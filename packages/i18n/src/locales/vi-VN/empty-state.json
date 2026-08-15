@@ -250,8 +250,8 @@
       "cta_primary": "Tạo mục công việc định kỳ"
     },
     "worklogs": {
-      "title": "Theo dõi bảng chấm công cho tất cả thành viên",
-      "description": "Ghi nhật ký thời gian trên các mục công việc để xem bảng chấm công chi tiết cho bất kỳ thành viên nào trong đội qua các dự án."
+      "title": "Chưa có worklog để tải xuống",
+      "description": "Ghi thời gian trên work item, rồi tải worklog cho mọi dự án bạn có quyền truy cập."
     },
     "group_syncing": {
       "title": "Chưa có ánh xạ nhóm"

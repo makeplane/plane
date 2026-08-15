@@ -250,8 +250,8 @@
       "cta_primary": "Vytvořit opakující se pracovní položku"
     },
     "worklogs": {
-      "title": "Sledujte časové výkazy pro všechny členy",
-      "description": "Zaznamenávejte čas na pracovních položkách pro zobrazení podrobných časových výkazů pro jakéhokoli člena týmu napříč projekty."
+      "title": "Zatím žádné worklogs ke stažení",
+      "description": "Zaznamenejte čas na pracovních položkách a poté stáhněte worklogs pro jakýkoli dostupný projekt."
     },
     "group_syncing": {
       "title": "Zatím žádná mapování skupin"

@@ -21,6 +21,7 @@ class ExporterHistorySerializer(BaseSerializer):
             "provider",
             "status",
             "url",
+            "type",
             "initiated_by",
             "initiated_by_detail",
             "token",

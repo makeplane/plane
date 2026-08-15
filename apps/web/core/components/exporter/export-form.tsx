@@ -30,17 +30,19 @@ import { ProjectExportService } from "@/services/project/project-export.service"
 // local imports
 import { SettingsBoxedControlItem } from "../settings/boxed-control-item";
 
-type Props = {
-  workspaceSlug: string;
-  provider: string | null;
-  mutateServices: () => void;
-};
 type FormData = {
   provider: (typeof EXPORTERS_LIST)[0];
   project: string[];
   multiple: boolean;
   filters: TWorkItemFilterExpression;
   type: "issue_exports" | "issue_worklogs";
+};
+
+type Props = {
+  workspaceSlug: string;
+  provider: string | null;
+  mutateServices: () => void;
+  lockedType?: FormData["type"];
 };
 
 // const initialWorkItemFilters = {
@@ -57,7 +59,7 @@ const projectExportService = new ProjectExportService();
 
 export const ExportForm = observer(function ExportForm(props: Props) {
   // props
-  const { workspaceSlug, mutateServices } = props;
+  const { workspaceSlug, mutateServices, lockedType } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
 
@@ -73,7 +75,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       project: [],
       multiple: false,
       filters: {},
-      type: "issue_exports",
+      type: lockedType ?? "issue_exports",
     },
   });
 
@@ -210,34 +212,36 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             />
           }
         />
-        <SettingsBoxedControlItem
-          className="rounded-none border-0 border-b"
-          title={t("worklog.export_type")}
-          control={
-            <Controller
-              control={control}
-              name="type"
-              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  onChange={onChange}
-                  label={value === "issue_worklogs" ? t("common.worklogs") : t("worklog.export_work_items")}
-                  optionsClassName="max-w-48 sm:max-w-[532px]"
-                  placement="bottom-end"
-                  buttonClassName="py-2 text-13"
-                >
-                  <CustomSelect.Option value="issue_exports">
-                    <span className="truncate">{t("worklog.export_work_items")}</span>
-                  </CustomSelect.Option>
-                  <CustomSelect.Option value="issue_worklogs">
-                    <span className="truncate">{t("common.worklogs")}</span>
-                  </CustomSelect.Option>
-                </CustomSelect>
-              )}
-            />
-          }
-        />
+        {!lockedType && (
+          <SettingsBoxedControlItem
+            className="rounded-none border-0 border-b"
+            title={t("worklog.export_type")}
+            control={
+              <Controller
+                control={control}
+                name="type"
+                disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+                render={({ field: { value, onChange } }) => (
+                  <CustomSelect
+                    value={value}
+                    onChange={onChange}
+                    label={value === "issue_worklogs" ? t("common.worklogs") : t("worklog.export_work_items")}
+                    optionsClassName="max-w-48 sm:max-w-[532px]"
+                    placement="bottom-end"
+                    buttonClassName="py-2 text-13"
+                  >
+                    <CustomSelect.Option value="issue_exports">
+                      <span className="truncate">{t("worklog.export_work_items")}</span>
+                    </CustomSelect.Option>
+                    <CustomSelect.Option value="issue_worklogs">
+                      <span className="truncate">{t("common.worklogs")}</span>
+                    </CustomSelect.Option>
+                  </CustomSelect>
+                )}
+              />
+            }
+          />
+        )}
         <div className="px-4 py-3">
           <Button variant="primary" size="lg" type="submit" loading={exportLoading}>
             {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}

@@ -250,8 +250,8 @@
       "cta_primary": "Buat item kerja berulang"
     },
     "worklogs": {
-      "title": "Lacak lembar waktu untuk semua anggota",
-      "description": "Catat waktu pada item kerja untuk melihat lembar waktu terperinci untuk anggota tim mana pun di seluruh proyek."
+      "title": "Belum ada worklog untuk diunduh",
+      "description": "Catat waktu pada work item, lalu unduh worklog untuk proyek yang dapat Anda akses."
     },
     "group_syncing": {
       "title": "Belum ada pemetaan grup"

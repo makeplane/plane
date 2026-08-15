@@ -250,8 +250,8 @@
       "cta_primary": "Creați element de lucru recurent"
     },
     "worklogs": {
-      "title": "Urmăriți foile de pontaj pentru toți membrii",
-      "description": "Înregistrați timpul pe elemente de lucru pentru a vedea foi de pontaj detaliate pentru orice membru al echipei din proiecte."
+      "title": "Nu există încă worklog-uri de descărcat",
+      "description": "Înregistrează timpul pe work items, apoi descarcă worklog-urile pentru orice proiect accesibil."
     },
     "group_syncing": {
       "title": "Încă nu există mapări de grup"

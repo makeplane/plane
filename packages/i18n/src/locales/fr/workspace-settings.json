@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Journaux de travail",
         "heading": "Journaux de travail",
-        "description": "Téléchargez les journaux de travail (feuilles de temps) pour n’importe qui dans n’importe quel projet."
+        "description": "Téléchargez le temps saisi pour les membres et les projets. Le temps se saisit sur les work items après activation de Time Tracking dans les fonctionnalités du projet.",
+        "hint": "Cette page télécharge les worklogs existants. Ce n’est pas un timesheet, une paie ou un rapport d’utilization. Activez Time Tracking sur un projet, puis saisissez le temps depuis un work item."
       },
       "group_syncing": {
         "title": "Synchronisation des groupes",

@@ -250,8 +250,8 @@
       "cta_primary": "반복 작업 항목 생성"
     },
     "worklogs": {
-      "title": "모든 멤버의 작업 시간표 추적",
-      "description": "작업 항목에 시간을 기록하여 프로젝트 전반의 모든 팀 멤버에 대한 자세한 작업 시간표를 확인하세요."
+      "title": "다운로드할 worklog가 아직 없습니다",
+      "description": "work item에 시간을 기록한 다음 접근 가능한 프로젝트의 worklog를 다운로드하세요."
     },
     "group_syncing": {
       "title": "아직 그룹 매핑이 없습니다"

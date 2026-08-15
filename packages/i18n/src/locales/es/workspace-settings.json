@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Registros de trabajo",
         "heading": "Registros de trabajo",
-        "description": "Descarga los registros de trabajo, también conocidos como hojas de tiempo, de cualquier persona en cualquier proyecto."
+        "description": "Descarga el tiempo registrado de miembros y proyectos. El tiempo se registra en work items después de activar Time Tracking en las funciones del proyecto.",
+        "hint": "Esta página descarga worklogs existentes. No es un timesheet, nómina ni informe de utilization. Activa Time Tracking en un proyecto y registra tiempo desde un work item."
       },
       "group_syncing": {
         "title": "Sincronización de grupos",

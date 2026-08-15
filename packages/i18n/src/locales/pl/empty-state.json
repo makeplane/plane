@@ -250,8 +250,8 @@
       "cta_primary": "Utwórz powtarzający się element roboczy"
     },
     "worklogs": {
-      "title": "Śledź karty czasu pracy dla wszystkich członków",
-      "description": "Rejestruj czas w elementach roboczych, aby wyświetlać szczegółowe karty czasu pracy dla każdego członka zespołu w projektach."
+      "title": "Brak worklogów do pobrania",
+      "description": "Zarejestruj czas na work items, a następnie pobierz worklogi projektów, do których masz dostęp."
     },
     "group_syncing": {
       "title": "Brak mapowań grup"

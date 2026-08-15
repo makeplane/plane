@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "워크로그",
         "heading": "워크로그",
-        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요."
+        "description": "멤버와 프로젝트의 기록된 시간을 다운로드합니다. 프로젝트 기능에서 Time Tracking을 켠 뒤 work item에 시간을 기록합니다.",
+        "hint": "이 페이지는 기존 worklog를 다운로드합니다. timesheet, payroll, utilization 보고서가 아닙니다. 프로젝트에서 Time Tracking을 켠 다음 work item에서 시간을 기록하세요."
       },
       "group_syncing": {
         "title": "그룹 동기화",

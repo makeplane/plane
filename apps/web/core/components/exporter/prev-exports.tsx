@@ -30,11 +30,12 @@ type Props = {
   cursor: string | undefined;
   per_page: number;
   setCursor: (cursor: string) => void;
+  exportType?: "issue_exports" | "issue_worklogs";
 };
 type RowData = IExportData;
 export const PrevExports = observer(function PrevExports(props: Props) {
   // props
-  const { workspaceSlug, cursor, per_page, setCursor } = props;
+  const { workspaceSlug, cursor, per_page, setCursor, exportType } = props;
   // state
   const [refreshing, setRefreshing] = useState(false);
   // hooks
@@ -42,21 +43,23 @@ export const PrevExports = observer(function PrevExports(props: Props) {
   const columns = useExportColumns();
 
   const { data: exporterServices } = useSWR(
-    workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug, cursor, `${per_page}`) : null,
-    workspaceSlug && cursor ? () => integrationService.getExportsServicesList(workspaceSlug, cursor, per_page) : null
+    workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug, cursor, `${per_page}`, exportType) : null,
+    workspaceSlug && cursor
+      ? () => integrationService.getExportsServicesList(workspaceSlug, cursor, per_page, exportType)
+      : null
   );
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`));
+      await mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`, exportType));
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Failed to refresh export services list", error);
     } finally {
       setRefreshing(false);
     }
-  }, [workspaceSlug, cursor, per_page]);
+  }, [workspaceSlug, cursor, per_page, exportType]);
 
   useEffect(() => {
     const interval = setInterval(() => {

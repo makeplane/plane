@@ -69,6 +69,7 @@ export interface IExportData {
   project: string[];
   provider: string;
   status: string;
+  type?: "issue_exports" | "issue_worklogs";
   url: string;
   token: string;
   created_by: string;

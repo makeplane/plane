@@ -250,8 +250,8 @@
       "cta_primary": "Wiederkehrendes Arbeitselement erstellen"
     },
     "worklogs": {
-      "title": "Zeiterfassungen für alle Mitglieder verfolgen",
-      "description": "Erfassen Sie Zeit für Arbeitselemente, um detaillierte Zeiterfassungen für jedes Teammitglied über Projekte hinweg anzuzeigen."
+      "title": "Noch keine Worklogs zum Download",
+      "description": "Erfassen Sie Zeit an Work Items und laden Sie anschließend Worklogs für jedes zugängliche Projekt herunter."
     },
     "group_syncing": {
       "title": "Noch keine Gruppenzuordnungen"

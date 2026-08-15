@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Registros de trabalho",
         "heading": "Registros de trabalho",
-        "description": "Baixe registros de trabalho, também conhecidos como folhas de ponto, de qualquer pessoa em qualquer projeto."
+        "description": "Baixe o tempo registrado de membros e projetos. O tempo é registrado em work items depois que Time Tracking é ativado nos recursos do projeto.",
+        "hint": "Esta página baixa worklogs existentes. Não é um timesheet, folha de pagamento ou relatório de utilization. Ative Time Tracking no projeto e registre o tempo em um work item."
       },
       "group_syncing": {
         "title": "Sincronização de grupos",

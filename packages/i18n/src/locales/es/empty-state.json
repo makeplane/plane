@@ -250,8 +250,8 @@
       "cta_primary": "Crear elemento de trabajo recurrente"
     },
     "worklogs": {
-      "title": "Rastrea hojas de tiempo para todos los miembros",
-      "description": "Registra el tiempo en los elementos de trabajo para ver hojas de tiempo detalladas de cualquier miembro del equipo en todos los proyectos."
+      "title": "Aún no hay worklogs para descargar",
+      "description": "Registra tiempo en work items y luego descarga worklogs de cualquier proyecto al que tengas acceso."
     },
     "group_syncing": {
       "title": "Aún no hay asignaciones de grupos"

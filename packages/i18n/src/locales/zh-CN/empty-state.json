@@ -250,8 +250,8 @@
       "cta_primary": "创建循环工作项"
     },
     "worklogs": {
-      "title": "跟踪所有成员的工时表",
-      "description": "在工作项上记录时间以查看跨项目任何团队成员的详细工时表。"
+      "title": "暂无 worklog 可下载",
+      "description": "先在工作项上记录时间，再下载你可访问项目的 worklog。"
     },
     "group_syncing": {
       "title": "暂无组映射"

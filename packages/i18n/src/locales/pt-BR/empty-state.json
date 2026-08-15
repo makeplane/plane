@@ -250,8 +250,8 @@
       "cta_primary": "Criar item de trabalho recorrente"
     },
     "worklogs": {
-      "title": "Acompanhe folhas de ponto para todos os membros",
-      "description": "Registre tempo em itens de trabalho para ver folhas de ponto detalhadas para qualquer membro da equipe em projetos."
+      "title": "Nenhum worklog para baixar ainda",
+      "description": "Registre tempo em work items e depois baixe worklogs de qualquer projeto que você possa acessar."
     },
     "group_syncing": {
       "title": "Ainda não há mapeamentos de grupos"

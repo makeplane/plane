@@ -250,8 +250,8 @@
       "cta_primary": "Create recurring work item"
     },
     "worklogs": {
-      "title": "Track timesheets for all members",
-      "description": "Log time on work items to view detailed timesheets for any team member across projects."
+      "title": "No worklogs to download yet",
+      "description": "Log time on work items, then download worklogs for any project you can access."
     },
     "group_syncing": {
       "title": "No group mappings yet"

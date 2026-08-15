@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Worklogs",
         "heading": "Worklogs",
-        "description": "Download worklogs AKA timesheets for anyone in any project."
+        "description": "Download logged time for members and projects. Time is logged on work items after Time Tracking is enabled in project features.",
+        "hint": "This page downloads existing worklogs. It is not a timesheet, payroll, or utilization report. Enable Time Tracking on a project, then log time from a work item."
       },
       "group_syncing": {
         "title": "Group syncing",

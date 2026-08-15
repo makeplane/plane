@@ -250,8 +250,8 @@
       "cta_primary": "Yinelenen iş öğesi oluştur"
     },
     "worklogs": {
-      "title": "Tüm üyeler için zaman çizelgelerini takip edin",
-      "description": "Projeler arasında herhangi bir ekip üyesi için ayrıntılı zaman çizelgelerini görmek için iş öğelerinde zaman kaydedin."
+      "title": "İndirilecek worklog yok",
+      "description": "Work item’lara süre kaydedin, ardından erişebildiğiniz projelerin worklog’larını indirin."
     },
     "group_syncing": {
       "title": "Henüz grup eşlemesi yok"

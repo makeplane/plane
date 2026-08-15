@@ -253,7 +253,8 @@
       "worklogs": {
         "title": "Workloglar",
         "heading": "Workloglar",
-        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin."
+        "description": "Üyeler ve projeler için kaydedilen süreyi indirin. Süre, proje özelliklerinde Time Tracking açıldıktan sonra work item’lara kaydedilir.",
+        "hint": "Bu sayfa mevcut worklog’ları indirir. Timesheet, payroll veya utilization raporu değildir. Bir projede Time Tracking’i açın, ardından work item’dan süre kaydedin."
       },
       "group_syncing": {
         "title": "Grup senkronizasyonu",
