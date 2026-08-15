@@ -11,9 +11,10 @@ from django.db.models import Q
 # Match whole integers only. The lookaround excludes the components of a
 # decimal: a plain \b\d+\b treats the dot in "3.5" as a word boundary and
 # yields both 3 and 5, so searching a version string surfaced unrelated issues
-# by sequence id. A trailing dot that is not followed by a digit ("issue 22.")
-# is still sentence punctuation, and 22 stays matchable.
-SEQUENCE_PATTERN = re.compile(r"(?<!\d\.)\b\d+\b(?!\.\d)")
+# by sequence id. Any digit preceded by a dot is part of a decimal too — ".5"
+# must not yield 5. A trailing dot not followed by a digit ("issue 22.") is
+# sentence punctuation, and 22 stays matchable.
+SEQUENCE_PATTERN = re.compile(r"(?<![\d.])\b\d+\b(?!\.\d)")
 
 # Searchable fields per entity, shared by every search endpoint so that the
 # global search, the entity search and the project issue search cannot drift

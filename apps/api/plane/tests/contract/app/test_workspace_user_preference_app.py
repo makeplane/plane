@@ -48,9 +48,7 @@ class TestWorkspaceUserPreferencePatch:
         WorkspaceUserPreference.objects.filter(pk=other_pref.pk).update(created_at=now + timedelta(minutes=1))
 
         url = reverse("workspace-user-preference", kwargs={"slug": workspace.slug})
-        response = session_client.patch(
-            url, [{"key": self.KEY, "is_pinned": True, "sort_order": 999}], format="json"
-        )
+        response = session_client.patch(url, [{"key": self.KEY, "is_pinned": True, "sort_order": 999}], format="json")
 
         assert response.status_code == status.HTTP_200_OK
 
@@ -72,9 +70,7 @@ class TestWorkspaceUserPreferencePatch:
         )
 
         url = reverse("workspace-user-preference", kwargs={"slug": workspace.slug})
-        response = session_client.patch(
-            url, [{"key": self.KEY, "is_pinned": True, "sort_order": 42}], format="json"
-        )
+        response = session_client.patch(url, [{"key": self.KEY, "is_pinned": True, "sort_order": 42}], format="json")
 
         assert response.status_code == status.HTTP_200_OK
 

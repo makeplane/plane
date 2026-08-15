@@ -20,8 +20,10 @@ from rest_framework import status
 
 from plane.db.models import (
     Issue,
+    Page,
     Project,
     ProjectMember,
+    ProjectPage,
     User,
     Workspace,
     WorkspaceMember,
@@ -161,6 +163,27 @@ class TestSearchDoesNotWidenVisibility:
         results = _search(session_client, workspace.slug, "northwind")
         assert _names(results) == {issues["gateway"].name}
 
+    def test_a_project_in_my_workspace_that_i_am_not_a_member_of_is_not_searched(
+        self, session_client, workspace, issues, create_user
+    ):
+        """Same workspace, different project, no membership row at all.
+
+        Distinct from the cross-tenant case above, which the workspace filter
+        alone would catch — this one only passes because of the project
+        membership filter.
+        """
+        uid = uuid4().hex[:8]
+        other_user = User.objects.create(email=f"peer-{uid}@plane.so", username=f"peer_{uid}")
+        WorkspaceMember.objects.create(workspace=workspace, member=other_user, role=20)
+        their_project = Project.objects.create(
+            name="Theirs", identifier=f"T{uid[:3].upper()}", workspace=workspace, created_by=other_user
+        )
+        ProjectMember.objects.create(project=their_project, member=other_user, role=20, is_active=True)
+        _issue(their_project, "Their gateway work", "Northwind appears only in this body.")
+
+        results = _search(session_client, workspace.slug, "northwind")
+        assert _names(results) == {issues["gateway"].name}
+
     def test_a_project_the_caller_left_is_not_searched(self, session_client, workspace, project, issues, create_user):
         ProjectMember.objects.filter(project=project, member=create_user).update(is_active=False)
         assert _search(session_client, workspace.slug, "northwind") == []
@@ -185,3 +208,38 @@ class TestProjectScopedIssueSearch:
         )
         assert response.status_code == status.HTTP_200_OK
         assert _names(response.json()) == {issues["gateway"].name}
+
+
+@pytest.mark.contract
+class TestPageSearch:
+    """Pages gained body search in the same change; cover the endpoint, not
+    just the field constant."""
+
+    def _page(self, workspace, project, owner, name, body):
+        page = Page.objects.create(
+            name=name,
+            workspace=workspace,
+            owned_by=owner,
+            access=0,
+            description_html=f"<p>{body}</p>",
+        )
+        ProjectPage.objects.create(project=project, page=page, workspace=workspace)
+        return page
+
+    def test_a_word_only_in_the_page_body_is_found(self, session_client, workspace, project, create_user):
+        page = self._page(workspace, project, create_user, "Vendor evaluation", "Northwind pricing notes.")
+        response = session_client.get(
+            GLOBAL_SEARCH.format(slug=workspace.slug),
+            {"search": "northwind", "workspace_search": "true", "entities": "page"},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert _names(response.json()["results"]["page"]) == {page.name}
+
+    def test_page_titles_still_match(self, session_client, workspace, project, create_user):
+        page = self._page(workspace, project, create_user, "Runbook", "Nothing relevant here.")
+        response = session_client.get(
+            GLOBAL_SEARCH.format(slug=workspace.slug),
+            {"search": "runbook", "workspace_search": "true", "entities": "page"},
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert page.name in _names(response.json()["results"]["page"])

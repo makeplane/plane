@@ -43,9 +43,7 @@ def project(db, workspace, create_user):
         workspace=workspace,
         created_by=create_user,
     )
-    ProjectMember.objects.create(
-        project=project, member=create_user, workspace=workspace, role=20
-    )
+    ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20)
     return project
 
 
@@ -67,9 +65,7 @@ def outsider_user(db):
 @pytest.fixture
 def outsider_client(db, workspace, outsider_user):
     """Session client for a workspace member who is not in ``project``."""
-    WorkspaceMember.objects.create(
-        workspace=workspace, member=outsider_user, role=15
-    )
+    WorkspaceMember.objects.create(workspace=workspace, member=outsider_user, role=15)
     client = APIClient()
     client.force_authenticate(user=outsider_user)
     return client
@@ -115,17 +111,13 @@ class TestWorkspaceFileAssetProjectScope:
     """A workspace member who is not in the asset's project must be blocked."""
 
     @pytest.mark.django_db
-    def test_get_project_asset_denied_for_non_project_member(
-        self, outsider_client, workspace, project_asset
-    ):
+    def test_get_project_asset_denied_for_non_project_member(self, outsider_client, workspace, project_asset):
         """GET on a project asset by a non-project-member must 403, not mint a
         presigned download URL."""
         url = detail_url(workspace.slug, project_asset.id)
 
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
-            mock_storage.return_value.generate_presigned_url.return_value = (
-                "https://signed.example/download"
-            )
+            mock_storage.return_value.generate_presigned_url.return_value = "https://signed.example/download"
             response = outsider_client.get(url)
 
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
@@ -134,18 +126,14 @@ class TestWorkspaceFileAssetProjectScope:
         mock_storage.return_value.generate_presigned_url.assert_not_called()
 
     @pytest.mark.django_db
-    def test_patch_project_asset_denied_for_non_project_member(
-        self, outsider_client, workspace, project_asset
-    ):
+    def test_patch_project_asset_denied_for_non_project_member(self, outsider_client, workspace, project_asset):
         """PATCH on a project asset by a non-project-member must 403 and leave
         the asset untouched."""
         url = detail_url(workspace.slug, project_asset.id)
         project_asset.is_uploaded = False
         project_asset.save(update_fields=["is_uploaded"])
 
-        response = outsider_client.patch(
-            url, {"attributes": {"name": "hacked.pdf"}}, format="json"
-        )
+        response = outsider_client.patch(url, {"attributes": {"name": "hacked.pdf"}}, format="json")
 
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
@@ -155,9 +143,7 @@ class TestWorkspaceFileAssetProjectScope:
         assert project_asset.attributes.get("name") == "secret.pdf"
 
     @pytest.mark.django_db
-    def test_delete_project_asset_denied_for_non_project_member(
-        self, outsider_client, workspace, project_asset
-    ):
+    def test_delete_project_asset_denied_for_non_project_member(self, outsider_client, workspace, project_asset):
         """DELETE on a project asset by a non-project-member must 403 and must
         not soft-delete the asset."""
         url = detail_url(workspace.slug, project_asset.id)
@@ -171,17 +157,13 @@ class TestWorkspaceFileAssetProjectScope:
         assert project_asset.is_deleted is False
 
     @pytest.mark.django_db
-    def test_get_project_asset_allowed_for_project_member(
-        self, session_client, workspace, project_asset
-    ):
+    def test_get_project_asset_allowed_for_project_member(self, session_client, workspace, project_asset):
         """Positive control: an active project member can still download the
         asset, so the fix does not over-block legitimate callers."""
         url = detail_url(workspace.slug, project_asset.id)
 
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
-            mock_storage.return_value.generate_presigned_url.return_value = (
-                "https://signed.example/download"
-            )
+            mock_storage.return_value.generate_presigned_url.return_value = "https://signed.example/download"
             response = session_client.get(url)
 
         assert response.status_code == status.HTTP_302_FOUND, (
@@ -198,9 +180,7 @@ class TestWorkspaceFileAssetProjectScope:
         url = detail_url(workspace.slug, workspace_logo_asset.id)
 
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
-            mock_storage.return_value.generate_presigned_url.return_value = (
-                "https://signed.example/download"
-            )
+            mock_storage.return_value.generate_presigned_url.return_value = "https://signed.example/download"
             response = outsider_client.get(url)
 
         assert response.status_code == status.HTTP_302_FOUND, (

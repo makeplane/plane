@@ -34,10 +34,10 @@ class TestBuildSearchQuery:
         assert build_search_query("   ", fields=["name"]) == Q()
 
     def test_single_token_ors_across_fields(self):
-        q = build_search_query("sage", fields=["name", "description_stripped"])
+        q = build_search_query("northwind", fields=["name", "description_stripped"])
         assert _children(q) == {
-            ("name__icontains", "sage"),
-            ("description_stripped__icontains", "sage"),
+            ("name__icontains", "northwind"),
+            ("description_stripped__icontains", "northwind"),
         }
         assert q.connector == Q.OR
 
@@ -83,7 +83,7 @@ class TestBuildSearchQuery:
 
     def test_identifier_and_number_in_one_token_still_matches_by_number(self):
         q = build_search_query(
-            "DUROPC-22",
+            "PAY-22",
             fields=ISSUE_SEARCH_FIELDS,
             sequence_fields=ISSUE_SEQUENCE_FIELDS,
         )
@@ -115,6 +115,15 @@ class TestBuildSearchQuery:
             sequence_fields=ISSUE_SEQUENCE_FIELDS,
         )
         assert ("sequence_id", "3") not in _children(q)
+        assert ("sequence_id", "5") not in _children(q)
+
+    def test_leading_dot_decimals_do_not_produce_sequence_matches(self):
+        """ ".5" is a decimal, not work item number 5."""
+        q = build_search_query(
+            ".5",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
         assert ("sequence_id", "5") not in _children(q)
 
     def test_version_strings_do_not_produce_sequence_matches(self):
@@ -161,11 +170,11 @@ class TestSearchableFields:
 
     def test_a_word_only_in_the_body_is_matchable(self):
         q = build_search_query(
-            "sage",
+            "northwind",
             fields=ISSUE_SEARCH_FIELDS,
             sequence_fields=ISSUE_SEQUENCE_FIELDS,
         )
-        assert ("description_stripped__icontains", "sage") in _children(q)
+        assert ("description_stripped__icontains", "northwind") in _children(q)
 
     def test_words_split_across_title_and_body_still_match(self):
         """ "payment" and "gateway" from the title, "review" from the body."""
