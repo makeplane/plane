@@ -48,7 +48,7 @@ Infrastructure backup/restore scripts (`restore.sh`, `restore-airgapped.sh`) are
 
 ## Production hardening (existing stack)
 
-- Data-service healthchecks on Community Compose and root `docker-compose.yml`.
+- Root `docker-compose.yml` is the production file: Hub images from `.env` (`PLANE_IMAGE_*`), no build context, no repo checkout. Pair it with `.env` copied from `.env.example`. Local source builds remain in `docker-compose-local.yml`.
 - `ALLOWED_HOSTS` and `AUTHENTICATION_RATE_LIMIT` passed into API containers.
 - `GUNICORN_WORKERS` is env-driven (default 1).
 - `pull_policy` from `PULL_POLICY` (default `if_not_present`).
