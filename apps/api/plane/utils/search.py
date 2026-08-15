@@ -16,6 +16,12 @@ from django.db.models import Q
 # sentence punctuation, and 22 stays matchable.
 SEQUENCE_PATTERN = re.compile(r"(?<![\d.])\b\d+\b(?!\.\d)")
 
+# Upper bound on tokens taken from one query. Every token costs one predicate
+# per searched field, so this caps the size of the SQL a single request can
+# build. Well above any real search — a dozen AND-ed words has narrowed the
+# result set to almost nothing already.
+MAX_SEARCH_TOKENS = 12
+
 # Searchable fields per entity, shared by every search endpoint so that the
 # global search, the entity search and the project issue search cannot drift
 # apart. Adding a field here widens all of them at once.
@@ -58,13 +64,22 @@ def build_search_query(query, fields, sequence_fields=(), sequence_query_max_len
     ``sequence_query_max_length`` skips sequence matching for queries longer
     than the given length, so prose does not get mined for stray digits.
 
+    Only the first ``MAX_SEARCH_TOKENS`` tokens are used. Each token adds one
+    predicate per field, so an unbounded token count would let a single request
+    build an arbitrarily large SQL expression — a cost the previous
+    whole-query ``icontains`` did not have, since it was one predicate per
+    field regardless of query length. Ignoring the tail is safe: tokens are
+    AND-ed, so the retained ones have already narrowed the result set at least
+    as much as the full query would have, and the extra terms could only
+    remove rows the caller is unlikely to be scrolling through anyway.
+
     An empty query returns an empty ``Q()``, which filters nothing — callers
     rely on that to mean "no search term supplied".
     """
     if not query:
         return Q()
 
-    tokens = query.split()
+    tokens = query.split()[:MAX_SEARCH_TOKENS]
     if not tokens:
         return Q()
 

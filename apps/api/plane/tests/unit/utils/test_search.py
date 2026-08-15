@@ -8,6 +8,7 @@ from django.db.models import Q
 from plane.utils.search import (
     ISSUE_SEARCH_FIELDS,
     ISSUE_SEQUENCE_FIELDS,
+    MAX_SEARCH_TOKENS,
     PAGE_SEARCH_FIELDS,
     build_search_query,
 )
@@ -156,6 +157,39 @@ class TestBuildSearchQuery:
     def test_no_sequence_fields_yields_no_sequence_leaves(self):
         q = build_search_query("22", fields=["name"])
         assert _children(q) == {("name__icontains", "22")}
+
+
+@pytest.mark.unit
+class TestTokenBudget:
+    """One predicate per token per field, so the token count has to be bounded.
+
+    The predicate this replaced was a single icontains over the whole query —
+    constant size no matter how long the query was. Tokenizing removes that
+    property, so a request could otherwise build arbitrarily large SQL.
+    """
+
+    def test_predicate_size_is_proportional_to_tokens(self):
+        fields = ["name", "description_stripped"]
+        q = build_search_query("alpha beta gamma", fields=fields)
+        assert len(_children(q)) == 3 * len(fields)
+
+    def test_tokens_at_the_limit_are_all_used(self):
+        fields = ["name"]
+        tokens = [f"t{i}" for i in range(MAX_SEARCH_TOKENS)]
+        q = build_search_query(" ".join(tokens), fields=fields)
+        assert len(_children(q)) == MAX_SEARCH_TOKENS
+
+    def test_tokens_beyond_the_limit_are_dropped(self):
+        fields = ["name"]
+        tokens = [f"t{i}" for i in range(MAX_SEARCH_TOKENS + 50)]
+        q = build_search_query(" ".join(tokens), fields=fields)
+        assert len(_children(q)) == MAX_SEARCH_TOKENS
+
+    def test_a_pathological_query_stays_bounded(self):
+        """The case the bound exists for: thousands of tokens, many fields."""
+        fields = ISSUE_SEARCH_FIELDS
+        q = build_search_query(" ".join(str(i) for i in range(5000)), fields=fields)
+        assert len(_children(q)) <= MAX_SEARCH_TOKENS * len(fields)
 
 
 @pytest.mark.unit
