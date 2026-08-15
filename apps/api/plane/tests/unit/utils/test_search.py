@@ -72,14 +72,41 @@ class TestBuildSearchQuery:
         assert ("sequence_id", "22") in _children(q)
 
     def test_sequence_match_is_ored_onto_the_whole_predicate(self):
-        """A bare issue number keeps surfacing the issue even alongside words."""
+        """A bare issue number reaches the issue regardless of its title."""
         q = build_search_query(
-            "fix 22",
+            "22",
             fields=ISSUE_SEARCH_FIELDS,
             sequence_fields=ISSUE_SEQUENCE_FIELDS,
         )
         assert q.connector == Q.OR
         assert ("sequence_id", "22") in _children(q)
+
+    def test_identifier_and_number_in_one_token_still_matches_by_number(self):
+        q = build_search_query(
+            "DUROPC-22",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert ("sequence_id", "22") in _children(q)
+
+    def test_sequence_lookup_still_applies_to_multi_word_queries(self):
+        """Unchanged from before this refactor, and deliberately so.
+
+        A number anywhere in the query still matches by sequence id, OR-ed onto
+        the whole predicate, so a work item carrying that number is returned
+        even when the words do not match it. That is noisy — "level 3 rate"
+        returns every work item numbered 3 — but narrowing it would remove
+        results that match today, and this change is meant to be a strict
+        superset. Pinned here so the behaviour is a decision rather than an
+        accident.
+        """
+        q = build_search_query(
+            "level 3 rate",
+            fields=ISSUE_SEARCH_FIELDS,
+            sequence_fields=ISSUE_SEQUENCE_FIELDS,
+        )
+        assert ("sequence_id", "3") in _children(q)
+        assert q.connector == Q.OR
 
     def test_decimals_do_not_produce_sequence_matches(self):
         q = build_search_query(
@@ -99,8 +126,9 @@ class TestBuildSearchQuery:
         assert not any(lookup == "sequence_id" for lookup, _ in _children(q))
 
     def test_trailing_punctuation_still_matches_a_sequence_id(self):
+        """A trailing dot is sentence punctuation, not a decimal point."""
         q = build_search_query(
-            "issue 22.",
+            "22.",
             fields=ISSUE_SEARCH_FIELDS,
             sequence_fields=ISSUE_SEQUENCE_FIELDS,
         )
