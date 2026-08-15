@@ -56,8 +56,10 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
                   label={currentSection.itemName(item)}
                   icon={currentSection.icon}
                   onSelect={() => {
+                    const path = currentSection.path(item, projectId);
+                    if (!path) return;
                     closePalette();
-                    router.push(currentSection.path(item, projectId));
+                    router.push(path);
                     // const itemProjectId =
                     //   item?.project_id ||
                     //   (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0

@@ -93,9 +93,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {
       let redirectProjectId = page?.project_ids?.[0];
       if (!!projectId && page?.project_ids?.includes(projectId)) redirectProjectId = projectId;
-      return redirectProjectId
-        ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
-        : `/${page?.workspace__slug}/wiki/${page?.id}`;
+      return redirectProjectId ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}` : "";
     },
     title: "Pages",
   },
