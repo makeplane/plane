@@ -102,7 +102,7 @@ services:
         - CMD
         - python
         - -c
-        - import urllib.request; urllib.request.urlopen('http://localhost:8000/api/ready/', timeout=5)
+        - import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=5)
       timeout: 10s
       interval: 30s
       retries: 5
@@ -1299,7 +1299,7 @@ services:
       BUCKET_NAME: ${BUCKET_NAME:-uploads}
       CERT_ACME_CA: "${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}"
       CERT_ACME_DNS: ${CERT_ACME_DNS:-}
-      CERT_EMAIL: "${CERT_EMAIL:-admin@example.com}"
+      CERT_EMAIL: ${CERT_EMAIL:-}
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       LISTEN_HTTP_PORT: ${LISTEN_HTTP_PORT:-80}
       LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
@@ -1645,7 +1645,7 @@ services:
         bind:
           create_host_path: true
   watchtower:
-    image: containrrr/watchtower:1.7.1
+    image: nickfedor/watchtower:1.12.3
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -1800,7 +1800,7 @@ x-proxy-env:
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
   CERT_ACME_CA: "${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}"
   CERT_ACME_DNS: ${CERT_ACME_DNS:-}
-  CERT_EMAIL: "${CERT_EMAIL:-admin@example.com}"
+  CERT_EMAIL: ${CERT_EMAIL:-}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
   LISTEN_HTTP_PORT: ${LISTEN_HTTP_PORT:-80}
   LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
