@@ -10,6 +10,7 @@ import type { TSearchEntities } from "@plane/types";
 export type TMentionSuggestion = {
   entity_identifier: string;
   entity_name: TSearchEntities;
+  entity_display_name?: string;
   icon: React.ReactNode;
   id: string;
   subTitle?: string;
@@ -22,7 +23,9 @@ export type TMentionSection = {
   items: TMentionSuggestion[];
 };
 
-export type TCallbackMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier" | "entity_name">;
+export type TCallbackMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier" | "entity_name"> & {
+  entity_display_name?: string | null;
+};
 
 export type TMentionHandler = {
   getMentionedEntityDetails?: (entity_identifier: string) => { display_name: string } | undefined;

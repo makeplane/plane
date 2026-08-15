@@ -29,6 +29,7 @@ export function MentionNodeView(props: MentionNodeViewProps) {
       {(extension.options as TMentionExtensionOptions).renderComponent({
         entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
         entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",
+        entity_display_name: attrs[EMentionComponentAttributeNames.ENTITY_DISPLAY_NAME],
       })}
     </NodeViewWrapper>
   );
