@@ -4,7 +4,6 @@ from uuid import uuid4
 import pytest
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APIClient
 
 from plane.db.models import Cycle, Project, ProjectMember, User, Workspace, WorkspaceMember
 from plane.license.models import Instance
@@ -72,7 +71,9 @@ class TestWorkspaceActiveCycles:
     def test_returns_accessible_active_cycle(self, session_client, workspace, project, create_user):
         cycle = create_cycle(workspace, project, create_user, "Current Cycle")
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["count"] == 1
@@ -81,12 +82,16 @@ class TestWorkspaceActiveCycles:
         assert response.data["results"][0]["project_detail"]["identifier"] == project.identifier
 
     @pytest.mark.django_db
-    def test_aggregates_active_cycles_from_multiple_accessible_projects(self, session_client, workspace, project, create_user):
+    def test_aggregates_active_cycles_from_multiple_accessible_projects(
+        self, session_client, workspace, project, create_user
+    ):
         second_project = create_project(workspace, create_user, "Beta", "BET")
         cycle_1 = create_cycle(workspace, project, create_user, "Alpha Current")
         cycle_2 = create_cycle(workspace, second_project, create_user, "Beta Current")
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         cycle_ids = {str(cycle["id"]) for cycle in response.data["results"]}
@@ -95,10 +100,16 @@ class TestWorkspaceActiveCycles:
     @pytest.mark.django_db
     def test_excludes_future_and_completed_cycles(self, session_client, workspace, project, create_user):
         current_cycle = create_cycle(workspace, project, create_user, "Current")
-        future_cycle = create_cycle(workspace, project, create_user, "Future", starts_in_days=1, ends_in_days=7)
-        completed_cycle = create_cycle(workspace, project, create_user, "Completed", starts_in_days=-7, ends_in_days=-1)
+        future_cycle = create_cycle(
+            workspace, project, create_user, "Future", starts_in_days=1, ends_in_days=7
+        )
+        completed_cycle = create_cycle(
+            workspace, project, create_user, "Completed", starts_in_days=-7, ends_in_days=-1
+        )
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         cycle_ids = {str(cycle["id"]) for cycle in response.data["results"]}
@@ -108,10 +119,14 @@ class TestWorkspaceActiveCycles:
 
     @pytest.mark.django_db
     def test_excludes_project_with_cycles_disabled(self, session_client, workspace, create_user):
-        disabled_project = create_project(workspace, create_user, "Disabled", "DIS", cycle_view=False)
+        disabled_project = create_project(
+            workspace, create_user, "Disabled", "DIS", cycle_view=False
+        )
         cycle = create_cycle(workspace, disabled_project, create_user, "Hidden Current")
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         assert str(cycle.id) not in {str(row["id"]) for row in response.data["results"]}
@@ -124,21 +139,29 @@ class TestWorkspaceActiveCycles:
         WorkspaceMember.objects.create(workspace=workspace, member=member_user, role=15, is_active=True)
         api_client.force_authenticate(user=member_user)
 
-        response = api_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = api_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         assert str(cycle.id) not in {str(row["id"]) for row in response.data["results"]}
 
     @pytest.mark.django_db
-    def test_guest_sees_only_project_cycles_they_belong_to(self, api_client, workspace, project, create_user, guest_user):
+    def test_guest_sees_only_project_cycles_they_belong_to(
+        self, api_client, workspace, project, create_user, guest_user
+    ):
         visible_project = create_project(workspace, create_user, "Visible", "VIS")
         hidden_cycle = create_cycle(workspace, project, create_user, "Hidden")
         visible_cycle = create_cycle(workspace, visible_project, create_user, "Visible")
         WorkspaceMember.objects.create(workspace=workspace, member=guest_user, role=5, is_active=True)
-        ProjectMember.objects.create(project=visible_project, member=guest_user, workspace=workspace, role=5, is_active=True)
+        ProjectMember.objects.create(
+            project=visible_project, member=guest_user, workspace=workspace, role=5, is_active=True
+        )
         api_client.force_authenticate(user=guest_user)
 
-        response = api_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = api_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         cycle_ids = {str(cycle["id"]) for cycle in response.data["results"]}
@@ -152,7 +175,9 @@ class TestWorkspaceActiveCycles:
         other_project = create_project(other_workspace, create_user, "Other", "OTH")
         other_cycle = create_cycle(other_workspace, other_project, create_user, "Other Current")
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         cycle_ids = {str(cycle["id"]) for cycle in response.data["results"]}
@@ -164,7 +189,9 @@ class TestWorkspaceActiveCycles:
         outsider = User.objects.create(email="active-outsider@plane.so", username="active-outsider")
         api_client.force_authenticate(user=outsider)
 
-        response = api_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = api_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -187,11 +214,17 @@ class TestWorkspaceActiveCycles:
 
     @pytest.mark.django_db
     def test_archived_cycles_and_projects_are_excluded(self, session_client, workspace, project, create_user):
-        archived_cycle = create_cycle(workspace, project, create_user, "Archived Cycle", archived_at=timezone.now())
-        archived_project = create_project(workspace, create_user, "Archived Project", "ARP", archived_at=timezone.now())
+        archived_cycle = create_cycle(
+            workspace, project, create_user, "Archived Cycle", archived_at=timezone.now()
+        )
+        archived_project = create_project(
+            workspace, create_user, "Archived Project", "ARP", archived_at=timezone.now()
+        )
         cycle_in_archived_project = create_cycle(workspace, archived_project, create_user, "Archived Project Cycle")
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         cycle_ids = {str(cycle["id"]) for cycle in response.data["results"]}
@@ -218,7 +251,9 @@ class TestWorkspaceActiveCycles:
             end_date=now + timedelta(seconds=1),
         )
 
-        response = session_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = session_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         cycle_ids = {str(cycle["id"]) for cycle in response.data["results"]}
@@ -236,7 +271,9 @@ class TestWorkspaceActiveCycles:
         ProjectMember.objects.create(project=project, member=member_user, workspace=workspace, role=15, is_active=True)
         api_client.force_authenticate(user=member_user)
 
-        response = api_client.get(ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"})
+        response = api_client.get(
+            ACTIVE_CYCLES_URL.format(slug=workspace.slug), {"per_page": 20, "cursor": "20:0:0"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         assert str(cycle.id) in {str(row["id"]) for row in response.data["results"]}

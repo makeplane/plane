@@ -48,7 +48,11 @@ class TestInstanceCapabilitiesEndpoint:
             "LLM_PROVIDER": "openai",
             "LLM_MODEL": "gpt-4o-mini",
         }
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
+        )
 
         response = api_client.get("/api/instances/")
 
@@ -116,7 +120,11 @@ class TestInstanceCapabilitiesEndpoint:
             "LLM_PROVIDER": "openai",
             "LLM_MODEL": "gpt-4o-mini",
         }
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
+        )
 
         response = api_client.get("/api/instances/")
 

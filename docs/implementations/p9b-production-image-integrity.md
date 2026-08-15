@@ -288,6 +288,8 @@ Frontend:
 - `web check:format`: pass
 - `web check:types`: pass (11 tasks)
 
+Lint API (`ruff check --fix apps/api`, line-length 120) failed on the first PR push because this branch touches `apps/api/**` and the job lints the whole tree. Remaining failures were E501 wraps in importer/cycle/Jira/worklog/capabilities tests. Those lines are wrapped; local `ruff check --select E501 apps/api` is clean.
+
 ## Remaining source-absent features
 
 Do not fabricate these. Do not import proprietary EE source.
@@ -322,6 +324,9 @@ If an equivalent exists on a legitimate open-source upstream branch/tag, sync th
 - `apps/api/plane/license/api/views/instance.py`
 - `apps/api/plane/tests/contract/license/test_instance_capabilities.py`
 - `apps/api/plane/tests/contract/app/test_self_hosted_unlimited.py`
+- `apps/api/plane/tests/unit/license/test_capabilities.py`
+- `apps/api/plane/tests/contract/app/test_{bulk_issue_archive,issue_worklogs,jira_importer,workspace_active_cycles}_app.py`
+- `apps/api/plane/app/urls/importer.py`, `views/workspace/cycle.py`, `bgtasks/jira_import_task.py` (E501 only)
 - `packages/types/src/instance/base.ts`
 - `docs/implementations/p9b-production-image-integrity.md`
 

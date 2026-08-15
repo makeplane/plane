@@ -134,7 +134,9 @@ class TestJiraImporterApp:
         ProjectMember.objects.create(project=project, workspace=workspace, member=guest_user, role=5, is_active=True)
         api_client.force_authenticate(user=guest_user)
 
-        response = api_client.post(JIRA_CREATE_URL.format(slug=workspace.slug), importer_payload(project), format="json")
+        response = api_client.post(
+            JIRA_CREATE_URL.format(slug=workspace.slug), importer_payload(project), format="json"
+        )
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert Importer.objects.count() == 0

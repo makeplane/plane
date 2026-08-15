@@ -124,7 +124,9 @@ class TestWorkspaceSeatUnlimited:
     @pytest.mark.django_db
     @patch("plane.bgtasks.workspace_invitation_task.workspace_invitation.delay")
     @patch("plane.bgtasks.event_tracking_task.track_event.delay")
-    def test_invite_thirteenth_member_succeeds(self, mock_track, mock_invite, api_client, workspace_with_twelve_members):
+    def test_invite_thirteenth_member_succeeds(
+        self, mock_track, mock_invite, api_client, workspace_with_twelve_members
+    ):
         """Workspaces already at the old 12-user cap accept a 13th invite."""
         workspace, owner = workspace_with_twelve_members
         assert WorkspaceMember.objects.filter(workspace=workspace, is_active=True).count() == 12
@@ -143,7 +145,9 @@ class TestWorkspaceSeatUnlimited:
     @pytest.mark.django_db
     @patch("plane.bgtasks.workspace_invitation_task.workspace_invitation.delay")
     @patch("plane.bgtasks.event_tracking_task.track_event.delay")
-    def test_invite_far_beyond_twelve_succeeds(self, mock_track, mock_invite, api_client, workspace_with_twelve_members):
+    def test_invite_far_beyond_twelve_succeeds(
+        self, mock_track, mock_invite, api_client, workspace_with_twelve_members
+    ):
         """No seat cap exists anywhere in the invite path: 15 members is fine."""
         workspace, owner = workspace_with_twelve_members
         for index in (12, 13):
