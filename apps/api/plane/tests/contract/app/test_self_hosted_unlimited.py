@@ -26,7 +26,13 @@ from plane.license.models import Instance, InstanceEdition
 
 
 def _create_user(email, first_name="Member", last_name="User"):
-    user = User.objects.create(email=email, first_name=first_name, last_name=last_name)
+    username = email.split("@")[0]
+    user = User.objects.create(
+        email=email,
+        username=username,
+        first_name=first_name,
+        last_name=last_name,
+    )
     user.set_password("member@123")
     user.save()
     return user

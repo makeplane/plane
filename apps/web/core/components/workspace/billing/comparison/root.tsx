@@ -11,6 +11,7 @@ import type { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/billing/comparison/base";
 import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
 import { PLANE_PLANS } from "@/components/workspace/billing/comparison/plans";
+import { useSelfHostedPolicy } from "@/hooks/store/use-self-hosted-policy";
 // plane web imports
 import { PlanDetail } from "./plan-detail";
 
@@ -31,9 +32,10 @@ export const PlansComparison = observer(function PlansComparison(props: TPlansCo
   // plan details
   const { planDetails } = PLANE_PLANS;
 
-  // This checkout is the self-hosted Community edition: the plan comparison is
-  // informational and must not surface cloud purchase CTAs.
-  const isSelfManaged = true;
+  const { hasCommercialGating } = useSelfHostedPolicy();
+  // Purchase CTAs stay hosted-only. Self-hosted Community reports
+  // ``commercial_gating: false`` from ``capabilities.policy``.
+  const isSelfManaged = !hasCommercialGating;
 
   return (
     <PlansComparisonBase
