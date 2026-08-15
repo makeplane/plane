@@ -104,6 +104,17 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+      WEB_BASE_URL: ${WEB_BASE_URL:-http://web:3000}
+      LIVE_BASE_URL: ${LIVE_BASE_URL:-http://live:3000}
+      LIVE_BASE_PATH: ${LIVE_BASE_PATH:-/live}
+      LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+      REDIS_URL: ${REDIS_URL}
+    env_file:
+      - .env
+    depends_on:
+      - plane-redis
 
   plane-db:
     container_name: plane-db
@@ -164,6 +175,8 @@ services:
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+    env_file:
+      - .env
     depends_on:
       - web
       - api
