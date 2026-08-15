@@ -40,6 +40,8 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.backup
+docker-compose-prod-origin.yml
 
 # Vercel
 .vercel
