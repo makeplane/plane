@@ -91,7 +91,10 @@ class InstanceCapabilityService:
                 {"key": "ENABLE_SMTP", "default": os.environ.get("ENABLE_SMTP", "0")},
                 {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
                 {"key": "EMAIL_PORT", "default": os.environ.get("EMAIL_PORT", "587")},
-                {"key": "EMAIL_FROM", "default": os.environ.get("EMAIL_FROM", "")},
+                {
+                    "key": "EMAIL_FROM",
+                    "default": os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
+                },
             ]
         )
         enabled = _is_enabled(enable_smtp)
@@ -105,13 +108,20 @@ class InstanceCapabilityService:
         }
 
     def _object_storage(self):
-        configured = all(
-            [
-                _is_present(getattr(settings, "AWS_ACCESS_KEY_ID", None)),
-                _is_present(getattr(settings, "AWS_SECRET_ACCESS_KEY", None)),
-                _is_present(getattr(settings, "AWS_STORAGE_BUCKET_NAME", None)),
-            ]
-        )
+        env_access = os.environ.get("AWS_ACCESS_KEY_ID")
+        env_secret = os.environ.get("AWS_SECRET_ACCESS_KEY")
+        env_bucket = os.environ.get("AWS_S3_BUCKET_NAME")
+        env_has_any = any(_is_present(value) for value in (env_access, env_secret, env_bucket))
+        if env_has_any:
+            configured = all(_is_present(value) for value in (env_access, env_secret, env_bucket))
+        else:
+            configured = all(
+                [
+                    _is_present(getattr(settings, "AWS_ACCESS_KEY_ID", None)),
+                    _is_present(getattr(settings, "AWS_SECRET_ACCESS_KEY", None)),
+                    _is_present(getattr(settings, "AWS_STORAGE_BUCKET_NAME", None)),
+                ]
+            )
 
         return {
             "available": True,
@@ -151,8 +161,14 @@ class InstanceCapabilityService:
 
     def _oauth_provider_host(self, provider):
         provider_key = provider.upper()
+        default_host = "https://gitlab.com" if provider == "gitlab" else ""
         (host,) = get_configuration_value(
-            [{"key": f"{provider_key}_HOST", "default": os.environ.get(f"{provider_key}_HOST", "")}]
+            [
+                {
+                    "key": f"{provider_key}_HOST",
+                    "default": os.environ.get(f"{provider_key}_HOST", default_host),
+                }
+            ]
         )
         return host
 

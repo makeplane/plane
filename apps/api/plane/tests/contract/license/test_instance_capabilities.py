@@ -26,6 +26,9 @@ class TestInstanceCapabilitiesEndpoint:
         settings.AWS_ACCESS_KEY_ID = "s3-access-key"
         settings.AWS_SECRET_ACCESS_KEY = "s3-secret"
         settings.AWS_STORAGE_BUCKET_NAME = "uploads"
+        monkeypatch.setenv("AWS_ACCESS_KEY_ID", "s3-access-key")
+        monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "s3-secret")
+        monkeypatch.setenv("AWS_S3_BUCKET_NAME", "uploads")
         values = {
             "ENABLE_SIGNUP": "1",
             "DISABLE_WORKSPACE_CREATION": "0",
@@ -59,19 +62,24 @@ class TestInstanceCapabilitiesEndpoint:
             "public_projects",
             "active_cycles",
             "project_features",
+            "policy",
         }
         assert response.data["capabilities"]["ai"]["ready"] is True
+        assert response.data["config"]["has_llm_configured"] is True
         assert response.data["capabilities"]["smtp"]["ready"] is True
         assert response.data["capabilities"]["object_storage"]["ready"] is True
         assert response.data["capabilities"]["oauth"]["providers"]["google"]["ready"] is True
         assert response.data["capabilities"]["active_cycles"] == {"available": True, "enabled": True}
         assert response.data["capabilities"]["project_features"]["cycles"] == {"available": True}
+        assert response.data["capabilities"]["policy"]["commercial_gating"] is False
+        assert response.data["capabilities"]["policy"]["seat_limit"] is None
 
         serialized = str(response.data)
         assert "llm-secret" not in serialized
         assert "s3-secret" not in serialized
         assert "s3-access-key" not in serialized
         assert "oauth-secret" not in serialized
+        assert "smtp-secret" not in serialized
 
     def test_public_instance_endpoint_reports_partial_configuration(self, api_client, db, monkeypatch, settings):
         cache.clear()
@@ -84,6 +92,9 @@ class TestInstanceCapabilitiesEndpoint:
         settings.AWS_ACCESS_KEY_ID = ""
         settings.AWS_SECRET_ACCESS_KEY = ""
         settings.AWS_STORAGE_BUCKET_NAME = "uploads"
+        monkeypatch.setenv("AWS_ACCESS_KEY_ID", "")
+        monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "")
+        monkeypatch.setenv("AWS_S3_BUCKET_NAME", "")
         values = {
             "ENABLE_SIGNUP": "1",
             "DISABLE_WORKSPACE_CREATION": "0",
@@ -109,6 +120,7 @@ class TestInstanceCapabilitiesEndpoint:
 
         assert response.status_code == 200
         assert response.data["capabilities"]["ai"]["ready"] is False
+        assert response.data["config"]["has_llm_configured"] is False
         assert response.data["capabilities"]["smtp"] == {
             "available": True,
             "enabled": False,

@@ -67,7 +67,6 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_API_KEY,
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
-            LLM_API_KEY,
         ) = get_configuration_value(
             [
                 {
@@ -123,10 +122,6 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "UNSPLASH_ACCESS_KEY",
                     "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 },
-                {
-                    "key": "LLM_API_KEY",
-                    "default": os.environ.get("LLM_API_KEY", ""),
-                },
             ]
         )
 
@@ -154,13 +149,17 @@ class InstanceEndpoint(BaseAPIView):
         # Unsplash
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
-        # Open AI settings
-        data["has_llm_configured"] = bool(LLM_API_KEY)
+        capabilities = InstanceCapabilityService().get_capabilities()
+
+        # Align the boot flag with the same provider/model/key checks the AI
+        # endpoints use. A key alone is not enough for a callable AI flow.
+        data["has_llm_configured"] = capabilities["ai"]["ready"]
 
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
-        # is smtp configured
+        # Magic-link and password-reset flows gate on EMAIL_HOST presence, not
+        # ENABLE_SMTP. Keep this boot flag aligned with those callable paths.
         data["is_smtp_configured"] = bool(EMAIL_HOST)
 
         # Base URL
@@ -177,7 +176,7 @@ class InstanceEndpoint(BaseAPIView):
         response_data = {
             "config": data,
             "instance": instance_data,
-            "capabilities": InstanceCapabilityService().get_capabilities(),
+            "capabilities": capabilities,
         }
         return Response(response_data, status=status.HTTP_200_OK)
 

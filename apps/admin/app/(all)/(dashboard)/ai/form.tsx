@@ -34,26 +34,34 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     defaultValues: {
       LLM_API_KEY: config["LLM_API_KEY"],
       LLM_MODEL: config["LLM_MODEL"],
+      LLM_PROVIDER: config["LLM_PROVIDER"],
     },
   });
 
   const aiFormFields: TControllerInputFormField[] = [
+    {
+      key: "LLM_PROVIDER",
+      type: "text",
+      label: "LLM provider",
+      description: (
+        <>
+          Existing backend adapters: <code>openai</code>, <code>anthropic</code>, and <code>gemini</code>. Requests use
+          the OpenAI-compatible client already implemented for this instance. Do not enter API keys here except in the
+          credential field below.
+        </>
+      ),
+      placeholder: "openai",
+      error: Boolean(errors.LLM_PROVIDER),
+      required: false,
+    },
     {
       key: "LLM_MODEL",
       type: "text",
       label: "LLM Model",
       description: (
         <>
-          Choose an OpenAI engine.{" "}
-          <a
-            href="https://platform.openai.com/docs/models/overview"
-            target="_blank"
-            className="text-accent-primary hover:underline"
-            rel="noreferrer"
-            aria-label="OpenAI models documentation"
-          >
-            Learn more
-          </a>
+          Must be a model already listed for the selected provider (for example gpt-4o-mini for OpenAI). Unsupported
+          models keep AI not ready and the assistant endpoint returns 400.
         </>
       ),
       placeholder: "gpt-4o-mini",
@@ -102,8 +110,11 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
-          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-18 font-medium text-primary">LLM</div>
+          <div className="text-13 font-regular text-tertiary">
+            Configure the existing assistant using instance LLM credentials. Self-hosted does not require a commercial
+            upgrade.
+          </div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
@@ -130,10 +141,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary">
           <Lightbulb className="size-4" />
           <div>
-            If you have a preferred AI models vendor, please get in{" "}
-            <a className="font-medium underline" href="https://plane.so/contact">
-              touch with us.
-            </a>
+            AI is optional and configuration-dependent. If provider, model, and API key are missing or unsupported, the
+            Admin readiness page reports Not configured. No paid plan is required for self-hosted.
           </div>
         </div>
       </div>

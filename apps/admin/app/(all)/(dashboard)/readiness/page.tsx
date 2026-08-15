@@ -74,7 +74,7 @@ function capabilitySections(capabilities: IInstanceCapabilities): TCapabilitySec
           status: readinessStatus(capabilities.smtp),
           guidance: capabilities.smtp.ready
             ? "Email delivery is configured enough for Plane to attempt SMTP delivery. Use the existing Email settings page for changes and manual test email actions."
-            : "Configure SMTP host, port, sender, and credentials through the existing Email settings or deployment configuration. This page does not send test email or reveal SMTP secrets.",
+            : "Required keys: ENABLE_SMTP, EMAIL_HOST, EMAIL_PORT, EMAIL_FROM. Configure them through Email settings or deployment configuration. Credentials such as EMAIL_HOST_PASSWORD are never shown here.",
         },
       ],
     },
@@ -87,7 +87,7 @@ function capabilitySections(capabilities: IInstanceCapabilities): TCapabilitySec
           status: capabilities.object_storage.ready ? readyStatus : notConfiguredStatus,
           guidance: capabilities.object_storage.ready
             ? "The S3-compatible storage settings required by the application are present. This is configuration readiness, not a live bucket health check."
-            : "Configure the required S3-compatible or MinIO storage settings in the deployment environment. Credentials and bucket details are not displayed here.",
+            : "Required keys: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME. Configure S3-compatible or MinIO settings in the deployment environment. Credentials are not displayed here.",
         },
       ],
     },
@@ -111,7 +111,7 @@ function capabilitySections(capabilities: IInstanceCapabilities): TCapabilitySec
           status: readinessStatus(capabilities.ai),
           guidance: capabilities.ai.ready
             ? "AI configuration is present. Existing workspace/project permissions still decide who may use AI actions."
-            : "Configure the instance LLM provider, model, and API credential through the existing AI settings or deployment configuration. This page does not call the LLM or reveal API keys.",
+            : "Required keys: LLM_PROVIDER, LLM_MODEL, LLM_API_KEY. The provider must be openai, anthropic, or gemini, and the model must be one already supported by that provider. This page does not call the LLM or reveal API keys.",
         },
       ],
     },
@@ -155,7 +155,7 @@ function oauthItem(name: string, capability: TCapabilityEnabledState): TCapabili
     status: readinessStatus(capability),
     guidance: capability.ready
       ? "Provider configuration is present. OAuth sign-in still follows the existing authentication flow and provider callback configuration."
-      : "Configure this provider's client ID, client secret, and any required host setting through the existing Authentication settings or deployment configuration. Client secrets are never shown here.",
+      : "Required keys: client ID, client secret, the provider enabled flag, and GITLAB_HOST or GITEA_HOST for those providers. Configure them through Authentication settings. Client secrets are never shown here.",
   };
 }
 
