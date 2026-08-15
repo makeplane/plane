@@ -58,6 +58,7 @@ jobs:
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
 
+      dh_owner: ${{ steps.set_env_variables.outputs.DH_OWNER }}
       dh_img_web: ${{ steps.set_env_variables.outputs.DH_IMG_WEB }}
       dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
       dh_img_admin: ${{ steps.set_env_variables.outputs.DH_IMG_ADMIN }}
@@ -77,10 +78,10 @@ jobs:
         name: Set Environment Variables
         run: |
           if [ "${{ env.ARM64_BUILD }}" == "true" ] || ([ "${{ env.BUILD_TYPE }}" == "Release" ] && [ "${{ env.IS_PRERELEASE }}" != "true" ]); then
-            echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
-            echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
-            echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
           else
             echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
@@ -89,6 +90,15 @@ jobs:
           fi
           BR_NAME=$( echo "${{ env.TARGET_BRANCH }}" |sed 's/[^a-zA-Z0-9.-]//g')
           echo "TARGET_BRANCH=$BR_NAME" >> $GITHUB_OUTPUT
+
+          DH_OWNER="${{ vars.DOCKERHUB_NAMESPACE }}"
+          if [ -z "$DH_OWNER" ]; then
+            DH_OWNER="${{ secrets.DOCKERHUB_USERNAME }}"
+          fi
+          if [ -z "$DH_OWNER" ]; then
+            DH_OWNER="afzidan"
+          fi
+          echo "DH_OWNER=$DH_OWNER" >> $GITHUB_OUTPUT
 
           echo "DH_IMG_WEB=plane-frontend" >> $GITHUB_OUTPUT
           echo "DH_IMG_SPACE=plane-space" >> $GITHUB_OUTPUT
@@ -149,7 +159,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
           dockerfile-path: ./apps/admin/Dockerfile.admin
@@ -171,7 +181,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
           dockerfile-path: ./apps/web/Dockerfile.web
@@ -193,7 +203,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
           dockerfile-path: ./apps/space/Dockerfile.space
@@ -215,7 +225,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
           build-context: .
           dockerfile-path: ./apps/live/Dockerfile.live
@@ -237,7 +247,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
           build-context: ./apps/api
           dockerfile-path: ./apps/api/Dockerfile.api
@@ -259,7 +269,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
           build-context: ./apps/proxy
           dockerfile-path: ./apps/proxy/Dockerfile.ce
@@ -311,7 +321,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: makeplane
+          docker-image-owner: ${{ needs.branch_build_setup.outputs.dh_owner }}
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_aio }}
           build-context: ./deployments/aio/community
           dockerfile-path: ./deployments/aio/community/Dockerfile
@@ -323,6 +333,7 @@ jobs:
           additional-assets-dir: ./deployments/aio/community/dist
           build-args: |
             PLANE_VERSION=${{ steps.prepare_aio_assets.outputs.AIO_BUILD_VERSION }}
+            DOCKERHUB_USER=${{ needs.branch_build_setup.outputs.dh_owner }}
 
   upload_build_assets:
     name: Upload Build Assets

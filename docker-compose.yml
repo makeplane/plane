@@ -46,8 +46,12 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
-      - plane-redis
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   worker:
     container_name: bgworker
@@ -61,9 +65,14 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
+      api:
+        condition: service_started
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   beat-worker:
     container_name: beatworker
@@ -77,9 +86,14 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
+      api:
+        condition: service_started
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   migrator:
     container_name: plane-migrator
@@ -93,8 +107,10 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
-      - plane-redis
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
 
   live:
     container_name: plane-live
@@ -119,6 +135,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plane-redis:
     container_name: plane-redis
@@ -126,6 +147,11 @@ services:
     restart: always
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plane-mq:
     container_name: plane-mq
@@ -139,6 +165,11 @@ services:
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
   plane-minio:
     container_name: plane-minio

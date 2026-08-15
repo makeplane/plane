@@ -1,13 +1,13 @@
 #!/bin/bash
 
-BRANCH=${BRANCH:-master}
+BRANCH=${BRANCH:-preview}
 SERVICE_FOLDER=plane-app
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
-export APP_RELEASE="stable"
-export DOCKERHUB_USER=makeplane
+export APP_RELEASE="${APP_RELEASE:-preview}"
+export DOCKERHUB_USER=${DOCKERHUB_USER:-afzidan}
 
-export GH_REPO=makeplane/plane
+export GH_REPO=${GH_REPO:-AFZidan/plane}
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
 export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
 
@@ -595,12 +595,12 @@ if [ -f "$DOCKER_ENV_PATH" ]; then
     APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
 
     if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=makeplane
+        DOCKERHUB_USER=afzidan
         updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
     fi
 
     if [ -z "$APP_RELEASE" ]; then
-        APP_RELEASE=stable
+        APP_RELEASE=preview
         updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     fi
 fi

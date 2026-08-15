@@ -50,20 +50,26 @@ x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
   DEBUG: ${DEBUG:-0}
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-  GUNICORN_WORKERS: 1
+  ALLOWED_HOSTS: ${ALLOWED_HOSTS:-*}
+  GUNICORN_WORKERS: ${GUNICORN_WORKERS:-1}
   USE_MINIO: ${USE_MINIO:-1}
   DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
   SECRET_KEY: ${SECRET_KEY}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  AUTHENTICATION_RATE_LIMIT: ${AUTHENTICATION_RATE_LIMIT:-10/minute}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
   WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
   WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
 
+x-pull-policy: &pull-policy
+  pull_policy: ${PULL_POLICY:-if_not_present}
+
 services:
   web:
-    image: makeplane/plane-frontend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-frontend:${APP_RELEASE:-preview}
+    <<: *pull-policy
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -73,7 +79,8 @@ services:
       - worker
 
   space:
-    image: makeplane/plane-space:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-space:${APP_RELEASE:-preview}
+    <<: *pull-policy
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -84,7 +91,8 @@ services:
       - web
 
   admin:
-    image: makeplane/plane-admin:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-admin:${APP_RELEASE:-preview}
+    <<: *pull-policy
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -94,7 +102,8 @@ services:
       - web
 
   live:
-    image: makeplane/plane-live:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-live:${APP_RELEASE:-preview}
+    <<: *pull-policy
     environment:
       <<: [*live-env, *redis-env]
     deploy:
@@ -106,7 +115,8 @@ services:
       - web
 
   api:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -116,13 +126,29 @@ services:
       - logs_api:/code/plane/logs
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=5)",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
     depends_on:
-      - plane-db
-      - plane-redis
-      - plane-mq
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   worker:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
@@ -133,13 +159,18 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
-      - plane-mq
+      api:
+        condition: service_healthy
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   beat-worker:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
@@ -150,13 +181,18 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
-      - plane-mq
+      api:
+        condition: service_healthy
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
 
   migrator:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-backend:${APP_RELEASE:-preview}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: 1
@@ -167,8 +203,10 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      - plane-db
-      - plane-redis
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
 
   # Comment this if you already have a database running
   plane-db:
@@ -182,6 +220,11 @@ services:
       <<: *db-env
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
@@ -191,6 +234,11 @@ services:
         condition: any
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -202,10 +250,15 @@ services:
       <<: *mq-env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
   # Comment this if you using any external s3 compatible storage
   plane-minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
     command: server /export --console-address ":9090"
     deploy:
       replicas: 1
@@ -215,10 +268,17 @@ services:
       <<: *minio-env
     volumes:
       - uploads:/export
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
 
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: makeplane/plane-proxy:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-afzidan}/plane-proxy:${APP_RELEASE:-preview}
+    <<: *pull-policy
     deploy:
       replicas: 1
       restart_policy:

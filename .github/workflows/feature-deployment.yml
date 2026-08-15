@@ -66,7 +66,7 @@ jobs:
     env:
       BUILD_TYPE: full
       AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
-      AIO_IMAGE_TAGS: makeplane/plane-aio-feature:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      AIO_IMAGE_TAGS: afzidan/plane-aio-feature:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
       BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}

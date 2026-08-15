@@ -92,6 +92,6 @@ if [ "$success" = true ]; then
     echo -e "\n${GREEN}Happy coding! 🚀${NC}"
 else
     echo -e "${RED}✗${NC} Some issues occurred during setup. Please check the errors above.\n"
-    echo -e "For help, visit: ${BLUE}https://github.com/makeplane/plane${NC}"
+    echo -e "For help, visit: ${BLUE}https://github.com/AFZidan/plane${NC}"
     exit 1
 fi
