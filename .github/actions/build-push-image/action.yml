@@ -1,0 +1,115 @@
+name: Build and push Plane image
+description: Build and push the exact Docker image reference from repository variables.
+
+inputs:
+  dockerhub-username:
+    description: Docker Hub username
+    required: true
+  dockerhub-token:
+    description: Docker Hub token
+    required: true
+  image:
+    description: Full image reference (username/repo-name:tag-name)
+    required: true
+  build-context:
+    description: Docker build context
+    required: true
+  dockerfile-path:
+    description: Path to the Dockerfile
+    required: true
+  buildx-driver:
+    description: Buildx driver
+    required: true
+  buildx-version:
+    description: Buildx version
+    required: true
+  buildx-platforms:
+    description: Buildx platforms
+    required: true
+  buildx-endpoint:
+    description: Buildx endpoint (empty uses the default builder)
+    required: false
+    default: ""
+  build-args:
+    description: Docker build-args
+    required: false
+    default: ""
+  additional-assets:
+    description: Artifact name to download into the build context
+    required: false
+    default: ""
+  additional-assets-dir:
+    description: Directory to extract additional assets into
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Require image ref and Hub credentials
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+        DOCKERHUB_USERNAME: ${{ inputs.dockerhub-username }}
+        DOCKERHUB_TOKEN: ${{ inputs.dockerhub-token }}
+      run: |
+        if [ -z "$IMAGE" ]; then
+          echo "image input is required (username/repo-name:tag-name)" >&2
+          exit 1
+        fi
+        if [[ "$IMAGE" != *:* ]]; then
+          echo "Invalid image='$IMAGE'. Expected username/repo-name:tag-name" >&2
+          exit 1
+        fi
+        if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_TOKEN" ]; then
+          echo "DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets are required to push" >&2
+          exit 1
+        fi
+        tag="${IMAGE##*:}"
+        without_tag="${IMAGE%:*}"
+        echo "Pushing $IMAGE" >&2
+        echo "CACHE_REF=${without_tag}:buildcache-${tag}" >> "$GITHUB_ENV"
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-token }}
+
+    - name: Set up Docker Buildx
+      if: ${{ inputs.buildx-endpoint != '' }}
+      uses: docker/setup-buildx-action@v3
+      with:
+        driver: ${{ inputs.buildx-driver }}
+        version: ${{ inputs.buildx-version }}
+        endpoint: ${{ inputs.buildx-endpoint }}
+
+    - name: Set up Docker Buildx
+      if: ${{ inputs.buildx-endpoint == '' }}
+      uses: docker/setup-buildx-action@v3
+      with:
+        driver: ${{ inputs.buildx-driver }}
+        version: ${{ inputs.buildx-version }}
+
+    - name: Download additional assets
+      if: ${{ inputs.additional-assets != '' && inputs.additional-assets-dir != '' }}
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ inputs.additional-assets }}
+        path: ${{ inputs.additional-assets-dir }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ inputs.build-context }}
+        file: ${{ inputs.dockerfile-path }}
+        platforms: ${{ inputs.buildx-platforms }}
+        tags: ${{ inputs.image }}
+        push: true
+        provenance: false
+        sbom: false
+        cache-from: type=registry,ref=${{ env.CACHE_REF }}
+        cache-to: type=registry,ref=${{ env.CACHE_REF }},mode=max
+        build-args: ${{ inputs.build-args }}
+      env:
+        DOCKER_BUILDKIT: 1

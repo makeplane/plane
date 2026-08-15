@@ -19,8 +19,9 @@ PLANE_IMAGE_AIO_FEATURE
 ```
 
 Also set secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` so `Branch Build CE`
-can publish those image names. `Branch Build CE` stamps `variables.env` from the
-repository variables before attaching it to a release.
+can publish those image names. The workflow pushes each variable as the Docker
+tag (it does not rewrite the tag to the git branch name) and stamps
+`variables.env` from the same refs before attaching it to a release.
 
 ```bash
 export GH_REPO=AFZidan/plane
