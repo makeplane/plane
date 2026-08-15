@@ -15,7 +15,7 @@ Set GitHub Actions repository variables:
 - `PLANE_IMAGE_FRONTEND`, `PLANE_IMAGE_SPACE`, `PLANE_IMAGE_ADMIN`, `PLANE_IMAGE_LIVE`, `PLANE_IMAGE_BACKEND`, `PLANE_IMAGE_PROXY`
 - `PLANE_IMAGE_AIO` (AIO build/release), `PLANE_IMAGE_AIO_FEATURE` (optional Feature Preview workflow)
 
-`Branch Build CE` parses those variables for push and stamps `deployments/cli/community/variables.env` on the published assets. Install refuses to continue if any Plane image key is empty in `plane.env`.
+`Branch Build CE` pushes each `PLANE_IMAGE_*` value as the Docker tag (exact `username/repo-name:tag-name`). It does not retag with the git branch name. After a successful run, Hub must show those tags (for example `aitechau/project:plane-admin-prod`), not a single `…:preview` tag shared by every app. The workflow stamps the same refs into `deployments/cli/community/variables.env` on the published assets. Install refuses to continue if any Plane image key is empty in `plane.env`.
 
 ## Defaults
 
@@ -33,7 +33,7 @@ export BRANCH=preview
 
 ## Docker Hub publish
 
-Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Required repository variables: the `PLANE_IMAGE_*` list above. Push to `preview` or run **Branch Build CE** manually. ARM64 uses QEMU in `docker-container`.
+Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Required repository variables: the `PLANE_IMAGE_*` list above. Those variable values must match the tags production Compose pulls. Push to `preview` or run **Branch Build CE** manually. ARM64 uses QEMU in `docker-container`.
 
 ## Upgrade readiness
 

@@ -1,3 +1,7 @@
+# Pushes each PLANE_IMAGE_* GitHub variable as-is (username/repo-name:tag-name).
+# Do not use makeplane/actions/build-push here: that action ignores the variable
+# tag and publishes owner/name:<git-branch>, which collapses every app onto one
+# tag when they share a Hub repository.
 name: Branch Build CE
 
 on:
@@ -185,6 +189,15 @@ jobs:
           parse_image IMG_PROXY PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY" true
           parse_image IMG_AIO PLANE_IMAGE_AIO "$PLANE_IMAGE_AIO" "$BUILD_AIO"
 
+          echo "Pushing these image refs (exact GitHub variable tags, not the branch name):"
+          echo "  FRONTEND=$PLANE_IMAGE_FRONTEND"
+          echo "  SPACE=$PLANE_IMAGE_SPACE"
+          echo "  ADMIN=$PLANE_IMAGE_ADMIN"
+          echo "  LIVE=$PLANE_IMAGE_LIVE"
+          echo "  BACKEND=$PLANE_IMAGE_BACKEND"
+          echo "  PROXY=$PLANE_IMAGE_PROXY"
+          echo "  AIO=${PLANE_IMAGE_AIO:-skipped}"
+
       - id: checkout_files
         name: Checkout Files
         uses: actions/checkout@v6
@@ -194,16 +207,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Admin Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_admin_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_admin_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_admin }}
           build-context: .
           dockerfile-path: ./apps/admin/Dockerfile.admin
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -216,16 +227,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Web Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_web_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_web_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_web }}
           build-context: .
           dockerfile-path: ./apps/web/Dockerfile.web
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -238,16 +247,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Space Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_space_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_space_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_space }}
           build-context: .
           dockerfile-path: ./apps/space/Dockerfile.space
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -260,16 +267,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Live Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_live_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_live_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_live }}
           build-context: .
           dockerfile-path: ./apps/live/Dockerfile.live
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -282,16 +287,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Backend Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_backend_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_backend_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_backend }}
           build-context: ./apps/api
           dockerfile-path: ./apps/api/Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -304,16 +307,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Proxy Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_proxy_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_proxy_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_proxy }}
           build-context: ./apps/proxy
           dockerfile-path: ./apps/proxy/Dockerfile.ce
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
@@ -359,15 +360,11 @@ jobs:
           name: aio-assets-dist
 
       - name: AIO Build and Push
-        uses: makeplane/actions/build-push@v1.4.0
+        uses: ./.github/actions/build-push-image
         with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-image-owner: ${{ needs.branch_build_setup.outputs.img_aio_owner }}
-          docker-image-name: ${{ needs.branch_build_setup.outputs.img_aio_name }}
+          image: ${{ needs.branch_build_setup.outputs.img_aio }}
           build-context: ./deployments/aio/community
           dockerfile-path: ./deployments/aio/community/Dockerfile
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
