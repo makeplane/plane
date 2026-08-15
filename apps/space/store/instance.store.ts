@@ -8,7 +8,7 @@ import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // plane imports
 import { InstanceService } from "@plane/services";
-import type { IInstance, IInstanceConfig } from "@plane/types";
+import type { IInstance, IInstanceCapabilities, IInstanceConfig } from "@plane/types";
 // store
 import type { RootStore } from "@/store/root.store";
 
@@ -26,6 +26,7 @@ export interface IInstanceStore {
   isLoading: boolean;
   instance: IInstance | undefined;
   config: IInstanceConfig | undefined;
+  capabilities: IInstanceCapabilities | undefined;
   error: TError | undefined;
   // action
   fetchInstanceInfo: () => Promise<void>;
@@ -36,6 +37,7 @@ export class InstanceStore implements IInstanceStore {
   isLoading: boolean = true;
   instance: IInstance | undefined = undefined;
   config: IInstanceConfig | undefined = undefined;
+  capabilities: IInstanceCapabilities | undefined = undefined;
   error: TError | undefined = undefined;
   // services
   instanceService;
@@ -46,6 +48,7 @@ export class InstanceStore implements IInstanceStore {
       isLoading: observable.ref,
       instance: observable,
       config: observable,
+      capabilities: observable,
       error: observable,
       // actions
       fetchInstanceInfo: action,
@@ -69,6 +72,7 @@ export class InstanceStore implements IInstanceStore {
         this.isLoading = false;
         this.instance = instanceInfo.instance;
         this.config = instanceInfo.config;
+        this.capabilities = instanceInfo.capabilities;
       });
     } catch (_error) {
       runInAction(() => {

@@ -26,15 +26,15 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { config } = useInstance();
-  // derived values
+  const { config, capabilities } = useInstance();
+  const oauthProviders = capabilities?.oauth?.providers;
+  const isProviderReady = (provider: "google" | "github" | "gitlab" | "gitea", enabledFlag?: boolean) =>
+    oauthProviders?.[provider]?.ready ?? Boolean(enabledFlag);
   const isOAuthEnabled =
-    (config &&
-      (config?.is_google_enabled ||
-        config?.is_github_enabled ||
-        config?.is_gitlab_enabled ||
-        config?.is_gitea_enabled)) ||
-    false;
+    isProviderReady("google", config?.is_google_enabled) ||
+    isProviderReady("github", config?.is_github_enabled) ||
+    isProviderReady("gitlab", config?.is_gitlab_enabled) ||
+    isProviderReady("gitea", config?.is_gitea_enabled);
   const oAuthOptions: TOAuthOption[] = [
     {
       id: "google",
@@ -43,7 +43,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_google_enabled,
+      enabled: isProviderReady("google", config?.is_google_enabled),
     },
     {
       id: "github",
@@ -59,7 +59,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_github_enabled,
+      enabled: isProviderReady("github", config?.is_github_enabled),
     },
     {
       id: "gitlab",
@@ -68,7 +68,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_gitlab_enabled,
+      enabled: isProviderReady("gitlab", config?.is_gitlab_enabled),
     },
     {
       id: "gitea",
@@ -77,7 +77,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_gitea_enabled,
+      enabled: isProviderReady("gitea", config?.is_gitea_enabled),
     },
   ];
 

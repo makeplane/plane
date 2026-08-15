@@ -92,7 +92,7 @@ export function GptAssistantPopover(props: Props) {
     const error = err?.data?.error;
     const errorMessage =
       err?.status === 429
-        ? error || "You have reached the maximum number of requests of 50 requests per month per user."
+        ? error || "Too many requests. Please try again later."
         : error || "Some error occurred. Please try again.";
 
     setToast({
@@ -271,7 +271,6 @@ export function GptAssistantPopover(props: Props) {
                   prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
                 }`}
                 className="w-full"
-                autoFocus
               />
             )}
           />

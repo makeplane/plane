@@ -46,6 +46,17 @@ class TestInstanceCapabilityService:
         assert state["configured"] is False
         assert state["ready"] is False
 
+    def test_ai_not_ready_with_unsupported_model(self, monkeypatch):
+        monkeypatch.setattr(
+            capabilities, "get_configuration_value", lambda _keys: ("llm-secret", "openai", "not-a-supported-model")
+        )
+
+        state = InstanceCapabilityService()._ai()
+
+        assert state["configured"] is False
+        assert state["ready"] is False
+        _assert_no_secret(state)
+
     def test_smtp_disabled_when_configuration_absent(self, monkeypatch):
         monkeypatch.setattr(capabilities, "get_configuration_value", lambda _keys: ("0", "", "587", ""))
 
@@ -61,7 +72,10 @@ class TestInstanceCapabilityService:
         assert state == {"available": True, "enabled": True, "configured": True, "ready": True}
         _assert_no_secret(state)
 
-    def test_object_storage_missing_configuration(self, settings):
+    def test_object_storage_missing_configuration(self, settings, monkeypatch):
+        monkeypatch.setenv("AWS_ACCESS_KEY_ID", "")
+        monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "")
+        monkeypatch.setenv("AWS_S3_BUCKET_NAME", "")
         settings.AWS_ACCESS_KEY_ID = ""
         settings.AWS_SECRET_ACCESS_KEY = ""
         settings.AWS_STORAGE_BUCKET_NAME = ""
@@ -70,13 +84,29 @@ class TestInstanceCapabilityService:
 
         assert state == {"available": True, "configured": False, "ready": False}
 
-    def test_object_storage_ready_with_configuration(self, settings):
+    def test_object_storage_ready_with_configuration(self, settings, monkeypatch):
+        monkeypatch.delenv("AWS_ACCESS_KEY_ID", raising=False)
+        monkeypatch.delenv("AWS_SECRET_ACCESS_KEY", raising=False)
+        monkeypatch.delenv("AWS_S3_BUCKET_NAME", raising=False)
         settings.AWS_ACCESS_KEY_ID = "s3-access-key"
         settings.AWS_SECRET_ACCESS_KEY = "s3-secret"
         settings.AWS_STORAGE_BUCKET_NAME = "uploads"
 
         state = InstanceCapabilityService()._object_storage()
         assert state == {"available": True, "configured": True, "ready": True}
+        _assert_no_secret(state)
+
+    def test_object_storage_not_ready_when_env_bucket_missing(self, settings, monkeypatch):
+        monkeypatch.setenv("AWS_ACCESS_KEY_ID", "s3-access-key")
+        monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "s3-secret")
+        monkeypatch.setenv("AWS_S3_BUCKET_NAME", "")
+        settings.AWS_ACCESS_KEY_ID = "s3-access-key"
+        settings.AWS_SECRET_ACCESS_KEY = "s3-secret"
+        settings.AWS_STORAGE_BUCKET_NAME = "uploads"
+
+        state = InstanceCapabilityService()._object_storage()
+
+        assert state == {"available": True, "configured": False, "ready": False}
         _assert_no_secret(state)
 
     def test_oauth_no_configured_providers(self, monkeypatch):
@@ -119,6 +149,38 @@ class TestInstanceCapabilityService:
         assert providers["google"]["ready"] is True
         assert providers["gitea"]["ready"] is True
         assert providers["gitlab"]["ready"] is False
+        _assert_no_secret(providers)
+
+    def test_gitlab_ready_with_runtime_default_host(self, monkeypatch):
+        values = {
+            "IS_GITLAB_ENABLED": "1",
+            "GITLAB_CLIENT_ID": "gitlab-client",
+            "GITLAB_CLIENT_SECRET": "oauth-secret",
+        }
+        monkeypatch.setattr(
+            capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys)
+        )
+
+        providers = InstanceCapabilityService()._oauth()["providers"]
+
+        assert providers["gitlab"] == {"available": True, "enabled": True, "configured": True, "ready": True}
+        _assert_no_secret(providers)
+
+    def test_gitea_not_ready_without_host(self, monkeypatch):
+        values = {
+            "IS_GITEA_ENABLED": "1",
+            "GITEA_CLIENT_ID": "gitea-client",
+            "GITEA_CLIENT_SECRET": "oauth-secret",
+            "GITEA_HOST": "",
+        }
+        monkeypatch.setattr(
+            capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys)
+        )
+
+        providers = InstanceCapabilityService()._oauth()["providers"]
+
+        assert providers["gitea"]["configured"] is False
+        assert providers["gitea"]["ready"] is False
         _assert_no_secret(providers)
 
     def test_telemetry_enabled_and_disabled(self, db):
