@@ -4,4 +4,14 @@
  * See the LICENSE file for details.
  */
 
-export const useBulkOperationStatus = () => false;
+import { useSelfHostedPolicy } from "@/hooks/store/use-self-hosted-policy";
+
+/**
+ * Selection + P4A bulk archive are available whenever this deployment does
+ * not apply commercial gating. Self-hosted Community reports
+ * ``hasCommercialGating: false`` from ``capabilities.policy``.
+ */
+export const useBulkOperationStatus = () => {
+  const { hasCommercialGating } = useSelfHostedPolicy();
+  return !hasCommercialGating;
+};
