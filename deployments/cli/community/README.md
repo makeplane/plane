@@ -1,9 +1,9 @@
 # Self Hosting
 
-This fork pulls application and data-store images from full image references
+This fork pulls Plane application images from full image references
 (`username/repo-name:tag-name`) set as GitHub Actions repository variables and
-copied into `variables.env` / `plane.env`. Compose files do not hardcode an
-owner, image name, or tag.
+copied into `variables.env` / `plane.env`. Postgres, Valkey, RabbitMQ, and MinIO
+are official Docker Hub images and are pinned in Compose.
 
 Set these repository variables (Settings → Secrets and variables → Actions → Variables):
 
@@ -16,10 +16,6 @@ PLANE_IMAGE_BACKEND
 PLANE_IMAGE_PROXY
 PLANE_IMAGE_AIO
 PLANE_IMAGE_AIO_FEATURE
-IMAGE_POSTGRES
-IMAGE_VALKEY
-IMAGE_RABBITMQ
-IMAGE_MINIO
 ```
 
 Also set secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` so `Branch Build CE`

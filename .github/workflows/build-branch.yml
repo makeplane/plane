@@ -79,10 +79,6 @@ jobs:
       img_aio_owner: ${{ steps.set_env_variables.outputs.IMG_AIO_OWNER }}
       img_aio_name: ${{ steps.set_env_variables.outputs.IMG_AIO_NAME }}
       img_aio: ${{ steps.set_env_variables.outputs.IMG_AIO }}
-      image_postgres: ${{ steps.set_env_variables.outputs.IMAGE_POSTGRES }}
-      image_valkey: ${{ steps.set_env_variables.outputs.IMAGE_VALKEY }}
-      image_rabbitmq: ${{ steps.set_env_variables.outputs.IMAGE_RABBITMQ }}
-      image_minio: ${{ steps.set_env_variables.outputs.IMAGE_MINIO }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
@@ -101,10 +97,6 @@ jobs:
           PLANE_IMAGE_BACKEND: ${{ vars.PLANE_IMAGE_BACKEND }}
           PLANE_IMAGE_PROXY: ${{ vars.PLANE_IMAGE_PROXY }}
           PLANE_IMAGE_AIO: ${{ vars.PLANE_IMAGE_AIO }}
-          IMAGE_POSTGRES: ${{ vars.IMAGE_POSTGRES }}
-          IMAGE_VALKEY: ${{ vars.IMAGE_VALKEY }}
-          IMAGE_RABBITMQ: ${{ vars.IMAGE_RABBITMQ }}
-          IMAGE_MINIO: ${{ vars.IMAGE_MINIO }}
           AIO_BUILD_INPUT: ${{ env.AIO_BUILD }}
           BUILD_TYPE_INPUT: ${{ env.BUILD_TYPE }}
         run: |
@@ -192,10 +184,6 @@ jobs:
           parse_image IMG_BACKEND PLANE_IMAGE_BACKEND "$PLANE_IMAGE_BACKEND" true
           parse_image IMG_PROXY PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY" true
           parse_image IMG_AIO PLANE_IMAGE_AIO "$PLANE_IMAGE_AIO" "$BUILD_AIO"
-          parse_image IMAGE_POSTGRES IMAGE_POSTGRES "$IMAGE_POSTGRES" true
-          parse_image IMAGE_VALKEY IMAGE_VALKEY "$IMAGE_VALKEY" true
-          parse_image IMAGE_RABBITMQ IMAGE_RABBITMQ "$IMAGE_RABBITMQ" true
-          parse_image IMAGE_MINIO IMAGE_MINIO "$IMAGE_MINIO" true
 
       - id: checkout_files
         name: Checkout Files
@@ -419,10 +407,6 @@ jobs:
           PLANE_IMAGE_LIVE: ${{ needs.branch_build_setup.outputs.img_live }}
           PLANE_IMAGE_BACKEND: ${{ needs.branch_build_setup.outputs.img_backend }}
           PLANE_IMAGE_PROXY: ${{ needs.branch_build_setup.outputs.img_proxy }}
-          IMAGE_POSTGRES: ${{ needs.branch_build_setup.outputs.image_postgres }}
-          IMAGE_VALKEY: ${{ needs.branch_build_setup.outputs.image_valkey }}
-          IMAGE_RABBITMQ: ${{ needs.branch_build_setup.outputs.image_rabbitmq }}
-          IMAGE_MINIO: ${{ needs.branch_build_setup.outputs.image_minio }}
         run: |
           if [ "${{ needs.branch_build_setup.outputs.build_type }}" == "Release" ]; then
             REL_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
@@ -447,10 +431,6 @@ jobs:
           stamp PLANE_IMAGE_LIVE "$PLANE_IMAGE_LIVE"
           stamp PLANE_IMAGE_BACKEND "$PLANE_IMAGE_BACKEND"
           stamp PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY"
-          stamp IMAGE_POSTGRES "$IMAGE_POSTGRES"
-          stamp IMAGE_VALKEY "$IMAGE_VALKEY"
-          stamp IMAGE_RABBITMQ "$IMAGE_RABBITMQ"
-          stamp IMAGE_MINIO "$IMAGE_MINIO"
 
           cp ./deployments/cli/community/install.sh deployments/cli/community/setup.sh
 
@@ -494,10 +474,6 @@ jobs:
           PLANE_IMAGE_LIVE: ${{ needs.branch_build_setup.outputs.img_live }}
           PLANE_IMAGE_BACKEND: ${{ needs.branch_build_setup.outputs.img_backend }}
           PLANE_IMAGE_PROXY: ${{ needs.branch_build_setup.outputs.img_proxy }}
-          IMAGE_POSTGRES: ${{ needs.branch_build_setup.outputs.image_postgres }}
-          IMAGE_VALKEY: ${{ needs.branch_build_setup.outputs.image_valkey }}
-          IMAGE_RABBITMQ: ${{ needs.branch_build_setup.outputs.image_rabbitmq }}
-          IMAGE_MINIO: ${{ needs.branch_build_setup.outputs.image_minio }}
         run: |
           ENV_FILE=deployments/cli/community/variables.env
           stamp() {
@@ -516,10 +492,6 @@ jobs:
           stamp PLANE_IMAGE_LIVE "$PLANE_IMAGE_LIVE"
           stamp PLANE_IMAGE_BACKEND "$PLANE_IMAGE_BACKEND"
           stamp PLANE_IMAGE_PROXY "$PLANE_IMAGE_PROXY"
-          stamp IMAGE_POSTGRES "$IMAGE_POSTGRES"
-          stamp IMAGE_VALKEY "$IMAGE_VALKEY"
-          stamp IMAGE_RABBITMQ "$IMAGE_RABBITMQ"
-          stamp IMAGE_MINIO "$IMAGE_MINIO"
 
           cp ./deployments/cli/community/install.sh deployments/cli/community/setup.sh
 

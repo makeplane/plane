@@ -210,7 +210,7 @@ services:
 
   # Comment this if you already have a database running
   plane-db:
-    image: ${IMAGE_POSTGRES}
+    image: postgres:15.7-alpine
     command: postgres -c 'max_connections=1000'
     deploy:
       replicas: 1
@@ -227,7 +227,7 @@ services:
       retries: 10
 
   plane-redis:
-    image: ${IMAGE_VALKEY}
+    image: valkey/valkey:7.2.11-alpine
     deploy:
       replicas: 1
       restart_policy:
@@ -241,7 +241,7 @@ services:
       retries: 10
 
   plane-mq:
-    image: ${IMAGE_RABBITMQ}
+    image: rabbitmq:3.13.6-management-alpine
     deploy:
       replicas: 1
       restart_policy:
@@ -258,7 +258,7 @@ services:
 
   # Comment this if you using any external s3 compatible storage
   plane-minio:
-    image: ${IMAGE_MINIO}
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
     command: server /export --console-address ":9090"
     deploy:
       replicas: 1

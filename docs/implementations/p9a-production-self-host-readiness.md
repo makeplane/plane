@@ -8,17 +8,14 @@ P8B (PR #14, merge `5c5e443b85`) is on `preview`. `git remote -v` confirms `orig
 
 ## Image references
 
-Compose and install scripts interpolate full image refs only. There is no hardcoded Docker Hub user, repository name, or tag in production or test Compose files.
+Plane application images are full `username/repo-name:tag-name` refs from GitHub Actions repository variables. Official data-store images (Postgres, Valkey, RabbitMQ, MinIO) are hardcoded in Compose and only pulled.
 
-Set GitHub Actions repository variables (each `username/repo-name:tag-name`):
+Set GitHub Actions repository variables:
 
 - `PLANE_IMAGE_FRONTEND`, `PLANE_IMAGE_SPACE`, `PLANE_IMAGE_ADMIN`, `PLANE_IMAGE_LIVE`, `PLANE_IMAGE_BACKEND`, `PLANE_IMAGE_PROXY`
 - `PLANE_IMAGE_AIO` (AIO build/release), `PLANE_IMAGE_AIO_FEATURE` (optional Feature Preview workflow)
-- `IMAGE_POSTGRES`, `IMAGE_VALKEY`, `IMAGE_RABBITMQ`, `IMAGE_MINIO`
 
-`Branch Build CE` parses those variables for push and stamps `deployments/cli/community/variables.env` on the published assets. Install refuses to continue if any of those keys are empty in `plane.env`.
-
-Local/test Compose reads `IMAGE_*` from the project `.env` (copied from `.env.example` by `./setup.sh`).
+`Branch Build CE` parses those variables for push and stamps `deployments/cli/community/variables.env` on the published assets. Install refuses to continue if any Plane image key is empty in `plane.env`.
 
 ## Defaults
 
@@ -36,7 +33,7 @@ export BRANCH=preview
 
 ## Docker Hub publish
 
-Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Required repository variables: the `PLANE_IMAGE_*` and `IMAGE_*` list above. Push to `preview` or run **Branch Build CE** manually. ARM64 uses QEMU in `docker-container`.
+Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Required repository variables: the `PLANE_IMAGE_*` list above. Push to `preview` or run **Branch Build CE** manually. ARM64 uses QEMU in `docker-container`.
 
 ## Upgrade readiness
 
@@ -45,7 +42,7 @@ Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Required repos
 - `APP_RELEASE=stable` still tries GitHub latest release; this fork should keep `preview` until a tagged release exists.
 - Migrator remains `on-failure`. API entrypoint still `wait_for_db` / `wait_for_migrations`.
 - API/worker/beat now wait until Postgres, Valkey, and RabbitMQ healthchecks pass. API has an HTTP healthcheck on `/`.
-- MinIO image comes from `IMAGE_MINIO` (no floating `latest` in Compose).
+- MinIO is pinned to `minio/minio:RELEASE.2024-12-18T13-15-44Z` in Community Compose.
 
 Infrastructure backup/restore scripts (`restore.sh`, `restore-airgapped.sh`) are unchanged. No in-product backup UI.
 
@@ -63,9 +60,6 @@ Not changed: RBAC, webhook SSRF, throttles, upload limits, signed URLs.
 ## Validation
 
 ```bash
-set -a
-source .env.example
-set +a
 PULL_POLICY=if_not_present SECRET_KEY=test LIVE_SERVER_SECRET_KEY=test \
   PLANE_IMAGE_FRONTEND=example/plane-frontend:tag \
   PLANE_IMAGE_SPACE=example/plane-space:tag \

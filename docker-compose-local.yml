@@ -1,6 +1,6 @@
 services:
   plane-redis:
-    image: ${IMAGE_VALKEY}
+    image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
     networks:
       - dev_env
@@ -10,7 +10,7 @@ services:
       - "6379:6379"
 
   plane-mq:
-    image: ${IMAGE_RABBITMQ}
+    image: rabbitmq:3.13.6-management-alpine
     restart: unless-stopped
     networks:
       - dev_env
@@ -24,7 +24,7 @@ services:
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
 
   plane-minio:
-    image: ${IMAGE_MINIO}
+    image: minio/minio
     restart: unless-stopped
     networks:
       - dev_env
@@ -49,7 +49,7 @@ services:
       - "9090:9090"
 
   plane-db:
-    image: ${IMAGE_POSTGRES}
+    image: postgres:15.7-alpine
     restart: unless-stopped
     networks:
       - dev_env

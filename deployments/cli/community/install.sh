@@ -159,7 +159,7 @@ function updateCustomVariables(){
     updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
     updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
-    for image_key in PLANE_IMAGE_FRONTEND PLANE_IMAGE_SPACE PLANE_IMAGE_ADMIN PLANE_IMAGE_LIVE PLANE_IMAGE_BACKEND PLANE_IMAGE_PROXY IMAGE_POSTGRES IMAGE_VALKEY IMAGE_RABBITMQ IMAGE_MINIO; do
+    for image_key in PLANE_IMAGE_FRONTEND PLANE_IMAGE_SPACE PLANE_IMAGE_ADMIN PLANE_IMAGE_LIVE PLANE_IMAGE_BACKEND PLANE_IMAGE_PROXY; do
         image_val="${!image_key}"
         if [ -n "$image_val" ]; then
             updateEnvFile "$image_key" "$image_val" "$DOCKER_ENV_PATH"
@@ -320,7 +320,7 @@ function download() {
     syncEnvFile
 
     missing_images=""
-    for image_key in PLANE_IMAGE_FRONTEND PLANE_IMAGE_SPACE PLANE_IMAGE_ADMIN PLANE_IMAGE_LIVE PLANE_IMAGE_BACKEND PLANE_IMAGE_PROXY IMAGE_POSTGRES IMAGE_VALKEY IMAGE_RABBITMQ IMAGE_MINIO; do
+    for image_key in PLANE_IMAGE_FRONTEND PLANE_IMAGE_SPACE PLANE_IMAGE_ADMIN PLANE_IMAGE_LIVE PLANE_IMAGE_BACKEND PLANE_IMAGE_PROXY; do
         if [ -z "$(getEnvValue "$image_key" "$DOCKER_ENV_PATH")" ]; then
             missing_images="$missing_images $image_key"
         fi

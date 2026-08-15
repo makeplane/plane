@@ -24,7 +24,7 @@
 
 services:
   test-db:
-    image: ${IMAGE_POSTGRES}
+    image: postgres:15.7-alpine
     networks:
       - test_env
     env_file:
@@ -42,7 +42,7 @@ services:
       retries: 10
 
   test-redis:
-    image: ${IMAGE_VALKEY}
+    image: valkey/valkey:7.2.11-alpine
     networks:
       - test_env
     tmpfs:
@@ -54,7 +54,7 @@ services:
       retries: 10
 
   test-mq:
-    image: ${IMAGE_RABBITMQ}
+    image: rabbitmq:3.13.6-management-alpine
     networks:
       - test_env
     environment:
@@ -69,7 +69,7 @@ services:
       retries: 10
 
   test-minio:
-    image: ${IMAGE_MINIO}
+    image: minio/minio
     networks:
       - test_env
     env_file:
