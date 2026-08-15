@@ -32,6 +32,19 @@ Upgrade an existing install with `./setup.sh upgrade` after publishing a new tag
 
 Official upstream images (`makeplane/...`) are not used by this deployment path.
 
+Watchtower is disabled for Plane application containers. Mutable tags can
+otherwise replace only one component and produce a mixed frontend/backend
+deployment. After Branch Build CE finishes every component, deploy with a
+coordinated:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+or the equivalent `./setup.sh` upgrade. Do not let a partial image
+publication roll production automatically.
+
 ---
 
 In this guide, we will walk you through the process of setting up a self-hosted environment. Self-hosting allows you to have full control over your applications and data. It's a great way to ensure privacy, control, and customization.

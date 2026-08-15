@@ -1,3 +1,7 @@
+# Community installer Compose. Plane app images fail interpolation when
+# PLANE_IMAGE_* is unset. Watchtower is not used; deploy with a coordinated
+# pull + up after every component build succeeds.
+
 x-db-env: &db-env
   PGHOST: ${PGHOST:-plane-db}
   PGDATABASE: ${PGDATABASE:-plane}
@@ -66,14 +70,10 @@ x-app-env: &app-env
 x-pull-policy: &pull-policy
   pull_policy: ${PULL_POLICY:-if_not_present}
 
-x-watchtower-enable: &watchtower-enable
-  labels:
-    - com.centurylinklabs.watchtower.enable=true
-
 services:
   web:
-    image: ${PLANE_IMAGE_FRONTEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_FRONTEND:?PLANE_IMAGE_FRONTEND is required}
+    <<: *pull-policy
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -83,8 +83,8 @@ services:
       - worker
 
   space:
-    image: ${PLANE_IMAGE_SPACE}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_SPACE:?PLANE_IMAGE_SPACE is required}
+    <<: *pull-policy
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -95,8 +95,8 @@ services:
       - web
 
   admin:
-    image: ${PLANE_IMAGE_ADMIN}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_ADMIN:?PLANE_IMAGE_ADMIN is required}
+    <<: *pull-policy
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -106,8 +106,8 @@ services:
       - web
 
   live:
-    image: ${PLANE_IMAGE_LIVE}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_LIVE:?PLANE_IMAGE_LIVE is required}
+    <<: *pull-policy
     environment:
       <<: [*live-env, *redis-env]
     deploy:
@@ -119,8 +119,8 @@ services:
       - web
 
   api:
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -151,8 +151,8 @@ services:
         condition: service_healthy
 
   worker:
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
@@ -173,8 +173,8 @@ services:
         condition: service_healthy
 
   beat-worker:
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
@@ -195,8 +195,8 @@ services:
         condition: service_healthy
 
   migrator:
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: 1
@@ -281,8 +281,8 @@ services:
 
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: ${PLANE_IMAGE_PROXY}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_PROXY:?PLANE_IMAGE_PROXY is required}
+    <<: *pull-policy
     deploy:
       replicas: 1
       restart_policy:
@@ -307,21 +307,6 @@ services:
       - space
       - admin
       - live
-
-  watchtower:
-    image: containrrr/watchtower:1.7.1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      REPO_USER: ${DOCKERHUB_USERNAME}
-      REPO_PASS: ${DOCKERHUB_TOKEN}
-      WATCHTOWER_CLEANUP: "true"
-      WATCHTOWER_LABEL_ENABLE: "true"
-      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-300}
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
 
 volumes:
   pgdata:

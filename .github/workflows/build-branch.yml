@@ -199,17 +199,45 @@ jobs:
           echo "  AIO=${PLANE_IMAGE_AIO:-skipped}"
 
       - id: checkout_files
-        name: Checkout Files
+        name: Checkout triggering commit
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD)"
+          echo "github.sha=${{ github.sha }}"
+          echo "Destination image refs (exact GitHub variable values, no extra tag):"
+          echo "  FRONTEND=${{ steps.set_env_variables.outputs.IMG_WEB }}"
+          echo "  SPACE=${{ steps.set_env_variables.outputs.IMG_SPACE }}"
+          echo "  ADMIN=${{ steps.set_env_variables.outputs.IMG_ADMIN }}"
+          echo "  LIVE=${{ steps.set_env_variables.outputs.IMG_LIVE }}"
+          echo "  BACKEND=${{ steps.set_env_variables.outputs.IMG_BACKEND }}"
+          echo "  PROXY=${{ steps.set_env_variables.outputs.IMG_PROXY }}"
+          echo "  AIO=${{ steps.set_env_variables.outputs.IMG_AIO }}"
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD) (github.sha=${{ github.sha }})"
+          echo "Destination image ${{ needs.branch_build_setup.outputs.img_admin }}"
       - name: Admin Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -226,10 +254,22 @@ jobs:
     name: Build-Push Web Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD) (github.sha=${{ github.sha }})"
+          echo "Destination image ${{ needs.branch_build_setup.outputs.img_web }}"
       - name: Web Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -246,10 +286,22 @@ jobs:
     name: Build-Push Space Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD) (github.sha=${{ github.sha }})"
+          echo "Destination image ${{ needs.branch_build_setup.outputs.img_space }}"
       - name: Space Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -266,10 +318,22 @@ jobs:
     name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD) (github.sha=${{ github.sha }})"
+          echo "Destination image ${{ needs.branch_build_setup.outputs.img_live }}"
       - name: Live Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -286,10 +350,22 @@ jobs:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD) (github.sha=${{ github.sha }})"
+          echo "Destination image ${{ needs.branch_build_setup.outputs.img_backend }}"
       - name: Backend Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -306,10 +382,22 @@ jobs:
     name: Build-Push Proxy Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Print build identity
+        run: |
+          echo "Building commit $(git rev-parse HEAD) (github.sha=${{ github.sha }})"
+          echo "Destination image ${{ needs.branch_build_setup.outputs.img_proxy }}"
       - name: Proxy Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -326,6 +414,10 @@ jobs:
     if: ${{ needs.branch_build_setup.outputs.aio_build == 'true' }}
     name: Build-Push AIO Docker Image
     runs-on: ubuntu-22.04
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.build.outputs.image }}
+      source-sha: ${{ steps.build.outputs.source-sha }}
     needs:
       - branch_build_setup
       - branch_build_push_admin
@@ -337,6 +429,9 @@ jobs:
     steps:
       - name: Checkout Files
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
 
       - name: Prepare AIO Assets
         id: prepare_aio_assets
@@ -360,6 +455,7 @@ jobs:
           name: aio-assets-dist
 
       - name: AIO Build and Push
+        id: build
         uses: ./.github/actions/build-push-image
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -395,6 +491,9 @@ jobs:
     steps:
       - name: Checkout Files
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
 
       - name: Update Assets
         env:
@@ -443,6 +542,57 @@ jobs:
             ./deployments/cli/community/variables.env
             ./deployments/swarm/community/swarm.sh
 
+  report_image_identity:
+    name: Report image identity
+    runs-on: ubuntu-22.04
+    needs:
+      - branch_build_setup
+      - branch_build_push_admin
+      - branch_build_push_web
+      - branch_build_push_space
+      - branch_build_push_live
+      - branch_build_push_api
+      - branch_build_push_proxy
+    steps:
+      - name: Print component digest table
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          WEB_REF: ${{ needs.branch_build_push_web.outputs.image }}
+          WEB_DIGEST: ${{ needs.branch_build_push_web.outputs.digest }}
+          SPACE_REF: ${{ needs.branch_build_push_space.outputs.image }}
+          SPACE_DIGEST: ${{ needs.branch_build_push_space.outputs.digest }}
+          ADMIN_REF: ${{ needs.branch_build_push_admin.outputs.image }}
+          ADMIN_DIGEST: ${{ needs.branch_build_push_admin.outputs.digest }}
+          LIVE_REF: ${{ needs.branch_build_push_live.outputs.image }}
+          LIVE_DIGEST: ${{ needs.branch_build_push_live.outputs.digest }}
+          BACKEND_REF: ${{ needs.branch_build_push_api.outputs.image }}
+          BACKEND_DIGEST: ${{ needs.branch_build_push_api.outputs.digest }}
+          PROXY_REF: ${{ needs.branch_build_push_proxy.outputs.image }}
+          PROXY_DIGEST: ${{ needs.branch_build_push_proxy.outputs.digest }}
+        run: |
+          echo "Source SHA $SOURCE_SHA"
+          echo "component -> ref -> digest -> source SHA"
+          printf 'frontend %s %s %s\n' "$WEB_REF" "$WEB_DIGEST" "$SOURCE_SHA"
+          printf 'space %s %s %s\n' "$SPACE_REF" "$SPACE_DIGEST" "$SOURCE_SHA"
+          printf 'admin %s %s %s\n' "$ADMIN_REF" "$ADMIN_DIGEST" "$SOURCE_SHA"
+          printf 'live %s %s %s\n' "$LIVE_REF" "$LIVE_DIGEST" "$SOURCE_SHA"
+          printf 'backend %s %s %s\n' "$BACKEND_REF" "$BACKEND_DIGEST" "$SOURCE_SHA"
+          printf 'proxy %s %s %s\n' "$PROXY_REF" "$PROXY_DIGEST" "$SOURCE_SHA"
+          {
+            echo "## Component identity"
+            echo ""
+            echo "Source SHA \`$SOURCE_SHA\`"
+            echo ""
+            echo "| Component | Ref | Digest |"
+            echo "| --- | --- | --- |"
+            echo "| frontend | \`$WEB_REF\` | \`$WEB_DIGEST\` |"
+            echo "| space | \`$SPACE_REF\` | \`$SPACE_DIGEST\` |"
+            echo "| admin | \`$ADMIN_REF\` | \`$ADMIN_DIGEST\` |"
+            echo "| live | \`$LIVE_REF\` | \`$LIVE_DIGEST\` |"
+            echo "| backend | \`$BACKEND_REF\` | \`$BACKEND_DIGEST\` |"
+            echo "| proxy | \`$PROXY_REF\` | \`$PROXY_DIGEST\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
@@ -462,6 +612,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
 
       - name: Update Assets
         env:

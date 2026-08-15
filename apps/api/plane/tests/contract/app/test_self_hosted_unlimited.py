@@ -90,6 +90,7 @@ class TestSelfHostedPolicyEndpoint:
         assert policy.get("project_limit") is None
         # No fake subscription / invoice / billing artifacts.
         assert not any(key in policy for key in ("subscription", "invoice", "billing_seats"))
+        assert isinstance(response.data.get("build_revision"), str)
 
     @pytest.mark.django_db
     def test_policy_uses_default_community_edition(self, api_client):

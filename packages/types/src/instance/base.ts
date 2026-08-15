@@ -68,6 +68,7 @@ export interface IInstanceConfig {
   admin_base_url: string | undefined;
   is_self_managed: boolean;
   instance_changelog_url?: string;
+  build_revision?: string;
 }
 
 export interface IInstanceAdmin {

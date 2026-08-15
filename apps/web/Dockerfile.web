@@ -82,6 +82,13 @@ RUN apk update && apk upgrade --no-cache && rm -rf /var/cache/apk/*
 COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html
 
+ARG PLANE_GIT_REVISION=""
+ARG PLANE_GIT_SOURCE="https://github.com/AFZidan/plane"
+ARG PLANE_BUILD_TIMESTAMP=""
+LABEL org.opencontainers.image.revision="${PLANE_GIT_REVISION}"
+LABEL org.opencontainers.image.source="${PLANE_GIT_SOURCE}"
+LABEL org.opencontainers.image.created="${PLANE_BUILD_TIMESTAMP}"
+
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

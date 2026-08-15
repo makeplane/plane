@@ -26,6 +26,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 
 
+def _build_revision():
+    """Non-secret git SHA baked into the backend image at build time."""
+    return (os.environ.get("PLANE_GIT_REVISION") or "").strip()
+
+
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
         if self.request.method == "PATCH":
@@ -44,6 +49,7 @@ class InstanceEndpoint(BaseAPIView):
                     "is_activated": False,
                     "is_setup_done": False,
                     "capabilities": InstanceCapabilityService().get_capabilities(),
+                    "build_revision": _build_revision(),
                 },
                 status=status.HTTP_200_OK,
             )
@@ -169,6 +175,7 @@ class InstanceEndpoint(BaseAPIView):
 
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
         data["is_self_managed"] = settings.IS_SELF_MANAGED
+        data["build_revision"] = _build_revision()
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

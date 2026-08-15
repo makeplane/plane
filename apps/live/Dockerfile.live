@@ -71,6 +71,13 @@ RUN find /app/node_modules \( -name 'esbuild' -o -name 'tsgolint' \) -type f -de
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
+ARG PLANE_GIT_REVISION=""
+ARG PLANE_GIT_SOURCE="https://github.com/AFZidan/plane"
+ARG PLANE_BUILD_TIMESTAMP=""
+LABEL org.opencontainers.image.revision="${PLANE_GIT_REVISION}"
+LABEL org.opencontainers.image.source="${PLANE_GIT_SOURCE}"
+LABEL org.opencontainers.image.created="${PLANE_BUILD_TIMESTAMP}"
+
 EXPOSE 3000
 
 CMD ["node", "apps/live"]
