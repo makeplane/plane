@@ -66,10 +66,14 @@ x-app-env: &app-env
 x-pull-policy: &pull-policy
   pull_policy: ${PULL_POLICY:-if_not_present}
 
+x-watchtower-enable: &watchtower-enable
+  labels:
+    - com.centurylinklabs.watchtower.enable=true
+
 services:
   web:
     image: ${PLANE_IMAGE_FRONTEND}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -80,7 +84,7 @@ services:
 
   space:
     image: ${PLANE_IMAGE_SPACE}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -92,7 +96,7 @@ services:
 
   admin:
     image: ${PLANE_IMAGE_ADMIN}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -103,7 +107,7 @@ services:
 
   live:
     image: ${PLANE_IMAGE_LIVE}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     environment:
       <<: [*live-env, *redis-env]
     deploy:
@@ -116,7 +120,7 @@ services:
 
   api:
     image: ${PLANE_IMAGE_BACKEND}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -148,7 +152,7 @@ services:
 
   worker:
     image: ${PLANE_IMAGE_BACKEND}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
@@ -170,7 +174,7 @@ services:
 
   beat-worker:
     image: ${PLANE_IMAGE_BACKEND}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
@@ -192,7 +196,7 @@ services:
 
   migrator:
     image: ${PLANE_IMAGE_BACKEND}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: 1
@@ -278,7 +282,7 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     image: ${PLANE_IMAGE_PROXY}
-    <<: *pull-policy
+    <<: [*pull-policy, *watchtower-enable]
     deploy:
       replicas: 1
       restart_policy:
@@ -303,6 +307,21 @@ services:
       - space
       - admin
       - live
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      REPO_USER: ${DOCKERHUB_USERNAME}
+      REPO_PASS: ${DOCKERHUB_TOKEN}
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-300}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
 volumes:
   pgdata:
