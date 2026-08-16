@@ -1,0 +1,273 @@
+# Manual coordinated production deploy / rollback for the Community self-hosted fork.
+# Does not run on pull_request. Does not run on every Branch Build.
+# Production SSH secrets are only available to this workflow via the
+# `production` GitHub Environment.
+
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "deploy a Branch Build CE manifest, or rollback a recorded release"
+        required: true
+        type: choice
+        default: deploy
+        options:
+          - deploy
+          - rollback
+      build_run_id:
+        description: "GitHub Actions run ID of a successful Branch Build CE (required for deploy)"
+        required: false
+        type: string
+      rollback_release_id:
+        description: "Release directory name under PLANE_RELEASES_DIR (required for rollback)"
+        required: false
+        type: string
+      skip_git_sync:
+        description: "Do not git checkout compose files on the host"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: plane-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare:
+    name: Validate release input
+    runs-on: ubuntu-22.04
+    outputs:
+      action: ${{ steps.meta.outputs.action }}
+      revision: ${{ steps.meta.outputs.revision }}
+      manifest_present: ${{ steps.meta.outputs.manifest_present }}
+    steps:
+      - name: Checkout helpers
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Require a complete successful build run for deploy
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ACTION: ${{ github.event.inputs.action }}
+          BUILD_RUN_ID: ${{ github.event.inputs.build_run_id }}
+          ROLLBACK_RELEASE_ID: ${{ github.event.inputs.rollback_release_id }}
+        run: |
+          set -euo pipefail
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          if [ "$ACTION" = "rollback" ]; then
+            if [ -z "$ROLLBACK_RELEASE_ID" ]; then
+              echo "rollback_release_id is required for rollback" >&2
+              exit 1
+            fi
+            echo "revision=" >> "$GITHUB_OUTPUT"
+            echo "manifest_present=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -z "$BUILD_RUN_ID" ]; then
+            echo "build_run_id is required for deploy. Use a successful Branch Build CE run." >&2
+            echo "Refusing to deploy mutable tags without digest evidence." >&2
+            exit 1
+          fi
+          if ! [[ "$BUILD_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "build_run_id must be a numeric Actions run ID" >&2
+            exit 1
+          fi
+          RUN_JSON="$(gh run view "$BUILD_RUN_ID" --repo "${{ github.repository }}" --json conclusion,status,workflowName,headSha)"
+          echo "$RUN_JSON"
+          python3 -c '
+import json, sys
+data = json.loads(sys.argv[1])
+name = data.get("workflowName") or ""
+if data.get("status") != "completed" or data.get("conclusion") != "success":
+    raise SystemExit(f"build run is not a successful completed run: {data}")
+if "Branch Build CE" not in name:
+    raise SystemExit(f"build_run_id must be a Branch Build CE run, got {name!r}")
+' "$RUN_JSON"
+          HEAD_SHA="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["headSha"])' "$RUN_JSON")"
+          echo "revision=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+          echo "manifest_present=true" >> "$GITHUB_OUTPUT"
+
+      - name: Download coordinated manifest from the build run
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        uses: actions/download-artifact@v7
+        with:
+          name: plane-release-manifest
+          path: ./release-artifact
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.inputs.build_run_id }}
+
+      - name: Validate manifest matches the build SHA
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        env:
+          EXPECTED_SHA: ${{ steps.meta.outputs.revision }}
+        run: |
+          set -euo pipefail
+          python3 deployments/production/plane_release.py validate --manifest ./release-artifact/plane-release-manifest.json
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          manifest = json.loads(Path("release-artifact/plane-release-manifest.json").read_text())
+          expected = os.environ["EXPECTED_SHA"].strip().lower()
+          actual = manifest["revision"].strip().lower()
+          if actual != expected:
+              raise SystemExit(f"manifest revision {actual} != build run headSha {expected}")
+          print("manifest revision matches build run", actual)
+          PY
+
+      - name: Upload validated manifest for the deploy job
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: plane-release-manifest-validated
+          path: ./release-artifact/plane-release-manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
+  deploy:
+    name: Production ${{ github.event.inputs.action }}
+    needs: [prepare]
+    runs-on: ubuntu-22.04
+    environment: production
+    env:
+      ACTION: ${{ github.event.inputs.action }}
+    steps:
+      - name: Checkout deploy scripts
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Download validated manifest
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        uses: actions/download-artifact@v7
+        with:
+          name: plane-release-manifest-validated
+          path: ./release-artifact
+
+      - name: Configure SSH
+        env:
+          PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_PORT: ${{ secrets.PROD_PORT }}
+          PROD_SSH_KNOWN_HOSTS: ${{ secrets.PROD_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PROD_SSH_KEY:-}" ] || [ -z "${PROD_HOST:-}" ]; then
+            echo "GitHub Environment production must provide PROD_HOST and PROD_SSH_KEY" >&2
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$PROD_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          PORT="${PROD_PORT:-22}"
+          if [ -z "$PORT" ]; then PORT=22; fi
+          echo "PORT=$PORT" >> "$GITHUB_ENV"
+          if [ -n "${PROD_SSH_KNOWN_HOSTS:-}" ]; then
+            printf '%s\n' "$PROD_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "$PORT" "$PROD_HOST" >> ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Copy compose files and deploy scripts
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_DEPLOY_DIR: ${{ secrets.PROD_DEPLOY_DIR }}
+        run: |
+          set -euo pipefail
+          USERNAME="${PROD_USER:?PROD_USER is required}"
+          HOST="${PROD_HOST:?}"
+          DEST="${PROD_DEPLOY_DIR:-/opt/plane}"
+          if [ -z "$DEST" ]; then DEST=/opt/plane; fi
+          echo "DEPLOY_DIR=$DEST" >> "$GITHUB_ENV"
+          SSH=(ssh -p "$PORT" -i ~/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes)
+          RSYNC_RSH="ssh -p $PORT -i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes"
+          "${SSH[@]}" "$USERNAME@$HOST" "mkdir -p '$DEST/deployments/production'"
+          rsync -az -e "$RSYNC_RSH" \
+            docker-compose.yml \
+            docker-compose-prod.yml \
+            "$USERNAME@$HOST:$DEST/"
+          rsync -az -e "$RSYNC_RSH" \
+            --exclude 'releases/' \
+            --exclude '__pycache__/' \
+            --exclude 'test_*.py' \
+            deployments/production/ \
+            "$USERNAME@$HOST:$DEST/deployments/production/"
+          "${SSH[@]}" "$USERNAME@$HOST" "test -f '$DEST/.env'"
+
+      - name: Copy release manifest
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+        run: |
+          set -euo pipefail
+          scp -P "$PORT" -i ~/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes \
+            ./release-artifact/plane-release-manifest.json \
+            "${PROD_USER}@${PROD_HOST}:${DEPLOY_DIR}/plane-release-manifest.json"
+
+      - name: Run coordinated deploy or rollback
+        id: remote
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_APP_URL: ${{ vars.PROD_APP_URL }}
+          SKIP_GIT_SYNC: ${{ github.event.inputs.skip_git_sync }}
+          ROLLBACK_RELEASE_ID: ${{ github.event.inputs.rollback_release_id }}
+        run: |
+          set -euo pipefail
+          USERNAME="${PROD_USER:?}"
+          HOST="${PROD_HOST:?}"
+          APP_URL="${PROD_APP_URL:-}"
+          if [ -z "$APP_URL" ]; then
+            echo "Set repository variable PROD_APP_URL (public origin, no trailing slash)" >&2
+            exit 1
+          fi
+          SSH=(ssh -p "$PORT" -i ~/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes)
+          GIT_FLAG=""
+          if [ "$SKIP_GIT_SYNC" = "true" ]; then
+            GIT_FLAG="--skip-git-sync"
+          fi
+          if [ "$ACTION" = "rollback" ]; then
+            REMOTE_LOG="$("${SSH[@]}" "$USERNAME@$HOST" "export PLANE_DEPLOY_DIR='$DEPLOY_DIR' PLANE_APP_URL='$APP_URL' PLANE_RELEASES_DIR='${DEPLOY_DIR}/releases'; bash '$DEPLOY_DIR/deployments/production/rollback.sh' --release-id '$ROLLBACK_RELEASE_ID'")"
+          else
+            REMOTE_LOG="$("${SSH[@]}" "$USERNAME@$HOST" "export PLANE_DEPLOY_DIR='$DEPLOY_DIR' PLANE_APP_URL='$APP_URL' PLANE_RELEASES_DIR='${DEPLOY_DIR}/releases'; bash '$DEPLOY_DIR/deployments/production/deploy.sh' --manifest '$DEPLOY_DIR/plane-release-manifest.json' $GIT_FLAG")"
+          fi
+          printf '%s\n' "$REMOTE_LOG"
+          {
+            echo "## Production ${ACTION}"
+            echo ""
+            echo '```'
+            echo "$REMOTE_LOG"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write job summary
+        if: always()
+        env:
+          BUILD_RUN_ID: ${{ github.event.inputs.build_run_id }}
+          REVISION: ${{ needs.prepare.outputs.revision }}
+          ROLLBACK_RELEASE_ID: ${{ github.event.inputs.rollback_release_id }}
+        run: |
+          {
+            echo "## Identity"
+            echo ""
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| Action | \`${ACTION}\` |"
+            echo "| Source SHA | \`${REVISION}\` |"
+            echo "| Build run | \`${BUILD_RUN_ID}\` |"
+            echo "| Rollback id | \`${ROLLBACK_RELEASE_ID}\` |"
+            echo "| Host record dir | \`\$PLANE_DEPLOY_DIR/releases\` |"
+            echo ""
+            echo "Secrets are not printed. Database migrations are not reversed on rollback."
+          } >> "$GITHUB_STEP_SUMMARY"
