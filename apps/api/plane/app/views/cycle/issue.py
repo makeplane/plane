@@ -282,6 +282,12 @@ class CycleIssueViewSet(BaseViewSet):
             ignore_conflicts=True,
         )
 
+        # ON CONFLICT DO NOTHING does not populate PKs on skipped rows, so a
+        # concurrent request that lost the race gets its duplicates back here
+        # with pk=None. Drop them before the activity log below, otherwise it
+        # records a "created" entry for an insert that was silently discarded.
+        created_records = [record for record in created_records if record.pk is not None]
+
         # Updated Issues
         updated_records = []
         update_cycle_issue_activity = []
