@@ -593,6 +593,50 @@ jobs:
             echo "| proxy | \`$PROXY_REF\` | \`$PROXY_DIGEST\` |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Checkout for manifest helper
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Write coordinated release manifest
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          WEB_REF: ${{ needs.branch_build_push_web.outputs.image }}
+          WEB_DIGEST: ${{ needs.branch_build_push_web.outputs.digest }}
+          SPACE_REF: ${{ needs.branch_build_push_space.outputs.image }}
+          SPACE_DIGEST: ${{ needs.branch_build_push_space.outputs.digest }}
+          ADMIN_REF: ${{ needs.branch_build_push_admin.outputs.image }}
+          ADMIN_DIGEST: ${{ needs.branch_build_push_admin.outputs.digest }}
+          LIVE_REF: ${{ needs.branch_build_push_live.outputs.image }}
+          LIVE_DIGEST: ${{ needs.branch_build_push_live.outputs.digest }}
+          BACKEND_REF: ${{ needs.branch_build_push_api.outputs.image }}
+          BACKEND_DIGEST: ${{ needs.branch_build_push_api.outputs.digest }}
+          PROXY_REF: ${{ needs.branch_build_push_proxy.outputs.image }}
+          PROXY_DIGEST: ${{ needs.branch_build_push_proxy.outputs.digest }}
+        run: |
+          python3 deployments/production/plane_release.py generate \
+            --revision "$SOURCE_SHA" \
+            --repository "${{ github.repository }}" \
+            --built-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --output plane-release-manifest.json \
+            --frontend-ref "$WEB_REF" --frontend-digest "$WEB_DIGEST" \
+            --admin-ref "$ADMIN_REF" --admin-digest "$ADMIN_DIGEST" \
+            --space-ref "$SPACE_REF" --space-digest "$SPACE_DIGEST" \
+            --live-ref "$LIVE_REF" --live-digest "$LIVE_DIGEST" \
+            --backend-ref "$BACKEND_REF" --backend-digest "$BACKEND_DIGEST" \
+            --proxy-ref "$PROXY_REF" --proxy-digest "$PROXY_DIGEST"
+          python3 deployments/production/plane_release.py validate --manifest plane-release-manifest.json >/dev/null
+          echo "Wrote plane-release-manifest.json for $SOURCE_SHA"
+
+      - name: Upload release manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: plane-release-manifest
+          path: plane-release-manifest.json
+          if-no-files-found: error
+          retention-days: 90
+
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release

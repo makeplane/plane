@@ -5,8 +5,13 @@
 # makeplane/commercial/stable/preview/latest.
 # Official data-store images are pulled from Docker Hub as-is.
 #
-# Deploy after every component build succeeds:
-#   docker compose pull
+# Deploy after every component build succeeds, using the coordinated
+# Deploy Production workflow (never Watchtower, never a partial image set):
+#   1. Branch Build CE publishes all six images from one SHA and a manifest
+#   2. workflow_dispatch Deploy Production with that build run ID
+#   3. host: pull-by-digest → migrator → recreate app services together
+# Manual host equivalent:
+#   docker compose pull   # only after digest verification in deploy.sh
 #   docker compose up -d
 # Do not auto-roll individual app containers (Watchtower is disabled).
 

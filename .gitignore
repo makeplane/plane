@@ -117,5 +117,10 @@ scripts/
 # i18n auto-generated types (regenerated on every build)
 packages/i18n/src/types/keys.generated.ts
 
+# Host-only coordinated release records and generated manifests
+deployments/production/releases/
+deployments/production/__pycache__/
+plane-release-manifest.json
+
 # Local security notes (not for version control)
 /security/
