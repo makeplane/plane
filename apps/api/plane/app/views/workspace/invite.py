@@ -32,6 +32,7 @@ from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInv
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
 from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
+from plane.utils.exception_logger import log_exception
 from .. import BaseViewSet
 
 
@@ -219,18 +220,21 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
-                    track_event.delay(
-                        user_id=user.id,
-                        event_name=USER_JOINED_WORKSPACE,
-                        slug=slug,
-                        event_properties={
-                            "user_id": user.id,
-                            "workspace_id": workspace_invite.workspace.id,
-                            "workspace_slug": workspace_invite.workspace.slug,
-                            "role": workspace_invite.role,
-                            "joined_at": str(timezone.now()),
-                        },
-                    )
+                    try:
+                        track_event.delay(
+                            user_id=str(user.id),
+                            event_name=USER_JOINED_WORKSPACE,
+                            slug=slug,
+                            event_properties={
+                                "user_id": str(user.id),
+                                "workspace_id": str(workspace_invite.workspace.id),
+                                "workspace_slug": workspace_invite.workspace.slug,
+                                "role": workspace_invite.role,
+                                "joined_at": str(timezone.now()),
+                            },
+                        )
+                    except Exception as exc:
+                        log_exception(exc)
 
                     # Delete the invitation
                     workspace_invite.delete()
