@@ -15,7 +15,9 @@ from plane.utils.jira_importer import JIRA_EXTERNAL_SOURCE, JiraClient, jira_adf
 @shared_task(bind=True, autoretry_for=(), max_retries=0)
 def jira_import_task(self, importer_id: str, metadata: dict):
     try:
-        importer = Importer.objects.select_related("workspace", "project", "initiated_by").get(id=importer_id, service="jira")
+        importer = Importer.objects.select_related("workspace", "project", "initiated_by").get(
+            id=importer_id, service="jira"
+        )
         if importer.status != "queued":
             return
         importer.status = "processing"
@@ -78,7 +80,9 @@ def _upsert_issue(importer: Importer, jira_issue: dict) -> str:
 def _get_state(project: Project, status: dict | None) -> State | None:
     status_name = ((status or {}).get("name") or "").strip()
     if not status_name:
-        return State.objects.filter(project=project, default=True).first() or State.objects.filter(project=project).first()
+        return State.objects.filter(project=project, default=True).first() or State.objects.filter(
+            project=project
+        ).first()
     external_id = str((status or {}).get("id") or status_name)
     state = _existing_jira_state(project, status_name, external_id)
     if state is not None:

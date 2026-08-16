@@ -1,10 +1,14 @@
-# Production Compose. Deploy with this file and a sibling .env only.
-# Plane app images are full username/repo-name:tag-name refs from .env.
+# Supported production Compose for this Community fork.
+# Pair with a sibling .env copied from .env.example or .env.prod.example.
+# Plane app images are full username/repo-name:tag-name refs. Missing
+# PLANE_IMAGE_* values fail interpolation instead of falling back to
+# makeplane/commercial/stable/preview/latest.
 # Official data-store images are pulled from Docker Hub as-is.
-
-x-watchtower-enable: &watchtower-enable
-  labels:
-    - com.centurylinklabs.watchtower.enable=true
+#
+# Deploy after every component build succeeds:
+#   docker compose pull
+#   docker compose up -d
+# Do not auto-roll individual app containers (Watchtower is disabled).
 
 x-db-env: &db-env
   PGHOST: ${PGHOST:-plane-db}
@@ -77,16 +81,16 @@ x-pull-policy: &pull-policy
 services:
   web:
     container_name: web
-    image: ${PLANE_IMAGE_FRONTEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_FRONTEND:?PLANE_IMAGE_FRONTEND is required}
+    <<: *pull-policy
     restart: always
     depends_on:
       - api
 
   admin:
     container_name: admin
-    image: ${PLANE_IMAGE_ADMIN}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_ADMIN:?PLANE_IMAGE_ADMIN is required}
+    <<: *pull-policy
     restart: always
     depends_on:
       - api
@@ -94,8 +98,8 @@ services:
 
   space:
     container_name: space
-    image: ${PLANE_IMAGE_SPACE}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_SPACE:?PLANE_IMAGE_SPACE is required}
+    <<: *pull-policy
     restart: always
     depends_on:
       - api
@@ -103,8 +107,8 @@ services:
 
   api:
     container_name: api
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     restart: always
     command: ./bin/docker-entrypoint-api.sh
     environment:
@@ -131,8 +135,8 @@ services:
 
   worker:
     container_name: bgworker
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     restart: always
     command: ./bin/docker-entrypoint-worker.sh
     environment:
@@ -149,8 +153,8 @@ services:
 
   beat-worker:
     container_name: beatworker
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     restart: always
     command: ./bin/docker-entrypoint-beat.sh
     environment:
@@ -167,8 +171,8 @@ services:
 
   migrator:
     container_name: plane-migrator
-    image: ${PLANE_IMAGE_BACKEND}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
+    <<: *pull-policy
     restart: "no"
     command: ./bin/docker-entrypoint-migrator.sh
     environment:
@@ -181,8 +185,8 @@ services:
 
   live:
     container_name: plane-live
-    image: ${PLANE_IMAGE_LIVE}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_LIVE:?PLANE_IMAGE_LIVE is required}
+    <<: *pull-policy
     restart: always
     environment:
       <<: [*live-env, *redis-env]
@@ -250,8 +254,8 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     container_name: proxy
-    image: ${PLANE_IMAGE_PROXY}
-    <<: [*pull-policy, *watchtower-enable]
+    image: ${PLANE_IMAGE_PROXY:?PLANE_IMAGE_PROXY is required}
+    <<: *pull-policy
     restart: always
     ports:
       - ${LISTEN_HTTP_PORT:-80}:80
@@ -267,19 +271,6 @@ services:
       - space
       - admin
       - live
-
-  watchtower:
-    container_name: watchtower
-    image: containrrr/watchtower:1.7.1
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      REPO_USER: ${DOCKERHUB_USERNAME}
-      REPO_PASS: ${DOCKERHUB_TOKEN}
-      WATCHTOWER_CLEANUP: "true"
-      WATCHTOWER_LABEL_ENABLE: "true"
-      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-300}
 
 volumes:
   pgdata:

@@ -43,6 +43,17 @@ inputs:
     required: false
     default: ""
 
+outputs:
+  digest:
+    description: Pushed image digest
+    value: ${{ steps.build.outputs.digest }}
+  image:
+    description: Image reference that was pushed
+    value: ${{ inputs.image }}
+  source-sha:
+    description: Git commit SHA baked into the image
+    value: ${{ github.sha }}
+
 runs:
   using: composite
   steps:
@@ -67,8 +78,11 @@ runs:
         fi
         tag="${IMAGE##*:}"
         without_tag="${IMAGE%:*}"
-        echo "Pushing $IMAGE" >&2
+        timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        echo "Source SHA ${{ github.sha }}" >&2
+        echo "Destination image $IMAGE" >&2
         echo "CACHE_REF=${without_tag}:buildcache-${tag}" >> "$GITHUB_ENV"
+        echo "PLANE_BUILD_TIMESTAMP=${timestamp}" >> "$GITHUB_ENV"
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
@@ -99,6 +113,7 @@ runs:
         path: ${{ inputs.additional-assets-dir }}
 
     - name: Build and push
+      id: build
       uses: docker/build-push-action@v6
       with:
         context: ${{ inputs.build-context }}
@@ -108,8 +123,43 @@ runs:
         push: true
         provenance: false
         sbom: false
+        # Registry layer cache only. Application COPY layers invalidate when
+        # the current checkout changes, so cache cannot substitute stale source
+        # for github.sha.
         cache-from: type=registry,ref=${{ env.CACHE_REF }}
         cache-to: type=registry,ref=${{ env.CACHE_REF }},mode=max
-        build-args: ${{ inputs.build-args }}
+        labels: |
+          org.opencontainers.image.revision=${{ github.sha }}
+          org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          org.opencontainers.image.created=${{ env.PLANE_BUILD_TIMESTAMP }}
+        build-args: |
+          PLANE_GIT_REVISION=${{ github.sha }}
+          PLANE_GIT_SOURCE=https://github.com/${{ github.repository }}
+          PLANE_BUILD_TIMESTAMP=${{ env.PLANE_BUILD_TIMESTAMP }}
+          ${{ inputs.build-args }}
       env:
         DOCKER_BUILDKIT: 1
+
+    - name: Report image digest
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+        DIGEST: ${{ steps.build.outputs.digest }}
+      run: |
+        if [ -z "$DIGEST" ]; then
+          echo "Build-push did not report a digest for $IMAGE" >&2
+          exit 1
+        fi
+        echo "component_ref=$IMAGE"
+        echo "digest=$DIGEST"
+        echo "source_sha=${{ github.sha }}"
+        echo "Pushed $IMAGE @ $DIGEST from ${{ github.sha }}"
+        {
+          echo "### Image identity"
+          echo ""
+          echo "| Field | Value |"
+          echo "| --- | --- |"
+          echo "| Ref | \`$IMAGE\` |"
+          echo "| Digest | \`$DIGEST\` |"
+          echo "| Source SHA | \`${{ github.sha }}\` |"
+        } >> "$GITHUB_STEP_SUMMARY"

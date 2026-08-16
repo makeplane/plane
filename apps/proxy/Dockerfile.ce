@@ -17,3 +17,10 @@ RUN apk update && apk upgrade --no-cache && apk add --no-cache nss-tools bash cu
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
 COPY Caddyfile.ce /etc/caddy/Caddyfile
+
+ARG PLANE_GIT_REVISION=""
+ARG PLANE_GIT_SOURCE="https://github.com/AFZidan/plane"
+ARG PLANE_BUILD_TIMESTAMP=""
+LABEL org.opencontainers.image.revision="${PLANE_GIT_REVISION}"
+LABEL org.opencontainers.image.source="${PLANE_GIT_SOURCE}"
+LABEL org.opencontainers.image.created="${PLANE_BUILD_TIMESTAMP}"

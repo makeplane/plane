@@ -1,36 +1,36 @@
 services:
   web:
-    image: ${PLANE_IMAGE_FRONTEND}
+    image: ${PLANE_IMAGE_FRONTEND:?PLANE_IMAGE_FRONTEND is required}
     build:
       context: ../../
       dockerfile: apps/web/Dockerfile.web
 
   space:
-    image: ${PLANE_IMAGE_SPACE}
+    image: ${PLANE_IMAGE_SPACE:?PLANE_IMAGE_SPACE is required}
     build:
       context: ../../
       dockerfile: apps/space/Dockerfile.space
 
   admin:
-    image: ${PLANE_IMAGE_ADMIN}
+    image: ${PLANE_IMAGE_ADMIN:?PLANE_IMAGE_ADMIN is required}
     build:
       context: ../../
       dockerfile: apps/admin/Dockerfile.admin
 
   live:
-    image: ${PLANE_IMAGE_LIVE}
+    image: ${PLANE_IMAGE_LIVE:?PLANE_IMAGE_LIVE is required}
     build:
       context: ../../
       dockerfile: apps/live/Dockerfile.live
 
   api:
-    image: ${PLANE_IMAGE_BACKEND}
+    image: ${PLANE_IMAGE_BACKEND:?PLANE_IMAGE_BACKEND is required}
     build:
       context: ../../apps/api
       dockerfile: Dockerfile.api
 
   proxy:
-    image: ${PLANE_IMAGE_PROXY}
+    image: ${PLANE_IMAGE_PROXY:?PLANE_IMAGE_PROXY is required}
     build:
       context: ../../apps/proxy
       dockerfile: Dockerfile.ce

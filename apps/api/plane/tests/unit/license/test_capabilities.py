@@ -31,7 +31,11 @@ class TestInstanceCapabilityService:
         assert state == {"available": True, "enabled": True, "configured": False, "ready": False}
 
     def test_ai_configured_with_supported_provider_model(self, monkeypatch):
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda _keys: ("llm-secret", "openai", "gpt-4o-mini"))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda _keys: ("llm-secret", "openai", "gpt-4o-mini"),
+        )
 
         state = InstanceCapabilityService()._ai()
 
@@ -39,7 +43,11 @@ class TestInstanceCapabilityService:
         _assert_no_secret(state)
 
     def test_ai_not_configured_with_invalid_provider(self, monkeypatch):
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda _keys: ("llm-secret", "unknown", "gpt-4o-mini"))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda _keys: ("llm-secret", "unknown", "gpt-4o-mini"),
+        )
 
         state = InstanceCapabilityService()._ai()
 
@@ -65,7 +73,11 @@ class TestInstanceCapabilityService:
         assert state == {"available": True, "enabled": False, "configured": False, "ready": False}
 
     def test_smtp_ready_when_enabled_and_configured(self, monkeypatch):
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda _keys: ("1", "smtp.local", "587", "Plane <noreply.local>"))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda _keys: ("1", "smtp.local", "587", "Plane <noreply.local>"),
+        )
 
         state = InstanceCapabilityService()._smtp()
 
@@ -124,7 +136,11 @@ class TestInstanceCapabilityService:
             "GOOGLE_CLIENT_ID": "google-client",
             "GOOGLE_CLIENT_SECRET": "oauth-secret",
         }
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
+        )
 
         providers = InstanceCapabilityService()._oauth()["providers"]
 
@@ -142,7 +158,11 @@ class TestInstanceCapabilityService:
             "GITEA_CLIENT_SECRET": "oauth-secret",
             "GITEA_HOST": "https://gitea.example.com",
         }
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
+        )
 
         providers = InstanceCapabilityService()._oauth()["providers"]
 
@@ -158,7 +178,9 @@ class TestInstanceCapabilityService:
             "GITLAB_CLIENT_SECRET": "oauth-secret",
         }
         monkeypatch.setattr(
-            capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys)
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
         )
 
         providers = InstanceCapabilityService()._oauth()["providers"]
@@ -174,7 +196,9 @@ class TestInstanceCapabilityService:
             "GITEA_HOST": "",
         }
         monkeypatch.setattr(
-            capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys)
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
         )
 
         providers = InstanceCapabilityService()._oauth()["providers"]

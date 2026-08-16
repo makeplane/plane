@@ -379,7 +379,9 @@ class TestIssueWorklogAPI:
     @pytest.mark.django_db
     @patch("plane.bgtasks.export_task.issue_export_task.delay")
     @patch("plane.bgtasks.export_task.issue_worklog_export_task.delay")
-    def test_exporter_list_can_filter_worklog_jobs(self, mock_worklog_export, mock_issue_export, session_client, tracking_setup):
+    def test_exporter_list_can_filter_worklog_jobs(
+        self, mock_worklog_export, mock_issue_export, session_client, tracking_setup
+    ):
         workspace, project, _issue, _user = tracking_setup
         url = f"/api/workspaces/{workspace.slug}/export-issues/"
         session_client.post(

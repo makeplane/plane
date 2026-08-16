@@ -148,7 +148,9 @@ class TestBulkIssueArchive:
         other_project = Project.objects.create(
             name="Other Project", identifier="OP", workspace=other_workspace, created_by=create_user
         )
-        other_state = State.objects.create(name="Done", project=other_project, workspace=other_workspace, group="completed")
+        other_state = State.objects.create(
+            name="Done", project=other_project, workspace=other_workspace, group="completed"
+        )
         other_issue = create_issue(other_workspace, other_project, other_state, "Other", create_user)
 
         response = session_client.post(
@@ -160,9 +162,15 @@ class TestBulkIssueArchive:
         assert other_issue.archived_at is None
 
     @pytest.mark.django_db
-    def test_cross_project_issue_is_not_modified(self, session_client, workspace, project, completed_state, create_user):
-        other_project = Project.objects.create(name="Other Project", identifier="OP", workspace=workspace, created_by=create_user)
-        other_state = State.objects.create(name="Done", project=other_project, workspace=workspace, group="completed")
+    def test_cross_project_issue_is_not_modified(
+        self, session_client, workspace, project, completed_state, create_user
+    ):
+        other_project = Project.objects.create(
+            name="Other Project", identifier="OP", workspace=workspace, created_by=create_user
+        )
+        other_state = State.objects.create(
+            name="Done", project=other_project, workspace=workspace, group="completed"
+        )
         other_issue = create_issue(workspace, other_project, other_state, "Other", create_user)
 
         response = session_client.post(
@@ -182,7 +190,9 @@ class TestBulkIssueArchive:
         other_project = Project.objects.create(
             name="Other Project", identifier="OP", workspace=other_workspace, created_by=create_user
         )
-        other_state = State.objects.create(name="Done", project=other_project, workspace=other_workspace, group="completed")
+        other_state = State.objects.create(
+            name="Done", project=other_project, workspace=other_workspace, group="completed"
+        )
         other_issue = create_issue(other_workspace, other_project, other_state, "Other", create_user)
 
         response = session_client.post(

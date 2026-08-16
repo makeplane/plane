@@ -48,7 +48,11 @@ class TestInstanceCapabilitiesEndpoint:
             "LLM_PROVIDER": "openai",
             "LLM_MODEL": "gpt-4o-mini",
         }
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
+        )
 
         response = api_client.get("/api/instances/")
 
@@ -73,6 +77,8 @@ class TestInstanceCapabilitiesEndpoint:
         assert response.data["capabilities"]["project_features"]["cycles"] == {"available": True}
         assert response.data["capabilities"]["policy"]["commercial_gating"] is False
         assert response.data["capabilities"]["policy"]["seat_limit"] is None
+        assert "build_revision" in response.data["config"]
+        assert isinstance(response.data["config"]["build_revision"], str)
 
         serialized = str(response.data)
         assert "llm-secret" not in serialized
@@ -114,7 +120,11 @@ class TestInstanceCapabilitiesEndpoint:
             "LLM_PROVIDER": "openai",
             "LLM_MODEL": "gpt-4o-mini",
         }
-        monkeypatch.setattr(capabilities, "get_configuration_value", lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys))
+        monkeypatch.setattr(
+            capabilities,
+            "get_configuration_value",
+            lambda keys: tuple(values.get(key["key"], key["default"]) for key in keys),
+        )
 
         response = api_client.get("/api/instances/")
 
@@ -144,3 +154,21 @@ class TestInstanceCapabilitiesEndpoint:
         assert response.data["is_activated"] is False
         assert response.data["is_setup_done"] is False
         assert "capabilities" in response.data
+        assert "build_revision" in response.data
+        assert isinstance(response.data["build_revision"], str)
+
+    def test_public_instance_endpoint_reports_build_revision(self, api_client, db, monkeypatch):
+        cache.clear()
+        Instance.objects.create(
+            instance_name="Plane",
+            instance_id="instance-id",
+            current_version="1.0.0",
+            last_checked_at=timezone.now() - timedelta(days=1),
+            is_setup_done=True,
+        )
+        monkeypatch.setenv("PLANE_GIT_REVISION", "abc123def456")
+
+        response = api_client.get("/api/instances/")
+
+        assert response.status_code == 200
+        assert response.data["config"]["build_revision"] == "abc123def456"

@@ -52,6 +52,14 @@ RUN mkdir -p /code/plane/logs
 RUN chmod +x ./bin/*
 RUN chmod -R 777 /code
 
+ARG PLANE_GIT_REVISION=""
+ARG PLANE_GIT_SOURCE="https://github.com/AFZidan/plane"
+ARG PLANE_BUILD_TIMESTAMP=""
+LABEL org.opencontainers.image.revision="${PLANE_GIT_REVISION}"
+LABEL org.opencontainers.image.source="${PLANE_GIT_SOURCE}"
+LABEL org.opencontainers.image.created="${PLANE_BUILD_TIMESTAMP}"
+ENV PLANE_GIT_REVISION=${PLANE_GIT_REVISION}
+
 # Expose container port and run entry point script
 EXPOSE 8000
 

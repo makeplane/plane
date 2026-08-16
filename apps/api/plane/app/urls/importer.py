@@ -4,7 +4,12 @@
 
 from django.urls import path
 
-from plane.app.views import ImporterDeleteEndpoint, ImporterServiceEndpoint, JiraImporterCreateEndpoint, JiraImporterMetadataEndpoint
+from plane.app.views import (
+    ImporterDeleteEndpoint,
+    ImporterServiceEndpoint,
+    JiraImporterCreateEndpoint,
+    JiraImporterMetadataEndpoint,
+)
 
 
 urlpatterns = [

@@ -117,7 +117,9 @@ class WorkspaceCyclesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
     def get(self, request, slug):
-        cycles = get_visible_workspace_cycles_queryset(request, slug).order_by(self.kwargs.get("order_by", "-created_at"))
+        cycles = get_visible_workspace_cycles_queryset(request, slug).order_by(
+            self.kwargs.get("order_by", "-created_at")
+        )
         serializer = CycleSerializer(cycles, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
 

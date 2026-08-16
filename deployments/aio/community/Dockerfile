@@ -66,6 +66,13 @@ RUN mkdir -p /app/logs/access && \
 
 VOLUME ["/app/data", "/app/logs"]
 
+ARG PLANE_GIT_REVISION=""
+ARG PLANE_GIT_SOURCE="https://github.com/AFZidan/plane"
+ARG PLANE_BUILD_TIMESTAMP=""
+LABEL org.opencontainers.image.revision="${PLANE_GIT_REVISION}"
+LABEL org.opencontainers.image.source="${PLANE_GIT_SOURCE}"
+LABEL org.opencontainers.image.created="${PLANE_BUILD_TIMESTAMP}"
+
 EXPOSE 80 443
 
 CMD ["/app/start.sh"] 
