@@ -138,7 +138,6 @@ const MediaDetailPage = () => {
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
   const videoAnnotationSaveBeforeCloseRef = useRef<(() => Promise<boolean>) | null>(null);
-  const videoAnnotationAutoOpenItemIdRef = useRef<string | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TPipCaptionMode }>>([]);
   const inactivityTimeoutRef = useRef<number | null>(null);
@@ -152,7 +151,6 @@ const MediaDetailPage = () => {
     setCurrentVideoDurationSeconds(null);
     setIsVideoAnnotationMode(false);
     setIsVideoAnnotationWorkspaceOpen(false);
-    videoAnnotationAutoOpenItemIdRef.current = null;
   }, [item?.id]);
 
   useEffect(() => {
@@ -1021,33 +1019,6 @@ const MediaDetailPage = () => {
 
     handleOpenVideoAnnotationWorkspace();
   }, [canAnnotateCurrentVideo, handleOpenVideoAnnotationWorkspace, shouldOpenVideoAnnotationWorkspaceFromQuery]);
-
-  useEffect(() => {
-    if (
-      shouldOpenVideoAnnotationWorkspaceFromQuery ||
-      !canAnnotateCurrentVideo ||
-      isVideoAnnotationWorkspaceOpen ||
-      isSgEventAsset ||
-      !item?.packageId ||
-      !item.id
-    ) {
-      return;
-    }
-
-    const annotationItemKey = `${item.packageId}:${item.id}`;
-    if (videoAnnotationAutoOpenItemIdRef.current === annotationItemKey) return;
-
-    videoAnnotationAutoOpenItemIdRef.current = annotationItemKey;
-    handleOpenVideoAnnotationWorkspace();
-  }, [
-    canAnnotateCurrentVideo,
-    handleOpenVideoAnnotationWorkspace,
-    isSgEventAsset,
-    isVideoAnnotationWorkspaceOpen,
-    item?.id,
-    item?.packageId,
-    shouldOpenVideoAnnotationWorkspaceFromQuery,
-  ]);
 
   if (!item && isLoading) {
     return (
