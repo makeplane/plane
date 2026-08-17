@@ -72,10 +72,7 @@ export const GeneralProjectSettingsControlSection = observer(function GeneralPro
           title={t("delete")}
           description="When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered."
           control={
-            <Button
-              variant="error-outline"
-              onClick={() => setSelectedProject(currentProjectDetails.id ?? null)}
-            >
+            <Button variant="error-outline" onClick={() => setSelectedProject(currentProjectDetails.id ?? null)}>
               {t("delete")}
             </Button>
           }

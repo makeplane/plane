@@ -47,11 +47,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
         <Header.RightItem>
           <ViewListHeader />
           <div>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => toggleCreateViewModal(true)}
-            >
+            <Button variant="primary" size="lg" onClick={() => toggleCreateViewModal(true)}>
               Add view
             </Button>
           </div>

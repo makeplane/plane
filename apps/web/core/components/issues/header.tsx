@@ -9,12 +9,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle } from "lucide-react";
 // plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  SPACE_BASE_PATH,
-  SPACE_BASE_URL,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";

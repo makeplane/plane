@@ -40,11 +40,7 @@ export function WebhookDeleteSection(props: Props) {
                   webhook.
                 </span>
                 <div>
-                  <Button
-                    variant="error-fill"
-                    size="lg"
-                    onClick={openDeleteModal}
-                  >
+                  <Button variant="error-fill" size="lg" onClick={openDeleteModal}>
                     Delete webhook
                   </Button>
                 </div>

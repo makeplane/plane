@@ -19,14 +19,7 @@ type TStateList = {
 };
 
 export const StateList = observer(function StateList(props: TStateList) {
-  const {
-    groupKey,
-    groupedStates,
-    states,
-    stateOperationsCallbacks,
-    disabled = false,
-    stateItemClassName,
-  } = props;
+  const { groupKey, groupedStates, states, stateOperationsCallbacks, disabled = false, stateItemClassName } = props;
 
   return (
     <>
