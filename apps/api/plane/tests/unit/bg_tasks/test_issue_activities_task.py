@@ -73,13 +73,13 @@ def issue(db, workspace, project, author):
 
 @pytest.mark.unit
 class TestCreateIssueActivityAssignees:
-    def _run(self, issue, project, workspace, actor, requested_data):
+    def _run(self, issue, project, workspace, actor, requested_data, serialize=True):
         # actor is passed explicitly: BaseModel.save() derives created_by from
         # crum's current user, which is None outside a request, so
         # issue.created_by_id cannot be used as the actor here.
         issue_activities = []
         create_issue_activity(
-            requested_data=json.dumps(requested_data),
+            requested_data=json.dumps(requested_data) if serialize else requested_data,
             current_instance=None,
             issue_id=issue.id,
             project_id=project.id,
@@ -110,6 +110,24 @@ class TestCreateIssueActivityAssignees:
     def test_create_without_assignees_only_creates_created_activity(self, workspace, project, issue, author):
         """No assignee payload: no assignee activities, no subscriptions."""
         activities = self._run(issue, project, workspace, author, {"name": "Created via external API"})
+
+        assert activities == []
+        assert not IssueSubscriber.objects.filter(issue_id=issue.id).exists()
+        assert IssueActivity.objects.filter(issue_id=issue.id, verb="created").exists()
+
+    @pytest.mark.django_db
+    def test_create_with_none_payload_only_creates_created_activity(self, workspace, project, issue, author):
+        """``requested_data`` may be None: the created activity is still written, nothing crashes."""
+        activities = self._run(issue, project, workspace, author, None, serialize=False)
+
+        assert activities == []
+        assert not IssueSubscriber.objects.filter(issue_id=issue.id).exists()
+        assert IssueActivity.objects.filter(issue_id=issue.id, verb="created").exists()
+
+    @pytest.mark.django_db
+    def test_create_with_non_dict_payload_only_creates_created_activity(self, workspace, project, issue, author):
+        """A payload parsing to a JSON array is skipped instead of raising AttributeError."""
+        activities = self._run(issue, project, workspace, author, [{"assignees": []}])
 
         assert activities == []
         assert not IssueSubscriber.objects.filter(issue_id=issue.id).exists()
