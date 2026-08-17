@@ -18,7 +18,9 @@
       "branch": "分支",
       "workdir": "Runner 工作目錄",
       "save": "儲存",
+      "saved": "倉庫綁定已儲存。",
       "unbound": "此專案尚未綁定測試倉庫。",
+      "unbound_description": "綁定測試 git 倉庫後，即可瀏覽目錄資產並執行白名單作業。",
       "cta": "綁定倉庫"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "pytest 節點",
       "data": "資料檔案"
     },
+    "empty": {
+      "no_items": "尚無內容。",
+      "no_jobs": "此專案還沒有執行過作業。",
+      "no_apis": "目錄快照中沒有 API objects。",
+      "no_results": "沒有符合篩選條件的結果。"
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "篩選路由"
+      "filter": "篩選路由",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "搜尋 APIs",
+      "filter_words": "搜尋 Action words",
+      "no_selection": "選取一個 API 以檢視文件。"
+    },
+    "api": {
+      "docs": "文件",
+      "request": "請求",
+      "response": "回應",
+      "source": "原始碼",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "錄製 Query",
+      "recorded_body": "錄製 Body",
+      "recorded_response": "錄製回應",
+      "copy": "複製",
+      "copied": "已複製到剪貼簿。",
+      "required": "必填",
+      "optional": "選填",
+      "name": "名稱",
+      "type": "類型",
+      "note": "備註",
+      "file": "檔案",
+      "load_error": "無法載入此 API object。",
+      "description": "說明",
+      "none": "無"
     },
     "tools": {
       "run": "執行",
       "not_whitelisted": "不在 P2 白名單",
       "tables": "表名",
+      "tables_required": "dump_ddl 至少需要一張表。",
       "datasource": "資料源"
     },
     "actions": {
       "run": "執行",
       "confirm": "我確認此操作會寫入受測系統",
       "params": "參數 JSON",
-      "pick": "選擇一個 action word"
+      "pick": "選擇一個 action word",
+      "invalid_json": "參數必須是合法 JSON。"
     },
     "jobs": {
       "empty": "尚無作業",
-      "status": "狀態"
+      "status": "狀態",
+      "kind": "類型",
+      "created": "建立時間",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "命令",
+      "exit": "結束代碼"
     },
     "file": {
-      "close": "關閉"
+      "close": "關閉",
+      "loading": "載入中…"
     }
   }
 }

@@ -18,7 +18,9 @@
       "branch": "ブランチ",
       "workdir": "Runner の作業ディレクトリ",
       "save": "保存",
+      "saved": "リポジトリのバインドを保存しました。",
       "unbound": "このプロジェクトにはテストリポジトリがまだありません。",
+      "unbound_description": "テスト用 git リポジトリをバインドすると、カタログ資産の閲覧と許可リストのジョブ実行ができます。",
       "cta": "リポジトリをバインド"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "pytest ノード",
       "data": "データファイル"
     },
+    "empty": {
+      "no_items": "表示する項目はまだありません。",
+      "no_jobs": "このプロジェクトで実行されたジョブはありません。",
+      "no_apis": "カタログスナップショットに API objects がありません。",
+      "no_results": "このフィルターに一致する結果はありません。"
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "ルートを絞り込む"
+      "filter": "ルートを絞り込む",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "APIs を検索",
+      "filter_words": "Action words を検索",
+      "no_selection": "ドキュメントを表示する API を選択してください。"
+    },
+    "api": {
+      "docs": "ドキュメント",
+      "request": "リクエスト",
+      "response": "レスポンス",
+      "source": "ソース",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "記録した Query",
+      "recorded_body": "記録した Body",
+      "recorded_response": "記録したレスポンス",
+      "copy": "コピー",
+      "copied": "クリップボードにコピーしました。",
+      "required": "必須",
+      "optional": "任意",
+      "name": "名前",
+      "type": "型",
+      "note": "メモ",
+      "file": "ファイル",
+      "load_error": "この API object を読み込めませんでした。",
+      "description": "説明",
+      "none": "なし"
     },
     "tools": {
       "run": "実行",
       "not_whitelisted": "P2 許可リスト外",
       "tables": "テーブル名",
+      "tables_required": "dump_ddl にはテーブルが 1 つ以上必要です。",
       "datasource": "データソース"
     },
     "actions": {
       "run": "実行",
       "confirm": "被テストシステムへの書き込みを確認します",
       "params": "パラメータ JSON",
-      "pick": "action word を選択"
+      "pick": "action word を選択",
+      "invalid_json": "パラメータは有効な JSON である必要があります。"
     },
     "jobs": {
       "empty": "ジョブはまだありません",
-      "status": "ステータス"
+      "status": "ステータス",
+      "kind": "種類",
+      "created": "作成日時",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "コマンド",
+      "exit": "終了コード"
     },
     "file": {
-      "close": "閉じる"
+      "close": "閉じる",
+      "loading": "読み込み中…"
     }
   }
 }

@@ -18,8 +18,10 @@
       "branch": "Branch",
       "workdir": "Diretório de trabalho do Runner",
       "save": "Salvar",
+      "saved": "Vinculação do repositório salva.",
       "unbound": "Este projeto ainda não tem um repositório de testes.",
-      "cta": "Vincular repositório"
+      "unbound_description": "Vincule um repositório git de testes para navegar no catálogo e executar jobs permitidos.",
+      "cta": "Vincular um repositório"
     },
     "overview": {
       "sync": "Sincronizar catálogo",
@@ -37,6 +39,12 @@
       "pytest": "nós pytest",
       "data": "Arquivos de dados"
     },
+    "empty": {
+      "no_items": "Nada para mostrar ainda.",
+      "no_jobs": "Nenhum job foi executado neste projeto.",
+      "no_apis": "Não há API objects no snapshot do catálogo.",
+      "no_results": "Nenhum resultado corresponde a este filtro."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filtrar rotas"
+      "filter": "Filtrar rotas",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Pesquisar APIs",
+      "filter_words": "Pesquisar action words",
+      "no_selection": "Selecione uma API para ver a documentação."
+    },
+    "api": {
+      "docs": "Documentação",
+      "request": "Requisição",
+      "response": "Resposta",
+      "source": "Código",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Query gravada",
+      "recorded_body": "Body gravado",
+      "recorded_response": "Resposta gravada",
+      "copy": "Copiar",
+      "copied": "Copiado para a área de transferência.",
+      "required": "obrigatório",
+      "optional": "opcional",
+      "name": "Nome",
+      "type": "Tipo",
+      "note": "Nota",
+      "file": "Arquivo",
+      "load_error": "Não foi possível carregar este API object.",
+      "description": "Descrição",
+      "none": "Nenhum"
     },
     "tools": {
       "run": "Executar",
       "not_whitelisted": "Fora da lista P2",
-      "tables": "Nomes de tabelas",
-      "datasource": "Fonte de dados"
+      "tables": "Nomes de tabela",
+      "tables_required": "dump_ddl exige pelo menos uma tabela.",
+      "datasource": "Origem de dados"
     },
     "actions": {
       "run": "Executar",
       "confirm": "Confirmo a gravação no sistema sob teste",
-      "params": "JSON dos parâmetros",
-      "pick": "Selecione um action word"
+      "params": "JSON de parâmetros",
+      "pick": "Selecione um action word",
+      "invalid_json": "Os parâmetros devem ser um JSON válido."
     },
     "jobs": {
-      "empty": "Nenhum job",
-      "status": "Status"
+      "empty": "Ainda não há jobs",
+      "status": "Status",
+      "kind": "Tipo",
+      "created": "Criado",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Comando",
+      "exit": "Código de saída"
     },
     "file": {
-      "close": "Fechar"
+      "close": "Fechar",
+      "loading": "Carregando…"
     }
   }
 }

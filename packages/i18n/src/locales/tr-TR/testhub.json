@@ -18,8 +18,10 @@
       "branch": "Dal",
       "workdir": "Runner çalışma dizini",
       "save": "Kaydet",
+      "saved": "Depo bağlama kaydedildi.",
       "unbound": "Bu projenin henüz bir test deposu yok.",
-      "cta": "Depo bağla"
+      "unbound_description": "Katalog varlıklarını görmek ve izin verilen işleri çalıştırmak için bir test git deposu bağlayın.",
+      "cta": "Bir depo bağla"
     },
     "overview": {
       "sync": "Kataloğu senkronize et",
@@ -37,6 +39,12 @@
       "pytest": "pytest düğümleri",
       "data": "Veri dosyaları"
     },
+    "empty": {
+      "no_items": "Henüz gösterilecek bir şey yok.",
+      "no_jobs": "Bu projede henüz iş çalıştırılmadı.",
+      "no_apis": "Katalog anlık görüntüsünde API object yok.",
+      "no_results": "Bu filtreyle eşleşen sonuç yok."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Rotaları filtrele"
+      "filter": "Rotaları filtrele",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "APIs ara",
+      "filter_words": "Action words ara",
+      "no_selection": "Belgelendirmeyi görmek için bir API seçin."
+    },
+    "api": {
+      "docs": "Belgelendirme",
+      "request": "İstek",
+      "response": "Yanıt",
+      "source": "Kaynak",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Kaydedilen Query",
+      "recorded_body": "Kaydedilen Body",
+      "recorded_response": "Kaydedilen yanıt",
+      "copy": "Kopyala",
+      "copied": "Panoya kopyalandı.",
+      "required": "zorunlu",
+      "optional": "isteğe bağlı",
+      "name": "Ad",
+      "type": "Tür",
+      "note": "Not",
+      "file": "Dosya",
+      "load_error": "Bu API object yüklenemedi.",
+      "description": "Açıklama",
+      "none": "Yok"
     },
     "tools": {
       "run": "Çalıştır",
       "not_whitelisted": "P2 listesinde değil",
       "tables": "Tablo adları",
+      "tables_required": "dump_ddl en az bir tablo gerektirir.",
       "datasource": "Veri kaynağı"
     },
     "actions": {
       "run": "Çalıştır",
-      "confirm": "Test edilen sisteme yazılacağını onaylıyorum",
+      "confirm": "Bunun test edilen sisteme yazacağını onaylıyorum",
       "params": "Parametre JSON",
-      "pick": "Bir action word seçin"
+      "pick": "Bir action word seçin",
+      "invalid_json": "Parametreler geçerli JSON olmalıdır."
     },
     "jobs": {
       "empty": "Henüz iş yok",
-      "status": "Durum"
+      "status": "Durum",
+      "kind": "Tür",
+      "created": "Oluşturuldu",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Komut",
+      "exit": "Çıkış kodu"
     },
     "file": {
-      "close": "Kapat"
+      "close": "Kapat",
+      "loading": "Yükleniyor…"
     }
   }
 }

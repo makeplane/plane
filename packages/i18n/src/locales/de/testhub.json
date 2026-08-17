@@ -18,7 +18,9 @@
       "branch": "Branch",
       "workdir": "Runner-Arbeitsverzeichnis",
       "save": "Speichern",
+      "saved": "Repository-Bindung gespeichert.",
       "unbound": "Dieses Projekt hat noch kein Test-Repository.",
+      "unbound_description": "Binden Sie ein Test-git-Repository, um Katalogressourcen zu durchsuchen und zulässige Jobs auszuführen.",
       "cta": "Repository binden"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "pytest-Knoten",
       "data": "Datendateien"
     },
+    "empty": {
+      "no_items": "Noch nichts anzuzeigen.",
+      "no_jobs": "In diesem Projekt wurden noch keine Jobs ausgeführt.",
+      "no_apis": "Keine API objects im Katalog-Snapshot.",
+      "no_results": "Keine Ergebnisse für diesen Filter."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Routen filtern"
+      "filter": "Routen filtern",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "APIs durchsuchen",
+      "filter_words": "Action words durchsuchen",
+      "no_selection": "Wählen Sie eine API, um die Dokumentation anzuzeigen."
+    },
+    "api": {
+      "docs": "Dokumentation",
+      "request": "Anfrage",
+      "response": "Antwort",
+      "source": "Quelle",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Aufgezeichnete Query",
+      "recorded_body": "Aufgezeichneter Body",
+      "recorded_response": "Aufgezeichnete Antwort",
+      "copy": "Kopieren",
+      "copied": "In die Zwischenablage kopiert.",
+      "required": "erforderlich",
+      "optional": "optional",
+      "name": "Name",
+      "type": "Typ",
+      "note": "Hinweis",
+      "file": "Datei",
+      "load_error": "Dieses API object konnte nicht geladen werden.",
+      "description": "Beschreibung",
+      "none": "Keine"
     },
     "tools": {
       "run": "Ausführen",
       "not_whitelisted": "Nicht auf der P2-Liste",
       "tables": "Tabellennamen",
+      "tables_required": "dump_ddl benötigt mindestens eine Tabelle.",
       "datasource": "Datenquelle"
     },
     "actions": {
       "run": "Ausführen",
       "confirm": "Ich bestätige Schreibzugriff auf das Testsystem",
       "params": "Parameter-JSON",
-      "pick": "Action word auswählen"
+      "pick": "Action word auswählen",
+      "invalid_json": "Parameter müssen gültiges JSON sein."
     },
     "jobs": {
       "empty": "Keine Jobs",
-      "status": "Status"
+      "status": "Status",
+      "kind": "Art",
+      "created": "Erstellt",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Befehl",
+      "exit": "Exit-Code"
     },
     "file": {
-      "close": "Schließen"
+      "close": "Schließen",
+      "loading": "Wird geladen…"
     }
   }
 }

@@ -29,6 +29,18 @@ CACHES = {
 
 INTERNAL_IPS = ("127.0.0.1",)
 
+# Vite binds 127.0.0.1; browsers treat that as a different origin than localhost.
+_loopback_web_origins = (
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
+    "http://127.0.0.1:3100",
+)
+if cors_allowed_origins:  # noqa: F405
+    for origin in _loopback_web_origins:
+        if origin not in cors_allowed_origins:  # noqa: F405
+            cors_allowed_origins.append(origin)  # noqa: F405
+
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")  # noqa
 

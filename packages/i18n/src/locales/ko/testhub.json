@@ -18,7 +18,9 @@
       "branch": "브랜치",
       "workdir": "Runner 작업 디렉터리",
       "save": "저장",
+      "saved": "저장소 연결이 저장되었습니다.",
       "unbound": "이 프로젝트에는 아직 테스트 저장소가 없습니다.",
+      "unbound_description": "테스트 git 저장소를 연결하면 카탈로그 자산을 보고 허용 목록 작업을 실행할 수 있습니다.",
       "cta": "저장소 연결"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "pytest 노드",
       "data": "데이터 파일"
     },
+    "empty": {
+      "no_items": "표시할 항목이 없습니다.",
+      "no_jobs": "이 프로젝트에서 실행된 작업이 없습니다.",
+      "no_apis": "카탈로그 스냅샷에 API objects가 없습니다.",
+      "no_results": "이 필터와 일치하는 결과가 없습니다."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "라우트 필터"
+      "filter": "라우트 필터",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "APIs 검색",
+      "filter_words": "Action words 검색",
+      "no_selection": "문서를 볼 API를 선택하세요."
+    },
+    "api": {
+      "docs": "문서",
+      "request": "요청",
+      "response": "응답",
+      "source": "소스",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "기록된 Query",
+      "recorded_body": "기록된 Body",
+      "recorded_response": "기록된 응답",
+      "copy": "복사",
+      "copied": "클립보드에 복사했습니다.",
+      "required": "필수",
+      "optional": "선택",
+      "name": "이름",
+      "type": "유형",
+      "note": "메모",
+      "file": "파일",
+      "load_error": "이 API object를 불러올 수 없습니다.",
+      "description": "설명",
+      "none": "없음"
     },
     "tools": {
       "run": "실행",
       "not_whitelisted": "P2 허용 목록 아님",
       "tables": "테이블 이름",
+      "tables_required": "dump_ddl에는 테이블이 하나 이상 필요합니다.",
       "datasource": "데이터소스"
     },
     "actions": {
       "run": "실행",
       "confirm": "피시험 시스템에 기록됨을 확인합니다",
       "params": "파라미터 JSON",
-      "pick": "action word 선택"
+      "pick": "action word 선택",
+      "invalid_json": "파라미터는 유효한 JSON이어야 합니다."
     },
     "jobs": {
       "empty": "작업이 없습니다",
-      "status": "상태"
+      "status": "상태",
+      "kind": "종류",
+      "created": "생성 시각",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "명령",
+      "exit": "종료 코드"
     },
     "file": {
-      "close": "닫기"
+      "close": "닫기",
+      "loading": "불러오는 중…"
     }
   }
 }

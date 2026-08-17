@@ -14,11 +14,13 @@
     },
     "bind": {
       "title": "Leagă depozitul de teste",
-      "repo_url": "URL depozit",
+      "repo_url": "URL-ul depozitului",
       "branch": "Ramură",
       "workdir": "Directorul de lucru Runner",
       "save": "Salvează",
+      "saved": "Legătura depozitului a fost salvată.",
       "unbound": "Acest proiect nu are încă un depozit de teste.",
+      "unbound_description": "Leagă un depozit git de teste pentru a parcurge catalogul și a rula joburile permise.",
       "cta": "Leagă un depozit"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "noduri pytest",
       "data": "Fișiere de date"
     },
+    "empty": {
+      "no_items": "Nimic de afișat deocamdată.",
+      "no_jobs": "Nu s-au rulat joburi în acest proiect.",
+      "no_apis": "Nu există API objects în instantaneul catalogului.",
+      "no_results": "Niciun rezultat pentru acest filtru."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filtrează rute"
+      "filter": "Filtrează rutele",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Caută APIs",
+      "filter_words": "Caută action words",
+      "no_selection": "Selectează un API pentru a vedea documentația."
+    },
+    "api": {
+      "docs": "Documentație",
+      "request": "Cerere",
+      "response": "Răspuns",
+      "source": "Sursă",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Query înregistrat",
+      "recorded_body": "Body înregistrat",
+      "recorded_response": "Răspuns înregistrat",
+      "copy": "Copiază",
+      "copied": "Copiat în clipboard.",
+      "required": "obligatoriu",
+      "optional": "opțional",
+      "name": "Nume",
+      "type": "Tip",
+      "note": "Notă",
+      "file": "Fișier",
+      "load_error": "Nu s-a putut încărca acest API object.",
+      "description": "Descriere",
+      "none": "Niciunul"
     },
     "tools": {
       "run": "Rulează",
-      "not_whitelisted": "În afara listei P2",
+      "not_whitelisted": "Nu este în lista P2",
       "tables": "Nume de tabele",
+      "tables_required": "dump_ddl necesită cel puțin un tabel.",
       "datasource": "Sursă de date"
     },
     "actions": {
       "run": "Rulează",
       "confirm": "Confirm scrierea în sistemul testat",
       "params": "JSON parametri",
-      "pick": "Selectează un action word"
+      "pick": "Selectează un action word",
+      "invalid_json": "Parametrii trebuie să fie JSON valid."
     },
     "jobs": {
-      "empty": "Niciun job",
-      "status": "Stare"
+      "empty": "Niciun job încă",
+      "status": "Stare",
+      "kind": "Tip",
+      "created": "Creat",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Comandă",
+      "exit": "Cod de ieșire"
     },
     "file": {
-      "close": "Închide"
+      "close": "Închide",
+      "loading": "Se încarcă…"
     }
   }
 }

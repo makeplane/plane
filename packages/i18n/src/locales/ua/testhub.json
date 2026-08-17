@@ -18,7 +18,9 @@
       "branch": "Гілка",
       "workdir": "Робочий каталог Runner",
       "save": "Зберегти",
+      "saved": "Прив’язку репозиторію збережено.",
       "unbound": "У цього проєкту ще немає тестового репозиторію.",
+      "unbound_description": "Прив’яжіть тестовий git-репозиторій, щоб переглядати каталог і запускати дозволені завдання.",
       "cta": "Прив’язати репозиторій"
     },
     "overview": {
@@ -33,9 +35,15 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "apps": "Apps",
-      "features": "Features",
+      "features": "Feature",
       "pytest": "вузли pytest",
       "data": "Файли даних"
+    },
+    "empty": {
+      "no_items": "Поки нічого показувати.",
+      "no_jobs": "У цьому проєкті ще не запускали завдання.",
+      "no_apis": "У знімку каталогу немає API objects.",
+      "no_results": "Немає результатів за цим фільтром."
     },
     "knowledge": {
       "ddl": "DDL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Фільтр маршрутів"
+      "filter": "Фільтр маршрутів",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Пошук APIs",
+      "filter_words": "Пошук Action words",
+      "no_selection": "Виберіть API, щоб переглянути документацію."
+    },
+    "api": {
+      "docs": "Документація",
+      "request": "Запит",
+      "response": "Відповідь",
+      "source": "Код",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Записаний Query",
+      "recorded_body": "Записаний Body",
+      "recorded_response": "Записана відповідь",
+      "copy": "Копіювати",
+      "copied": "Скопійовано в буфер обміну.",
+      "required": "обов’язково",
+      "optional": "необов’язково",
+      "name": "Назва",
+      "type": "Тип",
+      "note": "Примітка",
+      "file": "Файл",
+      "load_error": "Не вдалося завантажити цей API object.",
+      "description": "Опис",
+      "none": "Немає"
     },
     "tools": {
       "run": "Запустити",
-      "not_whitelisted": "Не в списку P2",
+      "not_whitelisted": "Немає в списку P2",
       "tables": "Назви таблиць",
+      "tables_required": "dump_ddl потребує щонайменше одну таблицю.",
       "datasource": "Джерело даних"
     },
     "actions": {
       "run": "Запустити",
-      "confirm": "Підтверджую запис у тестовану систему",
+      "confirm": "Підтверджую запис у систему під тестом",
       "params": "JSON параметрів",
-      "pick": "Оберіть action word"
+      "pick": "Виберіть action word",
+      "invalid_json": "Параметри мають бути коректним JSON."
     },
     "jobs": {
-      "empty": "Завдань ще немає",
-      "status": "Статус"
+      "empty": "Завдань поки немає",
+      "status": "Статус",
+      "kind": "Тип",
+      "created": "Створено",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Команда",
+      "exit": "Код виходу"
     },
     "file": {
-      "close": "Закрити"
+      "close": "Закрити",
+      "loading": "Завантаження…"
     }
   }
 }

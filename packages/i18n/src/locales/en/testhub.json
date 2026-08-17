@@ -18,7 +18,9 @@
       "branch": "Branch",
       "workdir": "Runner workdir",
       "save": "Save",
+      "saved": "Repository binding saved.",
       "unbound": "This project has no test repository yet.",
+      "unbound_description": "Bind a test git repository to browse catalog assets and run allowlisted jobs.",
       "cta": "Bind a repository"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "pytest nodes",
       "data": "Data files"
     },
+    "empty": {
+      "no_items": "Nothing to show yet.",
+      "no_jobs": "No jobs have been run in this project.",
+      "no_apis": "No API objects in the catalog snapshot.",
+      "no_results": "No results match this filter."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filter routes"
+      "filter": "Filter routes",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Search APIs",
+      "filter_words": "Search action words",
+      "no_selection": "Select an API to view its documentation."
+    },
+    "api": {
+      "docs": "Documentation",
+      "request": "Request",
+      "response": "Response",
+      "source": "Source",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Recorded query",
+      "recorded_body": "Recorded body",
+      "recorded_response": "Recorded response",
+      "copy": "Copy",
+      "copied": "Copied to clipboard.",
+      "required": "required",
+      "optional": "optional",
+      "name": "Name",
+      "type": "Type",
+      "note": "Note",
+      "file": "File",
+      "load_error": "Could not load this API object.",
+      "description": "Description",
+      "none": "None"
     },
     "tools": {
       "run": "Run",
       "not_whitelisted": "Not in the P2 allowlist",
       "tables": "Table names",
+      "tables_required": "dump_ddl requires at least one table.",
       "datasource": "Datasource"
     },
     "actions": {
       "run": "Run",
       "confirm": "I confirm this writes to the system under test",
       "params": "Params JSON",
-      "pick": "Select an action word"
+      "pick": "Select an action word",
+      "invalid_json": "Params must be valid JSON."
     },
     "jobs": {
       "empty": "No jobs yet",
-      "status": "Status"
+      "status": "Status",
+      "kind": "Kind",
+      "created": "Created",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Command",
+      "exit": "Exit code"
     },
     "file": {
-      "close": "Close"
+      "close": "Close",
+      "loading": "Loading…"
     }
   }
 }

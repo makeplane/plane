@@ -18,7 +18,9 @@
       "branch": "Branch",
       "workdir": "Direktori kerja Runner",
       "save": "Simpan",
+      "saved": "Tautan repositori disimpan.",
       "unbound": "Proyek ini belum memiliki repositori tes.",
+      "unbound_description": "Tautkan repositori git tes untuk menelusuri katalog dan menjalankan job yang diizinkan.",
       "cta": "Tautkan repositori"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "node pytest",
       "data": "File data"
     },
+    "empty": {
+      "no_items": "Belum ada yang ditampilkan.",
+      "no_jobs": "Belum ada job yang dijalankan di proyek ini.",
+      "no_apis": "Tidak ada API objects di snapshot katalog.",
+      "no_results": "Tidak ada hasil yang cocok dengan filter ini."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filter rute"
+      "filter": "Filter rute",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Cari APIs",
+      "filter_words": "Cari action words",
+      "no_selection": "Pilih API untuk melihat dokumentasinya."
+    },
+    "api": {
+      "docs": "Dokumentasi",
+      "request": "Permintaan",
+      "response": "Respons",
+      "source": "Sumber",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Query terekam",
+      "recorded_body": "Body terekam",
+      "recorded_response": "Respons terekam",
+      "copy": "Salin",
+      "copied": "Disalin ke papan klip.",
+      "required": "wajib",
+      "optional": "opsional",
+      "name": "Nama",
+      "type": "Tipe",
+      "note": "Catatan",
+      "file": "File",
+      "load_error": "Tidak dapat memuat API object ini.",
+      "description": "Deskripsi",
+      "none": "Tidak ada"
     },
     "tools": {
       "run": "Jalankan",
-      "not_whitelisted": "Tidak dalam daftar P2",
+      "not_whitelisted": "Tidak ada di daftar P2",
       "tables": "Nama tabel",
+      "tables_required": "dump_ddl memerlukan setidaknya satu tabel.",
       "datasource": "Sumber data"
     },
     "actions": {
       "run": "Jalankan",
-      "confirm": "Saya konfirmasi ini menulis ke sistem yang diuji",
+      "confirm": "Saya mengonfirmasi ini menulis ke sistem yang diuji",
       "params": "JSON parameter",
-      "pick": "Pilih action word"
+      "pick": "Pilih action word",
+      "invalid_json": "Parameter harus JSON yang valid."
     },
     "jobs": {
       "empty": "Belum ada job",
-      "status": "Status"
+      "status": "Status",
+      "kind": "Jenis",
+      "created": "Dibuat",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Perintah",
+      "exit": "Kode keluar"
     },
     "file": {
-      "close": "Tutup"
+      "close": "Tutup",
+      "loading": "Memuat…"
     }
   }
 }

@@ -18,7 +18,9 @@
       "branch": "Branche",
       "workdir": "Répertoire de travail du Runner",
       "save": "Enregistrer",
+      "saved": "Liaison du dépôt enregistrée.",
       "unbound": "Ce projet n’a pas encore de dépôt de tests.",
+      "unbound_description": "Liez un dépôt git de tests pour parcourir le catalogue et exécuter les tâches autorisées.",
       "cta": "Lier un dépôt"
     },
     "overview": {
@@ -37,6 +39,12 @@
       "pytest": "nœuds pytest",
       "data": "Fichiers de données"
     },
+    "empty": {
+      "no_items": "Rien à afficher pour le moment.",
+      "no_jobs": "Aucune tâche n’a été exécutée dans ce projet.",
+      "no_apis": "Aucun API object dans l’instantané du catalogue.",
+      "no_results": "Aucun résultat pour ce filtre."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filtrer les routes"
+      "filter": "Filtrer les routes",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Rechercher des APIs",
+      "filter_words": "Rechercher des action words",
+      "no_selection": "Sélectionnez une API pour voir sa documentation."
+    },
+    "api": {
+      "docs": "Documentation",
+      "request": "Requête",
+      "response": "Réponse",
+      "source": "Source",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Query enregistrée",
+      "recorded_body": "Body enregistré",
+      "recorded_response": "Réponse enregistrée",
+      "copy": "Copier",
+      "copied": "Copié dans le presse-papiers.",
+      "required": "obligatoire",
+      "optional": "facultatif",
+      "name": "Nom",
+      "type": "Type",
+      "note": "Note",
+      "file": "Fichier",
+      "load_error": "Impossible de charger cet API object.",
+      "description": "Description",
+      "none": "Aucun"
     },
     "tools": {
       "run": "Exécuter",
       "not_whitelisted": "Hors liste P2",
       "tables": "Noms de tables",
+      "tables_required": "dump_ddl requiert au moins une table.",
       "datasource": "Source de données"
     },
     "actions": {
       "run": "Exécuter",
       "confirm": "Je confirme l’écriture sur le système sous test",
       "params": "JSON des paramètres",
-      "pick": "Sélectionner un action word"
+      "pick": "Sélectionner un action word",
+      "invalid_json": "Les paramètres doivent être un JSON valide."
     },
     "jobs": {
       "empty": "Aucune tâche",
-      "status": "Statut"
+      "status": "Statut",
+      "kind": "Type",
+      "created": "Créé",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Commande",
+      "exit": "Code de sortie"
     },
     "file": {
-      "close": "Fermer"
+      "close": "Fermer",
+      "loading": "Chargement…"
     }
   }
 }

@@ -13,13 +13,15 @@
       "jobs": "Úlohy"
     },
     "bind": {
-      "title": "Pripojiť testovací repozitár",
+      "title": "Previazat testovací repozitár",
       "repo_url": "URL repozitára",
       "branch": "Vetva",
-      "workdir": "Pracovný adresár Runnera",
+      "workdir": "Pracovný adresár Runner",
       "save": "Uložiť",
+      "saved": "Prepojenie repozitára uložené.",
       "unbound": "Tento projekt ešte nemá testovací repozitár.",
-      "cta": "Pripojiť repozitár"
+      "unbound_description": "Previažte testovací git repozitár na prehliadanie katalógu a spúšťanie povolených úloh.",
+      "cta": "Previazat repozitár"
     },
     "overview": {
       "sync": "Synchronizovať katalóg",
@@ -37,6 +39,12 @@
       "pytest": "uzly pytest",
       "data": "Dátové súbory"
     },
+    "empty": {
+      "no_items": "Zatiaľ nie je čo zobraziť.",
+      "no_jobs": "V tomto projekte zatiaľ nebežali žiadne úlohy.",
+      "no_apis": "V snímke katalógu nie sú žiadne API objects.",
+      "no_results": "Tomuto filtru nezodpovedajú žiadne výsledky."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filtrovať trasy"
+      "filter": "Filtrovať trasy",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Hľadať APIs",
+      "filter_words": "Hľadať action words",
+      "no_selection": "Vyberte API na zobrazenie dokumentácie."
+    },
+    "api": {
+      "docs": "Dokumentácia",
+      "request": "Požiadavka",
+      "response": "Odpoveď",
+      "source": "Zdroj",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Nahraný Query",
+      "recorded_body": "Nahraný Body",
+      "recorded_response": "Nahraná odpoveď",
+      "copy": "Kopírovať",
+      "copied": "Skopírované do schránky.",
+      "required": "povinné",
+      "optional": "voliteľné",
+      "name": "Názov",
+      "type": "Typ",
+      "note": "Poznámka",
+      "file": "Súbor",
+      "load_error": "Tento API object sa nepodarilo načítať.",
+      "description": "Popis",
+      "none": "Žiadne"
     },
     "tools": {
       "run": "Spustiť",
-      "not_whitelisted": "Mimo zoznamu P2",
+      "not_whitelisted": "Nie je na zozname P2",
       "tables": "Názvy tabuliek",
+      "tables_required": "dump_ddl vyžaduje aspoň jednu tabuľku.",
       "datasource": "Zdroj dát"
     },
     "actions": {
       "run": "Spustiť",
       "confirm": "Potvrdzujem zápis do testovaného systému",
       "params": "JSON parametrov",
-      "pick": "Vyberte action word"
+      "pick": "Vyberte action word",
+      "invalid_json": "Parametre musia byť platný JSON."
     },
     "jobs": {
-      "empty": "Žiadne úlohy",
-      "status": "Stav"
+      "empty": "Zatiaľ žiadne úlohy",
+      "status": "Stav",
+      "kind": "Typ",
+      "created": "Vytvorené",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Príkaz",
+      "exit": "Návratový kód"
     },
     "file": {
-      "close": "Zavrieť"
+      "close": "Zavrieť",
+      "loading": "Načítava sa…"
     }
   }
 }

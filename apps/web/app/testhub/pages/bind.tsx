@@ -8,8 +8,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useOutletContext, useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { testhubService } from "@plane/services";
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { testhubErrorMessage } from "../helpers/error-message";
+import { TesthubPageBody } from "../components/page-shell";
 import type { TTesthubOutletContext } from "../layout";
 
 function BindPage() {
@@ -22,6 +25,7 @@ function BindPage() {
   const [workdir, setWorkdir] = useState(repo?.workdir ?? "/opt/testhub/workdir");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!repo) return;
@@ -34,6 +38,7 @@ function BindPage() {
     if (!workspaceSlug || !projectId) return;
     setSaving(true);
     setMessage("");
+    setError("");
     try {
       await testhubService.bindRepo(workspaceSlug, projectId, {
         repo_url: repoUrl,
@@ -41,34 +46,37 @@ function BindPage() {
         workdir,
       });
       await reload();
-      setMessage("ok");
+      setMessage(t("testhub.bind.saved"));
     } catch (err) {
-      setMessage(typeof err === "object" && err && "error" in err ? String((err as { error: string }).error) : "error");
+      setError(testhubErrorMessage(err));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-xl space-y-4">
-      <h2 className="text-16 font-medium text-primary">{t("testhub.bind.title")}</h2>
-      <label className="block space-y-1">
-        <span className="text-13 text-secondary">{t("testhub.bind.repo_url")}</span>
-        <Input value={repoUrl} onChange={(event) => setRepoUrl(event.target.value)} className="w-full" />
-      </label>
-      <label className="block space-y-1">
-        <span className="text-13 text-secondary">{t("testhub.bind.branch")}</span>
-        <Input value={branch} onChange={(event) => setBranch(event.target.value)} className="w-full" />
-      </label>
-      <label className="block space-y-1">
-        <span className="text-13 text-secondary">{t("testhub.bind.workdir")}</span>
-        <Input value={workdir} onChange={(event) => setWorkdir(event.target.value)} className="w-full" />
-      </label>
-      <Button variant="primary" size="sm" onClick={save} loading={saving} disabled={saving}>
-        {t("testhub.bind.save")}
-      </Button>
-      {message ? <p className="text-13 text-secondary">{message}</p> : null}
-    </div>
+    <TesthubPageBody>
+      <div className="mx-auto w-full max-w-xl space-y-4 py-5">
+        <h2 className="text-16 font-medium text-primary">{t("testhub.bind.title")}</h2>
+        <label className="block space-y-1">
+          <span className="text-13 text-secondary">{t("testhub.bind.repo_url")}</span>
+          <Input value={repoUrl} onChange={(event) => setRepoUrl(event.target.value)} className="w-full" />
+        </label>
+        <label className="block space-y-1">
+          <span className="text-13 text-secondary">{t("testhub.bind.branch")}</span>
+          <Input value={branch} onChange={(event) => setBranch(event.target.value)} className="w-full" />
+        </label>
+        <label className="block space-y-1">
+          <span className="text-13 text-secondary">{t("testhub.bind.workdir")}</span>
+          <Input value={workdir} onChange={(event) => setWorkdir(event.target.value)} className="w-full" />
+        </label>
+        <Button variant="primary" size="lg" onClick={save} loading={saving} disabled={saving}>
+          {t("testhub.bind.save")}
+        </Button>
+        {message ? <p className="text-13 text-secondary">{message}</p> : null}
+        {error ? <p className="text-13 text-danger-primary">{error}</p> : null}
+      </div>
+    </TesthubPageBody>
   );
 }
 

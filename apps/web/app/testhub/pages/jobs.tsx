@@ -6,10 +6,13 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Link, useOutletContext, useParams } from "react-router";
+import { useOutletContext, useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { testhubService } from "@plane/services";
 import type { TTesthubJob } from "@plane/types";
+import { TesthubListRow } from "../components/list-row";
+import { TesthubPageBody, TesthubPageLoader } from "../components/page-shell";
 import { TesthubUnbound } from "../components/unbound";
 import type { TTesthubOutletContext } from "../layout";
 
@@ -18,34 +21,47 @@ function JobsPage() {
   const { workspaceSlug, projectId } = useParams();
   const { catalog, loading } = useOutletContext<TTesthubOutletContext>();
   const [jobs, setJobs] = useState<TTesthubJob[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(false);
   const base = `/${workspaceSlug}/projects/${projectId}/testhub`;
 
   useEffect(() => {
     if (!workspaceSlug || !projectId || !catalog?.repo) return;
+    setJobsLoading(true);
     testhubService
       .listJobs(workspaceSlug, projectId)
       .then(setJobs)
-      .catch(() => setJobs([]));
+      .catch(() => setJobs([]))
+      .finally(() => setJobsLoading(false));
   }, [workspaceSlug, projectId, catalog?.repo]);
 
-  if (loading) return <p className="text-13 text-secondary">…</p>;
+  if (loading || jobsLoading) return <TesthubPageLoader />;
   if (!catalog?.repo) return <TesthubUnbound href={`${base}/bind`} />;
 
-  if (!jobs.length) return <p className="text-13 text-secondary">{t("testhub.jobs.empty")}</p>;
+  if (!jobs.length) {
+    return (
+      <TesthubPageBody>
+        <EmptyStateCompact
+          assetKey="worklog"
+          title={t("testhub.jobs.empty")}
+          description={t("testhub.empty.no_jobs")}
+        />
+      </TesthubPageBody>
+    );
+  }
 
   return (
-    <ul className="space-y-2">
+    <TesthubPageBody className="px-0 py-0">
       {jobs.map((job) => (
-        <li key={job.id}>
-          <Link to={`${base}/jobs/${job.id}`} className="block rounded-md bg-layer-1 px-3 py-2 hover:bg-layer-1-hover">
-            <p className="text-13 text-primary">
+        <TesthubListRow key={job.id} to={`${base}/jobs/${job.id}`}>
+          <span>
+            <span className="text-primary">
               {job.kind} · {job.status}
-            </p>
-            <p className="text-12 text-tertiary">{job.created_at}</p>
-          </Link>
-        </li>
+            </span>
+            <span className="ml-2 text-12 text-tertiary">{job.created_at}</span>
+          </span>
+        </TesthubListRow>
       ))}
-    </ul>
+    </TesthubPageBody>
   );
 }
 

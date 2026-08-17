@@ -18,7 +18,9 @@
       "branch": "Ветка",
       "workdir": "Рабочий каталог Runner",
       "save": "Сохранить",
+      "saved": "Привязка репозитория сохранена.",
       "unbound": "У этого проекта ещё нет тестового репозитория.",
+      "unbound_description": "Привяжите тестовый git-репозиторий, чтобы просматривать каталог и запускать разрешённые задания.",
       "cta": "Привязать репозиторий"
     },
     "overview": {
@@ -33,9 +35,15 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "apps": "Apps",
-      "features": "Features",
+      "features": "Feature",
       "pytest": "узлы pytest",
       "data": "Файлы данных"
+    },
+    "empty": {
+      "no_items": "Пока нечего показать.",
+      "no_jobs": "В этом проекте ещё не запускались задания.",
+      "no_apis": "В снимке каталога нет API objects.",
+      "no_results": "Нет результатов по этому фильтру."
     },
     "knowledge": {
       "ddl": "DDL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Фильтр маршрутов"
+      "filter": "Фильтр маршрутов",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Поиск APIs",
+      "filter_words": "Поиск Action words",
+      "no_selection": "Выберите API, чтобы просмотреть документацию."
+    },
+    "api": {
+      "docs": "Документация",
+      "request": "Запрос",
+      "response": "Ответ",
+      "source": "Исходник",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Записанный Query",
+      "recorded_body": "Записанный Body",
+      "recorded_response": "Записанный ответ",
+      "copy": "Копировать",
+      "copied": "Скопировано в буфер обмена.",
+      "required": "обязательно",
+      "optional": "необязательно",
+      "name": "Имя",
+      "type": "Тип",
+      "note": "Примечание",
+      "file": "Файл",
+      "load_error": "Не удалось загрузить этот API object.",
+      "description": "Описание",
+      "none": "Нет"
     },
     "tools": {
       "run": "Запустить",
-      "not_whitelisted": "Не в списке P2",
+      "not_whitelisted": "Нет в списке P2",
       "tables": "Имена таблиц",
+      "tables_required": "dump_ddl требует хотя бы одну таблицу.",
       "datasource": "Источник данных"
     },
     "actions": {
       "run": "Запустить",
       "confirm": "Подтверждаю запись в тестируемую систему",
       "params": "JSON параметров",
-      "pick": "Выберите action word"
+      "pick": "Выберите action word",
+      "invalid_json": "Параметры должны быть корректным JSON."
     },
     "jobs": {
       "empty": "Заданий пока нет",
-      "status": "Статус"
+      "status": "Статус",
+      "kind": "Тип",
+      "created": "Создано",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Команда",
+      "exit": "Код выхода"
     },
     "file": {
-      "close": "Закрыть"
+      "close": "Закрыть",
+      "loading": "Загрузка…"
     }
   }
 }

@@ -4,20 +4,27 @@
  * See the LICENSE file for details.
  */
 
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
 export function TesthubUnbound({ href }: { href: string }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-      <p className="text-14 text-secondary">{t("testhub.bind.unbound")}</p>
-      <Link to={href}>
-        <Button variant="primary" size="sm">
-          {t("testhub.bind.cta")}
-        </Button>
-      </Link>
+    <div className="h-full w-full">
+      <EmptyStateDetailed
+        assetKey="project"
+        title={t("testhub.bind.unbound")}
+        description={t("testhub.bind.unbound_description")}
+        actions={[
+          {
+            label: t("testhub.bind.cta"),
+            variant: "primary",
+            onClick: () => navigate(href),
+          },
+        ]}
+      />
     </div>
   );
 }

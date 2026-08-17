@@ -13,13 +13,15 @@
       "jobs": "Job"
     },
     "bind": {
-      "title": "Gắn kho kiểm thử",
+      "title": "Liên kết kho kiểm thử",
       "repo_url": "URL kho mã",
       "branch": "Nhánh",
       "workdir": "Thư mục làm việc Runner",
       "save": "Lưu",
-      "unbound": "Dự án này chưa gắn kho kiểm thử.",
-      "cta": "Gắn kho mã"
+      "saved": "Đã lưu liên kết kho mã.",
+      "unbound": "Dự án này chưa có kho kiểm thử.",
+      "unbound_description": "Liên kết kho git kiểm thử để xem catalog và chạy các job trong danh sách cho phép.",
+      "cta": "Liên kết kho mã"
     },
     "overview": {
       "sync": "Đồng bộ catalog",
@@ -33,9 +35,15 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "apps": "Apps",
-      "features": "Features",
+      "features": "Feature",
       "pytest": "nút pytest",
       "data": "Tệp dữ liệu"
+    },
+    "empty": {
+      "no_items": "Chưa có nội dung để hiển thị.",
+      "no_jobs": "Chưa có job nào chạy trong dự án này.",
+      "no_apis": "Không có API objects trong snapshot catalog.",
+      "no_results": "Không có kết quả khớp bộ lọc này."
     },
     "knowledge": {
       "ddl": "DDL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Lọc tuyến"
+      "filter": "Lọc route",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Tìm APIs",
+      "filter_words": "Tìm action words",
+      "no_selection": "Chọn một API để xem tài liệu."
+    },
+    "api": {
+      "docs": "Tài liệu",
+      "request": "Yêu cầu",
+      "response": "Phản hồi",
+      "source": "Mã nguồn",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Query đã ghi",
+      "recorded_body": "Body đã ghi",
+      "recorded_response": "Phản hồi đã ghi",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép vào clipboard.",
+      "required": "bắt buộc",
+      "optional": "tùy chọn",
+      "name": "Tên",
+      "type": "Kiểu",
+      "note": "Ghi chú",
+      "file": "Tệp",
+      "load_error": "Không thể tải API object này.",
+      "description": "Mô tả",
+      "none": "Không có"
     },
     "tools": {
       "run": "Chạy",
       "not_whitelisted": "Không nằm trong danh sách P2",
       "tables": "Tên bảng",
+      "tables_required": "dump_ddl cần ít nhất một bảng.",
       "datasource": "Nguồn dữ liệu"
     },
     "actions": {
       "run": "Chạy",
       "confirm": "Tôi xác nhận thao tác này ghi vào hệ thống đang kiểm thử",
       "params": "JSON tham số",
-      "pick": "Chọn một action word"
+      "pick": "Chọn một action word",
+      "invalid_json": "Tham số phải là JSON hợp lệ."
     },
     "jobs": {
       "empty": "Chưa có job",
-      "status": "Trạng thái"
+      "status": "Trạng thái",
+      "kind": "Loại",
+      "created": "Đã tạo",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Lệnh",
+      "exit": "Mã thoát"
     },
     "file": {
-      "close": "Đóng"
+      "close": "Đóng",
+      "loading": "Đang tải…"
     }
   }
 }

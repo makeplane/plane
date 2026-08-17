@@ -16,14 +16,16 @@
       "title": "Powiąż repozytorium testowe",
       "repo_url": "URL repozytorium",
       "branch": "Gałąź",
-      "workdir": "Katalog roboczy Runnera",
+      "workdir": "Katalog roboczy Runner",
       "save": "Zapisz",
+      "saved": "Powiązanie repozytorium zapisane.",
       "unbound": "Ten projekt nie ma jeszcze repozytorium testowego.",
+      "unbound_description": "Powiąż repozytorium git testów, aby przeglądać katalog i uruchamiać dozwolone zadania.",
       "cta": "Powiąż repozytorium"
     },
     "overview": {
       "sync": "Synchronizuj katalog",
-      "syncing": "Synchronizacja…",
+      "syncing": "Synchronizowanie…",
       "head": "HEAD",
       "status": "Status synchronizacji"
     },
@@ -37,6 +39,12 @@
       "pytest": "węzły pytest",
       "data": "Pliki danych"
     },
+    "empty": {
+      "no_items": "Na razie nic do wyświetlenia.",
+      "no_jobs": "W tym projekcie nie uruchomiono jeszcze zadań.",
+      "no_apis": "Brak API objects w migawce katalogu.",
+      "no_results": "Brak wyników dla tego filtra."
+    },
     "knowledge": {
       "ddl": "DDL",
       "sql": "SQL",
@@ -47,26 +55,67 @@
       "api_objects": "API objects",
       "action_words": "Action words",
       "page_objects": "Page objects",
-      "filter": "Filtruj trasy"
+      "filter": "Filtruj trasy",
+      "tab_apis": "APIs",
+      "tab_words": "Action words",
+      "tab_pages": "Page objects",
+      "filter_apis": "Szukaj APIs",
+      "filter_words": "Szukaj action words",
+      "no_selection": "Wybierz API, aby zobaczyć dokumentację."
+    },
+    "api": {
+      "docs": "Dokumentacja",
+      "request": "Żądanie",
+      "response": "Odpowiedź",
+      "source": "Źródło",
+      "query": "Query",
+      "body": "Body",
+      "headers": "Headers",
+      "auth": "Auth",
+      "asserts": "Asserts",
+      "extracts": "Extracts",
+      "recorded_query": "Zapisane Query",
+      "recorded_body": "Zapisane Body",
+      "recorded_response": "Zapisana odpowiedź",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano do schowka.",
+      "required": "wymagane",
+      "optional": "opcjonalne",
+      "name": "Nazwa",
+      "type": "Typ",
+      "note": "Uwaga",
+      "file": "Plik",
+      "load_error": "Nie można wczytać tego API object.",
+      "description": "Opis",
+      "none": "Brak"
     },
     "tools": {
       "run": "Uruchom",
       "not_whitelisted": "Poza listą P2",
       "tables": "Nazwy tabel",
+      "tables_required": "dump_ddl wymaga co najmniej jednej tabeli.",
       "datasource": "Źródło danych"
     },
     "actions": {
       "run": "Uruchom",
       "confirm": "Potwierdzam zapis do systemu testowanego",
       "params": "JSON parametrów",
-      "pick": "Wybierz action word"
+      "pick": "Wybierz action word",
+      "invalid_json": "Parametry muszą być poprawnym JSON."
     },
     "jobs": {
       "empty": "Brak zadań",
-      "status": "Status"
+      "status": "Status",
+      "kind": "Rodzaj",
+      "created": "Utworzono",
+      "stdout": "stdout",
+      "stderr": "stderr",
+      "argv": "Polecenie",
+      "exit": "Kod wyjścia"
     },
     "file": {
-      "close": "Zamknij"
+      "close": "Zamknij",
+      "loading": "Wczytywanie…"
     }
   }
 }
