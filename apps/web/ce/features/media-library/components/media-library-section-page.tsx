@@ -78,7 +78,7 @@ const MediaLibrarySectionPage = observer(() => {
     projectId: string;
     sectionName: string;
   };
-  const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
+  const { libraryVersion, mediaFilters, refreshLibrary, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get(SECTION_QUERY_PARAM_KEY) ?? "").trim();
   const viewMode = searchParams.get(SECTION_VIEW_PARAM_KEY) === "grid" ? "grid" : "list";
@@ -132,6 +132,7 @@ const MediaLibrarySectionPage = observer(() => {
       }),
     [libraryItems]
   );
+  const hasActiveTranscodes = useMemo(() => filteredItems.some((item) => item.isTranscodeActive), [filteredItems]);
   const lastPaginationRef = useRef<typeof pagination>(null);
   const resolvedPagination = pagination ?? lastPaginationRef.current;
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
@@ -147,6 +148,12 @@ const MediaLibrarySectionPage = observer(() => {
   useEffect(() => {
     setMediaFilterConfigs(filterConfigs);
   }, [filterConfigs, setMediaFilterConfigs]);
+
+  useEffect(() => {
+    if (!hasActiveTranscodes) return;
+    const intervalId = window.setInterval(refreshLibrary, 5000);
+    return () => window.clearInterval(intervalId);
+  }, [hasActiveTranscodes, refreshLibrary]);
 
   const section = useMemo<TMediaSection>(
     () => ({

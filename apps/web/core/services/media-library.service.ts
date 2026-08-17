@@ -16,6 +16,8 @@ export type TMediaArtifact = {
   work_item_id?: string | null;
   created_at: string;
   updated_at: string;
+  transcode_job?: TMediaTranscodeJobResponse;
+  transcode_job_error?: unknown;
 };
 
 export type TMediaArtifactPayload = {

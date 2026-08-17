@@ -9,6 +9,7 @@ from plane.app.views.media_library import (
     MediaArtifactTranscodeJobRetryAPIView,
     MediaArtifactsListAPIView,
     MediaLibraryInitAPIView,
+    MediaTranscodeCallbackAPIView,
     MediaManifestDetailAPIView,
     MediaPackageCreateAPIView,
     MediaWorkItemSyncAPIView,
@@ -64,6 +65,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/transcode/jobs/<str:job_id>/cancel/",
         MediaArtifactTranscodeJobCancelAPIView.as_view(),
         name="media-library-artifact-transcode-job-cancel",
+    ),
+    path(
+        "media-library/transcode/callback/",
+        MediaTranscodeCallbackAPIView.as_view(),
+        name="media-library-transcode-callback",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/file/<path:artifact_path>/",

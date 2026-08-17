@@ -21,11 +21,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/user";
 import { IssueService } from "@/services/issue";
 import { MediaLibraryService } from "@/services/media-library.service";
-import type {
-  TMediaArtifact,
-  TMediaTranscodeJobResponse,
-  TMediaTranscodeJobStatus,
-} from "@/services/media-library.service";
+import type { TMediaArtifact } from "@/services/media-library.service";
 import { ProjectService } from "@/services/project";
 import { useMediaLibrary } from "../store/media-library-context";
 import { getDocumentThumbnailPath } from "../utils/media-items";
@@ -51,20 +47,17 @@ const IMAGE_FORMATS = new Set([
 const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
 const DOC_FORMATS = new Set(["json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"]);
 
-type TUploadStatus = "queued" | "uploading" | "uploaded" | "transcoding" | "ready" | "failed" | "cancelled";
-type TUploadFailurePhase = "upload" | "transcode";
+type TUploadStatus = "queued" | "uploading" | "uploaded" | "ready" | "failed" | "cancelled";
+type TUploadFailurePhase = "upload";
 
 type TUploadItem = {
   id: string;
   file: File;
   status: TUploadStatus;
   progress: number;
-  transcodeProgress?: number;
-  transcodeLabel?: string;
   error?: string;
   artifact?: TMediaArtifact;
   packageId?: string;
-  jobId?: string;
   failedPhase?: TUploadFailurePhase;
   abortController?: AbortController;
   retryCount?: number;
@@ -122,10 +115,9 @@ const updateUploadEntry = (prev: TUploadItem[], id: string, updates: Partial<TUp
 
 const isMp4Upload = (file: File) => getFileExtension(file.name) === "mp4" || file.type === "video/mp4";
 
-const isActiveStatus = (status: TUploadStatus) => status === "uploading" || status === "transcoding";
+const isActiveStatus = (status: TUploadStatus) => status === "uploading";
 
 const getVisibleProgress = (item: TUploadItem) => {
-  if (item.status === "transcoding") return Math.min(100, Math.max(0, item.transcodeProgress ?? 0));
   return Math.min(100, Math.max(0, item.progress ?? 0));
 };
 
@@ -144,40 +136,10 @@ const getErrorMessage = (error: unknown, fallback: string) => {
   return fallback;
 };
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const mapTranscodeStatus = (status?: TMediaTranscodeJobStatus) => {
-  switch (status) {
-    case "QUEUED":
-      return "Queued";
-    case "CLAIMED":
-    case "PROBING":
-      return "Preparing...";
-    case "TRANSCODING":
-    case "PACKAGING":
-      return "Transcoding...";
-    case "VALIDATING":
-      return "Finalizing...";
-    case "COMPLETED":
-      return "Ready";
-    case "FAILED":
-      return "Failed";
-    case "CANCEL_REQUESTED":
-      return "Cancelling...";
-    case "CANCELLED":
-      return "Cancelled";
-    case "RETRY_PENDING":
-      return "Retrying...";
-    default:
-      return "Transcoding...";
-  }
-};
-
 const getUploadStatusLabel = (item: TUploadItem) => {
   if (item.status === "queued") return "Queued";
   if (item.status === "uploading") return "Uploading...";
   if (item.status === "uploaded") return isMp4Upload(item.file) ? "Uploaded" : "Success";
-  if (item.status === "transcoding") return item.transcodeLabel || "Transcoding...";
   if (item.status === "ready") return "Ready";
   if (item.status === "cancelled") return "Cancelled";
   return item.error || "Failed";
@@ -359,22 +321,6 @@ export const MediaLibraryUploadModal = () => {
   const handleClose = () => {
     uploads.forEach((item) => {
       item.abortController?.abort();
-      if (
-        item.status === "transcoding" &&
-        item.artifact?.name &&
-        item.packageId &&
-        item.jobId &&
-        workspaceSlug &&
-        projectId
-      ) {
-        void mediaLibraryService.cancelArtifactTranscodeJob(
-          workspaceSlug,
-          projectId,
-          item.packageId,
-          item.artifact.name,
-          item.jobId
-        );
-      }
     });
     setUploads([]);
     setIsDragging(false);
@@ -446,70 +392,6 @@ export const MediaLibraryUploadModal = () => {
     setPendingUploadFiles([]);
   }, [addFiles, isUploadOpen, pendingUploadFiles, setPendingUploadFiles]);
 
-  const pollTranscodeJob = async (
-    itemId: string,
-    packageId: string,
-    artifactId: string,
-    initialJob: TMediaTranscodeJobResponse
-  ) => {
-    let currentJob = initialJob;
-    while (currentJob.status !== "COMPLETED" && currentJob.status !== "FAILED" && currentJob.status !== "CANCELLED") {
-      setUploads((prev) =>
-        updateUploadEntry(prev, itemId, {
-          status: "transcoding",
-          transcodeProgress: Math.min(100, Math.max(0, Math.round(currentJob.progress ?? 0))),
-          transcodeLabel: mapTranscodeStatus(currentJob.status),
-          error: undefined,
-        })
-      );
-      await delay(2500);
-      currentJob = await mediaLibraryService.getArtifactTranscodeJob(
-        workspaceSlug,
-        projectId,
-        packageId,
-        artifactId,
-        currentJob.job_id
-      );
-    }
-
-    if (currentJob.status === "COMPLETED") {
-      setUploads((prev) =>
-        updateUploadEntry(prev, itemId, {
-          status: "ready",
-          progress: 100,
-          transcodeProgress: 100,
-          transcodeLabel: "Ready",
-          error: undefined,
-        })
-      );
-      refreshLibrary();
-      return true;
-    }
-
-    if (currentJob.status === "CANCELLED") {
-      setUploads((prev) =>
-        updateUploadEntry(prev, itemId, {
-          status: "cancelled",
-          transcodeProgress: Math.min(100, Math.max(0, Math.round(currentJob.progress ?? 0))),
-          transcodeLabel: "Cancelled",
-          error: "Cancelled",
-        })
-      );
-      return false;
-    }
-
-    setUploads((prev) =>
-      updateUploadEntry(prev, itemId, {
-        status: "failed",
-        failedPhase: "transcode",
-        transcodeProgress: Math.min(100, Math.max(0, Math.round(currentJob.progress ?? 0))),
-        transcodeLabel: "Failed",
-        error: currentJob.error?.message || currentJob.error?.code || "Transcoding failed",
-      })
-    );
-    return false;
-  };
-
   const uploadSingle = async (item: TUploadItem, packageId: string, index: number, uploadedAt: number) => {
     const file = item.file;
     const format = resolveArtifactFormat(file.name);
@@ -536,7 +418,6 @@ export const MediaLibraryUploadModal = () => {
       meta.thumbnail = getDocumentThumbnailPath(format);
     }
 
-    let uploadedArtifact: TMediaArtifact | undefined;
     try {
       const abortController = new AbortController();
       setUploads((prev) =>
@@ -571,7 +452,6 @@ export const MediaLibraryUploadModal = () => {
         },
         { signal: abortController.signal }
       );
-      uploadedArtifact = artifact;
 
       setUploads((prev) =>
         updateUploadEntry(prev, item.id, {
@@ -584,40 +464,23 @@ export const MediaLibraryUploadModal = () => {
       );
       refreshLibrary();
 
-      if (!isMp4Upload(file)) return true;
-
-      const job = await mediaLibraryService.enqueueArtifactTranscode(
-        workspaceSlug,
-        projectId,
-        packageId,
-        artifact.name,
-        {
-          encoding_profile: "adaptive-1080p",
-          generate_thumbnails: true,
-        }
-      );
-      setUploads((prev) =>
-        updateUploadEntry(prev, item.id, {
-          status: "transcoding",
-          jobId: job.job_id,
-          transcodeProgress: Math.min(100, Math.max(0, Math.round(job.progress ?? 0))),
-          transcodeLabel: mapTranscodeStatus(job.status),
-          error: undefined,
-        })
-      );
-      const transcodeResult = await pollTranscodeJob(item.id, packageId, artifact.name, job);
-      return transcodeResult;
+      if (isMp4Upload(file) && artifact.transcode_job_error) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Background transcoding was not queued",
+          message: getErrorMessage(artifact.transcode_job_error, "The MP4 was uploaded, but transcoding was not queued."),
+        });
+      }
+      return true;
     } catch (error) {
       const wasCancelled =
         error && typeof error === "object" && (error as Record<string, unknown>).code === "ERR_CANCELED";
       setUploads((prev) =>
         updateUploadEntry(prev, item.id, {
           status: wasCancelled ? "cancelled" : "failed",
-          failedPhase: wasCancelled ? undefined : uploadedArtifact ? "transcode" : "upload",
+          failedPhase: wasCancelled ? undefined : "upload",
           abortController: undefined,
-          error: wasCancelled
-            ? "Cancelled"
-            : getErrorMessage(error, uploadedArtifact ? "Transcoding failed" : "Upload failed"),
+          error: wasCancelled ? "Cancelled" : getErrorMessage(error, "Upload failed"),
         })
       );
       return false;
@@ -668,7 +531,9 @@ export const MediaLibraryUploadModal = () => {
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
         message:
-          successCount === 1 ? "File finished processing." : `${successCount} files finished uploading or processing.`,
+          successCount === 1
+            ? "File uploaded. Background transcoding will continue automatically."
+            : `${successCount} files uploaded. Background transcoding will continue automatically.`,
       });
     }
 
@@ -703,60 +568,14 @@ export const MediaLibraryUploadModal = () => {
       );
       return;
     }
-    if (item.failedPhase === "transcode" && item.artifact?.name && item.packageId && workspaceSlug && projectId) {
-      try {
-        setUploads((prev) =>
-          updateUploadEntry(prev, item.id, {
-            status: "transcoding",
-            error: undefined,
-            transcodeProgress: 0,
-            transcodeLabel: "Retrying...",
-            retryCount: (item.retryCount ?? 0) + 1,
-          })
-        );
-        const job = item.jobId
-          ? await mediaLibraryService.retryArtifactTranscodeJob(
-              workspaceSlug,
-              projectId,
-              item.packageId,
-              item.artifact.name,
-              item.jobId
-            )
-          : await mediaLibraryService.enqueueArtifactTranscode(
-              workspaceSlug,
-              projectId,
-              item.packageId,
-              item.artifact.name,
-              {
-                encoding_profile: "adaptive-1080p",
-                generate_thumbnails: true,
-              }
-            );
-        setUploads((prev) => updateUploadEntry(prev, item.id, { jobId: job.job_id }));
-        await pollTranscodeJob(item.id, item.packageId, item.artifact.name, job);
-      } catch (error) {
-        setUploads((prev) =>
-          updateUploadEntry(prev, item.id, {
-            status: "failed",
-            failedPhase: "transcode",
-            error: getErrorMessage(error, "Transcoding retry failed"),
-          })
-        );
-      }
-      return;
-    }
-
     setUploads((prev) =>
       updateUploadEntry(prev, item.id, {
         status: "queued",
         progress: 0,
-        transcodeProgress: undefined,
-        transcodeLabel: undefined,
         error: undefined,
         failedPhase: undefined,
         artifact: undefined,
         packageId: undefined,
-        jobId: undefined,
         retryCount: (item.retryCount ?? 0) + 1,
       })
     );
@@ -773,38 +592,10 @@ export const MediaLibraryUploadModal = () => {
         updateUploadEntry(prev, item.id, {
           status: "cancelled",
           abortController: undefined,
-          transcodeLabel: undefined,
           error: "Cancelled",
         })
       );
       return;
-    }
-    if (
-      item.status === "transcoding" &&
-      item.artifact?.name &&
-      item.packageId &&
-      item.jobId &&
-      workspaceSlug &&
-      projectId
-    ) {
-      try {
-        await mediaLibraryService.cancelArtifactTranscodeJob(
-          workspaceSlug,
-          projectId,
-          item.packageId,
-          item.artifact.name,
-          item.jobId
-        );
-      } catch {
-        // The polling loop will surface the final state if the worker is still reachable.
-      }
-      setUploads((prev) =>
-        updateUploadEntry(prev, item.id, {
-          status: "cancelled",
-          transcodeLabel: "Cancellation requested",
-          error: "Cancellation requested",
-        })
-      );
     }
   };
 
@@ -1003,8 +794,7 @@ export const MediaLibraryUploadModal = () => {
                     const progress = getVisibleProgress(item);
                     const isFailed = item.status === "failed";
                     const isComplete = isCompletedStatus(item.status);
-                    const canCancel =
-                      item.status === "queued" || item.status === "uploading" || item.status === "transcoding";
+                    const canCancel = item.status === "queued" || item.status === "uploading";
                     return (
                       <div
                         key={item.id}

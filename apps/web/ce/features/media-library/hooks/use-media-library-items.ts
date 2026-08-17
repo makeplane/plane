@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { TMediaArtifactsPaginatedResponse } from "@/services/media-library.service";
+import type { TMediaArtifactsPaginatedResponse, TMediaTranscodeJobResponse } from "@/services/media-library.service";
 import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../types/media-library.types";
 import { mapArtifactsToMediaItems } from "../utils/media-items";
@@ -40,6 +40,77 @@ const isRequestCanceled = (error: unknown) => {
     maybeCanceledError.name === "CanceledError" ||
     maybeCanceledError.name === "AbortError"
   );
+};
+
+const ACTIVE_TRANSCODE_STATUSES = new Set([
+  "QUEUED",
+  "CLAIMED",
+  "PROBING",
+  "TRANSCODING",
+  "PACKAGING",
+  "VALIDATING",
+  "RETRY_PENDING",
+  "CANCEL_REQUESTED",
+]);
+const FAILED_TRANSCODE_STATUSES = new Set(["FAILED", "CANCELLED"]);
+
+const getTranscodeLabel = (status: string) => {
+  switch (status) {
+    case "QUEUED":
+      return "Queued";
+    case "CLAIMED":
+    case "PROBING":
+      return "Preparing";
+    case "TRANSCODING":
+    case "PACKAGING":
+      return "Processing";
+    case "VALIDATING":
+      return "Finalizing";
+    case "RETRY_PENDING":
+      return "Retrying";
+    case "CANCEL_REQUESTED":
+      return "Cancelling";
+    case "COMPLETED":
+      return "Ready";
+    case "FAILED":
+      return "Failed";
+    case "CANCELLED":
+      return "Cancelled";
+    default:
+      return status.replace(/_/g, " ").toLowerCase();
+  }
+};
+
+const mergeTranscodeJob = (item: TMediaItem, job: TMediaTranscodeJobResponse): TMediaItem => {
+  const status = job.status;
+  const progress = Math.min(100, Math.max(0, Math.round(job.progress ?? item.transcodeProgress ?? 0)));
+  const isComplete = status === "COMPLETED";
+  const isFailed = FAILED_TRANSCODE_STATUSES.has(status);
+  const isActive = ACTIVE_TRANSCODE_STATUSES.has(status);
+  return {
+    ...item,
+    transcodeStatus: status,
+    transcodeProgress: isComplete ? 100 : progress,
+    transcodeLabel: getTranscodeLabel(status),
+    transcodeError: job.error?.message || job.error?.code || item.transcodeError,
+    isTranscodeActive: isActive,
+    isTranscodeFailed: isFailed,
+    isTranscodeComplete: isComplete,
+  };
+};
+
+const shouldIncludeForFormats = (item: TMediaItem, desiredFormats: string[], thumbnailTargets: Set<string>) => {
+  if (desiredFormats.length === 0) return true;
+  if (desiredFormats.includes(item.format)) return true;
+  if (
+    desiredFormats.includes("thumbnail") &&
+    (item.isTranscodeActive ||
+      item.isTranscodeFailed ||
+      (item.mediaType === "video" && item.isTranscodeComplete && !thumbnailTargets.has(item.id)))
+  ) {
+    return true;
+  }
+  return false;
 };
 
 export const useMediaLibraryItems = (
@@ -133,9 +204,42 @@ export const useMediaLibraryItems = (
             packageId,
             metadata: metadataMap,
           });
+          const activeTranscodeItems = mappedItems.filter(
+            (item) => item.packageId && item.transcodeJobId && item.isTranscodeActive
+          );
+          const jobResults = await Promise.all(
+            activeTranscodeItems.map(async (item) => {
+              try {
+                const job = await mediaLibraryService.getArtifactTranscodeJob(
+                  workspaceSlug,
+                  projectId,
+                  item.packageId ?? packageId,
+                  item.id,
+                  item.transcodeJobId ?? ""
+                );
+                return [item.id, job] as const;
+              } catch {
+                return [item.id, null] as const;
+              }
+            })
+          );
+          const jobByItemId = new Map<string, TMediaTranscodeJobResponse>();
+          for (const [itemId, job] of jobResults) {
+            if (job) jobByItemId.set(itemId, job);
+          }
+          if (!isMounted || abortController.signal.aborted) return;
+          const hydratedItems = mappedItems.map((item) => {
+            const job = jobByItemId.get(item.id);
+            return job ? mergeTranscodeJob(item, job) : item;
+          });
+          const thumbnailTargets = new Set(
+            hydratedItems
+              .filter((item) => item.format === "thumbnail" && typeof item.link === "string" && item.link.trim())
+              .map((item) => item.link?.trim() ?? "")
+          );
           const filteredItems = desiredFormats.length
-            ? mappedItems.filter((item) => desiredFormats.includes(item.format))
-            : mappedItems;
+            ? hydratedItems.filter((item) => shouldIncludeForFormats(item, desiredFormats, thumbnailTargets))
+            : hydratedItems;
           setItems(filteredItems);
           if (paginatedResponse) {
             setPagination({
