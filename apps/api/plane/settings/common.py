@@ -354,7 +354,7 @@ CELERY_IMPORTS = (
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
-# Testhub overlay (Innovamed): sidecar runner + bind-mounted test repo
+# TestCopilot overlay: sidecar runner + bind-mounted test repo
 TESTHUB_RUNNER_URL = os.environ.get("TESTHUB_RUNNER_URL", "http://testhub-runner:8090")
 TESTHUB_WORKDIR = os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir")
 TESTHUB_FILE_MAX_BYTES = int(os.environ.get("TESTHUB_FILE_MAX_BYTES", 1048576))

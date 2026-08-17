@@ -1,8 +1,7 @@
 # Testhub runner — allowlisted Python jobs against a bind-mounted test repo.
 
 Local Plane (`docker-compose-local.yml`) mounts `TESTHUB_HOST_REPO`
-(default `C:/dev/repo/innovamed-test-template`) at `/opt/testhub/workdir` and
-talks to this service at `http://testhub-runner:8090`.
+at `/opt/testhub/workdir` and talks to this service at `http://testhub-runner:8090`.
 
 On start the container runs `uv sync` in the mounted repo (Linux venv — do not
 reuse a Windows host `.venv`). `GET /v1/health` reports workdir + git branch/sha.

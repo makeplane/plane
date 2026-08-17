@@ -13,7 +13,7 @@ export function testhubNavigationItems(workspaceSlug: string, projectId: string)
     {
       i18n_key: "testhub.sidebar",
       key: "testhub",
-      name: "Test hub",
+      name: "TestCopilot",
       href: `/${workspaceSlug}/projects/${projectId}/testhub`,
       icon: Beaker,
       access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],

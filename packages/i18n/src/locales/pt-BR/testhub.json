@@ -1,7 +1,7 @@
 {
   "testhub": {
-    "title": "Central de testes",
-    "sidebar": "Central de testes",
+    "title": "TestCopilot",
+    "sidebar": "TestCopilot",
     "nav": {
       "overview": "Visão geral",
       "bind": "Repositório",

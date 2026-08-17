@@ -1,10 +1,12 @@
-# Testhub 架构与计划
+# TestCopilot 架构与计划
 
-本文件是 Plane fork 上「测试中心」的设计正文。入口见仓库根 [`TESTHUB.md`](../../TESTHUB.md)。
+本文件是 Plane fork 上 **TestCopilot** 的设计正文。作者：**tuner**。入口见仓库根 [`TESTCOPILOT.md`](../../TESTCOPILOT.md)。
 
-基线：官方 release **v1.4.1**（2026-08-07），开发分支 `testhub/v1.4.1`。
+基线：官方 release **v1.4.1**（2026-08-07），开发分支 `testcopilot/v1.4.1`。
 
-许可证：上游 **AGPL-3.0**。自研模块同样受约束；公开 GitHub fork 会把 testhub 一并公开。
+许可证：上游 **AGPL-3.0**。自研模块同样受约束；公开 GitHub fork 会把 overlay 一并公开。
+
+对外产品名是 **TestCopilot**。代码、URL、Django app 仍用 `testhub`，避免大面积改内部标识、方便继续 merge 官方 tag。
 
 ---
 
@@ -26,7 +28,7 @@ flowchart LR
     WS[Workspace]
     PJ[Project]
     ISS[Issue_Cycle_Pages]
-    TH[测试中心_新增]
+    TH[TestCopilot_新增]
   end
   subgraph gitRepo [测试仓_SSOT]
     IDX[INDEX与INDEX.project]
@@ -60,8 +62,8 @@ flowchart LR
 ```text
 makeplane/plane                 = upstream（只读；push 已设为 no_push）
 chenjianpeng97/plane            = origin
-C:\dev\repo\plane               = 本工作副本（只在这里写 testhub）
-C:\dev\repo\innovamed-test-template = 测试平台仓
+C:\dev\repo\plane               = 本工作副本（只在这里写 TestCopilot overlay）
+绑定的测试 git 仓               = 测试平台仓（SSOT；路径由项目绑定与 TESTHUB_HOST_REPO 决定）
 C:\dev\sourcecode\plane         = 上游只读参考，不要在那里开发
 ```
 
@@ -74,13 +76,13 @@ git fetch upstream --tags
 git merge v1.x.y
 ```
 
-合入节奏：每 1–2 个官方 patch/minor merge 一次 tag，跑官方测试 + testhub 冒烟。不要长期跟踪 `preview`。
+合入节奏：每 1–2 个官方 patch/minor merge 一次 tag，跑官方测试 + TestCopilot 冒烟。不要长期跟踪 `preview`。
 
 ---
 
 ## 本仓要新增的域
 
-独立 Django app `plane.testhub`（不要改 Issue 语义）。前端独立目录 + 项目侧栏「测试中心」。
+独立 Django app `plane.testhub`（不要改 Issue 语义）。前端独立目录 + 项目侧栏 **TestCopilot**。
 
 ### 1. ProjectTestRepo
 
@@ -92,7 +94,7 @@ git merge v1.x.y
 - 最近 sync：commit SHA、时间、状态
 - 可选：默认 Python extra
 
-项目设置增加「测试仓库」卡片。未绑定则测试中心显示引导，不报错。
+项目设置增加「测试仓库」卡片。未绑定则 TestCopilot 显示引导，不报错。
 
 ### 2. CatalogSnapshot
 
@@ -117,7 +119,7 @@ API 容器默认到不了 SUT，也不该任意 `subprocess`。执行必须是�
 
 ```mermaid
 sequenceDiagram
-  participant UI as TesthubUI
+  participant UI as TestCopilotUI
   participant API as testhubAPI
   participant Celery as Celery
   participant Agent as RepoRunner
@@ -146,7 +148,7 @@ sequenceDiagram
 
 ### 4. UI 信息架构
 
-项目侧栏「测试中心」子页：
+项目侧栏 **TestCopilot** 子页：
 
 1. 总览 — 绑定信息、HEAD、六层计数
 2. 知识 — DDL/SQL/usecases 只读（分页，勿一次拉全部表正文）
@@ -183,7 +185,7 @@ sequenceDiagram
 - `plane.testhub` + 项目设置「测试仓库」
 - Runner clone/fetch 指定 branch，跑测试仓 `index_platform`，写入 CatalogSnapshot
 - 总览：工具数、api_objects、action words、feature/pytest 计数
-- 测试仓并行：`apps/index_platform` + apps manifest（在 **innovamed-test-template**，不在本仓）
+- 测试仓并行：`apps/index_platform` + apps manifest（在**测试平台仓**实现，不在本仓）
 
 ### P1 — 只读可视化
 

@@ -37,11 +37,11 @@ See `apps/api/tests/RUNNING_TESTS.md` for the full walkthrough and troubleshooti
 
 ---
 
-## Innovamed Testhub overlay
+## TestCopilot overlay
 
-This fork adds a **Test Hub** on top of Plane. Product intent, two-repo split, and isolation rules:
+This Plane fork (maintained by **tuner**) adds **TestCopilot**. Product intent, two-repo split, and isolation rules:
 
-- [`TESTHUB.md`](TESTHUB.md)
+- [`TESTCOPILOT.md`](TESTCOPILOT.md)
 - [`docs/testhub/PLAN.md`](docs/testhub/PLAN.md)
 
-Do not fold test cases into Issues. Keep testhub additive so official tags can still be merged.
+Do not fold test cases into Issues. Keep the overlay additive so official tags can still be merged. Internal code still lives under `testhub`.

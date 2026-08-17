@@ -1,7 +1,7 @@
 {
   "testhub": {
-    "title": "Testovacie centrum",
-    "sidebar": "Testovacie centrum",
+    "title": "TestCopilot",
+    "sidebar": "TestCopilot",
     "nav": {
       "overview": "Prehľad",
       "bind": "Repozitár",

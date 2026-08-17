@@ -1,8 +1,10 @@
-# Testhub — 本 fork 要做什么
+# TestCopilot — 本 fork 要做什么
 
-> 这是 **Innovamed 在 Plane v1.4.1 上的自研层**。官方 Plane 是项目管理壳；测试能力的唯一真相源是绑定的测试 git 仓，不在本仓、也不在 Issue 里。
+> 作者：**tuner**。这是我在 Plane v1.4.1 上的自研层。官方 Plane 是项目管理壳；测试能力的唯一真相源是绑定的测试 git 仓，不在本仓、也不在 Issue 里。
 >
 > 打开本仓用 Cursor 开发时：**先读本文 + [`docs/testhub/PLAN.md`](docs/testhub/PLAN.md)**。官方开发命令仍见根 [`AGENTS.md`](AGENTS.md)。
+>
+> 对外产品名是 **TestCopilot**。代码、URL、Django app 仍用 `testhub`（additive overlay，方便继续 merge 官方 tag）。
 
 ## 一句话目标
 
@@ -10,10 +12,10 @@
 
 ## 两仓分工（不要焊成一个 monorepo）
 
-| 仓                     | 路径                                      | 职责                                                                                |
-| ---------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------- |
-| **本仓（Plane fork）** | `C:\dev\repo\plane` 分支 `testhub/v1.4.1` | 绑定、catalog 快照、UI、Job、失败链到 Issue                                         |
-| **测试平台仓**         | `C:\dev\repo\innovamed-test-template`     | 六层资产 + `python -m apps.*` / `packages.action_words`；另补 `apps/index_platform` |
+| 仓                     | 路径                                                     | 职责                                                                                |
+| ---------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **本仓（Plane fork）** | `C:\dev\repo\plane` 分支 `testcopilot/v1.4.1`            | 绑定、catalog 快照、UI、Job、失败链到 Issue                                         |
+| **测试平台仓**         | 由 Project 绑定的 git 仓（本地常见 `TESTHUB_HOST_REPO`） | 六层资产 + `python -m apps.*` / `packages.action_words`；另补 `apps/index_platform` |
 
 领域逻辑（SQL、造数、Gherkin）**不搬进本仓**。本仓只编排、展示、跑白名单命令。
 

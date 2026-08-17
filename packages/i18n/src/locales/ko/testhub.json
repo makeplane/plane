@@ -1,7 +1,7 @@
 {
   "testhub": {
-    "title": "테스트 허브",
-    "sidebar": "테스트 허브",
+    "title": "TestCopilot",
+    "sidebar": "TestCopilot",
     "nav": {
       "overview": "개요",
       "bind": "저장소",

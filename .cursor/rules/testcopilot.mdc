@@ -1,21 +1,23 @@
 ---
-description: Innovamed Testhub overlay — 本 fork 的产品目标与隔离约束。打开本仓开发测试中心时始终生效。
+description: tuner 的 TestCopilot overlay — 本 fork 的产品目标与隔离约束。打开本仓开发 TestCopilot 时始终生效。
 alwaysApply: true
 ---
 
-# Testhub overlay
+# TestCopilot overlay
 
-本仓是 **Plane v1.4.1 的 Innovamed fork**（分支 `testhub/v1.4.1`），要做「测试中心」，不是改官方 Issue 产品。
+本仓是 **tuner** 在 Plane v1.4.1 上的 fork（分支 `testcopilot/v1.4.1`），要做 **TestCopilot**，不是改官方 Issue 产品。
 
 开工先读：
 
-- 根目录 [`TESTHUB.md`](TESTHUB.md) — 目标、两仓分工、阶段
+- 根目录 [`TESTCOPILOT.md`](TESTCOPILOT.md) — 目标、两仓分工、阶段
 - [`docs/testhub/PLAN.md`](docs/testhub/PLAN.md) — 架构与计划正文
 - 官方命令仍以根 [`AGENTS.md`](AGENTS.md) 为准（`pnpm dev` / Docker pytest）
 
+对外产品名是 **TestCopilot**。代码、URL、Django app 仍用 `testhub`。
+
 ## 产品关系
 
-- 测试能力 SSOT = 绑定的测试 git 仓（典型：`C:\dev\repo\innovamed-test-template`），不是本仓数据库
+- 测试能力 SSOT = 绑定的测试 git 仓，不是本仓数据库
 - 一个 Plane Project 绑定 **一个** `repo_url` + **一个** `branch`
 - Issue/Cycle 只管缺陷与任务；**禁止**把 `.feature` / pytest / 造数参数双写进 Issue
 
