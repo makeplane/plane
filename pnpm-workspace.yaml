@@ -4,6 +4,29 @@ packages:
   - "!apps/api"
   - "!apps/proxy"
 
+# pnpm 11 reads these from this file, not .npmrc.
+nodeLinker: isolated
+preferWorkspacePackages: true
+linkWorkspacePackages: true
+sharedWorkspaceLockfile: true
+saveWorkspaceProtocol: true
+resolutionMode: highest
+autoInstallPeers: true
+strictPeerDependencies: false
+sideEffectsCache: true
+preferOffline: true
+preferFrozenLockfile: true
+publicHoistPattern:
+  - typescript
+  - eslint
+  - "*@plane/*"
+  - vite
+  - turbo
+# Turbo spawns nested `pnpm run` without a TTY. pnpm 11's default
+# verifyDepsBeforeRun=install then tries to recreate node_modules and aborts.
+verifyDepsBeforeRun: false
+confirmModulesPurge: false
+
 catalog:
   "@atlaskit/pragmatic-drag-and-drop": "1.7.4"
   "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "1.4.0"
