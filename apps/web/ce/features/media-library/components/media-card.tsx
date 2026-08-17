@@ -4,7 +4,17 @@ import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, File, Image as ImageIcon, ImageOff, Video } from "lucide-react";
+import {
+  AlertTriangle,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  File,
+  Image as ImageIcon,
+  ImageOff,
+  LoaderCircle,
+  Video,
+} from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { ETagSize, ETagVariant, Tag } from "@plane/ui";
 
@@ -19,13 +29,18 @@ import {
   isEventMediaItem,
 } from "../utils/media-event";
 
+const clampProgress = (value: unknown) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, Math.round(value)));
+};
+
 export const MediaCard = ({
   item,
   href,
   className,
   forceThumbnail: _forceThumbnail,
   label: _label,
-  onClick: _onClick,
+  onClick,
 }: {
   item: TMediaItem;
   href: string;
@@ -83,6 +98,7 @@ export const MediaCard = ({
   };
   const useCredentials = shouldUseCredentials(item.videoSrc ?? "");
   const crossOrigin = useCredentials ? "use-credentials" : "anonymous";
+  const isVideoLike = item.mediaType === "video" || item.linkedMediaType === "video";
   const LinkedTypeIcon = showLinkedTypeIndicator
     ? isEventItem
       ? Video
@@ -92,6 +108,29 @@ export const MediaCard = ({
           ? ImageIcon
           : File
     : null;
+  const showTranscodeBadge =
+    isVideoLike &&
+    Boolean(item.transcodeStatus) &&
+    (item.isTranscodeActive || item.isTranscodeFailed || item.isTranscodeComplete);
+  const transcodeProgress = clampProgress(item.transcodeProgress);
+  const TranscodeIcon = item.isTranscodeFailed ? AlertTriangle : item.isTranscodeComplete ? CheckCircle2 : LoaderCircle;
+  const transcodeBadgeClass = item.isTranscodeFailed
+    ? "bg-red-500/15 text-red-500"
+    : item.isTranscodeComplete
+      ? "bg-green-500/15 text-green-500"
+      : "bg-custom-primary-100/15 text-custom-primary-100";
+  const transcodeBadgeLabel = item.isTranscodeActive
+    ? `${item.transcodeLabel ?? "Processing"} ${transcodeProgress > 0 ? `${transcodeProgress}%` : ""}`.trim()
+    : item.transcodeLabel;
+  const isDetailDisabled = Boolean(item.isTranscodeActive);
+  const handleLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (isDetailDisabled) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    onClick?.(event, item);
+  };
 
   const thumbnailUnavailableFallback = (
     <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-custom-text-300">
@@ -175,6 +214,14 @@ export const MediaCard = ({
             )}
           </>
         )}
+        {item.isTranscodeActive ? (
+          <div className="absolute inset-x-0 bottom-0 z-10 h-1 bg-custom-background-100/70">
+            <div
+              className="h-full bg-custom-primary-100 transition-all duration-300"
+              style={{ width: `${transcodeProgress}%` }}
+            />
+          </div>
+        ) : null}
       </div>
       <div className="mt-2 space-y-1">
         <div className="flex items-center justify-between gap-2">
@@ -213,6 +260,12 @@ export const MediaCard = ({
               {eventDetails.status}
             </span>
           ) : null}
+          {showTranscodeBadge ? (
+            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 font-medium ${transcodeBadgeClass}`}>
+              <TranscodeIcon className={`h-3 w-3 ${item.isTranscodeActive ? "animate-spin" : ""}`} />
+              {transcodeBadgeLabel}
+            </span>
+          ) : null}
           {/* <span className="inline-flex items-center gap-1 rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
             <MediaTypeIcon className="h-3 w-3" strokeWidth={3.5} />
             {mediaTypeLabel}
@@ -225,12 +278,20 @@ export const MediaCard = ({
     </div>
   );
 
+  if (isDetailDisabled) {
+    return (
+      <div className="cursor-not-allowed text-left opacity-95" aria-disabled="true" title="Transcoding in progress">
+        {cardBody}
+      </div>
+    );
+  }
+
   return isExternal ? (
-    <a href={href} className="text-left">
+    <a href={href} onClick={handleLinkClick} className="text-left">
       {cardBody}
     </a>
   ) : (
-    <Link href={href} className="text-left">
+    <Link href={href} onClick={handleLinkClick} className="text-left">
       {cardBody}
     </Link>
   );

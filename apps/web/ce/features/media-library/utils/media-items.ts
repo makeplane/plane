@@ -66,6 +66,17 @@ const DOCUMENT_THUMBNAILS: Record<string, string> = {
 };
 const ARTIFACT_NAME_PATTERN = /^[A-Za-z0-9_-]+$/;
 const THUMBNAIL_HINT_KEYS = ["thumbnail", "thumbnail_url", "thumbnailUrl", "poster", "poster_url", "posterUrl"];
+const ACTIVE_TRANSCODE_STATUSES = new Set([
+  "UPLOAD_COMPLETE",
+  "QUEUED",
+  "CLAIMED",
+  "PROBING",
+  "TRANSCODING",
+  "PACKAGING",
+  "VALIDATING",
+  "RETRY_PENDING",
+]);
+const FAILED_TRANSCODE_STATUSES = new Set(["FAILED", "QUEUE_FAILED", "CANCELLED"]);
 
 const resolveArtifactPath = (path: string) => {
   if (!path) return "";
@@ -148,6 +159,67 @@ const getMetaNumber = (meta: Record<string, unknown>, keys: string[], fallback =
     }
   }
   return fallback;
+};
+
+const getMetaBoolean = (meta: Record<string, unknown>, keys: string[], fallback = false) => {
+  for (const key of keys) {
+    const value = meta[key];
+    if (typeof value === "boolean") return value;
+    if (typeof value === "string" && value.trim()) {
+      const normalized = value.trim().toLowerCase();
+      if (["1", "true", "yes"].includes(normalized)) return true;
+      if (["0", "false", "no"].includes(normalized)) return false;
+    }
+  }
+  return fallback;
+};
+
+const getTranscodeLabel = (status: string) => {
+  switch (status) {
+    case "UPLOAD_COMPLETE":
+    case "QUEUED":
+      return "Queued";
+    case "CLAIMED":
+    case "PROBING":
+      return "Preparing";
+    case "TRANSCODING":
+    case "PACKAGING":
+      return "Processing";
+    case "VALIDATING":
+      return "Finalizing";
+    case "RETRY_PENDING":
+      return "Retrying";
+    case "COMPLETED":
+      return "Ready";
+    case "CANCELLED":
+      return "Cancelled";
+    case "QUEUE_FAILED":
+    case "FAILED":
+      return "Failed";
+    default:
+      return status ? status.replace(/_/g, " ").toLowerCase() : "";
+  }
+};
+
+const getTranscodeState = (meta: Record<string, unknown>) => {
+  const status = getMetaString(meta, ["transcode_status"], "").trim().toUpperCase();
+  const progress = Math.min(100, Math.max(0, Math.round(getMetaNumber(meta, ["transcode_progress"], 0))));
+  const hlsPending = getMetaBoolean(meta, ["hls_pending", "hlsPending"], false);
+  const isComplete = status === "COMPLETED" || (!hlsPending && Boolean(getMetaString(meta, ["hls_master_playlist"], "")));
+  const isFailed = FAILED_TRANSCODE_STATUSES.has(status);
+  const isActive = !isComplete && !isFailed && (hlsPending || ACTIVE_TRANSCODE_STATUSES.has(status));
+  const error = getMetaString(meta, ["transcode_error"], "");
+  return {
+    transcodeStatus: status || undefined,
+    transcodeJobId: getMetaString(meta, ["transcode_job_id"], "") || undefined,
+    transcodeAssetId: getMetaString(meta, ["transcode_asset_id"], "") || undefined,
+    transcodeProgress: isComplete ? 100 : progress,
+    transcodeLabel: status ? getTranscodeLabel(status) : hlsPending ? "Processing" : undefined,
+    transcodeError: error || undefined,
+    isTranscodeActive: isActive,
+    isTranscodeFailed: isFailed,
+    isTranscodeComplete: isComplete,
+  };
 };
 
 const getMetaStringArray = (meta: Record<string, unknown>, key: string) => {
@@ -441,6 +513,7 @@ export const mapArtifactsToMediaItems = (artifacts: TMediaArtifact[], context?: 
       mediaType === "video" ? downloadablePath || directDownloadPath : directDownloadPath || downloadablePath;
 
     const metaThumbnail = getThumbnailHint(artifact, meta);
+    const transcodeState = getTranscodeState(meta);
     const artifactThumbnail = artifact.name ? thumbnailByLink.get(normalizeKey(artifact.name)) : "";
     const planeCoachThumbnail =
       metaSource === "plane-coach" && mediaType === "document" ? metaThumbnail || getPlaneCoachThumbnailPath() : "";
@@ -479,6 +552,7 @@ export const mapArtifactsToMediaItems = (artifacts: TMediaArtifact[], context?: 
       fileSrc: mediaType === "document" ? resolvedPath : undefined,
       downloadSrc: preferredDownloadPath || undefined,
       docs,
+      ...transcodeState,
     };
   });
 };
@@ -491,8 +565,6 @@ export const groupMediaItemsByTag = (items: TMediaItem[], fallbackTitle = "Uploa
     if (group) group.push(item);
     else grouped.set(key, [item]);
   }
-
-  console.log("Grouped Items:", items);
 
   return Array.from(grouped.entries()).map(([title, sectionItems]) => ({
     title,

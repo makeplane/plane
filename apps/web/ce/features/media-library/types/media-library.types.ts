@@ -25,6 +25,15 @@ export type TMediaItem = {
   fileSrc?: string;
   downloadSrc?: string;
   docs: string[];
+  transcodeStatus?: string;
+  transcodeJobId?: string;
+  transcodeAssetId?: string;
+  transcodeProgress?: number;
+  transcodeLabel?: string;
+  transcodeError?: string;
+  isTranscodeActive?: boolean;
+  isTranscodeFailed?: boolean;
+  isTranscodeComplete?: boolean;
 };
 
 export type TMediaSection = {

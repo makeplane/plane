@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
-import { File, Image, ImageOff, Video } from "lucide-react";
+import { AlertTriangle, CheckCircle2, File, Image, ImageOff, LoaderCircle, Video } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 import type { TMediaItem, TMediaSection } from "../types/media-library.types";
 import { getDisplayMediaTitle } from "../utils/media-detail-utils";
 import { getEventMediaDateLabel, isEventMediaItem } from "../utils/media-event";
+
+const clampProgress = (value: unknown) => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, Math.round(value)));
+};
 
 const MediaListRow = ({
   item,
@@ -56,10 +61,41 @@ const MediaListRow = ({
           ? Image
           : File
     : null;
+  const isVideoLike = item.mediaType === "video" || item.linkedMediaType === "video";
+  const showTranscodeBadge =
+    isVideoLike &&
+    Boolean(item.transcodeStatus) &&
+    (item.isTranscodeActive || item.isTranscodeFailed || item.isTranscodeComplete);
+  const TranscodeIcon = item.isTranscodeFailed ? AlertTriangle : item.isTranscodeComplete ? CheckCircle2 : LoaderCircle;
+  const transcodeBadgeClass = item.isTranscodeFailed
+    ? "bg-red-500/15 text-red-500"
+    : item.isTranscodeComplete
+      ? "bg-green-500/15 text-green-500"
+      : "bg-custom-primary-100/15 text-custom-primary-100";
+  const transcodeProgress = clampProgress(item.transcodeProgress);
+  const transcodeBadgeLabel = item.isTranscodeActive
+    ? `${item.transcodeLabel ?? "Processing"} ${transcodeProgress > 0 ? `${transcodeProgress}%` : ""}`.trim()
+    : item.transcodeLabel;
   const itemHref = getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`;
+  const isDetailDisabled = Boolean(item.isTranscodeActive);
   const handleItemClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (isDetailDisabled) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     onItemClick?.(event, item);
   };
+  const renderItemLink = (children: ReactNode, className: string) =>
+    isDetailDisabled ? (
+      <div className={`${className} cursor-not-allowed opacity-95`} aria-disabled="true" title="Transcoding in progress">
+        {children}
+      </div>
+    ) : (
+      <Link href={itemHref} onClick={handleItemClick} className={className}>
+        {children}
+      </Link>
+    );
   const thumbnailUnavailableFallback = (
     <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-custom-text-300">
       <ImageOff className="h-6 w-6" strokeWidth={2.5} />
@@ -70,7 +106,7 @@ const MediaListRow = ({
   return (
     <TableRow className="border-b border-custom-border-200 last:border-b-0 hover:bg-custom-background-80/50">
       <TableCell className="w-[140px] min-w-[140px] border-r border-custom-border-200">
-        <Link href={itemHref} onClick={handleItemClick} className="block">
+        {renderItemLink(
           <div className="relative h-16 w-28 overflow-hidden rounded-md bg-custom-background-90">
             {!isThumbnailUnavailable ? (
               <img
@@ -88,31 +124,50 @@ const MediaListRow = ({
                 <LinkedTypeIcon className="h-3.5 w-3.5" strokeWidth={3.5} />
               </span>
             ) : null}
-          </div>
-        </Link>
+            {showTranscodeBadge ? (
+              <span className={`absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full ${transcodeBadgeClass}`}>
+                <span className="sr-only">{transcodeBadgeLabel}</span>
+                <TranscodeIcon className={`h-3.5 w-3.5 ${item.isTranscodeActive ? "animate-spin" : ""}`} />
+              </span>
+            ) : null}
+            {item.isTranscodeActive ? (
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-custom-background-100/70">
+                <div
+                  className="h-full bg-custom-primary-100 transition-all duration-300"
+                  style={{ width: `${transcodeProgress}%` }}
+                />
+              </div>
+            ) : null}
+          </div>,
+          "block"
+        )}
       </TableCell>
       <TableCell className="min-w-[240px] border-r border-custom-border-200">
-        <Link href={itemHref} onClick={handleItemClick} className="block min-w-0">
-          <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{displayTitle}</div>
-          {item.description ? (
-            <div className="line-clamp-1 text-[11px] text-custom-text-300">{item.description}</div>
-          ) : null}
-        </Link>
+        {renderItemLink(
+          <>
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="line-clamp-1 min-w-0 text-sm font-semibold text-custom-text-100">{displayTitle}</div>
+              {showTranscodeBadge ? (
+                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${transcodeBadgeClass}`}>
+                  {transcodeBadgeLabel}
+                </span>
+              ) : null}
+            </div>
+            {item.description ? (
+              <div className="line-clamp-1 text-[11px] text-custom-text-300">{item.description}</div>
+            ) : null}
+          </>,
+          "block min-w-0"
+        )}
       </TableCell>
       <TableCell className="min-w-[120px] border-r border-custom-border-200 text-xs text-custom-text-300">
-        <Link href={itemHref} onClick={handleItemClick} className="block capitalize">
-          {typeLabel}
-        </Link>
+        {renderItemLink(typeLabel, "block capitalize")}
       </TableCell>
       <TableCell className="min-w-[160px] border-r border-custom-border-200 text-xs text-custom-text-300">
-        <Link href={itemHref} onClick={handleItemClick} className="block">
-          {dateLabel}
-        </Link>
+        {renderItemLink(dateLabel, "block")}
       </TableCell>
       <TableCell className="min-w-[120px] text-xs text-custom-text-300">
-        <Link href={itemHref} onClick={handleItemClick} className="block">
-          {item.primaryTag}
-        </Link>
+        {renderItemLink(item.primaryTag, "block")}
       </TableCell>
     </TableRow>
   );

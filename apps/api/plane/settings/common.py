@@ -209,9 +209,9 @@ MEDIA_URL = "/media/"
 MEDIA_LIBRARY_ROOT = os.environ.get("MEDIA_LIBRARY_ROOT", os.path.join(BASE_DIR, "media-library"))
 MEDIA_TRANSCODE_SOURCE_ROOT = os.environ.get(
     "MEDIA_TRANSCODE_SOURCE_ROOT",
-    os.path.join(BASE_DIR, "transcode-sources"),
+    "/data/uploads",
 )
-MEDIA_TRANSCODE_SOURCE_STORAGE_PREFIX = os.environ.get("MEDIA_TRANSCODE_SOURCE_STORAGE_PREFIX", "transcode-sources")
+MEDIA_TRANSCODE_SOURCE_STORAGE_PREFIX = os.environ.get("MEDIA_TRANSCODE_SOURCE_STORAGE_PREFIX", "uploads")
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
