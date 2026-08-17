@@ -8,11 +8,12 @@ import { useState } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { testhubService } from "@plane/services";
+import { gitsyncService, testhubService } from "@plane/services";
+import type { TGitSyncModuleKey } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, Spinner } from "@plane/ui";
 import { testhubErrorMessage } from "../helpers/error-message";
 
-export function FilePreviewButton({ path }: { path: string }) {
+export function FilePreviewButton({ path, moduleKey }: { path: string; moduleKey?: TGitSyncModuleKey }) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId } = useParams();
   const [open, setOpen] = useState(false);
@@ -26,7 +27,9 @@ export function FilePreviewButton({ path }: { path: string }) {
     setLoading(true);
     setError("");
     try {
-      const data = await testhubService.getFile(workspaceSlug, projectId, path);
+      const data = moduleKey
+        ? await gitsyncService.getModuleFile(workspaceSlug, projectId, moduleKey, path)
+        : await testhubService.getFile(workspaceSlug, projectId, path);
       setContent(data.content);
     } catch (err) {
       setError(testhubErrorMessage(err, t("testhub.api.load_error")));

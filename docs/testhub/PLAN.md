@@ -6,20 +6,21 @@
 
 许可证：上游 **AGPL-3.0**。自研模块同样受约束；公开 GitHub fork 会把 overlay 一并公开。
 
-对外产品名是 **TestCopilot**。代码、URL、Django app 仍用 `testhub`，避免大面积改内部标识、方便继续 merge 官方 tag。
+对外产品名是 **TestCopilot**。执行相关代码、URL、Django app 仍用 `testhub`。数据源绑定走 `plane.gitsync`。
 
 ---
 
 ## 世界观
 
-测试仓是 **repo as a platform**：能力在 git（六层目录 + CLI + INDEX），不在数据库。
+测试与规格仓是 **repo as a platform**：能力在 git（约定目录 + CLI + INDEX），不在数据库。
 
-Plane 是类 Linear 的项目管理工具（Workspace / Project / Issue / Cycle / Pages），**没有** pytest、Gherkin、CLI runner、造数编排。
+Plane 是类 Linear 的项目管理工具（Workspace / Project / Issue / Cycle / Pages）。本 fork 按 **项目成分** 展示绑定仓，而不是把仓里所有文件堆进 TestCopilot。
 
-关系：
-
-- **测试仓** = 测试平台本体（SSOT）
-- **本 fork** = 壳 + 项目管理 + 把绑定仓「实现了什么」可视化，并安全触发已有 CLI
+- **规格 / 测试 git 仓** = SSOT（可一条仓，也可分仓）
+- **配置（gitsync）** = 数据源登记 + 模块绑定 + Sync
+- **Formulation** = 被测系统有哪些场景与可复用操作
+- **环境** = 这个系统连到哪（脱敏）
+- **TestCopilot** = 引用 feature、跑白名单命令、测程与报告
 - **Issue** = 缺陷/任务，**不是**测试用例副本
 
 ```mermaid
@@ -28,22 +29,32 @@ flowchart LR
     WS[Workspace]
     PJ[Project]
     ISS[Issue_Cycle_Pages]
-    TH[TestCopilot_新增]
+    CFG[配置_gitsync]
+    F[Formulation]
+    E[环境]
+    TH[TestCopilot]
   end
-  subgraph gitRepo [测试仓_SSOT]
-    IDX[INDEX与INDEX.project]
-    L6[六层资产]
-    CLI[apps与action_words_CLI]
+  subgraph gitRepos [绑定的git工作副本]
+    Spec["规格仓_.feature"]
+    Plat[测试平台仓_CLI]
+    EnvRepo[环境模板仓]
   end
   WS --> PJ
   PJ --> ISS
-  PJ -->|"绑定 repo URL + branch"| TH
-  TH -->|"clone/sync/catalog"| gitRepo
-  TH -->|"白名单执行"| CLI
+  PJ --> CFG
+  CFG -->|"ModuleBinding features"| F
+  CFG -->|"ModuleBinding environments"| E
+  CFG -->|"ModuleBinding testhub"| TH
+  F --> Spec
+  E --> EnvRepo
+  TH --> Plat
+  TH -->|"白名单执行"| Plat
   TH -->|"失败可开"| ISS
+  F -->|"引用 path+sha"| TH
+  E -->|"测程选连接"| TH
 ```
 
-绑定：**一个 Project ↔ 一个 git URL + 一个 branch**。与测试仓 `init_repo`「一 SUT 一项目仓」一致。
+绑定：**一个 Project 下多条 `ProjectGitRemote`，每个产品模块至多绑一条**。允许三条模块指向同一条 local_mount（测试平台仓同时满足三种约定）。不再要求「一个 Project ↔ 一个 git URL」。
 
 ---
 
@@ -53,7 +64,7 @@ flowchart LR
 
 社区版扩展点 [`apps/web/app/routes/extended.ts`](../../apps/web/app/routes/extended.ts) 目前是空数组，不能当稳定插件 API；侧栏入口要自己打一小块 adapter。
 
-**不要塞进 Issue 模型**：测试用例、feature 步骤、pytest 节点、造数参数、DDL、api_objects。这些留在测试仓文件里。
+**不要塞进 Issue 模型**：测试用例、feature 步骤、pytest 节点、造数参数、DDL、api_objects、env 正文。这些留在 git 文件里。
 
 ---
 
@@ -63,7 +74,7 @@ flowchart LR
 makeplane/plane                 = upstream（只读；push 已设为 no_push）
 chenjianpeng97/plane            = origin
 C:\dev\repo\plane               = 本工作副本（只在这里写 TestCopilot overlay）
-绑定的测试 git 仓               = 测试平台仓（SSOT；路径由项目绑定与 TESTHUB_HOST_REPO 决定）
+绑定的 git 仓                   = 由配置模块的 ProjectGitRemote 指向
 C:\dev\sourcecode\plane         = 上游只读参考，不要在那里开发
 ```
 
@@ -82,32 +93,40 @@ git merge v1.x.y
 
 ## 本仓要新增的域
 
-独立 Django app `plane.testhub`（不要改 Issue 语义）。前端独立目录 + 项目侧栏 **TestCopilot**。
+独立 Django app `plane.testhub` + `plane.gitsync`。前端：`testhub` / `formulation` / `environments` / `gitsync`。
 
-### 1. ProjectTestRepo（兼容层）
+### 1. 配置：ProjectGitRemote + ModuleBinding
 
-历史一对一绑定仍保留。新绑定走独立 app `plane.gitsync`：**ProjectGitRemote**（`local_mount` / 预留 `git_url`）+ **ModuleBinding**（`testhub` 等模块指向一条数据源）。TestCopilot 读绑定仓的工作副本；测程等 overlay 只存在 testhub 表，不回写 git。
+见 [`apps/api/plane/gitsync/`](../../apps/api/plane/gitsync/)。
 
-一对一挂在现有 `plane.db.models.project.Project` 的影子记录仍可被 catalog 回退使用。未绑定则 TestCopilot 显示引导，不报错。绑定入口在侧栏 **配置**，TestCopilot 内页改为选择已有数据源。
+- **ProjectGitRemote**：`local_mount`（本阶段）/ 预留 `git_url`
+- **ModuleBinding**：`testhub` | `features`（Formulation）| `environments` | `wiki` | `prd` 各指向一条 Remote
+- 文件夹靠 registry 约定发现，不入库
+- 历史 `ProjectTestRepo` 仍可被 testhub catalog 回退
 
-### 2. CatalogSnapshot
+未绑定则对应产品页显示引导，链到配置，不报错。
 
-UI 不要每次全量扫树。测试仓应提供机器可读 catalog（测试仓侧建议 `python -m apps.index_platform`，**在测试仓实现，不在本仓重写扫描逻辑**）。
+### 2. 约定目录
 
-快照建议字段：
+| 产品模块    | `module_key`   | 约定                                                                                                            |
+| ----------- | -------------- | --------------------------------------------------------------------------------------------------------------- |
+| Formulation | `features`     | `./*/feature/**/*.feature`；若存在则读 `packages/action_words`、`packages/api_objects`、`packages/page_objects` |
+| 环境        | `environments` | `config/env.py`、`env/*.yaml`（非 `*local*`）；`assets/ddl/`、`assets/sql/`。永不读 `env_local.py` 或密钥值     |
+| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI                                                                 |
+| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                  |
 
-- 知识层：DDL 按 datasource 的表文件数、`assets/sql` 列表
-- 组件层：api_objects 条数/前缀、page_objects、action words（`word_id` / `name` / `category` / JSON Schema）
-- 工具层：app id、参数 schema、是否破坏性、README 路径
-- 测试层：`.feature` 的 Feature/Scenario/Tags；pytest 收集节点
-- 数据层：`data/` 文件列表
-- git：branch、HEAD sha
+**只读自己绑定的 workdir。** 共仓时磁盘上自然能看到全套目录；分仓时各看各的。Formulation 不偷偷读 testhub catalog。
 
-本仓只存 **CatalogSnapshot**（project + sha）。列表数字全部来自快照。
+测程引用存 `module_key=features`、相对路径、Formulation remote 的 git sha。执行仍在 testhub workdir。分仓时由测试平台仓解析同名场景；对不齐则报告标未找到。
 
-造数表单直接消费测试仓 `packages.action_words.export_catalog()` + `Params.model_json_schema()`，不要再发明参数模型。
+### 3. Catalog
 
-### 3. RepoRunner（Plane 没有的能力）
+- **TestCopilot**：测试仓 `python -m apps.index_platform` 写入 `CatalogSnapshot`。本仓不重写那套扫描。
+- **Formulation / 环境**：本仓薄约定扫描，经 `GET .../gitsync/modules/<key>/catalog/` 暴露。规格仓往往没有 `index_platform`。
+
+造数表单仍消费 testhub catalog 里测试仓 `export_catalog()` + JSON Schema。
+
+### 4. RepoRunner（Plane 没有的能力）
 
 API 容器默认到不了 SUT，也不该任意 `subprocess`。执行必须是旁路 Agent：
 
@@ -117,12 +136,11 @@ sequenceDiagram
   participant API as testhubAPI
   participant Celery as Celery
   participant Agent as RepoRunner
-  participant Repo as git工作副本
+  participant Repo as testhub工作副本
   participant SUT as 被测系统
   UI->>API: 触发允许的作业
   API->>Celery: 入队 Job
   Celery->>Agent: 下发白名单命令
-  Agent->>Repo: fetch指定branch
   Agent->>Repo: 注入运行时密钥为环境变量
   Agent->>Repo: python -m apps.xxx 或 action_words 或 pytest/behave
   Repo->>SUT: dump_ddl_db_seed_API
@@ -140,35 +158,35 @@ sequenceDiagram
 
 `apps.recorder` 是长驻代理，不是一次性 Job；P2 不做，P4 单独立项。
 
-### 4. UI 信息架构
+### 5. UI 信息架构
 
-项目侧栏 **TestCopilot** 子页：
+项目侧栏与 Work items 同级：
 
-1. 总览 — 绑定信息、HEAD、六层计数
-2. 知识 — DDL/SQL/usecases 只读（分页，勿一次拉全部表正文）
-3. 组件 — api_objects 路由树、page_objects、action words
-4. 工具 — apps 卡片 + 运行表单
-5. 造数/动作 — 按 `db_seed` / `db_assert` / `api_request` / `api_assert`；结果展示 `cleanup`
-6. 测试 — Feature 树 + pytest 收集树；按 tag/路径筛选后运行
-7. 作业 — 历史、日志、产物；失败一键创建 Issue（链到 Job，不复制用例正文）
-8. 环境 — 数据源别名、连通性（不显示密码）
+1. **Formulation** — 场景 / 动作 / 实现（只读）。不跑测。
+2. **环境** — 连接（脱敏）/ 结构（DDL、SQL）。无仓库绑定 Tab。
+3. **TestCopilot** — 测程与报告、作业、工具、造数、pytest 节点。
+4. **配置** — 数据源 + 模块绑定 + Sync。
 
-后期 xmind 等：作为测试仓知识层新类型进入 catalog，不必改 Plane 核心。
+旧 URL：`/testhub/tests` → Formulation 场景；`/testhub/components` → 实现；`/testhub/knowledge` → 环境结构。
+
+测程（`TesthubSession`）存引用，不存 Gherkin 正文。失败一键开 Issue（链 Job + 场景名）。
 
 ---
 
 ## 隔离策略（否则合不进上游）
 
-- 自研放 `apps/api/plane/testhub/`、前端 testhub 目录；少改同一上游文件
+- 自研放 `apps/api/plane/testhub/`、`apps/api/plane/gitsync/`、对应前端目录；少改同一上游文件
 - 必须改的核心文件收成最小 adapter（侧栏常量 + route 合并 + `INSTALLED_APPS` 一行）
 - 不改 Issue/Cycle 表语义
 
 ### 明确不做
 
-- 不在 Plane DB 编辑/保存 `.feature` 或 pytest 作为主副本
+- 不在 Plane DB 编辑/保存 `.feature` 或 pytest 或 env 作为主副本
 - 不把测试仓 `.cursor` skill/agent 搬进 Web
 - 不在 Web 重写测试仓 `packages.db` / 造数 SQL
-- 首期：不多 branch 并行绑定、无任意 SQL 控制台、无 recorder 常驻
+- 不在 Formulation 做编辑器，不回写 git
+- 不为 Formulation / 环境再拆 Django app
+- 首期：无任意 SQL 控制台、无 recorder 常驻
 
 ---
 
@@ -187,6 +205,13 @@ sequenceDiagram
 - pytest：`--collect-only` 或静态收集
 - api_objects 路由树、action words describe + schema
 - DDL/SQL 索引（点开再拉单文件）
+
+### P1b — 项目成分与分模块绑定
+
+- `plane.gitsync` 多 Remote + ModuleBinding
+- Formulation / 环境 / TestCopilot 一级入口
+- 约定 catalog/files；Sync fan-out
+- 测程引用 stub（空报告，尚未接 behave）
 
 ### P2 — 编排执行
 
@@ -212,5 +237,6 @@ sequenceDiagram
 - Runner 必须能访问 SUT；Plane Web 不必
 - 团队共用 Runner 时密钥必须在项目密钥库，不能只靠工程师本机 `env_local.py`
 - 工作副本以绑定 branch 的最新 fetch 为准，不含未推送的本地脏文件
+- Formulation 与 testhub 分仓时，feature 路径必须在执行仓能解析
 - Plane 官方建议约 12GB RAM；不要把 pytest 跑进 API 容器
 - 大面积改核心文件 = fork 失去「吸收官方 bugfix」的意义

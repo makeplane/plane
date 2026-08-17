@@ -16,12 +16,14 @@ from plane.gitsync.models import ProjectGitRemote
 from plane.gitsync.registry import MODULE_TESTHUB
 from plane.testhub.enqueue import TesthubJobConflict, enqueue_index_platform
 from plane.testhub.files import FileAccessError, resolve_repo_file
-from plane.testhub.models import CatalogSnapshot, TesthubAssetOverlay, TesthubJob
+from plane.testhub.models import CatalogSnapshot, TesthubAssetOverlay, TesthubJob, TesthubSession
 from plane.testhub.serializers import (
     CatalogSnapshotSerializer,
     TesthubAssetOverlaySerializer,
     TesthubJobSerializer,
+    TesthubSessionSerializer,
 )
+from plane.testhub.sessions import SessionSelectionError, clean_session_selection
 from plane.testhub.sources import TesthubUnbound, testhub_repo_payload, testhub_workdir
 from plane.testhub.whitelist import WhitelistError, build_argv, is_destructive
 
@@ -184,3 +186,36 @@ class TesthubOverlayEndpoint(BaseAPIView):
             defaults={"workspace_id": project.workspace_id, "payload": payload},
         )
         return Response(TesthubAssetOverlaySerializer(overlay).data, status=status.HTTP_200_OK)
+
+
+class TesthubSessionEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, pk=None):
+        if pk:
+            session = TesthubSession.objects.get(pk=pk, project_id=project_id)
+            return Response(TesthubSessionSerializer(session).data, status=status.HTTP_200_OK)
+        sessions = TesthubSession.objects.filter(project_id=project_id).order_by("-created_at")[:100]
+        return Response(TesthubSessionSerializer(sessions, many=True).data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id):
+        project = _project(slug, project_id)
+        name = str(request.data.get("name") or "").strip()
+        if not name:
+            return Response({"error": "name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            cleaned = clean_session_selection(request.data.get("selection") or [])
+        except SessionSelectionError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        session = TesthubSession.objects.create(
+            project=project,
+            workspace_id=project.workspace_id,
+            name=name,
+            feature_source_module=str(request.data.get("feature_source_module") or "features"),
+            feature_sha=str(request.data.get("feature_sha") or ""),
+            environment_id=str(request.data.get("environment_id") or ""),
+            selection=cleaned,
+            summary={"passed": 0, "failed": 0, "skipped": 0, "pending": len(cleaned)},
+            requested_by=request.user,
+        )
+        return Response(TesthubSessionSerializer(session).data, status=status.HTTP_201_CREATED)

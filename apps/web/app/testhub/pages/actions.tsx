@@ -47,7 +47,7 @@ function ActionsPage() {
   const destructive = selected.startsWith("db_seed.") || selected.startsWith("api_request.");
 
   if (loading) return <TesthubPageLoader />;
-  if (!catalog?.repo) return <TesthubUnbound href={`${base}/bind`} />;
+  if (!catalog?.repo) return <TesthubUnbound href={`/${workspaceSlug}/projects/${projectId}/gitsync`} />;
 
   const run = async () => {
     if (!workspaceSlug || !projectId || !selected) return;

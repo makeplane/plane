@@ -5,12 +5,11 @@
     "nav": {
       "overview": "总览",
       "bind": "仓库",
-      "knowledge": "知识",
-      "components": "组件",
       "tools": "工具",
       "actions": "造数/动作",
-      "tests": "测试",
-      "jobs": "作业"
+      "jobs": "作业",
+      "sessions": "测程",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "绑定 TestCopilot 数据源",
@@ -120,6 +119,23 @@
     "file": {
       "close": "关闭",
       "loading": "加载中…"
+    },
+    "sessions": {
+      "title": "测程",
+      "new": "新建测程",
+      "empty": "还没有测程。",
+      "empty_description": "引用 Formulation 场景来记录测程。在关联运行之前，报告保持为空。",
+      "name": "名称",
+      "environment": "环境",
+      "create": "创建测程",
+      "created": "创建时间",
+      "status": "状态",
+      "pending": "待执行",
+      "selection": "选择",
+      "report": "报告",
+      "sha": "Feature SHA",
+      "open_scene": "在 Formulation 中打开",
+      "none_selected": "请至少选择一个场景。"
     }
   }
 }

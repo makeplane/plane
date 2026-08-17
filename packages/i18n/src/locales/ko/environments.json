@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "환경",
+    "sidebar": "환경",
+    "nav": {
+      "connections": "연결",
+      "schema": "스키마"
+    },
+    "unbound": "환경이 데이터 소스에 바인딩되지 않았습니다.",
+    "unbound_description": "구성에서 환경을 git workdir에 바인딩하세요. env 템플릿과 DDL을 읽습니다. 비밀 값은 표시되지 않습니다.",
+    "cta": "구성 열기",
+    "sync": "동기화",
+    "syncing": "동기화 중…",
+    "head": "HEAD",
+    "status": "동기화 상태",
+    "open": "열기",
+    "empty": "표시할 항목이 없습니다.",
+    "targets": "대상",
+    "datasources": "데이터 소스",
+    "secret_keys": "비밀 키(이름만)",
+    "variables": "변수",
+    "source": "소스",
+    "filter": "테이블 필터",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "이 필터와 일치하는 결과가 없습니다.",
+    "redacted_hint": "비밀번호와 토큰은 가려집니다. 로컬 env 파일은 읽지 않습니다."
+  }
+}

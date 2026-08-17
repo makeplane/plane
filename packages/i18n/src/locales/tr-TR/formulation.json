@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Sahneler",
+      "action_words": "Action words",
+      "automation": "Otomasyon"
+    },
+    "unbound": "Formulation bir veri kaynağına bağlı değil.",
+    "unbound_description": "Yapılandırma içinde Formulation’ı bir git workdir’e bağlayın. ./*/feature/ dizinini kurala göre okur.",
+    "cta": "Yapılandırmayı aç",
+    "sync": "Senkronize et",
+    "syncing": "Senkronize ediliyor…",
+    "head": "HEAD",
+    "status": "Senkronizasyon durumu",
+    "open": "Aç",
+    "cite": "TestCopilot’ta kullan",
+    "empty": "Gösterilecek bir şey yok.",
+    "filter_words": "Action words ara",
+    "filter_apis": "API ara",
+    "no_apis": "Bu workdir’de API object yok.",
+    "no_selection": "Belgesini görmek için bir API seçin.",
+    "page_objects": "Page objects"
+  }
+}

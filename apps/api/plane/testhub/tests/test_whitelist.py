@@ -47,6 +47,26 @@ def test_overlay_is_not_a_runner_command():
         build_argv("git")
 
 
+def test_session_selection_keeps_only_path_and_name():
+    from plane.testhub.sessions import SessionSelectionError, clean_session_selection
+
+    cleaned = clean_session_selection(
+        [
+            {
+                "feature_path": "billing/feature/invoice.feature",
+                "scenario_name": "Create invoice",
+                "body": "Given I seed invoices",
+                "gherkin": "Feature: Invoice",
+            }
+        ]
+    )
+    assert cleaned == [
+        {"feature_path": "billing/feature/invoice.feature", "scenario_name": "Create invoice"}
+    ]
+    with pytest.raises(SessionSelectionError):
+        clean_session_selection({"feature_path": "x.feature"})
+
+
 def test_file_allowlist(tmp_path):
     (tmp_path / "assets" / "ddl" / "main").mkdir(parents=True)
     target = tmp_path / "assets" / "ddl" / "main" / "invoice.sql"

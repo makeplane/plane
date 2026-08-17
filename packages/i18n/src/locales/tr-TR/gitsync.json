@@ -40,16 +40,18 @@
       "save": "Bağlamaları kaydet",
       "saved": "Modül bağlamaları kaydedildi.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Kural"
+      "convention": "Kural",
+      "environments": "Ortam"
     },
     "conventions": {
-      "testhub": "Bir test platformu deposu bekler: apps.index_platform, ./*/feature/, action words ve izin listesindeki CLI’ler.",
-      "features": "Bağlı çalışma dizininden ./*/feature/ okur. TestCopilot kaynağını paylaşabilir.",
+      "testhub": "Bir test platformu deposu bekler: apps.index_platform, action words ve allowlist CLI’ları.",
+      "features": "./*/feature/ dizinini ve varsa packages/action_words, packages/api_objects ve packages/page_objects öğelerini okur. TestCopilot veri kaynağını paylaşabilir.",
       "wiki": "Bağlı çalışma dizinindeki docs/ veya wiki/ markdown dosyalarını okur.",
-      "prd": "Bağlı çalışma dizinindeki prd/ markdown dosyalarını okur."
+      "prd": "Bağlı çalışma dizinindeki prd/ markdown dosyalarını okur.",
+      "environments": "config/env.py ve env/*.yaml şablonlarını, ayrıca assets/ddl ve assets/sql öğelerini okur. env_local veya gizli değerleri asla okumaz."
     }
   }
 }

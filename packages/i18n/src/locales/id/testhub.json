@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Ringkasan",
       "bind": "Repositori",
-      "knowledge": "Pengetahuan",
-      "components": "Komponen",
       "tools": "Alat",
       "actions": "Aksi",
-      "tests": "Tes",
-      "jobs": "Job"
+      "jobs": "Job",
+      "sessions": "Sesi",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Ikat sumber TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Tutup",
       "loading": "Memuat…"
+    },
+    "sessions": {
+      "title": "Sesi",
+      "new": "Sesi baru",
+      "empty": "Belum ada sesi.",
+      "empty_description": "Rujuk adegan Formulation untuk mencatat sesi. Laporan tetap kosong sampai ada run yang dilampirkan.",
+      "name": "Nama",
+      "environment": "Lingkungan",
+      "create": "Buat sesi",
+      "created": "Dibuat",
+      "status": "Status",
+      "pending": "Tertunda",
+      "selection": "Pilihan",
+      "report": "Laporan",
+      "sha": "Feature SHA",
+      "open_scene": "Buka di Formulation",
+      "none_selected": "Pilih setidaknya satu skenario."
     }
   }
 }

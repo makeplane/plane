@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Visão geral",
       "bind": "Repositório",
-      "knowledge": "Conhecimento",
-      "components": "Componentes",
       "tools": "Ferramentas",
       "actions": "Ações",
-      "tests": "Testes",
-      "jobs": "Jobs"
+      "jobs": "Jobs",
+      "sessions": "Sessões",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Vincular fonte do TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Fechar",
       "loading": "Carregando…"
+    },
+    "sessions": {
+      "title": "Sessões",
+      "new": "Nova sessão",
+      "empty": "Ainda não há sessões.",
+      "empty_description": "Referencie cenas do Formulation para registrar uma sessão. Os relatórios ficam vazios até haver uma execução.",
+      "name": "Nome",
+      "environment": "Ambiente",
+      "create": "Criar sessão",
+      "created": "Criado",
+      "status": "Status",
+      "pending": "Pendente",
+      "selection": "Seleção",
+      "report": "Relatório",
+      "sha": "Feature SHA",
+      "open_scene": "Abrir no Formulation",
+      "none_selected": "Selecione pelo menos um cenário."
     }
   }
 }

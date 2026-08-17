@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Ambiente",
+    "sidebar": "Ambiente",
+    "nav": {
+      "connections": "Conexões",
+      "schema": "Esquema"
+    },
+    "unbound": "Ambiente não está vinculado a uma origem de dados.",
+    "unbound_description": "Em Configuração, vincule Ambiente a um workdir git. Lê modelos env e DDL. Segredos nunca são exibidos.",
+    "cta": "Abrir configuração",
+    "sync": "Sincronizar",
+    "syncing": "Sincronizando…",
+    "head": "HEAD",
+    "status": "Status da sincronização",
+    "open": "Abrir",
+    "empty": "Nada para mostrar ainda.",
+    "targets": "Destinos",
+    "datasources": "Fontes de dados",
+    "secret_keys": "Chaves secretas (somente nomes)",
+    "variables": "Variáveis",
+    "source": "Origem",
+    "filter": "Filtrar tabelas",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Nenhum resultado corresponde a este filtro.",
+    "redacted_hint": "Senhas e tokens são ocultados. Arquivos env locais nunca são lidos."
+  }
+}

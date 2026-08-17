@@ -11,6 +11,8 @@ import type {
   TTesthubJob,
   TTesthubJobCreate,
   TTesthubRepo,
+  TTesthubSession,
+  TTesthubSessionCreate,
 } from "@plane/types";
 import { APIService } from "../api.service";
 
@@ -109,6 +111,30 @@ export class TesthubService extends APIService {
     data: { asset_ref: string; kind?: string; payload?: Record<string, unknown> }
   ): Promise<TTesthubAssetOverlay> {
     return this.put(`${this.root(workspaceSlug, projectId)}/overlays/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async listSessions(workspaceSlug: string, projectId: string): Promise<TTesthubSession[]> {
+    return this.get(`${this.root(workspaceSlug, projectId)}/sessions/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getSession(workspaceSlug: string, projectId: string, sessionId: string): Promise<TTesthubSession> {
+    return this.get(`${this.root(workspaceSlug, projectId)}/sessions/${sessionId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createSession(workspaceSlug: string, projectId: string, data: TTesthubSessionCreate): Promise<TTesthubSession> {
+    return this.post(`${this.root(workspaceSlug, projectId)}/sessions/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

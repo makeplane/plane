@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Skenario",
+      "action_words": "Action words",
+      "automation": "Otomasi"
+    },
+    "unbound": "Formulation belum terikat ke sumber data.",
+    "unbound_description": "Di Konfigurasi, ikat Formulation ke workdir git. Membaca ./*/feature/ menurut konvensi.",
+    "cta": "Buka Konfigurasi",
+    "sync": "Sinkronkan",
+    "syncing": "Menyinkronkan…",
+    "head": "HEAD",
+    "status": "Status sinkronisasi",
+    "open": "Buka",
+    "cite": "Gunakan di TestCopilot",
+    "empty": "Belum ada yang ditampilkan.",
+    "filter_words": "Cari action words",
+    "filter_apis": "Cari API",
+    "no_apis": "Tidak ada API objects di workdir ini.",
+    "no_selection": "Pilih API untuk melihat dokumentasinya.",
+    "page_objects": "Page objects"
+  }
+}

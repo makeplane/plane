@@ -5,12 +5,11 @@
     "nav": {
       "overview": "概要",
       "bind": "リポジトリ",
-      "knowledge": "知識",
-      "components": "コンポーネント",
       "tools": "ツール",
       "actions": "アクション",
-      "tests": "テスト",
-      "jobs": "ジョブ"
+      "jobs": "ジョブ",
+      "sessions": "セッション",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "TestCopilot のソースをバインド",
@@ -120,6 +119,23 @@
     "file": {
       "close": "閉じる",
       "loading": "読み込み中…"
+    },
+    "sessions": {
+      "title": "セッション",
+      "new": "新しいセッション",
+      "empty": "セッションはまだありません。",
+      "empty_description": "Formulation のシーンを参照してセッションを記録します。実行を関連付けるまでレポートは空です。",
+      "name": "名前",
+      "environment": "環境",
+      "create": "セッションを作成",
+      "created": "作成日時",
+      "status": "ステータス",
+      "pending": "保留",
+      "selection": "選択",
+      "report": "レポート",
+      "sha": "Feature SHA",
+      "open_scene": "Formulation で開く",
+      "none_selected": "少なくとも 1 つのシナリオを選択してください。"
     }
   }
 }

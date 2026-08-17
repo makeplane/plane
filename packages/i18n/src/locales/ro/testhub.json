@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Prezentare",
       "bind": "Depozit",
-      "knowledge": "Cunoștințe",
-      "components": "Componente",
       "tools": "Instrumente",
       "actions": "Acțiuni",
-      "tests": "Teste",
-      "jobs": "Joburi"
+      "jobs": "Joburi",
+      "sessions": "Sesiuni",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Legați sursa TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Închide",
       "loading": "Se încarcă…"
+    },
+    "sessions": {
+      "title": "Sesiuni",
+      "new": "Sesiune nouă",
+      "empty": "Nicio sesiune încă.",
+      "empty_description": "Faceți referire la scene Formulation pentru a înregistra o sesiune. Rapoartele rămân goale până se leagă o rulare.",
+      "name": "Nume",
+      "environment": "Mediu",
+      "create": "Creează sesiunea",
+      "created": "Creat",
+      "status": "Stare",
+      "pending": "În așteptare",
+      "selection": "Selecție",
+      "report": "Raport",
+      "sha": "Feature SHA",
+      "open_scene": "Deschide în Formulation",
+      "none_selected": "Selectați cel puțin un scenariu."
     }
   }
 }

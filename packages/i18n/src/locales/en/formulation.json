@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Scenes",
+      "action_words": "Action words",
+      "automation": "Automation"
+    },
+    "unbound": "Formulation is not bound to a data source.",
+    "unbound_description": "In Configuration, bind Formulation to a git workdir. It reads ./*/feature/ by convention.",
+    "cta": "Open Configuration",
+    "sync": "Sync",
+    "syncing": "Syncing…",
+    "head": "HEAD",
+    "status": "Sync status",
+    "open": "Open",
+    "cite": "Use in TestCopilot",
+    "empty": "Nothing to show yet.",
+    "filter_words": "Search action words",
+    "filter_apis": "Search APIs",
+    "no_apis": "No API objects in this workdir.",
+    "no_selection": "Select an API to view its documentation.",
+    "page_objects": "Page objects"
+  }
+}

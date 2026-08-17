@@ -28,7 +28,7 @@ function ToolsPage() {
   const base = `/${workspaceSlug}/projects/${projectId}/testhub`;
 
   if (loading) return <TesthubPageLoader />;
-  if (!catalog?.repo) return <TesthubUnbound href={`${base}/bind`} />;
+  if (!catalog?.repo) return <TesthubUnbound href={`/${workspaceSlug}/projects/${projectId}/gitsync`} />;
 
   const tools = catalog.snapshot?.payload?.tools ?? [];
 

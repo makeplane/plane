@@ -11,12 +11,11 @@ import { cn } from "@plane/utils";
 
 export const TESTHUB_NAV = [
   { key: "overview", path: "", i18n: "testhub.nav.overview" },
-  { key: "knowledge", path: "/knowledge", i18n: "testhub.nav.knowledge" },
-  { key: "components", path: "/components", i18n: "testhub.nav.components" },
+  { key: "sessions", path: "/sessions", i18n: "testhub.nav.sessions" },
   { key: "tools", path: "/tools", i18n: "testhub.nav.tools" },
   { key: "actions", path: "/actions", i18n: "testhub.nav.actions" },
-  { key: "tests", path: "/tests", i18n: "testhub.nav.tests" },
   { key: "jobs", path: "/jobs", i18n: "testhub.nav.jobs" },
+  { key: "pytest", path: "/pytest", i18n: "testhub.nav.pytest" },
   { key: "bind", path: "/bind", i18n: "testhub.nav.bind" },
 ] as const;
 

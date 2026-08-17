@@ -40,16 +40,18 @@
       "save": "Salvar vínculos",
       "saved": "Vínculos de módulos salvos.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Convenção"
+      "convention": "Convenção",
+      "environments": "Ambiente"
     },
     "conventions": {
-      "testhub": "Espera um repositório da plataforma de testes: apps.index_platform, ./*/feature/, action words e CLIs na allowlist.",
-      "features": "Lê ./*/feature/ do workdir vinculado. Pode compartilhar a fonte do TestCopilot.",
+      "testhub": "Espera um repositório de plataforma de testes: apps.index_platform, action words e CLIs na allowlist.",
+      "features": "Lê ./*/feature/ e, se existirem, packages/action_words, packages/api_objects e packages/page_objects. Pode compartilhar a origem do TestCopilot.",
       "wiki": "Lê markdown de docs/ ou wiki/ no workdir vinculado.",
-      "prd": "Lê markdown de prd/ no workdir vinculado."
+      "prd": "Lê markdown de prd/ no workdir vinculado.",
+      "environments": "Lê config/env.py e modelos env/*.yaml mais assets/ddl e assets/sql. Nunca lê env_local nem valores secretos."
     }
   }
 }

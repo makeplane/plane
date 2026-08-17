@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Сцени",
+      "action_words": "Action words",
+      "automation": "Автоматизація"
+    },
+    "unbound": "Formulation не прив’язано до джерела даних.",
+    "unbound_description": "У конфігурації прив’яжіть Formulation до git workdir. Він читає ./*/feature/ за домовленістю.",
+    "cta": "Відкрити конфігурацію",
+    "sync": "Синхронізувати",
+    "syncing": "Синхронізація…",
+    "head": "HEAD",
+    "status": "Статус синхронізації",
+    "open": "Відкрити",
+    "cite": "Використати в TestCopilot",
+    "empty": "Поки нічого показувати.",
+    "filter_words": "Шукати action words",
+    "filter_apis": "Шукати API",
+    "no_apis": "У цьому workdir немає API objects.",
+    "no_selection": "Виберіть API, щоб переглянути документацію.",
+    "page_objects": "Page objects"
+  }
+}

@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Tổng quan",
       "bind": "Kho mã",
-      "knowledge": "Tri thức",
-      "components": "Thành phần",
       "tools": "Công cụ",
       "actions": "Hành động",
-      "tests": "Kiểm thử",
-      "jobs": "Job"
+      "jobs": "Job",
+      "sessions": "Phiên",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Gắn nguồn TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Đóng",
       "loading": "Đang tải…"
+    },
+    "sessions": {
+      "title": "Phiên",
+      "new": "Phiên mới",
+      "empty": "Chưa có phiên nào.",
+      "empty_description": "Tham chiếu cảnh Formulation để ghi phiên. Báo cáo trống cho đến khi gắn một lần chạy.",
+      "name": "Tên",
+      "environment": "Môi trường",
+      "create": "Tạo phiên",
+      "created": "Đã tạo",
+      "status": "Trạng thái",
+      "pending": "Đang chờ",
+      "selection": "Lựa chọn",
+      "report": "Báo cáo",
+      "sha": "Feature SHA",
+      "open_scene": "Mở trong Formulation",
+      "none_selected": "Chọn ít nhất một kịch bản."
     }
   }
 }

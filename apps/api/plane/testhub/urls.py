@@ -10,6 +10,7 @@ from plane.testhub.views import (
     TesthubFileEndpoint,
     TesthubJobEndpoint,
     TesthubOverlayEndpoint,
+    TesthubSessionEndpoint,
     TesthubSyncEndpoint,
 )
 
@@ -48,5 +49,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/testhub/overlays/",
         TesthubOverlayEndpoint.as_view(),
         name="testhub-overlays",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/testhub/sessions/",
+        TesthubSessionEndpoint.as_view(),
+        name="testhub-sessions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/testhub/sessions/<uuid:pk>/",
+        TesthubSessionEndpoint.as_view(),
+        name="testhub-session-detail",
     ),
 ]

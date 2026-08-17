@@ -18,7 +18,7 @@ export function gitsyncNavigationItems(workspaceSlug: string, projectId: string)
       icon: FolderGit2,
       access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
       shouldRender: true,
-      sortOrder: 8,
+      sortOrder: 10,
     },
   ];
 }

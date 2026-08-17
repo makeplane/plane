@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Umgebung",
+    "sidebar": "Umgebung",
+    "nav": {
+      "connections": "Verbindungen",
+      "schema": "Schema"
+    },
+    "unbound": "Umgebung ist an keine Datenquelle gebunden.",
+    "unbound_description": "Binden Sie die Umgebung in der Konfiguration an ein Git-Workdir. Es liest Env-Vorlagen und DDL. Geheimnisse werden nie angezeigt.",
+    "cta": "Konfiguration öffnen",
+    "sync": "Synchronisieren",
+    "syncing": "Synchronisierung…",
+    "head": "HEAD",
+    "status": "Sync-Status",
+    "open": "Öffnen",
+    "empty": "Noch nichts anzuzeigen.",
+    "targets": "Ziele",
+    "datasources": "Datenquellen",
+    "secret_keys": "Geheimschlüssel (nur Namen)",
+    "variables": "Variablen",
+    "source": "Quelle",
+    "filter": "Tabellen filtern",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Keine Ergebnisse für diesen Filter.",
+    "redacted_hint": "Passwörter und Tokens sind geschwärzt. Lokale Env-Dateien werden nie gelesen."
+  }
+}

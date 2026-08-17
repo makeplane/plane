@@ -5,12 +5,11 @@
     "nav": {
       "overview": "總覽",
       "bind": "倉庫",
-      "knowledge": "知識",
-      "components": "元件",
       "tools": "工具",
       "actions": "造數/動作",
-      "tests": "測試",
-      "jobs": "作業"
+      "jobs": "作業",
+      "sessions": "測程",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "綁定 TestCopilot 資料來源",
@@ -120,6 +119,23 @@
     "file": {
       "close": "關閉",
       "loading": "載入中…"
+    },
+    "sessions": {
+      "title": "測程",
+      "new": "新增測程",
+      "empty": "還沒有測程。",
+      "empty_description": "引用 Formulation 場景來記錄測程。在關聯執行之前，報告保持為空。",
+      "name": "名稱",
+      "environment": "環境",
+      "create": "建立測程",
+      "created": "建立時間",
+      "status": "狀態",
+      "pending": "待執行",
+      "selection": "選取",
+      "report": "報告",
+      "sha": "Feature SHA",
+      "open_scene": "在 Formulation 中開啟",
+      "none_selected": "請至少選取一個場景。"
     }
   }
 }

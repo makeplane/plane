@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Übersicht",
       "bind": "Repository",
-      "knowledge": "Wissen",
-      "components": "Komponenten",
       "tools": "Werkzeuge",
       "actions": "Aktionen",
-      "tests": "Tests",
-      "jobs": "Jobs"
+      "jobs": "Jobs",
+      "sessions": "Sitzungen",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "TestCopilot-Quelle binden",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Schließen",
       "loading": "Wird geladen…"
+    },
+    "sessions": {
+      "title": "Sitzungen",
+      "new": "Neue Sitzung",
+      "empty": "Noch keine Sitzungen.",
+      "empty_description": "Referenzieren Sie Formulation-Szenen, um eine Sitzung festzuhalten. Berichte bleiben leer, bis ein Lauf verknüpft ist.",
+      "name": "Name",
+      "environment": "Umgebung",
+      "create": "Sitzung erstellen",
+      "created": "Erstellt",
+      "status": "Status",
+      "pending": "Ausstehend",
+      "selection": "Auswahl",
+      "report": "Bericht",
+      "sha": "Feature SHA",
+      "open_scene": "In Formulation öffnen",
+      "none_selected": "Wählen Sie mindestens ein Szenario."
     }
   }
 }

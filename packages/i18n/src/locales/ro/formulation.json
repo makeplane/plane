@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Scene",
+      "action_words": "Action words",
+      "automation": "Automatizare"
+    },
+    "unbound": "Formulation nu este legat de o sursă de date.",
+    "unbound_description": "În Configurare, legați Formulation de un workdir git. Citește ./*/feature/ prin convenție.",
+    "cta": "Deschide configurarea",
+    "sync": "Sincronizează",
+    "syncing": "Se sincronizează…",
+    "head": "HEAD",
+    "status": "Stare sincronizare",
+    "open": "Deschide",
+    "cite": "Folosește în TestCopilot",
+    "empty": "Nimic de afișat încă.",
+    "filter_words": "Caută action words",
+    "filter_apis": "Caută API-uri",
+    "no_apis": "Nu există API objects în acest workdir.",
+    "no_selection": "Selectați un API pentru a vedea documentația.",
+    "page_objects": "Page objects"
+  }
+}

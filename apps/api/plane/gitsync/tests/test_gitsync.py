@@ -4,7 +4,7 @@
 
 import pytest
 
-from plane.gitsync.registry import MODULE_KEYS, MODULE_REGISTRY, MODULE_TESTHUB, is_known_module, module_catalog
+from plane.gitsync.registry import MODULE_KEYS, MODULE_REGISTRY, MODULE_ENVIRONMENTS, MODULE_TESTHUB, is_known_module, module_catalog
 from plane.gitsync.workdir import (
     GitUrlNotImplemented,
     WorkdirError,
@@ -25,6 +25,8 @@ def test_module_registry_is_read_only_git():
         assert item["mutate_git"] is False
     assert "exec_whitelist" in MODULE_REGISTRY[MODULE_TESTHUB]["capabilities"]
     assert is_known_module("testhub")
+    assert is_known_module(MODULE_ENVIRONMENTS)
+    assert "environments" in MODULE_KEYS
     assert not is_known_module("issues")
 
 
@@ -73,3 +75,63 @@ def test_git_url_workdir_ready_when_clone_exists(monkeypatch):
 
     monkeypatch.setattr(Path, "is_dir", fake_is_dir)
     assert ensure_workdir_ready("git_url", reserved) == reserved
+
+
+def test_scan_features_and_environments(tmp_path):
+    from plane.gitsync.conventions import scan_module_catalog
+    from plane.gitsync.files import FileAccessError, redact_secrets, resolve_module_file
+
+    feature_dir = tmp_path / "billing" / "feature"
+    feature_dir.mkdir(parents=True)
+    (feature_dir / "invoice.feature").write_text(
+        "@api\nFeature: Invoice\n  @smoke\n  Scenario: Create invoice\n",
+        encoding="utf-8",
+    )
+    words = tmp_path / "packages" / "action_words" / "db_seed"
+    words.mkdir(parents=True)
+    (words / "create_invoice.py").write_text("def run():\n    pass\n", encoding="utf-8")
+    (tmp_path / "packages" / "api_objects").mkdir(parents=True)
+    (tmp_path / "packages" / "api_objects" / "create_invoice.py").write_text(
+        'method = "POST"\npath = "/invoices"\n',
+        encoding="utf-8",
+    )
+    env_dir = tmp_path / "config"
+    env_dir.mkdir()
+    (env_dir / "env.py").write_text(
+        'API_BASE_URL = "https://sut.example"\nARGON_DB_HOST = "db.internal"\nARGON_DB_PASSWORD = "s3cret"\n',
+        encoding="utf-8",
+    )
+    (env_dir / "env_local.py").write_text('PASSWORD = "nope"\n', encoding="utf-8")
+    ddl = tmp_path / "assets" / "ddl" / "main"
+    ddl.mkdir(parents=True)
+    (ddl / "invoice.sql").write_text("create table invoice ();\n", encoding="utf-8")
+
+    features = scan_module_catalog("features", str(tmp_path))
+    assert features["counts"]["features"] == 1
+    assert features["features"][0]["name"] == "Invoice"
+    assert features["features"][0]["scenarios"][0]["name"] == "Create invoice"
+    assert features["components"]["action_words"][0]["word_id"] == "db_seed.create_invoice"
+    assert features["components"]["api_objects"][0]["method"] == "POST"
+
+    environments = scan_module_catalog("environments", str(tmp_path))
+    env = environments["environments"][0]
+    assert env["targets"][0]["base_url"] == "https://sut.example"
+    assert "ARGON_DB_PASSWORD" in env["secret_keys"]
+    assert all(item["key"] != "ARGON_DB_PASSWORD" for item in env["variables"])
+    assert environments["knowledge"]["ddl"][0]["datasource"] == "main"
+
+    path, content = resolve_module_file(str(tmp_path), "features", "billing/feature/invoice.feature")
+    assert "Feature: Invoice" in content
+    _, env_text = resolve_module_file(str(tmp_path), "environments", "config/env.py")
+    assert "***" in env_text
+    assert "s3cret" not in env_text
+    with pytest.raises(FileAccessError):
+        resolve_module_file(str(tmp_path), "environments", "config/env_local.py")
+    assert "PASSWORD" in redact_secrets('PASSWORD = "x"\n')
+
+
+def test_testhub_module_is_not_convention_scanned(tmp_path):
+    from plane.gitsync.conventions import ConventionError, scan_module_catalog
+
+    with pytest.raises(ConventionError):
+        scan_module_catalog("testhub", str(tmp_path))

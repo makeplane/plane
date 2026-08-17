@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Môi trường",
+    "sidebar": "Môi trường",
+    "nav": {
+      "connections": "Kết nối",
+      "schema": "Lược đồ"
+    },
+    "unbound": "Môi trường chưa được gắn với nguồn dữ liệu.",
+    "unbound_description": "Trong Cấu hình, gắn Môi trường với git workdir. Đọc mẫu env và DDL. Bí mật không bao giờ được hiện.",
+    "cta": "Mở cấu hình",
+    "sync": "Đồng bộ",
+    "syncing": "Đang đồng bộ…",
+    "head": "HEAD",
+    "status": "Trạng thái đồng bộ",
+    "open": "Mở",
+    "empty": "Chưa có gì để hiển thị.",
+    "targets": "Đích",
+    "datasources": "Nguồn dữ liệu",
+    "secret_keys": "Khóa bí mật (chỉ tên)",
+    "variables": "Biến",
+    "source": "Nguồn",
+    "filter": "Lọc bảng",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Không có kết quả khớp bộ lọc này.",
+    "redacted_hint": "Mật khẩu và token bị ẩn. Không bao giờ đọc tệp env cục bộ."
+  }
+}

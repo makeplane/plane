@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Aperçu",
       "bind": "Dépôt",
-      "knowledge": "Connaissances",
-      "components": "Composants",
       "tools": "Outils",
       "actions": "Actions",
-      "tests": "Tests",
-      "jobs": "Tâches"
+      "jobs": "Tâches",
+      "sessions": "Sessions",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Lier la source TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Fermer",
       "loading": "Chargement…"
+    },
+    "sessions": {
+      "title": "Sessions",
+      "new": "Nouvelle session",
+      "empty": "Aucune session pour le moment.",
+      "empty_description": "Référencez des scènes Formulation pour enregistrer une session. Les rapports restent vides tant qu’aucune exécution n’est liée.",
+      "name": "Nom",
+      "environment": "Environnement",
+      "create": "Créer une session",
+      "created": "Créé",
+      "status": "Statut",
+      "pending": "En attente",
+      "selection": "Sélection",
+      "report": "Rapport",
+      "sha": "Feature SHA",
+      "open_scene": "Ouvrir dans Formulation",
+      "none_selected": "Sélectionnez au moins un scénario."
     }
   }
 }

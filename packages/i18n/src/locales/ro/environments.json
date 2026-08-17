@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Mediu",
+    "sidebar": "Mediu",
+    "nav": {
+      "connections": "Conexiuni",
+      "schema": "Schemă"
+    },
+    "unbound": "Mediul nu este legat de o sursă de date.",
+    "unbound_description": "În Configurare, legați Mediul de un workdir git. Citește șabloane env și DDL. Secretele nu sunt afișate niciodată.",
+    "cta": "Deschide configurarea",
+    "sync": "Sincronizează",
+    "syncing": "Se sincronizează…",
+    "head": "HEAD",
+    "status": "Stare sincronizare",
+    "open": "Deschide",
+    "empty": "Nimic de afișat încă.",
+    "targets": "Ținte",
+    "datasources": "Surse de date",
+    "secret_keys": "Chei secrete (doar nume)",
+    "variables": "Variabile",
+    "source": "Sursă",
+    "filter": "Filtrează tabele",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Niciun rezultat nu se potrivește acestui filtru.",
+    "redacted_hint": "Parolele și tokenurile sunt mascate. Fișierele env locale nu sunt citite niciodată."
+  }
+}

@@ -40,16 +40,18 @@
       "save": "バインドを保存",
       "saved": "モジュールのバインドを保存しました。",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "規約"
+      "convention": "規約",
+      "environments": "環境"
     },
     "conventions": {
-      "testhub": "テストプラットフォームリポジトリが必要です。apps.index_platform、./*/feature/、action words、許可リストの CLI を含みます。",
-      "features": "バインドした作業ディレクトリから ./*/feature/ を読みます。TestCopilot とデータソースを共有できます。",
+      "testhub": "テストプラットフォームのリポジトリを想定します。apps.index_platform、action words、許可リストの CLI です。",
+      "features": "./*/feature/ を読み、存在すれば packages/action_words、packages/api_objects、packages/page_objects も読みます。TestCopilot のデータソースを共有できます。",
       "wiki": "バインドした作業ディレクトリから docs/ または wiki/ の markdown を読みます。",
-      "prd": "バインドした作業ディレクトリから prd/ の markdown を読みます。"
+      "prd": "バインドした作業ディレクトリから prd/ の markdown を読みます。",
+      "environments": "config/env.py と env/*.yaml テンプレート、assets/ddl と assets/sql を読みます。env_local や秘密の値は読みません。"
     }
   }
 }

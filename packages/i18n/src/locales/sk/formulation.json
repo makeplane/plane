@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Scény",
+      "action_words": "Action words",
+      "automation": "Automatizácia"
+    },
+    "unbound": "Formulation nie je naviazané na zdroj údajov.",
+    "unbound_description": "V konfigurácii priraďte Formulation k git workdir. Číta ./*/feature/ podľa konvencie.",
+    "cta": "Otvoriť konfiguráciu",
+    "sync": "Synchronizovať",
+    "syncing": "Synchronizácia…",
+    "head": "HEAD",
+    "status": "Stav synchronizácie",
+    "open": "Otvoriť",
+    "cite": "Použiť v TestCopilot",
+    "empty": "Zatiaľ nie je čo zobraziť.",
+    "filter_words": "Hľadať action words",
+    "filter_apis": "Hľadať API",
+    "no_apis": "V tomto workdir nie sú API objects.",
+    "no_selection": "Vyberte API na zobrazenie dokumentácie.",
+    "page_objects": "Page objects"
+  }
+}

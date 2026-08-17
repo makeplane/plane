@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Обзор",
       "bind": "Репозиторий",
-      "knowledge": "Знания",
-      "components": "Компоненты",
       "tools": "Инструменты",
       "actions": "Действия",
-      "tests": "Тесты",
-      "jobs": "Задания"
+      "jobs": "Задания",
+      "sessions": "Сессии",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Привязать источник TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Закрыть",
       "loading": "Загрузка…"
+    },
+    "sessions": {
+      "title": "Сессии",
+      "new": "Новая сессия",
+      "empty": "Сессий пока нет.",
+      "empty_description": "Ссылайтесь на сцены Formulation, чтобы записать сессию. Отчёты пусты, пока не привязан запуск.",
+      "name": "Имя",
+      "environment": "Среда",
+      "create": "Создать сессию",
+      "created": "Создано",
+      "status": "Статус",
+      "pending": "Ожидает",
+      "selection": "Выбор",
+      "report": "Отчёт",
+      "sha": "Feature SHA",
+      "open_scene": "Открыть в Formulation",
+      "none_selected": "Выберите хотя бы один сценарий."
     }
   }
 }

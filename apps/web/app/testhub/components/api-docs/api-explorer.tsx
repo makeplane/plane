@@ -27,9 +27,10 @@ type Props = {
   apis: TApiRow[];
   selectedFile: string;
   onSelect: (file: string) => void;
+  loadFile?: (path: string) => Promise<{ content: string }>;
 };
 
-export function ApiExplorer({ apis, selectedFile, onSelect }: Props) {
+export function ApiExplorer({ apis, selectedFile, onSelect, loadFile }: Props) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
@@ -87,7 +88,7 @@ export function ApiExplorer({ apis, selectedFile, onSelect }: Props) {
       </aside>
       <section className="min-w-0 flex-1 overflow-hidden">
         {selected ? (
-          <ApiDocPanel api={selected} />
+          <ApiDocPanel api={selected} loadFile={loadFile} />
         ) : (
           <EmptyStateCompact assetKey="search" title={t("testhub.components.no_selection")} />
         )}
@@ -148,7 +149,7 @@ function fileCacheKey(workspaceSlug: string, projectId: string, path: string) {
   return `${workspaceSlug}:${projectId}:${path}`;
 }
 
-function ApiDocPanel({ api }: { api: TApiRow }) {
+function ApiDocPanel({ api, loadFile }: { api: TApiRow; loadFile?: (path: string) => Promise<{ content: string }> }) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId } = useParams();
   const [source, setSource] = useState("");
@@ -170,8 +171,8 @@ function ApiDocPanel({ api }: { api: TApiRow }) {
     let cancelled = false;
     setLoading(true);
     setError("");
-    testhubService
-      .getFile(workspaceSlug, projectId, api.file)
+    const fetcher = loadFile ? loadFile(api.file) : testhubService.getFile(workspaceSlug, projectId, api.file);
+    fetcher
       .then((data) => {
         fileCache.set(cacheKey, data.content);
         if (!cancelled) setSource(data.content);
@@ -189,7 +190,7 @@ function ApiDocPanel({ api }: { api: TApiRow }) {
     return () => {
       cancelled = true;
     };
-  }, [api.file, loadErrorFallback, projectId, workspaceSlug]);
+  }, [api.file, loadErrorFallback, loadFile, projectId, workspaceSlug]);
 
   const doc = useMemo(() => (source ? parseApiObjectSource(source) : {}), [source]);
   const method = doc.method || api.method;

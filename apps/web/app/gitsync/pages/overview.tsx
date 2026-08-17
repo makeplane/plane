@@ -18,10 +18,15 @@ import { gitsyncErrorMessage } from "../helpers/error-message";
 
 const MODULE_LABEL: Record<
   TGitSyncModuleKey,
-  "gitsync.modules.testhub" | "gitsync.modules.features" | "gitsync.modules.wiki" | "gitsync.modules.prd"
+  | "gitsync.modules.testhub"
+  | "gitsync.modules.features"
+  | "gitsync.modules.environments"
+  | "gitsync.modules.wiki"
+  | "gitsync.modules.prd"
 > = {
   testhub: "gitsync.modules.testhub",
   features: "gitsync.modules.features",
+  environments: "gitsync.modules.environments",
   wiki: "gitsync.modules.wiki",
   prd: "gitsync.modules.prd",
 };
@@ -30,11 +35,13 @@ const MODULE_CONVENTION: Record<
   TGitSyncModuleKey,
   | "gitsync.conventions.testhub"
   | "gitsync.conventions.features"
+  | "gitsync.conventions.environments"
   | "gitsync.conventions.wiki"
   | "gitsync.conventions.prd"
 > = {
   testhub: "gitsync.conventions.testhub",
   features: "gitsync.conventions.features",
+  environments: "gitsync.conventions.environments",
   wiki: "gitsync.conventions.wiki",
   prd: "gitsync.conventions.prd",
 };

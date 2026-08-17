@@ -40,16 +40,18 @@
       "save": "Zapisz powiązania",
       "saved": "Zapisano powiązania modułów.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Konwencja"
+      "convention": "Konwencja",
+      "environments": "Środowisko"
     },
     "conventions": {
-      "testhub": "Wymaga repozytorium platformy testowej: apps.index_platform, ./*/feature/, action words oraz CLI z białej listy.",
-      "features": "Odczytuje ./*/feature/ z powiązanego katalogu roboczego. Może współdzielić źródło z TestCopilot.",
+      "testhub": "Oczekuje repozytorium platformy testowej: apps.index_platform, action words oraz CLI na allowliście.",
+      "features": "Czyta ./*/feature/ oraz — jeśli istnieją — packages/action_words, packages/api_objects i packages/page_objects. Może współdzielić źródło TestCopilot.",
       "wiki": "Odczytuje markdown z docs/ lub wiki/ w powiązanym katalogu roboczym.",
-      "prd": "Odczytuje markdown z prd/ w powiązanym katalogu roboczym."
+      "prd": "Odczytuje markdown z prd/ w powiązanym katalogu roboczym.",
+      "environments": "Czyta config/env.py i szablony env/*.yaml oraz assets/ddl i assets/sql. Nigdy nie czyta env_local ani wartości tajnych."
     }
   }
 }

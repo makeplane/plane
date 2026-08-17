@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "场景",
+      "action_words": "Action words",
+      "automation": "实现"
+    },
+    "unbound": "Formulation 尚未绑定数据源。",
+    "unbound_description": "请在配置中将 Formulation 绑定到 git 工作目录。按约定读取 ./*/feature/。",
+    "cta": "打开配置",
+    "sync": "同步",
+    "syncing": "同步中…",
+    "head": "HEAD",
+    "status": "同步状态",
+    "open": "打开",
+    "cite": "在 TestCopilot 中引用",
+    "empty": "暂无内容。",
+    "filter_words": "搜索 Action words",
+    "filter_apis": "搜索 APIs",
+    "no_apis": "此工作目录中没有 API objects。",
+    "no_selection": "选择一个 API 以查看文档。",
+    "page_objects": "Page objects"
+  }
+}

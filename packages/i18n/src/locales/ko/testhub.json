@@ -5,12 +5,11 @@
     "nav": {
       "overview": "개요",
       "bind": "저장소",
-      "knowledge": "지식",
-      "components": "구성 요소",
       "tools": "도구",
       "actions": "액션",
-      "tests": "테스트",
-      "jobs": "작업"
+      "jobs": "작업",
+      "sessions": "세션",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "TestCopilot 소스 바인딩",
@@ -120,6 +119,23 @@
     "file": {
       "close": "닫기",
       "loading": "불러오는 중…"
+    },
+    "sessions": {
+      "title": "세션",
+      "new": "새 세션",
+      "empty": "세션이 없습니다.",
+      "empty_description": "Formulation 장면을 참조하여 세션을 기록합니다. 실행을 연결하기 전까지 보고서는 비어 있습니다.",
+      "name": "이름",
+      "environment": "환경",
+      "create": "세션 만들기",
+      "created": "생성됨",
+      "status": "상태",
+      "pending": "대기 중",
+      "selection": "선택",
+      "report": "보고서",
+      "sha": "Feature SHA",
+      "open_scene": "Formulation에서 열기",
+      "none_selected": "시나리오를 하나 이상 선택하세요."
     }
   }
 }

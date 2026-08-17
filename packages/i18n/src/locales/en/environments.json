@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Environment",
+    "sidebar": "Environment",
+    "nav": {
+      "connections": "Connections",
+      "schema": "Schema"
+    },
+    "unbound": "Environment is not bound to a data source.",
+    "unbound_description": "In Configuration, bind Environment to a git workdir. It reads env templates and DDL by convention. Secrets are never shown.",
+    "cta": "Open Configuration",
+    "sync": "Sync",
+    "syncing": "Syncing…",
+    "head": "HEAD",
+    "status": "Sync status",
+    "open": "Open",
+    "empty": "Nothing to show yet.",
+    "targets": "Targets",
+    "datasources": "Datasources",
+    "secret_keys": "Secret keys (names only)",
+    "variables": "Variables",
+    "source": "Source",
+    "filter": "Filter tables",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "No results match this filter.",
+    "redacted_hint": "Passwords and tokens are redacted. Local env files are never read."
+  }
+}

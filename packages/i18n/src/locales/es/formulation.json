@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Escenas",
+      "action_words": "Action words",
+      "automation": "Automatización"
+    },
+    "unbound": "Formulation no está vinculado a un origen de datos.",
+    "unbound_description": "En Configuración, vincule Formulation a un workdir de git. Lee ./*/feature/ por convención.",
+    "cta": "Abrir configuración",
+    "sync": "Sincronizar",
+    "syncing": "Sincronizando…",
+    "head": "HEAD",
+    "status": "Estado de sincronización",
+    "open": "Abrir",
+    "cite": "Usar en TestCopilot",
+    "empty": "Aún no hay nada que mostrar.",
+    "filter_words": "Buscar action words",
+    "filter_apis": "Buscar APIs",
+    "no_apis": "No hay API objects en este workdir.",
+    "no_selection": "Seleccione una API para ver su documentación.",
+    "page_objects": "Page objects"
+  }
+}

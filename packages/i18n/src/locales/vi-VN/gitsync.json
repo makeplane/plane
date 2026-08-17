@@ -40,16 +40,18 @@
       "save": "Lưu liên kết",
       "saved": "Đã lưu liên kết mô-đun.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Quy ước"
+      "convention": "Quy ước",
+      "environments": "Môi trường"
     },
     "conventions": {
-      "testhub": "Cần kho nền tảng kiểm thử: apps.index_platform, ./*/feature/, action words và CLI trong danh sách cho phép.",
-      "features": "Đọc ./*/feature/ từ thư mục làm việc đã gắn. Có thể dùng chung nguồn với TestCopilot.",
+      "testhub": "Cần kho nền tảng kiểm thử: apps.index_platform, action words và CLI trong allowlist.",
+      "features": "Đọc ./*/feature/ và packages/action_words, packages/api_objects, packages/page_objects nếu có. Có thể dùng chung nguồn TestCopilot.",
       "wiki": "Đọc markdown docs/ hoặc wiki/ trong thư mục làm việc đã gắn.",
-      "prd": "Đọc markdown prd/ trong thư mục làm việc đã gắn."
+      "prd": "Đọc markdown prd/ trong thư mục làm việc đã gắn.",
+      "environments": "Đọc config/env.py và mẫu env/*.yaml cùng assets/ddl và assets/sql. Không bao giờ đọc env_local hoặc giá trị bí mật."
     }
   }
 }

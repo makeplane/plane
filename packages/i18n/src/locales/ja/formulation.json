@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "シーン",
+      "action_words": "Action words",
+      "automation": "自動化"
+    },
+    "unbound": "Formulation はデータソースにバインドされていません。",
+    "unbound_description": "設定で Formulation を git workdir にバインドします。./*/feature/ を規約どおりに読みます。",
+    "cta": "設定を開く",
+    "sync": "同期",
+    "syncing": "同期中…",
+    "head": "HEAD",
+    "status": "同期ステータス",
+    "open": "開く",
+    "cite": "TestCopilot で使う",
+    "empty": "表示する項目はまだありません。",
+    "filter_words": "Action words を検索",
+    "filter_apis": "API を検索",
+    "no_apis": "この workdir に API objects はありません。",
+    "no_selection": "ドキュメントを見る API を選択してください。",
+    "page_objects": "Page objects"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "環境",
+    "sidebar": "環境",
+    "nav": {
+      "connections": "連線",
+      "schema": "結構"
+    },
+    "unbound": "環境尚未綁定資料來源。",
+    "unbound_description": "請在設定中將環境綁定到 git 工作目錄。依慣例讀取 env 範本與 DDL。密鑰永不顯示。",
+    "cta": "開啟設定",
+    "sync": "同步",
+    "syncing": "同步中…",
+    "head": "HEAD",
+    "status": "同步狀態",
+    "open": "開啟",
+    "empty": "暫無內容。",
+    "targets": "目標",
+    "datasources": "資料來源",
+    "secret_keys": "密鑰鍵名（僅名稱）",
+    "variables": "變數",
+    "source": "來源",
+    "filter": "篩選資料表",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "沒有符合篩選條件的結果。",
+    "redacted_hint": "密碼與 token 已遮罩。永不讀取本機 env 檔。"
+  }
+}

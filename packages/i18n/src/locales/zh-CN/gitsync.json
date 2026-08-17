@@ -40,16 +40,18 @@
       "save": "保存绑定",
       "saved": "模块绑定已保存。",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "约定"
+      "convention": "约定",
+      "environments": "环境"
     },
     "conventions": {
-      "testhub": "需要测试平台仓：apps.index_platform、./*/feature/、action words 以及白名单 CLI。",
-      "features": "从绑定的工作目录读取 ./*/feature/。可与 TestCopilot 共用数据源。",
+      "testhub": "需要测试平台仓库：apps.index_platform、action words 以及白名单 CLI。",
+      "features": "读取 ./*/feature/；若存在则同时读取 packages/action_words、packages/api_objects 和 packages/page_objects。可与 TestCopilot 共用数据源。",
       "wiki": "从绑定的工作目录读取 docs/ 或 wiki/ 的 markdown。",
-      "prd": "从绑定的工作目录读取 prd/ 的 markdown。"
+      "prd": "从绑定的工作目录读取 prd/ 的 markdown。",
+      "environments": "读取 config/env.py 与 env/*.yaml 模板以及 assets/ddl、assets/sql。永不读取 env_local 或密钥值。"
     }
   }
 }

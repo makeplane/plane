@@ -11,6 +11,8 @@ import type {
   TGitSyncRemoteList,
   TGitSyncRemoteWrite,
   TGitSyncSyncResponse,
+  TGitSyncModuleKey,
+  TModuleCatalogResponse,
   TProjectGitRemote,
 } from "@plane/types";
 import { APIService } from "../api.service";
@@ -87,6 +89,31 @@ export class GitsyncService extends APIService {
     bindings: TGitSyncBindingWrite[]
   ): Promise<TGitSyncBindingList> {
     return this.put(`${this.root(workspaceSlug, projectId)}/bindings/`, { bindings })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getModuleCatalog(
+    workspaceSlug: string,
+    projectId: string,
+    moduleKey: TGitSyncModuleKey
+  ): Promise<TModuleCatalogResponse> {
+    return this.get(`${this.root(workspaceSlug, projectId)}/modules/${moduleKey}/catalog/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getModuleFile(
+    workspaceSlug: string,
+    projectId: string,
+    moduleKey: TGitSyncModuleKey,
+    path: string
+  ): Promise<{ path: string; content: string; module_key: string }> {
+    return this.get(`${this.root(workspaceSlug, projectId)}/modules/${moduleKey}/files/`, { params: { path } })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

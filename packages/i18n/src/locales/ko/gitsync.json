@@ -40,16 +40,18 @@
       "save": "바인딩 저장",
       "saved": "모듈 바인딩을 저장했습니다.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "규칙"
+      "convention": "규칙",
+      "environments": "환경"
     },
     "conventions": {
-      "testhub": "테스트 플랫폼 저장소가 필요합니다. apps.index_platform, ./*/feature/, action words, 허용 목록 CLI가 있어야 합니다.",
-      "features": "바인딩된 작업 디렉터리에서 ./*/feature/를 읽습니다. TestCopilot과 데이터 소스를 공유할 수 있습니다.",
+      "testhub": "테스트 플랫폼 저장소가 필요합니다. apps.index_platform, action words, 허용 목록 CLI.",
+      "features": "./*/feature/를 읽고, 있으면 packages/action_words, packages/api_objects, packages/page_objects도 읽습니다. TestCopilot 데이터 소스를 공유할 수 있습니다.",
       "wiki": "바인딩된 작업 디렉터리에서 docs/ 또는 wiki/ markdown을 읽습니다.",
-      "prd": "바인딩된 작업 디렉터리에서 prd/ markdown을 읽습니다."
+      "prd": "바인딩된 작업 디렉터리에서 prd/ markdown을 읽습니다.",
+      "environments": "config/env.py와 env/*.yaml 템플릿, assets/ddl 및 assets/sql을 읽습니다. env_local이나 비밀 값은 읽지 않습니다."
     }
   }
 }

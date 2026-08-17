@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "环境",
+    "sidebar": "环境",
+    "nav": {
+      "connections": "连接",
+      "schema": "结构"
+    },
+    "unbound": "环境尚未绑定数据源。",
+    "unbound_description": "请在配置中将环境绑定到 git 工作目录。按约定读取 env 模板和 DDL。密钥永不展示。",
+    "cta": "打开配置",
+    "sync": "同步",
+    "syncing": "同步中…",
+    "head": "HEAD",
+    "status": "同步状态",
+    "open": "打开",
+    "empty": "暂无内容。",
+    "targets": "目标",
+    "datasources": "数据源",
+    "secret_keys": "密钥键名（仅名称）",
+    "variables": "变量",
+    "source": "来源",
+    "filter": "筛选表",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "没有符合筛选条件的结果。",
+    "redacted_hint": "密码和 token 已脱敏。永不读取本地 env 文件。"
+  }
+}

@@ -40,16 +40,18 @@
       "save": "Salvați legăturile",
       "saved": "Legăturile modulelor au fost salvate.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Convenție"
+      "convention": "Convenție",
+      "environments": "Mediu"
     },
     "conventions": {
-      "testhub": "Așteaptă un depozit al platformei de testare: apps.index_platform, ./*/feature/, action words și CLI pe lista permisă.",
-      "features": "Citește ./*/feature/ din directorul de lucru legat. Poate partaja sursa TestCopilot.",
+      "testhub": "Așteaptă un depozit de platformă de testare: apps.index_platform, action words și CLI pe allowlist.",
+      "features": "Citește ./*/feature/ și, dacă există, packages/action_words, packages/api_objects și packages/page_objects. Poate partaja sursa TestCopilot.",
       "wiki": "Citește markdown din docs/ sau wiki/ în directorul de lucru legat.",
-      "prd": "Citește markdown din prd/ în directorul de lucru legat."
+      "prd": "Citește markdown din prd/ în directorul de lucru legat.",
+      "environments": "Citește config/env.py și șabloanele env/*.yaml plus assets/ddl și assets/sql. Nu citește niciodată env_local sau valori secrete."
     }
   }
 }

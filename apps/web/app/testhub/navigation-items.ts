@@ -18,7 +18,7 @@ export function testhubNavigationItems(workspaceSlug: string, projectId: string)
       icon: Beaker,
       access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
       shouldRender: true,
-      sortOrder: 7,
+      sortOrder: 9,
     },
   ];
 }

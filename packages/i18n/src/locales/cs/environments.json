@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Prostředí",
+    "sidebar": "Prostředí",
+    "nav": {
+      "connections": "Připojení",
+      "schema": "Schéma"
+    },
+    "unbound": "Prostředí není navázáno na zdroj dat.",
+    "unbound_description": "V konfiguraci přiřaďte prostředí k git workdir. Čte šablony env a DDL. Tajemství se nikdy nezobrazují.",
+    "cta": "Otevřít konfiguraci",
+    "sync": "Synchronizovat",
+    "syncing": "Synchronizace…",
+    "head": "HEAD",
+    "status": "Stav synchronizace",
+    "open": "Otevřít",
+    "empty": "Zatím nic k zobrazení.",
+    "targets": "Cíle",
+    "datasources": "Datové zdroje",
+    "secret_keys": "Tajné klíče (pouze názvy)",
+    "variables": "Proměnné",
+    "source": "Zdroj",
+    "filter": "Filtrovat tabulky",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Žádné výsledky neodpovídají filtru.",
+    "redacted_hint": "Hesla a tokeny jsou skryté. Místní env soubory se nikdy nečtou."
+  }
+}

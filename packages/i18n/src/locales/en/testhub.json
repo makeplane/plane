@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Overview",
       "bind": "Repository",
-      "knowledge": "Knowledge",
-      "components": "Components",
       "tools": "Tools",
       "actions": "Actions",
-      "tests": "Tests",
-      "jobs": "Jobs"
+      "jobs": "Jobs",
+      "sessions": "Sessions",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Bind TestCopilot source",
@@ -106,6 +105,23 @@
       "params": "Params JSON",
       "pick": "Select an action word",
       "invalid_json": "Params must be valid JSON."
+    },
+    "sessions": {
+      "title": "Sessions",
+      "new": "New session",
+      "empty": "No sessions yet.",
+      "empty_description": "Reference Formulation scenes to record a session. Reports stay empty until a run is attached.",
+      "name": "Name",
+      "environment": "Environment",
+      "create": "Create session",
+      "created": "Created",
+      "status": "Status",
+      "pending": "Pending",
+      "selection": "Selection",
+      "report": "Report",
+      "sha": "Feature SHA",
+      "open_scene": "Open in Formulation",
+      "none_selected": "Select at least one scenario."
     },
     "jobs": {
       "empty": "No jobs yet",

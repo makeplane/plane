@@ -40,16 +40,18 @@
       "save": "Uložit vazby",
       "saved": "Vazby modulů byly uloženy.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Konvence"
+      "convention": "Konvence",
+      "environments": "Prostředí"
     },
     "conventions": {
-      "testhub": "Očekává repozitář testovací platformy: apps.index_platform, ./*/feature/, action words a CLI na seznamu povolených.",
-      "features": "Čte ./*/feature/ z navázaného pracovního adresáře. Může sdílet zdroj s TestCopilot.",
+      "testhub": "Očekává testovací platformu: apps.index_platform, action words a CLI na allowlistu.",
+      "features": "Čte ./*/feature/ a případně packages/action_words, packages/api_objects a packages/page_objects. Může sdílet zdroj TestCopilot.",
       "wiki": "Čte markdown z docs/ nebo wiki/ v navázaném pracovním adresáři.",
-      "prd": "Čte markdown z prd/ v navázaném pracovním adresáři."
+      "prd": "Čte markdown z prd/ v navázaném pracovním adresáři.",
+      "environments": "Čte config/env.py a šablony env/*.yaml plus assets/ddl a assets/sql. Nikdy nečte env_local ani tajné hodnoty."
     }
   }
 }

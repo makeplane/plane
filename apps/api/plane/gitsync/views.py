@@ -11,9 +11,11 @@ from rest_framework.response import Response
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Project
-from plane.gitsync.bindings import BindingError, bind_module
+from plane.gitsync.bindings import BindingError, bind_module, get_bound_remote, resolve_remote_workdir
+from plane.gitsync.conventions import ConventionError, scan_module_catalog
+from plane.gitsync.files import FileAccessError, resolve_module_file
 from plane.gitsync.models import ModuleBinding, ProjectGitRemote
-from plane.gitsync.registry import MODULE_KEYS, module_catalog
+from plane.gitsync.registry import CONVENTION_SCAN_MODULES, MODULE_KEYS, MODULE_TESTHUB, is_known_module, module_catalog
 from plane.gitsync.serializers import (
     ModuleBindingSerializer,
     ProjectGitRemoteSerializer,
@@ -90,11 +92,13 @@ class GitRemoteSyncEndpoint(BaseAPIView):
         except (WorkdirError, FileNotFoundError) as exc:
             return Response({"error": str(exc), "remote": ProjectGitRemoteSerializer(remote).data}, status=status.HTTP_400_BAD_REQUEST)
 
-        testhub_job = None
-        if ModuleBinding.objects.filter(remote=remote, module_key="testhub").exists():
-            testhub_job = _enqueue_testhub_index(request, project_id)
-
-        payload = {"remote": ProjectGitRemoteSerializer(remote).data, "testhub_job": testhub_job}
+        indexes = _refresh_bound_indexes(request, project_id, remote)
+        testhub_job = indexes.get(MODULE_TESTHUB)
+        payload = {
+            "remote": ProjectGitRemoteSerializer(remote).data,
+            "testhub_job": testhub_job,
+            "indexes": indexes,
+        }
         return Response(payload, status=status.HTTP_200_OK if testhub_job is None else status.HTTP_202_ACCEPTED)
 
 
@@ -145,6 +149,74 @@ class ModuleBindingListEndpoint(BaseAPIView):
             for key in MODULE_KEYS
         ]
         return Response({"bindings": payload, "modules": module_catalog()}, status=status.HTTP_200_OK)
+
+
+class ModuleCatalogEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, module_key):
+        if not is_known_module(module_key):
+            return Response({"error": "Unknown module."}, status=status.HTTP_404_NOT_FOUND)
+        if module_key == MODULE_TESTHUB:
+            return Response(
+                {"error": "TestCopilot catalog is served at /testhub/catalog/."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        remote = get_bound_remote(project_id, module_key)
+        if remote is None:
+            return Response({"module_key": module_key, "remote": None, "payload": None}, status=status.HTTP_200_OK)
+        try:
+            workdir = resolve_remote_workdir(remote)
+            payload = scan_module_catalog(module_key, workdir)
+        except (WorkdirError, GitUrlNotImplemented, BindingError, ConventionError) as exc:
+            return Response({"error": str(exc), "module_key": module_key, "remote": ProjectGitRemoteSerializer(remote).data}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"module_key": module_key, "remote": ProjectGitRemoteSerializer(remote).data, "payload": payload},
+            status=status.HTTP_200_OK,
+        )
+
+
+class ModuleFileEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, module_key):
+        if not is_known_module(module_key):
+            return Response({"error": "Unknown module."}, status=status.HTTP_404_NOT_FOUND)
+        remote = get_bound_remote(project_id, module_key)
+        if remote is None:
+            return Response({"error": f"Module {module_key} is not bound to a data source."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            workdir = resolve_remote_workdir(remote)
+            normalized, content = resolve_module_file(
+                workdir,
+                module_key,
+                request.query_params.get("path") or "",
+                max_bytes=int(getattr(settings, "TESTHUB_FILE_MAX_BYTES", 1048576)),
+            )
+        except (WorkdirError, GitUrlNotImplemented, BindingError, FileAccessError) as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"path": normalized, "content": content, "module_key": module_key}, status=status.HTTP_200_OK)
+
+
+def _refresh_bound_indexes(request, project_id, remote: ProjectGitRemote) -> dict:
+    indexes: dict = {}
+    keys = list(ModuleBinding.objects.filter(remote=remote).values_list("module_key", flat=True))
+    if MODULE_TESTHUB in keys:
+        indexes[MODULE_TESTHUB] = _enqueue_testhub_index(request, project_id)
+    try:
+        workdir = resolve_remote_workdir(remote)
+    except (WorkdirError, GitUrlNotImplemented, BindingError) as exc:
+        for key in keys:
+            if key in CONVENTION_SCAN_MODULES:
+                indexes[key] = {"ok": False, "error": str(exc)}
+        return indexes
+    for key in keys:
+        if key not in CONVENTION_SCAN_MODULES:
+            continue
+        try:
+            scan_module_catalog(key, workdir)
+            indexes[key] = {"ok": True}
+        except ConventionError as exc:
+            indexes[key] = {"ok": False, "error": str(exc)}
+    return indexes
 
 
 def _enqueue_testhub_index(request, project_id):

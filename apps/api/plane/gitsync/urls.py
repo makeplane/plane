@@ -9,6 +9,8 @@ from plane.gitsync.views import (
     GitRemoteListEndpoint,
     GitRemoteSyncEndpoint,
     ModuleBindingListEndpoint,
+    ModuleCatalogEndpoint,
+    ModuleFileEndpoint,
 )
 
 urlpatterns = [
@@ -31,5 +33,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/gitsync/bindings/",
         ModuleBindingListEndpoint.as_view(),
         name="gitsync-bindings",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/gitsync/modules/<str:module_key>/catalog/",
+        ModuleCatalogEndpoint.as_view(),
+        name="gitsync-module-catalog",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/gitsync/modules/<str:module_key>/files/",
+        ModuleFileEndpoint.as_view(),
+        name="gitsync-module-files",
     ),
 ]

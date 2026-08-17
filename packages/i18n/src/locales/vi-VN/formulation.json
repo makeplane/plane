@@ -1,0 +1,26 @@
+{
+  "formulation": {
+    "title": "Formulation",
+    "sidebar": "Formulation",
+    "nav": {
+      "scenes": "Kịch bản",
+      "action_words": "Action words",
+      "automation": "Tự động hóa"
+    },
+    "unbound": "Formulation chưa được gắn với nguồn dữ liệu.",
+    "unbound_description": "Trong Cấu hình, gắn Formulation với git workdir. Đọc ./*/feature/ theo quy ước.",
+    "cta": "Mở cấu hình",
+    "sync": "Đồng bộ",
+    "syncing": "Đang đồng bộ…",
+    "head": "HEAD",
+    "status": "Trạng thái đồng bộ",
+    "open": "Mở",
+    "cite": "Dùng trong TestCopilot",
+    "empty": "Chưa có gì để hiển thị.",
+    "filter_words": "Tìm action words",
+    "filter_apis": "Tìm API",
+    "no_apis": "Không có API objects trong workdir này.",
+    "no_selection": "Chọn một API để xem tài liệu.",
+    "page_objects": "Page objects"
+  }
+}

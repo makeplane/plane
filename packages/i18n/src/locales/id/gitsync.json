@@ -40,16 +40,18 @@
       "save": "Simpan ikatan",
       "saved": "Ikatan modul disimpan.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Konvensi"
+      "convention": "Konvensi",
+      "environments": "Lingkungan"
     },
     "conventions": {
-      "testhub": "Mengharapkan repositori platform uji: apps.index_platform, ./*/feature/, action words, dan CLI pada daftar izinkan.",
-      "features": "Membaca ./*/feature/ dari workdir yang terikat. Dapat berbagi sumber TestCopilot.",
+      "testhub": "Mengharapkan repositori platform uji: apps.index_platform, action words, dan CLI allowlist.",
+      "features": "Membaca ./*/feature/, serta packages/action_words, packages/api_objects, dan packages/page_objects jika ada. Dapat berbagi sumber TestCopilot.",
       "wiki": "Membaca markdown docs/ atau wiki/ di workdir yang terikat.",
-      "prd": "Membaca markdown prd/ di workdir yang terikat."
+      "prd": "Membaca markdown prd/ di workdir yang terikat.",
+      "environments": "Membaca config/env.py dan templat env/*.yaml plus assets/ddl dan assets/sql. Tidak pernah membaca env_local atau nilai rahasia."
     }
   }
 }

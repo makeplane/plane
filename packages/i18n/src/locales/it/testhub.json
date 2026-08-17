@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Panoramica",
       "bind": "Repository",
-      "knowledge": "Conoscenza",
-      "components": "Componenti",
       "tools": "Strumenti",
       "actions": "Azioni",
-      "tests": "Test",
-      "jobs": "Job"
+      "jobs": "Job",
+      "sessions": "Sessioni",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Associa l’origine TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Chiudi",
       "loading": "Caricamento…"
+    },
+    "sessions": {
+      "title": "Sessioni",
+      "new": "Nuova sessione",
+      "empty": "Nessuna sessione ancora.",
+      "empty_description": "Fai riferimento alle scene Formulation per registrare una sessione. I report restano vuoti finché non si collega un’esecuzione.",
+      "name": "Nome",
+      "environment": "Ambiente",
+      "create": "Crea sessione",
+      "created": "Creato",
+      "status": "Stato",
+      "pending": "In attesa",
+      "selection": "Selezione",
+      "report": "Report",
+      "sha": "Feature SHA",
+      "open_scene": "Apri in Formulation",
+      "none_selected": "Seleziona almeno uno scenario."
     }
   }
 }

@@ -40,16 +40,18 @@
       "save": "儲存綁定",
       "saved": "模組綁定已儲存。",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "約定"
+      "convention": "約定",
+      "environments": "環境"
     },
     "conventions": {
-      "testhub": "需要測試平台儲存庫：apps.index_platform、./*/feature/、action words 以及白名單 CLI。",
-      "features": "從綁定的工作目錄讀取 ./*/feature/。可與 TestCopilot 共用資料來源。",
+      "testhub": "需要測試平台儲存庫：apps.index_platform、action words 以及白名單 CLI。",
+      "features": "讀取 ./*/feature/；若存在則同時讀取 packages/action_words、packages/api_objects 與 packages/page_objects。可與 TestCopilot 共用資料來源。",
       "wiki": "從綁定的工作目錄讀取 docs/ 或 wiki/ 的 markdown。",
-      "prd": "從綁定的工作目錄讀取 prd/ 的 markdown。"
+      "prd": "從綁定的工作目錄讀取 prd/ 的 markdown。",
+      "environments": "讀取 config/env.py 與 env/*.yaml 範本以及 assets/ddl、assets/sql。永不讀取 env_local 或密鑰值。"
     }
   }
 }

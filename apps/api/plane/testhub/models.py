@@ -137,3 +137,54 @@ class TesthubJob(BaseModel):
             models.Index(fields=["project", "status"]),
             models.Index(fields=["project", "-created_at"]),
         ]
+
+
+class TesthubSession(BaseModel):
+    """A test session that references Formulation features. Does not copy Gherkin."""
+
+    class Status(models.TextChoices):
+        DRAFT = "draft"
+        QUEUED = "queued"
+        RUNNING = "running"
+        SUCCEEDED = "succeeded"
+        FAILED = "failed"
+
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="testhub_sessions",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="testhub_sessions",
+    )
+    name = models.CharField(max_length=255)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
+    feature_source_module = models.CharField(max_length=64, default="features")
+    feature_sha = models.CharField(max_length=64, blank=True, default="")
+    environment_id = models.CharField(max_length=255, blank=True, default="")
+    selection = models.JSONField(default=list)
+    summary = models.JSONField(default=dict)
+    job = models.ForeignKey(
+        TesthubJob,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sessions",
+    )
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="testhub_sessions",
+    )
+
+    class Meta:
+        verbose_name = "Testhub session"
+        verbose_name_plural = "Testhub sessions"
+        db_table = "testhub_sessions"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["project", "-created_at"]),
+        ]

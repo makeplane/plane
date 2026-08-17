@@ -8,18 +8,25 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
-export function TesthubUnbound({ href }: { href: string }) {
+type Props = {
+  href: string;
+  title?: string;
+  description?: string;
+  cta?: string;
+};
+
+export function TesthubUnbound({ href, title, description, cta }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <div className="h-full w-full">
       <EmptyStateDetailed
         assetKey="project"
-        title={t("testhub.bind.unbound")}
-        description={t("testhub.bind.unbound_description")}
+        title={title ?? t("testhub.bind.unbound")}
+        description={description ?? t("testhub.bind.unbound_description")}
         actions={[
           {
-            label: t("testhub.bind.cta"),
+            label: cta ?? t("testhub.bind.cta"),
             variant: "primary",
             onClick: () => navigate(href),
           },

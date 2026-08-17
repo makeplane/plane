@@ -121,3 +121,27 @@ export type TTesthubAssetOverlay = {
   created_at: string;
   updated_at: string;
 };
+
+export type TTesthubSession = {
+  id: string;
+  project: string;
+  workspace: string;
+  name: string;
+  status: "draft" | "queued" | "running" | "succeeded" | "failed";
+  feature_source_module: string;
+  feature_sha: string;
+  environment_id: string;
+  selection: Array<{ feature_path: string; scenario_name: string }>;
+  summary: Record<string, number>;
+  job: string | null;
+  requested_by: string | null;
+  created_at: string;
+};
+
+export type TTesthubSessionCreate = {
+  name: string;
+  selection: Array<{ feature_path: string; scenario_name: string }>;
+  feature_source_module?: string;
+  feature_sha?: string;
+  environment_id?: string;
+};

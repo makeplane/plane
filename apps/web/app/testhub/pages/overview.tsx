@@ -16,31 +16,18 @@ function OverviewPage() {
   const { workspaceSlug, projectId } = useParams();
   const { catalog, loading } = useOutletContext<TTesthubOutletContext>();
   const base = `/${workspaceSlug}/projects/${projectId}/testhub`;
+  const configHref = `/${workspaceSlug}/projects/${projectId}/gitsync`;
 
   if (loading) return <TesthubPageLoader />;
-  if (!catalog?.repo) return <TesthubUnbound href={`${base}/bind`} />;
+  if (!catalog?.repo) return <TesthubUnbound href={configHref} />;
 
   const counts = catalog.snapshot?.payload?.counts;
   const git = catalog.snapshot?.payload?.git;
   const cards = [
-    { key: "ddl", value: counts?.ddl_tables ?? 0, label: t("testhub.counts.ddl"), href: `${base}/knowledge` },
-    { key: "sql", value: counts?.sql_files ?? 0, label: t("testhub.counts.sql"), href: `${base}/knowledge` },
-    {
-      key: "api",
-      value: counts?.api_objects ?? 0,
-      label: t("testhub.counts.api_objects"),
-      href: `${base}/components?tab=apis`,
-    },
-    {
-      key: "words",
-      value: counts?.action_words ?? 0,
-      label: t("testhub.counts.action_words"),
-      href: `${base}/components?tab=words`,
-    },
+    { key: "sessions", value: "→", label: t("testhub.nav.sessions"), href: `${base}/sessions` },
     { key: "apps", value: counts?.apps ?? 0, label: t("testhub.counts.apps"), href: `${base}/tools` },
-    { key: "features", value: counts?.features ?? 0, label: t("testhub.counts.features"), href: `${base}/tests` },
-    { key: "pytest", value: counts?.pytest_nodes ?? 0, label: t("testhub.counts.pytest"), href: `${base}/tests` },
-    { key: "data", value: counts?.data_files ?? 0, label: t("testhub.counts.data"), href: `${base}/knowledge` },
+    { key: "pytest", value: counts?.pytest_nodes ?? 0, label: t("testhub.counts.pytest"), href: `${base}/pytest` },
+    { key: "jobs", value: "→", label: t("testhub.nav.jobs"), href: `${base}/jobs` },
   ];
 
   return (

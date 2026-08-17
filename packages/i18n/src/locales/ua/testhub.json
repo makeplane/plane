@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Огляд",
       "bind": "Репозиторій",
-      "knowledge": "Знання",
-      "components": "Компоненти",
       "tools": "Інструменти",
       "actions": "Дії",
-      "tests": "Тести",
-      "jobs": "Завдання"
+      "jobs": "Завдання",
+      "sessions": "Сесії",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Прив’язати джерело TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Закрити",
       "loading": "Завантаження…"
+    },
+    "sessions": {
+      "title": "Сесії",
+      "new": "Нова сесія",
+      "empty": "Сесій ще немає.",
+      "empty_description": "Посилайтеся на сцени Formulation, щоб записати сесію. Звіти порожні, доки не прив’язано запуск.",
+      "name": "Назва",
+      "environment": "Середовище",
+      "create": "Створити сесію",
+      "created": "Створено",
+      "status": "Статус",
+      "pending": "Очікує",
+      "selection": "Вибір",
+      "report": "Звіт",
+      "sha": "Feature SHA",
+      "open_scene": "Відкрити у Formulation",
+      "none_selected": "Виберіть принаймні один сценарій."
     }
   }
 }

@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Özet",
       "bind": "Depo",
-      "knowledge": "Bilgi",
-      "components": "Bileşenler",
       "tools": "Araçlar",
       "actions": "Eylemler",
-      "tests": "Testler",
-      "jobs": "İşler"
+      "jobs": "İşler",
+      "sessions": "Oturumlar",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "TestCopilot kaynağını bağla",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Kapat",
       "loading": "Yükleniyor…"
+    },
+    "sessions": {
+      "title": "Oturumlar",
+      "new": "Yeni oturum",
+      "empty": "Henüz oturum yok.",
+      "empty_description": "Oturum kaydetmek için Formulation sahnelerine başvurun. Bir çalıştırma bağlanana kadar raporlar boş kalır.",
+      "name": "Ad",
+      "environment": "Ortam",
+      "create": "Oturum oluştur",
+      "created": "Oluşturuldu",
+      "status": "Durum",
+      "pending": "Beklemede",
+      "selection": "Seçim",
+      "report": "Rapor",
+      "sha": "Feature SHA",
+      "open_scene": "Formulation’da aç",
+      "none_selected": "En az bir senaryo seçin."
     }
   }
 }

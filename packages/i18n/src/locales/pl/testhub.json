@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Przegląd",
       "bind": "Repozytorium",
-      "knowledge": "Wiedza",
-      "components": "Komponenty",
       "tools": "Narzędzia",
       "actions": "Akcje",
-      "tests": "Testy",
-      "jobs": "Zadania"
+      "jobs": "Zadania",
+      "sessions": "Sesje",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Powiąż źródło TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Zamknij",
       "loading": "Wczytywanie…"
+    },
+    "sessions": {
+      "title": "Sesje",
+      "new": "Nowa sesja",
+      "empty": "Brak sesji.",
+      "empty_description": "Odwołuj się do scen Formulation, aby zapisać sesję. Raporty pozostają puste, dopóki nie powiążesz przebiegu.",
+      "name": "Nazwa",
+      "environment": "Środowisko",
+      "create": "Utwórz sesję",
+      "created": "Utworzono",
+      "status": "Status",
+      "pending": "Oczekujące",
+      "selection": "Wybór",
+      "report": "Raport",
+      "sha": "Feature SHA",
+      "open_scene": "Otwórz w Formulation",
+      "none_selected": "Wybierz co najmniej jeden scenariusz."
     }
   }
 }

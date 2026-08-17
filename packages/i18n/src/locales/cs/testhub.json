@@ -5,12 +5,11 @@
     "nav": {
       "overview": "Přehled",
       "bind": "Repozitář",
-      "knowledge": "Znalosti",
-      "components": "Komponenty",
       "tools": "Nástroje",
       "actions": "Akce",
-      "tests": "Testy",
-      "jobs": "Úlohy"
+      "jobs": "Úlohy",
+      "sessions": "Relace",
+      "pytest": "pytest"
     },
     "bind": {
       "title": "Navázat zdroj TestCopilot",
@@ -120,6 +119,23 @@
     "file": {
       "close": "Zavřít",
       "loading": "Načítání…"
+    },
+    "sessions": {
+      "title": "Relace",
+      "new": "Nová relace",
+      "empty": "Zatím žádné relace.",
+      "empty_description": "Odkazujte na scény Formulation a zaznamenejte relaci. Přehledy zůstanou prázdné, dokud se nepřipojí běh.",
+      "name": "Název",
+      "environment": "Prostředí",
+      "create": "Vytvořit relaci",
+      "created": "Vytvořeno",
+      "status": "Stav",
+      "pending": "Čeká",
+      "selection": "Výběr",
+      "report": "Přehled",
+      "sha": "Feature SHA",
+      "open_scene": "Otevřít ve Formulation",
+      "none_selected": "Vyberte alespoň jeden scénář."
     }
   }
 }

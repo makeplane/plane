@@ -8,10 +8,11 @@ from typing import Any
 
 MODULE_TESTHUB = "testhub"
 MODULE_FEATURES = "features"
+MODULE_ENVIRONMENTS = "environments"
 MODULE_WIKI = "wiki"
 MODULE_PRD = "prd"
 
-MODULE_KEYS = (MODULE_TESTHUB, MODULE_FEATURES, MODULE_WIKI, MODULE_PRD)
+MODULE_KEYS = (MODULE_TESTHUB, MODULE_FEATURES, MODULE_ENVIRONMENTS, MODULE_WIKI, MODULE_PRD)
 
 # Product modules that read a bound git workdir and never mutate git from Plane.
 MODULE_REGISTRY: dict[str, dict[str, Any]] = {
@@ -29,6 +30,13 @@ MODULE_REGISTRY: dict[str, dict[str, Any]] = {
         "capabilities": [],
         "convention_key": "gitsync.conventions.features",
     },
+    MODULE_ENVIRONMENTS: {
+        "key": MODULE_ENVIRONMENTS,
+        "source": "git_sync",
+        "mutate_git": False,
+        "capabilities": [],
+        "convention_key": "gitsync.conventions.environments",
+    },
     MODULE_WIKI: {
         "key": MODULE_WIKI,
         "source": "git_sync",
@@ -44,6 +52,9 @@ MODULE_REGISTRY: dict[str, dict[str, Any]] = {
         "convention_key": "gitsync.conventions.prd",
     },
 }
+
+# Testhub execution catalog is produced by apps.index_platform, not this scanner.
+CONVENTION_SCAN_MODULES = (MODULE_FEATURES, MODULE_ENVIRONMENTS, MODULE_WIKI, MODULE_PRD)
 
 
 def module_catalog() -> list[dict[str, Any]]:

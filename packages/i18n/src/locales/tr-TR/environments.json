@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Ortam",
+    "sidebar": "Ortam",
+    "nav": {
+      "connections": "Bağlantılar",
+      "schema": "Şema"
+    },
+    "unbound": "Ortam bir veri kaynağına bağlı değil.",
+    "unbound_description": "Yapılandırma içinde Ortam’ı bir git workdir’e bağlayın. Env şablonlarını ve DDL’i okur. Gizler asla gösterilmez.",
+    "cta": "Yapılandırmayı aç",
+    "sync": "Senkronize et",
+    "syncing": "Senkronize ediliyor…",
+    "head": "HEAD",
+    "status": "Senkronizasyon durumu",
+    "open": "Aç",
+    "empty": "Gösterilecek bir şey yok.",
+    "targets": "Hedefler",
+    "datasources": "Veri kaynakları",
+    "secret_keys": "Gizli anahtarlar (yalnızca adlar)",
+    "variables": "Değişkenler",
+    "source": "Kaynak",
+    "filter": "Tabloları süz",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Bu süzgeçle eşleşen sonuç yok.",
+    "redacted_hint": "Parolalar ve belirteçler gizlenir. Yerel env dosyaları asla okunmaz."
+  }
+}

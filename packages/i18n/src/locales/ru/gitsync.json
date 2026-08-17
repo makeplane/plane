@@ -40,16 +40,18 @@
       "save": "Сохранить привязки",
       "saved": "Привязки модулей сохранены.",
       "testhub": "TestCopilot",
-      "features": "Features",
+      "features": "Formulation",
       "wiki": "Wiki",
       "prd": "PRD",
-      "convention": "Соглашение"
+      "convention": "Соглашение",
+      "environments": "Среда"
     },
     "conventions": {
-      "testhub": "Ожидается репозиторий тестовой платформы: apps.index_platform, ./*/feature/, action words и CLI из белого списка.",
-      "features": "Читает ./*/feature/ из привязанного рабочего каталога. Можно использовать общий источник с TestCopilot.",
+      "testhub": "Ожидает репозиторий тестовой платформы: apps.index_platform, action words и CLI из allowlist.",
+      "features": "Читает ./*/feature/ и при наличии packages/action_words, packages/api_objects и packages/page_objects. Может использовать источник TestCopilot.",
       "wiki": "Читает markdown из docs/ или wiki/ в привязанном рабочем каталоге.",
-      "prd": "Читает markdown из prd/ в привязанном рабочем каталоге."
+      "prd": "Читает markdown из prd/ в привязанном рабочем каталоге.",
+      "environments": "Читает config/env.py и шаблоны env/*.yaml, а также assets/ddl и assets/sql. Никогда не читает env_local и секретные значения."
     }
   }
 }

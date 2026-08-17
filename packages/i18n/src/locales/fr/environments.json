@@ -1,0 +1,29 @@
+{
+  "environments": {
+    "title": "Environnement",
+    "sidebar": "Environnement",
+    "nav": {
+      "connections": "Connexions",
+      "schema": "Schéma"
+    },
+    "unbound": "Environnement n’est lié à aucune source de données.",
+    "unbound_description": "Dans Configuration, liez Environnement à un workdir git. Il lit les modèles env et le DDL. Les secrets ne sont jamais affichés.",
+    "cta": "Ouvrir Configuration",
+    "sync": "Synchroniser",
+    "syncing": "Synchronisation…",
+    "head": "HEAD",
+    "status": "État de synchronisation",
+    "open": "Ouvrir",
+    "empty": "Rien à afficher pour le moment.",
+    "targets": "Cibles",
+    "datasources": "Sources de données",
+    "secret_keys": "Clés secrètes (noms uniquement)",
+    "variables": "Variables",
+    "source": "Source",
+    "filter": "Filtrer les tables",
+    "ddl": "DDL",
+    "sql": "SQL",
+    "no_results": "Aucun résultat ne correspond à ce filtre.",
+    "redacted_hint": "Les mots de passe et jetons sont masqués. Les fichiers env locaux ne sont jamais lus."
+  }
+}

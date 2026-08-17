@@ -23,6 +23,7 @@ function JobsPage() {
   const [jobs, setJobs] = useState<TTesthubJob[]>([]);
   const [jobsLoading, setJobsLoading] = useState(false);
   const base = `/${workspaceSlug}/projects/${projectId}/testhub`;
+  const configHref = `/${workspaceSlug}/projects/${projectId}/gitsync`;
 
   useEffect(() => {
     if (!workspaceSlug || !projectId || !catalog?.repo) return;
@@ -35,7 +36,7 @@ function JobsPage() {
   }, [workspaceSlug, projectId, catalog?.repo]);
 
   if (loading || jobsLoading) return <TesthubPageLoader />;
-  if (!catalog?.repo) return <TesthubUnbound href={`${base}/bind`} />;
+  if (!catalog?.repo) return <TesthubUnbound href={configHref} />;
 
   if (!jobs.length) {
     return (
