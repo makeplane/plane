@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { API_BASE_URL } from "@plane/constants";
 import { resolveAttachmentDownloadUrl } from "@/components/issues/issue-detail-widgets/media-library-utils";
-import { addInlineDisposition, buildDownloadUrl, getVideoFormatFromSrc } from "../utils/media-detail-utils";
+import { addInlineDisposition, getVideoFormatFromSrc } from "../utils/media-detail-utils";
 
 type TUseResolvedMediaSourcesArgs = {
   item: any;
@@ -159,14 +159,6 @@ export const useResolvedMediaSources = ({
     () => shouldUseCredentials(effectiveDocumentSrc),
     [effectiveDocumentSrc, shouldUseCredentials]
   );
-  const videoDownloadSrc = useMemo(() => {
-    if (!isVideo) return "";
-    if (typeof item?.downloadSrc === "string" && item.downloadSrc) {
-      return buildDownloadUrl(item.downloadSrc);
-    }
-    return videoSrc ? buildDownloadUrl(videoSrc) : "";
-  }, [isVideo, item?.downloadSrc, videoSrc]);
-
   useEffect(() => {
     let isMounted = true;
     if (!isVideo || !videoSrc) {
@@ -283,7 +275,6 @@ export const useResolvedMediaSources = ({
     useCredentials,
     crossOrigin,
     useDocumentCredentials,
-    videoDownloadSrc,
   };
 };
 

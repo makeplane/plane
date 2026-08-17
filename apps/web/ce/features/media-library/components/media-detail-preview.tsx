@@ -41,7 +41,6 @@ type TMediaDetailPreviewProps = {
   settingsPanelRef: RefObject<HTMLDivElement>;
   crossOrigin: "anonymous" | "use-credentials" | "" | undefined;
   playerElement: HTMLElement | null;
-  videoDownloadSrc: string;
   videoAnnotationContent?: ReactNode;
   onVideoAnnotationPropertiesElementChange?: (element: HTMLDivElement | null) => void;
   onVideoAnnotationToolbarElementChange?: (element: HTMLDivElement | null) => void;
@@ -93,7 +92,6 @@ export const MediaDetailPreview = ({
   settingsPanelRef,
   playerElement,
   crossOrigin,
-  videoDownloadSrc,
   videoAnnotationContent,
   onVideoAnnotationPropertiesElementChange,
   onVideoAnnotationToolbarElementChange,
@@ -426,21 +424,6 @@ export const MediaDetailPreview = ({
               ) : null}
             </div>
             {showVideoTimeline ? <div ref={handleVideoTimelineElement} className="mt-3" /> : null}
-            {videoDownloadSrc && !isVideoPreviewBroken && !isVideoAnnotationWorkspaceOpen ? (
-              <div className="flex justify-end border-t border-custom-border-200 p-3">
-                <a
-                  href={videoDownloadSrc}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
-                >
-                  <span className="flex h-6 w-6 items-center justify-center">
-                    <Download className="h-4 w-4" />
-                  </span>
-                  Download
-                </a>
-              </div>
-            ) : null}
           </>
         ) : item.mediaType === "image" ? (
           <div

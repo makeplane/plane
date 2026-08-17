@@ -1,6 +1,5 @@
 import { ArrowUpRight, Circle, Image as ImageIcon, Minus, Pencil, Square, Type } from "lucide-react";
 import type { TCustomPlaylistAnnotation, TCustomPlaylistAnnotationTool } from "../types/annotation.types";
-import { VIDEO_ANNOTATION_START_TIME_OFFSET_SECONDS } from "./video-annotation-editor-config";
 
 const formatAnnotationTime = (seconds: number) => {
   if (!Number.isFinite(seconds) || seconds < 0) return "--:--";
@@ -38,20 +37,6 @@ const getTimelinePercent = (seconds: number, durationSeconds: number) => {
   if (!Number.isFinite(seconds) || !Number.isFinite(durationSeconds) || durationSeconds <= 0) return 0;
 
   return clampTimelineValue((seconds / durationSeconds) * 100, 0, 100);
-};
-
-const getAnnotationStartTimeWithCreationOffset = (playheadTime: number) =>
-  Math.max(0, playheadTime - VIDEO_ANNOTATION_START_TIME_OFFSET_SECONDS);
-
-const applyAnnotationCreationStartTimeOffset = (annotation: TCustomPlaylistAnnotation): TCustomPlaylistAnnotation => {
-  const annotationDurationSeconds = Math.max(0, annotation.endTime - annotation.startTime);
-  const startTime = getAnnotationStartTimeWithCreationOffset(annotation.startTime);
-
-  return {
-    ...annotation,
-    endTime: startTime + annotationDurationSeconds,
-    startTime,
-  };
 };
 
 const getAnnotationTimelineToolLabel = (type: TCustomPlaylistAnnotationTool) => {
@@ -271,12 +256,10 @@ const getTimelineContentWidthPx = (durationSeconds: number, zoomPercent: number)
 };
 
 export {
-  applyAnnotationCreationStartTimeOffset,
   buildAnnotationTimelineMoments,
   buildAnnotationTimelineTicks,
   clampTimelineValue,
   formatAnnotationTime,
-  getAnnotationStartTimeWithCreationOffset,
   getAnnotationTimelineIcon,
   getAnnotationTimelineLabel,
   getAnnotationTimelineToolLabel,
@@ -285,3 +268,7 @@ export {
   getTimelinePercent,
   resolveAnnotationTimelineLayers,
 };
+export {
+  applyAnnotationCreationStartTimeOffset,
+  getAnnotationStartTimeWithCreationOffset,
+} from "./playlist-annotation-creation-time";

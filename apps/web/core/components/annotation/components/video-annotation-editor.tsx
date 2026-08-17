@@ -13,12 +13,12 @@ import type {
   TCustomPlaylistAnnotationTool,
 } from "../types/annotation.types";
 import type { VideoAnnotationEditorProps } from "../types/video-annotation-editor.types";
-import { VIDEO_ANNOTATION_TOOLS } from "../utils/video-annotation-editor-config";
 import {
   applyAnnotationCreationStartTimeOffset,
   getAnnotationStartTimeWithCreationOffset,
-  resolveAnnotationTimelineLayers,
-} from "../utils/video-annotation-timeline";
+} from "../utils/playlist-annotation-creation-time";
+import { VIDEO_ANNOTATION_TOOLS } from "../utils/video-annotation-editor-config";
+import { resolveAnnotationTimelineLayers } from "../utils/video-annotation-timeline";
 import {
   PlaylistAnnotationOverlay,
   arePlaylistAnnotationsEqual,
