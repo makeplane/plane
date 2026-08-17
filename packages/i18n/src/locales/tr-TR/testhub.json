@@ -13,15 +13,19 @@
       "jobs": "İşler"
     },
     "bind": {
-      "title": "Test deposunu bağla",
+      "title": "TestCopilot kaynağını bağla",
       "repo_url": "Depo URL’si",
       "branch": "Dal",
       "workdir": "Runner çalışma dizini",
       "save": "Kaydet",
       "saved": "Depo bağlama kaydedildi.",
       "unbound": "Bu projenin henüz bir test deposu yok.",
-      "unbound_description": "Katalog varlıklarını görmek ve izin verilen işleri çalıştırmak için bir test git deposu bağlayın.",
-      "cta": "Bir depo bağla"
+      "unbound_description": "Katalog varlıklarını gezmek ve izin listesindeki işleri çalıştırmak için Yapılandırma’da TestCopilot’u bir veri kaynağına bağlayın.",
+      "cta": "Veri kaynağı seç",
+      "select_source": "Veri kaynağı",
+      "select_help": "TestCopilot, Yapılandırma’daki bir veri kaynağının çalışma dizinini okur. Klasörler kurala göre bulunur.",
+      "go_to_config": "Yapılandırmayı aç",
+      "no_sources": "Önce Yapılandırma’da bir veri kaynağı ekleyin."
     },
     "overview": {
       "sync": "Kataloğu senkronize et",

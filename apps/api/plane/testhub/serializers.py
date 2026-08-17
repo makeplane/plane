@@ -4,7 +4,7 @@
 
 from rest_framework import serializers
 
-from plane.testhub.models import CatalogSnapshot, ProjectTestRepo, TesthubJob
+from plane.testhub.models import CatalogSnapshot, ProjectTestRepo, TesthubAssetOverlay, TesthubJob
 
 
 class ProjectTestRepoSerializer(serializers.ModelSerializer):
@@ -61,6 +61,22 @@ class TesthubJobSerializer(serializers.ModelSerializer):
             "started_at",
             "finished_at",
             "requested_by",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = fields
+
+
+class TesthubAssetOverlaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TesthubAssetOverlay
+        fields = (
+            "id",
+            "project",
+            "workspace",
+            "asset_ref",
+            "kind",
+            "payload",
             "created_at",
             "updated_at",
         )

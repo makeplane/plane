@@ -5,7 +5,13 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { TTesthubCatalogResponse, TTesthubJob, TTesthubJobCreate, TTesthubRepo } from "@plane/types";
+import type {
+  TTesthubAssetOverlay,
+  TTesthubCatalogResponse,
+  TTesthubJob,
+  TTesthubJobCreate,
+  TTesthubRepo,
+} from "@plane/types";
 import { APIService } from "../api.service";
 
 export class TesthubService extends APIService {
@@ -28,7 +34,7 @@ export class TesthubService extends APIService {
   async bindRepo(
     workspaceSlug: string,
     projectId: string,
-    data: { repo_url?: string; branch?: string; workdir?: string }
+    data: { remote_id: string }
   ): Promise<{ repo: TTesthubRepo }> {
     return this.put(`${this.root(workspaceSlug, projectId)}/repo/`, data)
       .then((response) => response?.data)
@@ -79,6 +85,30 @@ export class TesthubService extends APIService {
 
   async createJob(workspaceSlug: string, projectId: string, data: TTesthubJobCreate): Promise<TTesthubJob> {
     return this.post(`${this.root(workspaceSlug, projectId)}/jobs/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async listOverlays(
+    workspaceSlug: string,
+    projectId: string,
+    params?: { asset_ref?: string; kind?: string }
+  ): Promise<TTesthubAssetOverlay[]> {
+    return this.get(`${this.root(workspaceSlug, projectId)}/overlays/`, { params })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async saveOverlay(
+    workspaceSlug: string,
+    projectId: string,
+    data: { asset_ref: string; kind?: string; payload?: Record<string, unknown> }
+  ): Promise<TTesthubAssetOverlay> {
+    return this.put(`${this.root(workspaceSlug, projectId)}/overlays/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

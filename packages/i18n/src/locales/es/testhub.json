@@ -13,15 +13,19 @@
       "jobs": "Trabajos"
     },
     "bind": {
-      "title": "Vincular repositorio de pruebas",
+      "title": "Vincular origen de TestCopilot",
       "repo_url": "URL del repositorio",
       "branch": "Rama",
       "workdir": "Directorio de trabajo del Runner",
       "save": "Guardar",
       "saved": "Vinculación del repositorio guardada.",
       "unbound": "Este proyecto aún no tiene un repositorio de pruebas.",
-      "unbound_description": "Vincule un repositorio git de pruebas para explorar el catálogo y ejecutar trabajos permitidos.",
-      "cta": "Vincular un repositorio"
+      "unbound_description": "Vincule TestCopilot a un origen de datos en Configuración para explorar el catálogo y ejecutar trabajos de la lista blanca.",
+      "cta": "Elegir un origen de datos",
+      "select_source": "Origen de datos",
+      "select_help": "TestCopilot lee el directorio de trabajo de un origen de datos en Configuración. Las carpetas se descubren por convención.",
+      "go_to_config": "Abrir Configuración",
+      "no_sources": "Añada primero un origen de datos en Configuración."
     },
     "overview": {
       "sync": "Sincronizar catálogo",

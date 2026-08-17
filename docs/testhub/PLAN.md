@@ -84,17 +84,11 @@ git merge v1.x.y
 
 独立 Django app `plane.testhub`（不要改 Issue 语义）。前端独立目录 + 项目侧栏 **TestCopilot**。
 
-### 1. ProjectTestRepo
+### 1. ProjectTestRepo（兼容层）
 
-一对一挂在现有 `plane.db.models.project.Project`：
+历史一对一绑定仍保留。新绑定走独立 app `plane.gitsync`：**ProjectGitRemote**（`local_mount` / 预留 `git_url`）+ **ModuleBinding**（`testhub` 等模块指向一条数据源）。TestCopilot 读绑定仓的工作副本；测程等 overlay 只存在 testhub 表，不回写 git。
 
-- `repo_url` / `branch`（必填）
-- 只读凭证：deploy token / SSH 引用（密文进密钥库，禁止明文进 Issue/日志）
-- Runner 上的 clone 路径
-- 最近 sync：commit SHA、时间、状态
-- 可选：默认 Python extra
-
-项目设置增加「测试仓库」卡片。未绑定则 TestCopilot 显示引导，不报错。
+一对一挂在现有 `plane.db.models.project.Project` 的影子记录仍可被 catalog 回退使用。未绑定则 TestCopilot 显示引导，不报错。绑定入口在侧栏 **配置**，TestCopilot 内页改为选择已有数据源。
 
 ### 2. CatalogSnapshot
 

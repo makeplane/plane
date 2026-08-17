@@ -48,7 +48,7 @@ function OverviewPage() {
       <div className="space-y-4">
         <div className="space-y-1 text-13">
           <p className="text-primary">
-            {catalog.repo.branch} · {catalog.repo.workdir}
+            {(catalog.repo.name ? `${catalog.repo.name} · ` : "") + catalog.repo.branch} · {catalog.repo.workdir}
           </p>
           <p className="text-secondary">
             {t("testhub.overview.head")}: {git?.sha || catalog.repo.last_sync_sha || "—"}

@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Konfiguracja",
+    "sidebar": "Konfiguracja",
+    "remotes": {
+      "title": "Źródła danych",
+      "empty": "Nie ma jeszcze źródeł danych.",
+      "empty_description": "Dodaj lokalny bind-mount (wolumin Compose), aby korzystać z TestCopilot bez hostowanego serwera git.",
+      "loading": "Ładowanie…",
+      "add": "Dodaj źródło danych",
+      "save": "Zapisz",
+      "saved": "Zapisano źródło danych.",
+      "delete": "Usuń",
+      "sync": "Synchronizuj",
+      "synced": "Synchronizacja zakończona.",
+      "name": "Nazwa",
+      "kind": "Typ",
+      "workdir": "Katalog roboczy kontenera",
+      "host_path": "Ścieżka hosta (opcjonalnie)",
+      "repo_url": "URL repozytorium",
+      "branch": "Gałąź",
+      "credential_ref": "Odwołanie do poświadczeń",
+      "sha": "HEAD",
+      "status": "Status synchronizacji",
+      "local_mount_hint": "Lokalne montowanie odpowiada woluminowi Docker. Projekty na tej maszynie współdzielą ten sam katalog roboczy."
+    },
+    "kinds": {
+      "local_mount": "Montowanie lokalne",
+      "git_url": "URL Git"
+    },
+    "git_url": {
+      "coming_soon": "Clone i fetch nie są jeszcze dostępne. Można zapisać URL na później albo teraz użyć montowania lokalnego.",
+      "sync_disabled": "Synchronizacja URL Git nie jest zaimplementowana. Na tym etapie należy użyć montowania lokalnego.",
+      "not_implemented": "clone/fetch git_url nie jest jeszcze zaimplementowane."
+    },
+    "modules": {
+      "title": "Źródła modułów",
+      "help": "Każdy moduł produktu odczytuje jedno źródło danych. Foldery są wykrywane według konwencji, a nie konfigurowane tutaj.",
+      "unbound": "Niepowiązane",
+      "save": "Zapisz powiązania",
+      "saved": "Zapisano powiązania modułów.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Konwencja"
+    },
+    "conventions": {
+      "testhub": "Wymaga repozytorium platformy testowej: apps.index_platform, ./*/feature/, action words oraz CLI z białej listy.",
+      "features": "Odczytuje ./*/feature/ z powiązanego katalogu roboczego. Może współdzielić źródło z TestCopilot.",
+      "wiki": "Odczytuje markdown z docs/ lub wiki/ w powiązanym katalogu roboczym.",
+      "prd": "Odczytuje markdown z prd/ w powiązanym katalogu roboczym."
+    }
+  }
+}

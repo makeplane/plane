@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "配置",
+    "sidebar": "配置",
+    "remotes": {
+      "title": "数据源",
+      "empty": "还没有数据源。",
+      "empty_description": "添加本地 bind-mount（Compose 卷）即可在没有托管 git 服务的情况下使用 TestCopilot。",
+      "loading": "加载中…",
+      "add": "添加数据源",
+      "save": "保存",
+      "saved": "数据源已保存。",
+      "delete": "移除",
+      "sync": "同步",
+      "synced": "同步完成。",
+      "name": "名称",
+      "kind": "类型",
+      "workdir": "容器工作目录",
+      "host_path": "宿主机路径（可选）",
+      "repo_url": "仓库 URL",
+      "branch": "分支",
+      "credential_ref": "凭证引用",
+      "sha": "HEAD",
+      "status": "同步状态",
+      "local_mount_hint": "本地挂载与 Docker 卷一致。本机上的项目共用同一工作目录。"
+    },
+    "kinds": {
+      "local_mount": "本地挂载",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "克隆与 fetch 尚未提供。您可以先保存 URL，或现在使用本地挂载。",
+      "sync_disabled": "Git URL 同步尚未实现。本阶段请使用本地挂载。",
+      "not_implemented": "git_url 的 clone/fetch 尚未实现。"
+    },
+    "modules": {
+      "title": "模块数据源",
+      "help": "每个产品模块读取一个数据源。文件夹按约定发现，不在此处配置。",
+      "unbound": "未绑定",
+      "save": "保存绑定",
+      "saved": "模块绑定已保存。",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "约定"
+    },
+    "conventions": {
+      "testhub": "需要测试平台仓：apps.index_platform、./*/feature/、action words 以及白名单 CLI。",
+      "features": "从绑定的工作目录读取 ./*/feature/。可与 TestCopilot 共用数据源。",
+      "wiki": "从绑定的工作目录读取 docs/ 或 wiki/ 的 markdown。",
+      "prd": "从绑定的工作目录读取 prd/ 的 markdown。"
+    }
+  }
+}

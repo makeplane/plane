@@ -110,6 +110,7 @@ INSTALLED_APPS = [
     "plane.middleware",
     "plane.license",
     "plane.testhub.apps.TesthubConfig",
+    "plane.gitsync.apps.GitsyncConfig",
     "plane.api",
     "plane.authentication",
     # Third-party things
@@ -358,6 +359,7 @@ FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 TESTHUB_RUNNER_URL = os.environ.get("TESTHUB_RUNNER_URL", "http://testhub-runner:8090")
 TESTHUB_WORKDIR = os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir")
 TESTHUB_FILE_MAX_BYTES = int(os.environ.get("TESTHUB_FILE_MAX_BYTES", 1048576))
+GITSYNC_CLONE_ROOT = os.environ.get("GITSYNC_CLONE_ROOT", "/opt/gitsync/clones")
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Konfiguration",
+    "sidebar": "Konfiguration",
+    "remotes": {
+      "title": "Datenquellen",
+      "empty": "Noch keine Datenquellen.",
+      "empty_description": "Fügen Sie ein lokales Bind-Mount (Compose-Volume) hinzu, um TestCopilot ohne gehosteten Git-Server zu nutzen.",
+      "loading": "Wird geladen…",
+      "add": "Datenquelle hinzufügen",
+      "save": "Speichern",
+      "saved": "Datenquelle gespeichert.",
+      "delete": "Entfernen",
+      "sync": "Synchronisieren",
+      "synced": "Synchronisierung abgeschlossen.",
+      "name": "Name",
+      "kind": "Typ",
+      "workdir": "Container-Workdir",
+      "host_path": "Host-Pfad (optional)",
+      "repo_url": "Repository-URL",
+      "branch": "Branch",
+      "credential_ref": "Anmeldedatenverweis",
+      "sha": "HEAD",
+      "status": "Synchronisierungsstatus",
+      "local_mount_hint": "Ein lokales Mount entspricht dem Docker-Volume. Projekte auf diesem Rechner teilen dasselbe Workdir."
+    },
+    "kinds": {
+      "local_mount": "Lokales Mount",
+      "git_url": "Git-URL"
+    },
+    "git_url": {
+      "coming_soon": "Clone und Fetch sind noch nicht verfügbar. Sie können die URL speichern oder jetzt ein lokales Mount verwenden.",
+      "sync_disabled": "Die Git-URL-Synchronisierung ist nicht implementiert. Verwenden Sie in dieser Phase ein lokales Mount.",
+      "not_implemented": "git_url-Clone/Fetch ist noch nicht implementiert."
+    },
+    "modules": {
+      "title": "Modulquellen",
+      "help": "Jedes Produktmodul liest eine Datenquelle. Ordner werden per Konvention erkannt, nicht hier konfiguriert.",
+      "unbound": "Nicht gebunden",
+      "save": "Bindungen speichern",
+      "saved": "Modulbindungen gespeichert.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Konvention"
+    },
+    "conventions": {
+      "testhub": "Erwartet ein Testplattform-Repository: apps.index_platform, ./*/feature/, Action Words und CLI-Allowlist.",
+      "features": "Liest ./*/feature/ aus dem gebundenen Workdir. Kann die Datenquelle von TestCopilot teilen.",
+      "wiki": "Liest Markdown aus docs/ oder wiki/ im gebundenen Workdir.",
+      "prd": "Liest Markdown aus prd/ im gebundenen Workdir."
+    }
+  }
+}

@@ -40,7 +40,7 @@ import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferen
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
-import { testhubNavigationItems } from "@/app/testhub/navigation-items";
+import { overlayNavigationItems } from "@/app/overlay-navigation";
 import { ProjectNavigation } from "./project-navigation";
 import { useNavigationItems } from "@/components/navigation/use-navigation-items";
 
@@ -484,7 +484,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   <ProjectNavigation
                     workspaceSlug={workspaceSlug.toString()}
                     projectId={projectId.toString()}
-                    additionalNavigationItems={testhubNavigationItems}
+                    additionalNavigationItems={overlayNavigationItems}
                   />
                 </Disclosure.Panel>
               )}

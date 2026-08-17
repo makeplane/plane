@@ -13,15 +13,19 @@
       "jobs": "作业"
     },
     "bind": {
-      "title": "绑定测试仓库",
+      "title": "绑定 TestCopilot 数据源",
       "repo_url": "仓库 URL",
       "branch": "分支",
       "workdir": "Runner 工作目录",
       "save": "保存",
       "saved": "仓库绑定已保存。",
       "unbound": "此项目尚未绑定测试仓库。",
-      "unbound_description": "绑定测试 git 仓库后，即可浏览目录资产并运行白名单作业。",
-      "cta": "绑定仓库"
+      "unbound_description": "在配置中为 TestCopilot 绑定数据源后，即可浏览目录资产并运行白名单作业。",
+      "cta": "选择数据源",
+      "select_source": "数据源",
+      "select_help": "TestCopilot 读取配置中的数据源工作目录。文件夹按约定发现。",
+      "go_to_config": "打开配置",
+      "no_sources": "请先在配置中添加数据源。"
     },
     "overview": {
       "sync": "同步目录",

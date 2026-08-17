@@ -13,15 +13,19 @@
       "jobs": "作業"
     },
     "bind": {
-      "title": "綁定測試倉庫",
+      "title": "綁定 TestCopilot 資料來源",
       "repo_url": "倉庫 URL",
       "branch": "分支",
       "workdir": "Runner 工作目錄",
       "save": "儲存",
       "saved": "倉庫綁定已儲存。",
       "unbound": "此專案尚未綁定測試倉庫。",
-      "unbound_description": "綁定測試 git 倉庫後，即可瀏覽目錄資產並執行白名單作業。",
-      "cta": "綁定倉庫"
+      "unbound_description": "在設定中為 TestCopilot 綁定資料來源後，即可瀏覽目錄資產並執行白名單作業。",
+      "cta": "選擇資料來源",
+      "select_source": "資料來源",
+      "select_help": "TestCopilot 會讀取設定中的資料來源工作目錄。資料夾依約定探索。",
+      "go_to_config": "開啟設定",
+      "no_sources": "請先在設定中新增資料來源。"
     },
     "overview": {
       "sync": "同步目錄",

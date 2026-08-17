@@ -13,15 +13,19 @@
       "jobs": "Jobs"
     },
     "bind": {
-      "title": "Bind test repository",
+      "title": "Bind TestCopilot source",
       "repo_url": "Repository URL",
       "branch": "Branch",
       "workdir": "Runner workdir",
       "save": "Save",
       "saved": "Repository binding saved.",
       "unbound": "This project has no test repository yet.",
-      "unbound_description": "Bind a test git repository to browse catalog assets and run allowlisted jobs.",
-      "cta": "Bind a repository"
+      "unbound_description": "Bind TestCopilot to a data source in Configuration to browse catalog assets and run allowlisted jobs.",
+      "cta": "Choose a data source",
+      "select_source": "Data source",
+      "select_help": "TestCopilot reads the workdir of a data source from Configuration. Folders are discovered by convention.",
+      "go_to_config": "Open Configuration",
+      "no_sources": "Add a data source in Configuration first."
     },
     "overview": {
       "sync": "Sync catalog",

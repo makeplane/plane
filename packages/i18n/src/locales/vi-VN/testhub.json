@@ -13,15 +13,19 @@
       "jobs": "Job"
     },
     "bind": {
-      "title": "Liên kết kho kiểm thử",
+      "title": "Gắn nguồn TestCopilot",
       "repo_url": "URL kho mã",
       "branch": "Nhánh",
       "workdir": "Thư mục làm việc Runner",
       "save": "Lưu",
       "saved": "Đã lưu liên kết kho mã.",
       "unbound": "Dự án này chưa có kho kiểm thử.",
-      "unbound_description": "Liên kết kho git kiểm thử để xem catalog và chạy các job trong danh sách cho phép.",
-      "cta": "Liên kết kho mã"
+      "unbound_description": "Gắn TestCopilot với nguồn dữ liệu trong Cấu hình để xem catalog và chạy job trong danh sách cho phép.",
+      "cta": "Chọn nguồn dữ liệu",
+      "select_source": "Nguồn dữ liệu",
+      "select_help": "TestCopilot đọc thư mục làm việc của nguồn dữ liệu trong Cấu hình. Thư mục được tìm theo quy ước.",
+      "go_to_config": "Mở Cấu hình",
+      "no_sources": "Hãy thêm nguồn dữ liệu trong Cấu hình trước."
     },
     "overview": {
       "sync": "Đồng bộ catalog",

@@ -23,6 +23,7 @@ export * from "./epics";
 export * from "./estimate";
 export * from "./favorite";
 export * from "./file";
+export * from "./gitsync";
 export * from "./home";
 export * from "./importer";
 export * from "./inbox";

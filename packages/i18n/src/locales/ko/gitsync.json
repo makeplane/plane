@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "구성",
+    "sidebar": "구성",
+    "remotes": {
+      "title": "데이터 소스",
+      "empty": "데이터 소스가 없습니다.",
+      "empty_description": "호스팅된 git 서버 없이 TestCopilot을 쓰려면 로컬 bind-mount(Compose 볼륨)를 추가하세요.",
+      "loading": "불러오는 중…",
+      "add": "데이터 소스 추가",
+      "save": "저장",
+      "saved": "데이터 소스를 저장했습니다.",
+      "delete": "제거",
+      "sync": "동기화",
+      "synced": "동기화가 끝났습니다.",
+      "name": "이름",
+      "kind": "유형",
+      "workdir": "컨테이너 작업 디렉터리",
+      "host_path": "호스트 경로(선택)",
+      "repo_url": "저장소 URL",
+      "branch": "브랜치",
+      "credential_ref": "자격 증명 참조",
+      "sha": "HEAD",
+      "status": "동기화 상태",
+      "local_mount_hint": "로컬 마운트는 Docker 볼륨과 같습니다. 이 기기의 프로젝트는 같은 작업 디렉터리를 공유합니다."
+    },
+    "kinds": {
+      "local_mount": "로컬 마운트",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "clone과 fetch는 아직 사용할 수 없습니다. URL을 먼저 저장하거나 지금 로컬 마운트를 사용하세요.",
+      "sync_disabled": "Git URL 동기화는 구현되지 않았습니다. 이 단계에서는 로컬 마운트를 사용하세요.",
+      "not_implemented": "git_url clone/fetch는 아직 구현되지 않았습니다."
+    },
+    "modules": {
+      "title": "모듈 데이터 소스",
+      "help": "각 제품 모듈은 데이터 소스 하나를 읽습니다. 폴더는 여기에서 설정하지 않고 규칙으로 찾습니다.",
+      "unbound": "바인딩되지 않음",
+      "save": "바인딩 저장",
+      "saved": "모듈 바인딩을 저장했습니다.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "규칙"
+    },
+    "conventions": {
+      "testhub": "테스트 플랫폼 저장소가 필요합니다. apps.index_platform, ./*/feature/, action words, 허용 목록 CLI가 있어야 합니다.",
+      "features": "바인딩된 작업 디렉터리에서 ./*/feature/를 읽습니다. TestCopilot과 데이터 소스를 공유할 수 있습니다.",
+      "wiki": "바인딩된 작업 디렉터리에서 docs/ 또는 wiki/ markdown을 읽습니다.",
+      "prd": "바인딩된 작업 디렉터리에서 prd/ markdown을 읽습니다."
+    }
+  }
+}

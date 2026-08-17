@@ -13,15 +13,19 @@
       "jobs": "Tâches"
     },
     "bind": {
-      "title": "Lier le dépôt de tests",
+      "title": "Lier la source TestCopilot",
       "repo_url": "URL du dépôt",
       "branch": "Branche",
       "workdir": "Répertoire de travail du Runner",
       "save": "Enregistrer",
       "saved": "Liaison du dépôt enregistrée.",
       "unbound": "Ce projet n’a pas encore de dépôt de tests.",
-      "unbound_description": "Liez un dépôt git de tests pour parcourir le catalogue et exécuter les tâches autorisées.",
-      "cta": "Lier un dépôt"
+      "unbound_description": "Liez TestCopilot à une source de données dans Configuration pour parcourir le catalogue et lancer des tâches sur liste blanche.",
+      "cta": "Choisir une source de données",
+      "select_source": "Source de données",
+      "select_help": "TestCopilot lit le répertoire de travail d’une source de données dans Configuration. Les dossiers sont découverts par convention.",
+      "go_to_config": "Ouvrir Configuration",
+      "no_sources": "Ajoutez d’abord une source de données dans Configuration."
     },
     "overview": {
       "sync": "Synchroniser le catalogue",

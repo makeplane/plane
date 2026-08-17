@@ -7,7 +7,7 @@
 import { useMemo, useCallback } from "react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { testhubNavigationItems } from "@/app/testhub/navigation-items";
+import { overlayNavigationItems } from "@/app/overlay-navigation";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
@@ -100,7 +100,7 @@ export const useNavigationItems = ({
 
   // Combine, filter, and sort navigation items
   const navigationItems = useMemo(() => {
-    const navItems = [...baseNavigation(workspaceSlug, projectId), ...testhubNavigationItems(workspaceSlug, projectId)];
+    const navItems = [...baseNavigation(workspaceSlug, projectId), ...overlayNavigationItems(workspaceSlug, projectId)];
 
     // Filter by permissions and shouldRender
     const filteredItems = navItems.filter((item) => {

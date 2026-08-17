@@ -13,15 +13,19 @@
       "jobs": "작업"
     },
     "bind": {
-      "title": "테스트 저장소 연결",
+      "title": "TestCopilot 소스 바인딩",
       "repo_url": "저장소 URL",
       "branch": "브랜치",
       "workdir": "Runner 작업 디렉터리",
       "save": "저장",
       "saved": "저장소 연결이 저장되었습니다.",
       "unbound": "이 프로젝트에는 아직 테스트 저장소가 없습니다.",
-      "unbound_description": "테스트 git 저장소를 연결하면 카탈로그 자산을 보고 허용 목록 작업을 실행할 수 있습니다.",
-      "cta": "저장소 연결"
+      "unbound_description": "구성에서 TestCopilot에 데이터 소스를 바인딩하면 카탈로그 자산을 보고 허용 목록 작업을 실행할 수 있습니다.",
+      "cta": "데이터 소스 선택",
+      "select_source": "데이터 소스",
+      "select_help": "TestCopilot은 구성의 데이터 소스 작업 디렉터리를 읽습니다. 폴더는 규칙으로 찾습니다.",
+      "go_to_config": "구성 열기",
+      "no_sources": "먼저 구성에서 데이터 소스를 추가하세요."
     },
     "overview": {
       "sync": "카탈로그 동기화",

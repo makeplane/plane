@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "設定",
+    "sidebar": "設定",
+    "remotes": {
+      "title": "資料來源",
+      "empty": "尚無資料來源。",
+      "empty_description": "新增本機 bind-mount（Compose 卷）即可在沒有託管 git 服務的情況下使用 TestCopilot。",
+      "loading": "載入中…",
+      "add": "新增資料來源",
+      "save": "儲存",
+      "saved": "資料來源已儲存。",
+      "delete": "移除",
+      "sync": "同步",
+      "synced": "同步完成。",
+      "name": "名稱",
+      "kind": "類型",
+      "workdir": "容器工作目錄",
+      "host_path": "主機路徑（選用）",
+      "repo_url": "儲存庫 URL",
+      "branch": "分支",
+      "credential_ref": "憑證參照",
+      "sha": "HEAD",
+      "status": "同步狀態",
+      "local_mount_hint": "本機掛載與 Docker 卷一致。本機上的專案共用同一工作目錄。"
+    },
+    "kinds": {
+      "local_mount": "本機掛載",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "複製與 fetch 尚未提供。您可以先儲存 URL，或現在使用本機掛載。",
+      "sync_disabled": "Git URL 同步尚未實作。本階段請使用本機掛載。",
+      "not_implemented": "git_url 的 clone/fetch 尚未實作。"
+    },
+    "modules": {
+      "title": "模組資料來源",
+      "help": "每個產品模組讀取一個資料來源。資料夾依約定探索，不在此處設定。",
+      "unbound": "未綁定",
+      "save": "儲存綁定",
+      "saved": "模組綁定已儲存。",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "約定"
+    },
+    "conventions": {
+      "testhub": "需要測試平台儲存庫：apps.index_platform、./*/feature/、action words 以及白名單 CLI。",
+      "features": "從綁定的工作目錄讀取 ./*/feature/。可與 TestCopilot 共用資料來源。",
+      "wiki": "從綁定的工作目錄讀取 docs/ 或 wiki/ 的 markdown。",
+      "prd": "從綁定的工作目錄讀取 prd/ 的 markdown。"
+    }
+  }
+}

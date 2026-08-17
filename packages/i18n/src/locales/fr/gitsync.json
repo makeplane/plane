@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Configuration",
+    "sidebar": "Configuration",
+    "remotes": {
+      "title": "Sources de données",
+      "empty": "Aucune source de données pour le moment.",
+      "empty_description": "Ajoutez un bind-mount local (volume Compose) pour utiliser TestCopilot sans serveur git hébergé.",
+      "loading": "Chargement…",
+      "add": "Ajouter une source de données",
+      "save": "Enregistrer",
+      "saved": "Source de données enregistrée.",
+      "delete": "Supprimer",
+      "sync": "Synchroniser",
+      "synced": "Synchronisation terminée.",
+      "name": "Nom",
+      "kind": "Type",
+      "workdir": "Répertoire de travail du conteneur",
+      "host_path": "Chemin hôte (facultatif)",
+      "repo_url": "URL du dépôt",
+      "branch": "Branche",
+      "credential_ref": "Référence d’identifiants",
+      "sha": "HEAD",
+      "status": "État de synchronisation",
+      "local_mount_hint": "Un montage local correspond au volume Docker. Les projets de cette machine partagent le même répertoire de travail."
+    },
+    "kinds": {
+      "local_mount": "Montage local",
+      "git_url": "URL Git"
+    },
+    "git_url": {
+      "coming_soon": "Le clone et le fetch ne sont pas encore disponibles. Vous pouvez enregistrer l’URL pour plus tard, ou utiliser un montage local maintenant.",
+      "sync_disabled": "La synchronisation Git URL n’est pas implémentée. Utilisez un montage local à cette étape.",
+      "not_implemented": "Le clone/fetch git_url n’est pas encore implémenté."
+    },
+    "modules": {
+      "title": "Sources des modules",
+      "help": "Chaque module produit lit une source de données. Les dossiers sont découverts par convention, pas configurés ici.",
+      "unbound": "Non lié",
+      "save": "Enregistrer les liaisons",
+      "saved": "Liaisons de modules enregistrées.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Convention"
+    },
+    "conventions": {
+      "testhub": "Attend un dépôt de plateforme de tests : apps.index_platform, ./*/feature/, action words et CLI sur liste blanche.",
+      "features": "Lit ./*/feature/ depuis le répertoire lié. Peut partager la source de TestCopilot.",
+      "wiki": "Lit le markdown de docs/ ou wiki/ dans le répertoire lié.",
+      "prd": "Lit le markdown de prd/ dans le répertoire lié."
+    }
+  }
+}

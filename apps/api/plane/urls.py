@@ -17,6 +17,7 @@ handler404 = "plane.app.views.error_404.custom_404_view"
 
 urlpatterns = [
     path("api/", include("plane.app.urls")),
+    path("api/", include("plane.gitsync.urls")),
     path("api/", include("plane.testhub.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/instances/", include("plane.license.urls")),

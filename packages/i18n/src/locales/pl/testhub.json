@@ -13,15 +13,19 @@
       "jobs": "Zadania"
     },
     "bind": {
-      "title": "Powiąż repozytorium testowe",
+      "title": "Powiąż źródło TestCopilot",
       "repo_url": "URL repozytorium",
       "branch": "Gałąź",
       "workdir": "Katalog roboczy Runner",
       "save": "Zapisz",
       "saved": "Powiązanie repozytorium zapisane.",
       "unbound": "Ten projekt nie ma jeszcze repozytorium testowego.",
-      "unbound_description": "Powiąż repozytorium git testów, aby przeglądać katalog i uruchamiać dozwolone zadania.",
-      "cta": "Powiąż repozytorium"
+      "unbound_description": "Powiąż TestCopilot ze źródłem danych w Konfiguracji, aby przeglądać katalog i uruchamiać zadania z białej listy.",
+      "cta": "Wybierz źródło danych",
+      "select_source": "Źródło danych",
+      "select_help": "TestCopilot odczytuje katalog roboczy źródła danych z Konfiguracji. Foldery są wykrywane według konwencji.",
+      "go_to_config": "Otwórz Konfigurację",
+      "no_sources": "Najpierw dodaj źródło danych w Konfiguracji."
     },
     "overview": {
       "sync": "Synchronizuj katalog",

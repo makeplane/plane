@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Konfigurace",
+    "sidebar": "Konfigurace",
+    "remotes": {
+      "title": "Zdroje dat",
+      "empty": "Zatím žádné zdroje dat.",
+      "empty_description": "Přidejte místní bind-mount (svazek Compose), abyste mohli používat TestCopilot bez hostovaného git serveru.",
+      "loading": "Načítání…",
+      "add": "Přidat zdroj dat",
+      "save": "Uložit",
+      "saved": "Zdroj dat byl uložen.",
+      "delete": "Odebrat",
+      "sync": "Synchronizovat",
+      "synced": "Synchronizace dokončena.",
+      "name": "Název",
+      "kind": "Typ",
+      "workdir": "Pracovní adresář kontejneru",
+      "host_path": "Cesta na hostiteli (volitelné)",
+      "repo_url": "URL repozitáře",
+      "branch": "Větev",
+      "credential_ref": "Odkaz na pověření",
+      "sha": "HEAD",
+      "status": "Stav synchronizace",
+      "local_mount_hint": "Místní připojení odpovídá svazku Docker. Projekty na tomto počítači sdílejí stejný pracovní adresář."
+    },
+    "kinds": {
+      "local_mount": "Místní připojení",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "Clone a fetch zatím nejsou k dispozici. URL můžete uložit na později, nebo nyní použít místní připojení.",
+      "sync_disabled": "Synchronizace Git URL není implementována. V této fázi použijte místní připojení.",
+      "not_implemented": "clone/fetch git_url ještě není implementováno."
+    },
+    "modules": {
+      "title": "Zdroje modulů",
+      "help": "Každý produktový modul čte jeden zdroj dat. Složky se zjišťují podle konvence, nenastavují se zde.",
+      "unbound": "Nenavázáno",
+      "save": "Uložit vazby",
+      "saved": "Vazby modulů byly uloženy.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Konvence"
+    },
+    "conventions": {
+      "testhub": "Očekává repozitář testovací platformy: apps.index_platform, ./*/feature/, action words a CLI na seznamu povolených.",
+      "features": "Čte ./*/feature/ z navázaného pracovního adresáře. Může sdílet zdroj s TestCopilot.",
+      "wiki": "Čte markdown z docs/ nebo wiki/ v navázaném pracovním adresáři.",
+      "prd": "Čte markdown z prd/ v navázaném pracovním adresáři."
+    }
+  }
+}

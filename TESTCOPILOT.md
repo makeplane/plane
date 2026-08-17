@@ -21,11 +21,15 @@
 
 ## 绑定规则
 
-`Project` ↔ `repo_url` + `branch`（一对一）。例：项目 A → `https://git.example/项目A.git` → `main`。
+项目在 **配置** 模块登记数据源（本阶段主路径是本地 bind-mount，对应 Compose 的 `TESTHUB_HOST_REPO`）。TestCopilot 通过 `ModuleBinding` 指向其中一条数据源，按约定读取仓内资产（如 `./*/feature/`），不把文件夹路径配进数据库。
+
+测程等平台状态存在 TestCopilot overlay 表，**不回写 git**。
+
+远程 `git_url` clone/fetch 已预留类型与字段，本阶段不同步。
 
 ## 本仓硬约束（合上游用）
 
-- 新增独立 Django app `plane.testhub` + 独立前端目录；**尽量 additive**
+- 新增独立 Django app `plane.testhub` / `plane.gitsync` + 独立前端目录；**尽量 additive**
 - **不改** Issue / Cycle 语义；失败只创建/链接 Issue，不把用例双写进 Issue
 - 社区版 `apps/web/app/routes/extended.ts` 是空数组，侧栏入口做成**尽量小的 adapter 补丁**
 - 禁止在 API 容器里任意 `subprocess`；执行走旁路 Runner，命令必须来自白名单

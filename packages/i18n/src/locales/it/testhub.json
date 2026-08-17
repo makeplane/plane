@@ -13,15 +13,19 @@
       "jobs": "Job"
     },
     "bind": {
-      "title": "Collega il repository di test",
+      "title": "Associa l’origine TestCopilot",
       "repo_url": "URL del repository",
       "branch": "Branch",
       "workdir": "Directory di lavoro del Runner",
       "save": "Salva",
       "saved": "Collegamento del repository salvato.",
       "unbound": "Questo progetto non ha ancora un repository di test.",
-      "unbound_description": "Collega un repository git di test per esplorare il catalogo ed eseguire i job consentiti.",
-      "cta": "Collega un repository"
+      "unbound_description": "Associ TestCopilot a un’origine dati in Configurazione per sfogliare il catalogo ed eseguire i job in allowlist.",
+      "cta": "Scegli un’origine dati",
+      "select_source": "Origine dati",
+      "select_help": "TestCopilot legge il workdir di un’origine dati da Configurazione. Le cartelle si scoprono per convenzione.",
+      "go_to_config": "Apri Configurazione",
+      "no_sources": "Aggiunga prima un’origine dati in Configurazione."
     },
     "overview": {
       "sync": "Sincronizza catalogo",

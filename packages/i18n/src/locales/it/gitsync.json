@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Configurazione",
+    "sidebar": "Configurazione",
+    "remotes": {
+      "title": "Origini dati",
+      "empty": "Nessuna origine dati al momento.",
+      "empty_description": "Aggiunga un bind-mount locale (volume Compose) per usare TestCopilot senza un server git ospitato.",
+      "loading": "Caricamento…",
+      "add": "Aggiungi origine dati",
+      "save": "Salva",
+      "saved": "Origine dati salvata.",
+      "delete": "Rimuovi",
+      "sync": "Sincronizza",
+      "synced": "Sincronizzazione completata.",
+      "name": "Nome",
+      "kind": "Tipo",
+      "workdir": "Workdir del contenitore",
+      "host_path": "Percorso host (facoltativo)",
+      "repo_url": "URL del repository",
+      "branch": "Branch",
+      "credential_ref": "Riferimento credenziali",
+      "sha": "HEAD",
+      "status": "Stato sincronizzazione",
+      "local_mount_hint": "Un mount locale corrisponde al volume Docker. I progetti su questa macchina condividono lo stesso workdir."
+    },
+    "kinds": {
+      "local_mount": "Mount locale",
+      "git_url": "URL Git"
+    },
+    "git_url": {
+      "coming_soon": "Clone e fetch non sono ancora disponibili. Può salvare l’URL per dopo oppure usare ora un mount locale.",
+      "sync_disabled": "La sincronizzazione Git URL non è implementata. In questa fase usi un mount locale.",
+      "not_implemented": "clone/fetch git_url non è ancora implementato."
+    },
+    "modules": {
+      "title": "Origini dei moduli",
+      "help": "Ogni modulo di prodotto legge un’origine dati. Le cartelle si scoprono per convenzione, non si configurano qui.",
+      "unbound": "Non associato",
+      "save": "Salva associazioni",
+      "saved": "Associazioni dei moduli salvate.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Convenzione"
+    },
+    "conventions": {
+      "testhub": "Richiede un repository della piattaforma di test: apps.index_platform, ./*/feature/, action words e CLI in allowlist.",
+      "features": "Legge ./*/feature/ dal workdir associato. Può condividere l’origine di TestCopilot.",
+      "wiki": "Legge il markdown di docs/ o wiki/ nel workdir associato.",
+      "prd": "Legge il markdown di prd/ nel workdir associato."
+    }
+  }
+}

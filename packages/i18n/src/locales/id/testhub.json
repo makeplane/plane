@@ -13,15 +13,19 @@
       "jobs": "Job"
     },
     "bind": {
-      "title": "Tautkan repositori tes",
+      "title": "Ikat sumber TestCopilot",
       "repo_url": "URL repositori",
       "branch": "Branch",
       "workdir": "Direktori kerja Runner",
       "save": "Simpan",
       "saved": "Tautan repositori disimpan.",
       "unbound": "Proyek ini belum memiliki repositori tes.",
-      "unbound_description": "Tautkan repositori git tes untuk menelusuri katalog dan menjalankan job yang diizinkan.",
-      "cta": "Tautkan repositori"
+      "unbound_description": "Ikat TestCopilot ke sumber data di Konfigurasi untuk menelusuri katalog dan menjalankan job allowlist.",
+      "cta": "Pilih sumber data",
+      "select_source": "Sumber data",
+      "select_help": "TestCopilot membaca workdir sumber data dari Konfigurasi. Folder ditemukan menurut konvensi.",
+      "go_to_config": "Buka Konfigurasi",
+      "no_sources": "Tambahkan sumber data di Konfigurasi terlebih dahulu."
     },
     "overview": {
       "sync": "Sinkronkan katalog",

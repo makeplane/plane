@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Configuration",
+    "sidebar": "Configuration",
+    "remotes": {
+      "title": "Data sources",
+      "empty": "No data sources yet.",
+      "empty_description": "Add a local bind-mount (the Compose volume) to use TestCopilot without a hosted git server.",
+      "loading": "Loading…",
+      "add": "Add data source",
+      "save": "Save",
+      "saved": "Data source saved.",
+      "delete": "Remove",
+      "sync": "Sync",
+      "synced": "Sync finished.",
+      "name": "Name",
+      "kind": "Type",
+      "workdir": "Container workdir",
+      "host_path": "Host path (optional)",
+      "repo_url": "Repository URL",
+      "branch": "Branch",
+      "credential_ref": "Credential reference",
+      "sha": "HEAD",
+      "status": "Sync status",
+      "local_mount_hint": "A local mount matches the Docker volume. Projects on this machine share the same workdir."
+    },
+    "kinds": {
+      "local_mount": "Local mount",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "Clone and fetch are not available yet. You can save the URL for later, or use a local mount now.",
+      "sync_disabled": "Git URL sync is not implemented. Use a local mount in this phase.",
+      "not_implemented": "git_url clone/fetch is not implemented yet."
+    },
+    "modules": {
+      "title": "Module sources",
+      "help": "Each product module reads one data source. Folders are discovered by convention, not configured here.",
+      "unbound": "Not bound",
+      "save": "Save bindings",
+      "saved": "Module bindings saved.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Convention"
+    },
+    "conventions": {
+      "testhub": "Expects a test-platform repo: apps.index_platform, ./*/feature/, action words, and allowlisted CLIs.",
+      "features": "Reads ./*/feature/ from the bound workdir. Can share TestCopilot's data source.",
+      "wiki": "Reads docs/ or wiki/ markdown from the bound workdir.",
+      "prd": "Reads prd/ markdown from the bound workdir."
+    }
+  }
+}

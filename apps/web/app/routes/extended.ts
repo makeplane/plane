@@ -27,6 +27,9 @@ export const extendedRoutes: RouteConfigEntry[] = [
             route(":workspaceSlug/projects/:projectId/testhub/jobs/:jobId", "./testhub/pages/job-detail.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/jobs", "./testhub/pages/jobs.tsx"),
           ]),
+          layout("./gitsync/layout.tsx", [
+            route(":workspaceSlug/projects/:projectId/gitsync", "./gitsync/pages/overview.tsx"),
+          ]),
         ]),
       ]),
     ]),

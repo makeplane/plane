@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Configuración",
+    "sidebar": "Configuración",
+    "remotes": {
+      "title": "Orígenes de datos",
+      "empty": "Aún no hay orígenes de datos.",
+      "empty_description": "Añada un bind-mount local (volumen de Compose) para usar TestCopilot sin un servidor git alojado.",
+      "loading": "Cargando…",
+      "add": "Añadir origen de datos",
+      "save": "Guardar",
+      "saved": "Origen de datos guardado.",
+      "delete": "Quitar",
+      "sync": "Sincronizar",
+      "synced": "Sincronización finalizada.",
+      "name": "Nombre",
+      "kind": "Tipo",
+      "workdir": "Directorio de trabajo del contenedor",
+      "host_path": "Ruta del host (opcional)",
+      "repo_url": "URL del repositorio",
+      "branch": "Rama",
+      "credential_ref": "Referencia de credenciales",
+      "sha": "HEAD",
+      "status": "Estado de sincronización",
+      "local_mount_hint": "Un montaje local coincide con el volumen de Docker. Los proyectos de esta máquina comparten el mismo directorio de trabajo."
+    },
+    "kinds": {
+      "local_mount": "Montaje local",
+      "git_url": "URL de Git"
+    },
+    "git_url": {
+      "coming_soon": "Clone y fetch aún no están disponibles. Puede guardar la URL para más tarde o usar un montaje local ahora.",
+      "sync_disabled": "La sincronización de URL de Git no está implementada. Use un montaje local en esta fase.",
+      "not_implemented": "El clone/fetch de git_url aún no está implementado."
+    },
+    "modules": {
+      "title": "Orígenes de módulos",
+      "help": "Cada módulo de producto lee un origen de datos. Las carpetas se descubren por convención, no se configuran aquí.",
+      "unbound": "Sin vincular",
+      "save": "Guardar vínculos",
+      "saved": "Vínculos de módulos guardados.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Convención"
+    },
+    "conventions": {
+      "testhub": "Espera un repositorio de plataforma de pruebas: apps.index_platform, ./*/feature/, action words y CLI en lista blanca.",
+      "features": "Lee ./*/feature/ del directorio vinculado. Puede compartir el origen de TestCopilot.",
+      "wiki": "Lee markdown de docs/ o wiki/ en el directorio vinculado.",
+      "prd": "Lee markdown de prd/ en el directorio vinculado."
+    }
+  }
+}

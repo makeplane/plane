@@ -39,6 +39,14 @@ def test_unknown_kind():
         build_argv("bash")
 
 
+def test_overlay_is_not_a_runner_command():
+    """Progress overlays live in TesthubAssetOverlay, never as a git/runner kind."""
+    with pytest.raises(WhitelistError):
+        build_argv("overlay")
+    with pytest.raises(WhitelistError):
+        build_argv("git")
+
+
 def test_file_allowlist(tmp_path):
     (tmp_path / "assets" / "ddl" / "main").mkdir(parents=True)
     target = tmp_path / "assets" / "ddl" / "main" / "invoice.sql"

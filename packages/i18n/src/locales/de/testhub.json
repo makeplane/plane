@@ -13,15 +13,19 @@
       "jobs": "Jobs"
     },
     "bind": {
-      "title": "Test-Repository binden",
+      "title": "TestCopilot-Quelle binden",
       "repo_url": "Repository-URL",
       "branch": "Branch",
       "workdir": "Runner-Arbeitsverzeichnis",
       "save": "Speichern",
       "saved": "Repository-Bindung gespeichert.",
       "unbound": "Dieses Projekt hat noch kein Test-Repository.",
-      "unbound_description": "Binden Sie ein Test-git-Repository, um Katalogressourcen zu durchsuchen und zulässige Jobs auszuführen.",
-      "cta": "Repository binden"
+      "unbound_description": "Binden Sie TestCopilot in der Konfiguration an eine Datenquelle, um Katalog-Assets zu durchsuchen und Jobs auf der Allowlist auszuführen.",
+      "cta": "Datenquelle wählen",
+      "select_source": "Datenquelle",
+      "select_help": "TestCopilot liest das Workdir einer Datenquelle aus der Konfiguration. Ordner werden per Konvention erkannt.",
+      "go_to_config": "Konfiguration öffnen",
+      "no_sources": "Zuerst in der Konfiguration eine Datenquelle hinzufügen."
     },
     "overview": {
       "sync": "Katalog synchronisieren",

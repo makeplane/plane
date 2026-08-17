@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Konfigurasi",
+    "sidebar": "Konfigurasi",
+    "remotes": {
+      "title": "Sumber data",
+      "empty": "Belum ada sumber data.",
+      "empty_description": "Tambahkan bind-mount lokal (volume Compose) agar TestCopilot dapat digunakan tanpa server git terhosting.",
+      "loading": "Memuat…",
+      "add": "Tambah sumber data",
+      "save": "Simpan",
+      "saved": "Sumber data disimpan.",
+      "delete": "Hapus",
+      "sync": "Sinkronkan",
+      "synced": "Sinkronisasi selesai.",
+      "name": "Nama",
+      "kind": "Jenis",
+      "workdir": "Workdir kontainer",
+      "host_path": "Jalur host (opsional)",
+      "repo_url": "URL repositori",
+      "branch": "Cabang",
+      "credential_ref": "Referensi kredensial",
+      "sha": "HEAD",
+      "status": "Status sinkronisasi",
+      "local_mount_hint": "Mount lokal sesuai volume Docker. Proyek di mesin ini berbagi workdir yang sama."
+    },
+    "kinds": {
+      "local_mount": "Mount lokal",
+      "git_url": "URL Git"
+    },
+    "git_url": {
+      "coming_soon": "Clone dan fetch belum tersedia. Anda dapat menyimpan URL untuk nanti, atau gunakan mount lokal sekarang.",
+      "sync_disabled": "Sinkronisasi URL Git belum diimplementasikan. Gunakan mount lokal pada tahap ini.",
+      "not_implemented": "clone/fetch git_url belum diimplementasikan."
+    },
+    "modules": {
+      "title": "Sumber modul",
+      "help": "Setiap modul produk membaca satu sumber data. Folder ditemukan menurut konvensi, tidak dikonfigurasi di sini.",
+      "unbound": "Belum terikat",
+      "save": "Simpan ikatan",
+      "saved": "Ikatan modul disimpan.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Konvensi"
+    },
+    "conventions": {
+      "testhub": "Mengharapkan repositori platform uji: apps.index_platform, ./*/feature/, action words, dan CLI pada daftar izinkan.",
+      "features": "Membaca ./*/feature/ dari workdir yang terikat. Dapat berbagi sumber TestCopilot.",
+      "wiki": "Membaca markdown docs/ atau wiki/ di workdir yang terikat.",
+      "prd": "Membaca markdown prd/ di workdir yang terikat."
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "設定",
+    "sidebar": "設定",
+    "remotes": {
+      "title": "データソース",
+      "empty": "データソースはまだありません。",
+      "empty_description": "ホストされた git サーバーがなくても、ローカルの bind-mount（Compose ボリューム）を追加すれば TestCopilot を利用できます。",
+      "loading": "読み込み中…",
+      "add": "データソースを追加",
+      "save": "保存",
+      "saved": "データソースを保存しました。",
+      "delete": "削除",
+      "sync": "同期",
+      "synced": "同期が完了しました。",
+      "name": "名前",
+      "kind": "種類",
+      "workdir": "コンテナの作業ディレクトリ",
+      "host_path": "ホストパス（任意）",
+      "repo_url": "リポジトリ URL",
+      "branch": "ブランチ",
+      "credential_ref": "認証情報の参照",
+      "sha": "HEAD",
+      "status": "同期ステータス",
+      "local_mount_hint": "ローカルマウントは Docker ボリュームと一致します。このマシン上のプロジェクトは同じ作業ディレクトリを共有します。"
+    },
+    "kinds": {
+      "local_mount": "ローカルマウント",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "clone と fetch はまだ利用できません。URL を保存しておくか、今はローカルマウントをご利用ください。",
+      "sync_disabled": "Git URL の同期は未実装です。この段階ではローカルマウントを使用してください。",
+      "not_implemented": "git_url の clone/fetch はまだ実装されていません。"
+    },
+    "modules": {
+      "title": "モジュールのデータソース",
+      "help": "各製品モジュールは 1 つのデータソースを読みます。フォルダーは設定ではなく、規約で検出します。",
+      "unbound": "未バインド",
+      "save": "バインドを保存",
+      "saved": "モジュールのバインドを保存しました。",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "規約"
+    },
+    "conventions": {
+      "testhub": "テストプラットフォームリポジトリが必要です。apps.index_platform、./*/feature/、action words、許可リストの CLI を含みます。",
+      "features": "バインドした作業ディレクトリから ./*/feature/ を読みます。TestCopilot とデータソースを共有できます。",
+      "wiki": "バインドした作業ディレクトリから docs/ または wiki/ の markdown を読みます。",
+      "prd": "バインドした作業ディレクトリから prd/ の markdown を読みます。"
+    }
+  }
+}

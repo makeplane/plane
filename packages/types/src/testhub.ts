@@ -8,9 +8,12 @@ export type TTesthubRepo = {
   id: string;
   project: string;
   workspace: string;
+  name?: string;
+  kind?: "local_mount" | "git_url";
   repo_url: string;
   branch: string;
   workdir: string;
+  host_path?: string;
   last_sync_sha: string;
   last_sync_at: string | null;
   last_sync_status: string;
@@ -106,4 +109,15 @@ export type TTesthubJobCreate = {
   kind: string;
   params?: Record<string, unknown>;
   confirmed?: boolean;
+};
+
+export type TTesthubAssetOverlay = {
+  id: string;
+  project: string;
+  workspace: string;
+  asset_ref: string;
+  kind: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
 };

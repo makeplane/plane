@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Konfigurácia",
+    "sidebar": "Konfigurácia",
+    "remotes": {
+      "title": "Zdroje údajov",
+      "empty": "Zatiaľ žiadne zdroje údajov.",
+      "empty_description": "Pridajte miestny bind-mount (zväzok Compose), aby ste mohli používať TestCopilot bez hostovaného git servera.",
+      "loading": "Načítava sa…",
+      "add": "Pridať zdroj údajov",
+      "save": "Uložiť",
+      "saved": "Zdroj údajov bol uložený.",
+      "delete": "Odstrániť",
+      "sync": "Synchronizovať",
+      "synced": "Synchronizácia dokončená.",
+      "name": "Názov",
+      "kind": "Typ",
+      "workdir": "Pracovný adresár kontajnera",
+      "host_path": "Cesta na hostiteľovi (voliteľné)",
+      "repo_url": "URL repozitára",
+      "branch": "Vetva",
+      "credential_ref": "Odkaz na poverenia",
+      "sha": "HEAD",
+      "status": "Stav synchronizácie",
+      "local_mount_hint": "Miestne pripojenie zodpovedá zväzku Docker. Projekty na tomto počítači zdieľajú ten istý pracovný adresár."
+    },
+    "kinds": {
+      "local_mount": "Miestne pripojenie",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "Clone a fetch zatiaľ nie sú k dispozícii. URL môžete uložiť na neskôr alebo teraz použiť miestne pripojenie.",
+      "sync_disabled": "Synchronizácia Git URL nie je implementovaná. V tejto fáze použite miestne pripojenie.",
+      "not_implemented": "clone/fetch git_url ešte nie je implementované."
+    },
+    "modules": {
+      "title": "Zdroje modulov",
+      "help": "Každý produktový modul číta jeden zdroj údajov. Priečinky sa zisťujú podľa konvencie, nenastavujú sa tu.",
+      "unbound": "Nepripojené",
+      "save": "Uložiť väzby",
+      "saved": "Väzby modulov boli uložené.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Konvencia"
+    },
+    "conventions": {
+      "testhub": "Očakáva sa repozitár testovacej platformy: apps.index_platform, ./*/feature/, action words a CLI na zozname povolených.",
+      "features": "Číta ./*/feature/ z naviazaného pracovného adresára. Môže zdieľať zdroj s TestCopilot.",
+      "wiki": "Číta markdown z docs/ alebo wiki/ v naviazanom pracovnom adresári.",
+      "prd": "Číta markdown z prd/ v naviazanom pracovnom adresári."
+    }
+  }
+}

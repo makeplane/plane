@@ -13,15 +13,19 @@
       "jobs": "ジョブ"
     },
     "bind": {
-      "title": "テストリポジトリをバインド",
+      "title": "TestCopilot のソースをバインド",
       "repo_url": "リポジトリ URL",
       "branch": "ブランチ",
       "workdir": "Runner の作業ディレクトリ",
       "save": "保存",
       "saved": "リポジトリのバインドを保存しました。",
       "unbound": "このプロジェクトにはテストリポジトリがまだありません。",
-      "unbound_description": "テスト用 git リポジトリをバインドすると、カタログ資産の閲覧と許可リストのジョブ実行ができます。",
-      "cta": "リポジトリをバインド"
+      "unbound_description": "設定で TestCopilot にデータソースをバインドすると、カタログ資産の閲覧と許可リストのジョブ実行ができます。",
+      "cta": "データソースを選ぶ",
+      "select_source": "データソース",
+      "select_help": "TestCopilot は設定のデータソース作業ディレクトリを読みます。フォルダーは規約で検出します。",
+      "go_to_config": "設定を開く",
+      "no_sources": "先に設定でデータソースを追加してください。"
     },
     "overview": {
       "sync": "カタログを同期",

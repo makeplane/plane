@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Configurare",
+    "sidebar": "Configurare",
+    "remotes": {
+      "title": "Surse de date",
+      "empty": "Nu există încă surse de date.",
+      "empty_description": "Adăugați un bind-mount local (volum Compose) pentru a folosi TestCopilot fără un server git găzduit.",
+      "loading": "Se încarcă…",
+      "add": "Adăugați o sursă de date",
+      "save": "Salvați",
+      "saved": "Sursa de date a fost salvată.",
+      "delete": "Eliminați",
+      "sync": "Sincronizați",
+      "synced": "Sincronizarea s-a încheiat.",
+      "name": "Nume",
+      "kind": "Tip",
+      "workdir": "Directorul de lucru al containerului",
+      "host_path": "Calea de pe host (opțional)",
+      "repo_url": "URL-ul depozitului",
+      "branch": "Ramură",
+      "credential_ref": "Referință de acreditări",
+      "sha": "HEAD",
+      "status": "Starea sincronizării",
+      "local_mount_hint": "Un montaj local corespunde volumului Docker. Proiectele de pe acest computer partajează același director de lucru."
+    },
+    "kinds": {
+      "local_mount": "Montaj local",
+      "git_url": "URL Git"
+    },
+    "git_url": {
+      "coming_soon": "Clone și fetch nu sunt încă disponibile. Puteți salva URL-ul pentru mai târziu sau folosi acum un montaj local.",
+      "sync_disabled": "Sincronizarea URL Git nu este implementată. În această fază folosiți un montaj local.",
+      "not_implemented": "clone/fetch git_url nu este încă implementat."
+    },
+    "modules": {
+      "title": "Sursele modulelor",
+      "help": "Fiecare modul de produs citește o sursă de date. Folderele sunt descoperite prin convenție, nu se configurează aici.",
+      "unbound": "Nelegat",
+      "save": "Salvați legăturile",
+      "saved": "Legăturile modulelor au fost salvate.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Convenție"
+    },
+    "conventions": {
+      "testhub": "Așteaptă un depozit al platformei de testare: apps.index_platform, ./*/feature/, action words și CLI pe lista permisă.",
+      "features": "Citește ./*/feature/ din directorul de lucru legat. Poate partaja sursa TestCopilot.",
+      "wiki": "Citește markdown din docs/ sau wiki/ în directorul de lucru legat.",
+      "prd": "Citește markdown din prd/ în directorul de lucru legat."
+    }
+  }
+}

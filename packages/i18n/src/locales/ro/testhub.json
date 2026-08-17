@@ -13,15 +13,19 @@
       "jobs": "Joburi"
     },
     "bind": {
-      "title": "Leagă depozitul de teste",
+      "title": "Legați sursa TestCopilot",
       "repo_url": "URL-ul depozitului",
       "branch": "Ramură",
       "workdir": "Directorul de lucru Runner",
       "save": "Salvează",
       "saved": "Legătura depozitului a fost salvată.",
       "unbound": "Acest proiect nu are încă un depozit de teste.",
-      "unbound_description": "Leagă un depozit git de teste pentru a parcurge catalogul și a rula joburile permise.",
-      "cta": "Leagă un depozit"
+      "unbound_description": "Legați TestCopilot de o sursă de date în Configurare pentru a parcurge catalogul și a rula lucrări de pe lista permisă.",
+      "cta": "Alegeți o sursă de date",
+      "select_source": "Sursă de date",
+      "select_help": "TestCopilot citește directorul de lucru al unei surse de date din Configurare. Folderele sunt descoperite prin convenție.",
+      "go_to_config": "Deschideți Configurare",
+      "no_sources": "Adăugați mai întâi o sursă de date în Configurare."
     },
     "overview": {
       "sync": "Sincronizează catalogul",

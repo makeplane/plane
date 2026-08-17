@@ -13,15 +13,19 @@
       "jobs": "Jobs"
     },
     "bind": {
-      "title": "Vincular repositório de testes",
+      "title": "Vincular fonte do TestCopilot",
       "repo_url": "URL do repositório",
       "branch": "Branch",
       "workdir": "Diretório de trabalho do Runner",
       "save": "Salvar",
       "saved": "Vinculação do repositório salva.",
       "unbound": "Este projeto ainda não tem um repositório de testes.",
-      "unbound_description": "Vincule um repositório git de testes para navegar no catálogo e executar jobs permitidos.",
-      "cta": "Vincular um repositório"
+      "unbound_description": "Vincule o TestCopilot a uma fonte de dados em Configuração para navegar no catálogo e executar jobs da allowlist.",
+      "cta": "Escolher uma fonte de dados",
+      "select_source": "Fonte de dados",
+      "select_help": "O TestCopilot lê o workdir de uma fonte de dados em Configuração. As pastas são descobertas por convenção.",
+      "go_to_config": "Abrir Configuração",
+      "no_sources": "Adicione primeiro uma fonte de dados em Configuração."
     },
     "overview": {
       "sync": "Sincronizar catálogo",

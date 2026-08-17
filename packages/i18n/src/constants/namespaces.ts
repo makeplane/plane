@@ -12,6 +12,7 @@ export const NAMESPACES = [
   "cycle",
   "editor",
   "empty-state",
+  "gitsync",
   "home",
   "inbox",
   "integration",

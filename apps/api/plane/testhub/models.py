@@ -61,6 +61,39 @@ class CatalogSnapshot(BaseModel):
         ]
 
 
+class TesthubAssetOverlay(BaseModel):
+    """Platform-only state keyed by a catalog/path ref. Never written back to git."""
+
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="testhub_overlays",
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="testhub_overlays",
+    )
+    asset_ref = models.CharField(max_length=512)
+    kind = models.CharField(max_length=64, default="progress")
+    payload = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Testhub asset overlay"
+        verbose_name_plural = "Testhub asset overlays"
+        db_table = "testhub_asset_overlays"
+        ordering = ("asset_ref",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "asset_ref", "kind"],
+                name="testhub_overlay_project_asset_kind_uniq",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["project", "kind"]),
+        ]
+
+
 class TesthubJob(BaseModel):
     class Status(models.TextChoices):
         QUEUED = "queued"

@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Configuração",
+    "sidebar": "Configuração",
+    "remotes": {
+      "title": "Fontes de dados",
+      "empty": "Ainda não há fontes de dados.",
+      "empty_description": "Adicione um bind-mount local (volume do Compose) para usar o TestCopilot sem um servidor git hospedado.",
+      "loading": "Carregando…",
+      "add": "Adicionar fonte de dados",
+      "save": "Salvar",
+      "saved": "Fonte de dados salva.",
+      "delete": "Remover",
+      "sync": "Sincronizar",
+      "synced": "Sincronização concluída.",
+      "name": "Nome",
+      "kind": "Tipo",
+      "workdir": "Workdir do contêiner",
+      "host_path": "Caminho do host (opcional)",
+      "repo_url": "URL do repositório",
+      "branch": "Branch",
+      "credential_ref": "Referência de credencial",
+      "sha": "HEAD",
+      "status": "Status da sincronização",
+      "local_mount_hint": "Um mount local corresponde ao volume Docker. Os projetos nesta máquina compartilham o mesmo workdir."
+    },
+    "kinds": {
+      "local_mount": "Mount local",
+      "git_url": "URL do Git"
+    },
+    "git_url": {
+      "coming_soon": "Clone e fetch ainda não estão disponíveis. Você pode salvar a URL para depois ou usar um mount local agora.",
+      "sync_disabled": "A sincronização de URL do Git não está implementada. Use um mount local nesta fase.",
+      "not_implemented": "O clone/fetch de git_url ainda não está implementado."
+    },
+    "modules": {
+      "title": "Fontes dos módulos",
+      "help": "Cada módulo de produto lê uma fonte de dados. As pastas são descobertas por convenção, não configuradas aqui.",
+      "unbound": "Não vinculado",
+      "save": "Salvar vínculos",
+      "saved": "Vínculos de módulos salvos.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Convenção"
+    },
+    "conventions": {
+      "testhub": "Espera um repositório da plataforma de testes: apps.index_platform, ./*/feature/, action words e CLIs na allowlist.",
+      "features": "Lê ./*/feature/ do workdir vinculado. Pode compartilhar a fonte do TestCopilot.",
+      "wiki": "Lê markdown de docs/ ou wiki/ no workdir vinculado.",
+      "prd": "Lê markdown de prd/ no workdir vinculado."
+    }
+  }
+}

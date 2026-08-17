@@ -31,7 +31,6 @@ def run_testhub_job(job_id: str) -> None:
     job.started_at = timezone.now()
     job.save(update_fields=["status", "started_at", "updated_at"])
 
-    repo = ProjectTestRepo.objects.filter(project_id=job.project_id).first()
     try:
         result = exec_job(job_id=str(job.id), argv=list(job.argv), timeout=_timeout_for(job.kind))
         job.exit_code = result.exit_code
@@ -43,29 +42,23 @@ def run_testhub_job(job_id: str) -> None:
 
         if job.kind == "index_platform" and job.status == TesthubJob.Status.SUCCEEDED:
             _store_catalog(job, result.stdout, result.git)
-        elif repo is not None and job.kind == "index_platform":
-            repo.last_sync_status = job.status
-            repo.last_sync_error = _clip(result.stderr or f"exit {result.exit_code}")
-            repo.save(update_fields=["last_sync_status", "last_sync_error", "updated_at"])
+        elif job.kind == "index_platform":
+            _mark_index_status(job.project_id, job.status, _clip(result.stderr or f"exit {result.exit_code}"))
     except RunnerError as exc:
         job.status = TesthubJob.Status.FAILED
         job.stderr = _clip(str(exc))
         job.finished_at = timezone.now()
         job.save(update_fields=["status", "stderr", "finished_at", "updated_at"])
-        if repo is not None and job.kind == "index_platform":
-            repo.last_sync_status = TesthubJob.Status.FAILED
-            repo.last_sync_error = _clip(str(exc))
-            repo.save(update_fields=["last_sync_status", "last_sync_error", "updated_at"])
+        if job.kind == "index_platform":
+            _mark_index_status(job.project_id, TesthubJob.Status.FAILED, _clip(str(exc)))
     except Exception as exc:
         log_exception(exc)
         job.status = TesthubJob.Status.FAILED
         job.stderr = _clip(str(exc))
         job.finished_at = timezone.now()
         job.save(update_fields=["status", "stderr", "finished_at", "updated_at"])
-        if repo is not None and job.kind == "index_platform":
-            repo.last_sync_status = TesthubJob.Status.FAILED
-            repo.last_sync_error = _clip(str(exc))
-            repo.save(update_fields=["last_sync_status", "last_sync_error", "updated_at"])
+        if job.kind == "index_platform":
+            _mark_index_status(job.project_id, TesthubJob.Status.FAILED, _clip(str(exc)))
 
 
 def _timeout_for(kind: str) -> int:
@@ -94,10 +87,32 @@ def _store_catalog(job: TesthubJob, stdout: str, git: dict) -> None:
         sha=sha,
         payload=payload,
     )
-    ProjectTestRepo.objects.filter(project_id=job.project_id).update(
-        last_sync_sha=sha,
-        last_sync_at=timezone.now(),
-        last_sync_status=TesthubJob.Status.SUCCEEDED,
-        last_sync_error="",
-        updated_at=timezone.now(),
-    )
+    _mark_index_status(job.project_id, TesthubJob.Status.SUCCEEDED, "", sha=sha)
+
+
+def _mark_index_status(project_id, status: str, error: str, sha: str | None = None) -> None:
+    from plane.gitsync.bindings import get_bound_remote
+    from plane.gitsync.registry import MODULE_TESTHUB
+
+    now = timezone.now()
+    repo_update = {
+        "last_sync_status": status,
+        "last_sync_error": error,
+        "updated_at": now,
+    }
+    if sha is not None:
+        repo_update["last_sync_sha"] = sha
+        repo_update["last_sync_at"] = now
+    ProjectTestRepo.objects.filter(project_id=project_id).update(**repo_update)
+
+    remote = get_bound_remote(project_id, MODULE_TESTHUB)
+    if remote is None:
+        return
+    remote.last_sync_status = status
+    remote.last_sync_error = error
+    update_fields = ["last_sync_status", "last_sync_error", "updated_at"]
+    if sha is not None:
+        remote.last_sync_sha = sha
+        remote.last_sync_at = now
+        update_fields.extend(["last_sync_sha", "last_sync_at"])
+    remote.save(update_fields=update_fields)

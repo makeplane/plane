@@ -13,15 +13,19 @@
       "jobs": "Úlohy"
     },
     "bind": {
-      "title": "Svázat testovací repozitář",
+      "title": "Navázat zdroj TestCopilot",
       "repo_url": "URL repozitáře",
       "branch": "Větev",
       "workdir": "Pracovní adresář Runner",
       "save": "Uložit",
       "saved": "Propojení repozitáře uloženo.",
       "unbound": "Tento projekt ještě nemá testovací repozitář.",
-      "unbound_description": "Svažte testovací git repozitář pro prohlížení katalogu a spouštění povolených úloh.",
-      "cta": "Svázat repozitář"
+      "unbound_description": "V Konfiguraci navážte TestCopilot na zdroj dat, abyste mohli procházet katalog a spouštět úlohy na seznamu povolených.",
+      "cta": "Vybrat zdroj dat",
+      "select_source": "Zdroj dat",
+      "select_help": "TestCopilot čte pracovní adresář zdroje dat z Konfigurace. Složky se zjišťují podle konvence.",
+      "go_to_config": "Otevřít Konfiguraci",
+      "no_sources": "Nejprve v Konfiguraci přidejte zdroj dat."
     },
     "overview": {
       "sync": "Synchronizovat katalog",

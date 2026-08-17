@@ -75,6 +75,7 @@ export const getTabUrl = (workspaceSlug: string, projectId: string, tabKey: stri
     overview: `${baseUrl}/overview`,
     epics: `${baseUrl}/epics`,
     testhub: `${baseUrl}/testhub`,
+    gitsync: `${baseUrl}/gitsync`,
   };
   return tabUrlMap[tabKey] || `${baseUrl}/issues`; // fallback to issues
 };

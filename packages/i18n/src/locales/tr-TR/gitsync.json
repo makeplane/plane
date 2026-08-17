@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Yapılandırma",
+    "sidebar": "Yapılandırma",
+    "remotes": {
+      "title": "Veri kaynakları",
+      "empty": "Henüz veri kaynağı yok.",
+      "empty_description": "Barındırılan bir git sunucusu olmadan TestCopilot kullanmak için yerel bir bind-mount (Compose birimi) ekleyin.",
+      "loading": "Yükleniyor…",
+      "add": "Veri kaynağı ekle",
+      "save": "Kaydet",
+      "saved": "Veri kaynağı kaydedildi.",
+      "delete": "Kaldır",
+      "sync": "Senkronize et",
+      "synced": "Senkronizasyon bitti.",
+      "name": "Ad",
+      "kind": "Tür",
+      "workdir": "Kapsayıcı çalışma dizini",
+      "host_path": "Ana makine yolu (isteğe bağlı)",
+      "repo_url": "Depo URL’si",
+      "branch": "Dal",
+      "credential_ref": "Kimlik bilgisi başvurusu",
+      "sha": "HEAD",
+      "status": "Senkronizasyon durumu",
+      "local_mount_hint": "Yerel bağlama Docker birimiyle eşleşir. Bu makinedeki projeler aynı çalışma dizinini paylaşır."
+    },
+    "kinds": {
+      "local_mount": "Yerel bağlama",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "Clone ve fetch henüz kullanılamıyor. URL’yi sonra için kaydedebilir veya şimdi yerel bağlama kullanabilirsiniz.",
+      "sync_disabled": "Git URL senkronizasyonu uygulanmadı. Bu aşamada yerel bağlama kullanın.",
+      "not_implemented": "git_url clone/fetch henüz uygulanmadı."
+    },
+    "modules": {
+      "title": "Modül kaynakları",
+      "help": "Her ürün modülü bir veri kaynağı okur. Klasörler burada yapılandırılmaz, kurala göre bulunur.",
+      "unbound": "Bağlı değil",
+      "save": "Bağlamaları kaydet",
+      "saved": "Modül bağlamaları kaydedildi.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Kural"
+    },
+    "conventions": {
+      "testhub": "Bir test platformu deposu bekler: apps.index_platform, ./*/feature/, action words ve izin listesindeki CLI’ler.",
+      "features": "Bağlı çalışma dizininden ./*/feature/ okur. TestCopilot kaynağını paylaşabilir.",
+      "wiki": "Bağlı çalışma dizinindeki docs/ veya wiki/ markdown dosyalarını okur.",
+      "prd": "Bağlı çalışma dizinindeki prd/ markdown dosyalarını okur."
+    }
+  }
+}

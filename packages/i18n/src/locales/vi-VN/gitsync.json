@@ -1,0 +1,55 @@
+{
+  "gitsync": {
+    "title": "Cấu hình",
+    "sidebar": "Cấu hình",
+    "remotes": {
+      "title": "Nguồn dữ liệu",
+      "empty": "Chưa có nguồn dữ liệu.",
+      "empty_description": "Thêm bind-mount cục bộ (volume Compose) để dùng TestCopilot khi chưa có máy chủ git lưu trữ.",
+      "loading": "Đang tải…",
+      "add": "Thêm nguồn dữ liệu",
+      "save": "Lưu",
+      "saved": "Đã lưu nguồn dữ liệu.",
+      "delete": "Gỡ",
+      "sync": "Đồng bộ",
+      "synced": "Đã xong đồng bộ.",
+      "name": "Tên",
+      "kind": "Loại",
+      "workdir": "Thư mục làm việc của container",
+      "host_path": "Đường dẫn máy chủ (tuỳ chọn)",
+      "repo_url": "URL kho",
+      "branch": "Nhánh",
+      "credential_ref": "Tham chiếu thông tin xác thực",
+      "sha": "HEAD",
+      "status": "Trạng thái đồng bộ",
+      "local_mount_hint": "Mount cục bộ khớp với volume Docker. Các dự án trên máy này dùng chung thư mục làm việc."
+    },
+    "kinds": {
+      "local_mount": "Mount cục bộ",
+      "git_url": "Git URL"
+    },
+    "git_url": {
+      "coming_soon": "Clone và fetch chưa sẵn sàng. Bạn có thể lưu URL để dùng sau, hoặc dùng mount cục bộ ngay bây giờ.",
+      "sync_disabled": "Đồng bộ Git URL chưa được triển khai. Hãy dùng mount cục bộ trong giai đoạn này.",
+      "not_implemented": "clone/fetch git_url chưa được triển khai."
+    },
+    "modules": {
+      "title": "Nguồn của mô-đun",
+      "help": "Mỗi mô-đun sản phẩm đọc một nguồn dữ liệu. Thư mục được tìm theo quy ước, không cấu hình tại đây.",
+      "unbound": "Chưa gắn",
+      "save": "Lưu liên kết",
+      "saved": "Đã lưu liên kết mô-đun.",
+      "testhub": "TestCopilot",
+      "features": "Features",
+      "wiki": "Wiki",
+      "prd": "PRD",
+      "convention": "Quy ước"
+    },
+    "conventions": {
+      "testhub": "Cần kho nền tảng kiểm thử: apps.index_platform, ./*/feature/, action words và CLI trong danh sách cho phép.",
+      "features": "Đọc ./*/feature/ từ thư mục làm việc đã gắn. Có thể dùng chung nguồn với TestCopilot.",
+      "wiki": "Đọc markdown docs/ hoặc wiki/ trong thư mục làm việc đã gắn.",
+      "prd": "Đọc markdown prd/ trong thư mục làm việc đã gắn."
+    }
+  }
+}
