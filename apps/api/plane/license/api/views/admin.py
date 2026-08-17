@@ -126,7 +126,7 @@ class InstanceAdminSignUpEndpoint(View):
         first_name = request.POST.get("first_name", False)
         last_name = request.POST.get("last_name", "")
         company_name = request.POST.get("company_name", "")
-        is_telemetry_enabled = request.POST.get("is_telemetry_enabled", True)
+        is_telemetry_enabled = str(request.POST.get("is_telemetry_enabled", True)).lower() in {"1", "true"}
 
         # return error if the email and password is not present
         if not email or not password or not first_name:
