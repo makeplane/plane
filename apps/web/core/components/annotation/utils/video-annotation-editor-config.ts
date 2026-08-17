@@ -1,5 +1,6 @@
 import { ArrowUpRight, Circle, Image as ImageIcon, Minus, Pencil, Square, Type } from "lucide-react";
 import type { TCustomPlaylistAnnotationStrokeStyle, TCustomPlaylistAnnotationTool } from "../types/annotation.types";
+import { VIDEO_ANNOTATION_START_TIME_OFFSET_SECONDS } from "./playlist-annotation-creation-time";
 
 const DEFAULT_VIDEO_ANNOTATION_COLOR = "#f97316";
 const VIDEO_ANNOTATION_COLOR_PRESETS = [
@@ -40,7 +41,6 @@ const VIDEO_ANNOTATION_TIMELINE_CLIP_MIN_WIDTH_PX = 56;
 const VIDEO_ANNOTATION_TIMELINE_CLIP_GAP_PX = 8;
 const VIDEO_ANNOTATION_TIMELINE_MOMENT_COLUMN_WIDTH_PX = 236;
 const VIDEO_ANNOTATION_TIMELINE_MIN_DURATION_SECONDS = 0.1;
-const VIDEO_ANNOTATION_START_TIME_OFFSET_SECONDS = 1;
 const VIDEO_ANNOTATION_TOOL_BUTTON_CLASS =
   "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[5px] border border-custom-border-200 bg-custom-background-100 text-custom-text-200 transition-colors hover:bg-custom-background-80 hover:text-custom-text-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40 disabled:cursor-not-allowed disabled:opacity-45";
 const VIDEO_ANNOTATION_TOOLS = [

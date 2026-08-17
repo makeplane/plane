@@ -236,7 +236,6 @@ const MediaDetailPage = () => {
     useCredentials,
     crossOrigin,
     useDocumentCredentials,
-    videoDownloadSrc,
   } = useResolvedMediaSources({
     item,
     meta,
@@ -1168,7 +1167,6 @@ const MediaDetailPage = () => {
               settingsPanelRef={settingsPanelRef}
               playerElement={playerElement}
               crossOrigin={crossOrigin}
-              videoDownloadSrc={videoDownloadSrc}
               onVideoAnnotationPropertiesElementChange={setVideoAnnotationPropertiesElement}
               onVideoAnnotationToolbarElementChange={setVideoAnnotationToolbarElement}
               onVideoTimelineElementChange={setVideoTimelineElement}
