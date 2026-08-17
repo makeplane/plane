@@ -8,7 +8,7 @@ import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 
 // plane imports
-import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
@@ -23,7 +23,6 @@ type TGroupItem = {
   states: IState[];
   stateOperationsCallbacks: TStateOperationsCallbacks;
   isEditable: boolean;
-  shouldTrackEvents: boolean;
   groupItemClassName?: string;
   stateItemClassName?: string;
   handleGroupCollapse: (groupKey: TStateGroups) => void;
@@ -38,7 +37,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
     groupsExpanded,
     isEditable,
     stateOperationsCallbacks,
-    shouldTrackEvents,
     groupItemClassName,
     stateItemClassName,
     handleExpand,
@@ -82,7 +80,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         </div>
         <button
           type="button"
-          data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
           className={cn(
             "flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-accent-primary/80 transition-colors hover:bg-layer-1 hover:text-accent-primary",
             (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
@@ -114,7 +111,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
             states={states}
             disabled={!isEditable}
             stateOperationsCallbacks={stateOperationsCallbacks}
-            shouldTrackEvents={shouldTrackEvents}
             stateItemClassName={stateItemClassName}
           />
         </div>
@@ -126,7 +122,6 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
             groupKey={groupKey}
             handleClose={() => setCreateState(false)}
             createStateCallback={stateOperationsCallbacks.createState}
-            shouldTrackEvents={shouldTrackEvents}
           />
         </div>
       )}

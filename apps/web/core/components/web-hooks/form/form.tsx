@@ -7,7 +7,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IWebhook, TWebhookEventTypes } from "@plane/types";
@@ -102,7 +101,6 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
             size="lg"
             type="submit"
             loading={isSubmitting}
-            data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_UPDATE_BUTTON}
           >
             {isSubmitting ? t("updating") : t("update")}
           </Button>

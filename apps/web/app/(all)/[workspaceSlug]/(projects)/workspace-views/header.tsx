@@ -11,7 +11,6 @@ import { useParams } from "next/navigation";
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  GLOBAL_VIEW_TRACKER_ELEMENTS,
   DEFAULT_GLOBAL_VIEWS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -151,7 +150,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
           <Button
             variant="primary"
             size="lg"
-            data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => setCreateViewModal(true)}
           >
             {t("workspace_views.add_view")}

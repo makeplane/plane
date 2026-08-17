@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // i18n
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -65,7 +65,6 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
             onClick={() => {
               toggleCreateProjectModal(true);
             }}
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
             className="items-center gap-1"
           >
             <span className="hidden sm:inline-block">{t("workspace_projects.create.label")}</span>

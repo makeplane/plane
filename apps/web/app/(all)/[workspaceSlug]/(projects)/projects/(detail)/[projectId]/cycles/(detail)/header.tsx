@@ -15,7 +15,6 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -246,7 +245,6 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
-                    data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
                   >
                     {t("issue.add.label")}
                   </Button>
