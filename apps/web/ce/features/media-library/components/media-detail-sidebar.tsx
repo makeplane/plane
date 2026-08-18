@@ -57,6 +57,8 @@ const HIDDEN_ADDITIONAL_META_KEYS = new Set([
   "hlsrenditions",
   "poster",
   "posterurl",
+  "thumbnailartifactid",
+  "thumbnailartifactpath",
   "transcodeassetid",
   "transcodecompletedat",
   "transcodejobid",
