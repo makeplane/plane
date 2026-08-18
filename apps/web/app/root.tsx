@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
@@ -137,8 +138,17 @@ export default function Root() {
 export function HydrateFallback() {
   const { resolvedTheme } = useTheme();
 
-  // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
+  // SPA build (ssr: false) prerenders this on the server as an empty <div />.
+  // On the first client hydration render, next-themes can already resolve the
+  // theme synchronously from localStorage, so rendering LogoSpinner here
+  // mismatches the prerendered HTML and throws React #418 on every load.
+  // Gate on `mounted` so hydration matches the prerender; show the spinner after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || resolvedTheme === undefined) return <div />;
 
   return (
     <div className="relative flex h-screen w-full items-center justify-center bg-canvas">
