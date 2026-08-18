@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
@@ -137,8 +138,18 @@ export default function Root() {
 export function HydrateFallback() {
   const { resolvedTheme } = useTheme();
 
-  // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
+  // The SPA build (ssr: false) prerenders this component on the server, where
+  // `typeof window === "undefined"` yields an empty <div />. On the first
+  // client (hydration) render, next-themes has already resolved the theme
+  // synchronously from localStorage, so rendering the spinner subtree here
+  // mismatches the prerendered HTML — React throws error #418 on every page
+  // load and re-renders the shell client-side. Gate on `mounted` so the
+  // hydration pass renders the same empty <div /> as the prerender; the
+  // spinner appears immediately after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted || resolvedTheme === undefined) return <div />;
 
   return (
     <div className="relative flex h-screen w-full items-center justify-center bg-canvas">
