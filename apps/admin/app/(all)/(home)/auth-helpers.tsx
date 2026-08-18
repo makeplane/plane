@@ -21,6 +21,15 @@ const errorCodeMessages: {
   [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string) => React.ReactNode };
 } = {
   // admin
+  [EAdminAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
+    title: `Instance not configured`,
+    message: () => `This Plane instance is not configured. Please contact your administrator.`,
+  },
+  [EAdminAuthErrorCodes.PASSWORD_TOO_WEAK]: {
+    title: `Password too weak`,
+    message: () =>
+      `Your password is too weak. Please use a mix of uppercase, lowercase, numbers, and special characters.`,
+  },
   [EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST]: {
     title: `Admin already exists`,
     message: () => `Admin already exists. Please try again.`,
@@ -77,6 +86,8 @@ const errorCodeMessages: {
 
 export const authErrorHandler = (errorCode: EAdminAuthErrorCodes, email?: string): TAdminAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
+    EAdminAuthErrorCodes.INSTANCE_NOT_CONFIGURED,
+    EAdminAuthErrorCodes.PASSWORD_TOO_WEAK,
     EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST,
     EAdminAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
     EAdminAuthErrorCodes.INVALID_ADMIN_EMAIL,
