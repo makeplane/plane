@@ -104,6 +104,7 @@
       "run": "실행",
       "confirm": "피시험 시스템에 기록됨을 확인합니다",
       "params": "파라미터 JSON",
+      "schema": "매개변수 스키마 보기",
       "pick": "action word 선택",
       "invalid_json": "파라미터는 유효한 JSON이어야 합니다."
     },

@@ -104,6 +104,7 @@
       "run": "執行",
       "confirm": "我確認此操作會寫入受測系統",
       "params": "參數 JSON",
+      "schema": "查看參數模型",
       "pick": "選擇一個 action word",
       "invalid_json": "參數必須是合法 JSON。"
     },

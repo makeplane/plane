@@ -104,6 +104,7 @@
       "run": "Run",
       "confirm": "I confirm this writes to the system under test",
       "params": "Params JSON",
+      "schema": "View parameter schema",
       "pick": "Select an action word",
       "invalid_json": "Params must be valid JSON."
     },

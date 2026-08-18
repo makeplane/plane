@@ -104,6 +104,7 @@
       "run": "Ejecutar",
       "confirm": "Confirmo que esto escribe en el sistema bajo prueba",
       "params": "JSON de parámetros",
+      "schema": "Ver esquema de parámetros",
       "pick": "Seleccione un action word",
       "invalid_json": "Los parámetros deben ser JSON válido."
     },

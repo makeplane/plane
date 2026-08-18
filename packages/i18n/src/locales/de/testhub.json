@@ -104,6 +104,7 @@
       "run": "Ausführen",
       "confirm": "Ich bestätige Schreibzugriff auf das Testsystem",
       "params": "Parameter-JSON",
+      "schema": "Parameterschema anzeigen",
       "pick": "Action word auswählen",
       "invalid_json": "Parameter müssen gültiges JSON sein."
     },

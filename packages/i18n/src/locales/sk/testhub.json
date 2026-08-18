@@ -104,6 +104,7 @@
       "run": "Spustiť",
       "confirm": "Potvrdzujem zápis do testovaného systému",
       "params": "JSON parametrov",
+      "schema": "Zobraziť schému parametrov",
       "pick": "Vyberte action word",
       "invalid_json": "Parametre musia byť platný JSON."
     },

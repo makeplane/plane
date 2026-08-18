@@ -12,7 +12,7 @@ import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { testhubService } from "@plane/services";
 import type { TTesthubCatalogResponse } from "@plane/types";
-import { Checkbox, Input, TextArea } from "@plane/ui";
+import { Checkbox, EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
 import { testhubErrorMessage } from "@/app/testhub/helpers/error-message";
 import { TesthubListRow } from "@/app/testhub/components/list-row";
 import { TesthubPageBody, TesthubPageLoader, TesthubSectionTitle } from "@/app/testhub/components/page-shell";
@@ -30,6 +30,38 @@ type TActionWord = {
   example_params?: Record<string, unknown>;
   doc?: string;
 };
+
+function ActionWordSchemaButton({ name, schema }: { name: string; schema: Record<string, unknown> }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const text = useMemo(() => JSON.stringify(schema, null, 2), [schema]);
+
+  return (
+    <>
+      <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
+        {t("testhub.actions.schema")}
+      </Button>
+      <ModalCore
+        isOpen={open}
+        handleClose={() => setOpen(false)}
+        position={EModalPosition.CENTER}
+        width={EModalWidth.XXXXL}
+      >
+        <div className="flex max-h-[80vh] flex-col gap-3 p-5 text-left">
+          <div className="flex items-center justify-between gap-2">
+            <p className="truncate text-13 font-medium text-primary">{name}</p>
+            <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
+              {t("testhub.file.close")}
+            </Button>
+          </div>
+          <pre className="min-h-40 flex-1 overflow-auto rounded-md bg-layer-1 p-3 text-12 whitespace-pre-wrap text-secondary">
+            {text}
+          </pre>
+        </div>
+      </ModalCore>
+    </>
+  );
+}
 
 function ActionWordsPage() {
   const { t } = useTranslation();
@@ -183,9 +215,11 @@ function ActionWordsPage() {
               <div className="space-y-3">
                 <p className="text-14 font-medium text-primary">{current.name}</p>
                 {current.doc ? <p className="text-12 text-secondary">{current.doc}</p> : null}
-                <pre className="overflow-auto rounded bg-layer-2 p-2 text-12 text-secondary">
-                  {JSON.stringify(current.params_schema ?? {}, null, 2)}
-                </pre>
+                <ActionWordSchemaButton
+                  key={current.word_id}
+                  name={current.name}
+                  schema={current.params_schema ?? {}}
+                />
                 <label className="block space-y-1">
                   <span className="text-13 text-secondary">{t("testhub.actions.params")}</span>
                   <TextArea

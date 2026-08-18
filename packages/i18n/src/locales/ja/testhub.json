@@ -104,6 +104,7 @@
       "run": "実行",
       "confirm": "被テストシステムへの書き込みを確認します",
       "params": "パラメータ JSON",
+      "schema": "パラメータースキーマを表示",
       "pick": "action word を選択",
       "invalid_json": "パラメータは有効な JSON である必要があります。"
     },

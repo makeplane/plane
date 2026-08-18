@@ -104,6 +104,7 @@
       "run": "Chạy",
       "confirm": "Tôi xác nhận thao tác này ghi vào hệ thống đang kiểm thử",
       "params": "JSON tham số",
+      "schema": "Xem lược đồ tham số",
       "pick": "Chọn một action word",
       "invalid_json": "Tham số phải là JSON hợp lệ."
     },

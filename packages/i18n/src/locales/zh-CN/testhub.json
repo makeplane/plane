@@ -104,6 +104,7 @@
       "run": "运行",
       "confirm": "我确认此操作会写入被测系统",
       "params": "参数 JSON",
+      "schema": "查看参数模型",
       "pick": "选择一个 action word",
       "invalid_json": "参数必须是合法 JSON。"
     },

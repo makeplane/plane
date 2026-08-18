@@ -104,6 +104,7 @@
       "run": "Jalankan",
       "confirm": "Saya mengonfirmasi ini menulis ke sistem yang diuji",
       "params": "JSON parameter",
+      "schema": "Lihat skema parameter",
       "pick": "Pilih action word",
       "invalid_json": "Parameter harus JSON yang valid."
     },

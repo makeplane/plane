@@ -104,6 +104,7 @@
       "run": "Rulează",
       "confirm": "Confirm scrierea în sistemul testat",
       "params": "JSON parametri",
+      "schema": "Vizualizează schema parametrilor",
       "pick": "Selectează un action word",
       "invalid_json": "Parametrii trebuie să fie JSON valid."
     },

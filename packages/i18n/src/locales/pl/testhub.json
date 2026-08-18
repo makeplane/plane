@@ -104,6 +104,7 @@
       "run": "Uruchom",
       "confirm": "Potwierdzam zapis do systemu testowanego",
       "params": "JSON parametrów",
+      "schema": "Zobacz schemat parametrów",
       "pick": "Wybierz action word",
       "invalid_json": "Parametry muszą być poprawnym JSON."
     },

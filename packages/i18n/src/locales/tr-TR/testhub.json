@@ -104,6 +104,7 @@
       "run": "Çalıştır",
       "confirm": "Bunun test edilen sisteme yazacağını onaylıyorum",
       "params": "Parametre JSON",
+      "schema": "Parametre şemasını görüntüle",
       "pick": "Bir action word seçin",
       "invalid_json": "Parametreler geçerli JSON olmalıdır."
     },
