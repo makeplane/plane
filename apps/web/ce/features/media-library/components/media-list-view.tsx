@@ -124,12 +124,6 @@ const MediaListRow = ({
                 <LinkedTypeIcon className="h-3.5 w-3.5" strokeWidth={3.5} />
               </span>
             ) : null}
-            {showTranscodeBadge ? (
-              <span className={`absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full ${transcodeBadgeClass}`}>
-                <span className="sr-only">{transcodeBadgeLabel}</span>
-                <TranscodeIcon className={`h-3.5 w-3.5 ${item.isTranscodeActive ? "animate-spin" : ""}`} />
-              </span>
-            ) : null}
             {item.isTranscodeActive ? (
               <div className="absolute inset-x-0 bottom-0 h-1 bg-custom-background-100/70">
                 <div
