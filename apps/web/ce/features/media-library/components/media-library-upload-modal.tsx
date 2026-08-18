@@ -117,9 +117,7 @@ const isMp4Upload = (file: File) => getFileExtension(file.name) === "mp4" || fil
 
 const isActiveStatus = (status: TUploadStatus) => status === "uploading";
 
-const getVisibleProgress = (item: TUploadItem) => {
-  return Math.min(100, Math.max(0, item.progress ?? 0));
-};
+const getVisibleProgress = (item: TUploadItem) => Math.min(100, Math.max(0, item.progress ?? 0));
 
 const getErrorMessage = (error: unknown, fallback: string) => {
   if (error && typeof error === "object") {
@@ -211,7 +209,8 @@ const buildMetaPayload = (
 const projectService = new ProjectService();
 
 export const MediaLibraryUploadModal = () => {
-  const { isUploadOpen, closeUpload, refreshLibrary, pendingUploadFiles, setPendingUploadFiles } = useMediaLibrary();
+  const { isUploadOpen, closeUpload, refreshLibrary, pendingUploadFiles, setPendingUploadFiles, trackTranscodeJob } =
+    useMediaLibrary();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { config } = useInstance();
   const { data: currentUser } = useUser();
@@ -464,11 +463,25 @@ export const MediaLibraryUploadModal = () => {
       );
       refreshLibrary();
 
+      const transcodeJobId = artifact.transcode_job?.job_id;
+      if (isMp4Upload(file) && transcodeJobId) {
+        trackTranscodeJob({
+          workspaceSlug,
+          projectId,
+          packageId,
+          artifactId: artifact.name,
+          jobId: transcodeJobId,
+        });
+      }
+
       if (isMp4Upload(file) && artifact.transcode_job_error) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Background transcoding was not queued",
-          message: getErrorMessage(artifact.transcode_job_error, "The MP4 was uploaded, but transcoding was not queued."),
+          message: getErrorMessage(
+            artifact.transcode_job_error,
+            "The MP4 was uploaded, but transcoding was not queued."
+          ),
         });
       }
       return true;

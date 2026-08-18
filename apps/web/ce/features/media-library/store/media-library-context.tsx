@@ -6,8 +6,18 @@ import { usePathname } from "next/navigation";
 import { FilterInstance } from "@plane/shared-state";
 import type { TFilterConfig, TFilterValue } from "@plane/types";
 
+import type { TMediaTranscodeJobStatus } from "@/services/media-library.service";
+import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaLibraryExternalFilter, TMediaLibraryFilterProperty } from "../utils/media-library-filters";
 import { mediaLibraryFiltersAdapter } from "../utils/media-library-filters";
+
+export type TMediaTranscodeJobTrackerInput = {
+  workspaceSlug: string;
+  projectId: string;
+  packageId: string;
+  artifactId: string;
+  jobId: string;
+};
 
 type TMediaLibraryContext = {
   isUploadOpen: boolean;
@@ -17,22 +27,51 @@ type TMediaLibraryContext = {
   setPendingUploadFiles: (files: File[]) => void;
   libraryVersion: number;
   refreshLibrary: () => void;
+  trackTranscodeJob: (job: TMediaTranscodeJobTrackerInput) => void;
   mediaFilters: FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>;
   setMediaFilterConfigs: (configs: TFilterConfig<TMediaLibraryFilterProperty, TFilterValue>[]) => void;
 };
 
 const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
 const SECTION_PATH_SEGMENT = "/media-library/section/";
+const MEDIA_LIBRARY_PATH_SEGMENT = "/media-library";
+const TRANSCODE_JOB_POLL_INTERVAL_MS = 5000;
+const TERMINAL_TRANSCODE_STATUSES = new Set<TMediaTranscodeJobStatus>(["COMPLETED", "FAILED", "CANCELLED"]);
+
+const normalizeTrackedTranscodeJob = (job: TMediaTranscodeJobTrackerInput): TMediaTranscodeJobTrackerInput | null => {
+  const workspaceSlug = job.workspaceSlug?.trim();
+  const projectId = job.projectId?.trim();
+  const packageId = job.packageId?.trim();
+  const artifactId = job.artifactId?.trim();
+  const jobId = job.jobId?.trim();
+
+  if (!workspaceSlug || !projectId || !packageId || !artifactId || !jobId) return null;
+
+  return {
+    workspaceSlug,
+    projectId,
+    packageId,
+    artifactId,
+    jobId,
+  };
+};
+
+const getTrackedTranscodeJobKey = (job: TMediaTranscodeJobTrackerInput) =>
+  [job.workspaceSlug, job.projectId, job.packageId, job.artifactId, job.jobId].join(":");
 
 export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [pendingUploadFiles, setPendingUploadFiles] = useState<File[]>([]);
   const [libraryVersion, setLibraryVersion] = useState(0);
+  const [trackedTranscodeJobs, setTrackedTranscodeJobs] = useState<Record<string, TMediaTranscodeJobTrackerInput>>({});
+  const trackedTranscodeJobsRef = useRef(trackedTranscodeJobs);
+  const isMediaLibraryPathRef = useRef(false);
   const filterInstancesRef = useRef(
     new Map<string, FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>>()
   );
   const filterConfigsRef = useRef(new Map<string, TFilterConfig<TMediaLibraryFilterProperty, TFilterValue>[]>());
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
 
   const openUpload = useCallback(() => setIsUploadOpen(true), []);
   const closeUpload = useCallback(() => {
@@ -40,6 +79,16 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
     setIsUploadOpen(false);
   }, []);
   const refreshLibrary = useCallback(() => setLibraryVersion((prev) => prev + 1), []);
+  const trackTranscodeJob = useCallback((job: TMediaTranscodeJobTrackerInput) => {
+    const normalizedJob = normalizeTrackedTranscodeJob(job);
+    if (!normalizedJob) return;
+
+    const jobKey = getTrackedTranscodeJobKey(normalizedJob);
+    setTrackedTranscodeJobs((prev) => {
+      if (prev[jobKey]) return prev;
+      return { ...prev, [jobKey]: normalizedJob };
+    });
+  }, []);
   const activeScopeKey = useMemo(() => {
     const markerIndex = pathname.indexOf(SECTION_PATH_SEGMENT);
     if (markerIndex === -1) return "all";
@@ -64,6 +113,86 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
     filterInstancesRef.current.set(activeScopeKey, nextInstance);
     return nextInstance;
   }, [activeScopeKey]);
+  const trackedTranscodeJobSignature = useMemo(
+    () => Object.keys(trackedTranscodeJobs).sort().join("|"),
+    [trackedTranscodeJobs]
+  );
+
+  useEffect(() => {
+    trackedTranscodeJobsRef.current = trackedTranscodeJobs;
+  }, [trackedTranscodeJobs]);
+
+  useEffect(() => {
+    isMediaLibraryPathRef.current = pathname.includes(MEDIA_LIBRARY_PATH_SEGMENT);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!trackedTranscodeJobSignature) return;
+
+    let isDisposed = false;
+    let isPolling = false;
+
+    const pollJobs = async () => {
+      if (isPolling) return;
+      isPolling = true;
+
+      try {
+        const jobs = Object.entries(trackedTranscodeJobsRef.current);
+        const terminalJobKeys: string[] = [];
+        let shouldRefreshLibrary = false;
+
+        await Promise.all(
+          jobs.map(async ([jobKey, job]) => {
+            try {
+              const result = await mediaLibraryService.getArtifactTranscodeJob(
+                job.workspaceSlug,
+                job.projectId,
+                job.packageId,
+                job.artifactId,
+                job.jobId
+              );
+              if (isDisposed) return;
+
+              shouldRefreshLibrary = true;
+              if (TERMINAL_TRANSCODE_STATUSES.has(result.status)) {
+                terminalJobKeys.push(jobKey);
+              }
+            } catch {
+              // Keep tracking. The service can be temporarily unavailable while the worker is still running.
+            }
+          })
+        );
+
+        if (isDisposed) return;
+
+        if (terminalJobKeys.length > 0) {
+          setTrackedTranscodeJobs((prev) => {
+            let next = prev;
+            for (const jobKey of terminalJobKeys) {
+              if (!next[jobKey]) continue;
+              if (next === prev) next = { ...prev };
+              delete next[jobKey];
+            }
+            return next;
+          });
+        }
+
+        if (shouldRefreshLibrary && isMediaLibraryPathRef.current) {
+          refreshLibrary();
+        }
+      } finally {
+        isPolling = false;
+      }
+    };
+
+    void pollJobs();
+
+    const intervalId = window.setInterval(pollJobs, TRANSCODE_JOB_POLL_INTERVAL_MS);
+    return () => {
+      isDisposed = true;
+      window.clearInterval(intervalId);
+    };
+  }, [mediaLibraryService, refreshLibrary, trackedTranscodeJobSignature]);
 
   useEffect(() => {
     const configs = filterConfigsRef.current.get(activeScopeKey) ?? [];
@@ -89,6 +218,7 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
       setPendingUploadFiles,
       libraryVersion,
       refreshLibrary,
+      trackTranscodeJob,
       mediaFilters,
       setMediaFilterConfigs,
     }),
@@ -100,6 +230,7 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
       setPendingUploadFiles,
       libraryVersion,
       refreshLibrary,
+      trackTranscodeJob,
       mediaFilters,
       setMediaFilterConfigs,
     ]

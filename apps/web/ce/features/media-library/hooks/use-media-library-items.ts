@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { TMediaArtifactsPaginatedResponse, TMediaTranscodeJobResponse } from "@/services/media-library.service";
 import { MediaLibraryService } from "@/services/media-library.service";
+import type { TMediaTranscodeJobTrackerInput } from "../store/media-library-context";
 import type { TMediaItem } from "../types/media-library.types";
 import { mapArtifactsToMediaItems } from "../utils/media-items";
 
@@ -21,6 +22,7 @@ type TMediaLibraryQueryOptions = {
   page?: number;
   perPage?: number;
   cursor?: string;
+  onActiveTranscodeJob?: (job: TMediaTranscodeJobTrackerInput) => void;
 };
 
 type TMediaLibraryPagination = {
@@ -136,6 +138,7 @@ export const useMediaLibraryItems = (
   const sectionParam = options?.section?.trim() ?? "";
   const perPageParam = options?.perPage;
   const pageParam = options?.page;
+  const onActiveTranscodeJob = options?.onActiveTranscodeJob;
   const cursorParam = useMemo(() => {
     if (options?.cursor) return options.cursor;
     if (!perPageParam) return "";
@@ -232,6 +235,16 @@ export const useMediaLibraryItems = (
             const job = jobByItemId.get(item.id);
             return job ? mergeTranscodeJob(item, job) : item;
           });
+          hydratedItems.forEach((item) => {
+            if (!item.packageId || !item.transcodeJobId || !item.isTranscodeActive) return;
+            onActiveTranscodeJob?.({
+              workspaceSlug,
+              projectId,
+              packageId: item.packageId,
+              artifactId: item.id,
+              jobId: item.transcodeJobId,
+            });
+          });
           const thumbnailTargets = new Set(
             hydratedItems
               .filter((item) => item.format === "thumbnail" && typeof item.link === "string" && item.link.trim())
@@ -275,6 +288,7 @@ export const useMediaLibraryItems = (
     filtersParam,
     formatsParam,
     mediaLibraryService,
+    onActiveTranscodeJob,
     perPageParam,
     projectId,
     queryParam,

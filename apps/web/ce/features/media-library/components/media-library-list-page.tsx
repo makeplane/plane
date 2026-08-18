@@ -166,7 +166,7 @@ const resolveDocumentFormat = (item: TMediaItem) => {
 
 const MediaLibraryListPage = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
-  const { libraryVersion, mediaFilters, refreshLibrary, setMediaFilterConfigs } = useMediaLibrary();
+  const { libraryVersion, mediaFilters, setMediaFilterConfigs, trackTranscodeJob } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get(MAIN_QUERY_PARAM_KEY) ?? "").trim();
   const viewMode = searchParams.get(MAIN_VIEW_PARAM_KEY) === "list" ? "list" : "grid";
@@ -184,6 +184,7 @@ const MediaLibraryListPage = observer(() => {
     query,
     filters: filterConditions,
     formats: "thumbnail",
+    onActiveTranscodeJob: trackTranscodeJob,
   });
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const filteredItems = useMemo(
@@ -201,7 +202,6 @@ const MediaLibraryListPage = observer(() => {
     [libraryItems]
   );
   const mediaSections = useMemo(() => groupMediaItemsByTag(filteredItems), [filteredItems]);
-  const hasActiveTranscodes = useMemo(() => filteredItems.some((item) => item.isTranscodeActive), [filteredItems]);
   const visibleSections = useMemo<TMediaSection[]>(
     () => (isAllMediaView ? [{ title: "All media", items: filteredItems }] : mediaSections),
     [filteredItems, isAllMediaView, mediaSections]
@@ -217,12 +217,6 @@ const MediaLibraryListPage = observer(() => {
   useEffect(() => {
     setMediaFilterConfigs(filterConfigs);
   }, [filterConfigs, setMediaFilterConfigs]);
-
-  useEffect(() => {
-    if (!hasActiveTranscodes) return;
-    const intervalId = window.setInterval(refreshLibrary, 5000);
-    return () => window.clearInterval(intervalId);
-  }, [hasActiveTranscodes, refreshLibrary]);
 
   const getItemHref = (item: TMediaItem) => {
     if (item.link) {
