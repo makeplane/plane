@@ -636,9 +636,9 @@ export const MediaLibraryUploadModal = () => {
   };
 
   const getFileIcon = (file: File) => {
-    if (file.type.startsWith("image/")) return <FileImage className="h-5 w-5 text-custom-text-300" />;
-    if (file.type.startsWith("video/")) return <FileVideo className="h-5 w-5 text-custom-text-300" />;
-    return <FileText className="h-5 w-5 text-custom-text-300" />;
+    if (file.type.startsWith("image/")) return <FileImage className="h-5 w-5 text-[#A3A39F]" />;
+    if (file.type.startsWith("video/")) return <FileVideo className="h-5 w-5 text-[#A3A39F]" />;
+    return <FileText className="h-5 w-5 text-[#A3A39F]" />;
   };
 
   const updateMetaField: TMetaFieldChange = (field, value) => {
@@ -686,14 +686,14 @@ export const MediaLibraryUploadModal = () => {
   if (!isUploadOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/75 p-4 sm:items-center">
-      <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-lg">
-        <div className="flex items-center justify-between border-b border-custom-border-200 px-5 py-3.5">
-          <h2 className="text-lg font-semibold text-custom-text-100">Upload Files</h2>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0F0F0F]/80 p-4 sm:items-center">
+      <div className="flex max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-[#353535] bg-[#151515] shadow-[0_24px_80px_rgba(15,15,15,0.45)]">
+        <div className="flex items-center justify-between border-b border-[#2A2A2A] px-5 py-3.5">
+          <h2 className="text-lg font-semibold text-[#A3A39F]">Upload Files</h2>
           <button
             type="button"
             onClick={handleClose}
-            className="text-custom-text-300 hover:text-custom-text-100"
+            className="text-[#A3A39F] hover:text-[#E5E7EB]"
             aria-label="Close upload"
           >
             <X className="h-5 w-5" />
@@ -706,7 +706,7 @@ export const MediaLibraryUploadModal = () => {
             uploadTarget={uploadTarget}
             workItemSelector={
               <div className="space-y-2">
-                <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-custom-text-200">
+                <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-[#A3A39F]">
                   <Checkbox
                     checked={isWorkItemSelectorEnabled}
                     onClick={() => handleWorkItemSelectorToggle(!isWorkItemSelectorEnabled)}
@@ -741,9 +741,7 @@ export const MediaLibraryUploadModal = () => {
 
           <div
             className={`flex min-h-[214px] flex-col items-center justify-center rounded-lg border border-dashed px-4 py-8 text-center transition ${
-              isDragging
-                ? "border-custom-primary-100 bg-custom-primary-100/10"
-                : "border-custom-border-200 bg-custom-background-90"
+              isDragging ? "border-[#2D9CDB] bg-[#2D9CDB]/10" : "border-[#303030] bg-[#171717]"
             }`}
             onDragOver={(event) => {
               event.preventDefault();
@@ -756,9 +754,9 @@ export const MediaLibraryUploadModal = () => {
               addFiles(Array.from(event.dataTransfer.files));
             }}
           >
-            <UploadCloud className="mx-auto h-10 w-10 text-custom-text-300" />
-            <div className="mt-2 text-sm font-semibold text-custom-text-100">Drag and drop files here</div>
-            <div className="mt-1 text-xs text-custom-text-300">or</div>
+            <UploadCloud className="mx-auto h-10 w-10 text-[#A3A39F]" />
+            <div className="mt-2 text-sm font-semibold text-[#E5E7EB]">Drag and drop files here</div>
+            <div className="mt-1 text-xs text-[#8D8D89]">or</div>
             <div className="flex items-center justify-center">
               <Button
                 variant="primary"
@@ -770,7 +768,7 @@ export const MediaLibraryUploadModal = () => {
               </Button>
             </div>
             {selectionError ? (
-              <div className="mt-3 inline-flex max-w-full items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-left text-xs font-medium text-red-500">
+              <div className="mt-3 inline-flex max-w-full items-start gap-2 rounded-md border border-[#FF3434]/30 bg-[#FF3434]/10 px-3 py-2 text-left text-xs font-medium text-[#FF3434]">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
                 <span>{selectionError}</span>
               </div>
@@ -789,25 +787,25 @@ export const MediaLibraryUploadModal = () => {
             />
           </div>
 
-          <div className="mt-4 border-t border-custom-border-200/60 pt-4">
-            <div className="rounded-lg border border-custom-border-200 bg-custom-background-100">
-              <div className="flex flex-wrap items-center gap-3 border-b border-custom-border-200 px-4 py-3">
-                <div className="min-w-[130px] text-xs font-semibold text-custom-text-100">{queueSummaryLabel}</div>
-                <div className="h-1.5 min-w-[180px] flex-1 overflow-hidden rounded-full bg-custom-border-200">
+          <div className="mt-4 border-t border-[#2A2A2A] pt-4">
+            <div className="rounded-lg border border-[#303030] bg-[#151515]">
+              <div className="flex flex-wrap items-center gap-3 border-b border-[#2A2A2A] px-4 py-3">
+                <div className="min-w-[130px] text-xs font-semibold text-[#E5E7EB]">{queueSummaryLabel}</div>
+                <div className="h-1.5 min-w-[180px] flex-1 overflow-hidden rounded-full bg-[#242424]">
                   <div
                     className={`h-full rounded-full transition-[width] ${
                       failedUploads.length > 0 && completedUploads.length === 0
-                        ? "bg-red-500"
+                        ? "bg-[#FF3434]"
                         : completedUploads.length === uploads.length && uploads.length > 0
-                          ? "bg-green-500"
-                          : "bg-custom-primary-100"
+                          ? "bg-[#12D8A0]"
+                          : "bg-[#2D9CDB]"
                     }`}
                     style={{ width: `${overallProgress}%` }}
                   />
                 </div>
-                <div className="w-10 text-right text-xs font-medium text-custom-text-200">{overallProgress}%</div>
+                <div className="w-10 text-right text-xs font-medium text-[#A3A39F]">{overallProgress}%</div>
                 {failedUploads.length > 0 ? (
-                  <div className="inline-flex items-center gap-1 text-xs font-medium text-red-500">
+                  <div className="inline-flex items-center gap-1 text-xs font-medium text-[#FF3434]">
                     <AlertTriangle className="h-3.5 w-3.5" />
                     {failedUploads.length} failed
                   </div>
@@ -815,7 +813,7 @@ export const MediaLibraryUploadModal = () => {
                 {completedUploads.length > 0 ? (
                   <button
                     type="button"
-                    className="ml-auto text-xs font-medium text-custom-text-300 hover:text-custom-text-100"
+                    className="ml-auto text-xs font-medium text-[#A3A39F] hover:text-[#E5E7EB]"
                     onClick={handleClearCompleted}
                   >
                     Clear completed
@@ -825,7 +823,7 @@ export const MediaLibraryUploadModal = () => {
 
               <div className="max-h-[32vh] overflow-y-auto sm:max-h-[40vh]">
                 {uploads.length === 0 ? (
-                  <div className="px-4 py-5 text-center text-xs text-custom-text-300">No file selected</div>
+                  <div className="px-4 py-5 text-center text-xs text-[#8D8D89]">No file selected</div>
                 ) : (
                   uploads.map((item) => {
                     const progress = getVisibleProgress(item);
@@ -835,40 +833,38 @@ export const MediaLibraryUploadModal = () => {
                     return (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 border-b border-custom-border-200 px-4 py-3 last:border-b-0"
+                        className="flex items-center gap-3 border-b border-[#2A2A2A] px-4 py-3 last:border-b-0"
                       >
                         <div
                           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md border ${
                             isFailed
-                              ? "border-red-500/40 text-red-500"
+                              ? "border-[#FF3434]/40 text-[#FF3434]"
                               : isComplete
-                                ? "border-green-500/40 text-green-500"
-                                : "border-custom-border-200 text-custom-text-300"
+                                ? "border-[#12D8A0]/40 text-[#12D8A0]"
+                                : "border-[#303030] text-[#A3A39F]"
                           }`}
                         >
                           {getFileIcon(item.file)}
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                            <div className="min-w-0 truncate text-xs font-semibold text-custom-text-100">
+                            <div className="min-w-0 truncate text-xs font-semibold text-[#E5E7EB]">
                               {item.file.name}
                             </div>
-                            <div className="shrink-0 text-[11px] text-custom-text-300">
-                              {formatFileSize(item.file.size)}
-                            </div>
+                            <div className="shrink-0 text-[11px] text-[#8D8D89]">{formatFileSize(item.file.size)}</div>
                           </div>
                           <div className="mt-2 flex items-center gap-3">
-                            <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-custom-border-200">
+                            <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[#242424]">
                               <div
                                 className={`h-full rounded-full transition-[width] ${
-                                  isFailed ? "bg-red-500" : isComplete ? "bg-green-500" : "bg-custom-primary-100"
+                                  isFailed ? "bg-[#FF3434]" : isComplete ? "bg-[#12D8A0]" : "bg-[#2D9CDB]"
                                 }`}
                                 style={{ width: `${progress}%` }}
                               />
                             </div>
                             <div
                               className={`w-9 text-right text-[11px] font-medium ${
-                                isFailed ? "text-red-500" : isComplete ? "text-green-500" : "text-custom-primary-100"
+                                isFailed ? "text-[#FF3434]" : isComplete ? "text-[#12D8A0]" : "text-[#2D9CDB]"
                               }`}
                             >
                               {progress}%
@@ -877,12 +873,12 @@ export const MediaLibraryUploadModal = () => {
                           <div
                             className={`mt-1 flex items-center gap-1.5 text-xs ${
                               isFailed
-                                ? "text-red-500"
+                                ? "text-[#FF3434]"
                                 : isComplete
-                                  ? "text-green-500"
+                                  ? "text-[#12D8A0]"
                                   : item.status === "cancelled"
-                                    ? "text-custom-text-300"
-                                    : "text-custom-primary-100"
+                                    ? "text-[#8D8D89]"
+                                    : "text-[#2D9CDB]"
                             }`}
                           >
                             {isFailed ? (
@@ -899,7 +895,7 @@ export const MediaLibraryUploadModal = () => {
                           {isFailed ? (
                             <button
                               type="button"
-                              className="inline-flex items-center gap-1 text-xs font-medium text-custom-primary-100 hover:text-custom-primary-200 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="inline-flex items-center gap-1 text-xs font-medium text-[#2D9CDB] hover:text-[#58B8EA] disabled:cursor-not-allowed disabled:opacity-60"
                               disabled={hasActiveUploads}
                               onClick={() => handleRetryUpload(item)}
                             >
@@ -909,7 +905,7 @@ export const MediaLibraryUploadModal = () => {
                           ) : canCancel ? (
                             <button
                               type="button"
-                              className="text-xs font-medium text-custom-text-300 hover:text-custom-text-100"
+                              className="text-xs font-medium text-[#A3A39F] hover:text-[#E5E7EB]"
                               onClick={() => handleCancelUpload(item)}
                             >
                               Cancel
@@ -918,7 +914,7 @@ export const MediaLibraryUploadModal = () => {
                           {!isActiveStatus(item.status) ? (
                             <button
                               type="button"
-                              className="inline-flex h-7 w-7 items-center justify-center rounded border border-transparent text-custom-text-300 hover:border-custom-border-200 hover:text-custom-text-100"
+                              className="inline-flex h-7 w-7 items-center justify-center rounded border border-transparent text-[#A3A39F] hover:border-[#303030] hover:text-[#E5E7EB]"
                               aria-label={`Remove ${item.file.name}`}
                               onClick={() => setUploads((prev) => prev.filter((entry) => entry.id !== item.id))}
                             >
@@ -935,7 +931,7 @@ export const MediaLibraryUploadModal = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#2A2A2A] px-5 py-3 text-xs text-[#8D8D89]">
           <span>Supported formats: MP4, HLS, JPEG, PNG, PDF, CSV, XLSX (Max size: {maxSizeLabel})</span>
           <div className="flex items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
