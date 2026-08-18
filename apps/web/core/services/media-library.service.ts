@@ -436,6 +436,7 @@ export class MediaLibraryService extends APIService {
     )
       .then((response) => response?.data as TMediaArtifact)
       .catch((error) => {
+        if (error?.response?.status === 413) throw error.response;
         throw error?.response?.data ?? error?.response ?? error;
       });
   }
