@@ -55,6 +55,7 @@ class PageSerializer(BaseSerializer):
             "logo_props",
             "label_ids",
             "project_ids",
+            "sort_order",
         ]
         read_only_fields = ["workspace", "owned_by"]
 

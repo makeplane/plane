@@ -22,6 +22,7 @@ const PAGE_SORTING_KEY_OPTIONS: {
   key: TPageFiltersSortKey;
   label: string;
 }[] = [
+  { key: "sort_order", label: "Manual order" },
   { key: "name", label: "Name" },
   { key: "created_at", label: "Date created" },
   { key: "updated_at", label: "Date modified" },
