@@ -518,6 +518,19 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
 
         payload = request.data
         file_obj = request.FILES.get("file")
+        if file_obj:
+            media_library_file_size_limit = getattr(settings, "MEDIA_LIBRARY_FILE_SIZE_LIMIT", 0)
+            if media_library_file_size_limit and file_obj.size > media_library_file_size_limit:
+                return Response(
+                    {
+                        "error": "File exceeds media library upload size limit.",
+                        "code": "MEDIA_LIBRARY_FILE_TOO_LARGE",
+                        "limit": media_library_file_size_limit,
+                        "size": file_obj.size,
+                    },
+                    status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                )
+
         is_bulk = isinstance(payload, list) or (isinstance(payload, dict) and "artifacts" in payload)
         artifacts_payload = []
         file_path = None
