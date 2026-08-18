@@ -29,7 +29,11 @@ import { MediaLibraryUploadMetaForm } from "./media-library-upload-meta";
 import type { TMetaFieldChange, TMetaFormState, TUploadTarget } from "./media-library-upload-types";
 import { MediaLibraryWorkItemSelector } from "./media-library-work-item-selector";
 
-const DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE = 1024 * 1024 * 1024;
+const FALLBACK_MEDIA_LIBRARY_MAX_FILE_SIZE = 1024 * 1024 * 1024;
+const readMediaLibraryFileSizeLimit = (value: unknown) => {
+  const limit = typeof value === "number" ? value : typeof value === "string" ? Number(value.trim()) : NaN;
+  return Number.isFinite(limit) && limit > 0 ? limit : null;
+};
 const IMAGE_FORMATS = new Set([
   "jpg",
   "jpeg",
@@ -230,9 +234,11 @@ export const MediaLibraryUploadModal = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const issueService = useMemo(() => new IssueService(), []);
-  const maxFileSize =
-    (config as { media_library_file_size_limit?: number } | undefined)?.media_library_file_size_limit ??
-    DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE;
+  const envMaxFileSize = readMediaLibraryFileSizeLimit(process.env.NEXT_PUBLIC_MEDIA_LIBRARY_FILE_SIZE_LIMIT);
+  const instanceMaxFileSize = readMediaLibraryFileSizeLimit(
+    (config as { media_library_file_size_limit?: number } | undefined)?.media_library_file_size_limit
+  );
+  const maxFileSize = instanceMaxFileSize ?? envMaxFileSize ?? FALLBACK_MEDIA_LIBRARY_MAX_FILE_SIZE;
   const maxSizeLabel = formatFileSize(maxFileSize);
   const hasActiveUploads = uploads.some((item) => isActiveStatus(item.status));
   const queuedUploads = uploads.filter((item) => item.status === "queued");
@@ -346,6 +352,7 @@ export const MediaLibraryUploadModal = () => {
       setUploads((prev) => {
         const existingIds = new Set(prev.map((item) => item.id));
         const duplicateNames: string[] = [];
+        const oversizedFiles: Array<{ name: string; size: number }> = [];
         const nextItems: TUploadItem[] = [];
 
         files.forEach((file) => {
@@ -358,6 +365,9 @@ export const MediaLibraryUploadModal = () => {
           existingIds.add(id);
           const tooLarge = file.size > maxFileSize;
           const unsupported = !resolveArtifactFormat(file.name);
+          if (tooLarge) {
+            oversizedFiles.push({ name: file.name, size: file.size });
+          }
           nextItems.push({
             id,
             file,
@@ -368,7 +378,16 @@ export const MediaLibraryUploadModal = () => {
           });
         });
 
-        if (duplicateNames.length > 0) {
+        if (oversizedFiles.length > 0) {
+          const firstOversizedFile = oversizedFiles[0];
+          setSelectionError(
+            oversizedFiles.length === 1
+              ? `"${firstOversizedFile.name}" is ${formatFileSize(
+                  firstOversizedFile.size
+                )}. Maximum allowed size is ${maxSizeLabel}.`
+              : `${oversizedFiles.length} files exceed the ${maxSizeLabel} media library upload limit.`
+          );
+        } else if (duplicateNames.length > 0) {
           setSelectionError(
             duplicateNames.length === 1
               ? `"${duplicateNames[0]}" is already selected.`
@@ -750,7 +769,12 @@ export const MediaLibraryUploadModal = () => {
                 Browse files
               </Button>
             </div>
-            {selectionError ? <div className="mt-2 text-xs text-red-500">{selectionError}</div> : null}
+            {selectionError ? (
+              <div className="mt-3 inline-flex max-w-full items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-left text-xs font-medium text-red-500">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                <span>{selectionError}</span>
+              </div>
+            ) : null}
             <input
               ref={inputRef}
               type="file"
