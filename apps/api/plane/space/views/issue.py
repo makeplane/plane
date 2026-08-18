@@ -542,6 +542,12 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def create(self, request, anchor, issue_id):
         project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
+        if not project_deploy_board.is_votes_enabled:
+            return Response(
+                {"error": "Votes are not enabled for this board"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
             project_id=project_deploy_board.project_id,
