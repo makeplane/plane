@@ -47,11 +47,11 @@
       "environments": "Lingkungan"
     },
     "conventions": {
-      "testhub": "Mengharapkan repositori platform uji: apps.index_platform, action words, dan CLI allowlist.",
-      "features": "Membaca ./*/feature/, serta packages/action_words, packages/api_objects, dan packages/page_objects jika ada. Dapat berbagi sumber TestCopilot.",
+      "testhub": "Mengharapkan repositori platform uji: apps.index_platform, CLI allowlist, dan assets/sql.",
+      "features": "Membaca ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects, dan assets/ddl jika ada. Dapat berbagi sumber TestCopilot.",
       "wiki": "Membaca markdown docs/ atau wiki/ di workdir yang terikat.",
       "prd": "Membaca markdown prd/ di workdir yang terikat.",
-      "environments": "Membaca config/env.py dan templat env/*.yaml plus assets/ddl dan assets/sql. Tidak pernah membaca env_local atau nilai rahasia."
+      "environments": "Membaca config/env.py dan templat env/*.yaml. Tidak pernah membaca env_local atau nilai rahasia."
     }
   }
 }

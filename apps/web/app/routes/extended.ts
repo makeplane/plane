@@ -22,7 +22,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/projects/:projectId/formulation/action-words",
               "./formulation/pages/action-words.tsx"
             ),
+            route(":workspaceSlug/projects/:projectId/formulation/api", "./formulation/pages/api.tsx"),
+            route(":workspaceSlug/projects/:projectId/formulation/page", "./formulation/pages/page.tsx"),
             route(":workspaceSlug/projects/:projectId/formulation/automation", "./formulation/pages/automation.tsx"),
+            route(":workspaceSlug/projects/:projectId/formulation/ddl", "./formulation/pages/ddl.tsx"),
           ]),
           layout("./environments/layout.tsx", [
             route(":workspaceSlug/projects/:projectId/environments", "./environments/pages/connections.tsx"),
@@ -35,6 +38,7 @@ export const extendedRoutes: RouteConfigEntry[] = [
             route(":workspaceSlug/projects/:projectId/testhub/components", "./testhub/pages/components.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/tools", "./testhub/pages/tools.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/actions", "./testhub/pages/actions.tsx"),
+            route(":workspaceSlug/projects/:projectId/testhub/sql", "./testhub/pages/sql.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/tests", "./testhub/pages/tests.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/pytest", "./testhub/pages/pytest.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/sessions/new", "./testhub/pages/session-new.tsx"),
@@ -45,6 +49,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
             route(":workspaceSlug/projects/:projectId/testhub/sessions", "./testhub/pages/sessions.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/jobs/:jobId", "./testhub/pages/job-detail.tsx"),
             route(":workspaceSlug/projects/:projectId/testhub/jobs", "./testhub/pages/jobs.tsx"),
+          ]),
+          layout("./jobs/layout.tsx", [
+            route(":workspaceSlug/projects/:projectId/jobs", "./jobs/pages/list.tsx"),
+            route(":workspaceSlug/projects/:projectId/jobs/:jobId", "./jobs/pages/detail.tsx"),
           ]),
           layout("./gitsync/layout.tsx", [
             route(":workspaceSlug/projects/:projectId/gitsync", "./gitsync/pages/overview.tsx"),

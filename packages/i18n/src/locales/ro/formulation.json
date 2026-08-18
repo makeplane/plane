@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "Scene",
       "action_words": "Action words",
-      "automation": "Automatizare"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation nu este legat de o sursă de date.",
-    "unbound_description": "În Configurare, legați Formulation de un workdir git. Citește ./*/feature/ prin convenție.",
+    "unbound_description": "În Configurare, legați Formulation de un workdir git. Citește ./*/feature/, action words, obiecte API și page, și assets/ddl/ prin convenție.",
     "cta": "Deschide configurarea",
     "sync": "Sincronizează",
     "syncing": "Se sincronizează…",
@@ -21,6 +23,8 @@
     "filter_apis": "Caută API-uri",
     "no_apis": "Nu există API objects în acest workdir.",
     "no_selection": "Selectați un API pentru a vedea documentația.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "Filtrează tabelele",
+    "run_unbound": "Legați TestCopilot în Configurare pentru a rula acest action word."
   }
 }

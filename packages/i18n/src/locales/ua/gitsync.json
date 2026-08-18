@@ -47,11 +47,11 @@
       "environments": "Середовище"
     },
     "conventions": {
-      "testhub": "Очікує репозиторій тестової платформи: apps.index_platform, action words і CLI з allowlist.",
-      "features": "Читає ./*/feature/ і за наявності packages/action_words, packages/api_objects і packages/page_objects. Може спільно використовувати джерело TestCopilot.",
+      "testhub": "Очікує репозиторій тестової платформи: apps.index_platform, CLI з allowlist і assets/sql.",
+      "features": "Читає ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects і за наявності assets/ddl. Може спільно використовувати джерело TestCopilot.",
       "wiki": "Читає markdown з docs/ або wiki/ у прив’язаному робочому каталозі.",
       "prd": "Читає markdown з prd/ у прив’язаному робочому каталозі.",
-      "environments": "Читає config/env.py і шаблони env/*.yaml плюс assets/ddl і assets/sql. Ніколи не читає env_local і секретні значення."
+      "environments": "Читає config/env.py і шаблони env/*.yaml. Ніколи не читає env_local і секретні значення."
     }
   }
 }

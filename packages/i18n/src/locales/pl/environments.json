@@ -7,7 +7,7 @@
       "schema": "Schemat"
     },
     "unbound": "Środowisko nie jest powiązane ze źródłem danych.",
-    "unbound_description": "W konfiguracji powiąż środowisko z workdir git. Czyta szablony env i DDL. Sekrety nigdy nie są pokazywane.",
+    "unbound_description": "W konfiguracji powiąż środowisko z workdir git. Czyta szablony env. Sekrety nigdy nie są pokazywane.",
     "cta": "Otwórz konfigurację",
     "sync": "Synchronizuj",
     "syncing": "Synchronizowanie…",

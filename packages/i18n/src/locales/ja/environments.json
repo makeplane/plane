@@ -7,7 +7,7 @@
       "schema": "スキーマ"
     },
     "unbound": "環境はデータソースにバインドされていません。",
-    "unbound_description": "設定で環境を git workdir にバインドします。env テンプレートと DDL を読みます。シークレットは表示しません。",
+    "unbound_description": "設定で環境を git workdir にバインドします。env テンプレートを読みます。シークレットは表示しません。",
     "cta": "設定を開く",
     "sync": "同期",
     "syncing": "同期中…",

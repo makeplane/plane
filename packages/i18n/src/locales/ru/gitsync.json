@@ -47,11 +47,11 @@
       "environments": "Среда"
     },
     "conventions": {
-      "testhub": "Ожидает репозиторий тестовой платформы: apps.index_platform, action words и CLI из allowlist.",
-      "features": "Читает ./*/feature/ и при наличии packages/action_words, packages/api_objects и packages/page_objects. Может использовать источник TestCopilot.",
+      "testhub": "Ожидает репозиторий тестовой платформы: apps.index_platform, CLI из allowlist и assets/sql.",
+      "features": "Читает ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects и при наличии assets/ddl. Может использовать источник TestCopilot.",
       "wiki": "Читает markdown из docs/ или wiki/ в привязанном рабочем каталоге.",
       "prd": "Читает markdown из prd/ в привязанном рабочем каталоге.",
-      "environments": "Читает config/env.py и шаблоны env/*.yaml, а также assets/ddl и assets/sql. Никогда не читает env_local и секретные значения."
+      "environments": "Читает config/env.py и шаблоны env/*.yaml. Никогда не читает env_local и секретные значения."
     }
   }
 }

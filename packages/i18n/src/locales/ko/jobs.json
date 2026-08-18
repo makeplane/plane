@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "작업",
+    "sidebar": "작업",
+    "unbound": "작업에는 TestCopilot 데이터 소스가 필요합니다.",
+    "unbound_description": "구성에서 TestCopilot을 바인딩하면 허용 목록 작업을 실행하고 결과를 여기서 확인할 수 있습니다.",
+    "cta": "구성 열기",
+    "empty": "작업 없음",
+    "empty_description": "이 프로젝트에서 실행된 작업이 없습니다."
+  }
+}

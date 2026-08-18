@@ -7,7 +7,7 @@
       "schema": "Lược đồ"
     },
     "unbound": "Môi trường chưa được gắn với nguồn dữ liệu.",
-    "unbound_description": "Trong Cấu hình, gắn Môi trường với git workdir. Đọc mẫu env và DDL. Bí mật không bao giờ được hiện.",
+    "unbound_description": "Trong Cấu hình, gắn Môi trường với git workdir. Đọc mẫu env. Bí mật không bao giờ được hiện.",
     "cta": "Mở cấu hình",
     "sync": "Đồng bộ",
     "syncing": "Đang đồng bộ…",

@@ -9,7 +9,8 @@
       "actions": "Azioni",
       "jobs": "Job",
       "sessions": "Sessioni",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "SQL comuni"
     },
     "bind": {
       "title": "Associa l’origine TestCopilot",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Chiudi",
-      "loading": "Caricamento…"
+      "loading": "Caricamento…",
+      "expand": "Espandi"
     },
     "sessions": {
       "title": "Sessioni",

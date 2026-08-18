@@ -9,7 +9,8 @@
       "actions": "Actions",
       "jobs": "Jobs",
       "sessions": "Sessions",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "Common SQL"
     },
     "bind": {
       "title": "Bind TestCopilot source",
@@ -135,7 +136,8 @@
     },
     "file": {
       "close": "Close",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "expand": "Expand"
     }
   }
 }

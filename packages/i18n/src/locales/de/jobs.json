@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Jobs",
+    "sidebar": "Jobs",
+    "unbound": "Jobs benötigen eine TestCopilot-Datenquelle.",
+    "unbound_description": "Binden Sie TestCopilot in der Konfiguration, um Jobs aus der Allowlist auszuführen und ihre Ergebnisse hier zu prüfen.",
+    "cta": "Konfiguration öffnen",
+    "empty": "Keine Jobs",
+    "empty_description": "In diesem Projekt wurden noch keine Jobs ausgeführt."
+  }
+}

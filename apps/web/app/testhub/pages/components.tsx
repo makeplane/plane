@@ -12,6 +12,8 @@ export default function RedirectToFormulationAutomation() {
   const dest =
     searchParams.get("tab") === "words"
       ? `/${workspaceSlug}/projects/${projectId}/formulation/action-words`
-      : `/${workspaceSlug}/projects/${projectId}/formulation/automation`;
+      : searchParams.get("tab") === "pages"
+        ? `/${workspaceSlug}/projects/${projectId}/formulation/page`
+        : `/${workspaceSlug}/projects/${projectId}/formulation/api`;
   return <Navigate to={dest} replace />;
 }

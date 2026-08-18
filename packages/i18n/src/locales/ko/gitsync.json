@@ -47,11 +47,11 @@
       "environments": "환경"
     },
     "conventions": {
-      "testhub": "테스트 플랫폼 저장소가 필요합니다. apps.index_platform, action words, 허용 목록 CLI.",
-      "features": "./*/feature/를 읽고, 있으면 packages/action_words, packages/api_objects, packages/page_objects도 읽습니다. TestCopilot 데이터 소스를 공유할 수 있습니다.",
+      "testhub": "테스트 플랫폼 저장소가 필요합니다. apps.index_platform, 허용 목록 CLI, assets/sql.",
+      "features": "./*/feature/, packages/action_words, packages/api_objects, packages/page_objects, 있으면 assets/ddl을 읽습니다. TestCopilot 데이터 소스를 공유할 수 있습니다.",
       "wiki": "바인딩된 작업 디렉터리에서 docs/ 또는 wiki/ markdown을 읽습니다.",
       "prd": "바인딩된 작업 디렉터리에서 prd/ markdown을 읽습니다.",
-      "environments": "config/env.py와 env/*.yaml 템플릿, assets/ddl 및 assets/sql을 읽습니다. env_local이나 비밀 값은 읽지 않습니다."
+      "environments": "config/env.py와 env/*.yaml 템플릿을 읽습니다. env_local이나 비밀 값은 읽지 않습니다."
     }
   }
 }

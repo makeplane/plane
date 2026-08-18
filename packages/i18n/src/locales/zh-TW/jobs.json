@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "作業",
+    "sidebar": "作業",
+    "unbound": "作業需要 TestCopilot 資料來源。",
+    "unbound_description": "請在設定中綁定 TestCopilot，即可在此執行白名單作業並查看結果。",
+    "cta": "開啟設定",
+    "empty": "暫無作業",
+    "empty_description": "此專案還沒有執行過作業。"
+  }
+}

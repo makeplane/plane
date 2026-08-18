@@ -47,9 +47,9 @@
       "convention": "Convention"
     },
     "conventions": {
-      "testhub": "Expects a test-platform repo: apps.index_platform, action words, and allowlisted CLIs.",
-      "features": "Reads ./*/feature/, and packages/action_words, packages/api_objects, and packages/page_objects when present. Can share TestCopilot's data source.",
-      "environments": "Reads config/env.py and env/*.yaml templates plus assets/ddl and assets/sql. Never reads env_local or secret values.",
+      "testhub": "Expects a test-platform repo: apps.index_platform, allowlisted CLIs, and assets/sql.",
+      "features": "Reads ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects, and assets/ddl when present. Can share TestCopilot's data source.",
+      "environments": "Reads config/env.py and env/*.yaml templates. Never reads env_local or secret values.",
       "wiki": "Reads docs/ or wiki/ markdown from the bound workdir.",
       "prd": "Reads prd/ markdown from the bound workdir."
     }

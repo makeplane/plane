@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "Kịch bản",
       "action_words": "Action words",
-      "automation": "Tự động hóa"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation chưa được gắn với nguồn dữ liệu.",
-    "unbound_description": "Trong Cấu hình, gắn Formulation với git workdir. Đọc ./*/feature/ theo quy ước.",
+    "unbound_description": "Trong Cấu hình, gắn Formulation với git workdir. Đọc ./*/feature/, action words, đối tượng API và page, cùng assets/ddl/ theo quy ước.",
     "cta": "Mở cấu hình",
     "sync": "Đồng bộ",
     "syncing": "Đang đồng bộ…",
@@ -21,6 +23,8 @@
     "filter_apis": "Tìm API",
     "no_apis": "Không có API objects trong workdir này.",
     "no_selection": "Chọn một API để xem tài liệu.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "Lọc bảng",
+    "run_unbound": "Gắn TestCopilot trong Cấu hình để chạy action word này."
   }
 }

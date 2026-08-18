@@ -9,7 +9,8 @@
       "actions": "Aksi",
       "jobs": "Job",
       "sessions": "Sesi",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "SQL umum"
     },
     "bind": {
       "title": "Ikat sumber TestCopilot",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Tutup",
-      "loading": "Memuat…"
+      "loading": "Memuat…",
+      "expand": "Bentangkan"
     },
     "sessions": {
       "title": "Sesi",

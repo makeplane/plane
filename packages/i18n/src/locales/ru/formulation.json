@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "Сцены",
       "action_words": "Action words",
-      "automation": "Автоматизация"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation не привязан к источнику данных.",
-    "unbound_description": "В конфигурации привяжите Formulation к git workdir. Он читает ./*/feature/ по соглашению.",
+    "unbound_description": "В конфигурации привяжите Formulation к git workdir. Он читает ./*/feature/, action words, объекты API и page, а также assets/ddl/ по соглашению.",
     "cta": "Открыть конфигурацию",
     "sync": "Синхронизировать",
     "syncing": "Синхронизация…",
@@ -21,6 +23,8 @@
     "filter_apis": "Искать API",
     "no_apis": "В этом workdir нет API objects.",
     "no_selection": "Выберите API, чтобы увидеть документацию.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "Фильтр таблиц",
+    "run_unbound": "Привяжите TestCopilot в конфигурации, чтобы выполнить это action word."
   }
 }

@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "Scény",
       "action_words": "Action words",
-      "automation": "Automatizácia"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation nie je naviazané na zdroj údajov.",
-    "unbound_description": "V konfigurácii priraďte Formulation k git workdir. Číta ./*/feature/ podľa konvencie.",
+    "unbound_description": "V konfigurácii priraďte Formulation k git workdir. Číta ./*/feature/, action words, API a page objects a assets/ddl/ podľa konvencie.",
     "cta": "Otvoriť konfiguráciu",
     "sync": "Synchronizovať",
     "syncing": "Synchronizácia…",
@@ -21,6 +23,8 @@
     "filter_apis": "Hľadať API",
     "no_apis": "V tomto workdir nie sú API objects.",
     "no_selection": "Vyberte API na zobrazenie dokumentácie.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "Filtrovať tabuľky",
+    "run_unbound": "V konfigurácii priraďte TestCopilot, aby ste mohli spustiť toto action word."
   }
 }

@@ -9,7 +9,8 @@
       "actions": "Akce",
       "jobs": "Úlohy",
       "sessions": "Relace",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "Běžné SQL"
     },
     "bind": {
       "title": "Navázat zdroj TestCopilot",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Zavřít",
-      "loading": "Načítání…"
+      "loading": "Načítání…",
+      "expand": "Rozbalit"
     },
     "sessions": {
       "title": "Relace",

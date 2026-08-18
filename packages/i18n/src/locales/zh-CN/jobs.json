@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "作业",
+    "sidebar": "作业",
+    "unbound": "作业需要 TestCopilot 数据源。",
+    "unbound_description": "请在配置中绑定 TestCopilot，即可在此运行白名单作业并查看结果。",
+    "cta": "打开配置",
+    "empty": "暂无作业",
+    "empty_description": "此项目还没有运行过作业。"
+  }
+}

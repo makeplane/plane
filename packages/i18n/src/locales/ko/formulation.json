@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "장면",
       "action_words": "Action words",
-      "automation": "자동화"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation이 데이터 소스에 바인딩되지 않았습니다.",
-    "unbound_description": "구성에서 Formulation을 git workdir에 바인딩하세요. 규칙에 따라 ./*/feature/를 읽습니다.",
+    "unbound_description": "구성에서 Formulation을 git workdir에 바인딩하세요. 규칙에 따라 ./*/feature/, action words, API 및 page objects, assets/ddl/를 읽습니다.",
     "cta": "구성 열기",
     "sync": "동기화",
     "syncing": "동기화 중…",
@@ -21,6 +23,8 @@
     "filter_apis": "API 검색",
     "no_apis": "이 workdir에 API objects가 없습니다.",
     "no_selection": "문서를 볼 API를 선택하세요.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "테이블 필터",
+    "run_unbound": "이 action word를 실행하려면 구성에서 TestCopilot을 바인딩하세요."
   }
 }

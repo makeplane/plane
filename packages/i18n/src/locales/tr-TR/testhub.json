@@ -9,7 +9,8 @@
       "actions": "Eylemler",
       "jobs": "İşler",
       "sessions": "Oturumlar",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "Sık kullanılan SQL"
     },
     "bind": {
       "title": "TestCopilot kaynağını bağla",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Kapat",
-      "loading": "Yükleniyor…"
+      "loading": "Yükleniyor…",
+      "expand": "Genişlet"
     },
     "sessions": {
       "title": "Oturumlar",

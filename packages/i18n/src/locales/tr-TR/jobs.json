@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "İşler",
+    "sidebar": "İşler",
+    "unbound": "İşler bir TestCopilot veri kaynağı gerektirir.",
+    "unbound_description": "Allowlist işlerini çalıştırıp sonuçlarını burada incelemek için Yapılandırma içinde TestCopilot’ı bağlayın.",
+    "cta": "Yapılandırmayı aç",
+    "empty": "İş yok",
+    "empty_description": "Bu projede henüz iş çalıştırılmadı."
+  }
+}

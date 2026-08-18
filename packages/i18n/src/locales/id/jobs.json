@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Job",
+    "sidebar": "Job",
+    "unbound": "Job memerlukan sumber data TestCopilot.",
+    "unbound_description": "Ikat TestCopilot di Konfigurasi untuk menjalankan job allowlist dan memeriksa hasilnya di sini.",
+    "cta": "Buka Konfigurasi",
+    "empty": "Tidak ada job",
+    "empty_description": "Belum ada job yang dijalankan di proyek ini."
+  }
+}

@@ -7,7 +7,7 @@
       "schema": "Şema"
     },
     "unbound": "Ortam bir veri kaynağına bağlı değil.",
-    "unbound_description": "Yapılandırma içinde Ortam’ı bir git workdir’e bağlayın. Env şablonlarını ve DDL’i okur. Gizler asla gösterilmez.",
+    "unbound_description": "Yapılandırma içinde Ortam’ı bir git workdir’e bağlayın. Env şablonlarını okur. Gizler asla gösterilmez.",
     "cta": "Yapılandırmayı aç",
     "sync": "Senkronize et",
     "syncing": "Senkronize ediliyor…",

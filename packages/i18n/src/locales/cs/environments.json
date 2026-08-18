@@ -7,7 +7,7 @@
       "schema": "Schéma"
     },
     "unbound": "Prostředí není navázáno na zdroj dat.",
-    "unbound_description": "V konfiguraci přiřaďte prostředí k git workdir. Čte šablony env a DDL. Tajemství se nikdy nezobrazují.",
+    "unbound_description": "V konfiguraci přiřaďte prostředí k git workdir. Čte šablony env. Tajemství se nikdy nezobrazují.",
     "cta": "Otevřít konfiguraci",
     "sync": "Synchronizovat",
     "syncing": "Synchronizace…",

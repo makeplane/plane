@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "場景",
       "action_words": "Action words",
-      "automation": "實作"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation 尚未綁定資料來源。",
-    "unbound_description": "請在設定中將 Formulation 綁定到 git 工作目錄。依慣例讀取 ./*/feature/。",
+    "unbound_description": "請在設定中將 Formulation 綁定到 git 工作目錄。依慣例讀取 ./*/feature/、action words、API 與 page objects，以及 assets/ddl/。",
     "cta": "開啟設定",
     "sync": "同步",
     "syncing": "同步中…",
@@ -21,6 +23,8 @@
     "filter_apis": "搜尋 APIs",
     "no_apis": "此工作目錄中沒有 API objects。",
     "no_selection": "選取一個 API 以檢視文件。",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "篩選表",
+    "run_unbound": "請在設定中綁定 TestCopilot 以執行此 action word。"
   }
 }

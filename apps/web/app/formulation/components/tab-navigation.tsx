@@ -12,7 +12,9 @@ import { cn } from "@plane/utils";
 export const FORMULATION_NAV = [
   { key: "scenes", path: "", i18n: "formulation.nav.scenes" },
   { key: "action_words", path: "/action-words", i18n: "formulation.nav.action_words" },
-  { key: "automation", path: "/automation", i18n: "formulation.nav.automation" },
+  { key: "api", path: "/api", i18n: "formulation.nav.api" },
+  { key: "page", path: "/page", i18n: "formulation.nav.page" },
+  { key: "ddl", path: "/ddl", i18n: "formulation.nav.ddl" },
 ] as const;
 
 export function FormulationTabNavigation() {

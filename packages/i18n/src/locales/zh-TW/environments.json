@@ -7,7 +7,7 @@
       "schema": "結構"
     },
     "unbound": "環境尚未綁定資料來源。",
-    "unbound_description": "請在設定中將環境綁定到 git 工作目錄。依慣例讀取 env 範本與 DDL。密鑰永不顯示。",
+    "unbound_description": "請在設定中將環境綁定到 git 工作目錄。依慣例讀取 env 範本。密鑰永不顯示。",
     "cta": "開啟設定",
     "sync": "同步",
     "syncing": "同步中…",

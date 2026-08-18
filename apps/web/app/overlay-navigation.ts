@@ -7,6 +7,7 @@
 import { environmentsNavigationItems } from "@/app/environments/navigation-items";
 import { formulationNavigationItems } from "@/app/formulation/navigation-items";
 import { gitsyncNavigationItems } from "@/app/gitsync/navigation-items";
+import { jobsNavigationItems } from "@/app/jobs/navigation-items";
 import { testhubNavigationItems } from "@/app/testhub/navigation-items";
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 
@@ -15,6 +16,7 @@ export function overlayNavigationItems(workspaceSlug: string, projectId: string)
     ...formulationNavigationItems(workspaceSlug, projectId),
     ...environmentsNavigationItems(workspaceSlug, projectId),
     ...testhubNavigationItems(workspaceSlug, projectId),
+    ...jobsNavigationItems(workspaceSlug, projectId),
     ...gitsyncNavigationItems(workspaceSlug, projectId),
   ];
 }

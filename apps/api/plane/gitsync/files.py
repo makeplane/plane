@@ -60,13 +60,13 @@ def path_allowed(module_key: str, rel_path: str) -> bool:
     if module_key == MODULE_FEATURES:
         if is_feature_file(normalized):
             return True
-        return normalized.startswith(("packages/action_words/", "packages/api_objects/", "packages/page_objects/"))
+        return normalized.startswith(
+            ("packages/action_words/", "packages/api_objects/", "packages/page_objects/", "assets/ddl/")
+        )
     if module_key == MODULE_ENVIRONMENTS:
         if is_denied_env_name(Path(normalized).name):
             return False
-        if is_environment_template(normalized):
-            return True
-        return normalized.startswith(("assets/ddl/", "assets/sql/"))
+        return is_environment_template(normalized)
     if module_key == MODULE_WIKI:
         return normalized.startswith(("docs/", "wiki/"))
     if module_key == MODULE_PRD:

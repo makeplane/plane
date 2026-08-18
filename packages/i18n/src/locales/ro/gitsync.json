@@ -47,11 +47,11 @@
       "environments": "Mediu"
     },
     "conventions": {
-      "testhub": "Așteaptă un depozit de platformă de testare: apps.index_platform, action words și CLI pe allowlist.",
-      "features": "Citește ./*/feature/ și, dacă există, packages/action_words, packages/api_objects și packages/page_objects. Poate partaja sursa TestCopilot.",
+      "testhub": "Așteaptă un depozit de platformă de testare: apps.index_platform, CLI pe allowlist și assets/sql.",
+      "features": "Citește ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects și assets/ddl dacă există. Poate partaja sursa TestCopilot.",
       "wiki": "Citește markdown din docs/ sau wiki/ în directorul de lucru legat.",
       "prd": "Citește markdown din prd/ în directorul de lucru legat.",
-      "environments": "Citește config/env.py și șabloanele env/*.yaml plus assets/ddl și assets/sql. Nu citește niciodată env_local sau valori secrete."
+      "environments": "Citește config/env.py și șabloanele env/*.yaml. Nu citește niciodată env_local sau valori secrete."
     }
   }
 }

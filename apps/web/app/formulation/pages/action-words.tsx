@@ -4,29 +4,103 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useOutletContext, useParams } from "react-router";
+import { useNavigate, useOutletContext, useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { Input } from "@plane/ui";
-import { TesthubPageBody, TesthubPageLoader } from "@/app/testhub/components/page-shell";
+import { testhubService } from "@plane/services";
+import type { TTesthubCatalogResponse } from "@plane/types";
+import { Checkbox, Input, TextArea } from "@plane/ui";
+import { testhubErrorMessage } from "@/app/testhub/helpers/error-message";
+import { TesthubListRow } from "@/app/testhub/components/list-row";
+import { TesthubPageBody, TesthubPageLoader, TesthubSectionTitle } from "@/app/testhub/components/page-shell";
 import { TesthubUnbound } from "@/app/testhub/components/unbound";
 import type { TFormulationOutletContext } from "../layout";
 
+const KNOWN_CATEGORIES = ["db_seed", "db_assert", "api_request", "api_assert"] as const;
+
+type TActionWord = {
+  word_id: string;
+  name: string;
+  category: string;
+  file?: string;
+  params_schema?: Record<string, unknown>;
+  example_params?: Record<string, unknown>;
+  doc?: string;
+};
+
 function ActionWordsPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { workspaceSlug, projectId } = useParams();
   const { catalog, loading } = useOutletContext<TFormulationOutletContext>();
   const [wordQuery, setWordQuery] = useState("");
+  const [paramsText, setParamsText] = useState("{}");
+  const [selected, setSelected] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [testhubCatalog, setTesthubCatalog] = useState<TTesthubCatalogResponse | null>(null);
+  const [testhubReady, setTesthubReady] = useState(false);
   const configHref = `/${workspaceSlug}/projects/${projectId}/gitsync`;
+  const jobsBase = `/${workspaceSlug}/projects/${projectId}/jobs`;
+
+  useEffect(() => {
+    if (!workspaceSlug || !projectId) return;
+    let cancelled = false;
+    setTesthubReady(false);
+    testhubService
+      .getCatalog(workspaceSlug, projectId)
+      .then((data) => {
+        if (!cancelled) setTesthubCatalog(data);
+        return data;
+      })
+      .catch(() => {
+        if (!cancelled) setTesthubCatalog({ repo: null, snapshot: null });
+      })
+      .finally(() => {
+        if (!cancelled) setTesthubReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceSlug, projectId]);
+
+  const mergedWords = useMemo(() => {
+    const listed = catalog?.payload?.components?.action_words ?? [];
+    const extras = testhubCatalog?.snapshot?.payload?.components?.action_words ?? [];
+    const byId = new Map(extras.map((word) => [word.word_id, word]));
+    const merged: TActionWord[] = [];
+    for (const word of listed) {
+      const extra = byId.get(word.word_id);
+      merged.push(extra ? Object.assign({}, word, extra) : word);
+    }
+    return merged;
+  }, [catalog, testhubCatalog]);
 
   const filteredWords = useMemo(() => {
-    const actionWords = catalog?.payload?.components?.action_words ?? [];
     const q = wordQuery.trim().toLowerCase();
-    if (!q) return actionWords;
-    return actionWords.filter((word) => `${word.word_id} ${word.name} ${word.category}`.toLowerCase().includes(q));
-  }, [wordQuery, catalog]);
+    if (!q) return mergedWords;
+    return mergedWords.filter((word) => `${word.word_id} ${word.name} ${word.category}`.toLowerCase().includes(q));
+  }, [wordQuery, mergedWords]);
+
+  const grouped = useMemo(() => {
+    const order: string[] = [...KNOWN_CATEGORIES];
+    const map: Record<string, TActionWord[]> = {};
+    for (const category of order) map[category] = [];
+    for (const word of filteredWords) {
+      if (!order.includes(word.category)) order.push(word.category);
+      const bucket = map[word.category] ?? (map[word.category] = []);
+      bucket.push(word);
+    }
+    return { order, map };
+  }, [filteredWords]);
+
+  const current = mergedWords.find((word) => word.word_id === selected);
+  const destructive = selected.startsWith("db_seed.") || selected.startsWith("api_request.");
+  const canRun = Boolean(testhubCatalog?.repo);
 
   if (loading) return <TesthubPageLoader />;
   if (!catalog?.remote) {
@@ -40,6 +114,31 @@ function ActionWordsPage() {
     );
   }
 
+  const run = async () => {
+    if (!workspaceSlug || !projectId || !selected || !canRun) return;
+    let params: Record<string, unknown> = {};
+    try {
+      params = JSON.parse(paramsText || "{}") as Record<string, unknown>;
+    } catch {
+      setMessage(t("testhub.actions.invalid_json"));
+      return;
+    }
+    setBusy(true);
+    setMessage("");
+    try {
+      const job = await testhubService.createJob(workspaceSlug, projectId, {
+        kind: "action_words",
+        params: { word_id: selected, params },
+        confirmed,
+      });
+      navigate(`${jobsBase}/${job.id}`);
+    } catch (err) {
+      setMessage(testhubErrorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <TesthubPageBody>
       <Input
@@ -48,18 +147,74 @@ function ActionWordsPage() {
         className="mb-3 w-full max-w-md"
         placeholder={t("formulation.filter_words")}
       />
+      {!canRun && testhubReady ? <p className="mb-3 text-13 text-secondary">{t("formulation.run_unbound")}</p> : null}
       {filteredWords.length ? (
-        <div className="space-y-2">
-          {filteredWords.map((word) => (
-            <details key={word.word_id} className="rounded-md border border-subtle bg-layer-1 p-3">
-              <summary className="cursor-pointer text-13 text-primary">
-                {word.word_id} · {word.name} · {word.category}
-              </summary>
-              <pre className="mt-2 overflow-auto rounded bg-layer-2 p-2 text-12 text-secondary">
-                {JSON.stringify(word.params_schema ?? {}, null, 2)}
-              </pre>
-            </details>
-          ))}
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="space-y-4">
+            {grouped.order.map((category) =>
+              grouped.map[category]?.length ? (
+                <section key={category}>
+                  <TesthubSectionTitle>{category}</TesthubSectionTitle>
+                  <div className="overflow-hidden rounded-md border border-subtle">
+                    {grouped.map[category].map((word) => (
+                      <TesthubListRow
+                        key={word.word_id}
+                        selected={selected === word.word_id}
+                        onClick={() => {
+                          setSelected(word.word_id);
+                          setParamsText(JSON.stringify(word.example_params ?? {}, null, 2));
+                          setConfirmed(false);
+                          setMessage("");
+                        }}
+                      >
+                        <span>
+                          <span className="text-primary">{word.name}</span>
+                          <span className="ml-2 text-tertiary">{word.word_id}</span>
+                        </span>
+                      </TesthubListRow>
+                    ))}
+                  </div>
+                </section>
+              ) : null
+            )}
+          </div>
+          <div className="rounded-md border border-subtle bg-layer-1 p-4">
+            {current ? (
+              <div className="space-y-3">
+                <p className="text-14 font-medium text-primary">{current.name}</p>
+                {current.doc ? <p className="text-12 text-secondary">{current.doc}</p> : null}
+                <pre className="overflow-auto rounded bg-layer-2 p-2 text-12 text-secondary">
+                  {JSON.stringify(current.params_schema ?? {}, null, 2)}
+                </pre>
+                <label className="block space-y-1">
+                  <span className="text-13 text-secondary">{t("testhub.actions.params")}</span>
+                  <TextArea
+                    className="h-48 w-full"
+                    value={paramsText}
+                    onChange={(event) => setParamsText(event.target.value)}
+                  />
+                </label>
+                {destructive ? (
+                  <label className="flex items-center gap-2 text-13 text-secondary">
+                    <Checkbox checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />
+                    {t("testhub.actions.confirm")}
+                  </label>
+                ) : null}
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={run}
+                  loading={busy}
+                  disabled={busy || !canRun || (destructive && !confirmed)}
+                >
+                  {t("testhub.actions.run")}
+                </Button>
+                {message ? <p className="text-13 text-danger-primary">{message}</p> : null}
+              </div>
+            ) : (
+              <p className="text-13 text-secondary">{t("testhub.actions.pick")}</p>
+            )}
+          </div>
         </div>
       ) : (
         <EmptyStateCompact assetKey="search" title={t("formulation.empty")} />

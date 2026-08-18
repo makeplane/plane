@@ -9,7 +9,8 @@
       "actions": "액션",
       "jobs": "작업",
       "sessions": "세션",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "자주 쓰는 SQL"
     },
     "bind": {
       "title": "TestCopilot 소스 바인딩",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "닫기",
-      "loading": "불러오는 중…"
+      "loading": "불러오는 중…",
+      "expand": "펼치기"
     },
     "sessions": {
       "title": "세션",

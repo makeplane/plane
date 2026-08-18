@@ -7,7 +7,7 @@
       "schema": "Esquema"
     },
     "unbound": "Ambiente não está vinculado a uma origem de dados.",
-    "unbound_description": "Em Configuração, vincule Ambiente a um workdir git. Lê modelos env e DDL. Segredos nunca são exibidos.",
+    "unbound_description": "Em Configuração, vincule Ambiente a um workdir git. Lê modelos env. Segredos nunca são exibidos.",
     "cta": "Abrir configuração",
     "sync": "Sincronizar",
     "syncing": "Sincronizando…",

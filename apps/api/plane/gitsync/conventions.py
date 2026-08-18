@@ -79,6 +79,7 @@ def _scan_features(root: Path) -> dict[str, Any]:
     action_words = _scan_action_words(root)
     api_objects = _scan_api_objects(root)
     page_objects = _scan_page_objects(root)
+    ddl = scan_ddl(root)
     return {
         "counts": {
             "features": len(features),
@@ -86,6 +87,7 @@ def _scan_features(root: Path) -> dict[str, Any]:
             "action_words": len(action_words),
             "api_objects": len(api_objects),
             "page_objects": len(page_objects),
+            "ddl_tables": sum(block["table_count"] for block in ddl),
         },
         "features": features,
         "components": {
@@ -93,6 +95,7 @@ def _scan_features(root: Path) -> dict[str, Any]:
             "api_objects": api_objects,
             "page_objects": page_objects,
         },
+        "knowledge": {"ddl": ddl},
     }
 
 
@@ -103,54 +106,57 @@ def _scan_environments(root: Path) -> dict[str, Any]:
         if not is_environment_template(rel):
             continue
         environments.append(_parse_env_file(rel, _read_text(path)))
-    knowledge = _scan_knowledge(root)
-    ddl_tables = sum(block["table_count"] for block in knowledge["ddl"])
     return {
         "counts": {
             "environments": len(environments),
-            "ddl_tables": ddl_tables,
-            "sql_files": len(knowledge["sql_files"]),
         },
         "environments": environments,
-        "knowledge": knowledge,
     }
 
 
-def _scan_knowledge(root: Path) -> dict[str, Any]:
+def scan_ddl(root: Path) -> list[dict[str, Any]]:
     ddl_dir = root / "assets" / "ddl"
-    sql_dir = root / "assets" / "sql"
     ddl: list[dict[str, Any]] = []
-    if ddl_dir.is_dir():
-        children = sorted(p for p in ddl_dir.iterdir() if p.name not in SKIP_DIR_NAMES)
-        subdirs = [p for p in children if p.is_dir()]
-        files = [p for p in children if p.is_file()]
-        if subdirs:
-            for folder in subdirs:
-                tables = sorted(p.stem for p in folder.iterdir() if p.is_file() and p.name not in SKIP_DIR_NAMES)
-                ddl.append(
-                    {
-                        "datasource": folder.name,
-                        "path": _rel(root, folder),
-                        "table_count": len(tables),
-                        "tables": tables,
-                    }
-                )
-        elif files:
-            tables = sorted(p.stem for p in files)
+    if not ddl_dir.is_dir():
+        return ddl
+    children = sorted(p for p in ddl_dir.iterdir() if p.name not in SKIP_DIR_NAMES)
+    subdirs = [p for p in children if p.is_dir()]
+    files = [p for p in children if p.is_file()]
+    if subdirs:
+        for folder in subdirs:
+            tables = sorted(p.stem for p in folder.iterdir() if p.is_file() and p.name not in SKIP_DIR_NAMES)
             ddl.append(
                 {
-                    "datasource": "default",
-                    "path": _rel(root, ddl_dir),
+                    "datasource": folder.name,
+                    "path": _rel(root, folder),
                     "table_count": len(tables),
                     "tables": tables,
                 }
             )
-    sql_files = []
-    if sql_dir.is_dir():
-        for path in _iter_files(sql_dir):
-            rel = _rel(root, path)
-            sql_files.append({"path": rel, "name": path.name})
-    return {"ddl": ddl, "sql_files": sql_files}
+        return ddl
+    if files:
+        tables = sorted(p.stem for p in files)
+        ddl.append(
+            {
+                "datasource": "default",
+                "path": _rel(root, ddl_dir),
+                "table_count": len(tables),
+                "tables": tables,
+            }
+        )
+    return ddl
+
+
+def scan_sql_files(workdir: str | Path) -> list[dict[str, str]]:
+    root = Path(workdir)
+    sql_dir = root / "assets" / "sql"
+    sql_files: list[dict[str, str]] = []
+    if not sql_dir.is_dir():
+        return sql_files
+    for path in _iter_files(sql_dir):
+        rel = _rel(root, path)
+        sql_files.append({"path": rel, "name": path.name})
+    return sql_files
 
 
 def _scan_action_words(root: Path) -> list[dict[str, Any]]:

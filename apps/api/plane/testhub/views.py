@@ -14,6 +14,7 @@ from plane.db.models import Project
 from plane.gitsync.bindings import BindingError, bind_module
 from plane.gitsync.models import ProjectGitRemote
 from plane.gitsync.registry import MODULE_TESTHUB
+from plane.gitsync.conventions import scan_sql_files
 from plane.testhub.enqueue import TesthubJobConflict, enqueue_index_platform
 from plane.testhub.files import FileAccessError, resolve_repo_file
 from plane.testhub.models import CatalogSnapshot, TesthubAssetOverlay, TesthubJob, TesthubSession
@@ -58,14 +59,43 @@ class ProjectTestRepoEndpoint(BaseAPIView):
         return Response({"repo": testhub_repo_payload(project_id)}, status=status.HTTP_200_OK)
 
 
+def _sql_files_from_workdir(project_id) -> list[dict[str, str]]:
+    try:
+        return scan_sql_files(testhub_workdir(project_id))
+    except TesthubUnbound:
+        return []
+
+
+def _overlay_sql_files(snapshot_data: dict | None, sql_files: list[dict[str, str]], project_id) -> dict | None:
+    if not sql_files:
+        return snapshot_data
+    if snapshot_data is None:
+        return {
+            "id": "",
+            "project": str(project_id),
+            "sha": "",
+            "payload": {"catalog_version": 1, "knowledge": {"sql_files": sql_files}},
+            "created_at": "",
+        }
+    payload = dict(snapshot_data.get("payload") or {})
+    knowledge = dict(payload.get("knowledge") or {})
+    if knowledge.get("sql_files"):
+        return snapshot_data
+    knowledge["sql_files"] = sql_files
+    payload["knowledge"] = knowledge
+    return {**snapshot_data, "payload": payload}
+
+
 class TesthubCatalogEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
     def get(self, request, slug, project_id):
         snapshot = CatalogSnapshot.objects.filter(project_id=project_id).order_by("-created_at").first()
+        snapshot_data = CatalogSnapshotSerializer(snapshot).data if snapshot else None
+        snapshot_data = _overlay_sql_files(snapshot_data, _sql_files_from_workdir(project_id), project_id)
         return Response(
             {
                 "repo": testhub_repo_payload(project_id),
-                "snapshot": CatalogSnapshotSerializer(snapshot).data if snapshot else None,
+                "snapshot": snapshot_data,
             },
             status=status.HTTP_200_OK,
         )

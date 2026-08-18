@@ -9,7 +9,8 @@
       "actions": "造数/动作",
       "jobs": "作业",
       "sessions": "测程",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "常用 SQL"
     },
     "bind": {
       "title": "绑定 TestCopilot 数据源",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "关闭",
-      "loading": "加载中…"
+      "loading": "加载中…",
+      "expand": "展开"
     },
     "sessions": {
       "title": "测程",

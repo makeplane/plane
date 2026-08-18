@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "Cenas",
       "action_words": "Action words",
-      "automation": "Automação"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation não está vinculado a uma origem de dados.",
-    "unbound_description": "Em Configuração, vincule Formulation a um workdir git. Lê ./*/feature/ por convenção.",
+    "unbound_description": "Em Configuração, vincule Formulation a um workdir git. Lê ./*/feature/, action words, objetos de API e de página, e assets/ddl/ por convenção.",
     "cta": "Abrir configuração",
     "sync": "Sincronizar",
     "syncing": "Sincronizando…",
@@ -21,6 +23,8 @@
     "filter_apis": "Buscar APIs",
     "no_apis": "Nenhum API object neste workdir.",
     "no_selection": "Selecione uma API para ver a documentação.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "Filtrar tabelas",
+    "run_unbound": "Vincule o TestCopilot em Configuração para executar este action word."
   }
 }

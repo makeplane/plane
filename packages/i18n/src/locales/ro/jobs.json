@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Joburi",
+    "sidebar": "Joburi",
+    "unbound": "Joburile au nevoie de o sursă TestCopilot.",
+    "unbound_description": "Legați TestCopilot în Configurare pentru a rula joburi din allowlist și a inspecta rezultatele aici.",
+    "cta": "Deschide Configurare",
+    "empty": "Niciun job",
+    "empty_description": "Nu a fost rulat niciun job în acest proiect."
+  }
+}

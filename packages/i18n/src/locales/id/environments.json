@@ -7,7 +7,7 @@
       "schema": "Skema"
     },
     "unbound": "Lingkungan belum terikat ke sumber data.",
-    "unbound_description": "Di Konfigurasi, ikat Lingkungan ke workdir git. Membaca templat env dan DDL. Rahasia tidak pernah ditampilkan.",
+    "unbound_description": "Di Konfigurasi, ikat Lingkungan ke workdir git. Membaca templat env. Rahasia tidak pernah ditampilkan.",
     "cta": "Buka Konfigurasi",
     "sync": "Sinkronkan",
     "syncing": "Menyinkronkan…",

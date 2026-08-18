@@ -78,7 +78,7 @@ def test_git_url_workdir_ready_when_clone_exists(monkeypatch):
 
 
 def test_scan_features_and_environments(tmp_path):
-    from plane.gitsync.conventions import scan_module_catalog
+    from plane.gitsync.conventions import scan_module_catalog, scan_sql_files
     from plane.gitsync.files import FileAccessError, redact_secrets, resolve_module_file
 
     feature_dir = tmp_path / "billing" / "feature"
@@ -105,6 +105,9 @@ def test_scan_features_and_environments(tmp_path):
     ddl = tmp_path / "assets" / "ddl" / "main"
     ddl.mkdir(parents=True)
     (ddl / "invoice.sql").write_text("create table invoice ();\n", encoding="utf-8")
+    sql_dir = tmp_path / "assets" / "sql"
+    sql_dir.mkdir(parents=True)
+    (sql_dir / "seed_invoice.sql").write_text("select 1;\n", encoding="utf-8")
 
     features = scan_module_catalog("features", str(tmp_path))
     assert features["counts"]["features"] == 1
@@ -112,13 +115,19 @@ def test_scan_features_and_environments(tmp_path):
     assert features["features"][0]["scenarios"][0]["name"] == "Create invoice"
     assert features["components"]["action_words"][0]["word_id"] == "db_seed.create_invoice"
     assert features["components"]["api_objects"][0]["method"] == "POST"
+    assert features["knowledge"]["ddl"][0]["datasource"] == "main"
+    assert features["counts"]["ddl_tables"] == 1
+    _, ddl_text = resolve_module_file(str(tmp_path), "features", "assets/ddl/main/invoice.sql")
+    assert "invoice" in ddl_text
 
     environments = scan_module_catalog("environments", str(tmp_path))
     env = environments["environments"][0]
     assert env["targets"][0]["base_url"] == "https://sut.example"
     assert "ARGON_DB_PASSWORD" in env["secret_keys"]
     assert all(item["key"] != "ARGON_DB_PASSWORD" for item in env["variables"])
-    assert environments["knowledge"]["ddl"][0]["datasource"] == "main"
+    assert "knowledge" not in environments
+
+    assert scan_sql_files(str(tmp_path))[0]["name"] == "seed_invoice.sql"
 
     path, content = resolve_module_file(str(tmp_path), "features", "billing/feature/invoice.feature")
     assert "Feature: Invoice" in content
@@ -127,6 +136,8 @@ def test_scan_features_and_environments(tmp_path):
     assert "s3cret" not in env_text
     with pytest.raises(FileAccessError):
         resolve_module_file(str(tmp_path), "environments", "config/env_local.py")
+    with pytest.raises(FileAccessError):
+        resolve_module_file(str(tmp_path), "environments", "assets/ddl/main/invoice.sql")
     assert "PASSWORD" in redact_secrets('PASSWORD = "x"\n')
 
 

@@ -6,7 +6,7 @@
 
 import { Navigate, useParams } from "react-router";
 
-export default function RedirectToEnvironmentSchema() {
+export default function RedirectToFormulationDdl() {
   const { workspaceSlug, projectId } = useParams();
-  return <Navigate to={`/${workspaceSlug}/projects/${projectId}/environments/schema`} replace />;
+  return <Navigate to={`/${workspaceSlug}/projects/${projectId}/formulation/ddl`} replace />;
 }

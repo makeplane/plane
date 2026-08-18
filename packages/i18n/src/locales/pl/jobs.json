@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Zadania",
+    "sidebar": "Zadania",
+    "unbound": "Zadania wymagają źródła TestCopilot.",
+    "unbound_description": "Powiąż TestCopilot w konfiguracji, aby uruchamiać zadania z allowlisty i sprawdzać ich wyniki tutaj.",
+    "cta": "Otwórz konfigurację",
+    "empty": "Brak zadań",
+    "empty_description": "W tym projekcie nie uruchomiono jeszcze żadnych zadań."
+  }
+}

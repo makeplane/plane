@@ -47,11 +47,11 @@
       "environments": "Prostředí"
     },
     "conventions": {
-      "testhub": "Očekává testovací platformu: apps.index_platform, action words a CLI na allowlistu.",
-      "features": "Čte ./*/feature/ a případně packages/action_words, packages/api_objects a packages/page_objects. Může sdílet zdroj TestCopilot.",
+      "testhub": "Očekává testovací platformu: apps.index_platform, CLI na allowlistu a assets/sql.",
+      "features": "Čte ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects a případně assets/ddl. Může sdílet zdroj TestCopilot.",
       "wiki": "Čte markdown z docs/ nebo wiki/ v navázaném pracovním adresáři.",
       "prd": "Čte markdown z prd/ v navázaném pracovním adresáři.",
-      "environments": "Čte config/env.py a šablony env/*.yaml plus assets/ddl a assets/sql. Nikdy nečte env_local ani tajné hodnoty."
+      "environments": "Čte config/env.py a šablony env/*.yaml. Nikdy nečte env_local ani tajné hodnoty."
     }
   }
 }

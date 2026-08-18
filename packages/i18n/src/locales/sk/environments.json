@@ -7,7 +7,7 @@
       "schema": "Schéma"
     },
     "unbound": "Prostredie nie je naviazané na zdroj údajov.",
-    "unbound_description": "V konfigurácii priraďte prostredie k git workdir. Číta šablóny env a DDL. Tajomstvá sa nikdy nezobrazujú.",
+    "unbound_description": "V konfigurácii priraďte prostredie k git workdir. Číta šablóny env. Tajomstvá sa nikdy nezobrazujú.",
     "cta": "Otvoriť konfiguráciu",
     "sync": "Synchronizovať",
     "syncing": "Synchronizácia…",

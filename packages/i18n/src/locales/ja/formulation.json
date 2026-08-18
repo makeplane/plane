@@ -5,10 +5,12 @@
     "nav": {
       "scenes": "シーン",
       "action_words": "Action words",
-      "automation": "自動化"
+      "ddl": "DDL",
+      "api": "API",
+      "page": "Page"
     },
     "unbound": "Formulation はデータソースにバインドされていません。",
-    "unbound_description": "設定で Formulation を git workdir にバインドします。./*/feature/ を規約どおりに読みます。",
+    "unbound_description": "設定で Formulation を git workdir にバインドします。./*/feature/、action words、API と page objects、assets/ddl/ を規約どおりに読みます。",
     "cta": "設定を開く",
     "sync": "同期",
     "syncing": "同期中…",
@@ -21,6 +23,8 @@
     "filter_apis": "API を検索",
     "no_apis": "この workdir に API objects はありません。",
     "no_selection": "ドキュメントを見る API を選択してください。",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "filter_ddl": "テーブルを絞り込む",
+    "run_unbound": "この action word を実行するには、設定で TestCopilot をバインドしてください。"
   }
 }

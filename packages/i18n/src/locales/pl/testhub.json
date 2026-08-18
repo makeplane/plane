@@ -9,7 +9,8 @@
       "actions": "Akcje",
       "jobs": "Zadania",
       "sessions": "Sesje",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "Częste SQL"
     },
     "bind": {
       "title": "Powiąż źródło TestCopilot",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Zamknij",
-      "loading": "Wczytywanie…"
+      "loading": "Wczytywanie…",
+      "expand": "Rozwiń"
     },
     "sessions": {
       "title": "Sesje",

@@ -9,7 +9,8 @@
       "actions": "Дії",
       "jobs": "Завдання",
       "sessions": "Сесії",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "Частий SQL"
     },
     "bind": {
       "title": "Прив’язати джерело TestCopilot",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Закрити",
-      "loading": "Завантаження…"
+      "loading": "Завантаження…",
+      "expand": "Розгорнути"
     },
     "sessions": {
       "title": "Сесії",

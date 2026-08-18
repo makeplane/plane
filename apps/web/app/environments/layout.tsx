@@ -13,7 +13,6 @@ import { PageHead } from "@/components/core/page-title";
 import { useProject } from "@/hooks/store/use-project";
 import { useModuleCatalog } from "@/app/overlay/use-module-catalog";
 import { EnvironmentsPrimaryHeader } from "./components/header";
-import { EnvironmentsTabNavigation } from "./components/tab-navigation";
 
 export type TEnvironmentsOutletContext = {
   catalog: TModuleCatalogResponse | null;
@@ -34,7 +33,6 @@ function EnvironmentsLayout() {
     <div className="flex h-full w-full flex-col overflow-hidden">
       <PageHead title={pageTitle} />
       <AppHeader header={<EnvironmentsPrimaryHeader catalog={catalog} reload={reload} />} />
-      <EnvironmentsTabNavigation />
       <div className="min-h-0 flex-1 overflow-hidden">
         <Outlet context={{ catalog, loading, reload } satisfies TEnvironmentsOutletContext} />
       </div>

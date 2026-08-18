@@ -7,7 +7,7 @@
       "schema": "Esquema"
     },
     "unbound": "Entorno no está vinculado a un origen de datos.",
-    "unbound_description": "En Configuración, vincule Entorno a un workdir de git. Lee plantillas env y DDL. Los secretos nunca se muestran.",
+    "unbound_description": "En Configuración, vincule Entorno a un workdir de git. Lee plantillas env. Los secretos nunca se muestran.",
     "cta": "Abrir configuración",
     "sync": "Sincronizar",
     "syncing": "Sincronizando…",

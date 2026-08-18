@@ -25,7 +25,7 @@ function ToolsPage() {
   const [datasource, setDatasource] = useState("main");
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState("");
-  const base = `/${workspaceSlug}/projects/${projectId}/testhub`;
+  const jobsBase = `/${workspaceSlug}/projects/${projectId}/jobs`;
 
   if (loading) return <TesthubPageLoader />;
   if (!catalog?.repo) return <TesthubUnbound href={`/${workspaceSlug}/projects/${projectId}/gitsync`} />;
@@ -38,7 +38,7 @@ function ToolsPage() {
     setMessage("");
     try {
       const job = await testhubService.createJob(workspaceSlug, projectId, { kind, params });
-      navigate(`${base}/jobs/${job.id}`);
+      navigate(`${jobsBase}/${job.id}`);
     } catch (err) {
       setMessage(testhubErrorMessage(err));
     } finally {

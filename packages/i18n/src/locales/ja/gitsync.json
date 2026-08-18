@@ -47,11 +47,11 @@
       "environments": "環境"
     },
     "conventions": {
-      "testhub": "テストプラットフォームのリポジトリを想定します。apps.index_platform、action words、許可リストの CLI です。",
-      "features": "./*/feature/ を読み、存在すれば packages/action_words、packages/api_objects、packages/page_objects も読みます。TestCopilot のデータソースを共有できます。",
+      "testhub": "テストプラットフォームのリポジトリを想定します。apps.index_platform、許可リストの CLI、assets/sql です。",
+      "features": "./*/feature/、packages/action_words、packages/api_objects、packages/page_objects、存在すれば assets/ddl を読みます。TestCopilot のデータソースを共有できます。",
       "wiki": "バインドした作業ディレクトリから docs/ または wiki/ の markdown を読みます。",
       "prd": "バインドした作業ディレクトリから prd/ の markdown を読みます。",
-      "environments": "config/env.py と env/*.yaml テンプレート、assets/ddl と assets/sql を読みます。env_local や秘密の値は読みません。"
+      "environments": "config/env.py と env/*.yaml テンプレートを読みます。env_local や秘密の値は読みません。"
     }
   }
 }

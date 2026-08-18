@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Tâches",
+    "sidebar": "Tâches",
+    "unbound": "Les tâches nécessitent une source TestCopilot.",
+    "unbound_description": "Liez TestCopilot dans Configuration pour exécuter les tâches de la liste blanche et inspecter leurs résultats ici.",
+    "cta": "Ouvrir Configuration",
+    "empty": "Aucune tâche",
+    "empty_description": "Aucune tâche n’a été exécutée dans ce projet."
+  }
+}

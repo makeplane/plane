@@ -9,7 +9,8 @@
       "actions": "Aktionen",
       "jobs": "Jobs",
       "sessions": "Sitzungen",
-      "pytest": "pytest"
+      "pytest": "pytest",
+      "sql": "Häufiges SQL"
     },
     "bind": {
       "title": "TestCopilot-Quelle binden",
@@ -118,7 +119,8 @@
     },
     "file": {
       "close": "Schließen",
-      "loading": "Wird geladen…"
+      "loading": "Wird geladen…",
+      "expand": "Aufklappen"
     },
     "sessions": {
       "title": "Sitzungen",

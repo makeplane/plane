@@ -18,9 +18,10 @@ Plane 是类 Linear 的项目管理工具（Workspace / Project / Issue / Cycle 
 
 - **规格 / 测试 git 仓** = SSOT（可一条仓，也可分仓）
 - **配置（gitsync）** = 数据源登记 + 模块绑定 + Sync
-- **Formulation** = 被测系统有哪些场景与可复用操作
+- **Formulation** = 被测系统有哪些场景、可复用操作、API / Page objects 与 DDL（活文档，可执行 action words）
 - **环境** = 这个系统连到哪（脱敏）
-- **TestCopilot** = 引用 feature、跑白名单命令、测程与报告
+- **TestCopilot** = 引用 feature、跑白名单命令、测程、常用 SQL 与报告
+- **作业** = 查看各模块触发的白名单异步任务
 - **Issue** = 缺陷/任务，**不是**测试用例副本
 
 ```mermaid
@@ -33,6 +34,7 @@ flowchart LR
     F[Formulation]
     E[环境]
     TH[TestCopilot]
+    JOBS[作业]
   end
   subgraph gitRepos [绑定的git工作副本]
     Spec["规格仓_.feature"]
@@ -49,6 +51,8 @@ flowchart LR
   E --> EnvRepo
   TH --> Plat
   TH -->|"白名单执行"| Plat
+  F -->|"action_words Job"| JOBS
+  TH -->|"工具 Job"| JOBS
   TH -->|"失败可开"| ISS
   F -->|"引用 path+sha"| TH
   E -->|"测程选连接"| TH
@@ -93,7 +97,7 @@ git merge v1.x.y
 
 ## 本仓要新增的域
 
-独立 Django app `plane.testhub` + `plane.gitsync`。前端：`testhub` / `formulation` / `environments` / `gitsync`。
+独立 Django app `plane.testhub` + `plane.gitsync`。前端：`testhub` / `formulation` / `environments` / `jobs` / `gitsync`。
 
 ### 1. 配置：ProjectGitRemote + ModuleBinding
 
@@ -108,14 +112,14 @@ git merge v1.x.y
 
 ### 2. 约定目录
 
-| 产品模块    | `module_key`   | 约定                                                                                                            |
-| ----------- | -------------- | --------------------------------------------------------------------------------------------------------------- |
-| Formulation | `features`     | `./*/feature/**/*.feature`；若存在则读 `packages/action_words`、`packages/api_objects`、`packages/page_objects` |
-| 环境        | `environments` | `config/env.py`、`env/*.yaml`（非 `*local*`）；`assets/ddl/`、`assets/sql/`。永不读 `env_local.py` 或密钥值     |
-| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI                                                                 |
-| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                  |
+| 产品模块    | `module_key`   | 约定                                                                                                                |
+| ----------- | -------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Formulation | `features`     | `./*/feature/**/*.feature`；`packages/action_words`、`packages/api_objects`、`packages/page_objects`；`assets/ddl/` |
+| 环境        | `environments` | `config/env.py`、`env/*.yaml`（非 `*local*`）。永不读 `env_local.py` 或密钥值                                       |
+| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI；展示 `assets/sql/`                                                 |
+| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                      |
 
-**只读自己绑定的 workdir。** 共仓时磁盘上自然能看到全套目录；分仓时各看各的。Formulation 不偷偷读 testhub catalog。
+**只读自己绑定的 workdir。** 共仓时磁盘上自然能看到全套目录；分仓时各看各的。Formulation 名单来自自己的约定扫描；执行 action words 时按 `word_id` 从 testhub snapshot 补 `params_schema`，命令仍在 testhub workdir 跑。
 
 测程引用存 `module_key=features`、相对路径、Formulation remote 的 git sha。执行仍在 testhub workdir。分仓时由测试平台仓解析同名场景；对不齐则报告标未找到。
 
@@ -124,7 +128,7 @@ git merge v1.x.y
 - **TestCopilot**：测试仓 `python -m apps.index_platform` 写入 `CatalogSnapshot`。本仓不重写那套扫描。
 - **Formulation / 环境**：本仓薄约定扫描，经 `GET .../gitsync/modules/<key>/catalog/` 暴露。规格仓往往没有 `index_platform`。
 
-造数表单仍消费 testhub catalog 里测试仓 `export_catalog()` + JSON Schema。
+造数 / action words 表单在 Formulation；schema 仍消费 testhub catalog 里测试仓 `export_catalog()` + JSON Schema。执行结果在作业模块查看。
 
 ### 4. RepoRunner（Plane 没有的能力）
 
@@ -132,7 +136,7 @@ API 容器默认到不了 SUT，也不该任意 `subprocess`。执行必须是�
 
 ```mermaid
 sequenceDiagram
-  participant UI as TestCopilotUI
+  participant UI as FormulationOrTestCopilotUI
   participant API as testhubAPI
   participant Celery as Celery
   participant Agent as RepoRunner
@@ -162,12 +166,13 @@ sequenceDiagram
 
 项目侧栏与 Work items 同级：
 
-1. **Formulation** — 场景 / 动作 / 实现（只读）。不跑测。
-2. **环境** — 连接（脱敏）/ 结构（DDL、SQL）。无仓库绑定 Tab。
-3. **TestCopilot** — 测程与报告、作业、工具、造数、pytest 节点。
-4. **配置** — 数据源 + 模块绑定 + Sync。
+1. **Formulation** — 场景 / 可执行 action words / API / Page / DDL。活文档：可触发白名单 `action_words` Job。
+2. **环境** — 连接（脱敏）。无仓库绑定 Tab。
+3. **TestCopilot** — 测程与报告、工具、常用 SQL、pytest 节点。
+4. **作业** — 所有页面上手动执行的白名单异步任务结果。
+5. **配置** — 数据源 + 模块绑定 + Sync。
 
-旧 URL：`/testhub/tests` → Formulation 场景；`/testhub/components` → 实现；`/testhub/knowledge` → 环境结构。
+旧 URL：`/testhub/tests` → Formulation 场景；`/testhub/components` → Formulation API；`/testhub/knowledge` 与 `/environments/schema` → Formulation DDL；`/testhub/actions` → Formulation action words；`/testhub/jobs` → `/jobs`；`/formulation/automation` → Formulation API（`?tab=pages` → Page）。
 
 测程（`TesthubSession`）存引用，不存 Gherkin 正文。失败一键开 Issue（链 Job + 场景名）。
 
@@ -185,7 +190,7 @@ sequenceDiagram
 - 不把测试仓 `.cursor` skill/agent 搬进 Web
 - 不在 Web 重写测试仓 `packages.db` / 造数 SQL
 - 不在 Formulation 做编辑器，不回写 git
-- 不为 Formulation / 环境再拆 Django app
+- 不为 Formulation / 环境 / 作业再拆 Django app
 - 首期：无任意 SQL 控制台、无 recorder 常驻
 
 ---

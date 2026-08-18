@@ -7,7 +7,7 @@
       "schema": "Schema"
     },
     "unbound": "Environment is not bound to a data source.",
-    "unbound_description": "In Configuration, bind Environment to a git workdir. It reads env templates and DDL by convention. Secrets are never shown.",
+    "unbound_description": "In Configuration, bind Environment to a git workdir. It reads env templates by convention. Secrets are never shown.",
     "cta": "Open Configuration",
     "sync": "Sync",
     "syncing": "Syncing…",

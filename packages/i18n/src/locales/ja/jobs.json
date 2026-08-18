@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "ジョブ",
+    "sidebar": "ジョブ",
+    "unbound": "ジョブには TestCopilot のデータソースが必要です。",
+    "unbound_description": "設定で TestCopilot をバインドすると、許可リストのジョブを実行し、結果をここで確認できます。",
+    "cta": "設定を開く",
+    "empty": "ジョブはありません",
+    "empty_description": "このプロジェクトではまだジョブが実行されていません。"
+  }
+}

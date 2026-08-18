@@ -47,11 +47,11 @@
       "environments": "Umgebung"
     },
     "conventions": {
-      "testhub": "Erwartet ein Testplattform-Repository: apps.index_platform, Action words und CLI-Allowlist.",
-      "features": "Liest ./*/feature/ sowie packages/action_words, packages/api_objects und packages/page_objects, falls vorhanden. Kann die TestCopilot-Datenquelle teilen.",
+      "testhub": "Erwartet ein Testplattform-Repository: apps.index_platform, CLI-Allowlist und assets/sql.",
+      "features": "Liest ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects und assets/ddl, falls vorhanden. Kann die TestCopilot-Datenquelle teilen.",
       "wiki": "Liest Markdown aus docs/ oder wiki/ im gebundenen Workdir.",
       "prd": "Liest Markdown aus prd/ im gebundenen Workdir.",
-      "environments": "Liest config/env.py und env/*.yaml-Vorlagen sowie assets/ddl und assets/sql. Liest niemals env_local oder Geheimwerte."
+      "environments": "Liest config/env.py und env/*.yaml-Vorlagen. Liest niemals env_local oder Geheimwerte."
     }
   }
 }

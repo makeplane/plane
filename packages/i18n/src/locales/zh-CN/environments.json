@@ -7,7 +7,7 @@
       "schema": "结构"
     },
     "unbound": "环境尚未绑定数据源。",
-    "unbound_description": "请在配置中将环境绑定到 git 工作目录。按约定读取 env 模板和 DDL。密钥永不展示。",
+    "unbound_description": "请在配置中将环境绑定到 git 工作目录。按约定读取 env 模板。密钥永不展示。",
     "cta": "打开配置",
     "sync": "同步",
     "syncing": "同步中…",

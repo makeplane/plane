@@ -23,11 +23,18 @@ function OverviewPage() {
 
   const counts = catalog.snapshot?.payload?.counts;
   const git = catalog.snapshot?.payload?.git;
+  const jobsHref = `/${workspaceSlug}/projects/${projectId}/jobs`;
   const cards = [
     { key: "sessions", value: "→", label: t("testhub.nav.sessions"), href: `${base}/sessions` },
     { key: "apps", value: counts?.apps ?? 0, label: t("testhub.counts.apps"), href: `${base}/tools` },
+    {
+      key: "sql",
+      value: catalog.snapshot?.payload?.knowledge?.sql_files?.length ?? counts?.sql_files ?? "→",
+      label: t("testhub.nav.sql"),
+      href: `${base}/sql`,
+    },
     { key: "pytest", value: counts?.pytest_nodes ?? 0, label: t("testhub.counts.pytest"), href: `${base}/pytest` },
-    { key: "jobs", value: "→", label: t("testhub.nav.jobs"), href: `${base}/jobs` },
+    { key: "jobs", value: "→", label: t("jobs.sidebar"), href: jobsHref },
   ];
 
   return (

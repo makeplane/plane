@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Jobs",
+    "sidebar": "Jobs",
+    "unbound": "Os jobs precisam de uma origem do TestCopilot.",
+    "unbound_description": "Vincule o TestCopilot em Configuração para executar jobs da allowlist e inspecionar os resultados aqui.",
+    "cta": "Abrir Configuração",
+    "empty": "Nenhum job",
+    "empty_description": "Nenhum job foi executado neste projeto."
+  }
+}

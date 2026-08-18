@@ -47,11 +47,11 @@
       "environments": "Môi trường"
     },
     "conventions": {
-      "testhub": "Cần kho nền tảng kiểm thử: apps.index_platform, action words và CLI trong allowlist.",
-      "features": "Đọc ./*/feature/ và packages/action_words, packages/api_objects, packages/page_objects nếu có. Có thể dùng chung nguồn TestCopilot.",
+      "testhub": "Cần kho nền tảng kiểm thử: apps.index_platform, CLI trong allowlist và assets/sql.",
+      "features": "Đọc ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects và assets/ddl nếu có. Có thể dùng chung nguồn TestCopilot.",
       "wiki": "Đọc markdown docs/ hoặc wiki/ trong thư mục làm việc đã gắn.",
       "prd": "Đọc markdown prd/ trong thư mục làm việc đã gắn.",
-      "environments": "Đọc config/env.py và mẫu env/*.yaml cùng assets/ddl và assets/sql. Không bao giờ đọc env_local hoặc giá trị bí mật."
+      "environments": "Đọc config/env.py và mẫu env/*.yaml. Không bao giờ đọc env_local hoặc giá trị bí mật."
     }
   }
 }

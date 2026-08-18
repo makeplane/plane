@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Jobs",
+    "sidebar": "Jobs",
+    "unbound": "Jobs need a TestCopilot data source.",
+    "unbound_description": "Bind TestCopilot in Configuration to run allowlisted jobs and inspect their results here.",
+    "cta": "Open Configuration",
+    "empty": "No jobs",
+    "empty_description": "No jobs have been run in this project."
+  }
+}

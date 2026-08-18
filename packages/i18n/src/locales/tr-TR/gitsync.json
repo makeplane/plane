@@ -47,11 +47,11 @@
       "environments": "Ortam"
     },
     "conventions": {
-      "testhub": "Bir test platformu deposu bekler: apps.index_platform, action words ve allowlist CLI’ları.",
-      "features": "./*/feature/ dizinini ve varsa packages/action_words, packages/api_objects ve packages/page_objects öğelerini okur. TestCopilot veri kaynağını paylaşabilir.",
+      "testhub": "Bir test platformu deposu bekler: apps.index_platform, allowlist CLI’ları ve assets/sql.",
+      "features": "./*/feature/, packages/action_words, packages/api_objects, packages/page_objects ve varsa assets/ddl öğelerini okur. TestCopilot veri kaynağını paylaşabilir.",
       "wiki": "Bağlı çalışma dizinindeki docs/ veya wiki/ markdown dosyalarını okur.",
       "prd": "Bağlı çalışma dizinindeki prd/ markdown dosyalarını okur.",
-      "environments": "config/env.py ve env/*.yaml şablonlarını, ayrıca assets/ddl ve assets/sql öğelerini okur. env_local veya gizli değerleri asla okumaz."
+      "environments": "config/env.py ve env/*.yaml şablonlarını okur. env_local veya gizli değerleri asla okumaz."
     }
   }
 }

@@ -7,7 +7,7 @@
       "schema": "스키마"
     },
     "unbound": "환경이 데이터 소스에 바인딩되지 않았습니다.",
-    "unbound_description": "구성에서 환경을 git workdir에 바인딩하세요. env 템플릿과 DDL을 읽습니다. 비밀 값은 표시되지 않습니다.",
+    "unbound_description": "구성에서 환경을 git workdir에 바인딩하세요. env 템플릿을 읽습니다. 비밀 값은 표시되지 않습니다.",
     "cta": "구성 열기",
     "sync": "동기화",
     "syncing": "동기화 중…",

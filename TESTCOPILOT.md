@@ -10,9 +10,10 @@
 
 每个 Plane **Project** 对应一个被测系统。项目在 **配置** 里登记一条或多条本地 git 数据源，再把产品模块分别绑上去：
 
-- **Formulation** — 场景（`.feature`）与可复用操作（action words）
+- **Formulation** — 场景（`.feature`）、可复用操作（action words，可执行）、API、Page objects 与 DDL（活文档）
 - **环境** — SUT 地址与数据源模板（不含密钥）
-- **TestCopilot** — 引用 Formulation 的 feature，记录测程、跑白名单 CLI、形成报告
+- **TestCopilot** — 引用 Formulation 的 feature，记录测程、跑白名单 CLI、常用 SQL、形成报告
+- **作业** — 汇总各页触发的白名单异步任务结果
 
 Issue / Cycle 继续管缺陷和任务。**不要**因为文件在同一个仓里，就把说明书、连接信息和跑测塞进同一个产品模块。
 

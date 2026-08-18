@@ -47,11 +47,11 @@
       "environments": "Environnement"
     },
     "conventions": {
-      "testhub": "Attend un dépôt de plateforme de tests : apps.index_platform, action words et CLI sur liste blanche.",
-      "features": "Lit ./*/feature/ et, s’ils existent, packages/action_words, packages/api_objects et packages/page_objects. Peut partager la source TestCopilot.",
+      "testhub": "Attend un dépôt de plateforme de tests : apps.index_platform, CLI sur liste blanche et assets/sql.",
+      "features": "Lit ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects et assets/ddl s’ils existent. Peut partager la source TestCopilot.",
       "wiki": "Lit le markdown de docs/ ou wiki/ dans le répertoire lié.",
       "prd": "Lit le markdown de prd/ dans le répertoire lié.",
-      "environments": "Lit config/env.py et les modèles env/*.yaml ainsi que assets/ddl et assets/sql. Ne lit jamais env_local ni les secrets."
+      "environments": "Lit config/env.py et les modèles env/*.yaml. Ne lit jamais env_local ni les secrets."
     }
   }
 }

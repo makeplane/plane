@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Công việc",
+    "sidebar": "Công việc",
+    "unbound": "Công việc cần nguồn dữ liệu TestCopilot.",
+    "unbound_description": "Gắn TestCopilot trong Cấu hình để chạy công việc trong allowlist và xem kết quả tại đây.",
+    "cta": "Mở Cấu hình",
+    "empty": "Không có công việc",
+    "empty_description": "Chưa có công việc nào được chạy trong dự án này."
+  }
+}

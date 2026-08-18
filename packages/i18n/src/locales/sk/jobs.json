@@ -1,0 +1,11 @@
+{
+  "jobs": {
+    "title": "Úlohy",
+    "sidebar": "Úlohy",
+    "unbound": "Úlohy potrebujú zdroj TestCopilot.",
+    "unbound_description": "V konfigurácii priraďte TestCopilot, aby ste mohli spúšťať úlohy z allowlistu a kontrolovať ich výsledky tu.",
+    "cta": "Otvoriť konfiguráciu",
+    "empty": "Žiadne úlohy",
+    "empty_description": "V tomto projekte ešte neboli spustené žiadne úlohy."
+  }
+}

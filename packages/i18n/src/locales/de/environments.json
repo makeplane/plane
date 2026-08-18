@@ -7,7 +7,7 @@
       "schema": "Schema"
     },
     "unbound": "Umgebung ist an keine Datenquelle gebunden.",
-    "unbound_description": "Binden Sie die Umgebung in der Konfiguration an ein Git-Workdir. Es liest Env-Vorlagen und DDL. Geheimnisse werden nie angezeigt.",
+    "unbound_description": "Binden Sie die Umgebung in der Konfiguration an ein Git-Workdir. Es liest Env-Vorlagen. Geheimnisse werden nie angezeigt.",
     "cta": "Konfiguration öffnen",
     "sync": "Synchronisieren",
     "syncing": "Synchronisierung…",

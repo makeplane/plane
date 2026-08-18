@@ -7,7 +7,7 @@
       "schema": "Schemă"
     },
     "unbound": "Mediul nu este legat de o sursă de date.",
-    "unbound_description": "În Configurare, legați Mediul de un workdir git. Citește șabloane env și DDL. Secretele nu sunt afișate niciodată.",
+    "unbound_description": "În Configurare, legați Mediul de un workdir git. Citește șabloane env. Secretele nu sunt afișate niciodată.",
     "cta": "Deschide configurarea",
     "sync": "Sincronizează",
     "syncing": "Se sincronizează…",
