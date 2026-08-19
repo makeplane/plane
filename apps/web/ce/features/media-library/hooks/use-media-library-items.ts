@@ -45,36 +45,40 @@ const isRequestCanceled = (error: unknown) => {
 };
 
 const ACTIVE_TRANSCODE_STATUSES = new Set([
+  "UPLOAD_COMPLETE",
   "QUEUED",
   "CLAIMED",
   "PROBING",
+  "PROCESSING",
   "TRANSCODING",
   "PACKAGING",
   "VALIDATING",
   "RETRY_PENDING",
   "CANCEL_REQUESTED",
 ]);
-const FAILED_TRANSCODE_STATUSES = new Set(["FAILED", "CANCELLED"]);
+const FAILED_TRANSCODE_STATUSES = new Set(["FAILED", "QUEUE_FAILED", "CANCELLED"]);
 
 const getTranscodeLabel = (status: string) => {
   switch (status) {
+    case "UPLOAD_COMPLETE":
     case "QUEUED":
       return "Queued";
     case "CLAIMED":
     case "PROBING":
-      return "Preparing";
+    case "PROCESSING":
     case "TRANSCODING":
     case "PACKAGING":
-      return "Processing";
     case "VALIDATING":
-      return "Finalizing";
     case "RETRY_PENDING":
-      return "Retrying";
+      return "Uploading";
     case "CANCEL_REQUESTED":
       return "Cancelling";
     case "COMPLETED":
-      return "Ready";
+    case "READY":
+    case "UPLOADED":
+      return "Uploaded";
     case "FAILED":
+    case "QUEUE_FAILED":
       return "Failed";
     case "CANCELLED":
       return "Cancelled";
@@ -86,7 +90,7 @@ const getTranscodeLabel = (status: string) => {
 const mergeTranscodeJob = (item: TMediaItem, job: TMediaTranscodeJobResponse): TMediaItem => {
   const status = job.status;
   const progress = Math.min(100, Math.max(0, Math.round(job.progress ?? item.transcodeProgress ?? 0)));
-  const isComplete = status === "COMPLETED";
+  const isComplete = status === "COMPLETED" || status === "READY" || status === "UPLOADED";
   const isFailed = FAILED_TRANSCODE_STATUSES.has(status);
   const isActive = ACTIVE_TRANSCODE_STATUSES.has(status);
   return {

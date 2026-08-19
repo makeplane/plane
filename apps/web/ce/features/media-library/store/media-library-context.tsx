@@ -36,7 +36,14 @@ const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
 const SECTION_PATH_SEGMENT = "/media-library/section/";
 const MEDIA_LIBRARY_PATH_SEGMENT = "/media-library";
 const TRANSCODE_JOB_POLL_INTERVAL_MS = 5000;
-const TERMINAL_TRANSCODE_STATUSES = new Set<TMediaTranscodeJobStatus>(["COMPLETED", "FAILED", "CANCELLED"]);
+const TERMINAL_TRANSCODE_STATUSES = new Set<TMediaTranscodeJobStatus>([
+  "COMPLETED",
+  "READY",
+  "UPLOADED",
+  "FAILED",
+  "QUEUE_FAILED",
+  "CANCELLED",
+]);
 
 const normalizeTrackedTranscodeJob = (job: TMediaTranscodeJobTrackerInput): TMediaTranscodeJobTrackerInput | null => {
   const workspaceSlug = job.workspaceSlug?.trim();
