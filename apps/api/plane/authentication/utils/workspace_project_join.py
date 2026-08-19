@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import os
+
 # Django imports
 from django.utils import timezone
 
@@ -9,6 +12,7 @@ from django.utils import timezone
 from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
+    Workspace,
     WorkspaceMember,
     WorkspaceMemberInvite,
 )
@@ -89,3 +93,65 @@ def process_workspace_project_invitations(user):
     # Delete all the invites
     workspace_member_invites.delete()
     project_member_invites.delete()
+
+
+def auto_join_default_workspaces(user):
+    """
+    If DEFAULT_WORKSPACE_SLUGS is configured and the user has no workspace memberships,
+    automatically add them as a Member to all listed workspaces and mark onboarding
+    complete so they land directly in the first workspace without the onboarding flow.
+
+    DEFAULT_WORKSPACE_SLUGS accepts:
+    - A comma-separated list of workspace slugs: "my-org,my-org-dev"
+    - A wildcard "*" to auto-join all workspaces on the instance
+
+    The first slug (or oldest workspace for "*") becomes the landing workspace.
+    """
+    from plane.license.utils.instance_value import get_configuration_value
+
+    (slugs_raw,) = get_configuration_value(
+        [{"key": "DEFAULT_WORKSPACE_SLUGS", "default": os.environ.get("DEFAULT_WORKSPACE_SLUGS", "")}]
+    )
+    if not slugs_raw:
+        return
+
+    slugs_raw = slugs_raw.strip()
+
+    # Only auto-join users who have no workspace memberships yet
+    if WorkspaceMember.objects.filter(member=user, is_active=True).exists():
+        return
+
+    if slugs_raw == "*":
+        workspaces = list(Workspace.objects.order_by("created_at"))
+        slug_order = {}  # not used for wildcard; primary = oldest workspace
+    else:
+        slugs = [s.strip() for s in slugs_raw.split(",") if s.strip()]
+        if not slugs:
+            return
+        workspaces = list(Workspace.objects.filter(slug__in=slugs))
+        slug_order = {s: i for i, s in enumerate(slugs)}
+
+    if not workspaces:
+        return
+
+    WorkspaceMember.objects.bulk_create(
+        [WorkspaceMember(workspace=w, member=user, role=15, is_active=True) for w in workspaces],
+        ignore_conflicts=True,
+    )
+
+    # Primary (landing) workspace: first by slug order, or oldest for wildcard
+    primary = workspaces[0] if slugs_raw == "*" else min(workspaces, key=lambda w: slug_order.get(w.slug, 999))
+
+    # Mark onboarding complete so the user lands directly in the workspace
+    from plane.db.models.user import Profile
+
+    Profile.objects.filter(user=user).update(
+        is_onboarded=True,
+        last_workspace_id=primary.id,
+        onboarding_step={
+            "profile_complete": True,
+            "workspace_create": True,
+            "workspace_invite": True,
+            "workspace_join": True,
+        },
+    )
