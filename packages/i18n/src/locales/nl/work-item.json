@@ -1,0 +1,426 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Werkitem} other {Werkitems}}",
+    "all": "Alle werkitems",
+    "edit": "Werkitem bewerken",
+    "title": {
+      "label": "Titel van het werkitem",
+      "required": "Titel van het werkitem is verplicht."
+    },
+    "add": {
+      "press_enter": "Druk op 'Enter' om nog een werkitem toe te voegen",
+      "label": "Werkitem toevoegen",
+      "cycle": {
+        "failed": "Werkitem kon niet aan de cyclus worden toegevoegd. Probeer het opnieuw.",
+        "success": "{count, plural, one {Werkitem} other {Werkitems}} succesvol toegevoegd aan de cyclus.",
+        "loading": "{count, plural, one {werkitem} other {werkitems}} toevoegen aan de cyclus"
+      },
+      "assignee": "Toegewezenen toevoegen",
+      "start_date": "Startdatum toevoegen",
+      "due_date": "Vervaldatum toevoegen",
+      "parent": "Bovenliggend werkitem toevoegen",
+      "sub_issue": "Subwerkitem toevoegen",
+      "dependency": "Afhankelijkheid toevoegen",
+      "relation": "Relatie toevoegen",
+      "link": "Koppeling toevoegen",
+      "existing": "Bestaand werkitem toevoegen"
+    },
+    "remove": {
+      "label": "Werkitem verwijderen",
+      "cycle": {
+        "loading": "Werkitem verwijderen uit de cyclus",
+        "success": "Werkitem succesvol verwijderd uit de cyclus.",
+        "failed": "Werkitem kon niet uit de cyclus worden verwijderd. Probeer het opnieuw."
+      },
+      "module": {
+        "loading": "Werkitem verwijderen uit de module",
+        "success": "Werkitem succesvol verwijderd uit de module.",
+        "failed": "Werkitem kon niet uit de module worden verwijderd. Probeer het opnieuw."
+      },
+      "parent": {
+        "label": "Bovenliggend werkitem verwijderen"
+      }
+    },
+    "new": "Nieuw werkitem",
+    "adding": "Werkitem toevoegen",
+    "create": {
+      "success": "Werkitem succesvol aangemaakt"
+    },
+    "priority": {
+      "urgent": "Urgent",
+      "high": "Hoog",
+      "medium": "Gemiddeld",
+      "low": "Laag"
+    },
+    "display": {
+      "properties": {
+        "label": "Weergave-eigenschappen",
+        "id": "ID",
+        "issue_type": "Type werkitem",
+        "sub_issue_count": "Aantal subwerkitems",
+        "attachment_count": "Aantal bijlagen",
+        "created_on": "Aangemaakt op",
+        "sub_issue": "Subwerkitem",
+        "work_item_count": "Aantal werkitems"
+      },
+      "extra": {
+        "show_sub_issues": "Subwerkitems tonen",
+        "show_empty_groups": "Lege groepen tonen"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Deze weergave is gesorteerd op",
+      "list": "Lijst",
+      "kanban": "Bord",
+      "calendar": "Agenda",
+      "spreadsheet": "Tabel",
+      "gantt": "Tijdlijn",
+      "title": {
+        "list": "Lijstweergave",
+        "kanban": "Bordweergave",
+        "calendar": "Agendaweergave",
+        "spreadsheet": "Tabelweergave",
+        "gantt": "Tijdlijnweergave"
+      }
+    },
+    "states": {
+      "active": "Actief",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "placeholder": "Reactie toevoegen",
+      "switch": {
+        "private": "Naar privéreactie schakelen",
+        "public": "Naar openbare reactie schakelen"
+      },
+      "create": {
+        "success": "Reactie succesvol aangemaakt",
+        "error": "Aanmaken van reactie mislukt. Probeer het later opnieuw."
+      },
+      "update": {
+        "success": "Reactie succesvol bijgewerkt",
+        "error": "Bijwerken van reactie mislukt. Probeer het later opnieuw."
+      },
+      "remove": {
+        "success": "Reactie succesvol verwijderd",
+        "error": "Verwijderen van reactie mislukt. Probeer het later opnieuw."
+      },
+      "upload": {
+        "error": "Uploaden van asset mislukt. Probeer het later opnieuw."
+      },
+      "copy_link": {
+        "success": "Koppeling naar reactie gekopieerd naar klembord",
+        "error": "Fout bij het kopiëren van de koppeling naar de reactie. Probeer het later opnieuw."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Antwoord toevoegen",
+          "placeholder": "Antwoord toevoegen"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Ophalen van antwoorden mislukt"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Antwoord succesvol aangemaakt"
+            },
+            "error": {
+              "message": "Aanmaken van antwoord mislukt"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Antwoord succesvol bijgewerkt"
+            },
+            "error": {
+              "message": "Bijwerken van antwoord mislukt"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Antwoord succesvol verwijderd"
+            },
+            "error": {
+              "message": "Verwijderen van antwoord mislukt"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Werkitem bestaat niet",
+        "description": "Het werkitem dat je zoekt bestaat niet, is gearchiveerd of is verwijderd.",
+        "primary_button": {
+          "text": "Andere werkitems bekijken"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Verwante werkitems"
+    },
+    "archive": {
+      "description": "Alleen voltooide of geannuleerde werkitems kunnen worden gearchiveerd",
+      "label": "Werkitem archiveren",
+      "confirm_message": "Weet je zeker dat je het werkitem wilt archiveren? Al je gearchiveerde werkitems kunnen later worden hersteld.",
+      "success": {
+        "label": "Archiveren geslaagd",
+        "message": "Je archieven vind je in de projectarchieven."
+      },
+      "failed": {
+        "message": "Werkitem kon niet worden gearchiveerd. Probeer het opnieuw."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Herstellen geslaagd",
+        "message": "Je werkitem vind je in de projectwerkitems."
+      },
+      "failed": {
+        "message": "Werkitem kon niet worden hersteld. Probeer het opnieuw."
+      }
+    },
+    "relation": {
+      "relates_to": "Gerelateerd aan",
+      "duplicate": "Duplicaat van",
+      "blocked_by": "Geblokkeerd door",
+      "blocking": "Blokkeert",
+      "start_before": "Start voor",
+      "start_after": "Start na",
+      "finish_before": "Eindigt voor",
+      "finish_after": "Eindigt na",
+      "implements": "Implementeert",
+      "implemented_by": "Geïmplementeerd door"
+    },
+    "copy_link": "Koppeling naar werkitem kopiëren",
+    "delete": {
+      "label": "Werkitem verwijderen",
+      "error": "Fout bij het verwijderen van het werkitem"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Je bent nu geabonneerd op het werkitem",
+        "unsubscribed": "Abonnement op werkitem succesvol opgezegd"
+      }
+    },
+    "select": {
+      "error": "Selecteer ten minste een werkitem",
+      "empty": "Geen werkitems geselecteerd",
+      "add_selected": "Geselecteerde werkitems toevoegen",
+      "select_all": "Alles selecteren",
+      "deselect_all": "Selectie opheffen"
+    },
+    "open_in_full_screen": "Werkitem openen in volledig scherm",
+    "duplicate": {
+      "modal": {
+        "title": "Een kopie naar een ander project maken",
+        "description1": "Dit maakt een kopie van het werkitem.",
+        "description2": "Alle eigenschapsgegevens worden verwijderd tijdens het dupliceren.",
+        "placeholder": "Selecteer een project"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Werkitem succesvol gedupliceerd"
+        },
+        "error": {
+          "message": "Dupliceren van het werkitem mislukt"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Pagina's koppelen",
+      "show_wiki_pages": "Wiki-pagina's tonen",
+      "link_pages_to": "Pagina's koppelen aan",
+      "linked_pages": "Gekoppelde pagina's",
+      "no_description": "Dit is een lege pagina. Schrijf hier iets en zie het hier verschijnen, net als deze tijdelijke tekst",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Pagina's bijgewerkt",
+            "message": "Pagina's succesvol bijgewerkt"
+          },
+          "error": {
+            "title": "Bijwerken van pagina's mislukt",
+            "message": "Bijwerken van pagina's mislukt"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Pagina verwijderd",
+            "message": "Pagina succesvol verwijderd"
+          },
+          "error": {
+            "title": "Verwijderen van pagina mislukt",
+            "message": "Verwijderen van pagina mislukt"
+          }
+        }
+      }
+    },
+    "vote": {
+      "click_to_upvote": "Klik om omhoog te stemmen",
+      "click_to_downvote": "Klik om omlaag te stemmen",
+      "click_to_view_upvotes": "Klik om positieve stemmen te bekijken",
+      "click_to_view_downvotes": "Klik om negatieve stemmen te bekijken"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Subwerkitem succesvol bijgewerkt",
+      "error": "Fout bij het bijwerken van het subwerkitem"
+    },
+    "remove": {
+      "success": "Subwerkitem succesvol verwijderd",
+      "error": "Fout bij het verwijderen van het subwerkitem"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Je hebt geen subwerkitems die overeenkomen met de toegepaste filters.",
+        "description": "Wis alle toegepaste filters om alle subwerkitems te zien.",
+        "action": "Filters wissen"
+      },
+      "list_filters": {
+        "title": "Je hebt geen werkitems die overeenkomen met de toegepaste filters.",
+        "description": "Wis alle toegepaste filters om alle werkitems te zien.",
+        "action": "Filters wissen"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Geen overeenkomende werkitems gevonden"
+      },
+      "no_issues": {
+        "title": "Geen werkitems gevonden"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Nog geen reacties",
+        "description": "Reacties kunnen worden gebruikt als ruimte voor discussie en opvolging van de werkitems"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Kan werkitems niet archiveren",
+        "message": "Alleen werkitems in de statusgroepen Voltooid of Geannuleerd kunnen worden gearchiveerd."
+      },
+      "invalid_issue_start_date": {
+        "title": "Kan werkitems niet bijwerken",
+        "message": "De geselecteerde startdatum ligt na de vervaldatum voor sommige werkitems. Zorg dat de startdatum voor de vervaldatum ligt."
+      },
+      "invalid_issue_target_date": {
+        "title": "Kan werkitems niet bijwerken",
+        "message": "De geselecteerde vervaldatum ligt voor de startdatum voor sommige werkitems. Zorg dat de vervaldatum na de startdatum ligt."
+      },
+      "invalid_state_transition": {
+        "title": "Kan werkitems niet bijwerken",
+        "message": "Statuswijziging is niet toegestaan voor sommige werkitems. Zorg dat de statuswijziging is toegestaan."
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Terugkerende werkitems",
+      "description": "Stel je herhaalbare werk een keer in en wij zorgen voor de herhalingen. Je ziet alles hier zodra het zover is.",
+      "new_recurring_work_item": "Nieuw terugkerend werkitem",
+      "update_recurring_work_item": "Terugkerend werkitem bijwerken",
+      "form": {
+        "interval": {
+          "title": "Planning",
+          "start_date": {
+            "validation": {
+              "required": "Startdatum is verplicht"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Intervaltype is verplicht"
+            }
+          }
+        },
+        "button": {
+          "create": "Terugkerend werkitem aanmaken",
+          "update": "Terugkerend werkitem bijwerken"
+        }
+      },
+      "create_button": {
+        "label": "Terugkerend werkitem aanmaken",
+        "no_permission": "Neem contact op met je projectbeheerder om terugkerende werkitems aan te maken"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Je werk op de automatische piloot",
+        "description": "Stel het een keer in. Wij halen het terug wanneer het weer nodig is. Upgrade naar Business om terugkerend werk moeiteloos te maken."
+      },
+      "no_templates": {
+        "button": "Maak je eerste terugkerende werkitem aan"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Terugkerend werkitem aangemaakt",
+          "message": "{name}, het terugkerende werkitem, is nu beschikbaar voor je werkruimte."
+        },
+        "error": {
+          "title": "We konden dit terugkerende werkitem deze keer niet aanmaken.",
+          "message": "Probeer je gegevens opnieuw op te slaan of kopieer ze naar een nieuw terugkerend werkitem, bij voorkeur in een ander tabblad."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Terugkerend werkitem gewijzigd",
+          "message": "{name}, het terugkerende werkitem, is gewijzigd."
+        },
+        "error": {
+          "title": "We konden de wijzigingen aan dit terugkerende werkitem niet opslaan.",
+          "message": "Probeer je gegevens opnieuw op te slaan of kom later terug naar dit terugkerende werkitem. Als het dan nog niet lukt, neem dan contact met ons op."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Terugkerend werkitem verwijderd",
+          "message": "{name}, het terugkerende werkitem, is nu verwijderd uit je werkruimte."
+        },
+        "error": {
+          "title": "We konden dat terugkerende werkitem niet verwijderen.",
+          "message": "Probeer het opnieuw te verwijderen of kom er later op terug. Als het dan nog niet lukt, neem dan contact met ons op."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Terugkerend werkitem verwijderen",
+      "description": {
+        "prefix": "Weet je zeker dat je het terugkerende werkitem wilt verwijderen-",
+        "suffix": "? Alle gegevens die bij het terugkerende werkitem horen worden permanent verwijderd. Deze actie kan niet ongedaan worden gemaakt."
+      }
+    }
+  },
+  "epic": {
+    "new": "Nieuwe Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Epic toevoegen",
+    "create": {
+      "success": "Epic succesvol aangemaakt"
+    },
+    "add": {
+      "label": "Epic toevoegen",
+      "press_enter": "Druk op 'Enter' om nog een epic toe te voegen"
+    },
+    "title": {
+      "label": "Epic-titel",
+      "required": "Epic-titel is verplicht."
+    }
+  }
+}
