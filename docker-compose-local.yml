@@ -165,9 +165,12 @@ services:
     volumes:
       - ${TESTHUB_HOST_REPO:-C:/dev/repo/innovamed-test-template}:/opt/testhub/workdir
       - gitsync-clones:/opt/gitsync/clones
+      - testhub-uv-envs:/opt/testhub/uv-envs
     environment:
       TESTHUB_WORKDIR: /opt/testhub/workdir
       GITSYNC_CLONE_ROOT: /opt/gitsync/clones
+      TESTHUB_UV_ENV_ROOT: /opt/testhub/uv-envs
+      UV_LINK_MODE: copy
     ports:
       - "8090:8090"
     healthcheck:
@@ -183,6 +186,7 @@ volumes:
   pgdata:
   rabbitmq_data:
   gitsync-clones:
+  testhub-uv-envs:
 
 networks:
   dev_env:

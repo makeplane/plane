@@ -2,11 +2,15 @@
 
 Local Plane (`docker-compose-local.yml`) mounts `TESTHUB_HOST_REPO`
 at `/opt/testhub/workdir` and a named volume at `/opt/gitsync/clones`.
+Linux uv environments live in `testhub-uv-envs` (`/opt/testhub/uv-envs`).
 The API talks to this service at `http://testhub-runner:8090`.
 
-On start the container runs `uv sync` in the mounted local-mount repo (Linux
-venv — do not reuse a Windows host `.venv`). `GET /v1/health` reports that
-workdir + git branch/sha.
+On start the container runs `uv sync` for the local-mount repo using
+`UV_PROJECT_ENVIRONMENT` under `/opt/testhub/uv-envs` — never the Windows host
+`.venv` bind-mounted at `/opt/testhub/workdir/.venv`. `uv run --directory <workdir>`
+on `/v1/exec` uses the same isolated env (hashed per workdir) and sets
+`PYTHONPATH` to the repo root so `python -m apps.*` resolves from source.
+`GET /v1/health` reports that workdir + git branch/sha.
 
 ```
 GET  /v1/health

@@ -5,6 +5,7 @@
 """HTTP sidecar that runs allowlisted python commands and git clone/fetch."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -22,6 +23,7 @@ WORKDIR = Path(os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir"))
 HOST = os.environ.get("TESTHUB_RUNNER_HOST", "0.0.0.0")
 PORT = int(os.environ.get("TESTHUB_RUNNER_PORT", "8090"))
 MAX_OUTPUT = 2_000_000
+UV_ENV_ROOT_DEFAULT = "/opt/testhub/uv-envs"
 _SECRET_RE = re.compile(
     r"(?i)((?:password|passwd|secret|token|api[_-]?key|authorization|access_key|private_key)\s*[=:]\s*)(\S+)"
 )
@@ -68,11 +70,60 @@ def _redact(text: str) -> str:
     return _SECRET_RE.sub(r"\1***", text)
 
 
-def _python_cmd(argv: list[str]) -> list[str]:
+def uv_env_root() -> Path:
+    raw = os.environ.get("TESTHUB_UV_ENV_ROOT") or UV_ENV_ROOT_DEFAULT
+    return Path(raw)
+
+
+def uv_env_dir(workdir: Path) -> Path:
+    """Linux-side venv path for a workdir. Never reuse a Windows bind-mount `.venv`."""
+    root = uv_env_root()
+    key = str(workdir).replace("\\", "/").rstrip("/") or "/"
+    default = str(Path(os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir"))).replace("\\", "/").rstrip("/")
+    if key == default:
+        return root / "local-mount"
+    digest = hashlib.sha256(key.encode("utf-8")).hexdigest()[:16]
+    return root / digest
+
+
+def exec_environment(workdir: Path) -> dict[str, str]:
+    env = dict(os.environ)
+    env.pop("PYTHONSAFEPATH", None)
+    dest = uv_env_dir(workdir)
+    dest.mkdir(parents=True, exist_ok=True)
+    env["UV_PROJECT_ENVIRONMENT"] = str(dest)
+    env.setdefault("UV_LINK_MODE", "copy")
+    workdir_s = str(workdir)
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = workdir_s if not existing else f"{workdir_s}{os.pathsep}{existing}"
+    return env
+
+
+def python_cmd(argv: list[str], workdir: Path) -> list[str]:
     uv = shutil.which("uv")
     if uv:
-        return [uv, "run", "--", *argv]
+        return [uv, "run", "--directory", str(workdir), "--no-dev", "--", *argv]
     return argv
+
+
+def missing_apps_module(workdir: Path, argv: list[str]) -> str | None:
+    """Return an error if `python -m apps.*` has no matching files in workdir."""
+    if len(argv) < 3 or argv[0] not in {"python", "python3"} or argv[1] != "-m":
+        return None
+    module = argv[2]
+    if not module.startswith("apps.") or ".." in module:
+        return None
+    parts = module.split(".")
+    if not all(part.isidentifier() for part in parts):
+        return None
+    rel = Path(*parts)
+    if (workdir / rel / "__main__.py").is_file() or (workdir / rel).with_suffix(".py").is_file():
+        return None
+    return (
+        f"workdir has no {module} (expected {rel.as_posix()}/__main__.py). "
+        "Use a test-platform repo with apps.index_platform (template >= 2.2.0). "
+        "Formulation-only spec repos cannot run TestCopilot Sync."
+    )
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -144,11 +195,24 @@ class Handler(BaseHTTPRequestHandler):
         if not workdir.is_dir():
             self._json(500, {"error": f"workdir missing: {workdir}"})
             return
-        cmd = _python_cmd(safe_argv)
+        missing = missing_apps_module(workdir, safe_argv)
+        if missing:
+            self._json(
+                200,
+                {
+                    "exit_code": 1,
+                    "stdout": "",
+                    "stderr": missing,
+                    "git": read_git_meta(workdir),
+                },
+            )
+            return
+        cmd = python_cmd(safe_argv, workdir)
         try:
             completed = subprocess.run(  # noqa: S603 — argv is allowlisted
                 cmd,
                 cwd=str(workdir),
+                env=exec_environment(workdir),
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
