@@ -17,6 +17,7 @@ These assert the dispatch contract rather than the delivered notification.
 mocking at the dispatch boundary keeps these tests from depending on Celery.
 """
 
+import json
 from unittest.mock import patch
 
 import pytest
@@ -108,6 +109,28 @@ class TestCommentNotificationContract:
         assert kwargs["type"] == "comment.activity.created"
         assert kwargs["notification"] is True
         assert kwargs["origin"]
+
+    @pytest.mark.django_db
+    def test_create_comment_activity_carries_the_comment_id(self, api_key_client, workspace, project, create_issue):
+        """Without the id, notifying is not enough — @mentions are still dropped.
+
+        ``create_comment_activity`` sets ``issue_comment_id`` from
+        ``requested_data["id"]``, and ``notification_task`` gates *all*
+        comment-mention extraction on that field being set. Serializing the write
+        serializer leaves it null, so a mention in an API-created comment notifies
+        nobody even once ``notification=True`` is passed. Comment *updates* are
+        unaffected, because they read the id from ``current_instance``.
+        """
+        with patch("plane.api.views.issue.issue_activity") as activity:
+            response = api_key_client.post(
+                self.url(workspace, project, create_issue),
+                {"comment_html": "<p>Mentioning someone</p>"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        requested = json.loads(_dispatched(activity)["requested_data"])
+        assert requested.get("id") == response.json()["id"]
 
     @pytest.mark.django_db
     def test_update_comment_notifies(self, api_key_client, workspace, project, create_issue, create_comment):
