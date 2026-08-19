@@ -1,16 +1,32 @@
-# Testhub runner — allowlisted Python jobs against a bind-mounted test repo.
+# Testhub runner — allowlisted Python jobs and public HTTPS git clone/fetch.
 
 Local Plane (`docker-compose-local.yml`) mounts `TESTHUB_HOST_REPO`
-at `/opt/testhub/workdir` and talks to this service at `http://testhub-runner:8090`.
+at `/opt/testhub/workdir` and a named volume at `/opt/gitsync/clones`.
+The API talks to this service at `http://testhub-runner:8090`.
 
-On start the container runs `uv sync` in the mounted repo (Linux venv — do not
-reuse a Windows host `.venv`). `GET /v1/health` reports workdir + git branch/sha.
+On start the container runs `uv sync` in the mounted local-mount repo (Linux
+venv — do not reuse a Windows host `.venv`). `GET /v1/health` reports that
+workdir + git branch/sha.
 
 ```
 GET  /v1/health
-POST /v1/exec   {"job_id", "argv": ["python", "-m", "apps.index_platform", "--out", "-"], "timeout": 180}
+POST /v1/exec      {"job_id", "argv": [...], "timeout": 180, "workdir"?}
+POST /v1/git-sync  {"repo_url", "branch", "workdir", "timeout"?}
 ```
 
-Allowlisted argv only: `python -m apps.index_platform|apps.index_ai|packages.action_words`
-or `python apps/dump_ddl.py`. Secrets matching password/token/key patterns are
-redacted from stdout/stderr. The API container must not subprocess the test repo.
+`/v1/exec` allowlisted argv only: `python -m apps.index_platform|apps.index_ai|packages.action_words`
+or `python apps/dump_ddl.py`. Optional `workdir` must be under `/opt/testhub/` or
+`/opt/gitsync/clones/`; default is `TESTHUB_WORKDIR`.
+
+`/v1/git-sync` clones or fetches a **public HTTPS** repo into `workdir` under
+`/opt/gitsync/clones/{project}/{remote}`. Fixed git argv only — no credentials,
+no extra flags. Existing clones must keep the same origin URL.
+
+If the runner logs `GnuTLS, handshake failed` / `unexpected eof while reading`
+while the Windows host can still `git ls-remote` via a mirror, Docker Desktop
+is not completing TLS to GitHub. Copy `local.env.example` to `local.env` (proxy
+
+- optional `GITSYNC_GITHUB_INSTEADOF`) and restart the runner.
+
+Secrets matching password/token/key patterns are redacted from stdout/stderr.
+The API container must not subprocess git or the test repo.

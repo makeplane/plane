@@ -22,16 +22,18 @@
       "credential_ref": "凭证引用",
       "sha": "HEAD",
       "status": "同步状态",
-      "local_mount_hint": "本地挂载与 Docker 卷一致。本机上的项目共用同一工作目录。"
+      "local_mount_hint": "本地挂载与 Docker 卷一致。本机上的项目共用同一工作目录。",
+      "sync_timeout": "同步仍在进行。请稍后刷新此页面。"
     },
     "kinds": {
       "local_mount": "本地挂载",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "克隆与 fetch 尚未提供。您可以先保存 URL，或现在使用本地挂载。",
-      "sync_disabled": "Git URL 同步尚未实现。本阶段请使用本地挂载。",
-      "not_implemented": "git_url 的 clone/fetch 尚未实现。"
+      "coming_soon": "可以克隆并获取公开 HTTPS 仓库。尚不支持私有远程和凭证引用。",
+      "sync_disabled": "同步会通过 HTTPS 克隆或获取绑定分支。尚不支持私有远程。",
+      "not_implemented": "尚不支持私有远程。请使用公开 HTTPS URL。",
+      "credential_unavailable": "尚不支持凭证引用。请使用公开 HTTPS URL。"
     },
     "modules": {
       "title": "模块数据源",

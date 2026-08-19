@@ -22,16 +22,18 @@
       "credential_ref": "Odwołanie do poświadczeń",
       "sha": "HEAD",
       "status": "Status synchronizacji",
-      "local_mount_hint": "Lokalne montowanie odpowiada woluminowi Docker. Projekty na tej maszynie współdzielą ten sam katalog roboczy."
+      "local_mount_hint": "Lokalne montowanie odpowiada woluminowi Docker. Projekty na tej maszynie współdzielą ten sam katalog roboczy.",
+      "sync_timeout": "Synchronizacja nadal trwa. Odśwież tę stronę za chwilę."
     },
     "kinds": {
       "local_mount": "Montowanie lokalne",
       "git_url": "URL Git"
     },
     "git_url": {
-      "coming_soon": "Clone i fetch nie są jeszcze dostępne. Można zapisać URL na później albo teraz użyć montowania lokalnego.",
-      "sync_disabled": "Synchronizacja URL Git nie jest zaimplementowana. Na tym etapie należy użyć montowania lokalnego.",
-      "not_implemented": "clone/fetch git_url nie jest jeszcze zaimplementowane."
+      "coming_soon": "Publiczne repozytoria HTTPS można klonować i pobierać. Prywatne zdalne źródła i odwołania do poświadczeń nie są jeszcze obsługiwane.",
+      "sync_disabled": "Synchronizacja klonuje lub pobiera powiązaną gałąź przez HTTPS. Prywatne zdalne źródła nie są jeszcze obsługiwane.",
+      "not_implemented": "Prywatne zdalne źródła nie są jeszcze obsługiwane. Użyj publicznego adresu URL HTTPS.",
+      "credential_unavailable": "Odwołania do poświadczeń nie są jeszcze obsługiwane. Użyj publicznego adresu URL HTTPS."
     },
     "modules": {
       "title": "Źródła modułów",

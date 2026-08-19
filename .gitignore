@@ -84,6 +84,7 @@ package-lock.json
 
 .secrets
 tmp/
+apps/testhub-runner/local.env
 
 ## packages
 dist

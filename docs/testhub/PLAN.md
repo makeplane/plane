@@ -103,7 +103,7 @@ git merge v1.x.y
 
 见 [`apps/api/plane/gitsync/`](../../apps/api/plane/gitsync/)。
 
-- **ProjectGitRemote**：`local_mount`（本阶段）/ 预留 `git_url`
+- **ProjectGitRemote**：`local_mount`（Compose bind-mount）/ `git_url`（公开 HTTPS；Runner clone/fetch 到 `/opt/gitsync/clones/{project}/{remote}`）
 - **ModuleBinding**：`testhub` | `features`（Formulation）| `environments` | `wiki` | `prd` 各指向一条 Remote
 - 文件夹靠 registry 约定发现，不入库
 - 历史 `ProjectTestRepo` 仍可被 testhub catalog 回退
@@ -200,7 +200,7 @@ sequenceDiagram
 ### P0 — 绑定与总览
 
 - `plane.testhub` + 项目设置「测试仓库」
-- Runner clone/fetch 指定 branch，跑测试仓 `index_platform`，写入 CatalogSnapshot
+- Runner clone/fetch 指定 branch（公开 HTTPS `git_url` → `/opt/gitsync/clones`），跑测试仓 `index_platform`，写入 CatalogSnapshot
 - 总览：工具数、api_objects、action words、feature/pytest 计数
 - 测试仓并行：`apps/index_platform` + apps manifest（在**测试平台仓**实现，不在本仓）
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 from plane.gitsync.bindings import BindingError, get_bound_remote, resolve_remote_workdir
 from plane.gitsync.models import ProjectGitRemote
 from plane.gitsync.registry import MODULE_TESTHUB
-from plane.gitsync.workdir import GitUrlNotImplemented, WorkdirError
+from plane.gitsync.workdir import GitUrlNotImplemented, WorkdirError, assert_allowed_workdir, default_mount_workdir
 from plane.testhub.models import ProjectTestRepo
 from plane.testhub.serializers import ProjectTestRepoSerializer
 
@@ -39,6 +39,18 @@ def testhub_workdir(project_id) -> str:
     if not workdir:
         raise TesthubUnbound("Bind a test repo first.")
     return workdir
+
+
+def testhub_exec_workdir(project_id) -> str | None:
+    """Path sent to the runner. Does not require the directory to exist on this host."""
+    source = testhub_remote_or_legacy(project_id)
+    if isinstance(source, ProjectGitRemote):
+        try:
+            return assert_allowed_workdir(source.workdir or default_mount_workdir())
+        except WorkdirError as exc:
+            raise TesthubUnbound(str(exc)) from exc
+    workdir = (source.workdir or "").strip()
+    return workdir or None
 
 
 def testhub_repo_payload(project_id) -> dict | None:

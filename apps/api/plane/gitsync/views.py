@@ -14,14 +14,16 @@ from plane.db.models import Project
 from plane.gitsync.bindings import BindingError, bind_module, get_bound_remote, resolve_remote_workdir
 from plane.gitsync.conventions import ConventionError, scan_module_catalog
 from plane.gitsync.files import FileAccessError, resolve_module_file
+from plane.gitsync.git_url import GitUrlError
+from plane.gitsync.indexes import refresh_bound_indexes
 from plane.gitsync.models import ModuleBinding, ProjectGitRemote
-from plane.gitsync.registry import CONVENTION_SCAN_MODULES, MODULE_KEYS, MODULE_TESTHUB, is_known_module, module_catalog
+from plane.gitsync.registry import MODULE_KEYS, MODULE_TESTHUB, is_known_module, module_catalog
 from plane.gitsync.serializers import (
     ModuleBindingSerializer,
     ProjectGitRemoteSerializer,
     assign_git_url_workdir,
 )
-from plane.gitsync.sync import refresh_remote
+from plane.gitsync.sync import queue_git_url_sync, refresh_remote
 from plane.gitsync.workdir import GitUrlNotImplemented, WorkdirError, default_mount_workdir
 
 
@@ -85,6 +87,34 @@ class GitRemoteSyncEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     def post(self, request, slug, project_id, pk):
         remote = ProjectGitRemote.objects.get(pk=pk, project_id=project_id)
+        if remote.kind == ProjectGitRemote.Kind.GIT_URL:
+            if remote.last_sync_status == "running":
+                return Response(
+                    {
+                        "remote": ProjectGitRemoteSerializer(remote).data,
+                        "git_sync_pending": True,
+                        "testhub_job": None,
+                        "indexes": {},
+                    },
+                    status=status.HTTP_202_ACCEPTED,
+                )
+            try:
+                queue_git_url_sync(remote, getattr(request.user, "id", None))
+            except GitUrlError as exc:
+                return Response(
+                    {"error": str(exc), "remote": ProjectGitRemoteSerializer(remote).data},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            return Response(
+                {
+                    "remote": ProjectGitRemoteSerializer(remote).data,
+                    "git_sync_pending": True,
+                    "testhub_job": None,
+                    "indexes": {},
+                },
+                status=status.HTTP_202_ACCEPTED,
+            )
+
         try:
             refresh_remote(remote)
         except GitUrlNotImplemented as exc:
@@ -92,7 +122,7 @@ class GitRemoteSyncEndpoint(BaseAPIView):
         except (WorkdirError, FileNotFoundError) as exc:
             return Response({"error": str(exc), "remote": ProjectGitRemoteSerializer(remote).data}, status=status.HTTP_400_BAD_REQUEST)
 
-        indexes = _refresh_bound_indexes(request, project_id, remote)
+        indexes = refresh_bound_indexes(request.user, project_id, remote)
         testhub_job = indexes.get(MODULE_TESTHUB)
         payload = {
             "remote": ProjectGitRemoteSerializer(remote).data,
@@ -194,41 +224,3 @@ class ModuleFileEndpoint(BaseAPIView):
         except (WorkdirError, GitUrlNotImplemented, BindingError, FileAccessError) as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"path": normalized, "content": content, "module_key": module_key}, status=status.HTTP_200_OK)
-
-
-def _refresh_bound_indexes(request, project_id, remote: ProjectGitRemote) -> dict:
-    indexes: dict = {}
-    keys = list(ModuleBinding.objects.filter(remote=remote).values_list("module_key", flat=True))
-    if MODULE_TESTHUB in keys:
-        indexes[MODULE_TESTHUB] = _enqueue_testhub_index(request, project_id)
-    try:
-        workdir = resolve_remote_workdir(remote)
-    except (WorkdirError, GitUrlNotImplemented, BindingError) as exc:
-        for key in keys:
-            if key in CONVENTION_SCAN_MODULES:
-                indexes[key] = {"ok": False, "error": str(exc)}
-        return indexes
-    for key in keys:
-        if key not in CONVENTION_SCAN_MODULES:
-            continue
-        try:
-            scan_module_catalog(key, workdir)
-            indexes[key] = {"ok": True}
-        except ConventionError as exc:
-            indexes[key] = {"ok": False, "error": str(exc)}
-    return indexes
-
-
-def _enqueue_testhub_index(request, project_id):
-    from plane.testhub.enqueue import TesthubJobConflict, enqueue_index_platform
-    from plane.testhub.serializers import TesthubJobSerializer
-    from plane.testhub.sources import TesthubUnbound
-
-    project = Project.objects.get(pk=project_id)
-    try:
-        job = enqueue_index_platform(project=project, user=request.user)
-    except TesthubJobConflict as exc:
-        return {"error": str(exc)}
-    except TesthubUnbound as exc:
-        return {"error": str(exc)}
-    return TesthubJobSerializer(job).data

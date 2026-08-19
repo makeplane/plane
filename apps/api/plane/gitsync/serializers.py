@@ -4,6 +4,7 @@
 
 from rest_framework import serializers
 
+from plane.gitsync.git_url import GitUrlError, validate_branch, validate_https_repo_url
 from plane.gitsync.models import ModuleBinding, ProjectGitRemote
 from plane.gitsync.registry import is_known_module
 from plane.gitsync.workdir import WorkdirError, assert_allowed_workdir, default_mount_workdir, reserved_clone_workdir
@@ -53,13 +54,19 @@ class ProjectGitRemoteSerializer(serializers.ModelSerializer):
         elif kind == ProjectGitRemote.Kind.GIT_URL:
             repo_url = (attrs.get("repo_url") if "repo_url" in attrs else getattr(self.instance, "repo_url", "")) or ""
             branch = (attrs.get("branch") if "branch" in attrs else getattr(self.instance, "branch", "")) or ""
-            if not str(repo_url).strip():
-                raise serializers.ValidationError({"repo_url": "Repository URL is required for git_url."})
-            if not str(branch).strip():
-                raise serializers.ValidationError({"branch": "Branch is required for git_url."})
-            # Never persist a secret. credential_ref is a pointer only.
-            if "credential_ref" in attrs:
-                attrs["credential_ref"] = str(attrs.get("credential_ref") or "").strip()
+            try:
+                attrs["repo_url"] = validate_https_repo_url(str(repo_url))
+                attrs["branch"] = validate_branch(str(branch))
+            except GitUrlError as exc:
+                raise serializers.ValidationError({exc.field: str(exc)}) from exc
+            credential_ref = (
+                attrs.get("credential_ref") if "credential_ref" in attrs else getattr(self.instance, "credential_ref", "")
+            )
+            if str(credential_ref or "").strip():
+                raise serializers.ValidationError(
+                    {"credential_ref": "Private remotes are not supported yet. Use a public HTTPS URL."}
+                )
+            attrs["credential_ref"] = ""
         else:
             raise serializers.ValidationError({"kind": "Unknown data source type."})
         return attrs

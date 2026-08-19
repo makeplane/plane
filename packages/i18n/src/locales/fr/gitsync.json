@@ -22,16 +22,18 @@
       "credential_ref": "Référence d’identifiants",
       "sha": "HEAD",
       "status": "État de synchronisation",
-      "local_mount_hint": "Un montage local correspond au volume Docker. Les projets de cette machine partagent le même répertoire de travail."
+      "local_mount_hint": "Un montage local correspond au volume Docker. Les projets de cette machine partagent le même répertoire de travail.",
+      "sync_timeout": "La synchronisation est toujours en cours. Actualisez cette page dans un instant."
     },
     "kinds": {
       "local_mount": "Montage local",
       "git_url": "URL Git"
     },
     "git_url": {
-      "coming_soon": "Le clone et le fetch ne sont pas encore disponibles. Vous pouvez enregistrer l’URL pour plus tard, ou utiliser un montage local maintenant.",
-      "sync_disabled": "La synchronisation Git URL n’est pas implémentée. Utilisez un montage local à cette étape.",
-      "not_implemented": "Le clone/fetch git_url n’est pas encore implémenté."
+      "coming_soon": "Les dépôts HTTPS publics peuvent être clonés et récupérés. Les dépôts privés et les références d’identifiants ne sont pas encore pris en charge.",
+      "sync_disabled": "La synchronisation clone ou récupère la branche liée via HTTPS. Les dépôts privés ne sont pas encore pris en charge.",
+      "not_implemented": "Les dépôts privés ne sont pas encore pris en charge. Utilisez une URL HTTPS publique.",
+      "credential_unavailable": "Les références d’identifiants ne sont pas encore prises en charge. Utilisez une URL HTTPS publique."
     },
     "modules": {
       "title": "Sources des modules",

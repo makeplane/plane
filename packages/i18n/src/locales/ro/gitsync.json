@@ -22,16 +22,18 @@
       "credential_ref": "Referință de acreditări",
       "sha": "HEAD",
       "status": "Starea sincronizării",
-      "local_mount_hint": "Un montaj local corespunde volumului Docker. Proiectele de pe acest computer partajează același director de lucru."
+      "local_mount_hint": "Un montaj local corespunde volumului Docker. Proiectele de pe acest computer partajează același director de lucru.",
+      "sync_timeout": "Sincronizarea este încă în curs. Reîmprospătați această pagină într-un moment."
     },
     "kinds": {
       "local_mount": "Montaj local",
       "git_url": "URL Git"
     },
     "git_url": {
-      "coming_soon": "Clone și fetch nu sunt încă disponibile. Puteți salva URL-ul pentru mai târziu sau folosi acum un montaj local.",
-      "sync_disabled": "Sincronizarea URL Git nu este implementată. În această fază folosiți un montaj local.",
-      "not_implemented": "clone/fetch git_url nu este încă implementat."
+      "coming_soon": "Depozitele HTTPS publice pot fi clonate și preluate. Remotele private și referințele de acreditare nu sunt încă acceptate.",
+      "sync_disabled": "Sincronizarea clonează sau preia ramura asociată prin HTTPS. Remotele private nu sunt încă acceptate.",
+      "not_implemented": "Remotele private nu sunt încă acceptate. Folosiți un URL HTTPS public.",
+      "credential_unavailable": "Referințele de acreditare nu sunt încă acceptate. Folosiți un URL HTTPS public."
     },
     "modules": {
       "title": "Sursele modulelor",

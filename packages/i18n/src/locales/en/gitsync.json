@@ -13,6 +13,7 @@
       "delete": "Remove",
       "sync": "Sync",
       "synced": "Sync finished.",
+      "sync_timeout": "Sync is still running. Refresh this page in a moment.",
       "name": "Name",
       "kind": "Type",
       "workdir": "Container workdir",
@@ -29,9 +30,10 @@
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "Clone and fetch are not available yet. You can save the URL for later, or use a local mount now.",
-      "sync_disabled": "Git URL sync is not implemented. Use a local mount in this phase.",
-      "not_implemented": "git_url clone/fetch is not implemented yet."
+      "coming_soon": "Public HTTPS repositories can be cloned and fetched. Private remotes and credential references are not supported yet.",
+      "sync_disabled": "Sync clones or fetches the bound branch over HTTPS. Private remotes are not supported yet.",
+      "not_implemented": "Private remotes are not supported yet. Use a public HTTPS URL.",
+      "credential_unavailable": "Credential references are not supported yet. Use a public HTTPS URL."
     },
     "modules": {
       "title": "Module sources",

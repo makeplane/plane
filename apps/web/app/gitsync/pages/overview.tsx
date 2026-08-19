@@ -15,6 +15,7 @@ import type { TGitRemoteKind, TGitSyncModuleKey, TModuleBindingRow, TProjectGitR
 import { CustomSelect, Input, Tooltip } from "@plane/ui";
 import { pollJobUntilSettled } from "@/app/testhub/helpers/poll-job";
 import { gitsyncErrorMessage } from "../helpers/error-message";
+import { pollRemoteUntilSettled } from "../helpers/poll-remote";
 
 const MODULE_LABEL: Record<
   TGitSyncModuleKey,
@@ -69,7 +70,6 @@ function OverviewPage() {
   const [hostPath, setHostPath] = useState("");
   const [repoUrl, setRepoUrl] = useState("");
   const [branch, setBranch] = useState("main");
-  const [credentialRef, setCredentialRef] = useState("");
 
   const [bindingDraft, setBindingDraft] = useState<Record<string, string>>({});
 
@@ -117,7 +117,7 @@ function OverviewPage() {
         host_path: hostPath,
         repo_url: kind === "git_url" ? repoUrl : "",
         branch: kind === "git_url" ? branch : "",
-        credential_ref: kind === "git_url" ? credentialRef : "",
+        credential_ref: "",
       });
       await reload();
       setMessage(t("gitsync.remotes.saved"));
@@ -138,6 +138,15 @@ function OverviewPage() {
       const testhubJob = result.testhub_job;
       if (result.error) {
         setError(result.error);
+      } else if (result.git_sync_pending || remote.kind === "git_url") {
+        const latest = await pollRemoteUntilSettled(workspaceSlug, projectId, remote.id);
+        if (latest?.last_sync_status === "failed") {
+          setError(latest.last_sync_error || t("gitsync.git_url.not_implemented"));
+        } else if (!latest) {
+          setError(t("gitsync.remotes.sync_timeout"));
+        } else {
+          setMessage(t("gitsync.remotes.synced"));
+        }
       } else if (testhubJob && "error" in testhubJob && testhubJob.error) {
         setError(testhubJob.error);
       } else if (testhubJob && "id" in testhubJob && testhubJob.id) {
@@ -228,7 +237,7 @@ function OverviewPage() {
                       size="sm"
                       onClick={() => syncRemote(remote)}
                       loading={busyId === remote.id}
-                      disabled={busyId !== "" || remote.kind === "git_url"}
+                      disabled={busyId !== ""}
                     >
                       {t("gitsync.remotes.sync")}
                     </Button>
@@ -293,11 +302,8 @@ function OverviewPage() {
                 </label>
                 <label className="block space-y-1">
                   <span className="text-13 text-secondary">{t("gitsync.remotes.credential_ref")}</span>
-                  <Input
-                    value={credentialRef}
-                    onChange={(event) => setCredentialRef(event.target.value)}
-                    className="w-full"
-                  />
+                  <Input value="" disabled className="w-full" />
+                  <p className="text-12 text-tertiary">{t("gitsync.git_url.credential_unavailable")}</p>
                 </label>
               </>
             )}

@@ -19,22 +19,22 @@ Issue / Cycle 继续管缺陷和任务。**不要**因为文件在同一个仓�
 
 ## 两仓分工（不要焊成一个 monorepo）
 
-| 仓                     | 路径                                                       | 职责                                                                                          |
-| ---------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **本仓（Plane fork）** | `C:\dev\repo\plane` 分支 `testcopilot/v1.4.1`              | 配置绑定、约定扫描、UI、Job、测程 overlay、失败链到 Issue                                     |
-| **测试 / 规格 git 仓** | 由配置模块的 `ProjectGitRemote` 指向（常见 `local_mount`） | 六层资产 + `python -m apps.*` / `packages.action_words`；测试平台仓另补 `apps/index_platform` |
+| 仓                     | 路径                                                                         | 职责                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **本仓（Plane fork）** | `C:\dev\repo\plane` 分支 `testcopilot/v1.4.1`                                | 配置绑定、约定扫描、UI、Job、测程 overlay、失败链到 Issue                                     |
+| **测试 / 规格 git 仓** | 由配置模块的 `ProjectGitRemote` 指向（`local_mount` 或公开 HTTPS `git_url`） | 六层资产 + `python -m apps.*` / `packages.action_words`；测试平台仓另补 `apps/index_platform` |
 
 领域逻辑（SQL、造数、Gherkin）**不搬进本仓**。本仓只绑定、按约定展示、编排白名单命令。
 
 ## 绑定规则
 
-项目在侧栏 **配置** 登记数据源（本阶段主路径是本地 bind-mount）。每个产品模块通过 `ModuleBinding` 指向其中 **一条** 数据源。三条绑定可以指向同一条 Remote（常见：测试平台仓同时满足三种约定），也可以分仓。
+项目在侧栏 **配置** 登记数据源（`local_mount` 或公开 HTTPS `git_url`）。每个产品模块通过 `ModuleBinding` 指向其中 **一条** 数据源。三条绑定可以指向同一条 Remote（常见：测试平台仓同时满足三种约定），也可以分仓。
 
 文件夹靠约定发现（如 Formulation 读 `./*/feature/`），**不把路径配进数据库**。
 
 测程等平台状态存在 TestCopilot overlay 表，**不回写 git**。
 
-远程 `git_url` clone/fetch 已预留类型与字段，本阶段不同步。
+远程 `git_url` 支持公开 HTTPS clone/fetch（testhub-runner `POST /v1/git-sync`，工作副本在 `/opt/gitsync/clones`）。私有仓与 `credential_ref` 尚未实现。API 容器不跑 git。
 
 ## 本仓硬约束（合上游用）
 

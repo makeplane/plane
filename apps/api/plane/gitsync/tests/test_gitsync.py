@@ -141,6 +141,64 @@ def test_scan_features_and_environments(tmp_path):
     assert "PASSWORD" in redact_secrets('PASSWORD = "x"\n')
 
 
+def test_https_repo_url_validation():
+    from plane.gitsync.git_url import GitUrlError, validate_branch, validate_https_repo_url
+
+    url = "https://github.com/chenjianpeng97/Repo-as-a-TestPlatform.git"
+    assert validate_https_repo_url(url) == url
+    assert validate_branch("plane-dogfood") == "plane-dogfood"
+    with pytest.raises(GitUrlError):
+        validate_https_repo_url("https://user:token@github.com/org/repo.git")
+    with pytest.raises(GitUrlError):
+        validate_https_repo_url("git@github.com:org/repo.git")
+    with pytest.raises(GitUrlError):
+        validate_branch("-evil")
+    with pytest.raises(GitUrlError):
+        validate_branch("../main")
+
+
+def test_git_url_serializer_rejects_credentials():
+    from plane.gitsync.serializers import ProjectGitRemoteSerializer
+
+    serializer = ProjectGitRemoteSerializer(
+        data={
+            "name": "Dogfood",
+            "kind": "git_url",
+            "repo_url": "https://github.com/chenjianpeng97/Repo-as-a-TestPlatform.git",
+            "branch": "plane-dogfood",
+            "credential_ref": "vault:github",
+        }
+    )
+    assert not serializer.is_valid()
+    assert "credential_ref" in serializer.errors
+
+
+def test_git_url_serializer_accepts_public_https():
+    from plane.gitsync.serializers import ProjectGitRemoteSerializer
+
+    serializer = ProjectGitRemoteSerializer(
+        data={
+            "name": "Dogfood",
+            "kind": "git_url",
+            "repo_url": "https://github.com/chenjianpeng97/Repo-as-a-TestPlatform.git",
+            "branch": "plane-dogfood",
+        }
+    )
+    assert serializer.is_valid(), serializer.errors
+    assert serializer.validated_data.get("credential_ref", "") == ""
+
+
+def test_refresh_remote_does_not_clone_git_url():
+    from types import SimpleNamespace
+
+    from plane.gitsync.models import ProjectGitRemote
+    from plane.gitsync.sync import refresh_remote
+
+    remote = SimpleNamespace(kind=ProjectGitRemote.Kind.GIT_URL)
+    with pytest.raises(ValueError, match="queue_git_url_sync"):
+        refresh_remote(remote)
+
+
 def test_testhub_module_is_not_convention_scanned(tmp_path):
     from plane.gitsync.conventions import ConventionError, scan_module_catalog
 

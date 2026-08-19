@@ -22,16 +22,18 @@
       "credential_ref": "憑證參照",
       "sha": "HEAD",
       "status": "同步狀態",
-      "local_mount_hint": "本機掛載與 Docker 卷一致。本機上的專案共用同一工作目錄。"
+      "local_mount_hint": "本機掛載與 Docker 卷一致。本機上的專案共用同一工作目錄。",
+      "sync_timeout": "同步仍在進行。請稍後重新整理此頁面。"
     },
     "kinds": {
       "local_mount": "本機掛載",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "複製與 fetch 尚未提供。您可以先儲存 URL，或現在使用本機掛載。",
-      "sync_disabled": "Git URL 同步尚未實作。本階段請使用本機掛載。",
-      "not_implemented": "git_url 的 clone/fetch 尚未實作。"
+      "coming_soon": "可以複製並擷取公開 HTTPS 儲存庫。尚不支援私有遠端與認證參考。",
+      "sync_disabled": "同步會透過 HTTPS 複製或擷取綁定分支。尚不支援私有遠端。",
+      "not_implemented": "尚不支援私有遠端。請使用公開 HTTPS URL。",
+      "credential_unavailable": "尚不支援認證參考。請使用公開 HTTPS URL。"
     },
     "modules": {
       "title": "模組資料來源",

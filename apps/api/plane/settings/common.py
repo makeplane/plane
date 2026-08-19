@@ -346,6 +346,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.cleanup_task",
     "plane.license.bgtasks.telemetry_metrics",
     "plane.testhub.bgtasks",
+    "plane.gitsync.bgtasks",
     # management tasks
     "plane.bgtasks.dummy_data_task",
     # issue version tasks

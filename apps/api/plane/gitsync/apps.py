@@ -9,3 +9,6 @@ class GitsyncConfig(AppConfig):
     name = "plane.gitsync"
     label = "gitsync"
     verbose_name = "Git sync"
+
+    def ready(self) -> None:
+        from plane.gitsync import bgtasks  # noqa: F401

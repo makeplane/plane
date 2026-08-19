@@ -22,16 +22,18 @@
       "credential_ref": "認証情報の参照",
       "sha": "HEAD",
       "status": "同期ステータス",
-      "local_mount_hint": "ローカルマウントは Docker ボリュームと一致します。このマシン上のプロジェクトは同じ作業ディレクトリを共有します。"
+      "local_mount_hint": "ローカルマウントは Docker ボリュームと一致します。このマシン上のプロジェクトは同じ作業ディレクトリを共有します。",
+      "sync_timeout": "同期はまだ実行中です。しばらくしてからこのページを更新してください。"
     },
     "kinds": {
       "local_mount": "ローカルマウント",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "clone と fetch はまだ利用できません。URL を保存しておくか、今はローカルマウントをご利用ください。",
-      "sync_disabled": "Git URL の同期は未実装です。この段階ではローカルマウントを使用してください。",
-      "not_implemented": "git_url の clone/fetch はまだ実装されていません。"
+      "coming_soon": "公開 HTTPS リポジトリはクローンおよびフェッチできます。プライベート リモートと資格情報参照はまだサポートされていません。",
+      "sync_disabled": "同期は HTTPS 経由でバインドされたブランチをクローンまたはフェッチします。プライベート リモートはまだサポートされていません。",
+      "not_implemented": "プライベート リモートはまだサポートされていません。公開 HTTPS URL を使用してください。",
+      "credential_unavailable": "資格情報参照はまだサポートされていません。公開 HTTPS URL を使用してください。"
     },
     "modules": {
       "title": "モジュールのデータソース",

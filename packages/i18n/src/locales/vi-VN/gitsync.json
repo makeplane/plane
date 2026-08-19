@@ -22,16 +22,18 @@
       "credential_ref": "Tham chiếu thông tin xác thực",
       "sha": "HEAD",
       "status": "Trạng thái đồng bộ",
-      "local_mount_hint": "Mount cục bộ khớp với volume Docker. Các dự án trên máy này dùng chung thư mục làm việc."
+      "local_mount_hint": "Mount cục bộ khớp với volume Docker. Các dự án trên máy này dùng chung thư mục làm việc.",
+      "sync_timeout": "Đồng bộ vẫn đang chạy. Hãy làm mới trang này sau giây lát."
     },
     "kinds": {
       "local_mount": "Mount cục bộ",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "Clone và fetch chưa sẵn sàng. Bạn có thể lưu URL để dùng sau, hoặc dùng mount cục bộ ngay bây giờ.",
-      "sync_disabled": "Đồng bộ Git URL chưa được triển khai. Hãy dùng mount cục bộ trong giai đoạn này.",
-      "not_implemented": "clone/fetch git_url chưa được triển khai."
+      "coming_soon": "Có thể clone và fetch kho HTTPS công khai. Chưa hỗ trợ remote riêng tư và tham chiếu thông tin xác thực.",
+      "sync_disabled": "Đồng bộ sẽ clone hoặc fetch nhánh đã gắn kết qua HTTPS. Chưa hỗ trợ remote riêng tư.",
+      "not_implemented": "Chưa hỗ trợ remote riêng tư. Hãy dùng URL HTTPS công khai.",
+      "credential_unavailable": "Chưa hỗ trợ tham chiếu thông tin xác thực. Hãy dùng URL HTTPS công khai."
     },
     "modules": {
       "title": "Nguồn của mô-đun",

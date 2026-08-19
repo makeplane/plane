@@ -22,16 +22,18 @@
       "credential_ref": "Anmeldedatenverweis",
       "sha": "HEAD",
       "status": "Synchronisierungsstatus",
-      "local_mount_hint": "Ein lokales Mount entspricht dem Docker-Volume. Projekte auf diesem Rechner teilen dasselbe Workdir."
+      "local_mount_hint": "Ein lokales Mount entspricht dem Docker-Volume. Projekte auf diesem Rechner teilen dasselbe Workdir.",
+      "sync_timeout": "Die Synchronisierung läuft noch. Aktualisieren Sie diese Seite in einem Moment."
     },
     "kinds": {
       "local_mount": "Lokales Mount",
       "git_url": "Git-URL"
     },
     "git_url": {
-      "coming_soon": "Clone und Fetch sind noch nicht verfügbar. Sie können die URL speichern oder jetzt ein lokales Mount verwenden.",
-      "sync_disabled": "Die Git-URL-Synchronisierung ist nicht implementiert. Verwenden Sie in dieser Phase ein lokales Mount.",
-      "not_implemented": "git_url-Clone/Fetch ist noch nicht implementiert."
+      "coming_soon": "Öffentliche HTTPS-Repositorys können geklont und abgerufen werden. Private Remotes und Anmeldeinformationsverweise werden noch nicht unterstützt.",
+      "sync_disabled": "Die Synchronisierung klont oder ruft den gebundenen Branch über HTTPS ab. Private Remotes werden noch nicht unterstützt.",
+      "not_implemented": "Private Remotes werden noch nicht unterstützt. Verwenden Sie eine öffentliche HTTPS-URL.",
+      "credential_unavailable": "Anmeldeinformationsverweise werden noch nicht unterstützt. Verwenden Sie eine öffentliche HTTPS-URL."
     },
     "modules": {
       "title": "Modulquellen",

@@ -22,16 +22,18 @@
       "credential_ref": "Referência de credencial",
       "sha": "HEAD",
       "status": "Status da sincronização",
-      "local_mount_hint": "Um mount local corresponde ao volume Docker. Os projetos nesta máquina compartilham o mesmo workdir."
+      "local_mount_hint": "Um mount local corresponde ao volume Docker. Os projetos nesta máquina compartilham o mesmo workdir.",
+      "sync_timeout": "A sincronização ainda está em andamento. Atualize esta página em instantes."
     },
     "kinds": {
       "local_mount": "Mount local",
       "git_url": "URL do Git"
     },
     "git_url": {
-      "coming_soon": "Clone e fetch ainda não estão disponíveis. Você pode salvar a URL para depois ou usar um mount local agora.",
-      "sync_disabled": "A sincronização de URL do Git não está implementada. Use um mount local nesta fase.",
-      "not_implemented": "O clone/fetch de git_url ainda não está implementado."
+      "coming_soon": "Repositórios HTTPS públicos podem ser clonados e buscados. Remotos privados e referências de credenciais ainda não são suportados.",
+      "sync_disabled": "A sincronização clona ou busca o branch vinculado via HTTPS. Remotos privados ainda não são suportados.",
+      "not_implemented": "Remotos privados ainda não são suportados. Use uma URL HTTPS pública.",
+      "credential_unavailable": "Referências de credenciais ainda não são suportadas. Use uma URL HTTPS pública."
     },
     "modules": {
       "title": "Fontes dos módulos",

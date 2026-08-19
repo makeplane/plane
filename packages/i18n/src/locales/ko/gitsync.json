@@ -22,16 +22,18 @@
       "credential_ref": "자격 증명 참조",
       "sha": "HEAD",
       "status": "동기화 상태",
-      "local_mount_hint": "로컬 마운트는 Docker 볼륨과 같습니다. 이 기기의 프로젝트는 같은 작업 디렉터리를 공유합니다."
+      "local_mount_hint": "로컬 마운트는 Docker 볼륨과 같습니다. 이 기기의 프로젝트는 같은 작업 디렉터리를 공유합니다.",
+      "sync_timeout": "동기화가 아직 진행 중입니다. 잠시 후 이 페이지를 새로고침하세요."
     },
     "kinds": {
       "local_mount": "로컬 마운트",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "clone과 fetch는 아직 사용할 수 없습니다. URL을 먼저 저장하거나 지금 로컬 마운트를 사용하세요.",
-      "sync_disabled": "Git URL 동기화는 구현되지 않았습니다. 이 단계에서는 로컬 마운트를 사용하세요.",
-      "not_implemented": "git_url clone/fetch는 아직 구현되지 않았습니다."
+      "coming_soon": "공개 HTTPS 저장소는 클론하고 fetch할 수 있습니다. 비공개 원격과 자격 증명 참조는 아직 지원되지 않습니다.",
+      "sync_disabled": "동기화는 HTTPS를 통해 바인딩된 분기를 클론하거나 fetch합니다. 비공개 원격은 아직 지원되지 않습니다.",
+      "not_implemented": "비공개 원격은 아직 지원되지 않습니다. 공개 HTTPS URL을 사용하세요.",
+      "credential_unavailable": "자격 증명 참조는 아직 지원되지 않습니다. 공개 HTTPS URL을 사용하세요."
     },
     "modules": {
       "title": "모듈 데이터 소스",

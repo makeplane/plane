@@ -21,7 +21,7 @@ class WorkdirError(ValueError):
 
 
 class GitUrlNotImplemented(RuntimeError):
-    """git_url clone/fetch is reserved; this phase only implements local_mount."""
+    """Raised when a git_url workdir has not been cloned yet."""
 
 
 def default_mount_workdir() -> str:
@@ -33,7 +33,7 @@ def clone_root() -> str:
 
 
 def reserved_clone_workdir(project_id, remote_id) -> str:
-    """Stable path for a future git_url clone. Not created in this phase."""
+    """Stable path for a git_url clone on the shared runner volume."""
     return f"{clone_root()}/{project_id}/{remote_id}"
 
 
@@ -60,7 +60,7 @@ def ensure_workdir_ready(kind: str, workdir: str) -> str:
     """Same consumer interface for both kinds. git_url is ready only after a clone exists."""
     normalized = assert_allowed_workdir(workdir)
     if kind == "git_url" and not Path(normalized).is_dir():
-        raise GitUrlNotImplemented("git_url clone/fetch is not implemented yet.")
+        raise GitUrlNotImplemented("git_url clone is not ready. Sync the data source first.")
     return normalized
 
 

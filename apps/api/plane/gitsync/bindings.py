@@ -36,7 +36,7 @@ def resolve_remote_workdir(remote: ProjectGitRemote) -> str:
     workdir = (remote.workdir or "").strip()
     if not workdir:
         if remote.kind == ProjectGitRemote.Kind.GIT_URL:
-            raise GitUrlNotImplemented("git_url clone/fetch is not implemented yet.")
+            raise GitUrlNotImplemented("git_url clone is not ready. Sync the data source first.")
         raise WorkdirError("workdir is required")
     return ensure_workdir_ready(remote.kind, workdir)
 

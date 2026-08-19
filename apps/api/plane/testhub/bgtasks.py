@@ -32,7 +32,12 @@ def run_testhub_job(job_id: str) -> None:
     job.save(update_fields=["status", "started_at", "updated_at"])
 
     try:
-        result = exec_job(job_id=str(job.id), argv=list(job.argv), timeout=_timeout_for(job.kind))
+        result = exec_job(
+            job_id=str(job.id),
+            argv=list(job.argv),
+            timeout=_timeout_for(job.kind),
+            workdir=_exec_workdir(job.project_id),
+        )
         job.exit_code = result.exit_code
         job.stdout = _clip(result.stdout)
         job.stderr = _clip(result.stderr)
@@ -67,6 +72,15 @@ def _timeout_for(kind: str) -> int:
     if kind == "action_words":
         return 300
     return 180
+
+
+def _exec_workdir(project_id) -> str | None:
+    from plane.testhub.sources import TesthubUnbound, testhub_exec_workdir
+
+    try:
+        return testhub_exec_workdir(project_id)
+    except TesthubUnbound:
+        return None
 
 
 def _parse_catalog_json(stdout: str) -> dict:

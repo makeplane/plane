@@ -12,7 +12,7 @@ RUN apt-get update \
 COPY --from=ghcr.io/astral-sh/uv:0.8.4 /uv /usr/local/bin/uv
 
 WORKDIR /opt/testhub-runner
-COPY whitelist.py server.py entrypoint.sh ./
+COPY whitelist.py server.py git_sync.py entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
 EXPOSE 8090

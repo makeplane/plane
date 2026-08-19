@@ -75,12 +75,14 @@ services:
     volumes:
       - ./apps/api:/code
       - ${TESTHUB_HOST_REPO:-C:/dev/repo/innovamed-test-template}:/opt/testhub/workdir:ro
+      - gitsync-clones:/opt/gitsync/clones:ro
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
     environment:
       TESTHUB_RUNNER_URL: http://testhub-runner:8090
       TESTHUB_WORKDIR: /opt/testhub/workdir
+      GITSYNC_CLONE_ROOT: /opt/gitsync/clones
     depends_on:
       - plane-db
       - plane-redis
@@ -107,6 +109,7 @@ services:
     environment:
       TESTHUB_RUNNER_URL: http://testhub-runner:8090
       TESTHUB_WORKDIR: /opt/testhub/workdir
+      GITSYNC_CLONE_ROOT: /opt/gitsync/clones
     depends_on:
       - api
       - plane-db
@@ -161,8 +164,10 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ${TESTHUB_HOST_REPO:-C:/dev/repo/innovamed-test-template}:/opt/testhub/workdir
+      - gitsync-clones:/opt/gitsync/clones
     environment:
       TESTHUB_WORKDIR: /opt/testhub/workdir
+      GITSYNC_CLONE_ROOT: /opt/gitsync/clones
     ports:
       - "8090:8090"
     healthcheck:
@@ -177,6 +182,7 @@ volumes:
   uploads:
   pgdata:
   rabbitmq_data:
+  gitsync-clones:
 
 networks:
   dev_env:

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""HTTP sidecar that runs allowlisted python commands in the mounted test repo."""
+"""HTTP sidecar that runs allowlisted python commands and git clone/fetch."""
 from __future__ import annotations
 
 import json
@@ -15,6 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
+from git_sync import GitSyncError, clone_or_fetch, resolve_exec_workdir
 from whitelist import validate_argv
 
 WORKDIR = Path(os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir"))
@@ -88,6 +89,19 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _read_json(self) -> dict | None:
+        length = int(self.headers.get("Content-Length") or 0)
+        raw = self.rfile.read(length) if length else b"{}"
+        try:
+            data = json.loads(raw.decode("utf-8"))
+        except json.JSONDecodeError:
+            self._json(400, {"error": "invalid json"})
+            return None
+        if not isinstance(data, dict):
+            self._json(400, {"error": "invalid json"})
+            return None
+        return data
+
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         if path in {"/v1/health", "/health"}:
@@ -106,32 +120,35 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
-        if path != "/v1/exec":
-            self._json(404, {"error": "not found"})
+        if path == "/v1/exec":
+            self._handle_exec()
             return
-        length = int(self.headers.get("Content-Length") or 0)
-        raw = self.rfile.read(length) if length else b"{}"
-        try:
-            data = json.loads(raw.decode("utf-8"))
-        except json.JSONDecodeError:
-            self._json(400, {"error": "invalid json"})
+        if path == "/v1/git-sync":
+            self._handle_git_sync()
+            return
+        self._json(404, {"error": "not found"})
+
+    def _handle_exec(self) -> None:
+        data = self._read_json()
+        if data is None:
             return
         argv = data.get("argv") or []
         timeout = int(data.get("timeout") or 180)
         timeout = max(5, min(timeout, 900))
         try:
             safe_argv = validate_argv(argv)
-        except ValueError as exc:
+            workdir = resolve_exec_workdir(data.get("workdir"), WORKDIR)
+        except (ValueError, GitSyncError) as exc:
             self._json(400, {"error": str(exc)})
             return
-        if not WORKDIR.is_dir():
-            self._json(500, {"error": f"workdir missing: {WORKDIR}"})
+        if not workdir.is_dir():
+            self._json(500, {"error": f"workdir missing: {workdir}"})
             return
         cmd = _python_cmd(safe_argv)
         try:
             completed = subprocess.run(  # noqa: S603 — argv is allowlisted
                 cmd,
-                cwd=str(WORKDIR),
+                cwd=str(workdir),
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
@@ -140,7 +157,7 @@ class Handler(BaseHTTPRequestHandler):
                 check=False,
             )
         except subprocess.TimeoutExpired:
-            self._json(200, {"exit_code": 124, "stdout": "", "stderr": "timeout", "git": read_git_meta(WORKDIR)})
+            self._json(200, {"exit_code": 124, "stdout": "", "stderr": "timeout", "git": read_git_meta(workdir)})
             return
         except FileNotFoundError as exc:
             self._json(500, {"error": str(exc)})
@@ -151,7 +168,37 @@ class Handler(BaseHTTPRequestHandler):
                 "exit_code": completed.returncode,
                 "stdout": _clip(_redact(completed.stdout or "")),
                 "stderr": _clip(_redact(completed.stderr or "")),
-                "git": read_git_meta(WORKDIR),
+                "git": read_git_meta(workdir),
+            },
+        )
+
+    def _handle_git_sync(self) -> None:
+        data = self._read_json()
+        if data is None:
+            return
+        timeout = int(data.get("timeout") or 300)
+        timeout = max(30, min(timeout, 900))
+        try:
+            result = clone_or_fetch(
+                repo_url=str(data.get("repo_url") or ""),
+                branch=str(data.get("branch") or ""),
+                workdir=str(data.get("workdir") or ""),
+                timeout=timeout,
+            )
+        except GitSyncError as exc:
+            self._json(400, {"error": str(exc)})
+            return
+        except subprocess.TimeoutExpired:
+            self._json(200, {"exit_code": 124, "stdout": "", "stderr": "timeout", "git": {"branch": None, "sha": None}})
+            return
+        dest = Path(result["workdir"])
+        self._json(
+            200,
+            {
+                "exit_code": 0,
+                "stdout": _clip(_redact(result.get("stdout") or "")),
+                "stderr": "",
+                "git": read_git_meta(dest),
             },
         )
 

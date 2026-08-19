@@ -22,16 +22,18 @@
       "credential_ref": "Kimlik bilgisi başvurusu",
       "sha": "HEAD",
       "status": "Senkronizasyon durumu",
-      "local_mount_hint": "Yerel bağlama Docker birimiyle eşleşir. Bu makinedeki projeler aynı çalışma dizinini paylaşır."
+      "local_mount_hint": "Yerel bağlama Docker birimiyle eşleşir. Bu makinedeki projeler aynı çalışma dizinini paylaşır.",
+      "sync_timeout": "Eşitleme hâlâ devam ediyor. Bu sayfayı biraz sonra yenileyin."
     },
     "kinds": {
       "local_mount": "Yerel bağlama",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "Clone ve fetch henüz kullanılamıyor. URL’yi sonra için kaydedebilir veya şimdi yerel bağlama kullanabilirsiniz.",
-      "sync_disabled": "Git URL senkronizasyonu uygulanmadı. Bu aşamada yerel bağlama kullanın.",
-      "not_implemented": "git_url clone/fetch henüz uygulanmadı."
+      "coming_soon": "Herkese açık HTTPS depoları klonlanıp alınabilir. Özel uzaktan depolar ve kimlik bilgisi başvuruları henüz desteklenmiyor.",
+      "sync_disabled": "Eşitleme, bağlı dalı HTTPS üzerinden klonlar veya alır. Özel uzaktan depolar henüz desteklenmiyor.",
+      "not_implemented": "Özel uzaktan depolar henüz desteklenmiyor. Herkese açık bir HTTPS URL kullanın.",
+      "credential_unavailable": "Kimlik bilgisi başvuruları henüz desteklenmiyor. Herkese açık bir HTTPS URL kullanın."
     },
     "modules": {
       "title": "Modül kaynakları",

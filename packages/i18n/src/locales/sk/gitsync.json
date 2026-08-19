@@ -22,16 +22,18 @@
       "credential_ref": "Odkaz na poverenia",
       "sha": "HEAD",
       "status": "Stav synchronizácie",
-      "local_mount_hint": "Miestne pripojenie zodpovedá zväzku Docker. Projekty na tomto počítači zdieľajú ten istý pracovný adresár."
+      "local_mount_hint": "Miestne pripojenie zodpovedá zväzku Docker. Projekty na tomto počítači zdieľajú ten istý pracovný adresár.",
+      "sync_timeout": "Synchronizácia stále prebieha. Túto stránku o chvíľu obnovte."
     },
     "kinds": {
       "local_mount": "Miestne pripojenie",
       "git_url": "Git URL"
     },
     "git_url": {
-      "coming_soon": "Clone a fetch zatiaľ nie sú k dispozícii. URL môžete uložiť na neskôr alebo teraz použiť miestne pripojenie.",
-      "sync_disabled": "Synchronizácia Git URL nie je implementovaná. V tejto fáze použite miestne pripojenie.",
-      "not_implemented": "clone/fetch git_url ešte nie je implementované."
+      "coming_soon": "Verejné HTTPS repozitáre možno klonovať a sťahovať. Súkromné vzdialené úložiská a odkazy na prihlasovacie údaje zatiaľ nie sú podporované.",
+      "sync_disabled": "Synchronizácia klonuje alebo sťahuje viazanú vetvu cez HTTPS. Súkromné vzdialené úložiská zatiaľ nie sú podporované.",
+      "not_implemented": "Súkromné vzdialené úložiská zatiaľ nie sú podporované. Použite verejnú adresu URL HTTPS.",
+      "credential_unavailable": "Odkazy na prihlasovacie údaje zatiaľ nie sú podporované. Použite verejnú adresu URL HTTPS."
     },
     "modules": {
       "title": "Zdroje modulov",

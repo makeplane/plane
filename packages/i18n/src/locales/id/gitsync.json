@@ -22,16 +22,18 @@
       "credential_ref": "Referensi kredensial",
       "sha": "HEAD",
       "status": "Status sinkronisasi",
-      "local_mount_hint": "Mount lokal sesuai volume Docker. Proyek di mesin ini berbagi workdir yang sama."
+      "local_mount_hint": "Mount lokal sesuai volume Docker. Proyek di mesin ini berbagi workdir yang sama.",
+      "sync_timeout": "Sinkronisasi masih berjalan. Segarkan halaman ini sebentar lagi."
     },
     "kinds": {
       "local_mount": "Mount lokal",
       "git_url": "URL Git"
     },
     "git_url": {
-      "coming_soon": "Clone dan fetch belum tersedia. Anda dapat menyimpan URL untuk nanti, atau gunakan mount lokal sekarang.",
-      "sync_disabled": "Sinkronisasi URL Git belum diimplementasikan. Gunakan mount lokal pada tahap ini.",
-      "not_implemented": "clone/fetch git_url belum diimplementasikan."
+      "coming_soon": "Repositori HTTPS publik dapat di-clone dan di-fetch. Remote privat dan referensi kredensial belum didukung.",
+      "sync_disabled": "Sinkronisasi meng-clone atau mengambil cabang terikat melalui HTTPS. Remote privat belum didukung.",
+      "not_implemented": "Remote privat belum didukung. Gunakan URL HTTPS publik.",
+      "credential_unavailable": "Referensi kredensial belum didukung. Gunakan URL HTTPS publik."
     },
     "modules": {
       "title": "Sumber modul",

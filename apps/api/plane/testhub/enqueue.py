@@ -15,7 +15,7 @@ class TesthubJobConflict(RuntimeError):
     pass
 
 
-def enqueue_index_platform(*, project: Project, user) -> TesthubJob:
+def enqueue_index_platform(*, project: Project, user, touch_remote_status: bool = True) -> TesthubJob:
     from plane.testhub.bgtasks import run_testhub_job
     from plane.testhub.sources import testhub_remote_or_legacy
 
@@ -37,12 +37,12 @@ def enqueue_index_platform(*, project: Project, user) -> TesthubJob:
     from plane.testhub.models import ProjectTestRepo
 
     remote = get_bound_remote(project.id, "testhub")
-    if remote is not None:
+    if touch_remote_status and remote is not None:
         remote.last_sync_status = TesthubJob.Status.QUEUED
         remote.last_sync_error = ""
         remote.save(update_fields=["last_sync_status", "last_sync_error", "updated_at"])
     repo = ProjectTestRepo.objects.filter(project_id=project.id).first()
-    if repo is not None:
+    if touch_remote_status and repo is not None:
         repo.last_sync_status = TesthubJob.Status.QUEUED
         repo.last_sync_error = ""
         repo.save(update_fields=["last_sync_status", "last_sync_error", "updated_at"])

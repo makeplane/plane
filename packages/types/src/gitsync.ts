@@ -83,6 +83,7 @@ export type TGitSyncSyncResponse = {
   remote: TProjectGitRemote;
   testhub_job?: { id: string; status: string; error?: string } | { error: string } | null;
   indexes?: Record<string, { ok?: boolean; error?: string; id?: string; status?: string } | null>;
+  git_sync_pending?: boolean;
   error?: string;
 };
 
