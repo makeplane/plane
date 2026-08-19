@@ -179,6 +179,13 @@
     --color-text-350: 130, 130, 130;
     --color-text-400: 163, 163, 163; /* placeholder text */
 
+    --media-library-upload-text-primary: var(--color-text-100);
+    --media-library-upload-text-body: var(--color-text-100);
+    --media-library-upload-text-label: var(--color-text-300);
+    --media-library-upload-text-muted: var(--color-text-400);
+    --media-library-upload-text-optional: var(--color-text-400);
+    --media-library-upload-placeholder-text: var(--color-text-400);
+
     --color-text-primary: var(--color-primary-100);
     --color-text-error: var(--color-error-200);
 
@@ -491,6 +498,13 @@
     --color-text-350: 130, 130, 130;
     --color-text-400: 82, 82, 82; /* placeholder text */
 
+    --media-library-upload-text-primary: 229, 231, 235;
+    --media-library-upload-text-body: 255, 255, 255;
+    --media-library-upload-text-label: 163, 163, 159;
+    --media-library-upload-text-muted: 163, 163, 159;
+    --media-library-upload-text-optional: 117, 117, 117;
+    --media-library-upload-placeholder-text: 229, 231, 235;
+
     --color-scrollbar: 82, 82, 82; /* scrollbar thumb */
 
     --color-border-100: 34, 34, 34; /* subtle border= 1 */
@@ -525,6 +539,13 @@
     --color-text-200: 241, 241, 241; /* secondary text */
     --color-text-300: 212, 212, 212; /* tertiary text */
     --color-text-350: 190, 190, 190 --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --media-library-upload-text-primary: 229, 231, 235;
+    --media-library-upload-text-body: 255, 255, 255;
+    --media-library-upload-text-label: 163, 163, 159;
+    --media-library-upload-text-muted: 163, 163, 159;
+    --media-library-upload-text-optional: 117, 117, 117;
+    --media-library-upload-placeholder-text: 229, 231, 235;
 
     --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
 

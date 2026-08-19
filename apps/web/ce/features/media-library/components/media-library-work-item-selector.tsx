@@ -55,9 +55,7 @@ export const MediaLibraryWorkItemSelector = ({
           onClick={() => setIsOpen((prev) => !prev)}
           aria-expanded={isOpen}
           className={`flex h-9 w-full items-center justify-between rounded-md border px-3 text-left ${
-            isOpen
-              ? "border-white bg-custom-background-100"
-              : "border-custom-border-200 bg-custom-background-100"
+            isOpen ? "border-white bg-custom-background-100" : "border-custom-border-200 bg-custom-background-100"
           }`}
         >
           {selectedWorkItem ? (
@@ -76,7 +74,7 @@ export const MediaLibraryWorkItemSelector = ({
               <span className="truncate text-xs text-custom-text-100">{selectedWorkItem.name}</span>
             </div>
           ) : (
-            <span className="text-xs text-custom-text-400">Select work item</span>
+            <span className="text-xs text-[#E5E7EB]">Select work item</span>
           )}
           <span className="flex items-center gap-1">
             {selectedWorkItem ? (
@@ -121,7 +119,7 @@ export const MediaLibraryWorkItemSelector = ({
                 value={workItemQuery}
                 onChange={(event) => onQueryChange(event.target.value)}
                 placeholder="Search work items"
-                className="h-8 w-full rounded-md border border-custom-border-200 bg-custom-background-90 pl-8 pr-2 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+                className="h-8 w-full rounded-md border border-custom-border-200 bg-custom-background-90 pl-8 pr-2 text-xs text-custom-text-100 placeholder:text-[#E5E7EB] focus:outline-none"
               />
             </div>
             <div className="max-h-40 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100">
@@ -160,7 +158,9 @@ export const MediaLibraryWorkItemSelector = ({
                         issueTypeId={issue.type_id}
                         projectIdentifier={issue.project__identifier}
                         issueSequenceId={issue.sequence_id}
-                        textContainerClassName={isSelected ? "text-xs text-custom-text-100" : "text-xs text-custom-text-200"}
+                        textContainerClassName={
+                          isSelected ? "text-xs text-custom-text-100" : "text-xs text-custom-text-200"
+                        }
                       />
                       <span className="truncate">{issue.name}</span>
                     </button>
@@ -173,7 +173,9 @@ export const MediaLibraryWorkItemSelector = ({
       </div>
       {error ? <div className={`${showCard ? "mt-2" : "mt-1"} text-xs text-red-500`}>{error}</div> : null}
       {isDetailsLoading ? (
-        <div className={`${showCard ? "mt-2" : "mt-1"} text-[11px] text-custom-text-300`}>Loading work item details…</div>
+        <div className={`${showCard ? "mt-2" : "mt-1"} text-[11px] text-custom-text-300`}>
+          Loading work item details…
+        </div>
       ) : null}
     </>
   );
