@@ -98,14 +98,19 @@ export type TEventVideoAnnotationUpdateResponse = {
 };
 
 export type TMediaTranscodeJobStatus =
+  | "UPLOAD_COMPLETE"
   | "QUEUED"
   | "CLAIMED"
   | "PROBING"
+  | "PROCESSING"
   | "TRANSCODING"
   | "PACKAGING"
   | "VALIDATING"
   | "COMPLETED"
+  | "READY"
+  | "UPLOADED"
   | "FAILED"
+  | "QUEUE_FAILED"
   | "RETRY_PENDING"
   | "CANCEL_REQUESTED"
   | "CANCELLED";
@@ -436,6 +441,7 @@ export class MediaLibraryService extends APIService {
     )
       .then((response) => response?.data as TMediaArtifact)
       .catch((error) => {
+        if (error?.response?.status === 413) throw error.response;
         throw error?.response?.data ?? error?.response ?? error;
       });
   }

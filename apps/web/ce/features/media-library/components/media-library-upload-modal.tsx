@@ -123,9 +123,46 @@ const isActiveStatus = (status: TUploadStatus) => status === "uploading";
 
 const getVisibleProgress = (item: TUploadItem) => Math.min(100, Math.max(0, item.progress ?? 0));
 
+const getHttpStatus = (error: unknown): number | null => {
+  if (!error || typeof error !== "object") return null;
+  const record = error as Record<string, unknown>;
+  const status = record.status ?? record.statusCode;
+  if (typeof status === "number") return status;
+  if (typeof status === "string") {
+    const parsedStatus = Number(status);
+    return Number.isFinite(parsedStatus) ? parsedStatus : null;
+  }
+  return null;
+};
+
+const isServerFileSizeError = (error: unknown) => {
+  if (getHttpStatus(error) === 413) return true;
+  if (typeof error === "string") {
+    const normalizedError = error.toLowerCase();
+    return normalizedError.includes("413") || normalizedError.includes("too large");
+  }
+  if (error && typeof error === "object") {
+    const record = error as Record<string, unknown>;
+    const data = record.data;
+    if (data && typeof data === "object") {
+      const responseData = data as Record<string, unknown>;
+      return responseData.code === "MEDIA_LIBRARY_FILE_TOO_LARGE" || responseData.error === "REQUEST_BODY_TOO_LARGE";
+    }
+    return record.code === "MEDIA_LIBRARY_FILE_TOO_LARGE" || record.error === "REQUEST_BODY_TOO_LARGE";
+  }
+  return false;
+};
+
 const getErrorMessage = (error: unknown, fallback: string) => {
   if (error && typeof error === "object") {
     const record = error as Record<string, unknown>;
+    const data = record.data;
+    if (data && typeof data === "object") {
+      const responseData = data as Record<string, unknown>;
+      if (typeof responseData.detail === "string" && responseData.detail.trim()) return responseData.detail;
+      if (typeof responseData.message === "string" && responseData.message.trim()) return responseData.message;
+      if (typeof responseData.error === "string" && responseData.error.trim()) return responseData.error;
+    }
     const nestedError = record.error;
     if (nestedError && typeof nestedError === "object") {
       const nested = nestedError as Record<string, unknown>;
@@ -138,13 +175,20 @@ const getErrorMessage = (error: unknown, fallback: string) => {
   return fallback;
 };
 
+const getUploadErrorMessage = (error: unknown) => {
+  if (isServerFileSizeError(error)) {
+    return "Server rejected this file as too large. Increase the upload size limit or choose a smaller file.";
+  }
+  return getErrorMessage(error, "Upload failed");
+};
+
 const getUploadStatusLabel = (item: TUploadItem) => {
   if (item.status === "queued") return "Queued";
-  if (item.status === "uploading") return "Uploading...";
-  if (item.status === "uploaded") return isMp4Upload(item.file) ? "Uploaded" : "Success";
-  if (item.status === "ready") return "Ready";
+  if (item.status === "uploading") return "Uploading";
+  if (item.status === "uploaded") return "Uploaded";
+  if (item.status === "ready") return "Uploaded";
   if (item.status === "cancelled") return "Cancelled";
-  return item.error || "Failed";
+  return "Failed";
 };
 
 const isCompletedStatus = (status: TUploadStatus) => status === "uploaded" || status === "ready";
@@ -512,7 +556,7 @@ export const MediaLibraryUploadModal = () => {
           status: wasCancelled ? "cancelled" : "failed",
           failedPhase: wasCancelled ? undefined : "upload",
           abortController: undefined,
-          error: wasCancelled ? "Cancelled" : getErrorMessage(error, "Upload failed"),
+          error: wasCancelled ? "Cancelled" : getUploadErrorMessage(error),
         })
       );
       return false;
