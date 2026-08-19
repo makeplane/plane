@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Run",
-      "not_whitelisted": "Not in the P2 allowlist",
+      "not_whitelisted": "Not registered to run on Plane",
+      "empty": "No Plane-runnable apps in this catalog. Sync after registering @plane_app tools.",
+      "example": "Use example params",
       "tables": "Table names",
       "tables_required": "dump_ddl requires at least one table.",
       "datasource": "Datasource"

@@ -131,7 +131,10 @@ function ActionWordsPage() {
   }, [filteredWords]);
 
   const current = mergedWords.find((word) => word.word_id === selected);
-  const destructive = selected.startsWith("db_seed.") || selected.startsWith("api_request.");
+  const currentTool = testhubCatalog?.snapshot?.payload?.tools?.find((tool) => tool.app_id === current?.category);
+  const destructive =
+    currentTool?.destructive ??
+    (selected.startsWith("db_seed.") || selected.startsWith("api_request.") || selected.startsWith("ui_action."));
   const canRun = Boolean(testhubCatalog?.repo);
 
   if (loading) return <TesthubPageLoader />;
@@ -159,7 +162,7 @@ function ActionWordsPage() {
     setMessage("");
     try {
       const job = await testhubService.createJob(workspaceSlug, projectId, {
-        kind: "action_words",
+        kind: current?.category || selected.split(".", 1)[0] || "db_seed",
         params: { word_id: selected, params },
         confirmed,
       });

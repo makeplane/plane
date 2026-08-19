@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Uruchom",
-      "not_whitelisted": "Poza listą P2",
+      "not_whitelisted": "Niezarejestrowane do uruchamiania w Plane",
+      "empty": "Brak aplikacji uruchamialnych w Plane w tym katalogu. Zsynchronizuj po zarejestrowaniu @plane_app.",
+      "example": "Użyj parametrów przykładowych",
       "tables": "Nazwy tabel",
       "tables_required": "dump_ddl wymaga co najmniej jednej tabeli.",
       "datasource": "Źródło danych"

@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "執行",
-      "not_whitelisted": "不在 P2 白名單",
+      "not_whitelisted": "未向 Plane 註冊，不能作為作業執行",
+      "empty": "目前目錄沒有可在 Plane 上執行的應用。註冊 @plane_app 後請先同步。",
+      "example": "使用範例參數",
       "tables": "表名",
       "tables_required": "dump_ddl 至少需要一張表。",
       "datasource": "資料源"

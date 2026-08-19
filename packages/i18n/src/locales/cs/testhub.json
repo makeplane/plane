@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Spustit",
-      "not_whitelisted": "Není na seznamu P2",
+      "not_whitelisted": "Není registrováno pro spuštění v Plane",
+      "empty": "V tomto katalogu nejsou žádné aplikace spustitelné v Plane. Po registraci @plane_app nejdřív synchronizujte.",
+      "example": "Použít ukázkové parametry",
       "tables": "Názvy tabulek",
       "tables_required": "dump_ddl vyžaduje alespoň jednu tabulku.",
       "datasource": "Zdroj dat"

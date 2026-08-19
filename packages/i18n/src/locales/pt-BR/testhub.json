@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Executar",
-      "not_whitelisted": "Fora da lista P2",
+      "not_whitelisted": "Não registrado para execução no Plane",
+      "empty": "Nenhum app executável no Plane neste catálogo. Sincronize após registrar @plane_app.",
+      "example": "Usar parâmetros de exemplo",
       "tables": "Nomes de tabela",
       "tables_required": "dump_ddl exige pelo menos uma tabela.",
       "datasource": "Origem de dados"

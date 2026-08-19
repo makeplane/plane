@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Jalankan",
-      "not_whitelisted": "Tidak ada di daftar P2",
+      "not_whitelisted": "Belum terdaftar untuk dijalankan di Plane",
+      "empty": "Tidak ada app yang dapat dijalankan di Plane dalam katalog ini. Sinkronkan setelah mendaftarkan @plane_app.",
+      "example": "Gunakan parameter contoh",
       "tables": "Nama tabel",
       "tables_required": "dump_ddl memerlukan setidaknya satu tabel.",
       "datasource": "Sumber data"

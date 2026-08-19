@@ -14,8 +14,9 @@ POST /v1/exec      {"job_id", "argv": [...], "timeout": 180, "workdir"?}
 POST /v1/git-sync  {"repo_url", "branch", "workdir", "timeout"?}
 ```
 
-`/v1/exec` allowlisted argv only: `python -m apps.index_platform|apps.index_ai|packages.action_words`
-or `python apps/dump_ddl.py`. Optional `workdir` must be under `/opt/testhub/` or
+`/v1/exec` allowlisted argv only: `python -m apps.<snake_module>` (for example
+`apps.index_platform`, `apps.action_runner`). No `python apps/foo.py`, no
+`packages.action_words`. Optional `workdir` must be under `/opt/testhub/` or
 `/opt/gitsync/clones/`; default is `TESTHUB_WORKDIR`.
 
 `/v1/git-sync` clones or fetches a **public HTTPS** repo into `workdir` under

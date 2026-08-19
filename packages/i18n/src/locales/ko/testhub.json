@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "실행",
-      "not_whitelisted": "P2 허용 목록 아님",
+      "not_whitelisted": "Plane에서 실행되도록 등록되지 않음",
+      "empty": "이 카탈로그에 Plane에서 실행할 앱이 없습니다. @plane_app 등록 후 동기화하세요.",
+      "example": "예제 파라미터 사용",
       "tables": "테이블 이름",
       "tables_required": "dump_ddl에는 테이블이 하나 이상 필요합니다.",
       "datasource": "데이터소스"

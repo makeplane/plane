@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Ausführen",
-      "not_whitelisted": "Nicht auf der P2-Liste",
+      "not_whitelisted": "Nicht für die Ausführung in Plane registriert",
+      "empty": "Keine in Plane ausführbaren Apps in diesem Katalog. Nach der Registrierung von @plane_app zuerst synchronisieren.",
+      "example": "Beispielparameter verwenden",
       "tables": "Tabellennamen",
       "tables_required": "dump_ddl benötigt mindestens eine Tabelle.",
       "datasource": "Datenquelle"

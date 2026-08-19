@@ -6,8 +6,18 @@ def test_allows_index_platform():
     assert validate_argv(argv) == argv
 
 
-def test_allows_dump_ddl():
-    argv = ["python", "apps/dump_ddl.py", "--datasource", "main", "invoice"]
+def test_allows_action_runner():
+    argv = [
+        "python",
+        "-m",
+        "apps.action_runner",
+        "run",
+        "--expect-category",
+        "db_seed",
+        "db_seed.create_example",
+        "--params",
+        "{}",
+    ]
     assert validate_argv(argv) == argv
 
 
@@ -19,9 +29,17 @@ def test_rejects_shell():
     raise AssertionError("expected ValueError")
 
 
-def test_rejects_dump_ddl_injection():
+def test_rejects_dump_ddl_path():
     try:
-        validate_argv(["python", "apps/dump_ddl.py", "--datasource", "main", "invoice;rm"])
+        validate_argv(["python", "apps/dump_ddl.py", "--datasource", "main", "invoice"])
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError")
+
+
+def test_rejects_packages_action_words():
+    try:
+        validate_argv(["python", "-m", "packages.action_words", "run", "db_seed.x"])
     except ValueError:
         return
     raise AssertionError("expected ValueError")
@@ -29,7 +47,8 @@ def test_rejects_dump_ddl_injection():
 
 if __name__ == "__main__":
     test_allows_index_platform()
-    test_allows_dump_ddl()
+    test_allows_action_runner()
     test_rejects_shell()
-    test_rejects_dump_ddl_injection()
+    test_rejects_dump_ddl_path()
+    test_rejects_packages_action_words()
     print("ok")

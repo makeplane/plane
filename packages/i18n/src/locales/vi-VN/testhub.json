@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Chạy",
-      "not_whitelisted": "Không nằm trong danh sách P2",
+      "not_whitelisted": "Chưa đăng ký để chạy trên Plane",
+      "empty": "Catalog này không có ứng dụng chạy được trên Plane. Đồng bộ sau khi đăng ký @plane_app.",
+      "example": "Dùng tham số mẫu",
       "tables": "Tên bảng",
       "tables_required": "dump_ddl cần ít nhất một bảng.",
       "datasource": "Nguồn dữ liệu"

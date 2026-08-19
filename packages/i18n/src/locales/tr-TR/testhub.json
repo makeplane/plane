@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Çalıştır",
-      "not_whitelisted": "P2 listesinde değil",
+      "not_whitelisted": "Plane’de çalıştırılmak üzere kaydedilmedi",
+      "empty": "Bu katalogda Plane’de çalıştırılabilir uygulama yok. @plane_app kaydından sonra senkronize edin.",
+      "example": "Örnek parametreleri kullan",
       "tables": "Tablo adları",
       "tables_required": "dump_ddl en az bir tablo gerektirir.",
       "datasource": "Veri kaynağı"

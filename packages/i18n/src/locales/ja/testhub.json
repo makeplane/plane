@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "実行",
-      "not_whitelisted": "P2 許可リスト外",
+      "not_whitelisted": "Plane で実行するよう登録されていません",
+      "empty": "このカタログに Plane で実行できるアプリがありません。@plane_app を登録してから同期してください。",
+      "example": "サンプルパラメータを使う",
       "tables": "テーブル名",
       "tables_required": "dump_ddl にはテーブルが 1 つ以上必要です。",
       "datasource": "データソース"

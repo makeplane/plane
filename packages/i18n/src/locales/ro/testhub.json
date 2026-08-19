@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Rulează",
-      "not_whitelisted": "Nu este în lista P2",
+      "not_whitelisted": "Neînregistrat pentru rulare în Plane",
+      "empty": "Nicio aplicație rulabilă în Plane în acest catalog. Sincronizează după înregistrarea @plane_app.",
+      "example": "Folosește parametrii exemplu",
       "tables": "Nume de tabele",
       "tables_required": "dump_ddl necesită cel puțin un tabel.",
       "datasource": "Sursă de date"

@@ -26,7 +26,7 @@ from plane.testhub.serializers import (
 )
 from plane.testhub.sessions import SessionSelectionError, clean_session_selection
 from plane.testhub.sources import TesthubUnbound, testhub_repo_payload, testhub_workdir
-from plane.testhub.whitelist import WhitelistError, build_argv, is_destructive
+from plane.testhub.whitelist import WhitelistError, build_argv, is_destructive, latest_tools
 
 ACTIVE_JOB_STATUSES = (TesthubJob.Status.QUEUED, TesthubJob.Status.RUNNING)
 
@@ -160,13 +160,14 @@ class TesthubJobEndpoint(BaseAPIView):
         if not isinstance(params, dict):
             return Response({"error": "params must be an object."}, status=status.HTTP_400_BAD_REQUEST)
         confirmed = bool(request.data.get("confirmed"))
-        if is_destructive(kind, params) and not confirmed:
+        tools = latest_tools(project_id)
+        if is_destructive(kind, params, tools) and not confirmed:
             return Response(
                 {"error": "This job writes to the system under test. Set confirmed=true after an admin review."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            argv = build_argv(kind, params)
+            argv = build_argv(kind, params, tools=tools)
         except WhitelistError as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 

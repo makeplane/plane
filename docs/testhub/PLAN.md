@@ -146,15 +146,15 @@ sequenceDiagram
   API->>Celery: 入队 Job
   Celery->>Agent: 下发白名单命令
   Agent->>Repo: 注入运行时密钥为环境变量
-  Agent->>Repo: python -m apps.xxx 或 action_words 或 pytest/behave
-  Repo->>SUT: dump_ddl_db_seed_API
+  Agent->>Repo: python -m apps.index_platform 或 apps.action_runner
+  Repo->>SUT: db_seed_API_assert
   Agent-->>API: 日志流_退出码_artifacts
   API-->>UI: 作业详情
 ```
 
 硬约束：
 
-- 命令白名单：catalog 已登记的 `apps.*`、`packages.action_words`、指定路径的 pytest/behave；禁止自由 shell
+- 命令白名单：唯一硬编码 `index_platform`；其余为 catalog 已登记且 `plane_runnable` 的 `python -m apps.*`。BDD 组合层在测试仓 `packages.action_words`，不经 Plane。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上 Runner。禁止自由 shell
 - 密钥：项目密钥库或 Runner 本机 `env_local.py`，映射 `ARGON_DB_*` / `TEST_*`；永不写回 git、不进 Job 日志
 - 破坏性操作默认 dry-run，需 Admin 二次确认
 - 同一 Project 默认串行
@@ -166,7 +166,7 @@ sequenceDiagram
 
 项目侧栏与 Work items 同级：
 
-1. **Formulation** — 场景 / 可执行 action words / API / Page / DDL。活文档：可触发白名单 `action_words` Job。
+1. **Formulation** — 场景 / 可执行 action words / API / Page / DDL。活文档：可触发已登记类别 Job（`db_seed` 等）。
 2. **环境** — 连接（脱敏）。无仓库绑定 Tab。
 3. **TestCopilot** — 测程与报告、工具、常用 SQL、pytest 节点。
 4. **作业** — 所有页面上手动执行的白名单异步任务结果。
@@ -220,9 +220,9 @@ sequenceDiagram
 
 ### P2 — 编排执行
 
-- Job + 日志流 + 白名单
-- `python -m packages.action_words run <id> --params ...`（造数主路径）
-- 已登记 apps：`dump_ddl`、`index_ai`；`init_repo` 仅 Admin
+- Job + 日志流 + catalog 白名单
+- `python -m apps.action_runner run --expect-category <cat> <word_id>`（造数主路径；领域实现仍在测试仓 packages）
+- 本地维护 apps（dump_ddl / index_ai / recorder / init_repo）不上 Plane；日后按 `@plane_app` 再注册
 - 密钥注入与 dry-run；展示 cleanup
 
 ### P3 — 跑测与缺陷闭环

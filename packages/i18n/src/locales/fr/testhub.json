@@ -95,7 +95,9 @@
     },
     "tools": {
       "run": "Exécuter",
-      "not_whitelisted": "Hors liste P2",
+      "not_whitelisted": "Non enregistré pour sexécuter dans Plane",
+      "empty": "Aucune app exécutable dans Plane dans ce catalogue. Synchronisez après avoir enregistré @plane_app.",
+      "example": "Utiliser les paramètres dexemple",
       "tables": "Noms de tables",
       "tables_required": "dump_ddl requiert au moins une table.",
       "datasource": "Source de données"

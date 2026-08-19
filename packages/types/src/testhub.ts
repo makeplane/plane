@@ -33,6 +33,25 @@ export type TTesthubCounts = {
   data_files: number;
 };
 
+export type TTesthubTool = {
+  app_id: string;
+  name: string;
+  module?: string;
+  argv: string[];
+  destructive: boolean;
+  whitelisted?: boolean;
+  plane_runnable?: boolean;
+  timeout?: number;
+  result?: string;
+  runtime?: string;
+  readme_path?: string;
+  params_schema?: Record<string, unknown> & {
+    properties?: Record<string, Record<string, unknown>>;
+    required?: string[];
+  };
+  argv_plan?: Array<{ key: string; kind: string; flag?: string; variadic?: boolean }>;
+};
+
 export type TTesthubCatalogPayload = {
   catalog_version: number;
   generated_at?: string;
@@ -54,15 +73,7 @@ export type TTesthubCatalogPayload = {
       doc?: string;
     }>;
   };
-  tools?: Array<{
-    app_id: string;
-    name: string;
-    argv: string[];
-    destructive: boolean;
-    whitelisted: boolean;
-    readme_path?: string;
-    params_schema?: Record<string, unknown>;
-  }>;
+  tools?: TTesthubTool[];
   tests?: {
     features?: Array<{
       path: string;
