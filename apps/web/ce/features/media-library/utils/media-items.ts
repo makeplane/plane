@@ -71,6 +71,7 @@ const ACTIVE_TRANSCODE_STATUSES = new Set([
   "QUEUED",
   "CLAIMED",
   "PROBING",
+  "PROCESSING",
   "TRANSCODING",
   "PACKAGING",
   "VALIDATING",
@@ -181,16 +182,16 @@ const getTranscodeLabel = (status: string) => {
       return "Queued";
     case "CLAIMED":
     case "PROBING":
-      return "Preparing";
+    case "PROCESSING":
     case "TRANSCODING":
     case "PACKAGING":
-      return "Processing";
     case "VALIDATING":
-      return "Finalizing";
     case "RETRY_PENDING":
-      return "Retrying";
+      return "Uploading";
     case "COMPLETED":
-      return "Ready";
+    case "READY":
+    case "UPLOADED":
+      return "Uploaded";
     case "CANCELLED":
       return "Cancelled";
     case "QUEUE_FAILED":
@@ -205,7 +206,11 @@ const getTranscodeState = (meta: Record<string, unknown>) => {
   const status = getMetaString(meta, ["transcode_status"], "").trim().toUpperCase();
   const progress = Math.min(100, Math.max(0, Math.round(getMetaNumber(meta, ["transcode_progress"], 0))));
   const hlsPending = getMetaBoolean(meta, ["hls_pending", "hlsPending"], false);
-  const isComplete = status === "COMPLETED" || (!hlsPending && Boolean(getMetaString(meta, ["hls_master_playlist"], "")));
+  const isComplete =
+    status === "COMPLETED" ||
+    status === "READY" ||
+    status === "UPLOADED" ||
+    (!hlsPending && Boolean(getMetaString(meta, ["hls_master_playlist"], "")));
   const isFailed = FAILED_TRANSCODE_STATUSES.has(status);
   const isActive = !isComplete && !isFailed && (hlsPending || ACTIVE_TRANSCODE_STATUSES.has(status));
   const error = getMetaString(meta, ["transcode_error"], "");
@@ -214,7 +219,7 @@ const getTranscodeState = (meta: Record<string, unknown>) => {
     transcodeJobId: getMetaString(meta, ["transcode_job_id"], "") || undefined,
     transcodeAssetId: getMetaString(meta, ["transcode_asset_id"], "") || undefined,
     transcodeProgress: isComplete ? 100 : progress,
-    transcodeLabel: status ? getTranscodeLabel(status) : hlsPending ? "Processing" : undefined,
+    transcodeLabel: status ? getTranscodeLabel(status) : hlsPending ? "Uploading" : undefined,
     transcodeError: error || undefined,
     isTranscodeActive: isActive,
     isTranscodeFailed: isFailed,

@@ -120,7 +120,7 @@ export const MediaCard = ({
       ? "bg-green-500/15 text-green-500"
       : "bg-custom-primary-100/15 text-custom-primary-100";
   const transcodeBadgeLabel = item.isTranscodeActive
-    ? `${item.transcodeLabel ?? "Processing"} ${transcodeProgress > 0 ? `${transcodeProgress}%` : ""}`.trim()
+    ? `${item.transcodeLabel ?? "Uploading"} ${transcodeProgress > 0 ? `${transcodeProgress}%` : ""}`.trim()
     : item.transcodeLabel;
   const isDetailDisabled = Boolean(item.isTranscodeActive);
   const handleLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {

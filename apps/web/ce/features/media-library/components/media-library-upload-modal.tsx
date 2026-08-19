@@ -184,11 +184,11 @@ const getUploadErrorMessage = (error: unknown) => {
 
 const getUploadStatusLabel = (item: TUploadItem) => {
   if (item.status === "queued") return "Queued";
-  if (item.status === "uploading") return "Uploading...";
-  if (item.status === "uploaded") return isMp4Upload(item.file) ? "Uploaded" : "Success";
-  if (item.status === "ready") return "Ready";
+  if (item.status === "uploading") return "Uploading";
+  if (item.status === "uploaded") return "Uploaded";
+  if (item.status === "ready") return "Uploaded";
   if (item.status === "cancelled") return "Cancelled";
-  return item.error || "Failed";
+  return "Failed";
 };
 
 const isCompletedStatus = (status: TUploadStatus) => status === "uploaded" || status === "ready";

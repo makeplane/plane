@@ -98,14 +98,19 @@ export type TEventVideoAnnotationUpdateResponse = {
 };
 
 export type TMediaTranscodeJobStatus =
+  | "UPLOAD_COMPLETE"
   | "QUEUED"
   | "CLAIMED"
   | "PROBING"
+  | "PROCESSING"
   | "TRANSCODING"
   | "PACKAGING"
   | "VALIDATING"
   | "COMPLETED"
+  | "READY"
+  | "UPLOADED"
   | "FAILED"
+  | "QUEUE_FAILED"
   | "RETRY_PENDING"
   | "CANCEL_REQUESTED"
   | "CANCELLED";
