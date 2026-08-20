@@ -6,6 +6,7 @@ import shutil
 import mimetypes
 import os
 import re
+import time
 from hashlib import sha1
 from urllib import error as urlerror, request as urlrequest
 from urllib.parse import urlparse
@@ -77,6 +78,104 @@ _MP4_FASTSTART_FORMATS = {".mp4", ".m4v"}
 _TRANSCODE_SOURCE_FORMATS = {"mp4"}
 _TRANSCODE_TERMINAL_STATUSES = {"COMPLETED", "FAILED", "CANCELLED"}
 logger = logging.getLogger(__name__)
+
+_UPLOAD_LOG_SAFE_FIELD_NAMES = {
+    "artifact_count",
+    "artifact_name",
+    "bytes_written",
+    "content_length",
+    "duration_ms",
+    "elapsed_ms",
+    "error",
+    "error_code",
+    "file_name",
+    "file_size",
+    "file_type",
+    "format",
+    "handler_status",
+    "hls_pending",
+    "is_bulk",
+    "metadata_ref",
+    "package_id",
+    "project_id",
+    "request_content_type",
+    "request_id",
+    "source_file_name",
+    "status_code",
+    "transcode_asset_id",
+    "transcode_job_id",
+    "transcode_profile",
+    "transcode_status",
+    "upload_client",
+    "upload_id",
+    "upstream_status",
+    "work_item_id",
+    "workspace_slug",
+}
+
+
+def _safe_upload_log_context(fields: dict) -> dict:
+    safe = {}
+    for key, value in fields.items():
+        if key not in _UPLOAD_LOG_SAFE_FIELD_NAMES:
+            continue
+        if value is None:
+            safe[key] = None
+            continue
+        if isinstance(value, (str, UUID)):
+            text = str(value).strip()
+            if text:
+                safe[key] = text[:500]
+            continue
+        if isinstance(value, bool):
+            safe[key] = value
+            continue
+        if isinstance(value, (int, float)):
+            safe[key] = value
+    return safe
+
+
+def _extract_upload_trace_fields(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return {}
+    aliases = {
+        "upload_id": ("upload_id", "uploadId"),
+        "request_id": ("request_id", "requestId"),
+        "upload_client": ("upload_client", "uploadClient"),
+    }
+    fields = {}
+    for field_name, keys in aliases.items():
+        for key in keys:
+            value = payload.get(key)
+            if isinstance(value, str) and value.strip():
+                fields[field_name] = value.strip()[:500]
+                break
+    return fields
+
+
+def _get_upload_trace_fields(request, meta: dict | None = None) -> dict:
+    trace = _extract_upload_trace_fields(meta)
+    headers = getattr(request, "headers", {}) or {}
+    header_trace = _extract_upload_trace_fields(
+        {
+            "upload_id": headers.get("X-Upload-ID"),
+            "request_id": headers.get("X-Request-ID"),
+        }
+    )
+    trace.update(header_trace)
+    if trace.get("upload_id") and not trace.get("request_id"):
+        trace["request_id"] = trace["upload_id"]
+    return trace
+
+
+def _log_media_upload_event(level: int, event: str, trace_fields: dict | None = None, **fields) -> None:
+    payload = {
+        "event": f"media_library_upload_{event}",
+        "ts": _now_iso(),
+        **_safe_upload_log_context(trace_fields or {}),
+        **_safe_upload_log_context(fields),
+    }
+    logger.log(level, json.dumps(payload, separators=(",", ":"), sort_keys=True))
 
 
 def _default_artifact_description(title: str) -> str:
@@ -1552,6 +1651,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     def post(self, request, slug, project_id, package_id):
+        handler_started_at = time.monotonic()
         project_id_str = str(project_id)
         validate_segment(project_id_str, "projectId")
         validate_segment(package_id, "packageId")
@@ -1590,6 +1690,21 @@ class MediaArtifactsListAPIView(BaseAPIView):
         transcode_job_response = None
         transcode_job_error = None
         timestamp = _now_iso()
+        trace_fields = _get_upload_trace_fields(request)
+        _log_media_upload_event(
+            logging.INFO,
+            "request_received",
+            trace_fields,
+            workspace_slug=slug,
+            project_id=project_id_str,
+            package_id=package_id,
+            content_length=request.META.get("CONTENT_LENGTH"),
+            request_content_type=request.META.get("CONTENT_TYPE"),
+            file_name=getattr(file_obj, "name", None),
+            file_size=getattr(file_obj, "size", None),
+            file_type=getattr(file_obj, "content_type", None),
+            is_bulk=is_bulk,
+        )
 
         if file_obj:
             raw_name = file_obj.name or "artifact"
@@ -1632,6 +1747,10 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     )
             if meta is None:
                 meta = {}
+            trace_fields = {**trace_fields, **_get_upload_trace_fields(request, meta)}
+            for key in ("upload_id", "request_id", "upload_client"):
+                if trace_fields.get(key):
+                    meta.setdefault(key, trace_fields[key])
 
             created_at = request.data.get("created_at") or timestamp
             updated_at = request.data.get("updated_at") or created_at
@@ -1784,12 +1903,30 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     entry["metadata_ref"] = link_ref
             prepared_payload.append(entry)
 
+        _log_media_upload_event(
+            logging.INFO,
+            "metadata_validation_started",
+            trace_fields,
+            workspace_slug=slug,
+            project_id=project_id_str,
+            package_id=package_id,
+            artifact_count=len(prepared_payload),
+        )
         serializer = MediaArtifactSerializer(data=prepared_payload, many=True)
         serializer.is_valid(raise_exception=True)
         validated_artifacts = serializer.validated_data
         for artifact in validated_artifacts:
             if not artifact.get("metadata_ref"):
                 artifact["metadata_ref"] = artifact.get("name")
+        _log_media_upload_event(
+            logging.INFO,
+            "metadata_validation_completed",
+            trace_fields,
+            workspace_slug=slug,
+            project_id=project_id_str,
+            package_id=package_id,
+            artifact_count=len(validated_artifacts),
+        )
 
         manifest = read_manifest(manifest_file)
         existing_artifacts = manifest.get("artifacts") or []
@@ -1856,10 +1993,38 @@ class MediaArtifactsListAPIView(BaseAPIView):
             if uploading_path.exists():
                 return Response({"error": "Artifact source file upload already in progress."}, status=status.HTTP_409_CONFLICT)
             try:
+                file_write_started_at = time.monotonic()
+                bytes_written = 0
+                _log_media_upload_event(
+                    logging.INFO,
+                    "file_write_started",
+                    trace_fields,
+                    workspace_slug=slug,
+                    project_id=project_id_str,
+                    package_id=package_id,
+                    artifact_name=primary_artifact_name,
+                    file_name=raw_name,
+                    file_size=getattr(file_obj, "size", None),
+                    file_type=getattr(file_obj, "content_type", None),
+                    source_file_name=transcode_source_file_path.name,
+                )
                 with open(uploading_path, "wb") as handle:
                     for chunk in file_obj.chunks():
+                        bytes_written += len(chunk)
                         handle.write(chunk)
                 os.replace(uploading_path, transcode_source_file_path)
+                _log_media_upload_event(
+                    logging.INFO,
+                    "file_write_completed",
+                    trace_fields,
+                    workspace_slug=slug,
+                    project_id=project_id_str,
+                    package_id=package_id,
+                    artifact_name=primary_artifact_name,
+                    bytes_written=bytes_written,
+                    duration_ms=int((time.monotonic() - file_write_started_at) * 1000),
+                    source_file_name=transcode_source_file_path.name,
+                )
             finally:
                 try:
                     uploading_path.unlink(missing_ok=True)
@@ -1884,6 +2049,21 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     "package_id": package_id,
                     "artifact_id": primary_artifact_name,
                 }
+                for key in ("upload_id", "request_id", "upload_client"):
+                    if trace_fields.get(key):
+                        transcode_payload[key] = trace_fields[key]
+                transcode_enqueue_started_at = time.monotonic()
+                _log_media_upload_event(
+                    logging.INFO,
+                    "transcode_enqueue_started",
+                    trace_fields,
+                    workspace_slug=slug,
+                    project_id=project_id_str,
+                    package_id=package_id,
+                    artifact_name=primary_artifact_name,
+                    transcode_asset_id=asset_id,
+                    transcode_profile="adaptive-1080p",
+                )
                 upstream_status, upstream_payload = _call_transcode_service("POST", "/transcoding/jobs", transcode_payload)
                 if upstream_status < 400:
                     transcode_job_response = upstream_payload
@@ -1897,6 +2077,20 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             "hls_pending": True,
                             "transcode_error": None,
                         }
+                    )
+                    _log_media_upload_event(
+                        logging.INFO,
+                        "transcode_enqueue_completed",
+                        trace_fields,
+                        workspace_slug=slug,
+                        project_id=project_id_str,
+                        package_id=package_id,
+                        artifact_name=primary_artifact_name,
+                        transcode_asset_id=asset_id,
+                        transcode_job_id=upstream_payload.get("job_id"),
+                        transcode_status=upstream_payload.get("status") or "QUEUED",
+                        upstream_status=upstream_status,
+                        duration_ms=int((time.monotonic() - transcode_enqueue_started_at) * 1000),
                     )
                 else:
                     transcode_job_error = upstream_payload
@@ -1912,6 +2106,19 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             "transcode_error": error_message or "Transcoding job could not be queued.",
                             "hls_pending": True,
                         }
+                    )
+                    _log_media_upload_event(
+                        logging.WARNING,
+                        "transcode_enqueue_failed",
+                        trace_fields,
+                        workspace_slug=slug,
+                        project_id=project_id_str,
+                        package_id=package_id,
+                        artifact_name=primary_artifact_name,
+                        transcode_asset_id=asset_id,
+                        upstream_status=upstream_status,
+                        duration_ms=int((time.monotonic() - transcode_enqueue_started_at) * 1000),
+                        error=error_message or "Transcoding job could not be queued.",
                     )
         elif file_obj and file_path:
             if should_transcode:
@@ -1953,9 +2160,37 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 if file_path.exists():
                     return Response({"error": "Artifact file already exists."}, status=status.HTTP_409_CONFLICT)
                 file_path.parent.mkdir(parents=True, exist_ok=True)
+                file_write_started_at = time.monotonic()
+                bytes_written = 0
+                _log_media_upload_event(
+                    logging.INFO,
+                    "file_write_started",
+                    trace_fields,
+                    workspace_slug=slug,
+                    project_id=project_id_str,
+                    package_id=package_id,
+                    artifact_name=primary_artifact_name,
+                    file_name=raw_name,
+                    file_size=getattr(file_obj, "size", None),
+                    file_type=getattr(file_obj, "content_type", None),
+                    source_file_name=file_path.name,
+                )
                 with open(file_path, "wb") as handle:
                     for chunk in file_obj.chunks():
+                        bytes_written += len(chunk)
                         handle.write(chunk)
+                _log_media_upload_event(
+                    logging.INFO,
+                    "file_write_completed",
+                    trace_fields,
+                    workspace_slug=slug,
+                    project_id=project_id_str,
+                    package_id=package_id,
+                    artifact_name=primary_artifact_name,
+                    bytes_written=bytes_written,
+                    duration_ms=int((time.monotonic() - file_write_started_at) * 1000),
+                    source_file_name=file_path.name,
+                )
                 # Always rewrite uploaded MP4/M4V with +faststart so playback starts quickly.
                 _ensure_mp4_faststart(file_path, primary_artifact_name, force=True)
                 if video_thumbnail_name and video_thumbnail_path and video_thumbnail_relative_path:
@@ -2218,6 +2453,16 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 validated_artifacts.append(thumbnail_serializer.validated_data)
                 incoming_names.add(thumbnail_name)
 
+        manifest_update_started_at = time.monotonic()
+        _log_media_upload_event(
+            logging.INFO,
+            "manifest_update_started",
+            trace_fields,
+            workspace_slug=slug,
+            project_id=project_id_str,
+            package_id=package_id,
+            artifact_count=len(validated_artifacts),
+        )
         with manifest_write_lock(manifest_file):
             manifest = read_manifest(manifest_file)
             existing_artifacts = manifest.get("artifacts") or []
@@ -2233,6 +2478,16 @@ class MediaArtifactsListAPIView(BaseAPIView):
             manifest["updatedAt"] = _now_iso()
             normalize_manifest_metadata(manifest)
             write_manifest_atomic(manifest_file, manifest)
+        _log_media_upload_event(
+            logging.INFO,
+            "manifest_update_completed",
+            trace_fields,
+            workspace_slug=slug,
+            project_id=project_id_str,
+            package_id=package_id,
+            artifact_count=len(validated_artifacts),
+            duration_ms=int((time.monotonic() - manifest_update_started_at) * 1000),
+        )
 
         response_payload = validated_artifacts if is_bulk else validated_artifacts[0]
         if not is_bulk and isinstance(response_payload, dict):
@@ -2240,6 +2495,19 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 response_payload = {**response_payload, "transcode_job": transcode_job_response}
             elif transcode_job_error:
                 response_payload = {**response_payload, "transcode_job_error": transcode_job_error}
+        _log_media_upload_event(
+            logging.INFO,
+            "response_returned",
+            trace_fields,
+            workspace_slug=slug,
+            project_id=project_id_str,
+            package_id=package_id,
+            status_code=status.HTTP_201_CREATED,
+            handler_status="success",
+            artifact_count=len(validated_artifacts),
+            transcode_job_id=transcode_job_response.get("job_id") if isinstance(transcode_job_response, dict) else None,
+            duration_ms=int((time.monotonic() - handler_started_at) * 1000),
+        )
         return Response(response_payload, status=status.HTTP_201_CREATED)
 
 

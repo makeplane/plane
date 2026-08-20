@@ -25,6 +25,14 @@ import type { TMediaArtifact } from "@/services/media-library.service";
 import { ProjectService } from "@/services/project";
 import { useMediaLibrary } from "../store/media-library-context";
 import { getDocumentThumbnailPath } from "../utils/media-items";
+import {
+  buildUploadTraceId,
+  calculateUploadProgressMetrics,
+  formatUploadEta,
+  formatUploadSpeed,
+  logMediaUploadLifecycle,
+  shouldLogUploadProgress,
+} from "../utils/upload-progress";
 import { MediaLibraryUploadMetaForm } from "./media-library-upload-meta";
 import { UPLOAD_MODAL_TEXT_CLASS } from "./media-library-upload-style-classes";
 import type { TMetaFieldChange, TMetaFormState, TUploadTarget } from "./media-library-upload-types";
@@ -60,6 +68,14 @@ type TUploadItem = {
   file: File;
   status: TUploadStatus;
   progress: number;
+  uploadId: string;
+  requestId?: string;
+  uploadedBytes?: number;
+  totalBytes?: number;
+  uploadStartedAtMs?: number;
+  uploadCompletedAtMs?: number;
+  uploadSpeedBytesPerSecond?: number;
+  uploadEtaSeconds?: number | null;
   error?: string;
   artifact?: TMediaArtifact;
   packageId?: string;
@@ -193,6 +209,8 @@ const getUploadStatusLabel = (item: TUploadItem) => {
 };
 
 const isCompletedStatus = (status: TUploadStatus) => status === "uploaded" || status === "ready";
+
+const buildUploadAttemptRequestId = (uploadId: string, retryCount = 0) => `${uploadId}-try-${retryCount + 1}`;
 
 const formatFileSize = (value: number) => {
   if (!Number.isFinite(value) || value <= 0) return "0MB";
@@ -394,14 +412,34 @@ export const MediaLibraryUploadModal = () => {
   const addFiles = useCallback(
     (files: File[]) => {
       if (files.length === 0) return;
+      const selectedAtMs = Date.now();
+      const incomingFiles = files.map((file, index) => {
+        const uploadId = buildUploadTraceId({
+          fileName: file.name,
+          fileSize: file.size,
+          lastModified: file.lastModified,
+          timestampMs: selectedAtMs + index,
+        });
+        logMediaUploadLifecycle({
+          event: "file_selected",
+          uploadId,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type || getFileExtension(file.name),
+        });
+        return {
+          file,
+          id: buildUploadId(file),
+          uploadId,
+        };
+      });
       setUploads((prev) => {
         const existingIds = new Set(prev.map((item) => item.id));
         const duplicateNames: string[] = [];
         const oversizedFiles: Array<{ name: string; size: number }> = [];
         const nextItems: TUploadItem[] = [];
 
-        files.forEach((file) => {
-          const id = buildUploadId(file);
+        incomingFiles.forEach(({ file, id, uploadId }) => {
           if (existingIds.has(id)) {
             duplicateNames.push(file.name);
             return;
@@ -416,6 +454,7 @@ export const MediaLibraryUploadModal = () => {
           nextItems.push({
             id,
             file,
+            uploadId,
             status: tooLarge || unsupported ? "failed" : "queued",
             progress: 0,
             failedPhase: tooLarge || unsupported ? "upload" : undefined,
@@ -459,6 +498,15 @@ export const MediaLibraryUploadModal = () => {
     const file = item.file;
     const format = resolveArtifactFormat(file.name);
     if (!format) {
+      logMediaUploadLifecycle({
+        level: "warn",
+        event: "upload_rejected",
+        uploadId: item.uploadId,
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type || getFileExtension(file.name),
+        error: "Unsupported file type",
+      });
       setUploads((prev) =>
         updateUploadEntry(prev, item.id, {
           status: "failed",
@@ -474,6 +522,11 @@ export const MediaLibraryUploadModal = () => {
     const description = `<p>Uploaded file: ${escapeHtml(title)}</p>`;
     const action = VIDEO_FORMATS.has(format) ? "play" : IMAGE_FORMATS.has(format) ? "view" : "download";
     const meta = buildMetaPayload(metaState, uploadTarget, selectedWorkItem);
+    const uploadId = item.uploadId;
+    const requestId = buildUploadAttemptRequestId(uploadId, item.retryCount ?? 0);
+    meta.upload_id = uploadId;
+    meta.request_id = requestId;
+    meta.upload_client = "plane-web";
     if (DOC_FORMATS.has(format)) {
       meta.kind = "document_file";
       meta.file_size = file.size;
@@ -481,12 +534,36 @@ export const MediaLibraryUploadModal = () => {
       meta.thumbnail = getDocumentThumbnailPath(format);
     }
 
+    let uploadStartedAtMs: number | undefined;
     try {
       const abortController = new AbortController();
+      const startedAtMs = Date.now();
+      uploadStartedAtMs = startedAtMs;
+      let lastLoggedPercent: number | null = null;
+      let lastLoggedAtMs: number | null = null;
+      logMediaUploadLifecycle({
+        event: "upload_started",
+        uploadId,
+        requestId,
+        workspaceSlug,
+        projectId,
+        packageId,
+        artifactName,
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type || format,
+      });
       setUploads((prev) =>
         updateUploadEntry(prev, item.id, {
           status: "uploading",
           progress: 0,
+          requestId,
+          uploadedBytes: 0,
+          totalBytes: file.size,
+          uploadStartedAtMs: startedAtMs,
+          uploadCompletedAtMs: undefined,
+          uploadSpeedBytesPerSecond: undefined,
+          uploadEtaSeconds: null,
           error: undefined,
           failedPhase: undefined,
           abortController,
@@ -510,18 +587,83 @@ export const MediaLibraryUploadModal = () => {
         (progressEvent) => {
           const total = progressEvent.total ?? 0;
           if (!total) return;
-          const percent = Math.min(100, Math.round((progressEvent.loaded / total) * 100));
-          setUploads((prev) => updateUploadEntry(prev, item.id, { progress: percent, status: "uploading" }));
+          const nowMs = Date.now();
+          const metrics = calculateUploadProgressMetrics({
+            loadedBytes: progressEvent.loaded,
+            totalBytes: total,
+            startedAtMs,
+            nowMs,
+          });
+          if (
+            shouldLogUploadProgress({
+              percent: metrics.percent,
+              lastLoggedPercent,
+              lastLoggedAtMs,
+              nowMs,
+            })
+          ) {
+            logMediaUploadLifecycle({
+              event: "upload_progress",
+              uploadId,
+              requestId,
+              workspaceSlug,
+              projectId,
+              packageId,
+              artifactName,
+              percent: metrics.percent,
+              uploadedBytes: metrics.uploadedBytes,
+              totalBytes: metrics.totalBytes,
+              speedBytesPerSecond: metrics.speedBytesPerSecond,
+              etaSeconds: metrics.etaSeconds,
+            });
+            lastLoggedPercent = metrics.percent;
+            lastLoggedAtMs = nowMs;
+          }
+          setUploads((prev) =>
+            updateUploadEntry(prev, item.id, {
+              progress: metrics.percent,
+              status: "uploading",
+              uploadedBytes: metrics.uploadedBytes,
+              totalBytes: metrics.totalBytes,
+              uploadSpeedBytesPerSecond: metrics.speedBytesPerSecond,
+              uploadEtaSeconds: metrics.etaSeconds,
+            })
+          );
         },
-        { signal: abortController.signal }
+        {
+          signal: abortController.signal,
+          headers: {
+            "X-Upload-ID": uploadId,
+            "X-Request-ID": requestId,
+          },
+        }
       );
 
+      const uploadCompletedAtMs = Date.now();
+      const uploadDurationMs = uploadCompletedAtMs - startedAtMs;
+      logMediaUploadLifecycle({
+        event: "upload_completed",
+        uploadId,
+        requestId,
+        workspaceSlug,
+        projectId,
+        packageId,
+        artifactName,
+        fileName: file.name,
+        fileSize: file.size,
+        durationMs: uploadDurationMs,
+        transcodeJobId: artifact.transcode_job?.job_id,
+      });
       setUploads((prev) =>
         updateUploadEntry(prev, item.id, {
           artifact,
           packageId,
           abortController: undefined,
           progress: 100,
+          uploadedBytes: file.size,
+          totalBytes: file.size,
+          uploadCompletedAtMs,
+          uploadEtaSeconds: 0,
           status: "uploaded",
         })
       );
@@ -529,6 +671,16 @@ export const MediaLibraryUploadModal = () => {
 
       const transcodeJobId = artifact.transcode_job?.job_id;
       if (isMp4Upload(file) && transcodeJobId) {
+        logMediaUploadLifecycle({
+          event: "transcode_tracking_started",
+          uploadId,
+          requestId,
+          workspaceSlug,
+          projectId,
+          packageId,
+          artifactName,
+          transcodeJobId,
+        });
         trackTranscodeJob({
           workspaceSlug,
           projectId,
@@ -552,12 +704,27 @@ export const MediaLibraryUploadModal = () => {
     } catch (error) {
       const wasCancelled =
         error && typeof error === "object" && (error as Record<string, unknown>).code === "ERR_CANCELED";
+      const errorMessage = wasCancelled ? "Cancelled" : getUploadErrorMessage(error);
+      logMediaUploadLifecycle({
+        level: wasCancelled ? "warn" : "error",
+        event: wasCancelled ? "upload_cancelled" : "upload_failed",
+        uploadId,
+        requestId,
+        workspaceSlug,
+        projectId,
+        packageId,
+        artifactName,
+        fileName: file.name,
+        fileSize: file.size,
+        durationMs: uploadStartedAtMs ? Date.now() - uploadStartedAtMs : undefined,
+        error: errorMessage,
+      });
       setUploads((prev) =>
         updateUploadEntry(prev, item.id, {
           status: wasCancelled ? "cancelled" : "failed",
           failedPhase: wasCancelled ? undefined : "upload",
           abortController: undefined,
-          error: wasCancelled ? "Cancelled" : getUploadErrorMessage(error),
+          error: errorMessage,
         })
       );
       return false;
@@ -649,6 +816,13 @@ export const MediaLibraryUploadModal = () => {
       updateUploadEntry(prev, item.id, {
         status: "queued",
         progress: 0,
+        requestId: undefined,
+        uploadedBytes: undefined,
+        totalBytes: undefined,
+        uploadStartedAtMs: undefined,
+        uploadCompletedAtMs: undefined,
+        uploadSpeedBytesPerSecond: undefined,
+        uploadEtaSeconds: undefined,
         error: undefined,
         failedPhase: undefined,
         artifact: undefined,
@@ -659,6 +833,17 @@ export const MediaLibraryUploadModal = () => {
   };
 
   const handleCancelUpload = async (item: TUploadItem) => {
+    logMediaUploadLifecycle({
+      level: "warn",
+      event: "upload_cancel_requested",
+      uploadId: item.uploadId,
+      requestId: item.requestId,
+      fileName: item.file.name,
+      fileSize: item.file.size,
+      percent: item.progress,
+      uploadedBytes: item.uploadedBytes,
+      totalBytes: item.totalBytes,
+    });
     if (item.status === "queued") {
       setUploads((prev) => updateUploadEntry(prev, item.id, { status: "cancelled", error: "Cancelled" }));
       return;
@@ -885,6 +1070,12 @@ export const MediaLibraryUploadModal = () => {
                     const isFailed = item.status === "failed";
                     const isComplete = isCompletedStatus(item.status);
                     const canCancel = item.status === "queued" || item.status === "uploading";
+                    const uploadDetail =
+                      item.status === "uploading"
+                        ? `${formatUploadSpeed(item.uploadSpeedBytesPerSecond ?? 0)} / ${formatUploadEta(
+                            item.uploadEtaSeconds
+                          )}`
+                        : null;
                     return (
                       <div
                         key={item.id}
@@ -954,6 +1145,9 @@ export const MediaLibraryUploadModal = () => {
                               <Clock3 className="h-3.5 w-3.5" />
                             )}
                             <span className="truncate">{getUploadStatusLabel(item)}</span>
+                            {uploadDetail ? (
+                              <span className={`truncate ${UPLOAD_MODAL_TEXT_CLASS.muted}`}>/ {uploadDetail}</span>
+                            ) : null}
                           </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
