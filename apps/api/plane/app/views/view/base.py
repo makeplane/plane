@@ -129,6 +129,18 @@ class WorkspaceViewViewSet(BaseViewSet):
         # membership in the workspace could therefore read any global view in it
         # by id.
         issue_view = self.get_queryset().filter(pk=pk).first()
+
+        # get_queryset() is scoped to the URL workspace, so None means either no
+        # such view or one belonging to a workspace this URL does not name.
+        # Serializing None yields a hollow object — every field null or empty —
+        # returned as 200, and enqueues a recent-visit for an entity that does
+        # not exist. Answer 404, as the other retrieve endpoints do.
+        if issue_view is None:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
             slug=slug,

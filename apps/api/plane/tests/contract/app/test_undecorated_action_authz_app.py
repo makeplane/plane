@@ -250,6 +250,20 @@ class TestWorkspaceViewRetrieveRequiresMembership:
         assert str(response.data["id"]) == str(workspace_view.id)
 
     @pytest.mark.django_db
+    def test_missing_view_is_a_404_not_an_empty_200(self, session_client, workspace):
+        """A member asking for a view id that does not exist must get 404.
+
+        get_queryset() is scoped to the URL workspace, so this also covers a real
+        view id belonging to a different workspace.
+        """
+        url = WORKSPACE_VIEW_DETAIL_URL.format(slug=workspace.slug, pk=uuid4())
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
     def test_workspace_guest_can_read_a_global_view(self, workspace, workspace_view):
         """Positive control: the role set matches list(), which permits guests."""
         guest_user = _make_user("wsguest")
