@@ -10,6 +10,15 @@ import { fileTypeFromBuffer } from "file-type";
 import type { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
 import { DANGEROUS_EXTENSIONS } from "@plane/constants";
 
+const TEXT_MIME_TYPES_BY_EXTENSION: Record<string, string> = {
+  txt: "text/plain",
+  md: "text/markdown",
+  markdown: "text/markdown",
+  csv: "text/csv",
+  yaml: "application/yaml",
+  yml: "application/yaml",
+};
+
 /**
  * @description Filename validation - checks for double extensions and dangerous patterns
  * @param {string} filename
@@ -92,6 +101,7 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
   const filenameError = validateFilename(file.name);
   if (filenameError) {
     console.warn(`File validation warning: ${filenameError}`);
+    return "";
   }
 
   try {
@@ -103,8 +113,8 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
-  // fallback for unknown files
-  return "";
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  return TEXT_MIME_TYPES_BY_EXTENSION[extension] || file.type || "";
 };
 
 /**

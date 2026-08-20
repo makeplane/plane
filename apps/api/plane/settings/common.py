@@ -533,6 +533,7 @@ ATTACHMENT_MIME_TYPES = [
     "text/css",
     "text/javascript",
     "application/json",
+    "application/yaml",
     "text/xml",
     "text/csv",
     "application/xml",
