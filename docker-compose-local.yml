@@ -142,7 +142,7 @@ services:
     env_file:
       - ./apps/api/.env
     environment:
-      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
       RABBITMQ_HOST: plane-mq
     depends_on:
       - plane-db
@@ -168,7 +168,7 @@ services:
     env_file:
       - ./apps/api/.env
     environment:
-      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
       RABBITMQ_HOST: plane-mq
     depends_on:
       - api
@@ -192,7 +192,7 @@ services:
     env_file:
       - ./apps/api/.env
     environment:
-      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
       RABBITMQ_HOST: plane-mq
     depends_on:
       - api
@@ -216,7 +216,7 @@ services:
     env_file:
       - ./apps/api/.env
     environment:
-      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
       RABBITMQ_HOST: plane-mq
     depends_on:
       - plane-db

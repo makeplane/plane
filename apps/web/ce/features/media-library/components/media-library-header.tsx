@@ -22,6 +22,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { useMediaLibrary } from "../store/media-library-context";
+import { MediaLibraryUploadStatus } from "./media-library-upload-status";
 
 /* ------------------------------------------------------------------ */
 /* TYPES */
@@ -507,6 +508,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
             ))}
           </div>
           {hasFilterOptions ? <FiltersToggle filter={mediaFilters} /> : null}
+          <MediaLibraryUploadStatus />
           {/* Upload */}
           <Button variant="primary" size="sm" className="gap-1.5 px-2 @4xl:px-3" onClick={openUpload}>
             <Upload size={16} className="h-3.5 w-3.5 flex-shrink-0" />
