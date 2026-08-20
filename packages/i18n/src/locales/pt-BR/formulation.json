@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation não está vinculado a uma origem de dados.",
-    "unbound_description": "Em Configuração, vincule Formulation a um workdir git. Lê ./*/feature/, action words, objetos de API e de página, e assets/ddl/ por convenção.",
+    "unbound_description": "Em Configuração, vincule Formulation a um workdir git. Cenas e DDL são descobertos por convenção. Action words, API e Page listam os ativos @plane_* registrados do catálogo do TestCopilot após o Sync.",
     "cta": "Abrir configuração",
     "sync": "Sincronizar",
     "syncing": "Sincronizando…",
@@ -25,6 +25,9 @@
     "no_selection": "Selecione uma API para ver a documentação.",
     "page_objects": "Page objects",
     "filter_ddl": "Filtrar tabelas",
-    "run_unbound": "Vincule o TestCopilot em Configuração para executar este action word."
+    "run_unbound": "Vincule o TestCopilot em Configuração para executar este action word.",
+    "sync_assets": "Os ativos registrados precisam de um Sync do TestCopilot.",
+    "sync_assets_description": "Action words, API e Page listam itens @plane_* do catálogo do TestCopilot. Sincronize o repositório de testes vinculado e volte aqui.",
+    "sync_assets_cta": "Abrir TestCopilot"
   }
 }

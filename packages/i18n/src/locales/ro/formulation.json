@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation nu este legat de o sursă de date.",
-    "unbound_description": "În Configurare, legați Formulation de un workdir git. Citește ./*/feature/, action words, obiecte API și page, și assets/ddl/ prin convenție.",
+    "unbound_description": "În Configurare, legați Formulation de un workdir git. Scenele și DDL sunt descoperite prin convenție. Action words, API și Page listează activele @plane_* înregistrate din catalogul TestCopilot după Sync.",
     "cta": "Deschide configurarea",
     "sync": "Sincronizează",
     "syncing": "Se sincronizează…",
@@ -25,6 +25,9 @@
     "no_selection": "Selectați un API pentru a vedea documentația.",
     "page_objects": "Page objects",
     "filter_ddl": "Filtrează tabelele",
-    "run_unbound": "Legați TestCopilot în Configurare pentru a rula acest action word."
+    "run_unbound": "Legați TestCopilot în Configurare pentru a rula acest action word.",
+    "sync_assets": "Activele înregistrate necesită un Sync TestCopilot.",
+    "sync_assets_description": "Action words, API și Page listează elementele @plane_* din catalogul TestCopilot. Sincronizați depozitul de teste legat, apoi reveniți aici.",
+    "sync_assets_cta": "Deschide TestCopilot"
   }
 }

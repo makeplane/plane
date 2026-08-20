@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation 尚未綁定資料來源。",
-    "unbound_description": "請在設定中將 Formulation 綁定到 git 工作目錄。依慣例讀取 ./*/feature/、action words、API 與 page objects，以及 assets/ddl/。",
+    "unbound_description": "請在設定中將 Formulation 綁定到 git 工作目錄。場景與 DDL 依慣例發現。Action words、API 與 Page 在 Sync 後列出 TestCopilot 目錄中已註冊的 @plane_* 資產。",
     "cta": "開啟設定",
     "sync": "同步",
     "syncing": "同步中…",
@@ -25,6 +25,9 @@
     "no_selection": "選取一個 API 以檢視文件。",
     "page_objects": "Page objects",
     "filter_ddl": "篩選表",
-    "run_unbound": "請在設定中綁定 TestCopilot 以執行此 action word。"
+    "run_unbound": "請在設定中綁定 TestCopilot 以執行此 action word。",
+    "sync_assets": "檢視已註冊資產需要先在 TestCopilot 中 Sync。",
+    "sync_assets_description": "Action words、API 與 Page 列出 TestCopilot 目錄中的 @plane_* 項目。請先同步已綁定的測試儲存庫，再回到此頁。",
+    "sync_assets_cta": "開啟 TestCopilot"
   }
 }

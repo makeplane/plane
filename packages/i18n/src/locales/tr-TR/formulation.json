@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation bir veri kaynağına bağlı değil.",
-    "unbound_description": "Yapılandırma içinde Formulation’ı bir git workdir’e bağlayın. Kurala göre ./*/feature/, action words, API ve page objects ile assets/ddl/ okur.",
+    "unbound_description": "Yapılandırma içinde Formulation’ı bir git workdir’e bağlayın. Sahneler ve DDL kurala göre bulunur. Action words, API ve Page, Sync sonrası TestCopilot kataloğundaki kayıtlı @plane_* varlıklarını listeler.",
     "cta": "Yapılandırmayı aç",
     "sync": "Senkronize et",
     "syncing": "Senkronize ediliyor…",
@@ -25,6 +25,9 @@
     "no_selection": "Belgesini görmek için bir API seçin.",
     "page_objects": "Page objects",
     "filter_ddl": "Tabloları süz",
-    "run_unbound": "Bu action word’ü çalıştırmak için Yapılandırma içinde TestCopilot’ı bağlayın."
+    "run_unbound": "Bu action word’ü çalıştırmak için Yapılandırma içinde TestCopilot’ı bağlayın.",
+    "sync_assets": "Kayıtlı varlıklar için TestCopilot Sync gerekir.",
+    "sync_assets_description": "Action words, API ve Page, TestCopilot kataloğundaki @plane_* öğelerini listeler. Bağlı test deposunu senkronize edin, sonra buraya dönün.",
+    "sync_assets_cta": "TestCopilot’ı aç"
   }
 }

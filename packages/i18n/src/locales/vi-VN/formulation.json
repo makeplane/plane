@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation chưa được gắn với nguồn dữ liệu.",
-    "unbound_description": "Trong Cấu hình, gắn Formulation với git workdir. Đọc ./*/feature/, action words, đối tượng API và page, cùng assets/ddl/ theo quy ước.",
+    "unbound_description": "Trong Cấu hình, gắn Formulation với git workdir. Cảnh và DDL được tìm theo quy ước. Action words, API và Page liệt kê tài sản @plane_* đã đăng ký từ catalog TestCopilot sau Sync.",
     "cta": "Mở cấu hình",
     "sync": "Đồng bộ",
     "syncing": "Đang đồng bộ…",
@@ -25,6 +25,9 @@
     "no_selection": "Chọn một API để xem tài liệu.",
     "page_objects": "Page objects",
     "filter_ddl": "Lọc bảng",
-    "run_unbound": "Gắn TestCopilot trong Cấu hình để chạy action word này."
+    "run_unbound": "Gắn TestCopilot trong Cấu hình để chạy action word này.",
+    "sync_assets": "Tài sản đã đăng ký cần Sync TestCopilot.",
+    "sync_assets_description": "Action words, API và Page liệt kê các mục @plane_* từ catalog TestCopilot. Đồng bộ kho kiểm thử đã gắn, rồi quay lại đây.",
+    "sync_assets_cta": "Mở TestCopilot"
   }
 }

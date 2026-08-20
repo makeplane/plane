@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation nie je naviazané na zdroj údajov.",
-    "unbound_description": "V konfigurácii priraďte Formulation k git workdir. Číta ./*/feature/, action words, API a page objects a assets/ddl/ podľa konvencie.",
+    "unbound_description": "V konfigurácii priraďte Formulation k git workdir. Scény a DDL sa zisťujú podľa konvencie. Action words, API a Page vypisujú registrované položky @plane_* z katalógu TestCopilot po Sync.",
     "cta": "Otvoriť konfiguráciu",
     "sync": "Synchronizovať",
     "syncing": "Synchronizácia…",
@@ -25,6 +25,9 @@
     "no_selection": "Vyberte API na zobrazenie dokumentácie.",
     "page_objects": "Page objects",
     "filter_ddl": "Filtrovať tabuľky",
-    "run_unbound": "V konfigurácii priraďte TestCopilot, aby ste mohli spustiť toto action word."
+    "run_unbound": "V konfigurácii priraďte TestCopilot, aby ste mohli spustiť toto action word.",
+    "sync_assets": "Registrované položky vyžadujú Sync v TestCopilot.",
+    "sync_assets_description": "Action words, API a Page vypisujú položky @plane_* z katalógu TestCopilot. Synchronizujte naviazaný testovací repozitár a vráťte sa sem.",
+    "sync_assets_cta": "Otvoriť TestCopilot"
   }
 }

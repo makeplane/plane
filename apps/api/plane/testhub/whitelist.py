@@ -10,8 +10,12 @@ from typing import Any
 
 BOOTSTRAP_KIND = "index_platform"
 LEGACY_ACTION_WORDS_KIND = "action_words"
+ACTION_WORDS_MODULE = "packages.action_words"
+ACTION_WORD_KINDS = frozenset(
+    {"db_seed", "db_assert", "api_request", "api_assert", "ui_action", "ui_assert"}
+)
 
-_MODULE_RE = re.compile(r"^apps\.[a-z][a-z0-9_]*$")
+_APPS_MODULE_RE = re.compile(r"^apps\.[a-z][a-z0-9_]*$")
 _DESTRUCTIVE_FALLBACK = frozenset({"db_seed", "api_request", "ui_action"})
 
 
@@ -19,14 +23,18 @@ class WhitelistError(ValueError):
     pass
 
 
-def latest_tools(project_id) -> list[dict[str, Any]]:
+def latest_catalog_payload(project_id) -> dict[str, Any]:
     from plane.testhub.models import CatalogSnapshot
 
     snapshot = CatalogSnapshot.objects.filter(project_id=project_id).order_by("-created_at").first()
     if snapshot is None:
-        return []
+        return {}
     payload = snapshot.payload if isinstance(snapshot.payload, dict) else {}
-    tools = payload.get("tools") or []
+    return payload
+
+
+def latest_tools(project_id) -> list[dict[str, Any]]:
+    tools = latest_catalog_payload(project_id).get("tools") or []
     return [row for row in tools if isinstance(row, dict)]
 
 
@@ -46,13 +54,15 @@ def is_destructive(
     kind: str,
     params: dict[str, Any] | None = None,
     tools: list[dict[str, Any]] | None = None,
+    catalog: dict[str, Any] | None = None,
 ) -> bool:
     if kind == BOOTSTRAP_KIND:
         return False
-    tool = find_tool(kind, tools, params)
-    if tool is not None:
-        return bool(tool.get("destructive"))
-    return _resolve_kind(kind, params) in _DESTRUCTIVE_FALLBACK
+    try:
+        row = _find_runnable(kind, params or {}, tools=tools, catalog=catalog)
+    except WhitelistError:
+        return _resolve_kind(kind, params) in _DESTRUCTIVE_FALLBACK
+    return bool(row.get("destructive")) if "destructive" in row else _resolve_kind(kind, params) in _DESTRUCTIVE_FALLBACK
 
 
 def build_argv(
@@ -60,31 +70,76 @@ def build_argv(
     params: dict[str, Any] | None = None,
     *,
     tools: list[dict[str, Any]] | None = None,
+    catalog: dict[str, Any] | None = None,
 ) -> list[str]:
     payload = params or {}
     if kind == BOOTSTRAP_KIND:
         return ["python", "-m", "apps.index_platform", "--out", "-"]
 
-    resolved = _resolve_kind(kind, payload)
-    tool = find_tool(resolved, tools, payload)
-    if tool is None:
-        raise WhitelistError(f"kind is not a registered Plane app: {resolved} (sync the catalog first)")
-    if not _is_runnable(tool):
+    row = _find_runnable(kind, payload, tools=tools, catalog=catalog)
+    if not _is_runnable(row):
+        resolved = _resolve_kind(kind, payload)
         raise WhitelistError(f"kind is not plane-runnable: {resolved}")
-    return _argv_from_tool(tool, payload)
+    return _argv_from_tool(row, payload)
 
 
-def tool_timeout(kind: str, tools: list[dict[str, Any]] | None = None) -> int:
+def tool_timeout(
+    kind: str,
+    tools: list[dict[str, Any]] | None = None,
+    *,
+    catalog: dict[str, Any] | None = None,
+    params: dict[str, Any] | None = None,
+) -> int:
     if kind == BOOTSTRAP_KIND:
         return 180
-    tool = find_tool(kind, tools)
-    if tool is None:
+    try:
+        row = _find_runnable(kind, params or {}, tools=tools, catalog=catalog)
+    except WhitelistError:
         return 180
     try:
-        timeout = int(tool.get("timeout") or 180)
+        timeout = int(row.get("timeout") or 180)
     except (TypeError, ValueError):
         return 180
     return max(5, min(timeout, 900))
+
+
+def _catalog_parts(
+    tools: list[dict[str, Any]] | None,
+    catalog: dict[str, Any] | None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    payload = catalog if isinstance(catalog, dict) else {}
+    tool_rows = list(tools) if tools is not None else [row for row in (payload.get("tools") or []) if isinstance(row, dict)]
+    components = payload.get("components") if isinstance(payload.get("components"), dict) else {}
+    words = [row for row in (components.get("action_words") or []) if isinstance(row, dict)]
+    return tool_rows, words
+
+
+def _find_runnable(
+    kind: str,
+    params: dict[str, Any],
+    *,
+    tools: list[dict[str, Any]] | None,
+    catalog: dict[str, Any] | None,
+) -> dict[str, Any]:
+    resolved = _resolve_kind(kind, params)
+    tool_rows, words = _catalog_parts(tools, catalog)
+    if resolved in ACTION_WORD_KINDS:
+        word_id = str(params.get("word_id") or "")
+        if not word_id:
+            raise WhitelistError("missing required param: word_id")
+        for word in words:
+            if str(word.get("word_id") or "") != word_id:
+                continue
+            plane_kind = str(word.get("plane_kind") or word.get("category") or "")
+            if plane_kind != resolved:
+                raise WhitelistError(f"action word category mismatch: {word_id}")
+            return word
+        raise WhitelistError(f"action word is not registered for Plane: {word_id}")
+
+    tool = find_tool(resolved, tool_rows, params)
+    if tool is None:
+        raise WhitelistError(f"kind is not a registered Plane app: {resolved} (sync the catalog first)")
+    return tool
 
 
 def _is_runnable(tool: dict[str, Any]) -> bool:
@@ -103,16 +158,21 @@ def _resolve_kind(kind: str, params: dict[str, Any] | None) -> str:
     return prefix
 
 
+def _allowed_module(module: str) -> bool:
+    return bool(_APPS_MODULE_RE.fullmatch(module)) or module == ACTION_WORDS_MODULE
+
+
 def _argv_from_tool(tool: dict[str, Any], payload: dict[str, Any]) -> list[str]:
     argv = [str(part) for part in (tool.get("argv") or [])]
     if len(argv) < 3 or argv[0] not in {"python", "python3"} or argv[1] != "-m":
         raise WhitelistError("registered tool argv must start with python -m")
     module = argv[2]
-    if not _MODULE_RE.fullmatch(module):
-        raise WhitelistError(f"registered tool module is not apps.*: {module}")
+    if not _allowed_module(module):
+        raise WhitelistError(f"registered tool module is not allowlisted: {module}")
 
     plan = tool.get("argv_plan") or []
-    schema = tool.get("params_schema") if isinstance(tool.get("params_schema"), dict) else {}
+    schema = tool.get("job_params_schema") if isinstance(tool.get("job_params_schema"), dict) else tool.get("params_schema")
+    schema = schema if isinstance(schema, dict) else {}
     properties = schema.get("properties") if isinstance(schema.get("properties"), dict) else {}
     allowed_keys = {str(step.get("key")) for step in plan if isinstance(step, dict) and step.get("key")}
     extra = set(payload) - allowed_keys

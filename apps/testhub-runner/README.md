@@ -9,7 +9,8 @@ On start the container runs `uv sync` for the local-mount repo using
 `UV_PROJECT_ENVIRONMENT` under `/opt/testhub/uv-envs` — never the Windows host
 `.venv` bind-mounted at `/opt/testhub/workdir/.venv`. `uv run --directory <workdir>`
 on `/v1/exec` uses the same isolated env (hashed per workdir) and sets
-`PYTHONPATH` to the repo root so `python -m apps.*` resolves from source.
+`PYTHONPATH` to the repo root so `python -m apps.*` and
+`python -m packages.action_words` resolve from source.
 `GET /v1/health` reports that workdir + git branch/sha.
 
 ```
@@ -19,8 +20,9 @@ POST /v1/git-sync  {"repo_url", "branch", "workdir", "timeout"?}
 ```
 
 `/v1/exec` allowlisted argv only: `python -m apps.<snake_module>` (for example
-`apps.index_platform`, `apps.action_runner`). No `python apps/foo.py`, no
-`packages.action_words`. Optional `workdir` must be under `/opt/testhub/` or
+`apps.index_platform`) or the pinned `python -m packages.action_words`.
+No `python apps/foo.py`, no arbitrary `packages.*`. Optional `workdir` must be
+under `/opt/testhub/` or
 `/opt/gitsync/clones/`; default is `TESTHUB_WORKDIR`.
 
 `/v1/git-sync` clones or fetches a **public HTTPS** repo into `workdir` under

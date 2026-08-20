@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation n’est lié à aucune source de données.",
-    "unbound_description": "Dans Configuration, liez Formulation à un workdir git. Il lit ./*/feature/, les action words, les objets API et page, et assets/ddl/ par convention.",
+    "unbound_description": "Dans Configuration, liez Formulation à un workdir git. Les scènes et le DDL sont découverts par convention. Action words, API et Page listent les actifs @plane_* enregistrés du catalogue TestCopilot après Sync.",
     "cta": "Ouvrir Configuration",
     "sync": "Synchroniser",
     "syncing": "Synchronisation…",
@@ -25,6 +25,9 @@
     "no_selection": "Sélectionnez une API pour voir sa documentation.",
     "page_objects": "Page objects",
     "filter_ddl": "Filtrer les tables",
-    "run_unbound": "Liez TestCopilot dans Configuration pour exécuter cet action word."
+    "run_unbound": "Liez TestCopilot dans Configuration pour exécuter cet action word.",
+    "sync_assets": "Les actifs enregistrés nécessitent une synchronisation TestCopilot.",
+    "sync_assets_description": "Action words, API et Page listent les éléments @plane_* du catalogue TestCopilot. Synchronisez le dépôt de tests lié, puis revenez ici.",
+    "sync_assets_cta": "Ouvrir TestCopilot"
   }
 }

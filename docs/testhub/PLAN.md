@@ -112,23 +112,23 @@ git merge v1.x.y
 
 ### 2. 约定目录
 
-| 产品模块    | `module_key`   | 约定                                                                                                                |
-| ----------- | -------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Formulation | `features`     | `./*/feature/**/*.feature`；`packages/action_words`、`packages/api_objects`、`packages/page_objects`；`assets/ddl/` |
-| 环境        | `environments` | `config/env.py`、`env/*.yaml`（非 `*local*`）。永不读 `env_local.py` 或密钥值                                       |
-| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI；展示 `assets/sql/`                                                 |
-| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                      |
+| 产品模块    | `module_key`   | 约定                                                                                                                                                     |
+| ----------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Formulation | `features`     | `./*/feature/**/*.feature`；`assets/ddl/`（场景 / DDL）。action words / API / Page **不**靠文件扫描，只读 testhub `CatalogSnapshot` 里 `@plane_*` 注册项 |
+| 环境        | `environments` | `config/env.py`、`env/*.yaml`（非 `*local*`）。永不读 `env_local.py` 或密钥值                                                                            |
+| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI；展示 `assets/sql/` 与 `tools[]`（真 `@plane_app`）                                                      |
+| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                                                           |
 
-**只读自己绑定的 workdir。** 共仓时磁盘上自然能看到全套目录；分仓时各看各的。Formulation 名单来自自己的约定扫描；执行 action words 时按 `word_id` 从 testhub snapshot 补 `params_schema`，命令仍在 testhub workdir 跑。
+**只读自己绑定的 workdir。** 共仓时磁盘上自然能看到全套目录；分仓时各看各的。Formulation 的场景 / DDL 来自约定扫描；action words / API / Page 只展示 testhub snapshot 里已 `@plane_*` 注册的项。未 Sync 则空列表并引导 Sync。执行仍在 testhub workdir 跑。
 
 测程引用存 `module_key=features`、相对路径、Formulation remote 的 git sha。执行仍在 testhub workdir。分仓时由测试平台仓解析同名场景；对不齐则报告标未找到。
 
 ### 3. Catalog
 
-- **TestCopilot**：测试仓 `python -m apps.index_platform` 写入 `CatalogSnapshot`。本仓不重写那套扫描。
-- **Formulation / 环境**：本仓薄约定扫描，经 `GET .../gitsync/modules/<key>/catalog/` 暴露。规格仓往往没有 `index_platform`。
+- **TestCopilot**：测试仓 `python -m apps.index_platform` 写入 `CatalogSnapshot`。`tools[]` 仅 `@plane_app`；`components.action_words` / `api_objects` / `page_objects` 仅 `@plane_*` 标记项。本仓不重写那套扫描。
+- **Formulation / 环境**：场景 / DDL / 环境仍用本仓薄约定扫描，经 `GET .../gitsync/modules/<key>/catalog/` 暴露。规格仓往往没有 `index_platform`，场景扫描保持原约定。
 
-造数 / action words 表单在 Formulation；schema 仍消费 testhub catalog 里测试仓 `export_catalog()` + JSON Schema。执行结果在作业模块查看。
+造数 / action words 表单在 Formulation；列表与 schema 消费 testhub catalog 的注册项（`params_schema` + `job_params_schema`）。执行结果在作业模块查看。
 
 ### 4. RepoRunner（Plane 没有的能力）
 
@@ -146,7 +146,7 @@ sequenceDiagram
   API->>Celery: 入队 Job
   Celery->>Agent: 下发白名单命令
   Agent->>Repo: 注入运行时密钥为环境变量
-  Agent->>Repo: python -m apps.index_platform 或 apps.action_runner
+  Agent->>Repo: python -m apps.index_platform 或 packages.action_words
   Repo->>SUT: db_seed_API_assert
   Agent-->>API: 日志流_退出码_artifacts
   API-->>UI: 作业详情
@@ -154,7 +154,7 @@ sequenceDiagram
 
 硬约束：
 
-- 命令白名单：唯一硬编码 `index_platform`；其余为 catalog 已登记且 `plane_runnable` 的 `python -m apps.*`。BDD 组合层在测试仓 `packages.action_words`，不经 Plane。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上 Runner。禁止自由 shell
+- 命令白名单：唯一硬编码 `index_platform`；Tools 为 catalog `tools[]` 且 `plane_runnable` 的 `python -m apps.*`；Formulation action words 为 `components.action_words` 登记的 `python -m packages.action_words`（模块名钉死，禁止任意 `packages.*`）。BDD 组合层仍在测试仓 `packages.action_words`。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上 Runner。禁止自由 shell
 - 密钥：项目密钥库或 Runner 本机 `env_local.py`，映射 `ARGON_DB_*` / `TEST_*`；永不写回 git、不进 Job 日志
 - 破坏性操作默认 dry-run，需 Admin 二次确认
 - 同一 Project 默认串行
@@ -166,7 +166,7 @@ sequenceDiagram
 
 项目侧栏与 Work items 同级：
 
-1. **Formulation** — 场景 / 可执行 action words / API / Page / DDL。活文档：可触发已登记类别 Job（`db_seed` 等）。
+1. **Formulation** — 场景 / 可执行 action words / API / Page / DDL。活文档：已 `@plane_*` 注册的词条可触发 Job（`python -m packages.action_words run`）。API / Page 本期只读展示。
 2. **环境** — 连接（脱敏）。无仓库绑定 Tab。
 3. **TestCopilot** — 测程与报告、工具、常用 SQL、pytest 节点。
 4. **作业** — 所有页面上手动执行的白名单异步任务结果。
@@ -221,8 +221,8 @@ sequenceDiagram
 ### P2 — 编排执行
 
 - Job + 日志流 + catalog 白名单
-- `python -m apps.action_runner run --expect-category <cat> <word_id>`（造数主路径；领域实现仍在测试仓 packages）
-- 本地维护 apps（dump_ddl / index_ai / recorder / init_repo）不上 Plane；日后按 `@plane_app` 再注册
+- `python -m packages.action_words run <word_id>`（造数主路径；仅 `@plane_db_seed` 等标记项上架）
+- 本地维护 apps（dump_ddl / index_ai / recorder / init_repo）不上 Plane；真 CLI 按 `@plane_app` 再注册
 - 密钥注入与 dry-run；展示 cleanup
 
 ### P3 — 跑测与缺陷闭环

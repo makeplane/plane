@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from plane.testhub.models import CatalogSnapshot, ProjectTestRepo, TesthubJob
 from plane.testhub.runner import RunnerError, exec_job
-from plane.testhub.whitelist import latest_tools, tool_timeout
+from plane.testhub.whitelist import latest_catalog_payload, tool_timeout
 from plane.utils.exception_logger import log_exception
 
 LOG_LIMIT = 200_000
@@ -36,7 +36,11 @@ def run_testhub_job(job_id: str) -> None:
         result = exec_job(
             job_id=str(job.id),
             argv=list(job.argv),
-            timeout=tool_timeout(job.kind, latest_tools(job.project_id)),
+            timeout=tool_timeout(
+                job.kind,
+                catalog=latest_catalog_payload(job.project_id),
+                params=job.params if isinstance(job.params, dict) else {},
+            ),
             workdir=_exec_workdir(job.project_id),
         )
         job.exit_code = result.exit_code

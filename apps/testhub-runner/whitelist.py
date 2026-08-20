@@ -7,7 +7,8 @@ from __future__ import annotations
 
 import re
 
-_MODULE_RE = re.compile(r"^apps\.[a-z][a-z0-9_]*$")
+_APPS_MODULE_RE = re.compile(r"^apps\.[a-z][a-z0-9_]*$")
+ACTION_WORDS_MODULE = "packages.action_words"
 
 
 def validate_argv(argv: list[str]) -> list[str]:
@@ -21,6 +22,10 @@ def validate_argv(argv: list[str]) -> list[str]:
         raise ValueError("argv must start with python")
     if argv[1:2] != ["-m"]:
         raise ValueError("argv is not allowlisted")
-    if len(argv) < 3 or not _MODULE_RE.fullmatch(argv[2]):
+    if len(argv) < 3 or not _allowed_module(argv[2]):
         raise ValueError("python -m module is not allowlisted")
     return list(argv)
+
+
+def _allowed_module(module: str) -> bool:
+    return bool(_APPS_MODULE_RE.fullmatch(module)) or module == ACTION_WORDS_MODULE

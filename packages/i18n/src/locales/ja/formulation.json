@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation はデータソースにバインドされていません。",
-    "unbound_description": "設定で Formulation を git workdir にバインドします。./*/feature/、action words、API と page objects、assets/ddl/ を規約どおりに読みます。",
+    "unbound_description": "設定で Formulation を git workdir にバインドします。シーンと DDL は規約で検出します。Action words、API、Page は Sync 後の TestCopilot カタログにある登録済み @plane_* 資産を一覧します。",
     "cta": "設定を開く",
     "sync": "同期",
     "syncing": "同期中…",
@@ -25,6 +25,9 @@
     "no_selection": "ドキュメントを見る API を選択してください。",
     "page_objects": "Page objects",
     "filter_ddl": "テーブルを絞り込む",
-    "run_unbound": "この action word を実行するには、設定で TestCopilot をバインドしてください。"
+    "run_unbound": "この action word を実行するには、設定で TestCopilot をバインドしてください。",
+    "sync_assets": "登録資産には TestCopilot の Sync が必要です。",
+    "sync_assets_description": "Action words、API、Page は TestCopilot カタログの @plane_* 項目を一覧します。バインド済みのテストリポジトリを同期してから、ここに戻ってください。",
+    "sync_assets_cta": "TestCopilot を開く"
   }
 }

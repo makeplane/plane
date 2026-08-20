@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation belum terikat ke sumber data.",
-    "unbound_description": "Di Konfigurasi, ikat Formulation ke workdir git. Membaca ./*/feature/, action words, objek API dan page, serta assets/ddl/ menurut konvensi.",
+    "unbound_description": "Di Konfigurasi, ikat Formulation ke workdir git. Skenario dan DDL ditemukan menurut konvensi. Action words, API, dan Page menampilkan aset @plane_* terdaftar dari katalog TestCopilot setelah Sync.",
     "cta": "Buka Konfigurasi",
     "sync": "Sinkronkan",
     "syncing": "Menyinkronkan…",
@@ -25,6 +25,9 @@
     "no_selection": "Pilih API untuk melihat dokumentasinya.",
     "page_objects": "Page objects",
     "filter_ddl": "Filter tabel",
-    "run_unbound": "Ikat TestCopilot di Konfigurasi untuk menjalankan action word ini."
+    "run_unbound": "Ikat TestCopilot di Konfigurasi untuk menjalankan action word ini.",
+    "sync_assets": "Aset terdaftar memerlukan Sync TestCopilot.",
+    "sync_assets_description": "Action words, API, dan Page menampilkan item @plane_* dari katalog TestCopilot. Sinkronkan repositori uji yang terikat, lalu kembali ke sini.",
+    "sync_assets_cta": "Buka TestCopilot"
   }
 }

@@ -113,8 +113,8 @@ def test_scan_features_and_environments(tmp_path):
     assert features["counts"]["features"] == 1
     assert features["features"][0]["name"] == "Invoice"
     assert features["features"][0]["scenarios"][0]["name"] == "Create invoice"
-    assert features["components"]["action_words"][0]["word_id"] == "db_seed.create_invoice"
-    assert features["components"]["api_objects"][0]["method"] == "POST"
+    assert "action_words" not in (features.get("components") or {})
+    assert "api_objects" not in (features.get("components") or {})
     assert features["knowledge"]["ddl"][0]["datasource"] == "main"
     assert features["counts"]["ddl_tables"] == 1
     _, ddl_text = resolve_module_file(str(tmp_path), "features", "assets/ddl/main/invoice.sql")

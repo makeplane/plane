@@ -10,7 +10,7 @@
       "ddl": "DDL"
     },
     "unbound": "Formulation is not bound to a data source.",
-    "unbound_description": "In Configuration, bind Formulation to a git workdir. It reads ./*/feature/, action words, API and page objects, and assets/ddl/ by convention.",
+    "unbound_description": "In Configuration, bind Formulation to a git workdir. Scenes and DDL are discovered by convention. Action words, API, and Page list registered @plane_* assets from the TestCopilot catalog after Sync.",
     "cta": "Open Configuration",
     "sync": "Sync",
     "syncing": "Syncing…",
@@ -25,6 +25,9 @@
     "run_unbound": "Bind TestCopilot in Configuration to run this action word.",
     "no_apis": "No API objects in this workdir.",
     "no_selection": "Select an API to view its documentation.",
-    "page_objects": "Page objects"
+    "page_objects": "Page objects",
+    "sync_assets": "Registered assets need a TestCopilot Sync.",
+    "sync_assets_description": "Action words, API, and Page list @plane_* items from the TestCopilot catalog. Sync the bound test repository, then return here.",
+    "sync_assets_cta": "Open TestCopilot"
   }
 }

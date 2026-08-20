@@ -10,7 +10,7 @@
       "page": "Page"
     },
     "unbound": "Formulation не прив’язано до джерела даних.",
-    "unbound_description": "У конфігурації прив’яжіть Formulation до git workdir. Він читає ./*/feature/, action words, об’єкти API і page, а також assets/ddl/ за домовленістю.",
+    "unbound_description": "У конфігурації прив’яжіть Formulation до git workdir. Сцени та DDL виявляються за домовленістю. Action words, API і Page показують зареєстровані активи @plane_* з каталогу TestCopilot після Sync.",
     "cta": "Відкрити конфігурацію",
     "sync": "Синхронізувати",
     "syncing": "Синхронізація…",
@@ -25,6 +25,9 @@
     "no_selection": "Виберіть API, щоб переглянути документацію.",
     "page_objects": "Page objects",
     "filter_ddl": "Фільтр таблиць",
-    "run_unbound": "Прив’яжіть TestCopilot у конфігурації, щоб виконати це action word."
+    "run_unbound": "Прив’яжіть TestCopilot у конфігурації, щоб виконати це action word.",
+    "sync_assets": "Зареєстрованим активам потрібна синхронізація TestCopilot.",
+    "sync_assets_description": "Action words, API і Page показують елементи @plane_* з каталогу TestCopilot. Синхронізуйте прив’язаний тестовий репозиторій і поверніться сюди.",
+    "sync_assets_cta": "Відкрити TestCopilot"
   }
 }

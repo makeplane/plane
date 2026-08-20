@@ -107,14 +107,21 @@ def python_cmd(argv: list[str], workdir: Path) -> list[str]:
 
 
 def missing_apps_module(workdir: Path, argv: list[str]) -> str | None:
-    """Return an error if `python -m apps.*` has no matching files in workdir."""
+    """Return an error if an allowlisted `python -m` target has no files in workdir."""
     if len(argv) < 3 or argv[0] not in {"python", "python3"} or argv[1] != "-m":
         return None
     module = argv[2]
-    if not module.startswith("apps.") or ".." in module:
+    if ".." in module:
         return None
     parts = module.split(".")
     if not all(part.isidentifier() for part in parts):
+        return None
+    if module == "packages.action_words":
+        rel = Path("packages") / "action_words"
+        if (workdir / rel / "__main__.py").is_file():
+            return None
+        return f"workdir has no {module} (expected {rel.as_posix()}/__main__.py)."
+    if not module.startswith("apps."):
         return None
     rel = Path(*parts)
     if (workdir / rel / "__main__.py").is_file() or (workdir / rel).with_suffix(".py").is_file():

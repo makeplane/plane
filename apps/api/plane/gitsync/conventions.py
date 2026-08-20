@@ -26,8 +26,6 @@ SKIP_DIR_NAMES = {".git", ".venv", "venv", "node_modules", "__pycache__", ".mypy
 SECRET_KEY_RE = re.compile(r"(password|secret|token|passwd|api_key|credential|private_key)", re.I)
 ASSIGN_RE = re.compile(r"""^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(['\"])(.*?)\2\s*(?:#.*)?$""")
 YAML_RE = re.compile(r"""^([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(?:['\"]([^'\"]*)['\"]|([^#\s][^#]*?))\s*$""")
-METHOD_RE = re.compile(r"""^\s*method\s*=\s*['\"]([A-Za-z]+)['\"]""", re.M)
-PATH_RE = re.compile(r"""^\s*path\s*=\s*['\"]([^'\"]+)['\"]""", re.M)
 MAX_SCAN_FILES = 4000
 MAX_PARSE_BYTES = 256_000
 
@@ -76,25 +74,14 @@ def _scan_features(root: Path) -> dict[str, Any]:
             features.append(_parse_feature(rel, _read_text(path)))
         if features:
             break
-    action_words = _scan_action_words(root)
-    api_objects = _scan_api_objects(root)
-    page_objects = _scan_page_objects(root)
     ddl = scan_ddl(root)
     return {
         "counts": {
             "features": len(features),
             "scenarios": sum(len(item["scenarios"]) for item in features),
-            "action_words": len(action_words),
-            "api_objects": len(api_objects),
-            "page_objects": len(page_objects),
             "ddl_tables": sum(block["table_count"] for block in ddl),
         },
         "features": features,
-        "components": {
-            "action_words": action_words,
-            "api_objects": api_objects,
-            "page_objects": page_objects,
-        },
         "knowledge": {"ddl": ddl},
     }
 
@@ -157,62 +144,6 @@ def scan_sql_files(workdir: str | Path) -> list[dict[str, str]]:
         rel = _rel(root, path)
         sql_files.append({"path": rel, "name": path.name})
     return sql_files
-
-
-def _scan_action_words(root: Path) -> list[dict[str, Any]]:
-    base = root / "packages" / "action_words"
-    if not base.is_dir():
-        return []
-    words = []
-    for path in _iter_files(base):
-        if path.suffix != ".py" or path.name.startswith("test_") or path.name in {"__init__.py", "conftest.py"}:
-            continue
-        rel = _rel(root, path)
-        parts = Path(rel).with_suffix("").parts[2:]
-        if not parts:
-            continue
-        word_id = ".".join(parts)
-        category = parts[0] if len(parts) > 1 else "action_words"
-        words.append({"word_id": word_id, "name": parts[-1], "category": category, "file": rel})
-    return words
-
-
-def _scan_api_objects(root: Path) -> list[dict[str, Any]]:
-    base = root / "packages" / "api_objects"
-    if not base.is_dir():
-        return []
-    rows = []
-    for path in _iter_files(base):
-        if path.suffix not in {".py", ".yml", ".yaml", ".json"} or path.name.startswith("test_"):
-            continue
-        if path.name in {"__init__.py", "conftest.py"}:
-            continue
-        rel = _rel(root, path)
-        text = _read_text(path)
-        method_match = METHOD_RE.search(text)
-        path_match = PATH_RE.search(text)
-        rows.append(
-            {
-                "method": (method_match.group(1) if method_match else "GET").upper(),
-                "path": path_match.group(1) if path_match else f"/{path.stem}",
-                "file": rel,
-                "name": path.stem,
-            }
-        )
-    return rows
-
-
-def _scan_page_objects(root: Path) -> list[dict[str, Any]]:
-    base = root / "packages" / "page_objects"
-    if not base.is_dir():
-        return []
-    rows = []
-    for path in _iter_files(base):
-        if path.suffix != ".py" or path.name in {"__init__.py", "conftest.py"} or path.name.startswith("test_"):
-            continue
-        rel = _rel(root, path)
-        rows.append({"path": rel, "name": path.stem})
-    return rows
 
 
 def _parse_feature(rel: str, text: str) -> dict[str, Any]:

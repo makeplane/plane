@@ -6,18 +6,8 @@ def test_allows_index_platform():
     assert validate_argv(argv) == argv
 
 
-def test_allows_action_runner():
-    argv = [
-        "python",
-        "-m",
-        "apps.action_runner",
-        "run",
-        "--expect-category",
-        "db_seed",
-        "db_seed.create_example",
-        "--params",
-        "{}",
-    ]
+def test_allows_packages_action_words():
+    argv = ["python", "-m", "packages.action_words", "run", "db_seed.create_example", "--params", "{}"]
     assert validate_argv(argv) == argv
 
 
@@ -37,9 +27,9 @@ def test_rejects_dump_ddl_path():
     raise AssertionError("expected ValueError")
 
 
-def test_rejects_packages_action_words():
+def test_rejects_arbitrary_packages_module():
     try:
-        validate_argv(["python", "-m", "packages.action_words", "run", "db_seed.x"])
+        validate_argv(["python", "-m", "packages.db", "run"])
     except ValueError:
         return
     raise AssertionError("expected ValueError")
@@ -47,8 +37,8 @@ def test_rejects_packages_action_words():
 
 if __name__ == "__main__":
     test_allows_index_platform()
-    test_allows_action_runner()
+    test_allows_packages_action_words()
     test_rejects_shell()
     test_rejects_dump_ddl_path()
-    test_rejects_packages_action_words()
+    test_rejects_arbitrary_packages_module()
     print("ok")

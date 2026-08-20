@@ -8,12 +8,22 @@ from plane.testhub.whitelist import WhitelistError, build_argv, is_destructive
 
 pytestmark = pytest.mark.unit
 
-DB_SEED_TOOL = {
-    "app_id": "db_seed",
-    "name": "DB seed",
-    "module": "apps.action_runner",
-    "argv": ["python", "-m", "apps.action_runner", "run", "--expect-category", "db_seed"],
-    "params_schema": {
+DB_SEED_WORD = {
+    "word_id": "db_seed.create_example",
+    "name": "create example",
+    "category": "db_seed",
+    "plane_kind": "db_seed",
+    "plane_runnable": True,
+    "destructive": True,
+    "timeout": 300,
+    "module": "packages.action_words",
+    "argv": ["python", "-m", "packages.action_words", "run"],
+    "argv_plan": [
+        {"key": "word_id", "kind": "positional"},
+        {"key": "params", "kind": "json_option", "flag": "--params"},
+        {"key": "example", "kind": "store_true", "flag": "--example"},
+    ],
+    "job_params_schema": {
         "type": "object",
         "properties": {
             "word_id": {"type": "string", "pattern": r"^db_seed\.[a-z][a-z0-9_]*$"},
@@ -23,30 +33,38 @@ DB_SEED_TOOL = {
         "required": ["word_id"],
         "additionalProperties": False,
     },
-    "argv_plan": [
-        {"key": "word_id", "kind": "positional"},
-        {"key": "params", "kind": "json_option", "flag": "--params"},
-        {"key": "example", "kind": "store_true", "flag": "--example"},
-    ],
-    "destructive": True,
-    "plane_runnable": True,
-    "whitelisted": True,
-    "timeout": 300,
 }
 
-DB_ASSERT_TOOL = {
-    **DB_SEED_TOOL,
-    "app_id": "db_assert",
-    "argv": ["python", "-m", "apps.action_runner", "run", "--expect-category", "db_assert"],
-    "params_schema": {
-        **DB_SEED_TOOL["params_schema"],
+DB_ASSERT_WORD = {
+    **DB_SEED_WORD,
+    "word_id": "db_assert.plane_example",
+    "category": "db_assert",
+    "plane_kind": "db_assert",
+    "destructive": False,
+    "timeout": 180,
+    "job_params_schema": {
+        "type": "object",
         "properties": {
             "word_id": {"type": "string", "pattern": r"^db_assert\.[a-z][a-z0-9_]*$"},
             "params": {"type": "object"},
             "example": {"type": "boolean"},
         },
+        "required": ["word_id"],
+        "additionalProperties": False,
     },
+}
+
+INDEX_APP = {
+    "app_id": "index_platform",
+    "name": "index",
+    "argv": ["python", "-m", "apps.index_platform", "--out", "-"],
     "destructive": False,
+    "plane_runnable": False,
+}
+
+CATALOG = {
+    "tools": [INDEX_APP],
+    "components": {"action_words": [DB_SEED_WORD, DB_ASSERT_WORD]},
 }
 
 
@@ -58,34 +76,27 @@ def test_db_seed_argv_from_catalog():
     argv = build_argv(
         "db_seed",
         {"word_id": "db_seed.create_example", "params": {"n": 1}},
-        tools=[DB_SEED_TOOL],
+        catalog=CATALOG,
     )
-    assert argv[:6] == [
-        "python",
-        "-m",
-        "apps.action_runner",
-        "run",
-        "--expect-category",
-        "db_seed",
-    ]
-    assert argv[6] == "db_seed.create_example"
-    assert argv[7] == "--params"
-    assert argv[8] == '{"n": 1}'
+    assert argv[:4] == ["python", "-m", "packages.action_words", "run"]
+    assert argv[4] == "db_seed.create_example"
+    assert argv[5] == "--params"
+    assert argv[6] == '{"n": 1}'
 
 
 def test_legacy_action_words_kind_maps_to_category():
     argv = build_argv(
         "action_words",
         {"word_id": "db_seed.create_example", "params": {}},
-        tools=[DB_SEED_TOOL],
+        catalog=CATALOG,
     )
-    assert "--expect-category" in argv
-    assert argv[argv.index("--expect-category") + 1] == "db_seed"
+    assert argv[:4] == ["python", "-m", "packages.action_words", "run"]
+    assert argv[4] == "db_seed.create_example"
 
 
 def test_rejects_unregistered_kind():
     with pytest.raises(WhitelistError):
-        build_argv("dump_ddl", {"tables": ["invoice"]}, tools=[DB_SEED_TOOL])
+        build_argv("dump_ddl", {"tables": ["invoice"]}, catalog=CATALOG)
 
 
 def test_rejects_wrong_word_prefix():
@@ -93,14 +104,14 @@ def test_rejects_wrong_word_prefix():
         build_argv(
             "db_assert",
             {"word_id": "db_seed.create_example"},
-            tools=[DB_ASSERT_TOOL],
+            catalog=CATALOG,
         )
 
 
-def test_is_destructive_from_tool():
-    assert is_destructive("db_seed", {"word_id": "db_seed.x"}, [DB_SEED_TOOL])
-    assert not is_destructive("db_assert", {"word_id": "db_assert.x"}, [DB_ASSERT_TOOL])
-    assert is_destructive("action_words", {"word_id": "db_seed.create_invoice"}, [DB_SEED_TOOL])
+def test_is_destructive_from_word():
+    assert is_destructive("db_seed", {"word_id": "db_seed.create_example"}, catalog=CATALOG)
+    assert not is_destructive("db_assert", {"word_id": "db_assert.plane_example"}, catalog=CATALOG)
+    assert is_destructive("action_words", {"word_id": "db_seed.create_example"}, catalog=CATALOG)
     assert not is_destructive("dump_ddl", {})
 
 

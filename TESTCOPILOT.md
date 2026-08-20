@@ -19,10 +19,10 @@ Issue / Cycle 继续管缺陷和任务。**不要**因为文件在同一个仓�
 
 ## 两仓分工（不要焊成一个 monorepo）
 
-| 仓                     | 路径                                                                         | 职责                                                                                                                                                                                                                     |
-| ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **本仓（Plane fork）** | `C:\dev\repo\plane` 分支 `testcopilot/v1.4.1`                                | 配置绑定、约定扫描、UI、Job、测程 overlay、失败链到 Issue                                                                                                                                                                |
-| **测试 / 规格 git 仓** | 由配置模块的 `ProjectGitRemote` 指向（`local_mount` 或公开 HTTPS `git_url`） | 六层资产 + `packages.action_words`（BDD/pytest 组合）；Plane Job 只跑已 `@plane_app` 登记的 `python -m apps.*`（`index_platform` / `action_runner`）。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上平台 |
+| 仓                     | 路径                                                                         | 职责                                                                                                                                                                                                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **本仓（Plane fork）** | `C:\dev\repo\plane` 分支 `testcopilot/v1.4.1`                                | 配置绑定、约定扫描、UI、Job、测程 overlay、失败链到 Issue                                                                                                                                                                                                             |
+| **测试 / 规格 git 仓** | 由配置模块的 `ProjectGitRemote` 指向（`local_mount` 或公开 HTTPS `git_url`） | 六层资产 + `packages.action_words`（BDD/pytest 组合）。Plane 只展示并运行测试仓 `@plane_*` 注册项：`@plane_app` → `python -m apps.*`；`@plane_db_seed` 等 → `python -m packages.action_words run`。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上平台 |
 
 领域逻辑（SQL、造数、Gherkin）**不搬进本仓**。本仓只绑定、按约定展示、编排白名单命令。
 
@@ -47,14 +47,14 @@ Issue / Cycle 继续管缺陷和任务。**不要**因为文件在同一个仓�
 
 ## 落地节奏（本仓）
 
-| 阶段    | 内容                                                                                            |
-| ------- | ----------------------------------------------------------------------------------------------- |
-| **P0**  | `ProjectTestRepo` 绑定；sync 测试仓；总览六层计数                                               |
-| **P1**  | 可视化：feature / pytest / api_objects / action words / DDL 索引（只读）                        |
-| **P1b** | 项目成分拆分：Formulation / 环境 / TestCopilot；gitsync 分模块绑定                              |
-| **P2**  | 白名单 Job：catalog 已登记 `apps.*`（`action_runner` 按类别跑造数/API）；本地 dump_ddl 不上平台 |
-| **P3**  | behave / pytest 跑测；失败一键开 Issue                                                          |
-| **P4**  | recorder、xmind、多 Runner、webhook 自动 sync                                                   |
+| 阶段    | 内容                                                                                                                                       |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **P0**  | `ProjectTestRepo` 绑定；sync 测试仓；总览六层计数                                                                                          |
+| **P1**  | 可视化：feature / pytest / api_objects / action words / DDL 索引（只读）                                                                   |
+| **P1b** | 项目成分拆分：Formulation / 环境 / TestCopilot；gitsync 分模块绑定                                                                         |
+| **P2**  | 白名单 Job：硬编码 `index_platform`；`@plane_app` 走 `apps.*`；Formulation action words 走 `packages.action_words`；本地 dump_ddl 不上平台 |
+| **P3**  | behave / pytest 跑测；失败一键开 Issue                                                                                                     |
+| **P4**  | recorder、xmind、多 Runner、webhook 自动 sync                                                                                              |
 
 P0 fork 卫生已完成：`upstream` = makeplane/plane（push 禁用），基线 tag **v1.4.1**。
 

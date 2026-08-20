@@ -62,15 +62,36 @@ export type TTesthubCatalogPayload = {
     sql_files?: Array<{ path: string; name: string }>;
   };
   components?: {
-    api_objects?: Array<{ method: string; path: string; file: string; id?: string; name?: string }>;
-    page_objects?: Array<{ path: string; name: string }>;
     action_words?: Array<{
       word_id: string;
       name: string;
       category: string;
+      plane_kind?: string;
+      plane_runnable?: boolean;
+      destructive?: boolean;
+      timeout?: number;
+      module?: string;
+      argv?: string[];
+      argv_plan?: Array<{ key: string; kind: string; flag?: string; variadic?: boolean }>;
+      job_params_schema?: Record<string, unknown>;
       params_schema?: Record<string, unknown>;
       example_params?: Record<string, unknown>;
       doc?: string;
+    }>;
+    api_objects?: Array<{
+      method: string;
+      path: string;
+      file: string;
+      id?: string;
+      name?: string;
+      plane_kind?: string;
+      plane_runnable?: boolean;
+    }>;
+    page_objects?: Array<{
+      path: string;
+      name: string;
+      plane_kind?: string;
+      plane_runnable?: boolean;
     }>;
   };
   tools?: TTesthubTool[];
