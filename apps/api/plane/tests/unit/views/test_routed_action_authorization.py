@@ -212,7 +212,13 @@ def _other_surface_fall_throughs():
     duplicated BaseViewSet that does not have it.
     """
     from django.urls import get_resolver
-    from rest_framework.permissions import IsAuthenticated
+
+    # Imported rather than restated. An earlier version of this helper listed
+    # only `(IsAuthenticated,)` and `()` as non-authorizing, which silently
+    # treated `[AllowAny]` as a deliberate restrictive declaration — on
+    # plane.space, the one surface where AllowAny is routine. Sharing the guard's
+    # own definition keeps the two from drifting apart again.
+    from plane.app.views.base import _NON_AUTHORIZING_PERMISSIONS
 
     found = set()
 
@@ -244,7 +250,7 @@ def _other_surface_fall_throughs():
                 if action == "create" and owner(viewset, "perform_create") is not None:
                     continue
                 declared = tuple(getattr(viewset, "permission_classes", ()) or ())
-                if declared not in ((IsAuthenticated,), ()):
+                if any(permission not in _NON_AUTHORIZING_PERMISSIONS for permission in declared):
                     continue
                 found.add((viewset.__module__, viewset.__name__, verb, action))
 
@@ -310,7 +316,8 @@ def test_guard_is_actually_wired_into_request_handling():
         through on."""
 
         def partial_update(self, request, *args, **kwargs):  # pragma: no cover
-            ...
+
+            pass
 
     class Guarded(BaseViewSet):
         def update(self, request, *args, **kwargs):
@@ -346,15 +353,15 @@ def test_guard_recognises_the_patterns_it_must_not_reject():
 
     class OwnImplementation(BaseViewSet):
         def partial_update(self, request):  # pragma: no cover - never called
-            ...
+            pass
 
     class RidesCreateMixin(BaseViewSet):
         def perform_create(self, serializer):  # pragma: no cover - never called
-            ...
+            pass
 
     class TransitivelyAuthorizesPatch(BaseViewSet):
         def update(self, request):  # pragma: no cover - never called
-            ...
+            pass
 
     class HasRealPermissionClass(BaseViewSet):
         permission_classes = [object]

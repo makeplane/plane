@@ -52,12 +52,15 @@ class TimezoneMixin:
 # is authenticated but not authorized at all.
 _MIXIN_PROVIDED_ACTIONS = frozenset({"list", "retrieve", "create", "update", "partial_update", "destroy"})
 
-# Permission classes that establish identity but authorize nothing: they say
-# who is calling, never what they may touch. A viewset carrying only these has
+# Permission classes that authorize nothing: neither says anything about what
+# the caller may touch. `IsAuthenticated` only establishes that there is a
+# caller; `AllowAny` does not even do that. A viewset carrying only these has
 # delegated all of its authorization to per-method checks, so a mixin-served
-# action has none. Tested for membership rather than comparing against the
-# default, so that a weaker declaration than the default — `[AllowAny]`, or an
-# empty list — is not mistaken for a deliberate, restrictive one.
+# action has none.
+#
+# Membership-tested rather than compared against the default, so a declaration
+# that is *weaker* than the default — `[AllowAny]`, or an empty list — is not
+# mistaken for a deliberate restrictive one.
 _NON_AUTHORIZING_PERMISSIONS = frozenset({IsAuthenticated, AllowAny})
 
 
@@ -142,9 +145,11 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         return owner is not None and not owner.__module__.startswith("rest_framework")
 
     def initial(self, request, *args, **kwargs):
-        # Runs after authentication and permission checks, so an anonymous
-        # caller still gets 401 rather than having the route's existence
-        # confirmed or denied first.
+        # Deliberately after super(), which runs authentication and the
+        # permission classes. Whatever they would have rejected is still
+        # rejected first and with their own status — an unauthenticated caller
+        # gets 401 from IsAuthenticated rather than learning from a 405 that the
+        # route exists.
         super().initial(request, *args, **kwargs)
 
         if not self._resolved_action_is_authorized():
