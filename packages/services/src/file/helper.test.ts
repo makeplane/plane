@@ -34,8 +34,12 @@ describe("getFileMetaDataForUpload", () => {
   });
 
   it("does not apply fallback to an unsafe filename", async () => {
-    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-    expect((await metadata("payload.exe.yaml")).type).toBe("");
+    try {
+      expect((await metadata("payload.exe.yaml")).type).toBe("");
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 });
