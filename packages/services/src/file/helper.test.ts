@@ -14,6 +14,9 @@ const metadata = (name: string, type = "", contents: BlobPart[] = ["key: value"]
 describe("getFileMetaDataForUpload", () => {
   it.each([
     ["program.txt", "text/plain"],
+    ["program.md", "text/markdown"],
+    ["program.markdown", "text/markdown"],
+    ["program.csv", "text/csv"],
     ["program.yaml", "application/yaml"],
     ["program.yml", "application/yaml"],
   ])("detects %s without browser MIME", async (name, expected) => {
