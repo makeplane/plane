@@ -23,6 +23,10 @@ from plane.app.serializers import (
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
 from plane.utils.cache import invalidate_cache
+from plane.utils.membership_realtime import (
+    EVENT_WORKSPACE_MEMBER_REMOVED,
+    publish_membership_removed,
+)
 
 from .. import BaseViewSet
 
@@ -147,6 +151,13 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         workspace_member.is_active = False
         workspace_member.save()
+        publish_membership_removed(
+            event_type=EVENT_WORKSPACE_MEMBER_REMOVED,
+            actor_id=request.user.id,
+            user_id=workspace_member.member_id,
+            workspace_id=workspace_member.workspace_id,
+            workspace_slug=slug,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
