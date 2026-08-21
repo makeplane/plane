@@ -317,6 +317,24 @@ class TestGenericAssetExternalIdDedupDisclosure:
             payload["project_id"] = str(project_id)
         return payload
 
+    @staticmethod
+    def _assert_discloses_nothing(response, foreign_asset):
+        """The denied response must carry no identifier for the matched asset.
+
+        Asserting the keys are absent as well as the UUIDs: ``asset_url`` is
+        derived from ``entity_type``, and its workspace-level form
+        (``/api/assets/v2/static/<id>/``) carries no project id at all, so a
+        substring check on the project UUID alone would not catch every leak.
+        Absence of the field is the invariant worth pinning.
+        """
+        data = getattr(response, "data", {}) or {}
+        assert "asset_url" not in data, "the foreign asset URL was disclosed"
+        assert "asset_id" not in data, "the foreign asset id was disclosed"
+
+        body = str(data)
+        assert str(foreign_asset.id) not in body, "the foreign asset id leaked into the body"
+        assert str(foreign_asset.project_id) not in body, "the foreign project id leaked into the body"
+
     @pytest.mark.django_db
     def test_dedup_does_not_disclose_foreign_asset_identifiers(
         self, api_key_client, workspace, foreign_asset, joined_project
@@ -333,9 +351,7 @@ class TestGenericAssetExternalIdDedupDisclosure:
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        body = str(getattr(response, "data", ""))
-        assert str(foreign_asset.id) not in body, "the foreign asset id was disclosed"
-        assert str(foreign_asset.project_id) not in body, "the foreign project id was disclosed"
+        self._assert_discloses_nothing(response, foreign_asset)
 
     @pytest.mark.django_db
     def test_dedup_does_not_disclose_when_project_id_is_omitted(
@@ -351,7 +367,7 @@ class TestGenericAssetExternalIdDedupDisclosure:
         assert response.status_code == status.HTTP_404_NOT_FOUND, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
-        assert str(foreign_asset.id) not in str(getattr(response, "data", ""))
+        self._assert_discloses_nothing(response, foreign_asset)
 
     @pytest.mark.django_db
     def test_dedup_still_echoes_an_accessible_asset(
