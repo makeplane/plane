@@ -23,6 +23,7 @@ import { env } from "@/env";
 import { HocusPocusServerManager } from "@/hocuspocus";
 // redis
 import { redisManager } from "@/redis";
+import { workItemRealtimeHub } from "@/services/work-item-realtime.service";
 
 export class Server {
   private app: Express;
@@ -43,6 +44,8 @@ export class Server {
     try {
       await redisManager.initialize();
       logger.info("SERVER: Redis setup completed");
+      await workItemRealtimeHub.initialize();
+      logger.info("SERVER: Work item realtime hub initialized");
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
       logger.info("SERVER: HocusPocus setup completed");

@@ -37,6 +37,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
+import { useWorkItemRealtime } from "@/hooks/use-work-item-realtime";
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
@@ -78,6 +79,8 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     initGantt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useWorkItemRealtime(workspaceSlug, projectId);
 
   // fetching project details
   const { isLoading: isProjectDetailsLoading, error: projectDetailsError } = useSWR(

@@ -36,6 +36,7 @@ from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
+from plane.utils.work_item_realtime import publish_work_item_activity
 
 
 def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
@@ -1597,6 +1598,13 @@ def issue_activity(
                 requested_data=requested_data,
                 current_instance=current_instance,
             )
+
+        publish_work_item_activity(
+            activity_type=type,
+            project_id=project_id,
+            actor_id=actor_id,
+            issue_id=issue_id,
+        )
 
         return
     except Exception as e:

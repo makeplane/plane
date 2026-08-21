@@ -223,3 +223,13 @@ export interface IWorkItemPeekOverview {
   is_draft?: boolean;
   storeType?: EIssuesStoreType;
 }
+
+export type TWorkItemRealtimeEventType = "issue.created" | "issue.updated" | "issue.deleted";
+
+export type TWorkItemRealtimeEvent = {
+  type: TWorkItemRealtimeEventType;
+  actor_id: string;
+  project_id: string;
+  issue_id: string;
+  issue?: TIssue | null;
+};
