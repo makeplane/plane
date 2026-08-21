@@ -313,30 +313,6 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         else:
             return
 
-    def has_project_asset_access(self, request, asset):
-        """Return whether the user may access a workspace-scoped asset.
-
-        This endpoint is authorized at the WORKSPACE level, so a workspace
-        member/guest could otherwise reach an asset that belongs to a project
-        they are not a member of. For project-bound assets, require an active
-        ProjectMember of the asset's project. Workspace-level entity types
-        (WORKSPACE_LOGO, USER_AVATAR, USER_COVER) have project_id=None and are
-        always allowed.
-        """
-        if asset.project_id is None:
-            return True
-        # Scope the membership lookup to the asset's workspace as well as its
-        # project, mirroring allow_permission's PROJECT branch. This prevents a
-        # member of the same project in a different workspace from passing the
-        # check should an asset row ever be inconsistent (asset.workspace_id !=
-        # asset.project.workspace_id).
-        return ProjectMember.objects.filter(
-            member=request.user,
-            workspace_id=asset.workspace_id,
-            project_id=asset.project_id,
-            is_active=True,
-        ).exists()
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug):
         name = sanitize_filename(request.data.get("name")) or "unnamed"
@@ -419,7 +395,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         # enforce project-level access for project-bound assets
-        if not self.has_project_asset_access(request, asset):
+        if not asset.is_project_accessible_to(request.user):
             return Response(
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -446,7 +422,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def delete(self, request, slug, asset_id):
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         # enforce project-level access for project-bound assets
-        if not self.has_project_asset_access(request, asset):
+        if not asset.is_project_accessible_to(request.user):
             return Response(
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -463,7 +439,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         # enforce project-level access for project-bound assets
-        if not self.has_project_asset_access(request, asset):
+        if not asset.is_project_accessible_to(request.user):
             return Response(
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -539,6 +515,14 @@ class AssetRestoreEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
+        # Authorized at the WORKSPACE level, so without this a workspace member
+        # who is not in the asset's project could reverse a deletion performed
+        # by that project's own members.
+        if not asset.is_project_accessible_to(request.user):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
@@ -772,8 +756,12 @@ class AssetCheckEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, asset_id):
-        asset = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).exists()
-        return Response({"exists": asset}, status=status.HTTP_200_OK)
+        asset = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).first()
+        # Report existence only to callers who could otherwise reach the asset.
+        # Reporting it unconditionally makes this route an existence oracle for
+        # every project in the workspace, including ones the caller cannot see.
+        exists = asset is not None and asset.is_project_accessible_to(request.user)
+        return Response({"exists": exists}, status=status.HTTP_200_OK)
 
 
 class DuplicateAssetEndpoint(BaseAPIView):
@@ -829,6 +817,20 @@ class DuplicateAssetEndpoint(BaseAPIView):
             # check if project exists in the workspace
             if not Project.objects.filter(id=project_id, workspace=workspace).exists():
                 return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+            # project_id is the *destination* and comes from the request body.
+            # Existence in the workspace is not authorization: require the caller
+            # to be an active member of the project the copy will land in, or a
+            # workspace member could deposit assets into any project.
+            if not ProjectMember.objects.filter(
+                member=request.user,
+                workspace=workspace,
+                project_id=project_id,
+                is_active=True,
+            ).exists():
+                return Response(
+                    {"error": "You don't have access to this project."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         storage = S3Storage(request=request)
         # Restrict the source asset to the same destination workspace to prevent cross-workspace asset copying
@@ -840,6 +842,15 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         if not original_asset:
             return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # The source lookup binds the workspace but not the project, so without
+        # this a non-member could copy a project's asset into a project they do
+        # control -- a permanent copy that outlives the original being deleted.
+        if not original_asset.is_project_accessible_to(request.user):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         sanitized_name = sanitize_filename(original_asset.attributes.get("name")) or "unnamed"
         destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{sanitized_name}"
@@ -880,6 +891,16 @@ class WorkspaceAssetDownloadEndpoint(BaseAPIView):
             return Response(
                 {"error": "The requested asset could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # The workspace-level twin of ProjectAssetDownloadEndpoint, which binds
+        # project_id through level="PROJECT". Here the project is not in the URL,
+        # so it has to be enforced against the asset itself -- otherwise the
+        # presigned URL hands the file to a non-member of its project.
+        if not asset.is_project_accessible_to(request.user):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         storage = S3Storage(request=request)

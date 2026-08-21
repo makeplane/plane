@@ -14,6 +14,7 @@ from django.db import models
 from plane.utils.path_validator import sanitize_filename
 
 from .base import BaseModel
+from .project import ProjectMember
 
 
 def get_upload_path(instance, filename):
@@ -101,3 +102,38 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 
         return None
+
+    def is_project_accessible_to(self, user):
+        """Return whether ``user`` clears the project dimension of access to this asset.
+
+        This is the project-membership half of asset authorization and nothing
+        more. Callers are still responsible for establishing that ``user`` may
+        act in this asset's workspace at all -- typically the endpoint's
+        permission class or ``allow_permission(..., level="WORKSPACE")``.
+
+        It exists as a model method rather than a view helper because the
+        workspace-level asset routes are spread across several unrelated
+        ``BaseAPIView`` subclasses in both the app and the external API, and a
+        helper bound to one of those classes is unreachable from the others.
+        That is precisely how the earlier project-scoping fix came to cover
+        three handlers and miss the rest: a route added later has no way to
+        inherit the rule. Keeping it on the model means every surface that can
+        load a ``FileAsset`` can also ask the question.
+
+        Assets with no project (workspace logos, user avatars and covers) carry
+        ``project_id=None`` and are workspace-level by definition, so they clear
+        this check; workspace authorization is the only gate that applies.
+        """
+        if self.project_id is None:
+            return True
+        # Scope the membership lookup to this asset's workspace as well as its
+        # project. A project id alone would let a member of a same-id project in
+        # a different workspace pass, should a row ever be inconsistent
+        # (workspace_id != project.workspace_id) -- a state the external API's
+        # create path could previously produce.
+        return ProjectMember.objects.filter(
+            member=user,
+            workspace_id=self.workspace_id,
+            project_id=self.project_id,
+            is_active=True,
+        ).exists()
