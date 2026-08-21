@@ -587,6 +587,28 @@ class GenericAssetEndpoint(BaseAPIView):
             ).first()
 
             if existing_asset:
+                # The dedup lookup is scoped to the workspace only -- and when the
+                # body omits project_id the validation above is skipped entirely --
+                # so the match may belong to a project the caller cannot see.
+                # Echoing it would hand over that asset's id, and asset_url
+                # additionally embeds the owning project and issue ids. Knowing the
+                # asset UUID is the precondition for every asset-scoped attack on
+                # this surface, so this branch must not supply it.
+                #
+                # 404 rather than 403 on purpose: a 403 would still confirm that
+                # some asset carries this external id pair in this workspace, which
+                # turns the pair into an existence oracle. The elsewhere-consistent
+                # 403 is fine on routes where the caller already named the asset id;
+                # here they named only an external id, so a match is new
+                # information. The cost is that a caller who guesses a pair held by
+                # a project they cannot see cannot create their own asset under it,
+                # which is the right trade -- real integrations mint ids per source
+                # and run as a member of the target project.
+                if not existing_asset.is_project_accessible_to(request.user):
+                    return Response(
+                        {"error": "Asset not found.", "status": False},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
                 return Response(
                     {
                         "message": "Asset with same external id and source already exists",

@@ -295,3 +295,94 @@ class TestGenericAssetPostProjectScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         assert FileAsset.objects.count() == before + 1
+
+
+@pytest.mark.contract
+class TestGenericAssetExternalIdDedupDisclosure:
+    """The 409 dedup echo must not hand out a foreign project's asset identifiers.
+
+    The dedup lookup matches on workspace + external_source + external_id, with no
+    project scoping, and the 409 body carries ``asset_id`` and ``asset_url``. That
+    url embeds the owning project and issue ids for an attachment. Since knowing
+    the asset UUID is the precondition for every asset-scoped attack on this
+    surface, echoing a match the caller cannot access supplies exactly what the
+    other guards in this module exist to make useless.
+    """
+
+    EXTERNAL = {"external_id": "EXT-1", "external_source": "jira"}
+
+    def _payload(self, project_id=None):
+        payload = {"name": "dedup.png", "type": "image/png", "size": 16, **self.EXTERNAL}
+        if project_id is not None:
+            payload["project_id"] = str(project_id)
+        return payload
+
+    @pytest.mark.django_db
+    def test_dedup_does_not_disclose_foreign_asset_identifiers(
+        self, api_key_client, workspace, foreign_asset, joined_project
+    ):
+        """404, not 403: a 403 would still confirm the external id pair is taken."""
+        foreign_asset.external_id = self.EXTERNAL["external_id"]
+        foreign_asset.external_source = self.EXTERNAL["external_source"]
+        foreign_asset.save(update_fields=["external_id", "external_source"])
+
+        response = api_key_client.post(
+            asset_list_url(workspace.slug), self._payload(joined_project.id), format="json"
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        body = str(getattr(response, "data", ""))
+        assert str(foreign_asset.id) not in body, "the foreign asset id was disclosed"
+        assert str(foreign_asset.project_id) not in body, "the foreign project id was disclosed"
+
+    @pytest.mark.django_db
+    def test_dedup_does_not_disclose_when_project_id_is_omitted(
+        self, api_key_client, workspace, foreign_asset
+    ):
+        """Omitting project_id skips the create-path validation, so this branch is the only gate."""
+        foreign_asset.external_id = self.EXTERNAL["external_id"]
+        foreign_asset.external_source = self.EXTERNAL["external_source"]
+        foreign_asset.save(update_fields=["external_id", "external_source"])
+
+        response = api_key_client.post(asset_list_url(workspace.slug), self._payload(), format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert str(foreign_asset.id) not in str(getattr(response, "data", ""))
+
+    @pytest.mark.django_db
+    def test_dedup_still_echoes_an_accessible_asset(
+        self, api_key_client, workspace, joined_asset, joined_project
+    ):
+        """Dedup must keep working for a caller who is a member of the match's project."""
+        joined_asset.external_id = self.EXTERNAL["external_id"]
+        joined_asset.external_source = self.EXTERNAL["external_source"]
+        joined_asset.save(update_fields=["external_id", "external_source"])
+
+        response = api_key_client.post(
+            asset_list_url(workspace.slug), self._payload(joined_project.id), format="json"
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert response.data["asset_id"] == str(joined_asset.id)
+
+    @pytest.mark.django_db
+    def test_dedup_still_echoes_a_workspace_level_asset(
+        self, api_key_client, workspace, workspace_level_asset
+    ):
+        """project_id is NULL, so there is no project dimension to gate on."""
+        workspace_level_asset.external_id = self.EXTERNAL["external_id"]
+        workspace_level_asset.external_source = self.EXTERNAL["external_source"]
+        workspace_level_asset.save(update_fields=["external_id", "external_source"])
+
+        response = api_key_client.post(asset_list_url(workspace.slug), self._payload(), format="json")
+
+        assert response.status_code == status.HTTP_409_CONFLICT, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert response.data["asset_id"] == str(workspace_level_asset.id)
