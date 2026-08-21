@@ -2023,10 +2023,9 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
         List all attachments for an issue.
         """
-        # This endpoint has no permission_classes beyond IsAuthenticated, and API
-        # tokens authenticate globally (not workspace-scoped), so enforce project
-        # membership on the issue the same way post() does — otherwise any token
-        # holder could read any issue's attachment metadata cross-tenant.
+        # Bare IsAuthenticated here, and API tokens authenticate globally rather
+        # than per workspace, so enforce project membership as post() does --
+        # otherwise any token holder reads any issue's attachment metadata.
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         if not user_has_issue_permission(
             request.user.id,
@@ -2077,20 +2076,34 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity and triggers metadata cleanup.
         """
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the request user is creator or admin then delete the attachment
-        if not user_has_issue_permission(
+
+        # Bind the asset to the URL work item and to the attachment entity type,
+        # matching the sibling list handler. Resolved before authorizing, so the
+        # check below applies to the object actually being acted on.
+        issue_attachment = FileAsset.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        )
+
+        # Admin or the uploader, as the app surface allows. allow_creator is off
+        # because it compares against the work item's author, not this file's
+        # uploader, so the ownership test is done explicitly below.
+        is_project_admin = user_has_issue_permission(
             request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
+            allowed_roles=[ROLE.ADMIN.value],
+            allow_creator=False,
+        )
+        if not (is_project_admin or issue_attachment.created_by_id == request.user.id):
             return Response(
                 {"error": "You are not allowed to delete this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
         issue_attachment.save()
@@ -2163,8 +2176,16 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Get the asset
-        asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        # Bind to the URL work item and entity type: scoped to the project alone,
+        # this route issued a presigned URL for any asset in it, page and comment
+        # images included.
+        asset = FileAsset.objects.get(
+            id=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        )
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -2228,7 +2249,14 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+        # Bound as in the delete and retrieve handlers above.
+        issue_attachment = FileAsset.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        )
         serializer = IssueAttachmentSerializer(issue_attachment)
 
         # Send this activity only if the attachment is not uploaded before
@@ -2245,9 +2273,10 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 origin=base_host(request=request, is_app=True),
             )
 
-            # Update the attachment
+            # created_by is deliberately not reassigned: confirming an upload is
+            # not authorship, and rewriting it would hand the caller the
+            # creator-based delete right on someone else's attachment.
             issue_attachment.is_uploaded = True
-            issue_attachment.created_by = request.user
 
         # Get the storage metadata
         if not issue_attachment.storage_metadata:
