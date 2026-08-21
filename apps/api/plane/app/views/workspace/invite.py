@@ -206,6 +206,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     ).first()
                     if workspace_member is not None:
                         workspace_member.is_active = True
+                        workspace_member.access_revoked = False
                         workspace_member.role = workspace_invite.role
                         workspace_member.save()
                     else:
@@ -214,6 +215,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                             workspace=workspace_invite.workspace,
                             member=user,
                             role=workspace_invite.role,
+                            access_revoked=False,
                         )
 
                     # Set the user last_workspace_id to the accepted workspace
@@ -287,7 +289,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             )
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
-                is_active=True, role=invitation.role
+                is_active=True, role=invitation.role, access_revoked=False
             )
 
             # Track event
