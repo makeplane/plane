@@ -49,7 +49,17 @@ def actor_without_avatar(db):
     return user
 
 
-def _render(issue, actor, receiver):
+# The guard was applied at three call sites, each reached by a different field:
+# "comment" and "mention" append to the comments block, anything else falls through
+# to the activity-change block. Exercising only one would leave two guards untested.
+ACTOR_DETAIL_PATHS = [
+    pytest.param("comment", "Who is working on this?", id="comment"),
+    pytest.param("mention", "<p>pinging you on this</p>", id="mention"),
+    pytest.param("name", "Renamed work item", id="activity-change"),
+]
+
+
+def _render(issue, actor, receiver, field="comment", new_value="Who is working on this?"):
     """Run the task with its external edges mocked, returning the HTML it built."""
     log = EmailNotificationLog.objects.create(
         entity_identifier=issue.id,
@@ -65,9 +75,9 @@ def _render(issue, actor, receiver):
         str(actor.id): [
             {
                 "issue_activity": {
-                    "field": "comment",
+                    "field": field,
                     "old_value": "",
-                    "new_value": "Who is working on this?",
+                    "new_value": new_value,
                     "activity_time": "2026-08-20T10:43:11",
                 }
             }
@@ -111,9 +121,10 @@ def _render(issue, actor, receiver):
 
 @pytest.mark.contract
 @pytest.mark.django_db
-def test_actor_without_avatar_does_not_get_a_broken_image(issue, actor_without_avatar, create_user):
-    """No ``<base>/None`` image src anywhere in the mail."""
-    html = _render(issue, actor_without_avatar, create_user)
+@pytest.mark.parametrize("field,new_value", ACTOR_DETAIL_PATHS)
+def test_actor_without_avatar_does_not_get_a_broken_image(issue, actor_without_avatar, create_user, field, new_value):
+    """No ``<base>/None`` image src anywhere in the mail, on any path."""
+    html = _render(issue, actor_without_avatar, create_user, field=field, new_value=new_value)
 
     assert html, "the task should have rendered and attached an HTML body"
     assert f"{BASE_API}/None" not in html
@@ -124,21 +135,23 @@ def test_actor_without_avatar_does_not_get_a_broken_image(issue, actor_without_a
 
 @pytest.mark.contract
 @pytest.mark.django_db
-def test_actor_without_avatar_falls_back_to_initials(issue, actor_without_avatar, create_user):
-    """The template's initials branch must actually be taken."""
-    html = _render(issue, actor_without_avatar, create_user)
+@pytest.mark.parametrize("field,new_value", ACTOR_DETAIL_PATHS)
+def test_actor_without_avatar_falls_back_to_initials(issue, actor_without_avatar, create_user, field, new_value):
+    """The template's initials branch must actually be taken, on any path."""
+    html = _render(issue, actor_without_avatar, create_user, field=field, new_value=new_value)
 
     # The initials circle renders the actor's first initial; "J" for Josh.
-    assert ">\n                        J\n" in html or ">J<" in html.replace(" ", "").replace("\n", "")
+    assert ">J<" in html.replace(" ", "").replace("\n", "")
 
 
 @pytest.mark.contract
 @pytest.mark.django_db
-def test_actor_with_avatar_still_gets_the_image(issue, actor_without_avatar, create_user):
-    """The guard must not suppress real avatars."""
+@pytest.mark.parametrize("field,new_value", ACTOR_DETAIL_PATHS)
+def test_actor_with_avatar_still_gets_the_image(issue, actor_without_avatar, create_user, field, new_value):
+    """The guard must not suppress real avatars, on any path."""
     actor_without_avatar.avatar = "/uploads/avatar.png"
     actor_without_avatar.save(update_fields=["avatar"])
 
-    html = _render(issue, actor_without_avatar, create_user)
+    html = _render(issue, actor_without_avatar, create_user, field=field, new_value=new_value)
 
     assert f"{BASE_API}/uploads/avatar.png" in html
