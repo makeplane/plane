@@ -19,9 +19,11 @@ EXPECTED_ORIGIN = ("http", "testserver")
 STRONG_PASSWORD = "correct-horse-battery-staple-9x"
 WEAK_PASSWORD = "password"
 
-# Where each endpoint sends a rejected reset, and where it sends a successful one
-SPACE_ERROR_PATH = "/spaces/accounts/reset-password"
-SPACE_SUCCESS_PATH = "/spaces"
+# Where each endpoint sends a rejected reset, and where it sends a successful one.
+# The trailing slashes differ because the space endpoint builds its redirects
+# with f-strings and the app endpoint with urljoin() - compared as emitted.
+SPACE_ERROR_PATH = "/spaces/accounts/reset-password/"
+SPACE_SUCCESS_PATH = "/spaces/"
 APP_ERROR_PATH = "/accounts/reset-password"
 APP_SUCCESS_PATH = "/sign-in"
 
@@ -87,7 +89,7 @@ def _assert_redirect(response, expected_path, expected_query):
     assert response.status_code == 302
     location = urlparse(response["Location"])
     assert (location.scheme, location.netloc) == EXPECTED_ORIGIN
-    assert location.path.replace("/spaces//", "/spaces/", 1).rstrip("/") == expected_path
+    assert location.path.replace("/spaces//", "/spaces/", 1) == expected_path
     assert parse_qs(location.query, keep_blank_values=True) == expected_query
 
 
