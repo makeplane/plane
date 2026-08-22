@@ -114,43 +114,6 @@ class ResetPasswordSpaceEndpoint(View):
             # Decode the id from the uidb64
             id = smart_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=id)
-
-            # check if the token is valid for the user
-            if not PasswordResetTokenGenerator().check_token(user, token):
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
-                    error_message="INVALID_PASSWORD_TOKEN",
-                )
-                params = exc.get_error_dict()
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
-                return HttpResponseRedirect(url)
-
-            password = request.POST.get("password", False)
-
-            if not password:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
-                )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
-                return HttpResponseRedirect(url)
-
-            # Check the password complexity
-            results = zxcvbn(password)
-            if results["score"] < 3:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
-                    error_message="PASSWORD_TOO_WEAK",
-                )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
-                return HttpResponseRedirect(url)
-
-            # set_password also hashes the password that the user will get
-            user.set_password(password)
-            user.is_password_autoset = False
-            user.save()
-
-            return HttpResponseRedirect(base_host(request=request, is_space=True))
         except DjangoUnicodeDecodeError:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_PASSWORD_TOKEN"],
@@ -158,3 +121,48 @@ class ResetPasswordSpaceEndpoint(View):
             )
             url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
             return HttpResponseRedirect(url)
+        except (ValueError, ValidationError, User.DoesNotExist):
+            # Malformed base64, a non-UUID id or an id that matches no user
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
+                error_message="INVALID_PASSWORD_TOKEN",
+            )
+            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+            return HttpResponseRedirect(url)
+
+        # check if the token is valid for the user
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
+                error_message="INVALID_PASSWORD_TOKEN",
+            )
+            params = exc.get_error_dict()
+            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
+            return HttpResponseRedirect(url)
+
+        password = request.POST.get("password", False)
+
+        if not password:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+                error_message="INVALID_PASSWORD",
+            )
+            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+            return HttpResponseRedirect(url)
+
+        # Check the password complexity
+        results = zxcvbn(password)
+        if results["score"] < 3:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
+            )
+            url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"  # noqa: E501
+            return HttpResponseRedirect(url)
+
+        # set_password also hashes the password that the user will get
+        user.set_password(password)
+        user.is_password_autoset = False
+        user.save()
+
+        return HttpResponseRedirect(base_host(request=request, is_space=True))
