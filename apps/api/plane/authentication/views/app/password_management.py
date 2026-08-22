@@ -98,6 +98,11 @@ class ForgotPasswordEndpoint(APIView):
 
 class ResetPasswordEndpoint(View):
     def post(self, request, uidb64, token):
+        """Set a new password for the user encoded in uidb64.
+
+        Always redirects: to sign-in on success, back to the reset-password page with an error code when the
+        link or the submitted password is rejected.
+        """
         try:
             # Decode the id from the uidb64
             id = smart_str(urlsafe_base64_decode(uidb64))
