@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import uuid
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -13,7 +14,16 @@ from django.utils.http import urlsafe_base64_encode
 from plane.authentication.adapter.error import AUTHENTICATION_ERROR_CODES
 from plane.db.models import User
 
+EXPECTED_ORIGIN = ("http", "testserver")
+
 STRONG_PASSWORD = "correct-horse-battery-staple-9x"
+WEAK_PASSWORD = "password"
+
+# Where each endpoint sends a rejected reset, and where it sends a successful one
+SPACE_ERROR_PATH = "/spaces/accounts/reset-password"
+SPACE_SUCCESS_PATH = "/spaces"
+APP_ERROR_PATH = "/accounts/reset-password"
+APP_SUCCESS_PATH = "/sign-in"
 
 
 @pytest.fixture(autouse=True)
@@ -22,6 +32,7 @@ def _pin_web_url(settings):
     settings.WEB_URL = "http://testserver"
     settings.SPACE_BASE_URL = None
     settings.APP_BASE_URL = None
+    settings.SPACE_BASE_PATH = "/spaces/"
 
 
 @pytest.fixture
@@ -59,6 +70,34 @@ def _app_url(uidb64, token):
     return f"/auth/reset-password/{uidb64}/{token}/"
 
 
+def _error_query(error_code_key):
+    """Return the query string both endpoints attach to a rejected reset"""
+    return {"error_code": [str(AUTHENTICATION_ERROR_CODES[error_code_key])], "error_message": [error_code_key]}
+
+
+def _assert_redirect(response, expected_path, expected_query):
+    """Assert the response redirects to expected_path on the pinned origin, carrying exactly expected_query.
+
+    Only the doubled slash after the space base path is normalized: base_host()
+    already ends in a slash, so the space endpoint emits
+    "/spaces//accounts/reset-password/". That quirk predates these tests and is
+    not what they pin - but every other path is compared as emitted, so the same
+    defect appearing anywhere else does fail.
+    """
+    assert response.status_code == 302
+    location = urlparse(response["Location"])
+    assert (location.scheme, location.netloc) == EXPECTED_ORIGIN
+    assert location.path.replace("/spaces//", "/spaces/", 1).rstrip("/") == expected_path
+    assert parse_qs(location.query, keep_blank_values=True) == expected_query
+
+
+def _assert_credentials_untouched(user, password_hash):
+    """Assert a rejected reset left the stored hash and the autoset flag alone"""
+    user.refresh_from_db()
+    assert user.password == password_hash
+    assert user.is_password_autoset is True
+
+
 @pytest.mark.contract
 class TestResetPasswordSpaceEndpoint:
     """The space reset-password endpoint must redirect - never 500 - on a bad uidb64"""
@@ -66,83 +105,83 @@ class TestResetPasswordSpaceEndpoint:
     @pytest.mark.django_db
     def test_unknown_user_id_redirects(self, django_client, reset_user):
         """A well formed uidb64 for a user that does not exist redirects with INVALID_PASSWORD_TOKEN"""
+        password_hash = reset_user.password
         uidb64 = _encode(uuid.uuid4())
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_space_url(uidb64, token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_non_uuid_id_redirects(self, django_client, reset_user):
         """A uidb64 that decodes to something that is not a UUID redirects instead of raising ValidationError"""
+        password_hash = reset_user.password
         uidb64 = _encode("not-a-uuid")
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_space_url(uidb64, token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_malformed_base64_redirects(self, django_client, reset_user):
         """A uidb64 that is not decodable base64 redirects instead of raising ValueError"""
+        password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_space_url("a", token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_undecodable_uidb64_redirects(self, django_client, reset_user):
         """A uidb64 that decodes to invalid utf-8 keeps the EXPIRED_PASSWORD_TOKEN response"""
+        password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_space_url("not", token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['EXPIRED_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("EXPIRED_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_missing_password_redirects(self, django_client, reset_user):
         """A valid link without a password is still rejected with INVALID_PASSWORD"""
+        password_hash = reset_user.password
         uidb64 = _encode(reset_user.id)
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_space_url(uidb64, token), {})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD']}" in response["Location"]
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_invalid_token_redirects(self, django_client, reset_user):
         """An existing user with a token that does not belong to them is still rejected"""
+        password_hash = reset_user.password
         uidb64 = _encode(reset_user.id)
 
         response = django_client.post(_space_url(uidb64, "invalid-token"), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert "accounts/reset-password" in response["Location"]
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
-        reset_user.refresh_from_db()
-        assert not reset_user.check_password(STRONG_PASSWORD)
-        assert reset_user.is_password_autoset is True
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_weak_password_redirects(self, django_client, reset_user):
         """A valid link with a weak password does not change the password"""
+        password_hash = reset_user.password
         uidb64 = _encode(reset_user.id)
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
-        response = django_client.post(_space_url(uidb64, token), {"password": "password"})
+        response = django_client.post(_space_url(uidb64, token), {"password": WEAK_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['PASSWORD_TOO_WEAK']}" in response["Location"]
-        reset_user.refresh_from_db()
-        assert not reset_user.check_password("password")
-        assert reset_user.is_password_autoset is True
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("PASSWORD_TOO_WEAK"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_valid_link_resets_password(self, django_client, reset_user):
@@ -152,11 +191,25 @@ class TestResetPasswordSpaceEndpoint:
 
         response = django_client.post(_space_url(uidb64, token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert "error_code" not in response["Location"]
+        _assert_redirect(response, SPACE_SUCCESS_PATH, {})
         reset_user.refresh_from_db()
         assert reset_user.check_password(STRONG_PASSWORD)
         assert reset_user.is_password_autoset is False
+
+    @pytest.mark.django_db
+    def test_token_cannot_be_replayed(self, django_client, reset_user):
+        """A token stops working once it has been spent - it is hashed over the stored password"""
+        uidb64 = _encode(reset_user.id)
+        token = PasswordResetTokenGenerator().make_token(reset_user)
+        django_client.post(_space_url(uidb64, token), {"password": STRONG_PASSWORD})
+        reset_user.refresh_from_db()
+        password_hash = reset_user.password
+
+        response = django_client.post(_space_url(uidb64, token), {"password": "another-correct-horse-99x"})
+
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        reset_user.refresh_from_db()
+        assert reset_user.password == password_hash
 
 
 @pytest.mark.contract
@@ -166,44 +219,83 @@ class TestResetPasswordAppEndpoint:
     @pytest.mark.django_db
     def test_non_uuid_id_redirects(self, django_client, reset_user):
         """A uidb64 that decodes to something that is not a UUID redirects instead of raising ValidationError"""
+        password_hash = reset_user.password
         uidb64 = _encode("not-a-uuid")
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_app_url(uidb64, token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_unknown_user_id_redirects(self, django_client, reset_user):
         """A well formed uidb64 for a user that does not exist redirects with INVALID_PASSWORD_TOKEN"""
+        password_hash = reset_user.password
         uidb64 = _encode(uuid.uuid4())
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_app_url(uidb64, token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_malformed_base64_redirects(self, django_client, reset_user):
         """A uidb64 that is not decodable base64 redirects instead of raising ValueError"""
+        password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_app_url("a", token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_undecodable_uidb64_redirects(self, django_client, reset_user):
         """A uidb64 that decodes to invalid utf-8 keeps the EXPIRED_PASSWORD_TOKEN response"""
+        password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
         response = django_client.post(_app_url("not", token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['EXPIRED_PASSWORD_TOKEN']}" in response["Location"]
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("EXPIRED_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
+
+    @pytest.mark.django_db
+    def test_invalid_token_redirects(self, django_client, reset_user):
+        """An existing user with a token that does not belong to them is still rejected"""
+        password_hash = reset_user.password
+        uidb64 = _encode(reset_user.id)
+
+        response = django_client.post(_app_url(uidb64, "invalid-token"), {"password": STRONG_PASSWORD})
+
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        _assert_credentials_untouched(reset_user, password_hash)
+
+    @pytest.mark.django_db
+    def test_missing_password_redirects(self, django_client, reset_user):
+        """A valid link without a password is still rejected with INVALID_PASSWORD"""
+        password_hash = reset_user.password
+        uidb64 = _encode(reset_user.id)
+        token = PasswordResetTokenGenerator().make_token(reset_user)
+
+        response = django_client.post(_app_url(uidb64, token), {})
+
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD"))
+        _assert_credentials_untouched(reset_user, password_hash)
+
+    @pytest.mark.django_db
+    def test_weak_password_redirects(self, django_client, reset_user):
+        """A valid link with a weak password does not change the password"""
+        password_hash = reset_user.password
+        uidb64 = _encode(reset_user.id)
+        token = PasswordResetTokenGenerator().make_token(reset_user)
+
+        response = django_client.post(_app_url(uidb64, token), {"password": WEAK_PASSWORD})
+
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("PASSWORD_TOO_WEAK"))
+        _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_valid_link_resets_password(self, django_client, reset_user):
@@ -213,47 +305,22 @@ class TestResetPasswordAppEndpoint:
 
         response = django_client.post(_app_url(uidb64, token), {"password": STRONG_PASSWORD})
 
-        assert response.status_code == 302
-        assert "sign-in?success=True" in response["Location"]
+        _assert_redirect(response, APP_SUCCESS_PATH, {"success": ["True"]})
         reset_user.refresh_from_db()
         assert reset_user.check_password(STRONG_PASSWORD)
         assert reset_user.is_password_autoset is False
 
     @pytest.mark.django_db
-    def test_invalid_token_redirects(self, django_client, reset_user):
-        """An existing user with a token that does not belong to them is still rejected"""
-        uidb64 = _encode(reset_user.id)
-
-        response = django_client.post(_app_url(uidb64, "invalid-token"), {"password": STRONG_PASSWORD})
-
-        assert response.status_code == 302
-        assert "accounts/reset-password" in response["Location"]
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
-        reset_user.refresh_from_db()
-        assert not reset_user.check_password(STRONG_PASSWORD)
-        assert reset_user.is_password_autoset is True
-
-    @pytest.mark.django_db
-    def test_missing_password_redirects(self, django_client, reset_user):
-        """A valid link without a password is still rejected with INVALID_PASSWORD"""
+    def test_token_cannot_be_replayed(self, django_client, reset_user):
+        """A token stops working once it has been spent - it is hashed over the stored password"""
         uidb64 = _encode(reset_user.id)
         token = PasswordResetTokenGenerator().make_token(reset_user)
-
-        response = django_client.post(_app_url(uidb64, token), {})
-
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD']}" in response["Location"]
-
-    @pytest.mark.django_db
-    def test_weak_password_redirects(self, django_client, reset_user):
-        """A valid link with a weak password does not change the password"""
-        uidb64 = _encode(reset_user.id)
-        token = PasswordResetTokenGenerator().make_token(reset_user)
-
-        response = django_client.post(_app_url(uidb64, token), {"password": "password"})
-
-        assert response.status_code == 302
-        assert f"error_code={AUTHENTICATION_ERROR_CODES['PASSWORD_TOO_WEAK']}" in response["Location"]
+        django_client.post(_app_url(uidb64, token), {"password": STRONG_PASSWORD})
         reset_user.refresh_from_db()
-        assert not reset_user.check_password("password")
-        assert reset_user.is_password_autoset is True
+        password_hash = reset_user.password
+
+        response = django_client.post(_app_url(uidb64, token), {"password": "another-correct-horse-99x"})
+
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
+        reset_user.refresh_from_db()
+        assert reset_user.password == password_hash
