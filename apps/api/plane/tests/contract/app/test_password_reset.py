@@ -40,16 +40,22 @@ def reset_user(db):
 
 
 def _encode(value):
+    """Encode a user id the way generate_password_token() does"""
     return urlsafe_base64_encode(smart_bytes(value))
 
 
-# The reset-password patterns share their url names with the forgot-password
-# ones, so reverse() resolves to the wrong view - build the paths by hand.
 def _space_url(uidb64, token):
+    """Build the space reset-password path.
+
+    Three patterns share name="forgot-password" and two share
+    name="space-forgot-password", so reverse() picks between them by argument
+    count alone. Hardcoding the paths pins the URL contract these tests assert.
+    """
     return f"/auth/spaces/reset-password/{uidb64}/{token}/"
 
 
 def _app_url(uidb64, token):
+    """Build the app reset-password path - see _space_url for why reverse() is not used"""
     return f"/auth/reset-password/{uidb64}/{token}/"
 
 
@@ -118,9 +124,11 @@ class TestResetPasswordSpaceEndpoint:
         response = django_client.post(_space_url(uidb64, "invalid-token"), {"password": STRONG_PASSWORD})
 
         assert response.status_code == 302
+        assert "accounts/reset-password" in response["Location"]
         assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
         reset_user.refresh_from_db()
         assert not reset_user.check_password(STRONG_PASSWORD)
+        assert reset_user.is_password_autoset is True
 
     @pytest.mark.django_db
     def test_weak_password_redirects(self, django_client, reset_user):
@@ -134,6 +142,7 @@ class TestResetPasswordSpaceEndpoint:
         assert f"error_code={AUTHENTICATION_ERROR_CODES['PASSWORD_TOO_WEAK']}" in response["Location"]
         reset_user.refresh_from_db()
         assert not reset_user.check_password("password")
+        assert reset_user.is_password_autoset is True
 
     @pytest.mark.django_db
     def test_valid_link_resets_password(self, django_client, reset_user):
@@ -209,3 +218,42 @@ class TestResetPasswordAppEndpoint:
         reset_user.refresh_from_db()
         assert reset_user.check_password(STRONG_PASSWORD)
         assert reset_user.is_password_autoset is False
+
+    @pytest.mark.django_db
+    def test_invalid_token_redirects(self, django_client, reset_user):
+        """An existing user with a token that does not belong to them is still rejected"""
+        uidb64 = _encode(reset_user.id)
+
+        response = django_client.post(_app_url(uidb64, "invalid-token"), {"password": STRONG_PASSWORD})
+
+        assert response.status_code == 302
+        assert "accounts/reset-password" in response["Location"]
+        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD_TOKEN']}" in response["Location"]
+        reset_user.refresh_from_db()
+        assert not reset_user.check_password(STRONG_PASSWORD)
+        assert reset_user.is_password_autoset is True
+
+    @pytest.mark.django_db
+    def test_missing_password_redirects(self, django_client, reset_user):
+        """A valid link without a password is still rejected with INVALID_PASSWORD"""
+        uidb64 = _encode(reset_user.id)
+        token = PasswordResetTokenGenerator().make_token(reset_user)
+
+        response = django_client.post(_app_url(uidb64, token), {})
+
+        assert response.status_code == 302
+        assert f"error_code={AUTHENTICATION_ERROR_CODES['INVALID_PASSWORD']}" in response["Location"]
+
+    @pytest.mark.django_db
+    def test_weak_password_redirects(self, django_client, reset_user):
+        """A valid link with a weak password does not change the password"""
+        uidb64 = _encode(reset_user.id)
+        token = PasswordResetTokenGenerator().make_token(reset_user)
+
+        response = django_client.post(_app_url(uidb64, token), {"password": "password"})
+
+        assert response.status_code == 302
+        assert f"error_code={AUTHENTICATION_ERROR_CODES['PASSWORD_TOO_WEAK']}" in response["Location"]
+        reset_user.refresh_from_db()
+        assert not reset_user.check_password("password")
+        assert reset_user.is_password_autoset is True
