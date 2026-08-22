@@ -78,8 +78,8 @@ export const validatePersonName = (name: string): boolean | string => {
     return "Name must be 50 characters or less";
   }
 
-  if (hasInjectionRiskChars(name)) {
-    return "Names cannot contain special characters like < > ' \" { } [ ] * ^ ! # %";
+  if (hasInjectionRiskChars(name, { allowApostrophe: true })) {
+    return 'Names cannot contain special characters like < > " { } [ ] * ^ ! # %';
   }
 
   if (!PERSON_NAME_REGEX.test(name)) {
@@ -219,12 +219,14 @@ export const validateSlug = (slug: string): boolean | string => {
 /**
  * @description Checks if a string contains any injection-risk characters
  * @param {string} input - String to check
+ * @param {boolean} [options.allowApostrophe=false] - Whether to allow apostrophes (e.g. for person names)
  * @returns {boolean} true if injection-risk characters found
  * @example
  * hasInjectionRiskChars("Hello World") // returns false
  * hasInjectionRiskChars("Hello<script>") // returns true
+ * hasInjectionRiskChars("O'Brien", { allowApostrophe: true }) // returns false
  */
-export const hasInjectionRiskChars = (input: string): boolean => {
-  const injectionRiskPattern = /[<>'"{}[\]*^!#%]/;
+export const hasInjectionRiskChars = (input: string, options?: { allowApostrophe?: boolean }): boolean => {
+  const injectionRiskPattern = options?.allowApostrophe ? /[<>"{}*^!#%[\]]/ : /[<>'"{}[\]*^!#%]/;
   return injectionRiskPattern.test(input);
 };
