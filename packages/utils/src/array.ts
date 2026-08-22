@@ -19,8 +19,8 @@ import type { IIssueLabel, IIssueLabelTree } from "@plane/types";
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
   return array.reduce((result, currentValue) => {
-    const key = innerKey.reduce((obj, i) => obj?.[i], currentValue) ?? "None"; // get the value of the inner key
-    (result[key] = result[key] || []).push(currentValue);
+    const groupKey = innerKey.reduce((obj, i) => obj?.[i], currentValue) ?? "None"; // get the value of the inner key
+    (result[groupKey] = result[groupKey] || []).push(currentValue);
     return result;
   }, {});
 };
@@ -36,27 +36,40 @@ export const groupBy = (array: any[], key: string) => {
  * orderArrayBy(array, 'value', 'ascending') // returns [{value: 1}, {value: 2}, {value: 3}]
  */
 export const orderArrayBy = (orgArray: any[], key: string, ordering: "ascending" | "descending" = "ascending") => {
-  if (!orgArray || !Array.isArray(orgArray) || orgArray.length === 0) return [];
+  if (!orgArray || !Array.isArray(orgArray) || orgArray.length === 0 || !key) return [];
 
   const array = [...orgArray];
 
-  if (key[0] === "-") {
+  if (key.startsWith("-")) {
     ordering = "descending";
     key = key.slice(1);
   }
 
-  const innerKey = key.split("."); // split the key by dot
+  const innerKey = key.split(".");
+  const isAscending = ordering === "ascending";
 
-  return array.sort((a, b) => {
-    const keyA = innerKey.reduce((obj, i) => obj[i], a); // get the value of the inner key
-    const keyB = innerKey.reduce((obj, i) => obj[i], b); // get the value of the inner key
-    if (keyA < keyB) {
-      return ordering === "ascending" ? -1 : 1;
+  return array.toSorted((a, b) => {
+    //safe traversal with optional chaining
+    const keyA = innerKey.reduce((obj, i) => (obj != null ? obj[i] : undefined), a);
+    const keyB = innerKey.reduce((obj, i) => (obj != null ? obj[i] : undefined), b);
+
+    //both equal or both null/undefined
+    if (keyA === keyB) return 0;
+    // null/undefined at the end
+    if (keyA == null) return 1;
+    if (keyB == null) return -1;
+
+    //  Type-safe comparison
+    let comparison = 0;
+    if (typeof keyA === "number" && typeof keyB === "number") {
+      comparison = keyA - keyB;
+    } else if (typeof keyA === "string" && typeof keyB === "string") {
+      comparison = keyA.localeCompare(keyB, undefined, { numeric: true, sensitivity: "base" });
+    } else {
+      comparison = keyA < keyB ? -1 : keyA > keyB ? 1 : 0;
     }
-    if (keyA > keyB) {
-      return ordering === "ascending" ? 1 : -1;
-    }
-    return 0;
+
+    return isAscending ? comparison : -comparison;
   });
 };
 
@@ -141,7 +154,7 @@ export const sortByField = (array: any[], field: string): any[] =>
 export const orderGroupedDataByField = <T>(groupedData: GroupedItems<T>, orderBy: keyof T): GroupedItems<T> => {
   for (const key in groupedData) {
     if (groupedData.hasOwnProperty(key)) {
-      groupedData[key] = groupedData[key].sort((a, b) => {
+      groupedData[key] = groupedData[key].toSorted((a, b) => {
         if (a[orderBy] < b[orderBy]) return -1;
         if (a[orderBy] > b[orderBy]) return 1;
         return 0;
@@ -221,8 +234,7 @@ export const sortBySelectedFirst = <T extends { value: string | null }>(
 
   if (selectedSet.size === 0) return options;
 
-  // Create a shallow copy to avoid mutating the original array
-  return [...options].sort((a, b) => {
+  return options.toSorted((a, b) => {
     const aSelected = a.value !== null && selectedSet.has(a.value);
     const bSelected = b.value !== null && selectedSet.has(b.value);
 
@@ -255,8 +267,7 @@ export const sortByCurrentUserThenSelected = <T extends { value: string | null }
   // Normalize selectedValues to array for consistent handling
   const selectedSet = new Set(Array.isArray(selectedValues) ? selectedValues : selectedValues ? [selectedValues] : []);
 
-  // Create a shallow copy to avoid mutating the original array
-  return [...options].sort((a, b) => {
+  return options.toSorted((a, b) => {
     const aIsCurrent = currentUserId && a.value === currentUserId;
     const bIsCurrent = currentUserId && b.value === currentUserId;
 
