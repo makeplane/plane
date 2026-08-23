@@ -5,6 +5,7 @@
  */
 
 import { Selection } from "@tiptap/pm/state";
+import powershell from "highlight.js/lib/languages/powershell";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 // components
@@ -12,6 +13,9 @@ import { CodeBlockLowlight } from "./code-block-lowlight";
 
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
+lowlight.register("powershell", powershell);
+lowlight.register("ps", powershell);
+lowlight.register("ps1", powershell);
 
 export const CustomCodeBlockExtensionWithoutProps = CodeBlockLowlight.extend({
   addKeyboardShortcuts() {

@@ -12,21 +12,21 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import highlight from "highlight.js/lib/core";
 
-function parseNodes(nodes: any[], className: string[] = []): { text: string; classes: string[] }[] {
-  return nodes
-    .map((node) => {
-      const classes = [...className, ...(node.properties ? node.properties.className : [])];
+export function parseNodes(nodes: any[], className: string[] = []): { text: string; classes: string[] }[] {
+  const result: { text: string; classes: string[] }[] = [];
+  for (const node of nodes) {
+    const classes = [...className, ...(node.properties?.className || [])];
 
-      if (node.children) {
-        return parseNodes(node.children, classes);
-      }
-
-      return {
+    if (node.children) {
+      result.push(...parseNodes(node.children, classes));
+    } else if (node.value !== undefined) {
+      result.push({
         text: node.value,
         classes,
-      };
-    })
-    .flat();
+      });
+    }
+  }
+  return result;
 }
 
 function getHighlightNodes(result: any) {
@@ -38,7 +38,7 @@ function registered(aliasOrLanguage: string) {
   return Boolean(highlight.getLanguage(aliasOrLanguage));
 }
 
-function getDecorations({
+export function getDecorations({
   doc,
   name,
   lowlight,
@@ -113,13 +113,20 @@ export function LowlightPlugin({
         const oldNodes = findChildren(oldState.doc, (node) => node.type.name === name);
         const newNodes = findChildren(newState.doc, (node) => node.type.name === name);
 
+        const codeBlockChanged =
+          newNodes.length !== oldNodes.length ||
+          newNodes.some((newNode, index) => {
+            const oldNode = oldNodes[index];
+            return !oldNode || oldNode.node !== newNode.node;
+          });
+
         if (
           transaction.docChanged &&
           // Apply decorations if:
           // selection includes named node,
           ([oldNodeName, newNodeName].includes(name) ||
-            // OR transaction adds/removes named node,
-            newNodes.length !== oldNodes.length ||
+            // OR code block node content / structure has changed,
+            codeBlockChanged ||
             // OR transaction has changes that completely encapsulate a node
             // (for example, a transaction that affects the entire document).
             // Such transactions can happen during collab syncing via y-prosemirror, for example.

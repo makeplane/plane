@@ -6,6 +6,7 @@
 
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
+import powershell from "highlight.js/lib/languages/powershell";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 import { CheckIcon } from "lucide-react";
@@ -19,9 +20,11 @@ import { cn } from "@plane/utils";
 import type { TCodeBlockAttributes } from "./types";
 import { ECodeBlockAttributeNames } from "./types";
 
-// we just have ts support for now
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
+lowlight.register("powershell", powershell);
+lowlight.register("ps", powershell);
+lowlight.register("ps1", powershell);
 
 type Props = {
   node: ProseMirrorNode;
