@@ -8,8 +8,8 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.test import Client
-from django.utils.encoding import smart_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import DjangoUnicodeDecodeError, smart_bytes, smart_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from plane.authentication.adapter.error import AUTHENTICATION_ERROR_CODES
 from plane.db.models import User
@@ -18,6 +18,11 @@ EXPECTED_ORIGIN = ("http", "testserver")
 
 STRONG_PASSWORD = "correct-horse-battery-staple-9x"
 WEAK_PASSWORD = "password"
+
+# Two ways a uidb64 fails before the user lookup - same except clause, different raise
+# sites, pinned by test_uidb64_fixtures_reach_their_branches
+MALFORMED_UIDB64 = "a"  # not valid base64: urlsafe_base64_decode raises binascii.Error
+UNDECODABLE_UIDB64 = "not"  # decodes to b"": smart_str raises DjangoUnicodeDecodeError
 
 # Where each endpoint sends a rejected reset, and where it sends a successful one.
 # The trailing slashes differ because the space endpoint builds its redirects
@@ -101,6 +106,31 @@ def _assert_credentials_untouched(user, password_hash):
 
 
 @pytest.mark.contract
+def test_error_code_wire_values():
+    """Pin the numbers clients hardcode - packages/constants/src/auth/index.ts carries the same literals"""
+    assert AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"] == 5125
+    assert AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"] == 5020
+    assert AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"] == 5021
+
+
+@pytest.mark.contract
+def test_uidb64_fixtures_reach_their_branches():
+    """Pin that the two rejected-uidb64 fixtures fail where their names say they do.
+
+    Both endpoints answer either one with INVALID_PASSWORD_TOKEN, so the response
+    alone no longer tells them apart: without this, a change that stopped
+    UNDECODABLE_UIDB64 from raising at all would leave the utf-8 branch untested
+    and every test still green.
+    """
+    with pytest.raises(ValueError) as malformed:
+        urlsafe_base64_decode(MALFORMED_UIDB64)
+    assert not isinstance(malformed.value, DjangoUnicodeDecodeError)
+
+    with pytest.raises(DjangoUnicodeDecodeError):
+        smart_str(urlsafe_base64_decode(UNDECODABLE_UIDB64))
+
+
+@pytest.mark.contract
 class TestResetPasswordSpaceEndpoint:
     """The space reset-password endpoint must redirect - never 500 - on a bad uidb64"""
 
@@ -134,20 +164,20 @@ class TestResetPasswordSpaceEndpoint:
         password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
-        response = django_client.post(_space_url("a", token), {"password": STRONG_PASSWORD})
+        response = django_client.post(_space_url(MALFORMED_UIDB64, token), {"password": STRONG_PASSWORD})
 
         _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
         _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_undecodable_uidb64_redirects(self, django_client, reset_user):
-        """A uidb64 that decodes to invalid utf-8 keeps the EXPIRED_PASSWORD_TOKEN response"""
+        """A uidb64 that decodes to invalid utf-8 is rejected as an invalid link"""
         password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
-        response = django_client.post(_space_url("not", token), {"password": STRONG_PASSWORD})
+        response = django_client.post(_space_url(UNDECODABLE_UIDB64, token), {"password": STRONG_PASSWORD})
 
-        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("EXPIRED_PASSWORD_TOKEN"))
+        _assert_redirect(response, SPACE_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
         _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
@@ -248,20 +278,20 @@ class TestResetPasswordAppEndpoint:
         password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
-        response = django_client.post(_app_url("a", token), {"password": STRONG_PASSWORD})
+        response = django_client.post(_app_url(MALFORMED_UIDB64, token), {"password": STRONG_PASSWORD})
 
         _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
         _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db
     def test_undecodable_uidb64_redirects(self, django_client, reset_user):
-        """A uidb64 that decodes to invalid utf-8 keeps the EXPIRED_PASSWORD_TOKEN response"""
+        """A uidb64 that decodes to invalid utf-8 is rejected as an invalid link"""
         password_hash = reset_user.password
         token = PasswordResetTokenGenerator().make_token(reset_user)
 
-        response = django_client.post(_app_url("not", token), {"password": STRONG_PASSWORD})
+        response = django_client.post(_app_url(UNDECODABLE_UIDB64, token), {"password": STRONG_PASSWORD})
 
-        _assert_redirect(response, APP_ERROR_PATH, _error_query("EXPIRED_PASSWORD_TOKEN"))
+        _assert_redirect(response, APP_ERROR_PATH, _error_query("INVALID_PASSWORD_TOKEN"))
         _assert_credentials_untouched(reset_user, password_hash)
 
     @pytest.mark.django_db

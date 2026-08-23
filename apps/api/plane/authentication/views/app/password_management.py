@@ -18,7 +18,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.utils.encoding import DjangoUnicodeDecodeError, smart_bytes, smart_str
+from django.utils.encoding import smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 
@@ -107,18 +107,9 @@ class ResetPasswordEndpoint(View):
             # Decode the id from the uidb64
             id = smart_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=id)
-        except DjangoUnicodeDecodeError:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_PASSWORD_TOKEN"],
-                error_message="EXPIRED_PASSWORD_TOKEN",
-            )
-            url = urljoin(
-                base_host(request=request, is_app=True),
-                "accounts/reset-password?" + urlencode(exc.get_error_dict()),
-            )
-            return HttpResponseRedirect(url)
         except (ValueError, ValidationError, User.DoesNotExist):
-            # Malformed base64, a non-UUID id or an id that matches no user
+            # Malformed base64, bytes that are not utf-8 (DjangoUnicodeDecodeError subclasses ValueError),
+            # a non-UUID id or an id that matches no user
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
                 error_message="INVALID_PASSWORD_TOKEN",
