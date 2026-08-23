@@ -80,11 +80,9 @@ class TestWorkItemRelationRemoveContract:
     """
 
     def get_remove_url(self, workspace_slug, project_id, issue_id):
-        """Helper to build the relation removal endpoint URL."""
         return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/work-items/{issue_id}/relations/remove/"
 
     def get_list_url(self, workspace_slug, project_id, issue_id):
-        """Helper to build the relation list/create endpoint URL."""
         return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/work-items/{issue_id}/relations/"
 
     @pytest.mark.django_db
