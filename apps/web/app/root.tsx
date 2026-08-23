@@ -24,6 +24,8 @@ import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+// lib
+import { isStaleAssetError, recoverFromStaleAsset } from "@/lib/stale-asset-error";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
@@ -146,5 +148,10 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  // A stale chunk failure surfaces here as React Router's own wrapper error
+  // (the failed dynamic import itself never reaches a window event) — recover
+  // the same way entry.client.tsx does instead of just showing the error page.
+  if (import.meta.env.PROD && isStaleAssetError(error)) recoverFromStaleAsset();
+
   return <CustomErrorComponent error={error} />;
 }

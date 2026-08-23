@@ -1,6 +1,6 @@
 {
   "name": "@plane/tailwind-config",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "description": "common tailwind configuration across monorepo",
   "license": "AGPL-3.0",
