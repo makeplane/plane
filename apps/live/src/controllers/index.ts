@@ -9,6 +9,7 @@ import { DocumentController } from "./document.controller";
 import { HealthController } from "./health.controller";
 import { MembershipController } from "./membership.controller";
 import { PdfExportController } from "./pdf-export.controller";
+import { WorkItemsController } from "./work-items.controller";
 
 export const CONTROLLERS = [
   CollaborationController,
@@ -16,4 +17,5 @@ export const CONTROLLERS = [
   HealthController,
   MembershipController,
   PdfExportController,
+  WorkItemsController,
 ];

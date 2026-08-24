@@ -24,6 +24,7 @@ import { HocusPocusServerManager } from "@/hocuspocus";
 // redis
 import { redisManager } from "@/redis";
 import { membershipRealtimeHub } from "@/services/membership-realtime.service";
+import { workItemRealtimeHub } from "@/services/work-item-realtime.service";
 
 export class Server {
   private app: Express;
@@ -46,6 +47,8 @@ export class Server {
       logger.info("SERVER: Redis setup completed");
       await membershipRealtimeHub.initialize();
       logger.info("SERVER: Membership realtime hub initialized");
+      await workItemRealtimeHub.initialize();
+      logger.info("SERVER: Work item realtime hub initialized");
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
       logger.info("SERVER: HocusPocus setup completed");
