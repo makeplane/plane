@@ -517,7 +517,7 @@ overrides:
   valibot: 1.4.2
   glob: 11.1.0
   brace-expansion: 5.0.7
-  nanoid: 3.3.8
+  nanoid: 3.3.18
   esbuild: 0.28.1
   '@babel/core': 7.29.7
   '@babel/helpers': 7.29.7
@@ -552,7 +552,7 @@ overrides:
   follow-redirects: 1.16.0
   uuid: 14.0.0
   fast-uri@<3.1.5: 3.1.5
-  js-yaml@4: 4.3.0
+  js-yaml@4: 4.3.1
   linkify-it: 5.0.2
   body-parser: 1.20.6
   '@react-router/node': 7.18.1
@@ -7252,8 +7252,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@4.3.0:
-    resolution: {integrity: sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==}
+  js-yaml@4.3.1:
+    resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
     hasBin: true
 
   jscodeshift@17.3.0:
@@ -7931,8 +7931,8 @@ packages:
     resolution: {integrity: sha512-tacvGzUY5o2D8CBh2rrwxyNojUsZNU2zjNTzKQrkgGJQTbGAfArVWXSKMBokBeeg6C7OLRGUEyoFlYbfeWQIqw==}
     engines: {node: '>=20.17'}
 
-  nanoid@3.3.8:
-    resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
+  nanoid@3.3.18:
+    resolution: {integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -13595,7 +13595,7 @@ snapshots:
   cosmiconfig@8.3.6(typescript@5.8.3):
     dependencies:
       import-fresh: 3.3.1
-      js-yaml: 4.3.0
+      js-yaml: 4.3.1
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
@@ -14945,7 +14945,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@4.3.0:
+  js-yaml@4.3.1:
     dependencies:
       argparse: 2.0.1
 
@@ -15773,7 +15773,7 @@ snapshots:
 
   nano-spawn@2.0.0: {}
 
-  nanoid@3.3.8: {}
+  nanoid@3.3.18: {}
 
   natural-compare@1.4.0: {}
 
@@ -16239,7 +16239,7 @@ snapshots:
 
   postcss@8.5.25:
     dependencies:
-      nanoid: 3.3.8
+      nanoid: 3.3.18
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
