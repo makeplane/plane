@@ -10,7 +10,7 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, Info, XCircle } from "lucide-react";
 // plane imports
-import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
+import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";
@@ -86,7 +86,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <div className="w-full">
         {isSMTPConfigured ? (
           <Link
-            data-ph-element={AUTH_TRACKER_ELEMENTS.FORGOT_PASSWORD_FROM_SIGNIN}
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
             className="text-11 font-medium text-accent-primary"
           >
@@ -292,7 +291,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               {isSMTPConfigured && (
                 <Button
                   type="button"
-                  data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_WITH_UNIQUE_CODE}
                   onClick={redirectToUniqueCodeSignIn}
                   variant="secondary"
                   className="w-full"

@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
@@ -78,14 +78,7 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
       >
         {({ filter: projectWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {projectWorkItemsFilter && (
-              <WorkItemFiltersRow
-                filter={projectWorkItemsFilter}
-                trackerElements={{
-                  saveView: PROJECT_VIEW_TRACKER_ELEMENTS.PROJECT_HEADER_SAVE_AS_VIEW_BUTTON,
-                }}
-              />
-            )}
+            {projectWorkItemsFilter && <WorkItemFiltersRow filter={projectWorkItemsFilter} />}
             <div className="relative h-full w-full overflow-auto bg-surface-1">
               {/* mutation loader */}
               {issues?.getIssueLoader() === "mutation" && (

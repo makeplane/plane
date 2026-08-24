@@ -5,7 +5,6 @@
  */
 
 import Link from "next/link";
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
 import { ToggleSwitch } from "@plane/ui";
@@ -41,7 +40,6 @@ export function ProjectFeatureToggle(props: Props) {
       onChange={() => handleSubmit(featureItem?.key, featureItem?.property)}
       disabled={disabled}
       size="sm"
-      data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
     />
   );
 }

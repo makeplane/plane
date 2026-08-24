@@ -15,7 +15,6 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { ModuleIcon } from "@plane/propel/icons";
@@ -241,7 +240,6 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 onClick={() => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
-                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
               >
                 Add work item
               </Button>
