@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
-
+//footer.tsx
 import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { getButtonStyling } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
+import { TFCLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -61,7 +61,7 @@ export function ProductUpdatesFooter() {
         </a>
       </div>
       <a
-        href="https://plane.so/pages"
+        href="https://www.tfc-academy.com/"
         target="_blank"
         className={cn(
           getButtonStyling("secondary", "base"),
@@ -69,7 +69,7 @@ export function ProductUpdatesFooter() {
         )}
         rel="noreferrer"
       >
-        <PlaneLogo className="h-4 w-auto text-primary" />
+        <TFCLogo className="h-4 w-auto text-primary" />
         {t("powered_by_plane_pages")}
       </a>
     </div>

@@ -9,9 +9,9 @@ import { create } from "storybook/theming";
 
 const planeTheme = create({
   base: "dark",
-  brandTitle: "Plane UI",
-  brandUrl: "https://plane.so",
-  brandImage: "plane-lockup-light.svg",
+  brandTitle: "TFC UI",
+  brandUrl: "https://www.tfc-academy.com",
+  brandImage: "tfc-lockup-light.svg",
   brandTarget: "_self",
 });
 

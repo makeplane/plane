@@ -20,15 +20,14 @@ export function LatestFeatureBlock() {
         <Lightbulb className="mx-3 mr-2 h-7 w-7" />
         <p className="text-left text-13 text-primary">
           Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
-          <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
+          <Link href="https://www.tfc-academy.com/" target="_blank" rel="noopener noreferrer">
             <span className="text-13 font-medium underline hover:cursor-pointer">Learn more</span>
           </Link>
         </p>
       </div>
       <div
-        className={`mx-auto mt-8 overflow-hidden rounded-md border border-subtle object-cover sm:h-52 sm:w-96 ${
-          resolvedTheme === "dark" ? "bg-surface-1" : "bg-layer-2"
-        }`}
+        className={`mx-auto mt-8 overflow-hidden rounded-md border border-subtle object-cover sm:h-52 sm:w-96 ${resolvedTheme === "dark" ? "bg-surface-1" : "bg-layer-2"
+          }`}
       >
         <div className="h-[90%]">
           <img

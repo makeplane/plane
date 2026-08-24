@@ -11,7 +11,7 @@ import LogoSpinnerLight from "@/app/assets/images/logo-spinner-light.gif?url";
 export function LogoSpinner() {
   const { resolvedTheme } = useTheme();
 
-  const logoSrc = resolvedTheme === "dark" ? LogoSpinnerLight : LogoSpinnerDark;
+  const logoSrc = resolvedTheme === "dark" ? LogoSpinnerDark : LogoSpinnerLight;
 
   return (
     <div className="flex items-center justify-center">
