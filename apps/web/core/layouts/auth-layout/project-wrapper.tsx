@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { ProjectAccessRestriction } from "@/components/auth-screens/project/project-access-restriction";
@@ -139,7 +140,19 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   // handle join project
   const handleJoinProject = () => {
     setIsJoiningProject(true);
-    joinProject(workspaceSlug, projectId).finally(() => setIsJoiningProject(false));
+    joinProject(workspaceSlug, projectId)
+      .catch((err: unknown) => {
+        const message =
+          err && typeof err === "object" && "error" in err && typeof (err as { error?: unknown }).error === "string"
+            ? (err as { error: string }).error
+            : "Could not join this project. Ask an admin to add you.";
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Access denied",
+          message,
+        });
+      })
+      .finally(() => setIsJoiningProject(false));
   };
 
   const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;

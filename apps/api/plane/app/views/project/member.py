@@ -93,10 +93,13 @@ class ProjectMemberViewSet(BaseViewSet):
         ):
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
+            project_member.access_revoked = False
             bulk_project_members.append(project_member)
 
         # Update the roles of the existing members
-        ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
+        ProjectMember.objects.bulk_update(
+            bulk_project_members, ["is_active", "role", "access_revoked"], batch_size=100
+        )
 
         # Get the minimum sort_order for each member in the workspace
         member_sort_orders = (
@@ -371,8 +374,9 @@ class ProjectMemberViewSet(BaseViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Deactivate the user
+        # Deactivate the user (voluntary leave — public self-join still allowed)
         project_member.is_active = False
+        project_member.access_revoked = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

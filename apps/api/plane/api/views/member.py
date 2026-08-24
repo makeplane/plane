@@ -230,6 +230,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
     def delete(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         project_member.is_active = False
+        project_member.access_revoked = True
         project_member.save()
         publish_membership_removed(
             event_type=EVENT_PROJECT_MEMBER_REMOVED,

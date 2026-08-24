@@ -147,9 +147,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False, updated_at=timezone.now())
+        ).update(is_active=False, access_revoked=True, updated_at=timezone.now())
 
         workspace_member.is_active = False
+        workspace_member.access_revoked = True
         workspace_member.save()
         publish_membership_removed(
             event_type=EVENT_WORKSPACE_MEMBER_REMOVED,
@@ -210,8 +211,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False, updated_at=timezone.now())
 
-        # # Deactivate the user
+        # # Deactivate the user (voluntary leave)
         workspace_member.is_active = False
+        workspace_member.access_revoked = False
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
