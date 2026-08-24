@@ -160,7 +160,7 @@
       }
     },
     "sibling": {
-      "label": "兄弟作業項目"
+      "label": "同階層の作業項目"
     },
     "archive": {
       "description": "完了またはキャンセルされた\n作業項目のみアーカイブできます",
@@ -237,7 +237,7 @@
       "show_wiki_pages": "Wikiページを表示",
       "link_pages_to": "ページを接続",
       "linked_pages": "リンクされたページ",
-      "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
+      "no_description": "このページは空です。内容を入力すると、ここに表示されます。",
       "toasts": {
         "link": {
           "success": {
@@ -331,7 +331,7 @@
   "recurring_work_items": {
     "settings": {
       "heading": "定期作業項目",
-      "description": "繰り返しの作業を1回設定するだけで、繰り返しを管理します。時間が来たらここにすべて表示されます。",
+      "description": "繰り返す作業を一度設定するだけで、定期的な作業項目を管理できます。予定時刻になると、ここに表示されます。",
       "new_recurring_work_item": "新しい定期作業項目",
       "update_recurring_work_item": "定期作業項目を更新",
       "form": {
