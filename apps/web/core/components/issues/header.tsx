@@ -9,13 +9,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle } from "lucide-react";
 // plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  SPACE_BASE_PATH,
-  SPACE_BASE_URL,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -125,7 +119,6 @@ export const IssuesHeader = observer(function IssuesHeader() {
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
-            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>

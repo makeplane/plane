@@ -12,7 +12,7 @@ import { useParams, usePathname } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
@@ -195,7 +195,6 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
-                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
                       className="hidden text-placeholder group-hover:inline-flex"
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                     />
@@ -278,7 +277,6 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
             className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2"
             onClick={() => {
               toggleCreateProjectModal(true);

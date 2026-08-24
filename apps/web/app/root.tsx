@@ -5,7 +5,6 @@
  */
 
 import type { ReactNode } from "react";
-import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 import { ThemeProvider, useTheme } from "next-themes";
@@ -24,6 +23,8 @@ import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+// lib
+import { isStaleAssetError, recoverFromStaleAsset } from "@/lib/stale-asset-error";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
@@ -55,8 +56,6 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
-  const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -80,15 +79,6 @@ export function Layout({ children }: { children: ReactNode }) {
           {children}
         </ThemeProvider>
         <Scripts />
-        {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-          <Script id="clarity-tracking">
-            {`(function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
-          </Script>
-        )}
       </body>
     </html>
   );
@@ -146,5 +136,10 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  // A stale chunk failure surfaces here as React Router's own wrapper error
+  // (the failed dynamic import itself never reaches a window event) — recover
+  // the same way entry.client.tsx does instead of just showing the error page.
+  if (import.meta.env.PROD && isStaleAssetError(error)) recoverFromStaleAsset();
+
   return <CustomErrorComponent error={error} />;
 }

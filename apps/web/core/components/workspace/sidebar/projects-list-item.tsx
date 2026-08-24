@@ -17,7 +17,7 @@ import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -434,10 +434,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   </CustomMenu.MenuItem>
                   {/* leave project */}
                   {!isAuthorized && (
-                    <CustomMenu.MenuItem
-                      onClick={handleLeaveProject}
-                      data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
-                    >
+                    <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
                         <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>{t("leave_project")}</span>

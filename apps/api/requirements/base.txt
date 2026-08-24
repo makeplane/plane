@@ -46,10 +46,8 @@ openpyxl==3.1.2
 python-json-logger==4.0.0
 # html parser
 beautifulsoup4==4.12.3
-# analytics
-posthog==3.5.0
 # crypto
-cryptography==48.0.1
+cryptography==50.0.0
 # html validator
 lxml==6.1.0
 # s3

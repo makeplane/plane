@@ -36,7 +36,7 @@ export class WorkspaceNotificationService extends APIService {
     params: TNotificationPaginatedInfoQueryParams
   ): Promise<TNotificationPaginatedInfo | undefined> {
     try {
-      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications`, {
+      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications/`, {
         params,
       });
       return data || undefined;

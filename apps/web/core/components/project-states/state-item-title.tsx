@@ -7,7 +7,7 @@
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
-import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIconSize } from "@plane/constants";
 // plane imports
 import { EditIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
@@ -25,7 +25,6 @@ type TBaseStateItemTitleProps = {
 type TEnabledStateItemTitleProps = TBaseStateItemTitleProps & {
   disabled: false;
   stateOperationsCallbacks: Pick<TStateOperationsCallbacks, "markStateAsDefault" | "deleteState">;
-  shouldTrackEvents: boolean;
 };
 
 type TDisabledStateItemTitleProps = TBaseStateItemTitleProps & {
@@ -76,7 +75,6 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
             <button
               className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
-              data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
               <EditIcon className="h-3 w-3" />
             </button>
@@ -84,7 +82,6 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
               totalStates={stateCount}
               state={state}
               deleteStateCallback={props.stateOperationsCallbacks.deleteState}
-              shouldTrackEvents={props.shouldTrackEvents}
             />
           </div>
         </div>

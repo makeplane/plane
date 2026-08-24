@@ -166,8 +166,8 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       sub_issue_ids: issueIds,
     });
 
-    const subIssuesStateDistribution = response?.state_distribution;
-    const subIssues = response.sub_issues as TIssue[];
+    const subIssuesStateDistribution = response?.state_distribution ?? {};
+    const subIssues = Array.isArray(response?.sub_issues) ? response.sub_issues : [];
 
     // fetch other issues states and members when sub-issues are from different project
     if (subIssues && subIssues.length > 0) {

@@ -1,6 +1,6 @@
 {
   "name": "@plane/shared-state",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "private": true,
   "description": "Shared state shared across multiple apps internally",
   "license": "AGPL-3.0",

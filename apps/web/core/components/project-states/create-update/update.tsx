@@ -14,7 +14,6 @@ import { StateForm } from "@/components/project-states";
 type TStateUpdate = {
   state: IState;
   updateStateCallback: TStateOperationsCallbacks["updateState"];
-  shouldTrackEvents: boolean;
   handleClose: () => void;
 };
 
