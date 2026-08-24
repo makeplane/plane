@@ -42,12 +42,18 @@ const useIntegrationPopup = ({
   );
 
   const checkPopup = () => {
-    popupCheckIntervalRef.current = setInterval(() => {
+    // a repeated click restarts the flow, so retire the previous poller before
+    // replacing the ref — otherwise it outlives its popup and clears its successor
+    if (popupCheckIntervalRef.current) clearInterval(popupCheckIntervalRef.current);
+
+    const intervalId = setInterval(() => {
       if (!popup.current || popup.current.closed) {
-        clearInterval(popupCheckIntervalRef.current);
+        clearInterval(intervalId);
+        popupCheckIntervalRef.current = undefined;
         setAuthLoader(false);
       }
     }, 1000);
+    popupCheckIntervalRef.current = intervalId;
   };
 
   const openPopup = (): Window | null => {
