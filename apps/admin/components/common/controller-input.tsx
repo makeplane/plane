@@ -19,7 +19,7 @@ import { cn } from "@plane/utils";
 type Props<TFieldValues extends FieldValues = FieldValues> = {
   control: Control<TFieldValues>;
   type: "text" | "password";
-  name: string;
+  name: FieldPath<TFieldValues>;
   label: string;
   description?: string | React.ReactNode;
   placeholder: string;
@@ -27,8 +27,8 @@ type Props<TFieldValues extends FieldValues = FieldValues> = {
   required: boolean;
 };
 
-export type TControllerInputFormField = {
-  key: string;
+export type TControllerInputFormField<TFieldValues extends FieldValues = FieldValues> = {
+  key: FieldPath<TFieldValues>;
   type: "text" | "password";
   label: string;
   description?: string | React.ReactNode;
@@ -48,7 +48,7 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
       <div className="relative">
         <Controller
           control={control}
-          name={name as FieldPath<TFieldValues>}
+          name={name}
           rules={{ required: required ? `${label} is required.` : false }}
           render={({ field: { value, onChange, ref } }) => (
             <Input

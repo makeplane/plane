@@ -52,20 +52,27 @@ export default function transform(file: FileInfo, api: API, options: Options) {
   // Map local name -> imported name so aliases such as `Popover as HeadlessReactPopover`
   // still resolve to the Headless UI component they came from.
   const importedNameByLocal = new Map<string, string>();
-  root.find(j.ImportDeclaration, { source: { value: "@headlessui/react" } }).forEach((path) => {
-    for (const specifier of path.node.specifiers ?? []) {
-      if (specifier.type === "ImportSpecifier" && specifier.local) {
-        importedNameByLocal.set(specifier.local.name, specifier.imported.name as string);
+  root
+    .find(j.ImportDeclaration, { source: { value: "@headlessui/react" } })
+    .forEach((path) => {
+      for (const specifier of path.node.specifiers ?? []) {
+        if (specifier.type === "ImportSpecifier" && specifier.local) {
+          importedNameByLocal.set(
+            specifier.local.name,
+            specifier.imported.name as string
+          );
+        }
       }
-    }
-  });
+    });
 
   if (importedNameByLocal.size === 0) return file.source;
 
   let mutations = 0;
   let usedFragment = false;
 
-  const resolveTarget = (node: JSXOpeningElement["name"]): AsValue | undefined => {
+  const resolveTarget = (
+    node: JSXOpeningElement["name"]
+  ): AsValue | undefined => {
     if (node.type === "JSXMemberExpression") {
       const object = node.object;
       if (object.type !== "JSXIdentifier") return undefined;
@@ -89,12 +96,15 @@ export default function transform(file: FileInfo, api: API, options: Options) {
 
     // An explicit `as` already pins the tag — including when it sits on a continuation line.
     const hasExplicitAs = attributes.some(
-      (attribute) => attribute.type === "JSXAttribute" && attribute.name?.name === "as"
+      (attribute) =>
+        attribute.type === "JSXAttribute" && attribute.name?.name === "as"
     );
     if (hasExplicitAs) return;
 
     // A spread may carry `as` at runtime; setting it here would override the caller.
-    const hasSpread = attributes.some((attribute) => attribute.type === "JSXSpreadAttribute");
+    const hasSpread = attributes.some(
+      (attribute) => attribute.type === "JSXSpreadAttribute"
+    );
     if (hasSpread) return;
 
     const value =
@@ -117,18 +127,34 @@ export default function transform(file: FileInfo, api: API, options: Options) {
 }
 
 /** Adds `Fragment` to the file's react import, creating that import if it has none. */
-function ensureFragmentImport(j: API["jscodeshift"], root: ReturnType<API["jscodeshift"]>) {
-  const reactImports = root.find(j.ImportDeclaration, { source: { value: "react" } });
+function ensureFragmentImport(
+  j: API["jscodeshift"],
+  root: ReturnType<API["jscodeshift"]>
+) {
+  const reactImports = root.find(j.ImportDeclaration, {
+    source: { value: "react" },
+  });
 
-  const alreadyImported = reactImports.nodes().some((node) =>
-    (node.specifiers ?? []).some(
-      (specifier) => specifier.type === "ImportSpecifier" && specifier.imported.name === "Fragment"
-    )
+  // `Fragment` is usable only when a value specifier binds that exact local name:
+  // `import type { Fragment }` binds no runtime value, and
+  // `import { Fragment as ReactFragment }` binds no local `Fragment` identifier.
+  const alreadyImported = reactImports.nodes().some(
+    (node) =>
+      node.importKind !== "type" &&
+      (node.specifiers ?? []).some(
+        (specifier) =>
+          specifier.type === "ImportSpecifier" &&
+          // `import { type Fragment }`: ast-types typings lack importKind on specifiers.
+          (specifier as { importKind?: string }).importKind !== "type" &&
+          specifier.local?.name === "Fragment"
+      )
   );
   if (alreadyImported) return;
 
   // Prefer a value import; `import type { X } from "react"` cannot carry a runtime binding.
-  const valueImport = reactImports.nodes().find((node) => node.importKind !== "type");
+  const valueImport = reactImports
+    .nodes()
+    .find((node) => node.importKind !== "type");
 
   if (valueImport) {
     valueImport.specifiers = valueImport.specifiers ?? [];

@@ -566,7 +566,7 @@ overrides:
   morgan: 1.11.0
 
 patchedDependencies:
-  react-color@2.19.3: 3bb3ef90f548cd9ae6a0c7fd76b361cc5235a535bdeabf029252883bf5a6455e
+  react-color@2.19.3: 311b81530f5338988f8b57718f24870a7550637159d8360d69f668cba2f2033f
 
 importers:
 
@@ -1117,7 +1117,7 @@ importers:
         version: 19.2.8
       react-color:
         specifier: 'catalog:'
-        version: 2.19.3(patch_hash=3bb3ef90f548cd9ae6a0c7fd76b361cc5235a535bdeabf029252883bf5a6455e)(react@19.2.8)
+        version: 2.19.3(patch_hash=311b81530f5338988f8b57718f24870a7550637159d8360d69f668cba2f2033f)(react@19.2.8)
       react-dom:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
@@ -1787,7 +1787,7 @@ importers:
         version: 19.2.8
       react-color:
         specifier: 'catalog:'
-        version: 2.19.3(patch_hash=3bb3ef90f548cd9ae6a0c7fd76b361cc5235a535bdeabf029252883bf5a6455e)(react@19.2.8)
+        version: 2.19.3(patch_hash=311b81530f5338988f8b57718f24870a7550637159d8360d69f668cba2f2033f)(react@19.2.8)
       react-day-picker:
         specifier: 'catalog:'
         version: 9.5.0(react@19.2.8)
@@ -16444,7 +16444,7 @@ snapshots:
       react-stately: 3.49.0(react@19.2.8)
       use-sync-external-store: 1.6.0(react@19.2.8)
 
-  react-color@2.19.3(patch_hash=3bb3ef90f548cd9ae6a0c7fd76b361cc5235a535bdeabf029252883bf5a6455e)(react@19.2.8):
+  react-color@2.19.3(patch_hash=311b81530f5338988f8b57718f24870a7550637159d8360d69f668cba2f2033f)(react@19.2.8):
     dependencies:
       '@icons/material': 0.2.4(react@19.2.8)
       lodash: 4.18.1

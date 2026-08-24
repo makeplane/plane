@@ -30,19 +30,19 @@ const useIntegrationPopup = ({
     }`,
   };
 
-  const popup = useRef<any>(undefined);
+  const popup = useRef<Window | null>(null);
 
   const checkPopup = () => {
     const check = setInterval(() => {
-      if (!popup || popup.current.closed || popup.current.closed === undefined) {
+      if (!popup.current || popup.current.closed) {
         clearInterval(check);
         setAuthLoader(false);
       }
     }, 1000);
   };
 
-  const openPopup = () => {
-    if (!provider) return;
+  const openPopup = (): Window | null => {
+    if (!provider) return null;
 
     const width = 600,
       height = 600;
@@ -55,6 +55,7 @@ const useIntegrationPopup = ({
 
   const startAuth = () => {
     popup.current = openPopup();
+    if (!popup.current) return;
     checkPopup();
     setAuthLoader(true);
   };

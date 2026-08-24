@@ -9,7 +9,7 @@ import type { LucideProps } from "lucide-react";
 import type { FC } from "react";
 import React, { Fragment } from "react";
 // helpers
-import { cn } from "../utils";
+import { cn } from "../utils/classname";
 
 export type TabListItem = {
   key: string;

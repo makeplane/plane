@@ -8,7 +8,8 @@ import { describe, it, expect } from "vitest";
 import { applyTransform } from "@hypermod/utils";
 import * as transformer from "../headlessui-v2-default-tags";
 
-const apply = (source: string) => applyTransform(transformer, source, { parser: "tsx" });
+const apply = (source: string) =>
+  applyTransform(transformer, source, { parser: "tsx" });
 
 describe("headlessui-v2-default-tags", () => {
   it("pins a bare <Transition> to the v1 div default", async () => {
@@ -22,7 +23,9 @@ describe("headlessui-v2-default-tags", () => {
       );
     `);
 
-    expect(result).toContain(`<Transition as="div" show={open} className="grid">`);
+    expect(result).toContain(
+      `<Transition as="div" show={open} className="grid">`
+    );
   });
 
   it("pins Combobox.Options to ul and Combobox.Option to li", async () => {
@@ -74,6 +77,33 @@ describe("headlessui-v2-default-tags", () => {
     // Tab.List and Tab are unchanged between v1 and v2.
     expect(result).toContain("<Tab.List>");
     expect(result).toContain("<Tab>One</Tab>");
+  });
+
+  it("adds a value Fragment import alongside an existing type-only one", async () => {
+    const result = await apply(`
+      import type { Fragment } from "react";
+      import { Tab } from "@headlessui/react";
+
+      export const Tabs = () => <Tab.Group><Tab.List /></Tab.Group>;
+    `);
+
+    expect(result).toContain("<Tab.Group as={Fragment}>");
+    // The type-only specifier binds no runtime value, so a real value import must appear.
+    expect(result).toMatch(/import \{ Fragment \} from "react"/);
+  });
+
+  it("does not mistake an aliased Fragment import for a local Fragment binding", async () => {
+    const result = await apply(`
+      import { Fragment as ReactFragment } from "react";
+      import { Tab } from "@headlessui/react";
+
+      export const Tabs = () => <Tab.Group><Tab.List /></Tab.Group>;
+    `);
+
+    expect(result).toContain("<Tab.Group as={Fragment}>");
+    expect(result).toMatch(
+      /import \{ Fragment as ReactFragment, Fragment \} from "react"/
+    );
   });
 
   it("adds a react import when the file has none", async () => {

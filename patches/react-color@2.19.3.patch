@@ -40,3 +40,46 @@ index 0cbc2fb3bd830ae75ff460ac98e4d903ac3b07f8..48e868a7fa999c42d2113e06083a79a8
 -};
 -
  exports.default = Checkboard;
+diff --git a/es/components/common/Checkboard.js b/es/components/common/Checkboard.js
+index 95c72045476a58a6a2f52924a669d3ed1da94be8..6bf685cd87ffccdd240f09f14b2e195f834c2a0b 100644
+--- a/es/components/common/Checkboard.js
++++ b/es/components/common/Checkboard.js
+@@ -4,7 +4,24 @@ import reactCSS from 'reactcss';
+ import reactCSS from 'reactcss';
+ import * as checkboard from '../../helpers/checkboard';
+ 
+-export var Checkboard = function Checkboard(_ref) {
++// React 19 removed defaultProps for function components, so these are applied here
++// instead. `undefined` falls back to the default exactly as defaultProps did, which
++// matters because Alpha and Chrome forward a `renderers` that is often undefined,
++// and Sketch and Block render Checkboard without it at all. Reading `renderers.canvas`
++// off undefined below is a hard crash.
++var CHECKBOARD_DEFAULT_PROPS = {
++  size: 8,
++  white: 'transparent',
++  grey: 'rgba(0,0,0,.08)',
++  renderers: {}
++};
++
++export var Checkboard = function Checkboard(_props) {
++  var _ref = _extends({}, _props);
++  for (var _defaultKey in CHECKBOARD_DEFAULT_PROPS) {
++    if (_ref[_defaultKey] === undefined) _ref[_defaultKey] = CHECKBOARD_DEFAULT_PROPS[_defaultKey];
++  }
++
+   var white = _ref.white,
+       grey = _ref.grey,
+       size = _ref.size,
+@@ -26,11 +43,4 @@ export var Checkboard = function Checkboard(_ref) {
+   return isValidElement(children) ? React.cloneElement(children, _extends({}, children.props, { style: _extends({}, children.props.style, styles.grid) })) : React.createElement('div', { style: styles.grid });
+ };
+ 
+-Checkboard.defaultProps = {
+-  size: 8,
+-  white: 'transparent',
+-  grey: 'rgba(0,0,0,.08)',
+-  renderers: {}
+-};
+-
+ export default Checkboard;
+\ No newline at end of file

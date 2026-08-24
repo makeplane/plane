@@ -269,12 +269,12 @@ allowBuilds:
   sharp: false
 
 minimumReleaseAgeExclude:
-  - '@storybook/addon-docs@10.4.6'
-  - '@storybook/builder-vite@10.4.6'
-  - '@storybook/csf-plugin@10.4.6'
-  - '@storybook/react-dom-shim@10.4.6'
-  - '@storybook/react-vite@10.4.6'
-  - '@storybook/react@10.4.6'
+  - "@storybook/addon-docs@10.4.6"
+  - "@storybook/builder-vite@10.4.6"
+  - "@storybook/csf-plugin@10.4.6"
+  - "@storybook/react-dom-shim@10.4.6"
+  - "@storybook/react-vite@10.4.6"
+  - "@storybook/react@10.4.6"
   - storybook@10.4.6
 
 patchedDependencies:
@@ -287,7 +287,7 @@ peerDependencyRules:
     # defaultProps on function components — so it runs unchanged on React 19. All 32
     # call sites import usePopper only. Recorded here so the acceptance is explicit
     # rather than hidden behind the global strict-peer-dependencies=false.
-    react-popper: "19"
+    "react-popper>react": "19"
     # Same situation: peer range predates React 19, uses nothing React 19 removed.
-    react-masonry-component: "19"
-    use-font-face-observer: "19"
+    "react-masonry-component>react": "19"
+    "use-font-face-observer>react": "19"

@@ -112,11 +112,7 @@ export function ParentIssuesListModal({
             tabIndex={baseTabIndex}
           />
         </div>
-        <Combobox.Options
-          as="ul"
-          static
-          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
-        >
+        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
               Search results for{" "}
