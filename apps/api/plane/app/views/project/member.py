@@ -290,6 +290,8 @@ class ProjectMemberViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
             if was_active and serializer.instance.is_active is False:
+                serializer.instance.access_revoked = True
+                serializer.instance.save(update_fields=["access_revoked", "updated_at"])
                 publish_membership_removed(
                     event_type=EVENT_PROJECT_MEMBER_REMOVED,
                     actor_id=request.user.id,
@@ -298,6 +300,9 @@ class ProjectMemberViewSet(BaseViewSet):
                     workspace_slug=slug,
                     project_id=project_id,
                 )
+            elif (not was_active) and serializer.instance.is_active is True:
+                serializer.instance.access_revoked = False
+                serializer.instance.save(update_fields=["access_revoked", "updated_at"])
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -331,6 +336,7 @@ class ProjectMemberViewSet(BaseViewSet):
             )
 
         project_member.is_active = False
+        project_member.access_revoked = True
         project_member.save()
         publish_membership_removed(
             event_type=EVENT_PROJECT_MEMBER_REMOVED,
