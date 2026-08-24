@@ -10,47 +10,80 @@ import { Telescope } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IInstance, IInstanceAdmin } from "@plane/types";
+import type {
+  IFormattedInstanceConfiguration,
+  IInstance,
+  IInstanceAdmin,
+  TInstanceBrandingConfigurationKeys,
+} from "@plane/types";
 import { Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 
+type BrandingFormValues = Record<TInstanceBrandingConfigurationKeys, string>;
+
 export interface IGeneralConfigurationForm {
   instance: IInstance;
   instanceAdmins: IInstanceAdmin[];
+  config: IFormattedInstanceConfiguration;
 }
 
 export const GeneralConfigurationForm = observer(function GeneralConfigurationForm(props: IGeneralConfigurationForm) {
-  const { instance, instanceAdmins } = props;
+  const { instance, instanceAdmins, config } = props;
   // hooks
-  const { updateInstanceInfo } = useInstance();
+  const { updateInstanceInfo, updateInstanceConfigurations, fetchInstanceInfo } = useInstance();
 
   // form data
   const {
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<Partial<IInstance>>({
+  } = useForm<Partial<IInstance> & BrandingFormValues>({
     defaultValues: {
       instance_name: instance?.instance_name,
       is_telemetry_enabled: instance?.is_telemetry_enabled,
+      BRAND_LOGO_URL: config.BRAND_LOGO_URL ?? "",
+      BRAND_LOGO_DARK_URL: config.BRAND_LOGO_DARK_URL ?? "",
+      BRAND_FAVICON_URL: config.BRAND_FAVICON_URL ?? "",
+      BRAND_SUPPORT_EMAIL: config.BRAND_SUPPORT_EMAIL ?? "",
+      BRAND_WEBSITE_URL: config.BRAND_WEBSITE_URL ?? "",
+      HIDE_PLANE_MARKETING: config.HIDE_PLANE_MARKETING ?? "0",
     },
   });
 
-  const onSubmit = async (formData: Partial<IInstance>) => {
-    const payload: Partial<IInstance> = { ...formData };
+  const onSubmit = async (formData: Partial<IInstance> & BrandingFormValues) => {
+    const {
+      instance_name,
+      is_telemetry_enabled,
+      BRAND_LOGO_URL,
+      BRAND_LOGO_DARK_URL,
+      BRAND_FAVICON_URL,
+      BRAND_SUPPORT_EMAIL,
+      BRAND_WEBSITE_URL,
+      HIDE_PLANE_MARKETING,
+    } = formData;
 
-    await updateInstanceInfo(payload)
-      .then(() =>
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    try {
+      await updateInstanceInfo({ instance_name, is_telemetry_enabled });
+      await updateInstanceConfigurations({
+        BRAND_LOGO_URL: BRAND_LOGO_URL ?? "",
+        BRAND_LOGO_DARK_URL: BRAND_LOGO_DARK_URL ?? "",
+        BRAND_FAVICON_URL: BRAND_FAVICON_URL ?? "",
+        BRAND_SUPPORT_EMAIL: BRAND_SUPPORT_EMAIL ?? "",
+        BRAND_WEBSITE_URL: BRAND_WEBSITE_URL ?? "",
+        HIDE_PLANE_MARKETING: HIDE_PLANE_MARKETING === "1" ? "1" : "0",
+      });
+      await fetchInstanceInfo();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success",
+        message: "Settings updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -92,6 +125,87 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               value={instance.instance_id}
               className="w-full cursor-not-allowed rounded-md font-medium !text-placeholder"
               disabled
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="border-b border-subtle pb-1.5 text-16 font-medium text-primary">Branding</div>
+        <p className="text-13 text-tertiary">
+          Optional white-label chrome for this instance. Leave fields empty to keep Plane defaults.
+        </p>
+        <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <ControllerInput
+            key="BRAND_LOGO_URL"
+            name="BRAND_LOGO_URL"
+            control={control}
+            type="text"
+            label="Logo URL"
+            placeholder="https://cdn.example.com/logo.svg"
+            error={Boolean(errors.BRAND_LOGO_URL)}
+            required={false}
+          />
+          <ControllerInput
+            key="BRAND_LOGO_DARK_URL"
+            name="BRAND_LOGO_DARK_URL"
+            control={control}
+            type="text"
+            label="Dark theme logo URL"
+            placeholder="https://cdn.example.com/logo-dark.svg"
+            error={Boolean(errors.BRAND_LOGO_DARK_URL)}
+            required={false}
+          />
+          <ControllerInput
+            key="BRAND_FAVICON_URL"
+            name="BRAND_FAVICON_URL"
+            control={control}
+            type="text"
+            label="Favicon URL"
+            placeholder="https://cdn.example.com/favicon.ico"
+            error={Boolean(errors.BRAND_FAVICON_URL)}
+            required={false}
+          />
+          <ControllerInput
+            key="BRAND_SUPPORT_EMAIL"
+            name="BRAND_SUPPORT_EMAIL"
+            control={control}
+            type="text"
+            label="Support email"
+            placeholder="support@example.com"
+            error={Boolean(errors.BRAND_SUPPORT_EMAIL)}
+            required={false}
+          />
+          <ControllerInput
+            key="BRAND_WEBSITE_URL"
+            name="BRAND_WEBSITE_URL"
+            control={control}
+            type="text"
+            label="Website URL"
+            placeholder="https://example.com"
+            error={Boolean(errors.BRAND_WEBSITE_URL)}
+            required={false}
+          />
+        </div>
+        <div className="flex items-center gap-14">
+          <div className="grow">
+            <div className="text-13 leading-5 font-medium text-primary">Hide Plane marketing</div>
+            <div className="text-11 leading-5 font-regular text-tertiary">
+              Hide pricing, Powered by Plane, and other Plane Cloud upsell links in the product chrome.
+            </div>
+          </div>
+          <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
+            <Controller
+              control={control}
+              name="HIDE_PLANE_MARKETING"
+              render={({ field: { value, onChange } }) => (
+                <ToggleSwitch
+                  value={value === "1"}
+                  onChange={(checked) => onChange(checked ? "1" : "0")}
+                  size="sm"
+                  disabled={isSubmitting}
+                />
+              )}
             />
           </div>
         </div>

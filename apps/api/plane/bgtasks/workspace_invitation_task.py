@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 
 # Module imports
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
@@ -45,15 +45,15 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
             EMAIL_FROM,
         ) = get_email_configuration()
 
-        # Subject of the email
-        subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on Plane"  # noqa: E501
-
-        context = {
+        context = with_email_branding({
             "email": email,
             "first_name": user.first_name or user.display_name or user.email,
             "workspace_name": workspace.name,
             "abs_url": abs_url,
-        }
+        })
+
+        # Subject of the email
+        subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on {context['brand_name']}"  # noqa: E501
 
         html_content = render_to_string("emails/invitations/workspace_invitation.html", context)
 

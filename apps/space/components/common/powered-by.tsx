@@ -4,31 +4,31 @@
  * See the LICENSE file for details.
  */
 
-import { WEBSITE_URL } from "@plane/constants";
-// assets
-import { PlaneLogo } from "@plane/propel/icons";
+import { observer } from "mobx-react";
+import { InstanceBrandMark } from "@/components/brand/instance-brand-mark";
+import { useBrand } from "@/hooks/use-brand";
 
 type TPoweredBy = {
   disabled?: boolean;
 };
 
-export function PoweredBy(props: TPoweredBy) {
-  // props
+export const PoweredBy = observer(function PoweredBy(props: TPoweredBy) {
   const { disabled = false } = props;
+  const { websiteUrl, hidePlaneMarketing, name } = useBrand();
 
-  if (disabled || !WEBSITE_URL) return null;
+  if (disabled || hidePlaneMarketing || !websiteUrl) return null;
 
   return (
     <a
-      href={WEBSITE_URL}
+      href={websiteUrl}
       className="fixed right-5 bottom-2.5 !z-[999999] flex items-center gap-1 rounded-sm border border-subtle bg-layer-3 px-2 py-1 shadow-raised-100"
       target="_blank"
       rel="noreferrer noopener"
     >
-      <PlaneLogo className="h-3 w-auto text-primary" />
+      <InstanceBrandMark className="h-3 w-auto text-primary" />
       <div className="text-11">
-        Powered by <span className="font-semibold">Plane Publish</span>
+        Powered by <span className="font-semibold">{name}</span>
       </div>
     </a>
   );
-}
+});

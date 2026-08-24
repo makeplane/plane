@@ -27,6 +27,7 @@ from plane.license.api.serializers import InstanceConfigurationSerializer
 from plane.license.utils.encryption import encrypt_data
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.instance_config_variables import instance_config_variables
 
 
 class InstanceConfigurationEndpoint(BaseAPIView):
@@ -41,6 +42,21 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/configurations/", user=False)
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
+        # Ensure known config keys exist so branding can be set before configure_instance re-runs
+        seed_by_key = {item["key"]: item for item in instance_config_variables}
+        for key in request.data.keys():
+            seed = seed_by_key.get(key)
+            if seed is None:
+                continue
+            InstanceConfiguration.objects.get_or_create(
+                key=key,
+                defaults={
+                    "category": seed.get("category", "BRANDING"),
+                    "is_encrypted": seed.get("is_encrypted", False),
+                    "value": "",
+                },
+            )
+
         configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
 
         bulk_configurations = []

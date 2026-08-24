@@ -9,10 +9,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlaneLockup } from "@plane/propel/icons";
 import { PageHead } from "@/components/core/page-title";
+import { InstanceBrandMark } from "@/components/brand/instance-brand-mark";
 import { EAuthModes } from "@/helpers/authentication.helper";
 import { useInstance } from "@/hooks/store/use-instance";
+import { useBrand } from "@/hooks/use-brand";
 
 const authContentMap = {
   [EAuthModes.SIGN_IN]: {
@@ -37,16 +38,18 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
   const { t } = useTranslation();
   // store
   const { config } = useInstance();
+  const { name } = useBrand();
   // derived values
   const enableSignUpConfig = config?.enable_signup ?? false;
 
   return (
     <AuthHeaderBase
       pageTitle={t(authContentMap[type].pageTitle)}
+      brandName={name}
       additionalAction={
         enableSignUpConfig && (
           <div className="flex flex-col items-end text-center text-13 font-medium text-tertiary sm:flex-row sm:items-center sm:gap-2">
-            <span className="text-body-sm-regular text-tertiary">{t(authContentMap[type].text)}</span>
+            <span className="text-body-sm-regular text-tertiary">{t(authContentMap[type].text, { brand: name })}</span>
             <Link
               data-ph-element={AUTH_TRACKER_ELEMENTS.NAVIGATE_TO_SIGN_UP}
               href={authContentMap[type].linkHref}
@@ -63,17 +66,18 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
 
 type TAuthHeaderBase = {
   pageTitle: string;
+  brandName?: string;
   additionalAction?: React.ReactNode;
 };
 
 export function AuthHeaderBase(props: TAuthHeaderBase) {
-  const { pageTitle, additionalAction } = props;
+  const { pageTitle, brandName = "Plane", additionalAction } = props;
   return (
     <>
-      <PageHead title={pageTitle + " - Plane"} />
+      <PageHead title={`${pageTitle} - ${brandName}`} />
       <div className="sticky top-0 flex w-full flex-shrink-0 items-center justify-between gap-6">
         <Link href="/">
-          <PlaneLockup height={20} width={95} className="text-primary" />
+          <InstanceBrandMark variant="lockup" className="h-5 w-auto text-primary" />
         </Link>
         {additionalAction}
       </div>

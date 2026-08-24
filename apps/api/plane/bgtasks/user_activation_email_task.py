@@ -14,7 +14,7 @@ from celery import shared_task
 
 # Module imports
 from plane.db.models import User
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
@@ -24,9 +24,8 @@ def user_activation_email(current_site, user_id):
     try:
         # Send email to user when account is activated
         user = User.objects.get(id=user_id)
-        subject = f"{user.first_name or user.display_name or user.email} has been activated on Plane"
-
-        context = {"email": str(user.email), "profile_url": current_site + "/profile"}
+        context = with_email_branding({"email": str(user.email), "profile_url": current_site + "/profile"})
+        subject = f"{user.first_name or user.display_name or user.email} has been activated on {context['brand_name']}"
 
         # Send email to user
         html_content = render_to_string("emails/user/user_activation.html", context)

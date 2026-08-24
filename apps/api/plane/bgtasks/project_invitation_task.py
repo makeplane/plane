@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 
 # Module imports
 from plane.db.models import Project, ProjectMemberInvite, User
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
@@ -30,15 +30,15 @@ def project_invitation(email, project_id, token, current_site, invitor):
         relativelink = f"/project-invitations/?invitation_id={project_member_invite.id}&email={email}&slug={project.workspace.slug}&project_id={str(project_id)}"  # noqa: E501
         abs_url = current_site + relativelink
 
-        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on Plane"
-
-        context = {
+        context = with_email_branding({
             "email": email,
             "first_name": user.first_name,
             "project_name": project.name,
             "invitation_url": abs_url,
             "current_site": current_site,
-        }
+        })
+
+        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on {context['brand_name']}"
 
         html_content = render_to_string("emails/invitations/project_invitation.html", context)
 

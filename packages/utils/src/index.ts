@@ -5,6 +5,7 @@
  */
 
 export * from "./array";
+export * from "./branding";
 export * from "./attachment";
 export * from "./auth";
 export * from "./calendar";

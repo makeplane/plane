@@ -18,7 +18,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.db.models import EmailNotificationLog, Issue, User
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.settings.redis import redis_instance
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
@@ -259,7 +259,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 "comments": comments,
                 "entity_type": "issue",
             }
-            html_content = render_to_string("emails/notifications/issue-updates.html", context)
+            html_content = render_to_string("emails/notifications/issue-updates.html", with_email_branding(context))
             text_content = generate_plain_text_from_html(html_content)
 
             try:

@@ -14,7 +14,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 
 # Module imports
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
@@ -32,9 +32,9 @@ def magic_link(email, key, token):
             EMAIL_FROM,
         ) = get_email_configuration()
 
+        context = with_email_branding({"code": token, "email": email})
         # Send the mail
-        subject = f"Your unique Plane login code is {token}"
-        context = {"code": token, "email": email}
+        subject = f"Your unique {context['brand_name']} login code is {token}"
 
         html_content = render_to_string("emails/auth/magic_signin.html", context)
         text_content = generate_plain_text_from_html(html_content)

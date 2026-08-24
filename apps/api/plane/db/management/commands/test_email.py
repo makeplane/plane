@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 # Module imports
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 
 
 class Command(BaseCommand):
@@ -44,9 +44,10 @@ class Command(BaseCommand):
             timeout=30,
         )
         # Prepare email details
-        subject = "Test email from Plane"
+        branding = with_email_branding()
+        subject = f"Test email from {branding['brand_name']}"
 
-        html_content = render_to_string("emails/test_email.html")
+        html_content = render_to_string("emails/test_email.html", branding)
         text_content = strip_tags(html_content)
 
         self.stdout.write(self.style.SUCCESS("Trying to send test email..."))

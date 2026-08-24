@@ -377,7 +377,11 @@ const errorCodeMessages: {
   },
 };
 
-export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: string): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (
+  errorCode: EAuthenticationErrorCodes,
+  email?: string,
+  supportEmail: string = SUPPORT_EMAIL
+): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.INVALID_EMAIL,
@@ -438,7 +442,10 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
       type: EErrorAlertType.BANNER_ALERT,
       code: errorCode,
       title: errorCodeMessages[errorCode]?.title || "Error",
-      message: errorCodeMessages[errorCode]?.message(email) || "Something went wrong. Please try again.",
+      message:
+        errorCode === EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED
+          ? `User account deactivated. Please contact ${supportEmail || "administrator"}.`
+          : errorCodeMessages[errorCode]?.message(email) || "Something went wrong. Please try again.",
     };
 
   return undefined;

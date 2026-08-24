@@ -250,6 +250,45 @@ unsplash_config_variables = [
     },
 ]
 
+branding_config_variables = [
+    {
+        "key": "BRAND_LOGO_URL",
+        "value": os.environ.get("BRAND_LOGO_URL", ""),
+        "category": "BRANDING",
+        "is_encrypted": False,
+    },
+    {
+        "key": "BRAND_LOGO_DARK_URL",
+        "value": os.environ.get("BRAND_LOGO_DARK_URL", ""),
+        "category": "BRANDING",
+        "is_encrypted": False,
+    },
+    {
+        "key": "BRAND_FAVICON_URL",
+        "value": os.environ.get("BRAND_FAVICON_URL", ""),
+        "category": "BRANDING",
+        "is_encrypted": False,
+    },
+    {
+        "key": "BRAND_SUPPORT_EMAIL",
+        "value": os.environ.get("BRAND_SUPPORT_EMAIL", ""),
+        "category": "BRANDING",
+        "is_encrypted": False,
+    },
+    {
+        "key": "BRAND_WEBSITE_URL",
+        "value": os.environ.get("BRAND_WEBSITE_URL", ""),
+        "category": "BRANDING",
+        "is_encrypted": False,
+    },
+    {
+        "key": "HIDE_PLANE_MARKETING",
+        "value": os.environ.get("HIDE_PLANE_MARKETING", "0"),
+        "category": "BRANDING",
+        "is_encrypted": False,
+    },
+]
+
 core_config_variables = [
     *authentication_config_variables,
     *workspace_management_config_variables,
@@ -260,4 +299,5 @@ core_config_variables = [
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,
+    *branding_config_variables,
 ]

@@ -10,7 +10,8 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import { SPACE_BASE_PATH } from "@plane/constants";
-import { PlaneLockup } from "@plane/propel/icons";
+import { InstanceBrandMark } from "@/components/brand/instance-brand-mark";
+import { InstanceBrandHead } from "@/components/brand/instance-brand-head";
 // assets
 import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dark.svg?url";
 import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url";
@@ -53,7 +54,7 @@ export const InstanceProvider = observer(function InstanceProvider({ children }:
           <div className="z-50 container mx-auto flex h-[110px] flex-shrink-0 items-center justify-between gap-5 px-5 lg:px-0">
             <div className="flex items-center gap-x-2 py-10">
               <Link to={`${SPACE_BASE_PATH}/`}>
-                <PlaneLockup className="h-7 w-auto text-primary" />
+                <InstanceBrandMark variant="lockup" className="h-7 w-auto text-primary" />
               </Link>
             </div>
           </div>
@@ -70,5 +71,10 @@ export const InstanceProvider = observer(function InstanceProvider({ children }:
     );
   }
 
-  return children;
+  return (
+    <>
+      <InstanceBrandHead />
+      {children}
+    </>
+  );
 });

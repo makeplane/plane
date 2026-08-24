@@ -19,7 +19,7 @@ from plane.db.models import Workspace
 from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers import InstanceSerializer
 from plane.license.models import Instance
-from plane.license.utils.instance_value import get_configuration_value
+from plane.license.utils.instance_value import get_branding_configuration, get_configuration_value
 from plane.utils.cache import cache_response, invalidate_cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -125,6 +125,8 @@ class InstanceEndpoint(BaseAPIView):
             ]
         )
 
+        branding = get_branding_configuration()
+
         data = {}
         # Authentication
         data["enable_signup"] = ENABLE_SIGNUP == "1"
@@ -157,6 +159,14 @@ class InstanceEndpoint(BaseAPIView):
 
         # is smtp configured
         data["is_smtp_configured"] = bool(EMAIL_HOST)
+
+        # Branding
+        data["brand_logo_url"] = branding["brand_logo_url"]
+        data["brand_logo_dark_url"] = branding["brand_logo_dark_url"]
+        data["brand_favicon_url"] = branding["brand_favicon_url"]
+        data["brand_support_email"] = branding["brand_support_email"]
+        data["brand_website_url"] = branding["brand_website_url"]
+        data["hide_plane_marketing"] = branding["hide_plane_marketing"]
 
         # Base URL
         data["admin_base_url"] = settings.ADMIN_BASE_URL

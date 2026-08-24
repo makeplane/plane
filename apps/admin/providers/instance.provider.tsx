@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
+import { InstanceBrandHead } from "@/components/brand/instance-brand-head";
 import { useInstance } from "@/hooks/store";
 
 export const InstanceProvider = observer(function InstanceProvider(props: React.PropsWithChildren) {
@@ -20,5 +21,10 @@ export const InstanceProvider = observer(function InstanceProvider(props: React.
     errorRetryCount: 0,
   });
 
-  return <>{children}</>;
+  return (
+    <>
+      <InstanceBrandHead />
+      {children}
+    </>
+  );
 });

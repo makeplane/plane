@@ -24,6 +24,7 @@ import ctaR2Light from "@/app/assets/workspace-active-cycles/cta-r-2-light.webp?
 import { ProIcon } from "@/components/common/pro-icon";
 // hooks
 import { useUser } from "@/hooks/store/user";
+import { useBrand } from "@/hooks/use-brand";
 
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {
@@ -74,8 +75,11 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
   const {
     userProfile: { data: userProfile },
   } = useUser();
+  const { hidePlaneMarketing } = useBrand();
 
   const isDarkMode = userProfile?.theme.theme === "dark";
+
+  if (hidePlaneMarketing) return null;
 
   return (
     <ContentWrapper className="gap-10">

@@ -13,7 +13,7 @@ from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 
 # Module imports
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 
@@ -35,7 +35,7 @@ def send_email_update_magic_code(email, token):
         subject = "Verify your new email address"
         context = {"code": token, "email": email}
 
-        html_content = render_to_string("emails/auth/magic_signin.html", context)
+        html_content = render_to_string("emails/auth/magic_signin.html", with_email_branding(context))
         text_content = generate_plain_text_from_html(html_content)
 
         connection = get_connection(
@@ -83,8 +83,8 @@ def send_email_update_confirmation(email):
         ) = get_email_configuration()
 
         # Send the confirmation email
-        subject = "Plane email address successfully updated"
-        context = {"email": email}
+        context = with_email_branding({"email": email})
+        subject = f"{context['brand_name']} email address successfully updated"
 
         html_content = render_to_string("emails/user/email_updated.html", context)
         text_content = generate_plain_text_from_html(html_content)

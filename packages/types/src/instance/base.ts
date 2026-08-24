@@ -13,6 +13,7 @@ import type {
   TInstanceWorkspaceConfigurationKeys,
   TCoreLoginMediums,
 } from "./";
+import type { TInstanceBrandingConfigurationKeys } from "./branding";
 import type { TExtendedLoginMediums } from "./auth-ee";
 
 export interface IInstanceInfo {
@@ -66,6 +67,12 @@ export interface IInstanceConfig {
   admin_base_url: string | undefined;
   is_self_managed: boolean;
   instance_changelog_url?: string;
+  brand_logo_url?: string;
+  brand_logo_dark_url?: string;
+  brand_favicon_url?: string;
+  brand_support_email?: string;
+  brand_website_url?: string;
+  hide_plane_marketing?: boolean;
 }
 
 export interface IInstanceAdmin {
@@ -85,7 +92,8 @@ export type TInstanceConfigurationKeys =
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
-  | TInstanceWorkspaceConfigurationKeys;
+  | TInstanceWorkspaceConfigurationKeys
+  | TInstanceBrandingConfigurationKeys;
 
 export interface IInstanceConfiguration {
   id: string;

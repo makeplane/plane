@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { InstanceBrandHead } from "@/components/brand/instance-brand-head";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceNotReady, MaintenanceView } from "@/components/instance";
 // hooks
@@ -44,7 +45,12 @@ const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrappe
   // instance is not ready and setup is not done
   if (instance?.is_setup_done === false) return <InstanceNotReady />;
 
-  return <>{children}</>;
+  return (
+    <>
+      <InstanceBrandHead />
+      {children}
+    </>
+  );
 });
 
 export default InstanceWrapper;

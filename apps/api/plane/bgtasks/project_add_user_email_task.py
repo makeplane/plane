@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 
 
 # Module imports
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import get_email_configuration, with_email_branding
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.db.models import ProjectMember
@@ -35,13 +35,13 @@ def project_add_user_email(current_site, project_member_id, invitor_id):
         member_email = project_member.member.email
         project_url = f"{current_site}/{project_member.workspace.slug}/projects/{project_member.project_id}/issues"
         # set the context
-        context = {
+        context = with_email_branding({
             "project_name": project_name,
             "workspace_name": workspace_name,
             "email": member_email,
             "inviter_first_name": inviter_first_name,
             "project_url": project_url,
-        }
+        })
 
         # Get the email configuration
         (
@@ -55,7 +55,7 @@ def project_add_user_email(current_site, project_member_id, invitor_id):
         ) = get_email_configuration()
 
         # Set the subject
-        subject = "You have been invited to a Plane project"
+        subject = f"You have been invited to a {context['brand_name']} project"
 
         # Render the email template
         html_content = render_to_string("emails/notifications/project_addition.html", context)
