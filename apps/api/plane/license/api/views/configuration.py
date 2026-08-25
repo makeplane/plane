@@ -104,10 +104,20 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             EMAIL_FROM,
         ) = get_email_configuration()
 
+        try:
+            port = int(EMAIL_PORT) if EMAIL_PORT else 587
+            if not (1 <= port <= 65535):
+                raise ValueError()
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "SMTP port is invalid. Please save a valid SMTP configuration before sending a test email."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Configure all the connections
         connection = get_connection(
             host=EMAIL_HOST,
-            port=int(EMAIL_PORT),
+            port=port,
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
             use_tls=EMAIL_USE_TLS == "1",

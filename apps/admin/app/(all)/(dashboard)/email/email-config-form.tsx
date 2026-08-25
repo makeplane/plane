@@ -222,7 +222,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           size="lg"
           onClick={() => setIsSendTestEmailModalOpen(true)}
           loading={isSubmitting}
-          disabled={!isValid}
+          disabled={!isValid || isDirty}
         >
           Send test email
         </Button>
