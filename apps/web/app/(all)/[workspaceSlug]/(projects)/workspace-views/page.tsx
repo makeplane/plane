@@ -40,7 +40,7 @@ function WorkspaceViewsPage() {
             mode="true-transparent"
           />
         </div>
-        <div className="vertical-scrollbar flex scrollbar-lg h-full w-full flex-col">
+        <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col">
           {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => t(v.i18n_label).toLowerCase().includes(query.toLowerCase())).map(
             (option) => (
               <GlobalDefaultViewListItem key={option.key} view={option} />
