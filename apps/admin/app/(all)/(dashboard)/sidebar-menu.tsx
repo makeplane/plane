@@ -29,7 +29,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
   };
 
   return (
-    <div className="vertical-scrollbar flex scrollbar-sm h-full w-full flex-col gap-2.5 overflow-y-scroll px-4 py-4">
+    <div className="vertical-scrollbar scrollbar-sm flex h-full w-full flex-col gap-2.5 overflow-y-scroll px-4 py-4">
       {sidebarMenu.map((item) => {
         const isActive = item.href === pathName || pathName?.startsWith(item.href);
         return (
