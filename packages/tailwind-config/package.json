@@ -13,6 +13,7 @@
     "./postcss.config.js": "./postcss.config.js"
   },
   "dependencies": {
+    "@makeplane/propel": "0.2.0",
     "@tailwindcss/postcss": "catalog:",
     "postcss": "catalog:"
   },
