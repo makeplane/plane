@@ -4,7 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { EIconSize } from "@plane/constants";
+export enum EIconSize {
+  XS = "xs",
+  SM = "sm",
+  MD = "md",
+  LG = "lg",
+  XL = "xl",
+} // inlined from @plane/constants
 import type { TIntakeStateGroups } from "@plane/types";
 
 export interface IStateGroupIcon {

@@ -4,18 +4,66 @@
  * See the LICENSE file for details.
  */
 
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { ArrowRight, Plus, Trash2 } from "lucide-react";
 import { Button } from "./button";
+
+const ICON_OPTIONS = ["none", "plus", "trash", "arrow-right"] as const;
+type IconOption = (typeof ICON_OPTIONS)[number];
+
+const ICON_MAP: Record<IconOption, React.ReactElement | undefined> = {
+  none: undefined,
+  plus: <Plus />,
+  trash: <Trash2 />,
+  "arrow-right": <ArrowRight />,
+};
+
+const ALL_VARIANTS = ["primary", "error-fill", "error-outline", "secondary", "tertiary", "ghost", "link"] as const;
 
 const meta = {
   title: "Components/Button",
   component: Button,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: { layout: "padded" },
   tags: ["autodocs"],
   args: {
     children: "Button",
+    variant: "primary",
+    size: "base",
+    loading: false,
+  },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["primary", "error-fill", "error-outline", "secondary", "tertiary", "ghost", "link"],
+      description: "Variant",
+      table: { defaultValue: { summary: '"primary"' } },
+    },
+    size: {
+      control: "select",
+      options: ["sm", "base", "lg", "xl"],
+      description: "Size",
+      table: { defaultValue: { summary: '"base"' } },
+    },
+    loading: {
+      control: "boolean",
+      description: "Loading",
+      table: { defaultValue: { summary: "false" } },
+    },
+    prependIcon: {
+      control: "select",
+      options: ICON_OPTIONS,
+      mapping: ICON_MAP,
+      description: "Icon rendered before the label",
+      table: { defaultValue: { summary: "none" } },
+    },
+    appendIcon: {
+      control: "select",
+      options: ICON_OPTIONS,
+      mapping: ICON_MAP,
+      description: "Icon rendered after the label",
+      table: { defaultValue: { summary: "none" } },
+    },
   },
 } satisfies Meta<typeof Button>;
 
@@ -27,150 +75,61 @@ export const Default: Story = {};
 export const Primary: Story = {
   args: {
     variant: "primary",
-    children: "Primary Button",
+    children: "Primary",
   },
 };
 
 export const ErrorFill: Story = {
   args: {
     variant: "error-fill",
-    children: "Error Button",
+    children: "Error Fill",
   },
 };
 
 export const ErrorOutline: Story = {
   args: {
     variant: "error-outline",
-    children: "Error Outline Button",
+    children: "Error Outline",
   },
 };
 
 export const Secondary: Story = {
   args: {
     variant: "secondary",
-    children: "Secondary Button",
+    children: "Secondary",
   },
 };
 
 export const Tertiary: Story = {
   args: {
     variant: "tertiary",
-    children: "Tertiary Button",
+    children: "Tertiary",
   },
 };
 
 export const Ghost: Story = {
   args: {
     variant: "ghost",
-    children: "Ghost Button",
+    children: "Ghost",
   },
 };
 
 export const Link: Story = {
   args: {
     variant: "link",
-    children: "Link Button",
-  },
-};
-
-export const Small: Story = {
-  args: {
-    size: "sm",
-    children: "Small Button",
-  },
-};
-
-export const Base: Story = {
-  args: {
-    size: "base",
-    children: "Base Button",
-  },
-};
-
-export const Large: Story = {
-  args: {
-    size: "lg",
-    children: "Large Button",
-  },
-};
-
-export const ExtraLarge: Story = {
-  args: {
-    size: "xl",
-    children: "Extra Large Button",
-  },
-};
-
-export const Loading: Story = {
-  args: {
-    loading: true,
-    children: "Loading Button",
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    children: "Disabled Button",
-  },
-};
-
-export const WithPrependIcon: Story = {
-  args: {
-    prependIcon: (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 5v14m-7-7h14" />
-      </svg>
-    ),
-    children: "With Prepend Icon",
-  },
-};
-
-export const WithAppendIcon: Story = {
-  args: {
-    appendIcon: (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M9 5l7 7-7 7" />
-      </svg>
-    ),
-    children: "With Append Icon",
+    children: "Link",
   },
 };
 
 export const AllVariants: Story = {
   render() {
     return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Primary Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="primary">Primary</Button>
-            <Button variant="error-fill">Error Fill</Button>
-            <Button variant="error-outline">Error Outline</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="tertiary">Tertiary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="link">Link</Button>
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        {ALL_VARIANTS.map((v) => (
+          <Button key={v} variant={v}>
+            {v.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+          </Button>
+        ))}
       </div>
     );
   },
@@ -179,30 +138,56 @@ export const AllVariants: Story = {
 export const AllSizes: Story = {
   render() {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Button size="sm">Small</Button>
-          <Button size="base">Base</Button>
-          <Button size="lg">Large</Button>
-          <Button size="xl">Extra Large</Button>
-        </div>
+      <div className="flex items-center gap-2">
+        <Button size="sm">Sm</Button>
+        <Button size="base">Base</Button>
+        <Button size="lg">Lg</Button>
+        <Button size="xl">Xl</Button>
       </div>
     );
   },
 };
 
-export const AllStates: Story = {
+export const WithPrependIcon: Story = {
+  name: "With Prepend Icon — all variants",
   render() {
     return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Button States</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button>Default</Button>
-            <Button loading>Loading</Button>
-            <Button disabled>Disabled</Button>
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        {ALL_VARIANTS.map((v) => (
+          <Button key={v} variant={v} prependIcon={<Plus />}>
+            {v.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+          </Button>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const WithAppendIcon: Story = {
+  name: "With Append Icon — all variants",
+  render() {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {ALL_VARIANTS.map((v) => (
+          <Button key={v} variant={v} appendIcon={<ArrowRight />}>
+            {v.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+          </Button>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const WithBothIcons: Story = {
+  name: "With Both Icons — all variants",
+  render() {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {ALL_VARIANTS.map((v) => (
+          <Button key={v} variant={v} prependIcon={<Trash2 />} appendIcon={<ArrowRight />}>
+            {v.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+          </Button>
+        ))}
       </div>
     );
   },

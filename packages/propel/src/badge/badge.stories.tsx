@@ -4,18 +4,33 @@
  * See the LICENSE file for details.
  */
 
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Badge } from "./badge";
 
 const meta = {
   title: "Components/Badge",
   component: Badge,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: { layout: "padded" },
   tags: ["autodocs"],
   args: {
     children: "Badge",
+    variant: "neutral",
+    size: "base",
+  },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["neutral", "brand", "warning", "success", "danger"],
+      description: "Variant",
+      table: { defaultValue: { summary: '"neutral"' } },
+    },
+    size: {
+      control: "select",
+      options: ["sm", "base", "lg"],
+      description: "Size",
+      table: { defaultValue: { summary: '"base"' } },
+    },
   },
 } satisfies Meta<typeof Badge>;
 
@@ -27,127 +42,57 @@ export const Default: Story = {};
 export const Neutral: Story = {
   args: {
     variant: "neutral",
-    children: "Neutral Badge",
+    children: "Neutral",
   },
 };
 
 export const Brand: Story = {
   args: {
     variant: "brand",
-    children: "Brand Badge",
+    children: "Brand",
   },
 };
 
 export const Warning: Story = {
   args: {
     variant: "warning",
-    children: "Warning Badge",
+    children: "Warning",
   },
 };
 
 export const Success: Story = {
   args: {
     variant: "success",
-    children: "Success Badge",
+    children: "Success",
   },
 };
 
 export const Danger: Story = {
   args: {
     variant: "danger",
-    children: "Danger Badge",
+    children: "Danger",
   },
 };
-
-export const Small: Story = {
-  args: {
-    size: "sm",
-    children: "Small Badge",
-  },
-};
-
-export const Base: Story = {
-  args: {
-    size: "base",
-    children: "Base Badge",
-  },
-};
-
-export const Large: Story = {
-  args: {
-    size: "lg",
-    children: "Large Badge",
-  },
-};
-
-export const WithPrependIcon: Story = {
-  args: {
-    prependIcon: (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M12 5v14m-7-7h14" />
-      </svg>
-    ),
-    children: "With Prepend Icon",
-  },
-};
-
-export const WithAppendIcon: Story = {
-  args: {
-    appendIcon: (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M9 5l7 7-7 7" />
-      </svg>
-    ),
-    children: "With Append Icon",
-  },
-};
-
 export const AllVariants: Story = {
   render() {
     return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Primary Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="neutral">Neutral</Badge>
-            <Badge variant="brand">Brand</Badge>
-            <Badge variant="warning">Warning</Badge>
-            <Badge variant="success">Success</Badge>
-            <Badge variant="danger">Danger</Badge>
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        <Badge variant="neutral">Neutral</Badge>
+        <Badge variant="brand">Brand</Badge>
+        <Badge variant="warning">Warning</Badge>
+        <Badge variant="success">Success</Badge>
+        <Badge variant="danger">Danger</Badge>
       </div>
     );
   },
 };
-
 export const AllSizes: Story = {
   render() {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Badge size="sm">Small</Badge>
-          <Badge size="base">Base</Badge>
-          <Badge size="lg">Large</Badge>
-        </div>
+      <div className="flex items-center gap-2">
+        <Badge size="sm">Sm</Badge>
+        <Badge size="base">Base</Badge>
+        <Badge size="lg">Lg</Badge>
       </div>
     );
   },

@@ -16,7 +16,7 @@ import {
   YAxis,
 } from "recharts";
 // plane imports
-import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
+const AXIS_LABEL_CLASSNAME = "uppercase text-tertiary/60 text-13 tracking-wide"; // inlined from @plane/constants
 import type { TScatterChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
@@ -91,9 +91,9 @@ export const ScatterChart = React.memo(function ScatterChart<K extends string, T
           <CartesianGrid stroke="var(--border-color-subtle)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
-            tick={(props) => {
+            tick={(tickProps) => {
               const TickComponent = customTicks?.x || CustomXAxisTick;
-              return <TickComponent {...props} />;
+              return <TickComponent {...tickProps} />;
             }}
             tickLine={false}
             axisLine={false}
@@ -120,9 +120,9 @@ export const ScatterChart = React.memo(function ScatterChart<K extends string, T
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
-            tick={(props) => {
+            tick={(tickProps) => {
               const TickComponent = customTicks?.y || CustomYAxisTick;
-              return <TickComponent {...props} />;
+              return <TickComponent {...tickProps} />;
             }}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}

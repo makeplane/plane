@@ -4,144 +4,71 @@
  * See the LICENSE file for details.
  */
 
+import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IconButton } from "./icon-button";
 
-const icon = () => (
+const PlusIcon = ({ className }: { className?: string }) => (
   <svg
-    width="16"
-    height="16"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth={2}
     strokeLinecap="round"
-    strokeLinejoin="round"
+    className={className}
   >
-    <path d="M12 5v14m-7-7h14" />
+    <path d="M12 5v14M5 12h14" />
   </svg>
 );
 
 const meta = {
   title: "Components/IconButton",
   component: IconButton,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: { layout: "padded" },
   tags: ["autodocs"],
   args: {
-    icon,
+    variant: "primary",
+    size: "base",
+    icon: PlusIcon,
+  },
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["primary", "error-fill", "error-outline", "secondary", "tertiary", "ghost"],
+      description: "Variant",
+      table: { defaultValue: { summary: '"primary"' } },
+    },
+    size: {
+      control: "select",
+      options: ["sm", "base", "lg", "xl"],
+      description: "Size",
+      table: { defaultValue: { summary: '"base"' } },
+    },
   },
 } satisfies Meta<typeof IconButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    icon,
-  },
-};
+export const Default: Story = {};
 
-export const Primary: Story = {
-  args: {
-    variant: "primary",
-    icon,
-  },
-};
-
-export const ErrorFill: Story = {
-  args: {
-    variant: "error-fill",
-    icon,
-  },
-};
-
-export const ErrorOutline: Story = {
-  args: {
-    variant: "error-outline",
-    icon,
-  },
-};
-
-export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    icon,
-  },
-};
-
-export const Tertiary: Story = {
-  args: {
-    variant: "tertiary",
-    icon,
-  },
-};
-
-export const Ghost: Story = {
-  args: {
-    variant: "ghost",
-    icon,
-  },
-};
-
-export const Small: Story = {
-  args: {
-    size: "sm",
-    icon,
-  },
-};
-
-export const Base: Story = {
-  args: {
-    size: "base",
-    icon,
-  },
-};
-
-export const Large: Story = {
-  args: {
-    size: "lg",
-    icon,
-  },
-};
-
-export const ExtraLarge: Story = {
-  args: {
-    size: "xl",
-    icon,
-  },
-};
-
-export const Loading: Story = {
-  args: {
-    loading: true,
-    icon,
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    icon,
-  },
-};
+export const Primary: Story = { args: { variant: "primary" } };
+export const ErrorFill: Story = { args: { variant: "error-fill" } };
+export const ErrorOutline: Story = { args: { variant: "error-outline" } };
+export const Secondary: Story = { args: { variant: "secondary" } };
+export const Tertiary: Story = { args: { variant: "tertiary" } };
+export const Ghost: Story = { args: { variant: "ghost" } };
 
 export const AllVariants: Story = {
   render() {
     return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Primary Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <IconButton variant="primary" icon={icon} />
-            <IconButton variant="error-fill" icon={icon} />
-            <IconButton variant="error-outline" icon={icon} />
-            <IconButton variant="secondary" icon={icon} />
-            <IconButton variant="tertiary" icon={icon} />
-            <IconButton variant="ghost" icon={icon} />
-          </div>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        <IconButton icon={PlusIcon} variant="primary" />
+        <IconButton icon={PlusIcon} variant="error-fill" />
+        <IconButton icon={PlusIcon} variant="error-outline" />
+        <IconButton icon={PlusIcon} variant="secondary" />
+        <IconButton icon={PlusIcon} variant="tertiary" />
+        <IconButton icon={PlusIcon} variant="ghost" />
       </div>
     );
   },
@@ -150,30 +77,11 @@ export const AllVariants: Story = {
 export const AllSizes: Story = {
   render() {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <IconButton size="sm" icon={icon} />
-          <IconButton size="base" icon={icon} />
-          <IconButton size="lg" icon={icon} />
-          <IconButton size="xl" icon={icon} />
-        </div>
-      </div>
-    );
-  },
-};
-
-export const AllStates: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Button States</h3>
-          <div className="flex flex-wrap gap-2">
-            <IconButton icon={icon} />
-            <IconButton loading icon={icon} />
-            <IconButton disabled icon={icon} />
-          </div>
-        </div>
+      <div className="flex items-center gap-2">
+        <IconButton icon={PlusIcon} size="sm" />
+        <IconButton icon={PlusIcon} size="base" />
+        <IconButton icon={PlusIcon} size="lg" />
+        <IconButton icon={PlusIcon} size="xl" />
       </div>
     );
   },
