@@ -208,7 +208,9 @@ overrides:
   mdast-util-to-hast: 13.2.1
   valibot: 1.4.2
   glob: 11.1.0
-  brace-expansion: 5.0.7
+  # brace-expansion <5.0.9 has two DoS advisories (GHSA-mh99-v99m-4gvg, GHSA-rgw5-rvv9-x895,
+  # the second bypasses the first's mitigation) reachable via serve>serve-handler>minimatch.
+  brace-expansion: 5.0.9
   nanoid: 3.3.18
   esbuild: 0.28.1
   "@babel/core": 7.29.7
