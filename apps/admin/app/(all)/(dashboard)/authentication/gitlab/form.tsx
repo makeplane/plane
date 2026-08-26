@@ -59,7 +59,7 @@ export function InstanceGitlabConfigForm(props: Props) {
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
-  const GITLAB_FORM_FIELDS: TControllerInputFormField[] = [
+  const GITLAB_FORM_FIELDS: TControllerInputFormField<GitlabConfigFormValues>[] = [
     {
       key: "GITLAB_HOST",
       type: "text",

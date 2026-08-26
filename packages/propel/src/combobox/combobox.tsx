@@ -144,7 +144,8 @@ function ComboboxOptions({
     if (!showSearch || !searchQuery) return children;
 
     return React.Children.toArray(children).filter((child) => {
-      if (!React.isValidElement(child)) return true;
+      // React 19 defaults ReactElement's props to `unknown`; name the shape read below.
+      if (!React.isValidElement<{ children?: React.ReactNode; value?: string }>(child)) return true;
 
       // Only filter ComboboxOption components, leave other elements (like additional content) unfiltered
       if (child.type !== ComboboxOption) return true;
@@ -153,7 +154,7 @@ function ComboboxOptions({
       const getTextContent = (node: React.ReactNode): string => {
         if (typeof node === "string") return node;
         if (typeof node === "number") return String(node);
-        if (React.isValidElement(node) && node.props.children) {
+        if (React.isValidElement<{ children?: React.ReactNode }>(node) && node.props.children) {
           return getTextContent(node.props.children);
         }
         if (Array.isArray(node)) {

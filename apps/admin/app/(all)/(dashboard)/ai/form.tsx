@@ -37,7 +37,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     },
   });
 
-  const aiFormFields: TControllerInputFormField[] = [
+  const aiFormFields: TControllerInputFormField<AIFormValues>[] = [
     {
       key: "LLM_MODEL",
       type: "text",

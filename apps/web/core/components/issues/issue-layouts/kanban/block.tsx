@@ -53,7 +53,7 @@ interface IssueBlockProps {
 }
 
 interface IssueDetailsBlockProps {
-  cardRef: React.RefObject<HTMLElement>;
+  cardRef: React.RefObject<HTMLElement | null>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;

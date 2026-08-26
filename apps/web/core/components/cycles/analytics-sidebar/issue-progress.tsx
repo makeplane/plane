@@ -126,7 +126,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                 <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
               </div>
             )}
-            <Transition show={open}>
+            <Transition as="div" show={open}>
               <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
                 {cycleStartDate && cycleEndDate ? (
                   <>

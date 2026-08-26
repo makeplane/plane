@@ -60,7 +60,7 @@ export function InstanceGithubConfigForm(props: Props) {
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
-  const GITHUB_FORM_FIELDS: TControllerInputFormField[] = [
+  const GITHUB_FORM_FIELDS: TControllerInputFormField<GithubConfigFormValues>[] = [
     {
       key: "GITHUB_CLIENT_ID",
       type: "text",

@@ -112,7 +112,11 @@ export function ParentIssuesListModal({
             tabIndex={baseTabIndex}
           />
         </div>
-        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
+        <Combobox.Options
+          as="ul"
+          static
+          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+        >
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
               Search results for{" "}
@@ -145,6 +149,7 @@ export function ParentIssuesListModal({
                 <ul className={`text-13 ${issues.length > 0 ? "p-2" : ""}`}>
                   {issues.map((issue) => (
                     <Combobox.Option
+                      as="li"
                       key={issue.id}
                       value={issue}
                       className={({ active, selected }) =>

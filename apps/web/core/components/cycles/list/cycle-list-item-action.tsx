@@ -40,7 +40,7 @@ type Props = {
   projectId: string;
   cycleId: string;
   cycleDetails: ICycle;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
   isActive?: boolean;
 };
 

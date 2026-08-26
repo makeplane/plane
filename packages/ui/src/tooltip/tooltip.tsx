@@ -4,33 +4,27 @@
  * See the LICENSE file for details.
  */
 
-import { Tooltip2 } from "@blueprintjs/popover2";
 import React, { useEffect, useRef, useState } from "react";
-// helpers
-import { cn } from "../utils";
+import { Tooltip as PropelTooltip } from "@plane/propel/tooltip";
+import type { TPlacement } from "@plane/propel/utils";
 
-export type TPosition =
-  | "top"
-  | "right"
-  | "bottom"
-  | "left"
-  | "auto"
-  | "auto-end"
-  | "auto-start"
-  | "bottom-left"
-  | "bottom-right"
-  | "left-bottom"
-  | "left-top"
-  | "right-bottom"
-  | "right-top"
-  | "top-left"
-  | "top-right";
+/**
+ * Kept as an alias so existing `TPosition` consumers keep compiling.
+ *
+ * The previous Blueprint-backed implementation also accepted `bottom-left`,
+ * `left-top`, `top-right` and friends. Those have no equivalent in the design
+ * system's placement vocabulary (which spells them `bottom-start`, `top-end`, ...)
+ * and no call site in the repo used them.
+ */
+export type TPosition = TPlacement;
 
 interface ITooltipProps {
   tooltipHeading?: string;
   tooltipContent: string | React.ReactNode;
   position?: TPosition;
-  children: React.ReactElement;
+  // React 19 defaults ReactElement's props to `unknown`; propel's Tooltip needs a
+  // named props shape, so mirror it here rather than casting at the call site.
+  children: React.ReactElement<Record<string, unknown>>;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
@@ -82,32 +76,17 @@ export function Tooltip({
   }
 
   return (
-    <Tooltip2
-      disabled={disabled}
-      hoverOpenDelay={openDelay}
-      hoverCloseDelay={closeDelay}
-      content={
-        <div
-          className={cn(
-            "shadow-md relative z-50 block max-w-xs gap-1 overflow-hidden rounded-md bg-surface-1 p-2 text-11 break-words text-secondary",
-            {
-              hidden: isMobile,
-            },
-            className
-          )}
-        >
-          {tooltipHeading && <h5 className="font-medium text-primary">{tooltipHeading}</h5>}
-          {tooltipContent}
-        </div>
-      }
+    <PropelTooltip
+      tooltipHeading={tooltipHeading}
+      tooltipContent={tooltipContent}
       position={position}
-      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
-        React.cloneElement(children, {
-          ref: eleReference,
-          ...tooltipProps,
-          ...children.props,
-        })
-      }
-    />
+      disabled={disabled}
+      className={className}
+      openDelay={openDelay}
+      closeDelay={closeDelay}
+      isMobile={isMobile}
+    >
+      {children}
+    </PropelTooltip>
   );
 }

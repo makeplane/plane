@@ -123,6 +123,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
           </div>
         )}
         <Combobox.Options
+          as="ul"
           static
           className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto py-2 transition-[height] duration-200 ease-in-out"
         >
@@ -146,6 +147,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                 const isProjectSelected = selectedProjectIds.includes(projectDetails.id);
                 return (
                   <Combobox.Option
+                    as="li"
                     key={projectDetails.id}
                     value={projectDetails.id}
                     className={({ active }) =>

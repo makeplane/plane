@@ -15,7 +15,7 @@ import useAutoSave from "@/hooks/use-auto-save";
 import type { TPageInstance } from "@/store/pages/base-page";
 
 type TArgs = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: React.RefObject<EditorRefApi | null>;
   fetchPageDescription: () => Promise<ArrayBuffer>;
   collaborationState: CollaborationState | null;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;

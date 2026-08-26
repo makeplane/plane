@@ -177,7 +177,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
               </div>
             )}
 
-            <Transition show={open}>
+            <Transition as="div" show={open}>
               <Disclosure.Panel className="space-y-4">
                 {/* progress burndown chart */}
                 <div>

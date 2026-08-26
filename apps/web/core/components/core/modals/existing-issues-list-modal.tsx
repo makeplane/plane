@@ -139,7 +139,8 @@ export function ExistingIssuesListModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <Combobox
         as="div"
-        onChange={(val: ISearchIssueResponse) => {
+        onChange={(val: ISearchIssueResponse | null) => {
+          if (val === null) return;
           if (selectedIssues.some((i) => i.id === val.id))
             setSelectedIssues((prevData) => prevData.filter((i) => i.id !== val.id));
           else setSelectedIssues((prevData) => [...prevData, val]);
@@ -210,7 +211,11 @@ export function ExistingIssuesListModal(props: Props) {
           )}
         </div>
 
-        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
+        <Combobox.Options
+          as="ul"
+          static
+          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+        >
           {/* TODO: Translate here */}
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">

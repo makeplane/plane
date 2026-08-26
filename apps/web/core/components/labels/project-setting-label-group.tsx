@@ -124,6 +124,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
                       </Disclosure.Button>
                     </div>
                     <Transition
+                      as="div"
                       show={open}
                       enter="transition duration-100 ease-out"
                       enterFrom="transform opacity-0"

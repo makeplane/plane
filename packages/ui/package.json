@@ -29,8 +29,6 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
-    "@blueprintjs/core": "catalog:",
-    "@blueprintjs/popover2": "catalog:",
     "@headlessui/react": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
@@ -72,7 +70,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

@@ -466,6 +466,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           </div>
           {isAccordionMode && (
             <Transition
+              as="div"
               show={isProjectListOpen}
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"

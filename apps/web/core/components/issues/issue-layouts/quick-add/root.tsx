@@ -21,7 +21,7 @@ import { QuickAddIssueFormRoot } from "./form";
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
-  ref: React.RefObject<HTMLFormElement>;
+  ref: React.RefObject<HTMLFormElement | null>;
   isOpen: boolean;
   projectDetail: IProject;
   hasError: boolean;

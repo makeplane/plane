@@ -30,7 +30,7 @@ import { ButtonAvatars } from "../dropdowns/member/avatar";
 type Props = {
   moduleId: string;
   moduleDetails: IModule;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {

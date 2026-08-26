@@ -78,7 +78,7 @@ function Breadcrumbs({ className, children, onBack, isLoading = false }: Breadcr
             {isLoading ? (
               <BreadcrumbItemLoader />
             ) : React.isValidElement(childrenArray[childrenArray.length - 1]) ? (
-              React.cloneElement(childrenArray[childrenArray.length - 1] as React.ReactElement, {
+              React.cloneElement(childrenArray[childrenArray.length - 1] as React.ReactElement<BreadcrumbItemProps>, {
                 isLast: true,
               })
             ) : (

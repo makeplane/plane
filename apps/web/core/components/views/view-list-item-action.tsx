@@ -28,7 +28,7 @@ import { CreateUpdateProjectViewModal } from "./modal";
 import { ViewQuickActions } from "./quick-actions";
 
 type Props = {
-  parentRef: React.RefObject<HTMLElement>;
+  parentRef: React.RefObject<HTMLElement | null>;
   view: IProjectView;
 };
 

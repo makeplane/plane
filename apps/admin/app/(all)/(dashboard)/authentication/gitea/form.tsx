@@ -59,7 +59,7 @@ export function InstanceGiteaConfigForm(props: Props) {
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
-  const GITEA_FORM_FIELDS: TControllerInputFormField[] = [
+  const GITEA_FORM_FIELDS: TControllerInputFormField<GiteaConfigFormValues>[] = [
     {
       key: "GITEA_HOST",
       type: "text",

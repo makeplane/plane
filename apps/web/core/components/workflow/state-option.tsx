@@ -28,6 +28,7 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
 
   return (
     <Combobox.Option
+      as="li"
       key={option.value}
       value={option.value}
       className={({ active, selected }) =>

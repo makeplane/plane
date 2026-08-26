@@ -14,7 +14,7 @@ export interface PopoverContentProps extends React.ComponentProps<typeof BasePop
   align?: TAlign;
   sideOffset?: BasePopover.Positioner.Props["sideOffset"];
   side?: TSide;
-  containerRef?: React.RefObject<HTMLElement>;
+  containerRef?: React.RefObject<HTMLElement | null>;
   positionerClassName?: string;
 }
 

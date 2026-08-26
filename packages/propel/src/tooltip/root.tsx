@@ -14,7 +14,9 @@ type ITooltipProps = {
   tooltipHeading?: string;
   tooltipContent?: string | React.ReactNode | null;
   position?: TPlacement;
-  children: React.ReactElement;
+  // React 19 defaults ReactElement's props to `unknown`; Base UI's `render` prop
+  // needs a named props shape to accept the element.
+  children: React.ReactElement<Record<string, unknown>>;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
