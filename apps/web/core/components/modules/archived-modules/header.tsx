@@ -82,7 +82,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
 
   return (
     <div className="group relative flex border-b border-subtle">
-      <div className="horizontal-scrollbar flex scrollbar-sm w-full items-center gap-2 overflow-x-auto px-4">
+      <div className="horizontal-scrollbar scrollbar-sm flex w-full items-center gap-2 overflow-x-auto px-4">
         <ArchiveTabsList />
       </div>
       {/* filter options */}

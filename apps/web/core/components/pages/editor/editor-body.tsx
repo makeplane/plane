@@ -240,7 +240,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
 
   return (
     <Row
-      className="vertical-scrollbar relative flex scrollbar-md size-full flex-col overflow-x-hidden overflow-y-auto duration-200"
+      className="vertical-scrollbar relative scrollbar-md flex size-full flex-col overflow-x-hidden overflow-y-auto duration-200"
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">

@@ -173,11 +173,11 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
+            className="vertical-scrollbar scrollbar-sm flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             <div
               ref={issuesContainerRef}
-              className="vertical-scrollbar flex scrollbar-sm h-full w-full flex-col gap-1 overflow-y-auto"
+              className="vertical-scrollbar scrollbar-sm flex h-full w-full flex-col gap-1 overflow-y-auto"
             >
               {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
                 cycleIssueDetails.issueCount > 0 ? (
@@ -264,7 +264,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
+            className="vertical-scrollbar scrollbar-sm flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -326,7 +326,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
+            className="vertical-scrollbar scrollbar-sm flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (

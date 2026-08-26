@@ -22,7 +22,7 @@ export function ProfileSettingContentWrapper(props: Props) {
 
       <div
         className={cn(
-          "vertical-scrollbar mx-auto flex scrollbar-md h-full w-full flex-col px-8 py-10 md:px-20 md:py-16 lg:px-36 xl:px-56",
+          "vertical-scrollbar mx-auto scrollbar-md flex h-full w-full flex-col px-8 py-10 md:px-20 md:py-16 lg:px-36 xl:px-56",
           className
         )}
       >

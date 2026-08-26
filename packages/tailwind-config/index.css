@@ -1,6 +1,26 @@
 @import "tailwindcss";
-@import "./variables.css";
-@import "./animations.css";
+/*
+ * Design tokens + animations come from @makeplane/propel, which supersedes the
+ * variables.css / animations.css this package used to ship. It defines every
+ * token name we had bar one — --scrollbar-thumb-surface-hover, whose consumers
+ * now point at propel's --scrollbar-thumb-hover — plus every --animate-* token
+ * and a superset of our keyframes, and it keys light/dark off the same
+ * [data-theme*="dark"] / [data-theme="dark-contrast"] selectors we already use.
+ *
+ * Token *values* are propel's, not ours: many differ from what this package
+ * shipped. See the migration notes for the drift that needs a visual pass.
+ *
+ * Imported as the two leaf files rather than the "@makeplane/propel/styles"
+ * barrel. The barrel is those same two files plus `@source "../"`, which points
+ * Tailwind at propel's dist and emits utilities for its components — dead CSS
+ * here, since we consume propel for tokens only and import none of its JS.
+ * Re-add the barrel if propel components are adopted.
+ *
+ * propel's CSS deliberately does not import tailwindcss itself, so that stays
+ * above.
+ */
+@import "@makeplane/propel/styles/variables";
+@import "@makeplane/propel/styles/animations";
 @source "../**/*.{ts,tsx}";
 
 * {
@@ -103,8 +123,10 @@ body {
     }
   }
 
+  /* Container hover out-orders `::-webkit-scrollbar-thumb:hover` and `:active`
+     at equal specificity, so this shade shows while hovering *and* dragging. */
   &:hover::-webkit-scrollbar-thumb {
-    @apply bg-scrollbar-thumb-surface-hover;
+    @apply bg-scrollbar-thumb-hover;
   }
 
   &::-webkit-scrollbar-corner {
@@ -116,7 +138,22 @@ body {
   margin-top: 44px;
 }
 
-/* Scrollbar variants */
+/* Scrollbar variants
+ * `sm`, `md` and `lg` collide by name with propel's own scrollbar utilities,
+ * imported at the top of this file. Both definitions are emitted and ours lands
+ * second, so it wins — but only for properties it actually restates. propel sets
+ * `scrollbar-width` / `scrollbar-color`, and from Chromium 121 setting either of
+ * those makes the browser ignore every ::-webkit-scrollbar rule on the element,
+ * which would silently drop the geometry below and leave one 11px scrollbar
+ * everywhere. Resetting both back to `auto` hands the pseudo-elements back.
+ *
+ * This leans on ours being emitted after propel's, which follows from `@utility`
+ * registration order and is not something Tailwind documents for duplicate
+ * names. Keep these definitions below the propel @import. If scrollbars ever
+ * turn thin and uniform app-wide, this is why — rename ours to break the tie.
+ *
+ * `xs` has no propel counterpart, so it needs no reset.
+ */
 @utility scrollbar-xs {
   &::-webkit-scrollbar {
     height: 10px;
@@ -127,6 +164,13 @@ body {
   }
 }
 @utility scrollbar-sm {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+
+  &:hover {
+    scrollbar-color: auto;
+  }
+
   &::-webkit-scrollbar {
     height: 12px;
     width: 12px;
@@ -137,6 +181,13 @@ body {
   }
 }
 @utility scrollbar-md {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+
+  &:hover {
+    scrollbar-color: auto;
+  }
+
   &::-webkit-scrollbar {
     height: 14px;
     width: 14px;
@@ -147,6 +198,13 @@ body {
   }
 }
 @utility scrollbar-lg {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+
+  &:hover {
+    scrollbar-color: auto;
+  }
+
   &::-webkit-scrollbar {
     height: 16px;
     width: 16px;
@@ -155,19 +213,6 @@ body {
   &::-webkit-scrollbar-thumb {
     border: 4px solid rgba(0, 0, 0, 0);
   }
-}
-
-.hide-vertical-scrollbar::-webkit-scrollbar {
-  width: 0 !important;
-}
-
-.hide-horizontal-scrollbar::-webkit-scrollbar {
-  height: 0 !important;
-}
-
-.hide-both-scrollbars::-webkit-scrollbar {
-  height: 0 !important;
-  width: 0 !important;
 }
 
 /* highlight class */
