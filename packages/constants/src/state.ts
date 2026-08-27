@@ -51,6 +51,10 @@ export const STATE_GROUPS: {
   },
 };
 
+export const STATE_GROUP_COLUMN_DEFAULT_WIDTH = 350;
+export const STATE_GROUP_COLUMN_MIN_WIDTH = 350;
+export const STATE_GROUP_COLUMN_MAX_WIDTH = 1000;
+
 export const ARCHIVABLE_STATE_GROUPS = [STATE_GROUPS.completed.key, STATE_GROUPS.cancelled.key];
 export const COMPLETED_STATE_GROUPS = [STATE_GROUPS.completed.key];
 export const PENDING_STATE_GROUPS = [
