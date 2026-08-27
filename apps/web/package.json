@@ -25,6 +25,7 @@
     "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/material-symbols-rounded": "catalog:",
     "@headlessui/react": "catalog:",
+    "@makeplane/propel": "0.2.0",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/hooks": "workspace:*",

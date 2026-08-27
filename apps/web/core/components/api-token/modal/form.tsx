@@ -14,7 +14,8 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IApiToken } from "@plane/types";
 // ui
-import { CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { CustomSelect, Input, TextArea } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -240,7 +241,12 @@ export function CreateApiTokenForm(props: Props) {
       <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <div className="flex cursor-pointer items-center gap-1.5" onClick={toggleNeverExpires}>
           <div className="flex cursor-pointer items-center justify-center">
-            <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
+            <Switch
+              size="sm"
+              checked={neverExpires}
+              onCheckedChange={() => {}}
+              aria-label={t("workspace_settings.settings.api_tokens.never_expires")}
+            />
           </div>
           <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>

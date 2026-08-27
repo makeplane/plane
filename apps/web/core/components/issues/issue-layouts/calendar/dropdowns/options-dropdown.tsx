@@ -18,7 +18,7 @@ import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 // types
 // constants
 import { CALENDAR_LAYOUTS } from "@plane/constants";
@@ -154,11 +154,13 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                     onClick={handleToggleWeekends}
                   >
                     {t("common.actions.show_weekends")}
-                    <ToggleSwitch
-                      value={showWeekends}
-                      onChange={() => {
-                        if (windowWidth <= 768) closePopover(); // close the popover on mobile
+                    <Switch
+                      size="sm"
+                      checked={showWeekends}
+                      onCheckedChange={() => {
+                        if (windowWidth <= 768) closePopover();
                       }}
+                      aria-label={t("common.actions.show_weekends")}
                     />
                   </button>
                 </div>

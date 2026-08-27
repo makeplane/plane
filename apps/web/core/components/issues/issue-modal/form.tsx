@@ -20,7 +20,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 import {
   convertWorkItemDataToSearchResponse,
   getUpdateFormDataForReset,
@@ -454,7 +454,12 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       }}
                       role="button"
                     >
-                      <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                      <Switch
+                        size="sm"
+                        checked={isCreateMoreToggleEnabled}
+                        onCheckedChange={() => {}}
+                        aria-label={t("create_more")}
+                      />
                       <span className="text-caption-sm-regular">{t("create_more")}</span>
                     </div>
                   )}
