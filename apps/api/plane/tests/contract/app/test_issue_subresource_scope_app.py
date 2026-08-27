@@ -386,15 +386,24 @@ class TestIssueRelationListScope:
 
 @pytest.mark.contract
 class TestIssueManagerBoundary:
-    """Pin the one axis on which the two fixes deliberately differ.
+    """Pin the axes on which the fixes deliberately differ.
 
-    ``comment.py`` scopes with ``Issue.objects`` and ``relation.py`` with
-    ``Issue.issue_objects``. ``IssueManager`` additionally excludes triage-state,
-    archived and draft issues, so the choice is behavioural, not cosmetic: intake
-    (triage) and archived issues must stay commentable, while the relation endpoints
-    follow the ``issue_objects`` convention already used for the body ``issues`` list
-    and by ``SubIssuesEndpoint``. Without these tests, "tidying" the two to match
-    would silently break commenting on intake items.
+    ``comment.py`` scopes with ``Issue.objects`` and the relation *write* paths
+    (``create`` / ``remove_relation``) with ``Issue.issue_objects``. ``IssueManager``
+    additionally excludes triage-state, archived and draft issues, so the choice is
+    behavioural, not cosmetic: intake (triage) and archived issues must stay
+    commentable, while the relation write endpoints follow the ``issue_objects``
+    convention already used for the body ``issues`` list and by ``SubIssuesEndpoint``.
+
+    ``IssueRelationViewSet.list()`` is the odd one out: it is a read, and the issue
+    detail page fetches relations unconditionally even for archived issues, rendering
+    them read-only rather than hiding the panel. So ``list()`` scopes with
+    ``Issue.objects`` (``include_archived=True``) like ``IssueViewSet.retrieve()``
+    does — archived issues in the URL's own project stay listable, while an archived
+    issue in a *different* project is still refused, same as everywhere else.
+
+    Without these tests, "tidying" the managers to match would either silently break
+    commenting/listing on intake or archived items, or reopen the cross-project hole.
     """
 
     @pytest.mark.django_db
@@ -465,14 +474,33 @@ class TestIssueManagerBoundary:
         )
 
     @pytest.mark.django_db
-    def test_relation_list_excludes_archived_url_issue(
+    def test_relation_list_allows_archived_issue_in_own_project(
         self, attacker_client, attacker_workspace, attacker_project, attacker_issue
     ):
-        """And on the read path, so all three handlers are pinned to the same manager."""
+        """Unlike the write paths, ``list()`` must keep working on an archived issue
+        that belongs to the URL's own project — the issue detail page reads relations
+        for archived issues too, and the panel there is read-only, not hidden."""
         attacker_issue.archived_at = timezone.now().date()
         attacker_issue.save(update_fields=["archived_at"])
 
         url = relation_url(attacker_workspace.slug, attacker_project.id, attacker_issue.id)
+        response = attacker_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Archived issue in the URL's own project must stay listable, "
+            f"got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_relation_list_rejects_archived_issue_in_other_project(
+        self, attacker_client, attacker_workspace, attacker_project, sibling_project_issue
+    ):
+        """The archive-inclusive lookup must not reopen the cross-project hole: an
+        archived issue in a *sibling* project is still refused."""
+        sibling_project_issue.archived_at = timezone.now().date()
+        sibling_project_issue.save(update_fields=["archived_at"])
+
+        url = relation_url(attacker_workspace.slug, attacker_project.id, sibling_project_issue.id)
         response = attacker_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND, (

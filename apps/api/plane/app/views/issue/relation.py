@@ -34,15 +34,23 @@ from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.utils.host import base_host
 
 
-def issue_in_project(issue_id, slug, project_id):
+def issue_in_project(issue_id, slug, project_id, *, include_archived=False):
     """Whether ``issue_id`` belongs to the URL workspace + project.
 
     ``ProjectEntityPermission`` only checks that the caller is a member of the URL's
     ``project_id`` — it never binds the sibling ``issue_id`` path parameter to that
     project. Every handler taking both must therefore check this itself, or it is
     reachable cross-project/cross-tenant.
+
+    ``Issue.issue_objects`` (the default) additionally excludes archived/draft/triage
+    issues, which is correct for the write paths below — but a read path like
+    ``list()`` must still find archived issues in the URL's own project, the same way
+    ``IssueViewSet.retrieve()`` does with ``Issue.objects``. Pass
+    ``include_archived=True`` for that case; the project/workspace binding itself is
+    unchanged either way.
     """
-    return Issue.issue_objects.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).exists()
+    manager = Issue.objects if include_archived else Issue.issue_objects
+    return manager.filter(pk=issue_id, workspace__slug=slug, project_id=project_id).exists()
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -55,7 +63,12 @@ class IssueRelationViewSet(BaseViewSet):
         # it a member of project A could list the relations of an issue in project B of
         # the same workspace and receive that issue's name, priority, assignees and
         # labels in the response.
-        if not issue_in_project(issue_id, slug, project_id):
+        #
+        # include_archived=True: this is a read, not a write, and the issue detail page
+        # fetches relations unconditionally for archived issues too. Scoping this lookup
+        # with the write-path's issue_objects (which excludes archived issues) would 404
+        # a legitimate same-project read instead of only closing the cross-project hole.
+        if not issue_in_project(issue_id, slug, project_id, include_archived=True):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         issue_relations = (
