@@ -205,6 +205,56 @@ UNGUARDED_OTHER_SURFACE_ROUTES = frozenset(
 )
 
 
+def _other_surface_owner(cls, action):
+    for klass in cls.__mro__:
+        if action in vars(klass):
+            return klass
+    return None
+
+
+def _other_surface_route_is_unguarded(viewset, action):
+    """Structural classification mirroring the runtime guard's rules.
+
+    Pulled out of `_other_surface_fall_throughs()`'s walk so it can be unit
+    tested directly against synthetic viewsets, without needing a real routed
+    URL to drive it through the resolver.
+    """
+    # Imported rather than restated. An earlier version of this helper listed
+    # only `(IsAuthenticated,)` and `()` as non-authorizing, which silently
+    # treated `[AllowAny]` as a deliberate restrictive declaration — on
+    # plane.space, the one surface where AllowAny is routine. Sharing the guard's
+    # own definition keeps the two from drifting apart again.
+    from plane.app.views.base import _NON_AUTHORIZING_PERMISSIONS
+
+    if action not in MIXIN_PROVIDED_ACTIONS:
+        return False
+
+    implemented = _other_surface_owner(viewset, action)
+    if implemented is not None and not implemented.__module__.startswith("rest_framework"):
+        return False
+
+    if action == "create":
+        perform_create_owner = _other_surface_owner(viewset, "perform_create")
+        if perform_create_owner is not None and not perform_create_owner.__module__.startswith("rest_framework"):
+            return False
+
+    # Mirrors the runtime guard's partial_update exemption: DRF's
+    # partial_update delegates to self.update(), so a viewset that implements
+    # update() authorizes PATCH transitively even without its own
+    # partial_update. Without this, the scan misclassifies that shape as an
+    # unguarded fall-through.
+    if action == "partial_update":
+        update_owner = _other_surface_owner(viewset, "update")
+        if update_owner is not None and not update_owner.__module__.startswith("rest_framework"):
+            return False
+
+    declared = tuple(getattr(viewset, "permission_classes", ()) or ())
+    if any(permission not in _NON_AUTHORIZING_PERMISSIONS for permission in declared):
+        return False
+
+    return True
+
+
 def _other_surface_fall_throughs():
     """Fall-throughs outside plane.app, found structurally.
 
@@ -213,20 +263,7 @@ def _other_surface_fall_throughs():
     """
     from django.urls import get_resolver
 
-    # Imported rather than restated. An earlier version of this helper listed
-    # only `(IsAuthenticated,)` and `()` as non-authorizing, which silently
-    # treated `[AllowAny]` as a deliberate restrictive declaration — on
-    # plane.space, the one surface where AllowAny is routine. Sharing the guard's
-    # own definition keeps the two from drifting apart again.
-    from plane.app.views.base import _NON_AUTHORIZING_PERMISSIONS
-
     found = set()
-
-    def owner(cls, action):
-        for klass in cls.__mro__:
-            if action in vars(klass):
-                return klass
-        return None
 
     def walk(patterns):
         for pattern in patterns:
@@ -242,21 +279,8 @@ def _other_surface_fall_throughs():
             if viewset.__module__.startswith("plane.app"):
                 continue
             for verb, action in action_map.items():
-                if action not in MIXIN_PROVIDED_ACTIONS:
-                    continue
-                implemented = owner(viewset, action)
-                if implemented is not None and not implemented.__module__.startswith("rest_framework"):
-                    continue
-                if action == "create":
-                    perform_create_owner = owner(viewset, "perform_create")
-                    if perform_create_owner is not None and not perform_create_owner.__module__.startswith(
-                        "rest_framework"
-                    ):
-                        continue
-                declared = tuple(getattr(viewset, "permission_classes", ()) or ())
-                if any(permission not in _NON_AUTHORIZING_PERMISSIONS for permission in declared):
-                    continue
-                found.add((viewset.__module__, viewset.__name__, verb, action))
+                if _other_surface_route_is_unguarded(viewset, action):
+                    found.add((viewset.__module__, viewset.__name__, verb, action))
 
     walk(get_resolver().url_patterns)
     return found
@@ -293,6 +317,44 @@ def test_other_surfaces_do_not_grow_new_fall_throughs():
         )
 
     assert not messages, "\n\n".join(messages)
+
+
+@pytest.mark.unit
+def test_other_surface_scan_treats_inherited_partial_update_as_authorized_via_update():
+    """The other-surface scan must mirror the runtime guard's partial_update rule.
+
+    A secondary-surface viewset (`plane.api`/`plane.space`) that overrides
+    update() but inherits DRF's partial_update() authorizes PATCH transitively,
+    exactly like the app-surface guard already recognises in
+    `_resolved_action_is_authorized()`. Without the matching exemption here, the
+    scan would misclassify the PATCH route as an unguarded fall-through - a
+    false positive in the scan's own classification, not a real vulnerability.
+    """
+    from rest_framework.permissions import IsAuthenticated
+    from rest_framework.viewsets import ModelViewSet
+
+    class OverridesUpdateOnly(ModelViewSet):
+        """Shape from the CodeRabbit report: owns update(), inherits
+        partial_update() from DRF's UpdateModelMixin, bare default permission
+        class - same as any other secondary-surface viewset."""
+
+        permission_classes = [IsAuthenticated]
+
+        def update(self, request, *args, **kwargs):  # pragma: no cover - never called
+            pass
+
+    # partial_update is not our own - it is DRF's UpdateModelMixin.partial_update
+    # - but it delegates straight into the update() override above, so this must
+    # NOT be reported as unguarded.
+    assert _other_surface_route_is_unguarded(OverridesUpdateOnly, "partial_update") is False
+
+    # Negative control: neither update() nor partial_update() implemented, bare
+    # default permission class - this is the real defect shape and must still
+    # be caught.
+    class ImplementsNeither(ModelViewSet):
+        permission_classes = [IsAuthenticated]
+
+    assert _other_surface_route_is_unguarded(ImplementsNeither, "partial_update") is True
 
 
 @pytest.mark.unit
@@ -439,3 +501,46 @@ def test_guard_recognises_the_patterns_it_must_not_reject():
 
     assert verdict(InheritsFromOurs, "update") is True
     assert InheritsFromOurs._action_owner("update") is TransitivelyAuthorizesPatch
+
+
+@pytest.mark.unit
+def test_guard_uses_effective_permissions_not_the_static_class_attribute():
+    """CodeRabbit's scenario: get_permissions() overridden, permission_classes untouched.
+
+    A viewset can restrict a mixin-provided action entirely from
+    get_permissions() without ever mutating self.permission_classes - nothing
+    requires an override to mutate the class attribute as a side effect (the
+    one override that exists in this codebase today happens to do so, but that
+    is not a contract the guard may rely on). Reading self.permission_classes
+    directly would miss a restrictive get_permissions() override entirely and
+    refuse the request with a false 405. The guard must consult the effective,
+    per-action permissions instead.
+    """
+    from rest_framework.permissions import IsAuthenticated
+
+    from plane.app.views.base import BaseViewSet
+
+    class DenyAll:
+        """A real, restrictive permission that is not in the non-authorizing set."""
+
+        def has_permission(self, request, view):  # pragma: no cover - never called
+            return False
+
+    class RestrictsOnlyViaGetPermissions(BaseViewSet):
+        # Stays at the bare, non-authorizing default - the guard must not be
+        # fooled by this into thinking the action is unguarded.
+        permission_classes = [IsAuthenticated]
+
+        def get_permissions(self):
+            # Deliberately does NOT touch self.permission_classes - returns a
+            # restrictive instance straight from the method, which is the gap
+            # CodeRabbit flagged.
+            return [DenyAll()]
+
+    instance = RestrictsOnlyViaGetPermissions()
+    instance.action = "update"
+
+    assert instance.permission_classes == [IsAuthenticated], "class attribute must stay untouched by this shape"
+    assert instance._resolved_action_is_authorized() is True, (
+        "guard must authorize via the effective get_permissions() result, not the static class attribute"
+    )
