@@ -161,32 +161,92 @@ export const findHowManyDaysLeft = (
   return findTotalDaysInRange(new Date(), date, inclusive);
 };
 
+/**
+ * Safely parses any date representation (ISO string, timestamp number/string, Date object) into a valid Date.
+ * Returns undefined if the input is null, undefined, or invalid.
+ */
+export const parseDateSafe = (date: string | number | Date | null | undefined): Date | undefined => {
+  if (date === null || date === undefined || date === "") {
+    return undefined;
+  }
+
+  if (date instanceof Date) {
+    return isValid(date) ? date : undefined;
+  }
+
+  if (typeof date === "number") {
+    if (!Number.isFinite(date)) return undefined;
+    // If timestamp in seconds (e.g. Unix epoch 10 digits), convert to ms
+    const timestamp = Math.abs(date) < 1e11 ? date * 1000 : date;
+    const parsed = new Date(timestamp);
+    return isValid(parsed) ? parsed : undefined;
+  }
+
+  if (typeof date === "string") {
+    const trimmed = date.trim();
+    if (!trimmed || trimmed === "undefined" || trimmed === "null" || trimmed === "NaN") {
+      return undefined;
+    }
+
+    // Check if numeric timestamp string (e.g. "1724312400000" or "1724312400")
+    if (/^\d{10,13}$/.test(trimmed)) {
+      const num = Number(trimmed);
+      const timestamp = trimmed.length === 10 ? num * 1000 : num;
+      const parsed = new Date(timestamp);
+      if (isValid(parsed)) return parsed;
+    }
+
+    // Try parseISO first for standard ISO formats
+    try {
+      const parsedISO = parseISO(trimmed);
+      if (isValid(parsedISO)) return parsedISO;
+    } catch {
+      // ignore
+    }
+
+    // Fallback to standard new Date()
+    try {
+      const parsedDate = new Date(trimmed);
+      if (isValid(parsedDate)) return parsedDate;
+    } catch {
+      // ignore
+    }
+  }
+
+  return undefined;
+};
+
 // Time Difference Helpers
 /**
  * @returns {string} formatted date in the form of amount of time passed since the event happened
  * @description Returns time passed since the event happened
- * @param {string | Date} time
+ * @param {string | number | Date | null | undefined} time
  * @example calculateTimeAgo("2023-01-01") // 1 year ago
  */
-export const calculateTimeAgo = (time: string | number | Date | null): string => {
-  if (!time) return "";
-  // Parse the time to check if it is valid
-  const parsedTime = typeof time === "string" || typeof time === "number" ? parseISO(String(time)) : time;
-  // return if undefined
-  if (!parsedTime) return ""; // Return empty string for invalid dates
-  // Format the time in the form of amount of time passed since the event happened
-  const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
-  return distance;
+export const calculateTimeAgo = (time: string | number | Date | null | undefined): string => {
+  const parsedTime = parseDateSafe(time);
+  if (!parsedTime) return "";
+
+  try {
+    const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
+    return distance;
+  } catch {
+    return "";
+  }
 };
 
-export function calculateTimeAgoShort(date: string | number | Date | null): string {
-  if (!date) {
+export function calculateTimeAgoShort(date: string | number | Date | null | undefined): string {
+  const parsedDate = parseDateSafe(date);
+  if (!parsedDate) {
     return "";
   }
 
-  const parsedDate = typeof date === "string" ? parseISO(date) : new Date(date);
   const now = new Date();
   const diffInSeconds = (now.getTime() - parsedDate.getTime()) / 1000;
+
+  if (isNaN(diffInSeconds) || diffInSeconds < 0) {
+    return "0s";
+  }
 
   if (diffInSeconds < 60) {
     return `${Math.floor(diffInSeconds)}s`;
@@ -284,7 +344,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
   try {
     if (!date || date === "") return;
 
-    if (typeof date !== "string" && !(date instanceof String)) return date;
+    if (typeof date !== "string") return date;
 
     const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
     const year = parseInt(yearString);
@@ -398,15 +458,16 @@ export const generateDateArray = (startDate: string | Date, endDate: string | Da
 
   // Create an empty array to store the dates
   const dateArray = [];
+  let current = new Date(start);
 
   // Use a while loop to generate dates between the range
-  while (start <= end) {
+  while (current.getTime() <= end.getTime()) {
     // Push the current date (converted to ISO string for consistency)
     dateArray.push({
-      date: new Date(start).toISOString().split("T")[0],
+      date: current.toISOString().split("T")[0],
     });
     // Increment the date by 1 day (86400000 milliseconds)
-    start.setDate(start.getDate() + 1);
+    current = new Date(current.getTime() + 86400000);
   }
 
   return dateArray;
