@@ -11,6 +11,7 @@ import { AppProgressBar } from "@/lib/b-progress";
 import { ToastWithTheme } from "./toast";
 import { StoreProvider } from "./store.provider";
 import { InstanceProvider } from "./instance.provider";
+import { AdminTranslationProvider } from "./translation-provider";
 import { UserProvider } from "./user.provider";
 
 const DEFAULT_SWR_CONFIG = {
@@ -24,16 +25,18 @@ const DEFAULT_SWR_CONFIG = {
 
 export function CoreProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-      <AppProgressBar />
-      <ToastWithTheme />
-      <SWRConfig value={DEFAULT_SWR_CONFIG}>
-        <StoreProvider>
-          <InstanceProvider>
-            <UserProvider>{children}</UserProvider>
-          </InstanceProvider>
-        </StoreProvider>
-      </SWRConfig>
-    </ThemeProvider>
+    <AdminTranslationProvider>
+      <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+        <AppProgressBar />
+        <ToastWithTheme />
+        <SWRConfig value={DEFAULT_SWR_CONFIG}>
+          <StoreProvider>
+            <InstanceProvider>
+              <UserProvider>{children}</UserProvider>
+            </InstanceProvider>
+          </StoreProvider>
+        </SWRConfig>
+      </ThemeProvider>
+    </AdminTranslationProvider>
   );
 }
