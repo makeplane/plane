@@ -8,10 +8,10 @@ import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCycleGroups } from "@plane/types";
-import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { generateQueryParams, calculateCycleProgress } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
@@ -86,13 +86,23 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
       onItemClick={handleItemClick}
       className={className}
       prependTitleElement={
-        <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
-          {progress === 100 ? (
-            <CheckIcon className="h-3 w-3 stroke-2" />
-          ) : (
-            <span className="text-9 text-primary">{`${progress}%`}</span>
-          )}
-        </CircularProgressIndicator>
+        <div className="relative size-[30px]">
+          <div className="absolute inset-0 flex scale-150 items-center justify-center">
+            <CircularProgress
+              value={progress}
+              size="md"
+              variant={progress === 100 ? "success" : "brand"}
+              aria-label="Cycle progress"
+            />
+          </div>
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            {progress === 100 ? (
+              <CheckIcon className="h-3 w-3 stroke-2" />
+            ) : (
+              <span className="text-9 text-primary">{`${progress}%`}</span>
+            )}
+          </div>
+        </div>
       }
       actionableItems={
         <CycleListItemAction
