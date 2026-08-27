@@ -16,7 +16,8 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -198,7 +199,12 @@ export function ExistingIssuesListModal(props: Props) {
                   isWorkspaceLevel ? "text-primary" : "text-secondary"
                 }`}
               >
-                <ToggleSwitch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
+                <Switch
+                  size="sm"
+                  checked={isWorkspaceLevel}
+                  onCheckedChange={setIsWorkspaceLevel}
+                  aria-label={t("common.workspace_level")}
+                />
                 <button
                   type="button"
                   onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}

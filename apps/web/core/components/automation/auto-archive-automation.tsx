@@ -12,7 +12,8 @@ import { ArchiveRestore } from "lucide-react";
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
-import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { CustomSelect, Loader } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
@@ -76,7 +77,13 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
             title={t("project_settings.automations.auto-archive.title")}
             description={t("project_settings.automations.auto-archive.description")}
             control={
-              <ToggleSwitch value={autoArchiveStatus} onChange={handleToggleArchive} size="sm" disabled={!isAdmin} />
+              <Switch
+                size="sm"
+                checked={autoArchiveStatus}
+                onCheckedChange={handleToggleArchive}
+                disabled={!isAdmin}
+                aria-label={t("project_settings.automations.auto-archive.title")}
+              />
             }
           />
         </div>

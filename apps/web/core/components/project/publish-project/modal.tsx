@@ -16,7 +16,8 @@ import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -283,7 +284,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   control={control}
                   name="is_comments_enabled"
                   render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
+                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow comments" />
                   )}
                 />
               </div>
@@ -293,7 +294,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   control={control}
                   name="is_reactions_enabled"
                   render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
+                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow reactions" />
                   )}
                 />
               </div>
@@ -303,7 +304,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   control={control}
                   name="is_votes_enabled"
                   render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
+                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow voting" />
                   )}
                 />
               </div>

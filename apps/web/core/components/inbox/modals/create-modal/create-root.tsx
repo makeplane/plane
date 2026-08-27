@@ -16,7 +16,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -212,7 +212,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               role="button"
               tabIndex={getIndex("create_more")}
             >
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+              <Switch size="sm" checked={createMore} onCheckedChange={() => {}} aria-label={t("create_more")} />
               <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
