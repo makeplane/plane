@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Contract tests for ``ProjectViewSet`` PUT authorization (SECUR-248).
+"""Contract tests for ``ProjectViewSet`` PUT authorization.
+
+PUT must enforce the same authorization as PATCH, not fall through to DRF's
+generic handler under the bare default permission class.
 
 ``urls/project.py`` maps ``"put": "update"``, but the viewset never defined
 ``update`` — so PUT fell through to DRF's ``ModelViewSet.update``. The class sets
