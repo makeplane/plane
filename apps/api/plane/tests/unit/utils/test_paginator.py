@@ -176,8 +176,9 @@ class TestCursorBounds:
 
 
 @pytest.mark.unit
-class TestGetPerPageNegativeRejected:
-    """A negative per_page must be rejected, not just a too-large one.
+class TestGetPerPageNonPositiveRejected:
+    """A non-positive per_page (negative or zero) must be rejected, not just a
+    too-large one.
 
     OffsetPaginator.get_result() slices the queryset with
     queryset[offset : offset + limit]; get_per_page() previously only checked
@@ -186,16 +187,21 @@ class TestGetPerPageNegativeRejected:
     unhandled "Negative indexing is not supported" -> HTTP 500. This is the same
     crash class TestCursorBounds closes for the cursor-driven grouped paginators,
     reachable here on every non-grouped paginated endpoint via a plain query
-    param."""
+    param.
 
-    @pytest.mark.parametrize("per_page", [-1, -50, -1000])
-    def test_negative_per_page_rejected_by_get_per_page(self, per_page):
+    A per_page of exactly 0 has the same failure mode: it reaches
+    OffsetPaginator.get_result() with limit=0, where math.ceil(count / limit)
+    raises an unhandled ZeroDivisionError -> HTTP 500."""
+
+    @pytest.mark.parametrize("per_page", [-1, -50, -1000, 0])
+    def test_non_positive_per_page_rejected_by_get_per_page(self, per_page):
         request = _make_request(per_page=str(per_page))
         with pytest.raises(ParseError):
             BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000)
 
-    def test_negative_per_page_rejected_before_paginator_runs(self):
-        request = _make_request(per_page="-1")
+    @pytest.mark.parametrize("per_page", ["-1", "0"])
+    def test_non_positive_per_page_rejected_before_paginator_runs(self, per_page):
+        request = _make_request(per_page=per_page)
         with pytest.raises(ParseError):
             BasePaginator().paginate(
                 request=request,
@@ -204,9 +210,3 @@ class TestGetPerPageNegativeRejected:
                 default_per_page=20,
                 max_per_page=1000,
             )
-
-    def test_zero_per_page_is_still_allowed(self):
-        # 0 is a valid (if degenerate) page size, not a negative one — must not
-        # be rejected by this guard.
-        request = _make_request(per_page="0")
-        assert BasePaginator().get_per_page(request, default_per_page=20, max_per_page=1000) == 0

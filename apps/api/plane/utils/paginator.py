@@ -647,13 +647,16 @@ class BasePaginator:
             raise ParseError(detail="Invalid per_page parameter.")
 
         max_per_page = self._effective_max_per_page(max_per_page, default_per_page)
-        # A negative per_page reaches OffsetPaginator.get_result() unmodified and
-        # produces a negative slice bound (queryset[offset : offset + per_page]),
-        # which raises Django's unhandled "Negative indexing is not supported"
-        # (HTTP 500) — the same crash class the cursor-bound check below closes,
-        # just reachable on every paginated endpoint via a plain query param.
-        if per_page < 0:
-            raise ParseError(detail="Invalid per_page value. Cannot be negative.")
+        # A non-positive per_page reaches OffsetPaginator.get_result() unmodified.
+        # A negative value produces a negative slice bound
+        # (queryset[offset : offset + per_page]), which raises Django's unhandled
+        # "Negative indexing is not supported" (HTTP 500) — the same crash class
+        # the cursor-bound check below closes, just reachable on every paginated
+        # endpoint via a plain query param. A zero value reaches
+        # math.ceil(count / limit) with limit=0 and raises an unhandled
+        # ZeroDivisionError (HTTP 500) instead.
+        if per_page <= 0:
+            raise ParseError(detail="Invalid per_page value. Must be greater than zero.")
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
 
