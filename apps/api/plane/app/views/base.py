@@ -129,8 +129,18 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         # override as the implementation, so this does not reject a deliberate
         # pattern. NOTE: perform_create is a save hook, not an authorization
         # hook — a viewset using it still needs its own permission check.
-        if action == "create" and self._action_owner("perform_create") is not None:
-            return True
+        #
+        # perform_create must be resolved the same way every other action is:
+        # CreateModelMixin itself always defines perform_create, so checking
+        # only "is it defined" is always true and never rejects anything. The
+        # owner has to actually be ours (not rest_framework's) for this to mean
+        # the viewset overrode it.
+        if action == "create":
+            perform_create_owner = self._action_owner("perform_create")
+            if perform_create_owner is not None and not perform_create_owner.__module__.startswith(
+                "rest_framework"
+            ):
+                return True
 
         # DRF's partial_update delegates to self.update(), so a viewset that
         # implements update() authorizes PATCH transitively even without its own

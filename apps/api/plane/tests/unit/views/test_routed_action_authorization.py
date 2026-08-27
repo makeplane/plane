@@ -247,8 +247,12 @@ def _other_surface_fall_throughs():
                 implemented = owner(viewset, action)
                 if implemented is not None and not implemented.__module__.startswith("rest_framework"):
                     continue
-                if action == "create" and owner(viewset, "perform_create") is not None:
-                    continue
+                if action == "create":
+                    perform_create_owner = owner(viewset, "perform_create")
+                    if perform_create_owner is not None and not perform_create_owner.__module__.startswith(
+                        "rest_framework"
+                    ):
+                        continue
                 declared = tuple(getattr(viewset, "permission_classes", ()) or ())
                 if any(permission not in _NON_AUTHORIZING_PERMISSIONS for permission in declared):
                     continue
@@ -373,6 +377,14 @@ def test_guard_recognises_the_patterns_it_must_not_reject():
 
     # The defect itself: nobody implements it, bare default permission class.
     assert verdict(OwnImplementation, "update") is False
+
+    # The same defect on "create" specifically: CreateModelMixin always
+    # defines perform_create, so a check that only asks "is perform_create
+    # defined" (rather than "did *we* define it") is always true and never
+    # rejects anything. A viewset that overrides neither create nor
+    # perform_create, with the bare default permission class, must still be
+    # refused.
+    assert verdict(OwnImplementation, "create") is False
 
     # Implemented on our own class.
     assert verdict(OwnImplementation, "partial_update") is True
