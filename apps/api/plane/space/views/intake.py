@@ -113,6 +113,14 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Ensure the intake belongs to this board before writing
+        # (GHSA-vqr2-wx56-gmq4: caller-supplied intake_id must be bound to the anchor).
+        if str(intake_id) != str(project_deploy_board.intake_id):
+            return Response(
+                {"error": "Intake does not belong to this Project Board"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if not request.data.get("issue", {}).get("name", False):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 

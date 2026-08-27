@@ -233,6 +233,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     super()
                     .get_queryset()
                     .filter(workspace_id=project_deploy_board.workspace_id)
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .filter(access="EXTERNAL")
                     .select_related("project")
@@ -262,6 +263,15 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Ensure the issue belongs to this board's project before writing
+        # (GHSA-vqr2-wx56-gmq4: caller-supplied issue_id must be bound to the anchor).
+        if not Issue.issue_objects.filter(
+            id=issue_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+        ).exists():
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -372,6 +382,15 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Ensure the issue belongs to this board's project before writing
+        # (GHSA-vqr2-wx56-gmq4: caller-supplied issue_id must be bound to the anchor).
+        if not Issue.issue_objects.filter(
+            id=issue_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+        ).exists():
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -456,6 +475,16 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 {"error": "Reactions are not enabled for this board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Ensure the comment belongs to this board's project before writing
+        # (GHSA-vqr2-wx56-gmq4: caller-supplied comment_id must be bound to the anchor).
+        if not IssueComment.objects.filter(
+            id=comment_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            access="EXTERNAL",
+        ).exists():
+            return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CommentReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -542,6 +571,22 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def create(self, request, anchor, issue_id):
         project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
+
+        if not project_deploy_board.is_votes_enabled:
+            return Response(
+                {"error": "Votes are not enabled for this project board"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Ensure the issue belongs to this board's project before writing
+        # (GHSA-vqr2-wx56-gmq4: caller-supplied issue_id must be bound to the anchor).
+        if not Issue.issue_objects.filter(
+            id=issue_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+        ).exists():
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
             project_id=project_deploy_board.project_id,
