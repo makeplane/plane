@@ -17,7 +17,8 @@ directions — one of the two turned out to be guarded after all.
    ``read_only_fields`` so the API never sets it, and the model defaults it to
    ``1`` (Public), so every row matches. A user with no membership in the
    workspace could read any global view in it by id. It now requires workspace
-   membership, matching ``list``.
+   membership, matching ``list`` — and, like ``list``, restricts a GUEST to
+   views they own, since guests pass the membership check too.
 
 2. **Regression coverage only, no fix.** ``IssueDetailIdentifierEndpoint``
    (``/workspaces/<slug>/work-items/<PROJ>-<n>/``) resolves a work item by its
@@ -264,14 +265,35 @@ class TestWorkspaceViewRetrieveRequiresMembership:
         )
 
     @pytest.mark.django_db
-    def test_workspace_guest_can_read_a_global_view(self, workspace, workspace_view):
-        """Positive control: the role set matches list(), which permits guests."""
+    def test_workspace_guest_cannot_read_a_global_view_they_do_not_own(self, workspace, workspace_view):
+        """The role set matches list(), which permits guests as members — but list()
+        also restricts a GUEST to views they own. retrieve() must reapply that
+        same restriction: this guest owns no views, so a view owned by someone
+        else must not be readable by id even though guests may pass the
+        workspace-membership check above."""
         guest_user = _make_user("wsguest")
         WorkspaceMember.objects.create(workspace=workspace, member=guest_user, role=5)
 
         url = WORKSPACE_VIEW_DETAIL_URL.format(slug=workspace.slug, pk=workspace_view.id)
         response = _client_for(guest_user).get(url)
 
+        assert response.status_code == status.HTTP_404_NOT_FOUND, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+
+    @pytest.mark.django_db
+    def test_workspace_guest_can_read_a_global_view_they_own(self, workspace):
+        """Positive control: a guest reading a view they own themselves must
+        still succeed — the fix must not over-restrict."""
+        guest_user = _make_user("wsguest-owner")
+        WorkspaceMember.objects.create(workspace=workspace, member=guest_user, role=5)
+        own_view = IssueView(name="Guest's own view", workspace=workspace, owned_by=guest_user, access=1)
+        own_view.save()
+
+        url = WORKSPACE_VIEW_DETAIL_URL.format(slug=workspace.slug, pk=own_view.id)
+        response = _client_for(guest_user).get(url)
+
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+        assert str(response.data["id"]) == str(own_view.id)
