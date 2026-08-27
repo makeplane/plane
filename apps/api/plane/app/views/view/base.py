@@ -141,6 +141,22 @@ class WorkspaceViewViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        # Reapply the same guest-ownership restriction list() enforces above.
+        # get_queryset()'s `Q(owned_by=request.user) | Q(access=1)` is vacuous
+        # (see comment above), so without this a GUEST who owns no views could
+        # still fetch any other member's global view directly by id. Answer 404
+        # rather than 403, consistent with the "missing view" branch above —
+        # this endpoint does not otherwise distinguish "not found" from "not
+        # visible to you".
+        if (
+            WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists()
+            and issue_view.owned_by_id != request.user.id
+        ):
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
             slug=slug,
