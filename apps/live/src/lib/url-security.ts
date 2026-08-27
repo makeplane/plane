@@ -175,10 +175,16 @@ const isAllowedHostname = (hostname: string): boolean => {
 /**
  * Decides whether a TipTap image `src` may reach the PDF image pipeline. `data:` is
  * allowed because the asset pipeline pre-fetches images server-side and inlines them,
- * so nothing is fetched at render time. Not a complete http(s) defence: the fetch
- * happens inside `@react-pdf/image`, so a host that passes here but resolves to a
- * blocked address is a residual DNS-rebinding TOCTOU (SECUR-245 follow-up).
- * TODO(SECUR-245): close it by pre-fetching raw image nodes, as imageComponent does.
+ * so nothing is fetched at render time.
+ *
+ * This is a hostname/IP check on a single URL, not a complete defence by itself:
+ * a host that passes here can still resolve to a blocked address by the time the
+ * real fetch happens (DNS-rebinding TOCTOU — the name is looked up once here, and
+ * again, independently, whenever the URL is actually fetched). `fetchImageSrcSafely`
+ * below re-runs this same check on every redirect hop, which closes the far more
+ * easily exploited gap — a plain 3xx response pointed at an internal address — but
+ * does not re-resolve DNS between validating and fetching the final, non-redirect
+ * response, so the rebinding window still exists on that last hop.
  */
 export const isSafeImageSrc = (src: string): boolean => {
   if (!src) return false;
@@ -209,4 +215,74 @@ export const isSafeImageSrc = (src: string): boolean => {
   if (parsed.username || parsed.password) return false;
 
   return isAllowedHostname(parsed.hostname);
+};
+
+/** Redirect hops `fetchImageSrcSafely` will follow before giving up on a source. */
+const MAX_IMAGE_FETCH_REDIRECTS = 5;
+
+/**
+ * Fetches an http(s) image URL the way `isSafeImageSrc` alone cannot guard: real
+ * fetch libraries (`@react-pdf/image`'s `fetchRemoteFile`, plain `fetch()`) follow
+ * redirects by default and never re-consult a src validator on the redirect target.
+ * That means a URL on an ordinary public host can 302 to an internal address —
+ * cloud metadata, a Docker service name, loopback — and sail straight through a
+ * check that only ever looked at the URL it was first handed.
+ *
+ * This fetches with `redirect: "manual"`, and on every 3xx response resolves the
+ * `Location` header against the current URL and re-validates it with
+ * `isSafeImageSrc` before following it, capped at `MAX_IMAGE_FETCH_REDIRECTS` hops.
+ * Any failure — the initial URL, a redirect target, or the hop count failing
+ * validation, a network error, or an unreadable body — resolves to `null`, which
+ * callers treat exactly like `isSafeImageSrc` returning `false`: render a
+ * placeholder, never hand the raw URL to the PDF image pipeline.
+ *
+ * Returns the fetched body as a `Buffer` on success, so callers can feed it through
+ * the same image-processing path used for pre-fetched asset-store images.
+ */
+export const fetchImageSrcSafely = async (uri: string): Promise<Buffer | null> => {
+  let current = uri;
+
+  for (let hop = 0; hop <= MAX_IMAGE_FETCH_REDIRECTS; hop++) {
+    if (!isSafeImageSrc(current)) return null;
+
+    let response: Response;
+    try {
+      // Each hop's request target comes from the previous hop's response, so these
+      // fetches cannot be parallelized — they must run one at a time, in order.
+      // oxlint-disable-next-line no-await-in-loop -- intentional, see above
+      response = await fetch(current, { redirect: "manual" });
+    } catch {
+      return null;
+    }
+
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location) return null;
+
+      let next: URL;
+      try {
+        next = new URL(location, current);
+      } catch {
+        // Unparseable Location header — nothing safe to follow.
+        return null;
+      }
+      current = next.toString();
+      continue; // Re-validated by isSafeImageSrc at the top of the next iteration.
+    }
+
+    if (!response.ok) return null;
+
+    try {
+      // Terminal (non-redirect) response, reached after at most MAX_IMAGE_FETCH_REDIRECTS
+      // sequential hops above — there is nothing left here to run in parallel with.
+      // oxlint-disable-next-line no-await-in-loop -- intentional, see above
+      const arrayBuffer = await response.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    } catch {
+      return null;
+    }
+  }
+
+  // Exhausted MAX_IMAGE_FETCH_REDIRECTS hops without reaching a terminal response.
+  return null;
 };

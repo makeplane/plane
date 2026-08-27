@@ -273,10 +273,23 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    // SSRF guard: `src` comes from page content, and @react-pdf/image will fetch()
-    // any URL with a host — including internal Docker service names — or
-    // fs.readFile() a bare path. Anything we won't fetch renders as a placeholder.
-    if (!isSafeImageSrc(src)) {
+    // SSRF guard: `src` comes from page content. It is never handed to @react-pdf/image
+    // directly — that fetch() follows redirects and would never re-consult a src
+    // validator on the redirect target, so a URL on an ordinary public host could
+    // 302 to an internal address and be fetched anyway. Instead, pdf-export.service.ts
+    // pre-fetches every `image`-node src through the redirect-safe path
+    // (fetchImageSrcSafely, see @/lib/url-security) before rendering starts, the same
+    // way `imageComponent` assets are pre-fetched below, so this render pass stays
+    // synchronous and only ever looks up an already-resolved value.
+    let resolvedSrc: string | null = null;
+    if (ctx.metadata?.resolvedImageUrls && ctx.metadata.resolvedImageUrls[src]) {
+      resolvedSrc = ctx.metadata.resolvedImageUrls[src];
+    } else if (src.startsWith("data:") && isSafeImageSrc(src)) {
+      // data: carries its payload inline — nothing to fetch, so no pre-fetch entry exists.
+      resolvedSrc = src;
+    }
+
+    if (!resolvedSrc) {
       return (
         <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
           <Text style={pdfStyles.imagePlaceholderText}>[Image unavailable]</Text>
@@ -287,7 +300,7 @@ export const nodeRenderers: NodeRendererRegistry = {
     return (
       <View key={ctx.getKey()} style={[{ width: "100%" }, alignmentStyle]}>
         <Image
-          src={src}
+          src={resolvedSrc}
           style={[pdfStyles.image, width ? { width, maxHeight: 500 } : { maxWidth: 400, maxHeight: 500 }]}
         />
       </View>

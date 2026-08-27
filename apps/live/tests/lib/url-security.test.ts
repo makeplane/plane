@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { describe, expect, it } from "vitest";
-import { isBlockedHostLiteral, isSafeImageSrc } from "@/lib/url-security";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchImageSrcSafely, isBlockedHostLiteral, isSafeImageSrc } from "@/lib/url-security";
 
 describe("isSafeImageSrc", () => {
   describe("internal Docker service names", () => {
@@ -240,5 +240,141 @@ describe("isBlockedHostLiteral", () => {
   it("treats real hostnames as non-literals", () => {
     expect(isBlockedHostLiteral("example.com")).toBe(false);
     expect(isBlockedHostLiteral("api")).toBe(false);
+  });
+});
+
+const redirectTo = (location?: string) =>
+  new Response(null, { status: 302, headers: location ? { Location: location } : undefined });
+
+const ok = (body = "image-bytes") => new Response(body, { status: 200 });
+
+describe("fetchImageSrcSafely", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("refuses the initial URL without fetching when it fails isSafeImageSrc", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchImageSrcSafely("http://169.254.169.254/latest/meta-data/");
+
+    expect(result).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses a safe host that redirects to a blocked address (link-local metadata)", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://169.254.169.254/latest/meta-data/"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+
+    expect(result).toBeNull();
+    // The redirect target fails isSafeImageSrc before it is ever fetched.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses a safe host that redirects to a loopback address", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://127.0.0.1:8000/"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses a safe host that redirects to an RFC1918 private address", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://10.0.0.5/internal"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("refuses a safe host that redirects to a Docker service name", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://api:8000/api/workspaces/"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("follows a redirect from one safe host to another and returns the fetched body", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(redirectTo("https://cdn.example.org/final.png"))
+      .mockResolvedValueOnce(ok("final-bytes"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+
+    expect(result).not.toBeNull();
+    expect(result?.toString("utf-8")).toBe("final-bytes");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenNthCalledWith(1, "https://images.example.com/a.png", { redirect: "manual" });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "https://cdn.example.org/final.png", { redirect: "manual" });
+  });
+
+  it("resolves a relative Location header against the current URL before re-validating it", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("/final.png")).mockResolvedValueOnce(ok("final-bytes"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+
+    expect(result?.toString("utf-8")).toBe("final-bytes");
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "https://images.example.com/final.png", { redirect: "manual" });
+  });
+
+  it("refuses a redirect chain that exceeds the cap", async () => {
+    let hop = 0;
+    const fetchMock = vi.fn().mockImplementation(() => {
+      hop += 1;
+      return Promise.resolve(redirectTo(`https://images.example.com/hop-${hop}`));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+
+    expect(result).toBeNull();
+    // 1 initial request plus 5 allowed redirects = 6 requests; the 6th response is
+    // itself a redirect and is never followed.
+    expect(fetchMock).toHaveBeenCalledTimes(6);
+  });
+
+  it("refuses a redirect with no Location header", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo());
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+  });
+
+  it("refuses an unparseable Location header", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(redirectTo("http://[not-a-valid-host"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+  });
+
+  it("refuses a non-ok, non-redirect response", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(null, { status: 404 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+  });
+
+  it("refuses when the fetch itself throws", async () => {
+    const fetchMock = vi.fn().mockRejectedValueOnce(new Error("network error"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchImageSrcSafely("https://images.example.com/a.png")).toBeNull();
+  });
+
+  it("returns the body untouched on a direct 200 with no redirects", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(ok("direct-bytes"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchImageSrcSafely("https://images.example.com/a.png");
+
+    expect(result?.toString("utf-8")).toBe("direct-bytes");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
