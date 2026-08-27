@@ -11,19 +11,14 @@ import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
 // plane package imports
-import {
-  MODULE_STATUS,
-  PROGRESS_STATE_GROUPS_DETAILS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN,
-} from "@plane/constants";
+import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { LinearProgress } from "@makeplane/propel/components/linear-progress";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IModule } from "@plane/types";
-import { Card, FavoriteStar, LinearProgressIndicator } from "@plane/ui";
+import { Card, FavoriteStar } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -175,13 +170,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     : `0 work items`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
-
-  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
-    id: index,
-    name: group.title,
-    value: moduleTotalIssues > 0 ? (moduleDetails[group.key as keyof IModule] as number) : 0,
-    color: group.color,
-  }));
+  const progressValue = moduleTotalIssues > 0 ? (moduleCompletedIssues / moduleTotalIssues) * 100 : 0;
 
   return (
     <div className="relative" data-prevent-progress>
@@ -222,7 +211,13 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                 </Tooltip>
               )}
             </div>
-            <LinearProgressIndicator size="lg" data={progressIndicatorData} />
+            <LinearProgress
+              value={progressValue}
+              size="md"
+              variant="brand"
+              showValue={false}
+              aria-label="Module progress"
+            />
             <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
               <DateRangeDropdown
                 buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}

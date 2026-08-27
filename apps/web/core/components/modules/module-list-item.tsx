@@ -11,7 +11,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info } from "lucide-react";
 import { CheckIcon } from "@plane/propel/icons";
 // ui
-import { CircularProgressIndicator } from "@plane/ui";
+import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 // components
 import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
@@ -76,19 +76,27 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
       itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
       onItemClick={handleItemClick}
       prependTitleElement={
-        <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
-          {completedModuleCheck ? (
-            progress === 100 ? (
+        <div className="relative flex size-8 items-center justify-center">
+          <CircularProgress
+            value={progress}
+            size="md"
+            variant={progress === 100 ? "success" : "brand"}
+            aria-label="Module progress"
+          />
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            {completedModuleCheck ? (
+              progress === 100 ? (
+                <CheckIcon className="h-3 w-3 stroke-[2] text-accent-primary" />
+              ) : (
+                <span className="text-13 text-accent-primary">{`!`}</span>
+              )
+            ) : progress === 100 ? (
               <CheckIcon className="h-3 w-3 stroke-[2] text-accent-primary" />
             ) : (
-              <span className="text-13 text-accent-primary">{`!`}</span>
-            )
-          ) : progress === 100 ? (
-            <CheckIcon className="h-3 w-3 stroke-[2] text-accent-primary" />
-          ) : (
-            <span className="text-9 text-tertiary">{`${progress}%`}</span>
-          )}
-        </CircularProgressIndicator>
+              <span className="text-9 text-tertiary">{`${progress}%`}</span>
+            )}
+          </div>
+        </div>
       }
       appendTitleElement={
         <button
