@@ -518,7 +518,13 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=None,
-                project_id=str(self.kwargs.get("project_id", None)),
+                # This route's URL only supplies `anchor` and `comment_id`,
+                # never `project_id` - self.kwargs.get("project_id") was
+                # always None here, silently corrupting the activity log for
+                # every comment reaction created on a public board. Use the
+                # project resolved from the deploy board, matching destroy()
+                # below.
+                project_id=str(project_deploy_board.project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
