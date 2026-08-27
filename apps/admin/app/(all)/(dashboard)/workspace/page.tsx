@@ -10,15 +10,16 @@ import Link from "next/link";
 import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
 // types
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { Skeleton } from "@plane/propel/skeleton";
-import { Switch } from "@plane/propel/switch";
-import { setPromiseToast } from "@plane/propel/toast";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Button } from "@makeplane/propel/components/button";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceConfigurationKeys } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
 import { WorkspaceListItem } from "@/components/workspace/list-item";
+import { setPromiseToast } from "@/providers/toast";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
 // types
@@ -96,8 +97,8 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
                 <Switch
-                  value={Boolean(parseInt(disableWorkspaceCreation))}
-                  onChange={() => {
+                  checked={Boolean(parseInt(disableWorkspaceCreation))}
+                  onCheckedChange={() => {
                     if (Boolean(parseInt(disableWorkspaceCreation)) === true) {
                       updateConfig("DISABLE_WORKSPACE_CREATION", "0");
                     } else {
@@ -131,9 +132,14 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
-                  Create workspace
-                </Link>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  stretch="auto"
+                  nativeButton={false}
+                  render={<Link href="/workspace/create" />}
+                  label="Create workspace"
+                />
               </div>
             </div>
             <div className="flex flex-col gap-4 py-2">
@@ -143,15 +149,13 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             </div>
             {hasNextPage && (
               <div className="flex justify-center">
-                <Button
-                  variant="link"
-                  size="lg"
+                <AnchorButton
+                  variant="primary"
+                  size="md"
                   onClick={() => fetchNextWorkspaces()}
-                  disabled={workspaceLoader === "pagination"}
-                >
-                  Load more
-                  {workspaceLoader === "pagination" && <LoaderIcon className="h-3 w-3 animate-spin" />}
-                </Button>
+                  loading={workspaceLoader === "pagination"}
+                  label="Load more"
+                />
               </div>
             )}
           </>

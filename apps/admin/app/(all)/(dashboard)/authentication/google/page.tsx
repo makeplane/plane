@@ -7,14 +7,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Skeleton } from "@plane/propel/skeleton";
-import { Switch } from "@plane/propel/switch";
-import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 // assets
 import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
+import { setPromiseToast } from "@/providers/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -74,8 +74,8 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
           icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
           config={
             <Switch
-              value={Boolean(parseInt(enableGoogleConfig))}
-              onChange={() => {
+              checked={Boolean(parseInt(enableGoogleConfig))}
+              onCheckedChange={() => {
                 if (Boolean(parseInt(enableGoogleConfig)) === true) {
                   updateConfig("IS_GOOGLE_ENABLED", "0");
                 } else {

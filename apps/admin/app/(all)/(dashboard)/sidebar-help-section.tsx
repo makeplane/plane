@@ -11,8 +11,8 @@ import { HelpCircle, MessageSquare, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
 import { WEB_BASE_URL } from "@plane/constants";
 // plane internal packages
-import { GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Github, NewTabOutline, PagesOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance, useTheme } from "@/hooks/store";
@@ -22,7 +22,7 @@ const helpOptions = [
   {
     name: "Documentation",
     href: "https://docs.plane.so/",
-    Icon: PageIcon,
+    Icon: PagesOutline,
   },
   {
     name: "Join our Forum",
@@ -32,7 +32,7 @@ const helpOptions = [
   {
     name: "Report a bug",
     href: "https://github.com/makeplane/plane/issues/new/choose",
-    Icon: GithubIcon,
+    Icon: Github,
   },
 ];
 
@@ -57,16 +57,28 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
       )}
     >
       <div className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full"}`}>
-        <Tooltip tooltipContent="Redirect to Plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
-          <a
-            href={redirectionLink}
-            className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
-          >
-            <NewTabIcon width={14} height={14} />
-            {!isSidebarCollapsed && "Redirect to Plane"}
-          </a>
-        </Tooltip>
-        <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
+        {!isSidebarCollapsed ? (
+          <>
+            <a
+              href={redirectionLink}
+              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
+            >
+              <NewTabOutline width={14} height={14} />
+              {!isSidebarCollapsed && "Redirect to Plane"}
+            </a>
+          </>
+        ) : (
+          <Tooltip label="Redirect to Plane" side="right">
+            <a
+              href={redirectionLink}
+              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
+            >
+              <NewTabOutline width={14} height={14} />
+              {!isSidebarCollapsed && "Redirect to Plane"}
+            </a>
+          </Tooltip>
+        )}
+        <Tooltip label="Help" side={isSidebarCollapsed ? "right" : "top"}>
           <button
             type="button"
             aria-label="Help"
@@ -78,7 +90,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
             <HelpCircle className="size-4" />
           </button>
         </Tooltip>
-        <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
+        <Tooltip label="Toggle sidebar" side={isSidebarCollapsed ? "right" : "top"}>
           <button
             type="button"
             aria-label="Toggle sidebar"

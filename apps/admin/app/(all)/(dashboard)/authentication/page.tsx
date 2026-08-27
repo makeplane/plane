@@ -9,14 +9,14 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { Skeleton } from "@plane/propel/skeleton";
-import { Switch } from "@plane/propel/switch";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
 import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { Skeleton } from "@/components/common/skeleton";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@/providers/toast";
 // helpers
 import { canDisableAuthMethod } from "@/helpers/authentication";
 // hooks
@@ -132,8 +132,8 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
                 <Switch
-                  value={Boolean(parseInt(enableSignUpConfig))}
-                  onChange={() => {
+                  checked={Boolean(parseInt(enableSignUpConfig))}
+                  onCheckedChange={() => {
                     if (Boolean(parseInt(enableSignUpConfig)) === true) {
                       updateConfig("ENABLE_SIGNUP", "0");
                     } else {

@@ -11,7 +11,7 @@ import { LogOut, UserCog2, Palette } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { Avatar } from "@plane/propel/avatar";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { AuthService } from "@plane/services";
 import { getFileURL, cn } from "@plane/utils";
 // hooks
@@ -124,12 +124,11 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
       {!isSidebarCollapsed && currentUser && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar
-              name={currentUser.display_name}
+            <WorkspaceAvatar
+              alt={currentUser.display_name ?? "Admin user"}
+              fallback={currentUser.display_name?.[0]?.toUpperCase()}
               src={getFileURL(currentUser.avatar_url)}
-              size={24}
-              shape="square"
-              className="!text-body-sm-medium"
+              size="sm"
             />
           </Menu.Button>
 

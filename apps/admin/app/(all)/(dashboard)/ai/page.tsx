@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Skeleton } from "@plane/propel/skeleton";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
