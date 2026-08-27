@@ -217,6 +217,31 @@ class TestSignInEndpoint:
         assert "_auth_user_id" in django_client.session
 
     @pytest.mark.django_db
+    def test_user_login_without_user_agent_header(self, setup_user, setup_instance):
+        """Sign-in must succeed even when the request has no User-Agent header.
+
+        Regression test for #9672: some programmatic clients (e.g. Rust's
+        reqwest) send no User-Agent by default. `save_user_data()` used to
+        read `HTTP_USER_AGENT` with no default, so a missing header stored
+        `None` into the non-nullable `last_login_uagent` column and the
+        resulting `IntegrityError` bubbled up as an unhandled 500 instead of
+        completing the sign-in.
+        """
+        # Unlike the `django_client` fixture, a plain `Client()` sends no
+        # User-Agent header at all, matching the reported reproduction.
+        client = Client()
+        url = reverse("sign-in")
+
+        response = client.post(url, {"email": "user@plane.so", "password": "user@123"}, follow=False)
+
+        # Must redirect (successful sign-in), not 500.
+        assert response.status_code == 302
+        assert "error_code" not in response.url
+
+        setup_user.refresh_from_db()
+        assert setup_user.last_login_uagent == ""
+
+    @pytest.mark.django_db
     def test_next_path_redirection(self, django_client, setup_user, setup_instance):
         """Test sign-in with next_path parameter"""
         url = reverse("sign-in")
