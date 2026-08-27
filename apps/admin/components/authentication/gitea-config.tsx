@@ -10,8 +10,8 @@ import Link from "next/link";
 import { Settings2 } from "lucide-react";
 // plane internal packages
 import { getButtonStyling } from "@plane/propel/button";
+import { Switch } from "@plane/propel/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -37,7 +37,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
           <Link href="/authentication/gitea" className={cn(getButtonStyling("link", "base"), "font-medium")}>
             Edit
           </Link>
-          <ToggleSwitch
+          <Switch
             value={Boolean(parseInt(GiteaConfig))}
             onChange={() => {
               Boolean(parseInt(GiteaConfig)) === true

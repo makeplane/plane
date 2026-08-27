@@ -37,6 +37,7 @@
     "./portal": "./dist/portal/index.js",
     "./scrollarea": "./dist/scrollarea/index.js",
     "./skeleton": "./dist/skeleton/index.js",
+    "./spinners": "./dist/spinners/index.js",
     "./switch": "./dist/switch/index.js",
     "./tab-navigation": "./dist/tab-navigation/index.js",
     "./table": "./dist/table/index.js",

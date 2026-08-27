@@ -10,7 +10,7 @@ import { Controller } from "react-hook-form";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import { Input } from "@plane/ui";
+import { Input } from "@plane/propel/input";
 import { cn } from "@plane/utils";
 
 // Generic over the form's values because react-hook-form's Control is invariant: its

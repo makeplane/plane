@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Loader } from "@plane/ui";
+import { Skeleton } from "@plane/propel/skeleton";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
@@ -32,10 +32,10 @@ const InstanceImagePage = observer(function InstanceImagePage(_props: Route.Comp
       {formattedConfig ? (
         <InstanceImageConfigForm config={formattedConfig} />
       ) : (
-        <Loader className="space-y-8">
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="20%" />
-        </Loader>
+        <Skeleton className="space-y-8">
+          <Skeleton.Item height="50px" width="50%" />
+          <Skeleton.Item height="50px" width="20%" />
+        </Skeleton>
       )}
     </PageWrapper>
   );

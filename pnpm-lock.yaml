@@ -625,9 +625,6 @@ importers:
       '@plane/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@plane/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@plane/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -661,6 +658,9 @@ importers:
       react-hook-form:
         specifier: 'catalog:'
         version: 7.84.0(react@19.2.8)
+      react-popper:
+        specifier: 'catalog:'
+        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-router:
         specifier: 'catalog:'
         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

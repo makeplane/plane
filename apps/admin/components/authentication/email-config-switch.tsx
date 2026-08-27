@@ -7,8 +7,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
+import { Switch } from "@plane/propel/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui
 // types
@@ -26,7 +26,7 @@ export const EmailCodesConfiguration = observer(function EmailCodesConfiguration
   const enableMagicLogin = formattedConfig?.ENABLE_MAGIC_LINK_LOGIN ?? "";
 
   return (
-    <ToggleSwitch
+    <Switch
       value={Boolean(parseInt(enableMagicLogin))}
       onChange={() => {
         const newEnableMagicLogin = Boolean(parseInt(enableMagicLogin)) === true ? "0" : "1";
