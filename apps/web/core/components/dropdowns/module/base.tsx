@@ -111,9 +111,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
     }
   }, [isOpen, isMobile]);
 
-  const comboButton = (
-    <>
-      {button ? (
+  const comboButton = button ? (
         <button
           ref={setReferenceElement}
           type="button"
@@ -171,9 +169,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
             />
           </DropdownButton>
         </button>
-      )}
-    </>
-  );
+      );
 
   return (
     <ComboDropDown

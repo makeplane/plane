@@ -136,9 +136,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
     handleClose();
   };
 
-  const comboButton = (
-    <>
-      {button ? (
+  const comboButton = button ? (
         <button
           ref={setReferenceElement}
           type="button"
@@ -199,9 +197,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             )}
           </DropdownButton>
         </button>
-      )}
-    </>
-  );
+      );
 
   return (
     // oxlint-disable-next-line jsx_a11y/no-static-element-interactions

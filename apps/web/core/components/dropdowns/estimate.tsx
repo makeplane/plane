@@ -159,9 +159,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
     handleClose();
   };
 
-  const comboButton = (
-    <>
-      {button ? (
+  const comboButton = button ? (
         <button
           ref={setReferenceElement}
           type="button"
@@ -214,9 +212,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             )}
           </DropdownButton>
         </button>
-      )}
-    </>
-  );
+      );
 
   return (
     <ComboDropDown
