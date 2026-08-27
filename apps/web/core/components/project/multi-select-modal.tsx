@@ -14,7 +14,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
 import darkProjectAsset from "@/app/assets/empty-state/search/project-dark.webp?url";
@@ -162,7 +163,9 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                   >
                     <div className="flex items-center gap-2 truncate">
                       <span className="flex flex-shrink-0 items-center gap-2.5">
-                        <Checkbox checked={isProjectSelected} />
+                        <span className="pointer-events-none">
+                          <Checkbox checked={isProjectSelected} aria-label={projectDetails.name} />
+                        </span>
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
                       <span className="flex-shrink-0 text-10">{projectDetails.identifier}</span>
