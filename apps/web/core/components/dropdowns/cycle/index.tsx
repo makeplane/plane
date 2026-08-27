@@ -83,9 +83,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
     handleClose();
   };
 
-  const comboButton = (
-    <>
-      {button ? (
+  const comboButton = button ? (
         <button
           ref={setReferenceElement}
           type="button"
@@ -130,9 +128,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
             )}
           </DropdownButton>
         </button>
-      )}
-    </>
-  );
+      );
 
   return (
     <ComboDropDown

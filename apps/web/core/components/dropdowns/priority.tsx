@@ -398,9 +398,7 @@ export function PriorityDropdown(props: Props) {
       ? BackgroundButton
       : TransparentButton;
 
-  const comboButton = (
-    <>
-      {button ? (
+  const comboButton = button ? (
         <button
           ref={setReferenceElement}
           type="button"
@@ -440,9 +438,7 @@ export function PriorityDropdown(props: Props) {
             renderToolTipByDefault={renderByDefault}
           />
         </button>
-      )}
-    </>
-  );
+      );
 
   return (
     <ComboDropDown

@@ -174,9 +174,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
     }
   };
 
-  const comboButton = (
-    <>
-      {button ? (
+  const comboButton = button ? (
         <button
           ref={setReferenceElement}
           type="button"
@@ -219,9 +217,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             )}
           </DropdownButton>
         </button>
-      )}
-    </>
-  );
+      );
 
   return (
     <ComboDropDown
