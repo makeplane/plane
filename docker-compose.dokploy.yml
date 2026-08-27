@@ -1,0 +1,307 @@
+# Dokploy compose for this repo.
+#
+# Point the EXISTING Dokploy application at this file (keep the same
+# Compose project name). Named volumes (`pgdata`, `uploads`, …) are then
+# reused and the current database / files / Caddy state keep working.
+# A new Dokploy app uses a new project name and starts with empty volumes.
+#
+# Copy the env vars from the current stack into Dokploy (especially
+# SECRET_KEY, POSTGRES_PASSWORD, AWS_* keys, LIVE_SERVER_SECRET_KEY).
+#
+# DNS collision avoidance for multi-stack Dokploy:
+# Internal services renamed with `plane-*` prefix (unique cluster-wide) and
+# `links:` on the `proxy` service creates /etc/hosts entries (`<plane-web-IP>
+# web`, etc.) — /etc/hosts takes absolute priority over DNS, so the Caddy
+# inside proxy (which has `reverse_proxy web:3000`/`api:8000` hardcoded)
+# resolves straight to our containers, ignoring any `web`/`api` containers
+# from other stacks on the shared Dokploy network.
+#
+# Images are built from this repo (not pulled from a registry).
+
+x-db-env: &db-env
+  PGHOST: ${PGHOST:-plane-db}
+  PGDATABASE: ${PGDATABASE:-plane}
+  POSTGRES_USER: ${POSTGRES_USER:-plane}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
+  POSTGRES_DB: ${POSTGRES_DB:-plane}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  PGDATA: ${PGDATA:-/var/lib/postgresql/data}
+
+x-redis-env: &redis-env
+  REDIS_HOST: ${REDIS_HOST:-plane-redis}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+  REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
+
+x-minio-env: &minio-env
+  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
+  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+
+x-aws-s3-env: &aws-s3-env
+  AWS_REGION: ${AWS_REGION:-}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-access-key}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+  AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+
+x-proxy-env: &proxy-env
+  APP_DOMAIN: ${APP_DOMAIN:-localhost}
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+  BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+  # Caddy proxy: listen address (no upstream default in Caddyfile -> must be set,
+  # else the `{$SITE_ADDRESS} { ... }` block is keyless and Caddy aborts).
+  SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+  # trusted_proxies decides which peers may set X-Forwarded-For/X-Real-IP. Dokploy's
+  # Traefik upstream always lives on Dokploy's private network, so trust only private
+  # ranges (Caddy built-in) instead of 0.0.0.0/0 to prevent client-IP spoofing if the
+  # proxy is ever exposed directly. Override with your real upstream CIDR if needed.
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-private_ranges}
+
+x-mq-env: &mq-env
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+  RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-plane}
+  RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+
+x-live-env: &live-env
+  API_BASE_URL: ${API_BASE_URL:-http://plane-api:8000}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-dev-only-change-me}
+
+x-app-env: &app-env
+  WEB_URL: ${WEB_URL:-http://localhost}
+  DEBUG: ${DEBUG:-0}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost}
+  GUNICORN_WORKERS: ${GUNICORN_WORKERS:-1}
+  USE_MINIO: ${USE_MINIO:-1}
+  DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
+  SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+  AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
+  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-dev-only-change-me}
+  WEBHOOK_ALLOWED_IPS: ${WEBHOOK_ALLOWED_IPS:-}
+  WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
+
+x-api-build: &api-build
+  context: ./apps/api
+  dockerfile: Dockerfile.api
+  args:
+    DOCKER_BUILDKIT: 1
+
+services:
+  plane-web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    depends_on:
+      plane-api:
+        condition: service_started
+      plane-worker:
+        condition: service_started
+
+  plane-space:
+    build:
+      context: .
+      dockerfile: ./apps/space/Dockerfile.space
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    depends_on:
+      plane-api:
+        condition: service_started
+      plane-worker:
+        condition: service_started
+      plane-web:
+        condition: service_started
+
+  plane-admin:
+    build:
+      context: .
+      dockerfile: ./apps/admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    depends_on:
+      plane-api:
+        condition: service_started
+      plane-web:
+        condition: service_started
+
+  plane-live:
+    build:
+      context: .
+      dockerfile: ./apps/live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    environment:
+      <<: [*live-env, *redis-env]
+    depends_on:
+      plane-api:
+        condition: service_started
+      plane-web:
+        condition: service_started
+
+  plane-api:
+    build: *api-build
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-api.sh
+    volumes:
+      - logs_api:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
+      plane-migrator:
+        condition: service_completed_successfully
+
+  plane-worker:
+    build: *api-build
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-worker.sh
+    volumes:
+      - logs_worker:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
+      plane-migrator:
+        condition: service_completed_successfully
+
+  plane-beat-worker:
+    build: *api-build
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-beat.sh
+    volumes:
+      - logs_beat-worker:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
+      plane-migrator:
+        condition: service_completed_successfully
+
+  plane-migrator:
+    build: *api-build
+    restart: on-failure
+    command: ./bin/docker-entrypoint-migrator.sh
+    volumes:
+      - logs_migrator:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+    depends_on:
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+
+  plane-db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    command: postgres -c 'max_connections=1000'
+    environment:
+      <<: *db-env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-plane} -d ${POSTGRES_DB:-plane}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  plane-redis:
+    image: valkey/valkey:7.2.11-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    environment:
+      <<: *mq-env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  plane-minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    restart: unless-stopped
+    command: server /export --console-address ":9090"
+    environment:
+      <<: *minio-env
+    volumes:
+      - uploads:/export
+
+  proxy:
+    build:
+      context: ./apps/proxy
+      dockerfile: Dockerfile.ce
+    restart: unless-stopped
+    expose:
+      - "80"
+    environment:
+      <<: *proxy-env
+    volumes:
+      - proxy_config:/config
+      - proxy_data:/data
+    links:
+      - "plane-web:web"
+      - "plane-api:api"
+      - "plane-space:space"
+      - "plane-admin:admin"
+      - "plane-live:live"
+    depends_on:
+      plane-web:
+        condition: service_started
+      plane-api:
+        condition: service_started
+      plane-space:
+        condition: service_started
+      plane-admin:
+        condition: service_started
+      plane-live:
+        condition: service_started
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  rabbitmq_data:
+  logs_api:
+  logs_worker:
+  logs_beat-worker:
+  logs_migrator:
+  proxy_config:
+  proxy_data:
