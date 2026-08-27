@@ -6,9 +6,10 @@
 
 import React from "react";
 // ui
-import { Button } from "@plane/propel/button";
-import { CopyIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { CopyOutline } from "@makeplane/propel/icons";
+// components
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 
 type Props = {
   label: string;
@@ -31,8 +32,11 @@ export function CopyField(props: Props) {
       <h4 className="text-13 text-secondary">{label}</h4>
       <Button
         variant="secondary"
-        size="lg"
-        className="flex items-center justify-between py-2"
+        size="md"
+        stretch="auto"
+        icon={<CopyOutline width={18} height={18} color="#B9B9B9" />}
+        iconPosition="end"
+        label={url}
         onClick={() => {
           navigator.clipboard.writeText(url);
           setToast({
@@ -41,10 +45,7 @@ export function CopyField(props: Props) {
             message: `The ${label} has been successfully copied to your clipboard`,
           });
         }}
-      >
-        <p className="text-13 font-medium">{url}</p>
-        <CopyIcon width={18} height={18} color="#B9B9B9" />
-      </Button>
+      />
       <div className="text-11 text-tertiary">{description}</div>
     </div>
   );

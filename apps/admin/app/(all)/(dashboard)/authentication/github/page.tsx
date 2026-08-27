@@ -9,9 +9,7 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { Skeleton } from "@plane/propel/skeleton";
-import { Switch } from "@plane/propel/switch";
-import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 import { resolveGeneralTheme } from "@plane/utils";
 // assets
 import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
@@ -19,6 +17,8 @@ import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
+import { setPromiseToast } from "@/providers/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -89,8 +89,8 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
           }
           config={
             <Switch
-              value={isGithubEnabled}
-              onChange={() => {
+              checked={isGithubEnabled}
+              onCheckedChange={() => {
                 updateConfig("IS_GITHUB_ENABLED", isGithubEnabled ? "0" : "1");
               }}
               size="sm"

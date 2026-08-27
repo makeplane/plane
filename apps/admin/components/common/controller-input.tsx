@@ -10,8 +10,7 @@ import { Controller } from "react-hook-form";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import { Input } from "@plane/propel/input";
-import { cn } from "@plane/utils";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 
 // Generic over the form's values because react-hook-form's Control is invariant: its
 // `_options.validate` narrows `name` to a keyof union, so `Control<any>` no longer
@@ -45,24 +44,22 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
   return (
     <div className="flex flex-col gap-1">
       <h4 className="text-13 text-tertiary">{label}</h4>
-      <div className="relative">
+      <InputGroup size="lg">
         <Controller
           control={control}
           name={name}
           rules={{ required: required ? `${label} is required.` : false }}
           render={({ field: { value, onChange, ref } }) => (
             <Input
+              size="lg"
               id={name}
               name={name}
               type={type === "password" && showPassword ? "text" : type}
               value={value}
               onChange={onChange}
               ref={ref}
-              hasError={error}
+              aria-invalid={error}
               placeholder={placeholder}
-              className={cn("w-full rounded-md font-medium", {
-                "pr-10": type === "password",
-              })}
             />
           )}
         />
@@ -71,7 +68,7 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
             <button
               type="button"
               aria-label="Hide password"
-              className="absolute top-2.5 right-3 flex items-center justify-center text-placeholder"
+              className="flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(false)}
             >
               <EyeOff className="h-4 w-4" />
@@ -80,13 +77,13 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
             <button
               type="button"
               aria-label="Show password"
-              className="absolute top-2.5 right-3 flex items-center justify-center text-placeholder"
+              className="flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(true)}
             >
               <Eye className="h-4 w-4" />
             </button>
           ))}
-      </div>
+      </InputGroup>
       {description && <p className="pt-0.5 text-11 text-tertiary">{description}</p>}
     </div>
   );

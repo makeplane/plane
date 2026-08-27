@@ -8,14 +8,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane internal packages
-import { Skeleton } from "@plane/propel/skeleton";
-import { Switch } from "@plane/propel/switch";
-import { setPromiseToast } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 // assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
+import { setPromiseToast } from "@/providers/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -74,8 +74,8 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
           icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
           config={
             <Switch
-              value={isGiteaEnabled}
-              onChange={() => {
+              checked={isGiteaEnabled}
+              onCheckedChange={() => {
                 updateConfig("IS_GITEA_ENABLED", isGiteaEnabled ? "0" : "1");
               }}
               size="sm"

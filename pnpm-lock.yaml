@@ -610,15 +610,15 @@ importers:
       '@headlessui/react':
         specifier: 'catalog:'
         version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@makeplane/propel':
+        specifier: 0.2.0
+        version: 0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
       '@plane/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
-      '@plane/propel':
-        specifier: workspace:*
-        version: link:../../packages/propel
       '@plane/services':
         specifier: workspace:*
         version: link:../../packages/services
@@ -658,9 +658,6 @@ importers:
       react-hook-form:
         specifier: 'catalog:'
         version: 7.84.0(react@19.2.8)
-      react-popper:
-        specifier: 'catalog:'
-        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-router:
         specifier: 'catalog:'
         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

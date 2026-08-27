@@ -7,11 +7,11 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Skeleton } from "@plane/propel/skeleton";
-import { Switch } from "@plane/propel/switch";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -76,7 +76,7 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
             <Skeleton.Item width="24px" height="16px" className="rounded-full" />
           </Skeleton>
         ) : (
-          <Switch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
+          <Switch checked={isSMTPEnabled} onCheckedChange={handleToggle} size="sm" disabled={isSubmitting} />
         ),
       }}
     >

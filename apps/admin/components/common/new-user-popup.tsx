@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme as useNextTheme } from "next-themes";
 // ui
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { resolveGeneralTheme } from "@plane/utils";
 // hooks
 import TakeoffIconDark from "@/app/assets/logos/takeoff-icon-dark.svg?url";
@@ -33,12 +33,15 @@ export const NewUserPopup = observer(function NewUserPopup() {
             workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
-            <Link href="/workspace/create" className={getButtonStyling("primary", "lg")}>
-              Create workspace
-            </Link>
-            <Button variant="secondary" size="lg" onClick={toggleNewUserPopup}>
-              Close
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              nativeButton={false}
+              render={<Link href="/workspace/create" />}
+              label="Create workspace"
+            />
+            <Button variant="secondary" size="md" stretch="auto" onClick={toggleNewUserPopup} label="Close" />
           </div>
         </div>
         <div className="flex shrink-0 items-center justify-center">

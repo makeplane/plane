@@ -10,9 +10,8 @@ import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
 import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { Input } from "@plane/propel/input";
-import { Spinner } from "@plane/propel/spinners";
+import { Button } from "@makeplane/propel/components/button";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { AuthService } from "@plane/services";
 // components
 import { Banner } from "@/components/common/banner";
@@ -136,31 +135,31 @@ export function InstanceSignInForm() {
               <label className="text-13 font-medium text-tertiary" htmlFor="email">
                 Email <span className="text-danger-primary">*</span>
               </label>
-              <Input
-                className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
-                id="email"
-                name="email"
-                type="email"
-                inputSize="md"
-                placeholder="name@company.com"
-                value={formData.email}
-                onChange={(e) => handleFormChange("email", e.target.value)}
-                autoComplete="off"
-                autoFocus
-              />
+              <InputGroup size="lg">
+                <Input
+                  size="lg"
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  value={formData.email}
+                  onChange={(e) => handleFormChange("email", e.target.value)}
+                  autoComplete="off"
+                  autoFocus
+                />
+              </InputGroup>
             </div>
 
             <div className="w-full space-y-1">
               <label className="text-13 font-medium text-tertiary" htmlFor="password">
                 Password <span className="text-danger-primary">*</span>
               </label>
-              <div className="relative">
+              <InputGroup size="lg">
                 <Input
-                  className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
+                  size="lg"
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  inputSize="md"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
@@ -170,7 +169,7 @@ export function InstanceSignInForm() {
                   <button
                     type="button"
                     aria-label="Hide password"
-                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
+                    className="flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(false)}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -179,18 +178,24 @@ export function InstanceSignInForm() {
                   <button
                     type="button"
                     aria-label="Show password"
-                    className="absolute top-3.5 right-3 flex items-center justify-center text-placeholder"
+                    className="flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(true)}
                   >
                     <Eye className="h-4 w-4" />
                   </button>
                 )}
-              </div>
+              </InputGroup>
             </div>
             <div className="py-2">
-              <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
-              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                stretch="full"
+                disabled={isButtonDisabled}
+                loading={isSubmitting}
+                label="Sign in"
+              />
             </div>
           </form>
         </div>

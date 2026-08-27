@@ -8,7 +8,7 @@ import { Info } from "lucide-react";
 // plane constants
 import type { TAdminAuthErrorInfo } from "@plane/constants";
 // icons
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 
 type TAuthBanner = {
   bannerData: TAdminAuthErrorInfo | undefined;
@@ -31,7 +31,7 @@ export function AuthBanner(props: TAuthBanner) {
         className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary transition-all hover:bg-accent-primary/20"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
-        <CloseIcon className="h-4 w-4 flex-shrink-0" />
+        <CloseOutline className="h-4 w-4 flex-shrink-0" />
       </button>
     </div>
   );
