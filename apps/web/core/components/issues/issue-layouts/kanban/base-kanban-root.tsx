@@ -237,13 +237,17 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const groupWidths = issuesFilter?.issueFilters?.kanbanFilters?.group_widths || {};
 
   const handleResizeColumnWidth = useCallback(
-    (columnId: string, width: number) => {
+    async (columnId: string, width: number) => {
       if (!workspaceSlug) return;
       const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
-      updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-        ...kanbanFilters,
-        group_widths: { ...kanbanFilters.group_widths, [columnId]: Math.round(width) },
-      });
+      try {
+        await updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+          ...kanbanFilters,
+          group_widths: { ...kanbanFilters.group_widths, [columnId]: Math.round(width) },
+        });
+      } catch (error: unknown) {
+        console.error("Failed to save Kanban column width", error);
+      }
     },
     [workspaceSlug, issuesFilter, projectId, updateFilters]
   );
