@@ -12,8 +12,7 @@ STATE_ORDER = ["backlog", "unstarted", "started", "completed", "cancelled"]
 # order_by allowlists — one per model/endpoint family
 # All contain bare field names (no leading '-'); the sanitizer strips the
 # prefix before looking up, so descending variants are implicitly covered.
-# Prevents ORM order_by injection via user-supplied query params
-# (GHSA-2r95-c453-vxmr / GHSA-w45q-6m65-9498).
+# Prevents ORM order_by injection via user-supplied query params.
 # ---------------------------------------------------------------------------
 
 ISSUE_ORDER_BY_ALLOWLIST = frozenset({
@@ -76,12 +75,20 @@ NOTIFICATION_ORDER_BY_ALLOWLIST = frozenset({
     "updated_at",
 })
 
+# Page list queryset.
+PAGE_ORDER_BY_ALLOWLIST = frozenset({
+    "created_at",
+    "updated_at",
+    "name",
+    "sort_order",
+})
+
 # ---------------------------------------------------------------------------
 # group_by / sub_group_by allowlist for Issue querysets — used by
 # GroupedOffsetPaginator / SubGroupedOffsetPaginator (plane/utils/paginator.py),
 # which pass the field name straight into F(), .values(), .order_by(), and
 # Window partition_by. Prevents unauthenticated ORM field-name injection via
-# user-supplied query params (GHSA-wwgj-929g-42cm).
+# user-supplied query params.
 # ---------------------------------------------------------------------------
 ISSUE_GROUP_BY_ALLOWLIST = frozenset({
     "state_id",
@@ -117,6 +124,7 @@ MODULE_ORDER_BY_ALLOWLIST = frozenset({
     "status",
     "sort_order",
 })
+
 
 def sanitize_order_by(value, allowed_fields, default="-created_at"):
     """Return a safe ordering string derived from *value*.
