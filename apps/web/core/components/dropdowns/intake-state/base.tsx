@@ -136,66 +136,63 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
   };
 
   const comboButton = button ? (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          {button}
-        </button>
-      ) : (
-        <button
-          tabIndex={tabIndex}
-          ref={setReferenceElement}
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-secondary": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          onClick={handleOnClick}
-          disabled={disabled}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading={t("state")}
-            tooltipContent={selectedState?.name ?? t("state")}
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-            renderToolTipByDefault={renderByDefault}
-          >
-            {isInitializing ? (
-              <Spinner className="h-3.5 w-3.5" />
-            ) : (
-              <>
-                {!hideIcon && (
-                  <IntakeStateGroupIcon
-                    stateGroup={selectedState?.group ?? "triage"}
-                    color={selectedState?.color ?? "var(--text-color-tertiary)"}
-                    className={cn("flex-shrink-0", iconSize)}
-                  />
-                )}
-                {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                  <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
-                )}
-                {dropdownArrow && (
-                  <ChevronDownIcon
-                    className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
-                    aria-hidden="true"
-                  />
-                )}
-              </>
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+      onClick={handleOnClick}
+      disabled={disabled}
+      tabIndex={tabIndex}
+    >
+      {button}
+    </button>
+  ) : (
+    <button
+      tabIndex={tabIndex}
+      ref={setReferenceElement}
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-secondary": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
+      )}
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading={t("state")}
+        tooltipContent={selectedState?.name ?? t("state")}
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
+      >
+        {isInitializing ? (
+          <Spinner className="h-3.5 w-3.5" />
+        ) : (
+          <>
+            {!hideIcon && (
+              <IntakeStateGroupIcon
+                stateGroup={selectedState?.group ?? "triage"}
+                color={selectedState?.color ?? "var(--text-color-tertiary)"}
+                className={cn("flex-shrink-0", iconSize)}
+              />
             )}
-          </DropdownButton>
-        </button>
-      );
+            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
+            )}
+            {dropdownArrow && (
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+            )}
+          </>
+        )}
+      </DropdownButton>
+    </button>
+  );
 
   return (
     // oxlint-disable-next-line jsx_a11y/no-static-element-interactions
