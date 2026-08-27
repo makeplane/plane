@@ -300,3 +300,57 @@ class TestDuplicateAssetProjectScope:
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
         assert FileAsset.objects.count() == before + 1
+
+    @pytest.mark.django_db
+    def test_duplicate_omitted_project_id_inherits_source_project(
+        self, session_client, workspace, project, project_asset
+    ):
+        """Omitting project_id must not strip the copy's project scoping.
+
+        The caller's access to ``project_asset`` is only established through
+        ``project`` membership; defaulting the copy to project_id=None would
+        make is_project_accessible_to() treat it as workspace-accessible by
+        default, exposing it to every workspace member regardless of role.
+        """
+        before = FileAsset.objects.count()
+        with mock.patch(S3_STORAGE_PATH):
+            response = session_client.post(
+                duplicate_url(workspace.slug, project_asset.id),
+                {"entity_type": FileAsset.EntityTypeContext.ISSUE_ATTACHMENT},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert FileAsset.objects.count() == before + 1
+        duplicated_asset = FileAsset.objects.get(id=response.data["asset_id"])
+        assert duplicated_asset.project_id == project.id, (
+            "the duplicate did not inherit the source asset's project and was "
+            f"created with project_id={duplicated_asset.project_id!r} instead"
+        )
+
+    @pytest.mark.django_db
+    def test_duplicate_null_project_id_still_inherits_source_project(
+        self, session_client, workspace, project, project_asset
+    ):
+        """An explicit ``project_id: null`` must not override inheritance either --
+        the field isn't meant to be client-settable to "no project" at all when
+        the source asset has one."""
+        before = FileAsset.objects.count()
+        with mock.patch(S3_STORAGE_PATH):
+            response = session_client.post(
+                duplicate_url(workspace.slug, project_asset.id),
+                {
+                    "entity_type": FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    "project_id": None,
+                },
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert FileAsset.objects.count() == before + 1
+        duplicated_asset = FileAsset.objects.get(id=response.data["asset_id"])
+        assert duplicated_asset.project_id == project.id

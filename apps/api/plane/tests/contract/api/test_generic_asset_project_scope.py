@@ -296,6 +296,24 @@ class TestGenericAssetPostProjectScope:
         )
         assert FileAsset.objects.count() == before + 1
 
+    @pytest.mark.django_db
+    def test_post_denied_when_project_id_omitted(self, api_key_client, workspace):
+        """The endpoint only ever creates ISSUE_ATTACHMENT rows, a project-scoped
+        entity type. Omitting project_id must not create a project_id=None row --
+        is_project_accessible_to() treats that as workspace-accessible-by-default,
+        which would hand every workspace member access regardless of role.
+        """
+        before = FileAsset.objects.count()
+        payload = {"name": "planted.png", "type": "image/png", "size": 16}
+        response = api_key_client.post(asset_list_url(workspace.slug), payload, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert FileAsset.objects.count() == before, (
+            "an asset row was created with project_id=None despite the omitted field"
+        )
+
 
 @pytest.mark.contract
 class TestGenericAssetExternalIdDedupDisclosure:

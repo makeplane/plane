@@ -618,6 +618,19 @@ class GenericAssetEndpoint(BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
 
+        # This endpoint always creates an ISSUE_ATTACHMENT (below), a
+        # project-scoped entity type. The block above only validates project_id
+        # when one is supplied, so a caller who omits it entirely reaches this
+        # point unchecked -- creating the row here would leave project_id=None,
+        # and is_project_accessible_to() treats project_id=None as
+        # workspace-accessible-by-default, silently bypassing the membership
+        # check above for every caller who just leaves the field out.
+        if not project_id:
+            return Response(
+                {"error": "Project id is required.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Create a File Asset
         asset = FileAsset.objects.create(
             attributes={"name": name, "type": type, "size": size_limit},

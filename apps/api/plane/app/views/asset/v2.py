@@ -813,24 +813,6 @@ class DuplicateAssetEndpoint(BaseAPIView):
             )
 
         workspace = Workspace.objects.get(slug=slug)
-        if project_id:
-            # check if project exists in the workspace
-            if not Project.objects.filter(id=project_id, workspace=workspace).exists():
-                return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
-            # project_id is the *destination* and comes from the request body.
-            # Existence in the workspace is not authorization: require the caller
-            # to be an active member of the project the copy will land in, or a
-            # workspace member could deposit assets into any project.
-            if not ProjectMember.objects.filter(
-                member=request.user,
-                workspace=workspace,
-                project_id=project_id,
-                is_active=True,
-            ).exists():
-                return Response(
-                    {"error": "You don't have access to this project."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
 
         storage = S3Storage(request=request)
         # Restrict the source asset to the same destination workspace to prevent cross-workspace asset copying
@@ -851,6 +833,38 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        # A caller may redirect the copy to a different project than the source
+        # (e.g. duplicating an attachment onto an issue that lives in another
+        # project) by naming project_id explicitly -- that's still validated
+        # below. But leaving it out (or sending it empty/null) must not be read
+        # as "make this workspace-level": the caller's access to the source
+        # only ever came through its project, and defaulting to None here
+        # would strip that scoping and expose the copy to the entire
+        # workspace. This isn't something the client should be able to unset
+        # at all -- default to the source's own project instead.
+        if project_id:
+            # check if project exists in the workspace
+            if not Project.objects.filter(id=project_id, workspace=workspace).exists():
+                return Response(
+                    {"error": "Project not found", "status": False}, status=status.HTTP_404_NOT_FOUND
+                )
+            # project_id is the *destination* and comes from the request body.
+            # Existence in the workspace is not authorization: require the caller
+            # to be an active member of the project the copy will land in, or a
+            # workspace member could deposit assets into any project.
+            if not ProjectMember.objects.filter(
+                member=request.user,
+                workspace=workspace,
+                project_id=project_id,
+                is_active=True,
+            ).exists():
+                return Response(
+                    {"error": "You don't have access to this project.", "status": False},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        else:
+            project_id = original_asset.project_id
 
         sanitized_name = sanitize_filename(original_asset.attributes.get("name")) or "unnamed"
         destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{sanitized_name}"
