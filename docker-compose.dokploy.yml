@@ -1,8 +1,9 @@
 # Dokploy compose for this repo.
 #
 # Point the EXISTING Dokploy application at this file (keep the same
-# Compose project name). Named volumes (`pgdata`, `uploads`, …) are then
-# reused and the current database / files / Caddy state keep working.
+# Compose project name). Named volumes (`uploads`, …) are then reused
+# and files / Caddy state keep working. Postgres is external — set
+# DATABASE_URL / PGHOST in Dokploy (bundled `plane-db` is commented out).
 # A new Dokploy app uses a new project name and starts with empty volumes.
 #
 # Copy the env vars from the current stack into Dokploy (especially
@@ -19,7 +20,7 @@
 # Images are built from this repo (not pulled from a registry).
 
 x-db-env: &db-env
-  PGHOST: ${PGHOST:-plane-db}
+  PGHOST: ${PGHOST}
   PGDATABASE: ${PGDATABASE:-plane}
   POSTGRES_USER: ${POSTGRES_USER:-plane}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
@@ -74,7 +75,7 @@ x-app-env: &app-env
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost}
   GUNICORN_WORKERS: ${GUNICORN_WORKERS:-1}
   USE_MINIO: ${USE_MINIO:-1}
-  DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
+  DATABASE_URL: ${DATABASE_URL}
   SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
@@ -155,8 +156,6 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      plane-db:
-        condition: service_healthy
       plane-redis:
         condition: service_healthy
       plane-mq:
@@ -173,8 +172,6 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      plane-db:
-        condition: service_healthy
       plane-redis:
         condition: service_healthy
       plane-mq:
@@ -191,8 +188,6 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      plane-db:
-        condition: service_healthy
       plane-redis:
         condition: service_healthy
       plane-mq:
@@ -209,25 +204,27 @@ services:
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
-      plane-db:
-        condition: service_healthy
       plane-redis:
         condition: service_healthy
 
-  plane-db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    command: postgres -c 'max_connections=1000'
-    environment:
-      <<: *db-env
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-plane} -d ${POSTGRES_DB:-plane}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+  # Bundled Postgres — commented out; the app uses an external database
+  # via DATABASE_URL / PGHOST. Uncomment this block (and `pgdata` under
+  # volumes, plus depends_on plane-db on api/worker/beat/migrator) to
+  # run Postgres in-cluster again.
+  # plane-db:
+  #   image: postgres:17-alpine
+  #   restart: unless-stopped
+  #   command: postgres -c 'max_connections=1000'
+  #   environment:
+  #     <<: *db-env
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-plane} -d ${POSTGRES_DB:-plane}"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 10s
 
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
@@ -295,7 +292,7 @@ services:
         condition: service_started
 
 volumes:
-  pgdata:
+  # pgdata:
   redisdata:
   uploads:
   rabbitmq_data:
