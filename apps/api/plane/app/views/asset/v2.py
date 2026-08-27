@@ -834,6 +834,16 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # get_entity_id_field() (below) derives the persisted project_id for a
+        # PROJECT_COVER duplicate from entity_id, overriding whatever project_id
+        # was supplied separately -- so entity_id, not the request body's
+        # project_id, is the value that actually lands on the new row. Validate
+        # that value here too, or a caller could pass a project_id they belong to
+        # just to clear the membership check below while entity_id -- the real
+        # destination -- points at a project they were never checked against.
+        if entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            project_id = entity_id
+
         # A caller may redirect the copy to a different project than the source
         # (e.g. duplicating an attachment onto an issue that lives in another
         # project) by naming project_id explicitly -- that's still validated
@@ -868,6 +878,11 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         sanitized_name = sanitize_filename(original_asset.attributes.get("name")) or "unnamed"
         destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{sanitized_name}"
+        entity_id_fields = self.get_entity_id_field(entity_type=entity_type, entity_id=entity_id)
+        # project_id is already validated above -- and for PROJECT_COVER it *is*
+        # entity_id -- so drop any project_id get_entity_id_field derived to avoid
+        # passing it twice to create() below.
+        entity_id_fields.pop("project_id", None)
         duplicated_asset = FileAsset.objects.create(
             attributes={
                 "name": original_asset.attributes.get("name"),
@@ -881,7 +896,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
             entity_type=entity_type,
             project_id=project_id if project_id else None,
             storage_metadata=original_asset.storage_metadata,
-            **self.get_entity_id_field(entity_type=entity_type, entity_id=entity_id),
+            **entity_id_fields,
         )
         storage.copy_object(original_asset.asset, destination_key)
         # Update the is_uploaded field for all newly created assets

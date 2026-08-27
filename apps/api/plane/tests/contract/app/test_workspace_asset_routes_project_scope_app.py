@@ -354,3 +354,61 @@ class TestDuplicateAssetProjectScope:
         assert FileAsset.objects.count() == before + 1
         duplicated_asset = FileAsset.objects.get(id=response.data["asset_id"])
         assert duplicated_asset.project_id == project.id
+
+    @pytest.mark.django_db
+    def test_duplicate_project_cover_denied_when_entity_id_is_foreign_project(
+        self, session_client, workspace, project, project_asset, outsider_project
+    ):
+        """PROJECT_COVER's entity_id -- not project_id -- is the real destination.
+
+        get_entity_id_field() turns entity_id into the project_id that actually
+        gets persisted, overriding whatever project_id was supplied. A caller who
+        puts a project they belong to in project_id (clearing the membership
+        check) but a foreign project in entity_id must still be rejected, or the
+        duplicate lands in a project they were never checked against.
+        """
+        before = FileAsset.objects.count()
+        with mock.patch(S3_STORAGE_PATH) as mock_storage:
+            response = session_client.post(
+                duplicate_url(workspace.slug, project_asset.id),
+                {
+                    "entity_type": FileAsset.EntityTypeContext.PROJECT_COVER,
+                    "project_id": str(project.id),
+                    "entity_id": str(outsider_project.id),
+                },
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        mock_storage.return_value.copy_object.assert_not_called()
+        assert FileAsset.objects.count() == before, (
+            "a PROJECT_COVER duplicate was persisted into a project only named "
+            "via entity_id, which was never validated"
+        )
+
+    @pytest.mark.django_db
+    def test_duplicate_project_cover_allowed_for_own_project_entity_id(
+        self, session_client, workspace, project, project_asset
+    ):
+        """Sanity check: a legitimate PROJECT_COVER duplicate still works, and the
+        persisted project_id follows entity_id as intended."""
+        before = FileAsset.objects.count()
+        with mock.patch(S3_STORAGE_PATH):
+            response = session_client.post(
+                duplicate_url(workspace.slug, project_asset.id),
+                {
+                    "entity_type": FileAsset.EntityTypeContext.PROJECT_COVER,
+                    "project_id": str(project.id),
+                    "entity_id": str(project.id),
+                },
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK, (
+            f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
+        )
+        assert FileAsset.objects.count() == before + 1
+        duplicated_asset = FileAsset.objects.get(id=response.data["asset_id"])
+        assert duplicated_asset.project_id == project.id
