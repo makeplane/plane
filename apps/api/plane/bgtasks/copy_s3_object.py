@@ -77,7 +77,19 @@ def sync_with_external_service(entity_name, description_html):
 
         url = normalize_url_path(f"{live_url}/convert-document/")
 
-        response = requests.post(url, json=data, headers=None)
+        # The Live service authenticates this endpoint with a shared secret
+        # (GHSA-55gq-rf47-9pqx). Without the header the request is rejected as 401.
+        secret_key = settings.LIVE_SERVER_SECRET_KEY
+        if not secret_key:
+            log_exception(
+                Exception(
+                    "LIVE_SERVER_SECRET_KEY is not configured; skipping document conversion "
+                    "for duplication. Set it to the same value as the Live service."
+                )
+            )
+            return {}
+
+        response = requests.post(url, json=data, headers={"live-server-secret-key": secret_key})
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:

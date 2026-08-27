@@ -8,6 +8,7 @@ import { Image, Link, Text, View } from "@react-pdf/renderer";
 import type { Style } from "@react-pdf/types";
 import type { ReactElement } from "react";
 import { CORE_EXTENSIONS } from "@plane/editor";
+import { isSafeImageSrc } from "@/lib/url-security";
 import { BACKGROUND_COLORS, EDITOR_BACKGROUND_COLORS, resolveColorForPdf, TEXT_COLORS } from "./colors";
 import { CheckIcon, ClipboardIcon, DocumentIcon, GlobeIcon, LightbulbIcon, LinkIcon } from "./icons";
 import { applyMarks } from "./mark-renderers";
@@ -272,6 +273,18 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
+    // SSRF guard (GHSA-55gq-rf47-9pqx). `src` comes from page content, and
+    // @react-pdf/image will fetch() any URL with a host — including internal
+    // Docker service names — or fs.readFile() a bare path. Anything we are not
+    // willing to fetch renders as a placeholder instead.
+    if (!isSafeImageSrc(src)) {
+      return (
+        <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
+          <Text style={pdfStyles.imagePlaceholderText}>[Image unavailable]</Text>
+        </View>
+      );
+    }
+
     return (
       <View key={ctx.getKey()} style={[{ width: "100%" }, alignmentStyle]}>
         <Image
@@ -308,7 +321,12 @@ export const nodeRenderers: NodeRendererRegistry = {
           ? { alignItems: "flex-end" as const }
           : { alignItems: "flex-start" as const };
 
-    if (!resolvedSrc.startsWith("http") && !resolvedSrc.startsWith("data:")) {
+    // Normally `resolvedSrc` is the `data:image/jpeg;base64,…` URI produced by the
+    // service's own pre-fetch, so nothing is fetched at render time. If asset
+    // resolution failed it is still the raw asset id, which is not a fetchable URL.
+    // Use the same guard as the `image` renderer rather than a startsWith("http")
+    // check, which would happily pass http://api:8000/ (GHSA-55gq-rf47-9pqx).
+    if (!isSafeImageSrc(resolvedSrc)) {
       return (
         <View key={ctx.getKey()} style={[pdfStyles.imagePlaceholder, alignmentStyle]}>
           <Text style={pdfStyles.imagePlaceholderText}>[Image: {assetId.slice(0, 8)}...]</Text>
