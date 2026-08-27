@@ -22,7 +22,10 @@ class WebhookEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         try:
-            serializer = WebhookSerializer(data=request.data, context={"request": request})
+            serializer = WebhookSerializer(
+                data=request.data,
+                context={"request": request, "show_secret_key": True},
+            )
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -114,7 +117,7 @@ class WebhookSecretRegenerateEndpoint(BaseAPIView):
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
         webhook.secret_key = generate_token()
         webhook.save()
-        serializer = WebhookSerializer(webhook)
+        serializer = WebhookSerializer(webhook, context={"show_secret_key": True})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
