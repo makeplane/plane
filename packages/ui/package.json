@@ -36,7 +36,6 @@
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
     "@popperjs/core": "catalog:",
-    "@radix-ui/react-scroll-area": "catalog:",
     "clsx": "catalog:",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
