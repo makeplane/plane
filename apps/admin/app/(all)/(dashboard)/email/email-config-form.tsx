@@ -10,11 +10,10 @@ import { useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
-// ui
-import { CustomSelect } from "@plane/ui";
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import { CustomSelect } from "@/components/common/custom-select";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components

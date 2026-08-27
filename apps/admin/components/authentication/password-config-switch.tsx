@@ -7,8 +7,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
+import { Switch } from "@plane/propel/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui
 // types
@@ -26,7 +26,7 @@ export const PasswordLoginConfiguration = observer(function PasswordLoginConfigu
   const enableEmailPassword = formattedConfig?.ENABLE_EMAIL_PASSWORD ?? "";
 
   return (
-    <ToggleSwitch
+    <Switch
       value={Boolean(parseInt(enableEmailPassword))}
       onChange={() => {
         const newEnableEmailPassword = Boolean(parseInt(enableEmailPassword)) === true ? "0" : "1";

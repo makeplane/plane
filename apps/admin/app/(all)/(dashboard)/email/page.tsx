@@ -7,8 +7,9 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { Skeleton } from "@plane/propel/skeleton";
+import { Switch } from "@plane/propel/switch";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
@@ -71,11 +72,11 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
           </>
         ),
         actions: isLoading ? (
-          <Loader>
-            <Loader.Item width="24px" height="16px" className="rounded-full" />
-          </Loader>
+          <Skeleton>
+            <Skeleton.Item width="24px" height="16px" className="rounded-full" />
+          </Skeleton>
         ) : (
-          <ToggleSwitch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
+          <Switch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
         ),
       }}
     >
@@ -84,13 +85,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
           {formattedConfig ? (
             <InstanceEmailForm config={formattedConfig} />
           ) : (
-            <Loader className="space-y-10">
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="20%" />
-            </Loader>
+            <Skeleton className="space-y-10">
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="20%" />
+            </Skeleton>
           )}
         </>
       )}
