@@ -36,6 +36,15 @@ from plane.db.models import APIToken, Issue, IssueComment, IssueLink, Project, P
 FORGED_CREATED_AT = timezone.now() - timedelta(days=3650)  # 10 years back — unmistakably not "now"
 
 
+def _assert_created_at_is_now(created_at):
+    """`> FORGED_CREATED_AT` alone would pass for any stale-but-not-exactly-forged
+    value; require it within a tight window of the actual request time instead."""
+    now = timezone.now()
+    assert now - timedelta(minutes=1) <= created_at <= now + timedelta(minutes=1), (
+        f"created_at must be generated near the request time, got {created_at}"
+    )
+
+
 def _create_issue_as(creator, **kwargs):
     """BaseModel.save() sets created_by from crum's current request/user, and
     there is no active request in a fixture — get_current_user() returns None
@@ -145,9 +154,7 @@ class TestIssueCreateIgnoresBodyCreatedBy:
             "created_by must be the authenticated caller regardless of what the body requested"
         )
         assert created.created_by_id != admin_user.id
-        assert created.created_at > FORGED_CREATED_AT + timedelta(days=1), (
-            "created_at must not be backdated by a body-supplied value"
-        )
+        _assert_created_at_is_now(created.created_at)
 
     # No test for IssueDetailAPIEndpoint.put's external_id-upsert create branch:
     # confirmed against apps/api/plane/api/urls/work_item.py that
@@ -236,9 +243,7 @@ class TestCommentCreateIgnoresBodyCreatedBy:
         assert comment.created_by_id == member_user.id
         assert comment.created_by_id != admin_user.id
         assert comment.actor_id == member_user.id, "actor (the audit-log identity) must also be the real caller"
-        assert comment.created_at > FORGED_CREATED_AT + timedelta(days=1), (
-            "created_at must not be backdated by a body-supplied value"
-        )
+        _assert_created_at_is_now(comment.created_at)
 
 
 @pytest.mark.django_db
