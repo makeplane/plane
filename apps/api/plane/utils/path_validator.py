@@ -120,7 +120,7 @@ def validate_next_path(next_path: str) -> str:
     # scheme-free string here and a literal .startswith("//") below would
     # miss it too (the second character is a tab, not a slash). Strip them
     # here so every check downstream sees what the browser will.
-    next_path = "".join(char for char in next_path if char not in "\t\r\n")
+    next_path = next_path.translate(str.maketrans("", "", "\t\r\n"))
 
     parsed_url = urlparse(next_path)
 
