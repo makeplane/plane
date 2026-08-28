@@ -156,7 +156,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
               <Input
                 id={`emails.${index}.email`}
                 name={`emails.${index}.email`}
-                type="text"
+                type="email"
                 value={value}
                 onChange={(event) => {
                   emailOnChange(event);
@@ -166,7 +166,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
                 className="w-full border-strong text-11 placeholder:text-placeholder sm:text-13"
-                autoComplete="off"
+                autoComplete="new-password"
               />
             )}
           />
