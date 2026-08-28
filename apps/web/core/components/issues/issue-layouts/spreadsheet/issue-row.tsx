@@ -76,11 +76,13 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
   const [isExpanded, setExpanded] = useState<boolean>(false);
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
-  const { issueMap } = useIssues();
+  const { issueMap, issues, issuesFilter } = useIssues();
 
   // derived values
   const issue = issueMap[issueId];
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  const rawSubIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  const orderBy = issuesFilter.issueFilters?.displayFilters?.order_by;
+  const subIssues = rawSubIssues && orderBy ? issues.issuesSortWithOrderBy(rawSubIssues, orderBy) : rawSubIssues;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
 
