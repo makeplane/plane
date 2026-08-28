@@ -90,9 +90,9 @@ x-api-build: &api-build
   args:
     DOCKER_BUILDKIT: 1
 
-# Shared tag so api/worker/beat/migrator (identical Dockerfile) resolve after
-# Compose Bake. Without this, Bake reports all four "Built" but only one
-# project-prefixed tag exists → "No such image: …-plane-api:latest".
+# One image, one Bake export. api/worker/beat/migrator share Dockerfile.api;
+# giving all four `build:` + the same tag makes Bake export in parallel and
+# fail ("image already exists"). Only migrator builds; the others reuse it.
 x-api-image: &api-image kiin-plane-backend:local
 
 services:
@@ -154,7 +154,7 @@ services:
 
   plane-api:
     image: *api-image
-    build: *api-build
+    pull_policy: never
     restart: unless-stopped
     command: ./bin/docker-entrypoint-api.sh
     volumes:
@@ -171,7 +171,7 @@ services:
 
   plane-worker:
     image: *api-image
-    build: *api-build
+    pull_policy: never
     restart: unless-stopped
     command: ./bin/docker-entrypoint-worker.sh
     volumes:
@@ -188,7 +188,7 @@ services:
 
   plane-beat-worker:
     image: *api-image
-    build: *api-build
+    pull_policy: never
     restart: unless-stopped
     command: ./bin/docker-entrypoint-beat.sh
     volumes:
@@ -205,6 +205,7 @@ services:
 
   plane-migrator:
     image: *api-image
+    pull_policy: build
     build: *api-build
     restart: on-failure
     command: ./bin/docker-entrypoint-migrator.sh
