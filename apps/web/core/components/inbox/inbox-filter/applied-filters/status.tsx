@@ -9,9 +9,6 @@ import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
-// constants
-import { Tag } from "@plane/ui";
-// hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { InboxStatusIcon } from "../../inbox-status-icon";
 
@@ -28,7 +25,7 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">Status</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -50,6 +47,6 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
           </div>
         );
       })}
-    </Tag>
+    </div>
   );
 });

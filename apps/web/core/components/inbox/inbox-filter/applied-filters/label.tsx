@@ -7,7 +7,6 @@
 import { observer } from "mobx-react";
 // hooks
 import { CloseIcon } from "@plane/propel/icons";
-import { Tag } from "@plane/ui";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
@@ -30,7 +29,7 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">Label</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -57,6 +56,6 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
       >
         <CloseIcon className={`h-3 w-3`} />
       </div>
-    </Tag>
+    </div>
   );
 });
