@@ -68,3 +68,25 @@ class TestValidateNextPathAuthorityRelative:
         same-origin path — this fix must not change that behavior."""
         assert validate_next_path("https://evil.com/phish") == "/phish"
         assert validate_next_path("http://evil.com/phish") == "/phish"
+
+    @pytest.mark.parametrize(
+        # A tab between each slash defeats both urlparse()'s own netloc
+        # detection (verified directly: "/\t/\t/evil.com" -> scheme='',
+        # netloc='') AND a literal next_path.startswith("//") check, since
+        # the second character is a tab, not a slash. Per the WHATWG URL
+        # spec, browsers strip every ASCII tab/CR/LF from a URL before
+        # parsing it, so what the browser actually navigates on is
+        # "///evil.com" — authority-relative, off-origin — even though this
+        # function never sees a literal "//" prefix.
+        "obfuscated_next_path",
+        [
+            "/\t/\t/evil.com",
+            "/\r/\r/evil.com",
+            "/\n/\n/evil.com",
+        ],
+    )
+    def test_rejects_tab_cr_lf_obfuscated_authority_relative_paths(self, obfuscated_next_path):
+        assert validate_next_path(obfuscated_next_path) == "", (
+            f"{obfuscated_next_path!r} must be rejected — browsers strip tab/CR/LF before parsing, "
+            "so this collapses to an authority-relative '///evil.com' navigation"
+        )
