@@ -20,6 +20,7 @@ Fixed by adding initiated_by=request.user to the queryset filter.
 from uuid import uuid4
 
 import pytest
+from rest_framework import status
 from rest_framework.test import APIClient
 
 from plane.db.models import ExporterHistory, User, WorkspaceMember
@@ -74,7 +75,7 @@ class TestExportHistoryScope:
         not see it, and therefore must never receive its presigned url."""
         response = _client_for(other_member).get(_export_url(workspace.slug))
 
-        assert response.status_code == 200, response.data
+        assert response.status_code == status.HTTP_200_OK, response.data
         result_ids = [str(row["id"]) for row in response.data["results"]]
         assert str(own_export.id) not in result_ids, "a workspace member must not see another member's export history"
 
@@ -82,7 +83,7 @@ class TestExportHistoryScope:
         """Positive control: the initiator must still see their own export."""
         response = _client_for(create_user).get(_export_url(workspace.slug))
 
-        assert response.status_code == 200, response.data
+        assert response.status_code == status.HTTP_200_OK, response.data
         result_ids = [str(row["id"]) for row in response.data["results"]]
         assert str(own_export.id) in result_ids
         own_row = next(row for row in response.data["results"] if str(row["id"]) == str(own_export.id))
