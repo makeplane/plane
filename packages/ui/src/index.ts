@@ -6,7 +6,6 @@
 
 export * from "./avatar";
 export * from "./breadcrumbs";
-export * from "./button";
 export * from "./card";
 export * from "./collapsible";
 export * from "./content-wrapper";
@@ -22,12 +21,10 @@ export * from "./link";
 export * from "./loader";
 export * from "./modals";
 export * from "./popovers";
-export * from "./progress";
 export * from "./row";
 export * from "./sortable";
 export * from "./spinners";
 export * from "./tables";
 export * from "./tag";
-export * from "./tooltip";
 export * from "./utils";
 export * from "./oauth";
