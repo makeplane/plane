@@ -20,16 +20,20 @@ IssueSerializer.Meta.read_only_fields, closing the PATCH vector directly.
 
 The escalation chain: forge created_by via PATCH, then pass
 IssueDetailAPIEndpoint.delete's "admin OR creator" gate as a plain member.
-Test `test_patch_then_delete_forgery_chain_is_blocked` exercises the whole
-chain end to end, not just the individual forgery.
+Test `test_patch_then_delete_is_still_403_for_a_plain_member` exercises the
+whole chain end to end, not just the individual forgery.
 """
 
+from datetime import timedelta
 from uuid import uuid4
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 
 from plane.db.models import APIToken, Issue, IssueComment, IssueLink, Project, ProjectMember, State
+
+FORGED_CREATED_AT = timezone.now() - timedelta(days=3650)  # 10 years back — unmistakably not "now"
 
 
 def _create_issue_as(creator, **kwargs):
@@ -126,7 +130,12 @@ class TestIssueCreateIgnoresBodyCreatedBy:
         url = _issues_url(workspace.slug, project.id)
         response = member_api_client.post(
             url,
-            {"name": "Spoofed issue", "state": str(state.id), "created_by": str(admin_user.id)},
+            {
+                "name": "Spoofed issue",
+                "state": str(state.id),
+                "created_by": str(admin_user.id),
+                "created_at": FORGED_CREATED_AT.isoformat(),
+            },
             format="json",
         )
         assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
@@ -136,6 +145,9 @@ class TestIssueCreateIgnoresBodyCreatedBy:
             "created_by must be the authenticated caller regardless of what the body requested"
         )
         assert created.created_by_id != admin_user.id
+        assert created.created_at > FORGED_CREATED_AT + timedelta(days=1), (
+            "created_at must not be backdated by a body-supplied value"
+        )
 
     # No test for IssueDetailAPIEndpoint.put's external_id-upsert create branch:
     # confirmed against apps/api/plane/api/urls/work_item.py that
@@ -211,7 +223,11 @@ class TestCommentCreateIgnoresBodyCreatedBy:
         url = _comments_url(workspace.slug, project.id, issue.id)
         response = member_api_client.post(
             url,
-            {"comment_html": "<p>please approve the payment</p>", "created_by": str(admin_user.id)},
+            {
+                "comment_html": "<p>please approve the payment</p>",
+                "created_by": str(admin_user.id),
+                "created_at": FORGED_CREATED_AT.isoformat(),
+            },
             format="json",
         )
         assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
@@ -220,6 +236,9 @@ class TestCommentCreateIgnoresBodyCreatedBy:
         assert comment.created_by_id == member_user.id
         assert comment.created_by_id != admin_user.id
         assert comment.actor_id == member_user.id, "actor (the audit-log identity) must also be the real caller"
+        assert comment.created_at > FORGED_CREATED_AT + timedelta(days=1), (
+            "created_at must not be backdated by a body-supplied value"
+        )
 
 
 @pytest.mark.django_db
