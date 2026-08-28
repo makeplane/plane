@@ -116,7 +116,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         name: "Pages",
         href: `/${workspaceSlug}/projects/${projectId}/pages`,
         icon: PageIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: project?.page_view ?? false,
         sortOrder: 5,
       },
