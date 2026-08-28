@@ -25,8 +25,17 @@ type TAuthenticationWrapper = {
 };
 
 const isValidURL = (url: string): boolean => {
-  const disallowedSchemes = /^(https?|ftp):\/\//i;
-  return !disallowedSchemes.test(url);
+  // A prefix-only scheme check (http(s)/ftp) lets an authority-relative
+  // value like "///example.com/" through: it matches none of those schemes,
+  // but the browser still resolves a leading "//" against the current
+  // origin as an authority (host), navigating off-domain. Resolve against
+  // location.origin and require the result to actually still be same-origin
+  // instead of pattern-matching the input string.
+  try {
+    return new URL(url, location.origin).origin === location.origin;
+  } catch {
+    return false;
+  }
 };
 
 export const AuthenticationWrapper = observer(function AuthenticationWrapper(props: TAuthenticationWrapper) {

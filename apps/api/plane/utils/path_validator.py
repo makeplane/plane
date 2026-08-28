@@ -123,6 +123,17 @@ def validate_next_path(next_path: str) -> str:
     if not next_path or not next_path.startswith("/"):
         return ""
 
+    # Reject authority-relative paths (//, ///, ////, ...). urlparse() only
+    # treats a leading "//" as a netloc when what follows still looks like a
+    # bare host (e.g. "//example.com/"); for "///example.com/" both scheme
+    # and netloc come back empty, so the branch above never fires and this
+    # string would otherwise sail through every check below unmodified. The
+    # browser itself still resolves any leading "//" as authority-relative
+    # against an http(s) base, navigating off-domain regardless of what
+    # urlparse() made of it server-side.
+    if next_path.startswith("//"):
+        return ""
+
     # Prevent path traversal
     if ".." in next_path:
         return ""
