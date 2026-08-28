@@ -88,26 +88,31 @@ class WorkspaceLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
+# workspace/member must stay read-only on every WorkspaceMember-backed serializer
+# below: WorkSpaceMemberViewSet.partial_update passes request.data straight into
+# whichever of these is in play with no scrubbing, so a writable `workspace` FK let
+# any workspace admin PATCH a member's row into an arbitrary foreign workspace (with
+# whatever role was also in the body) — instant cross-tenant admin takeover, no
+# invite, no consent, no audit trail. Shared as one constant so a future field
+# addition (or removal) can't drift between these three and reopen the same gap.
+WORKSPACE_MEMBER_READ_ONLY_FIELDS = [
+    "id",
+    "workspace",
+    "member",
+    "created_by",
+    "updated_by",
+    "created_at",
+    "updated_at",
+]
+
+
 class WorkSpaceMemberSerializer(DynamicBaseSerializer):
     member = UserLiteSerializer(read_only=True)
 
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
-        # workspace/member must stay read-only: WorkSpaceMemberViewSet.partial_update
-        # passes request.data straight into this serializer with no scrubbing, so a
-        # writable `workspace` FK let any workspace admin PATCH a member's row into an
-        # arbitrary foreign workspace (with whatever role was also in the body) —
-        # instant cross-tenant admin takeover, no invite, no consent, no audit trail.
-        read_only_fields = [
-            "id",
-            "workspace",
-            "member",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        read_only_fields = WORKSPACE_MEMBER_READ_ONLY_FIELDS
 
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
@@ -116,17 +121,8 @@ class WorkspaceMemberMeSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
-        # See WorkSpaceMemberSerializer above — same model, same fix, applied here
-        # even though this serializer is only ever used read-only today.
-        read_only_fields = [
-            "id",
-            "workspace",
-            "member",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        # Only ever instantiated read-only today — see WORKSPACE_MEMBER_READ_ONLY_FIELDS above.
+        read_only_fields = WORKSPACE_MEMBER_READ_ONLY_FIELDS
 
 
 class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
@@ -135,17 +131,8 @@ class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
-        # See WorkSpaceMemberSerializer above — same model, same fix, applied here
-        # even though this serializer is only ever used read-only today.
-        read_only_fields = [
-            "id",
-            "workspace",
-            "member",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        # Only ever instantiated read-only today — see WORKSPACE_MEMBER_READ_ONLY_FIELDS above.
+        read_only_fields = WORKSPACE_MEMBER_READ_ONLY_FIELDS
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
