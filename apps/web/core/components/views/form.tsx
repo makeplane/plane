@@ -8,6 +8,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -21,7 +23,7 @@ import type {
   IIssueFilters,
 } from "@plane/types";
 import { EViewAccess, EIssuesStoreType } from "@plane/types";
-import { Input, TextArea } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -162,19 +164,22 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   },
                 }}
                 render={({ field: { value, onChange } }) => (
-                  <Input
-                    id="name"
-                    type="name"
-                    name="name"
-                    value={value}
-                    onChange={onChange}
-                    hasError={Boolean(errors.name)}
-                    placeholder={t("common.title")}
-                    className="w-full text-14"
-                    tabIndex={getIndex("name")}
-                    // oxlint-disable-next-line jsx_a11y/no-autofocus
-                    autoFocus
-                  />
+                  <Field name="name" invalid={Boolean(errors.name)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="name"
+                        type="name"
+                        name="name"
+                        value={value}
+                        onChange={onChange}
+                        placeholder={t("common.title")}
+                        tabIndex={getIndex("name")}
+                        // oxlint-disable-next-line jsx_a11y/no-autofocus
+                        autoFocus
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>

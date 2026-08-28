@@ -9,13 +9,15 @@ import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar } from "lucide-react";
 // types
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IApiToken } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, Input, TextArea } from "@plane/ui";
+import { CustomSelect, TextArea } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -144,14 +146,18 @@ export function CreateApiTokenForm(props: Props) {
                 validate: (val) => val.trim() !== "" || t("title_is_required"),
               }}
               render={({ field: { value, onChange } }) => (
-                <Input
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  hasError={Boolean(errors.label)}
-                  placeholder={t("title")}
-                  className="w-full text-14"
-                />
+                <Field name="input" invalid={Boolean(errors.label)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      placeholder={t("title")}
+                      aria-label={t("title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             {errors.label && <span className="text-11 text-danger-primary">{errors.label.message}</span>}

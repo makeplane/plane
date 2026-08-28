@@ -12,10 +12,11 @@ import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input } from "@plane/ui";
+
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // services
@@ -260,19 +261,21 @@ export function GptAssistantPopover(props: Props) {
             control={control}
             name="task"
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="task"
-                name="task"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                placeholder={`${
-                  prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
-                }`}
-                className="w-full"
-                autoFocus
-              />
+              <InputGroup size="2xl">
+                <Input
+                  size="2xl"
+                  id="task"
+                  name="task"
+                  type="text"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  placeholder={`${
+                    prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
+                  }`}
+                  autoFocus
+                />
+              </InputGroup>
             )}
           />
           <div className="flex justify-between gap-2">

@@ -20,6 +20,8 @@ import { usePopper } from "react-popper";
 import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -29,7 +31,7 @@ import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 // ui
-import { Input, Spinner } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // components
@@ -153,21 +155,24 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id={`emails.${index}.email`}
-                name={`emails.${index}.email`}
-                type="text"
-                value={value}
-                onChange={(event) => {
-                  emailOnChange(event);
-                  onChange(event);
-                }}
-                ref={ref}
-                hasError={Boolean(errors.emails?.[index]?.email)}
-                placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="w-full border-strong text-11 placeholder:text-placeholder sm:text-13"
-                autoComplete="off"
-              />
+              <Field name="input" invalid={Boolean(errors.emails?.[index]?.email)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id={`emails.${index}.email`}
+                    name={`emails.${index}.email`}
+                    type="text"
+                    value={value}
+                    onChange={(event) => {
+                      emailOnChange(event);
+                      onChange(event);
+                    }}
+                    ref={ref}
+                    placeholder={placeholderEmails[index % placeholderEmails.length]}
+                    autoComplete="off"
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
         </div>
