@@ -7,10 +7,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { SearchIcon } from "@plane/propel/icons";
-import { Input } from "@plane/ui";
+
 // components
 import { PageHead } from "@/components/core/page-title";
 import { GlobalDefaultViewListItem } from "@/components/workspace/views/default-view-list-item";
@@ -30,15 +31,17 @@ function WorkspaceViewsPage() {
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col overflow-hidden">
-        <div className="flex h-11 w-full items-center gap-2.5 overflow-hidden border-b border-subtle px-5 py-3">
-          <SearchIcon className="text-secondary" width={14} height={14} strokeWidth={2} />
-          <Input
-            className="w-full bg-transparent !p-0 text-11 leading-5 text-secondary placeholder:text-placeholder focus:outline-none"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
-            mode="true-transparent"
-          />
+        <div className="flex h-11 w-full items-center overflow-hidden border-b border-subtle px-5 py-3">
+          <InputGroup size="2xl">
+            <SearchIcon className="text-secondary" width={14} height={14} strokeWidth={2} />
+            <Input
+              size="2xl"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              aria-label="Search"
+            />
+          </InputGroup>
         </div>
         <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col">
           {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => t(v.i18n_label).toLowerCase().includes(query.toLowerCase())).map(

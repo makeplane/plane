@@ -7,12 +7,14 @@
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IWorkspaceView, IIssueFilters } from "@plane/types";
 import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
-import { Input, TextArea } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -90,17 +92,20 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="name"
-                  name="name"
-                  type="name"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.name)}
-                  placeholder={t("common.title")}
-                  className="w-full text-14"
-                />
+                <Field name="name" invalid={Boolean(errors.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="name"
+                      name="name"
+                      type="name"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={t("common.title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>

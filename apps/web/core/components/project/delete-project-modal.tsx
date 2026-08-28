@@ -8,10 +8,12 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // Plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -100,18 +102,21 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
             control={control}
             name="projectName"
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="projectName"
-                name="projectName"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.projectName)}
-                placeholder="Project name"
-                className="mt-2 w-full"
-                autoComplete="off"
-              />
+              <Field name="projectName" invalid={Boolean(errors.projectName)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="projectName"
+                    name="projectName"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder="Project name"
+                    autoComplete="off"
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
         </div>
@@ -123,18 +128,21 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
             control={control}
             name="confirmDelete"
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="confirmDelete"
-                name="confirmDelete"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.confirmDelete)}
-                placeholder="Enter 'delete my project'"
-                className="mt-2 w-full"
-                autoComplete="off"
-              />
+              <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="confirmDelete"
+                    name="confirmDelete"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder="Enter 'delete my project'"
+                    autoComplete="off"
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
         </div>

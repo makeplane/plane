@@ -13,13 +13,14 @@ import { Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Popover } from "@headlessui/react";
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Tabs } from "@plane/propel/tabs";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Input, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // helpers
 import { STATIC_COVER_IMAGES, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
@@ -223,22 +224,24 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                           control={control}
                           name={"search" as FieldPath<TFieldValues>}
                           render={({ field: { value, ref } }) => (
-                            <Input
-                              id="search"
-                              name="search"
-                              type="text"
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  setSearchParams(formData.search);
-                                }
-                              }}
-                              value={value}
-                              onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                              ref={ref}
-                              placeholder="Search for images"
-                              className="w-full text-13"
-                            />
+                            <InputGroup size="2xl">
+                              <Input
+                                size="2xl"
+                                id="search"
+                                name="search"
+                                type="text"
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    setSearchParams(formData.search);
+                                  }
+                                }}
+                                value={value}
+                                onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                                ref={ref}
+                                placeholder="Search for images"
+                              />
+                            </InputGroup>
                           )}
                         />
                         <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>

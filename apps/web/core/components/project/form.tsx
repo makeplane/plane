@@ -7,6 +7,8 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info } from "lucide-react";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
@@ -17,7 +19,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TextArea } from "@plane/ui";
+import { CustomSelect, TextArea } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -287,18 +289,21 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                ref={ref}
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.name)}
-                className="rounded-md !p-3 font-medium"
-                placeholder={t("common.project_name")}
-                disabled={!isAdmin}
-              />
+              <Field name="name" invalid={Boolean(errors.name)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="name"
+                    name="name"
+                    type="text"
+                    ref={ref}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t("common.project_name")}
+                    disabled={!isAdmin}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -342,18 +347,21 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   },
                 }}
                 render={({ field: { value, ref } }) => (
-                  <Input
-                    id="identifier"
-                    name="identifier"
-                    type="text"
-                    value={value}
-                    onChange={handleIdentifierChange}
-                    ref={ref}
-                    hasError={Boolean(errors.identifier)}
-                    placeholder={t("project_settings.general.enter_project_id")}
-                    className="w-full font-medium"
-                    disabled={!isAdmin}
-                  />
+                  <Field name="identifier" invalid={Boolean(errors.identifier)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="identifier"
+                        name="identifier"
+                        type="text"
+                        value={value}
+                        onChange={handleIdentifierChange}
+                        ref={ref}
+                        placeholder={t("project_settings.general.enter_project_id")}
+                        disabled={!isAdmin}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <Tooltip

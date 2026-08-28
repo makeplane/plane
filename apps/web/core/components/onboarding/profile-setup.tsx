@@ -8,6 +8,8 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +17,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
 import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
@@ -310,19 +312,22 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
-                      <Input
-                        id="first_name"
-                        name="first_name"
-                        type="text"
-                        value={value}
-                        autoFocus
-                        onChange={onChange}
-                        ref={ref}
-                        hasError={Boolean(errors.first_name)}
-                        placeholder="Wilbur"
-                        className="w-full border-strong"
-                        autoComplete="on"
-                      />
+                      <Field name="first_name" invalid={Boolean(errors.first_name)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="first_name"
+                            name="first_name"
+                            type="text"
+                            value={value}
+                            autoFocus
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder="Wilbur"
+                            autoComplete="on"
+                          />
+                        </InputGroup>
+                      </Field>
                     )}
                   />
                   {errors.first_name && (
@@ -348,18 +353,21 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
-                      <Input
-                        id="last_name"
-                        name="last_name"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        hasError={Boolean(errors.last_name)}
-                        placeholder="Wright"
-                        className="w-full border-strong"
-                        autoComplete="on"
-                      />
+                      <Field name="last_name" invalid={Boolean(errors.last_name)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="last_name"
+                            name="last_name"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder="Wright"
+                            autoComplete="on"
+                          />
+                        </InputGroup>
+                      </Field>
                     )}
                   />
                   {errors.last_name && <span className="text-13 text-danger-primary">{errors.last_name.message}</span>}
@@ -380,32 +388,34 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         required: false,
                       }}
                       render={({ field: { value, onChange, ref } }) => (
-                        <div className="relative flex items-center rounded-md">
-                          <Input
-                            type={showPassword.password ? "text" : "password"}
-                            name="password"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            hasError={Boolean(errors.password)}
-                            placeholder="New password..."
-                            className="w-full border-[0.5px] border-subtle pr-12 placeholder:text-placeholder"
-                            onFocus={() => setIsPasswordInputFocused(true)}
-                            onBlur={() => setIsPasswordInputFocused(false)}
-                            autoComplete="new-password"
-                          />
-                          {showPassword.password ? (
-                            <EyeOff
-                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
-                              onClick={() => handleShowPassword("password")}
+                        <Field name="password" invalid={Boolean(errors.password)}>
+                          <InputGroup size="2xl">
+                            <Input
+                              size="2xl"
+                              type={showPassword.password ? "text" : "password"}
+                              name="password"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              placeholder="New password..."
+                              onFocus={() => setIsPasswordInputFocused(true)}
+                              onBlur={() => setIsPasswordInputFocused(false)}
+                              autoComplete="new-password"
+                              aria-label="New password..."
                             />
-                          ) : (
-                            <Eye
-                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
+                            <button
+                              type="button"
+                              className="grid size-5 place-items-center"
                               onClick={() => handleShowPassword("password")}
-                            />
-                          )}
-                        </div>
+                            >
+                              {showPassword.password ? (
+                                <EyeOff className="size-4 stroke-placeholder" />
+                              ) : (
+                                <Eye className="size-4 stroke-placeholder" />
+                              )}
+                            </button>
+                          </InputGroup>
+                        </Field>
                       )}
                     />
                     <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
@@ -423,30 +433,32 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                           watch("password") ? (value === watch("password") ? true : "Passwords don't match") : true,
                       }}
                       render={({ field: { value, onChange, ref } }) => (
-                        <div className="relative flex items-center rounded-md">
-                          <Input
-                            type={showPassword.retypePassword ? "text" : "password"}
-                            name="confirm_password"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            hasError={Boolean(errors.confirm_password)}
-                            placeholder={t("auth.common.password.confirm_password.placeholder")}
-                            className="w-full border-subtle pr-12 placeholder:text-placeholder"
-                            autoComplete="new-password"
-                          />
-                          {showPassword.retypePassword ? (
-                            <EyeOff
-                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
-                              onClick={() => handleShowPassword("retypePassword")}
+                        <Field name="confirm_password" invalid={Boolean(errors.confirm_password)}>
+                          <InputGroup size="2xl">
+                            <Input
+                              size="2xl"
+                              type={showPassword.retypePassword ? "text" : "password"}
+                              name="confirm_password"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              placeholder={t("auth.common.password.confirm_password.placeholder")}
+                              autoComplete="new-password"
+                              aria-label={t("auth.common.password.confirm_password.placeholder")}
                             />
-                          ) : (
-                            <Eye
-                              className="absolute right-3 h-4 w-4 stroke-placeholder hover:cursor-pointer"
+                            <button
+                              type="button"
+                              className="grid size-5 place-items-center"
                               onClick={() => handleShowPassword("retypePassword")}
-                            />
-                          )}
-                        </div>
+                            >
+                              {showPassword.retypePassword ? (
+                                <EyeOff className="size-4 stroke-placeholder" />
+                              ) : (
+                                <Eye className="size-4 stroke-placeholder" />
+                              )}
+                            </button>
+                          </InputGroup>
+                        </Field>
                       )}
                     />
                     {errors.confirm_password && (

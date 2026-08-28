@@ -11,10 +11,12 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input } from "@plane/ui";
+
 import { cn, checkEmailValidity } from "@plane/utils";
 // hooks
 import useTimer from "@/hooks/use-timer";
@@ -94,19 +96,22 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
               validate: (value) => checkEmailValidity(value) || t("auth.common.email.errors.invalid"),
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.email)}
-                placeholder={t("auth.common.email.placeholder")}
-                className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
-                autoComplete="off"
-                disabled={resendTimerCode > 0}
-              />
+              <Field name="email" invalid={Boolean(errors.email)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={t("auth.common.email.placeholder")}
+                    autoComplete="off"
+                    disabled={resendTimerCode > 0}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           {resendTimerCode > 0 && (
