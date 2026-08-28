@@ -13,6 +13,7 @@ from .workspace import (
 )
 from .project import (
     ProjectBasePermission,
+    ProjectArchiveUnarchivePermission,
     ProjectEntityPermission,
     ProjectMemberPermission,
     ProjectLitePermission,
