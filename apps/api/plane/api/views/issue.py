@@ -489,11 +489,6 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
-            # Refetch the issue
-            issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=serializer.data["id"]).first()
-            issue.created_at = request.data.get("created_at", timezone.now())
-            issue.created_by_id = request.data.get("created_by", request.user.id)
-            issue.save(update_fields=["created_at", "created_by"])
 
             # Track the issue
             issue_activity.delay(
@@ -703,19 +698,6 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 # issue activity worker event as created
                 if serializer.is_valid():
                     serializer.save()
-                    # Refetch the issue
-                    issue = Issue.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        pk=serializer.data["id"],
-                    ).first()
-
-                    # If any of the created_at or created_by is present, update
-                    # the issue with the provided data, else return with the
-                    # default states given.
-                    issue.created_at = request.data.get("created_at", timezone.now())
-                    issue.created_by_id = request.data.get("created_by", request.user.id)
-                    issue.save(update_fields=["created_at", "created_by"])
 
                     issue_activity.delay(
                         type="issue.activity.created",
@@ -1198,8 +1180,6 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
             serializer.save(project_id=project_id, issue_id=issue_id)
             crawl_work_item_link_title.delay(serializer.instance.id, serializer.instance.url)
             link = IssueLink.objects.get(pk=serializer.instance.id)
-            link.created_by_id = request.data.get("created_by", request.user.id)
-            link.save(update_fields=["created_by"])
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -1481,11 +1461,6 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
-            # Update the created_at and the created_by and save the comment
-            issue_comment.created_at = request.data.get("created_at", timezone.now())
-            issue_comment.created_by_id = request.data.get("created_by", request.user.id)
-            issue_comment.actor_id = request.data.get("created_by", request.user.id)
-            issue_comment.save(update_fields=["created_at", "created_by"])
 
             issue_activity.delay(
                 type="comment.activity.created",
