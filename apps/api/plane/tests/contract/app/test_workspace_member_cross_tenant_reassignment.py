@@ -2,26 +2,36 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Regression test for cross-workspace privilege escalation via
-WorkSpaceMemberSerializer.partial_update.
+"""Regression tests for cross-workspace privilege escalation and
+authorization-bypass forgery via WorkSpaceMemberViewSet.partial_update.
 
 Root cause: WorkSpaceMemberSerializer (and its read-only-in-practice siblings
 WorkspaceMemberMeSerializer / WorkspaceMemberAdminSerializer) declared
-fields = "__all__" with no read_only_fields, so DRF auto-generated a writable
-`workspace` FK field. WorkSpaceMemberViewSet.partial_update passes raw
-request.data straight into the serializer with no scrubbing, so a workspace
-ADMIN could PATCH any other active member's WorkspaceMember row with a
-`workspace` field pointing at a foreign workspace's UUID — moving that row
-(and whatever role was also in the body) into the foreign workspace with no
-invitation, no consent from its owner, and no audit trail.
+fields = "__all__" with no read_only_fields, so DRF auto-generated writable
+fields for everything on the model. WorkSpaceMemberViewSet.partial_update
+passes raw request.data straight into the serializer with no scrubbing, so a
+workspace ADMIN could:
 
-Fixed by adding workspace/member (plus the usual created_by/updated_by/
-created_at/updated_at) to read_only_fields on all three serializers.
+- PATCH `workspace` on any other active member's row to a foreign workspace's
+  UUID — moving that row (and whatever role was also in the body) into the
+  foreign workspace with no invitation, no consent from its owner, and no
+  audit trail.
+- PATCH `is_active`/`deleted_at` directly, as a side channel around
+  WorkSpaceMemberViewSet.destroy()'s own checks (can't remove yourself, can't
+  remove someone outranking you, can't orphan a project's last admin) and its
+  ProjectMember deactivation cascade — every legitimate place that flips
+  these fields does so via direct model-field assignment, never through this
+  serializer.
+
+Fixed by adding workspace/member/is_active/deleted_at (plus the usual
+created_by/updated_by/created_at/updated_at) to read_only_fields on all
+three serializers.
 """
 
 import uuid
 
 import pytest
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -103,3 +113,45 @@ class TestWorkspaceMemberCrossTenantReassignment:
         victim_member.refresh_from_db()
         assert victim_member.role == 5
         assert victim_member.workspace_id == workspace.id
+
+
+@pytest.mark.django_db
+class TestWorkspaceMemberIsActiveDeletedAtBypass:
+    """is_active/deleted_at must not be settable through this PATCH — that would
+    let an admin route around WorkSpaceMemberViewSet.destroy()'s own safety
+    checks (self-removal, role-outranking, last-project-admin orphaning) and
+    skip its ProjectMember deactivation cascade entirely."""
+
+    def test_admin_cannot_deactivate_member_via_patch(self, workspace, victim_member, create_user):
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+
+        response = client.patch(
+            _member_detail_url(workspace.slug, victim_member.id),
+            {"is_active": False},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK, f"got {response.status_code}: {response.data!r}"
+        victim_member.refresh_from_db()
+        assert victim_member.is_active is True, "is_active must not be settable through this PATCH at all"
+
+    def test_admin_cannot_soft_delete_member_via_patch(self, workspace, victim_member, create_user):
+        """deleted_at is worse than is_active: the default manager filters on it,
+        so setting it directly would silently vanish the row from every normal
+        queryset, forgeable to an arbitrary timestamp with no audit trail."""
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+
+        response = client.patch(
+            _member_detail_url(workspace.slug, victim_member.id),
+            {"deleted_at": timezone.now().isoformat()},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_200_OK, f"got {response.status_code}: {response.data!r}"
+        assert WorkspaceMember.objects.filter(pk=victim_member.id).exists(), (
+            "the row must still be visible through the default (non-deleted) manager"
+        )
+        victim_member.refresh_from_db()
+        assert victim_member.deleted_at is None, "deleted_at must not be settable through this PATCH at all"

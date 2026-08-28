@@ -95,10 +95,23 @@ class WorkspaceLiteSerializer(BaseSerializer):
 # whatever role was also in the body) — instant cross-tenant admin takeover, no
 # invite, no consent, no audit trail. Shared as one constant so a future field
 # addition (or removal) can't drift between these three and reopen the same gap.
+#
+# is_active/deleted_at are read-only for the same reason: every legitimate place
+# that flips them (WorkSpaceMemberViewSet.destroy, .leave, invite acceptance) does
+# so via direct model-field assignment, never through this serializer — so exposing
+# them here only ever gave an admin a side-channel PATCH that skips destroy()'s own
+# checks (can't remove yourself, can't remove someone outranking you, can't orphan a
+# project's last admin) and its ProjectMember deactivation cascade. deleted_at is
+# worse: WorkspaceMember's default manager filters on it, so setting it directly
+# would silently vanish the row from every normal queryset with no trace, and an
+# admin could set it to an arbitrary timestamp — the same audit-trail-forgery shape
+# as the created_by/created_at class fixed elsewhere in this security pass.
 WORKSPACE_MEMBER_READ_ONLY_FIELDS = [
     "id",
     "workspace",
     "member",
+    "is_active",
+    "deleted_at",
     "created_by",
     "updated_by",
     "created_at",
