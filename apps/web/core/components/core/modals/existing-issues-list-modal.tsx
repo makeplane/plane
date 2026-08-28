@@ -10,7 +10,7 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -313,27 +313,29 @@ export function ExistingIssuesListModal(props: Props) {
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-between p-3">
-        <Button
-          variant="link"
-          onClick={handleSelectIssues}
-          disabled={filteredIssues.length === 0}
-          className={filteredIssues.length === 0 ? "p-0" : ""}
-        >
-          {selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")}
-        </Button>
+        <span className={filteredIssues.length === 0 ? "p-0" : ""}>
+          <Button
+            variant="ghost"
+            size="sm"
+            stretch="auto"
+            label={
+              selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")
+            }
+            onClick={handleSelectIssues}
+            disabled={filteredIssues.length === 0}
+          />
+        </span>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            {t("common.cancel")}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label={t("common.cancel")} onClick={handleClose} />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label={isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
             onClick={onSubmit}
             loading={isSubmitting}
             disabled={isSubmitting || selectedIssues.length === 0}
-          >
-            {isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
-          </Button>
+          />
         </div>
       </div>
     </ModalCore>

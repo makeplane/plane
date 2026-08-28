@@ -9,7 +9,7 @@ import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 type Props = {
   label: string;
@@ -32,7 +32,7 @@ export function ComicBoxButton(props: Props) {
     setIsHovered(false);
   };
 
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLSpanElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>();
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "right-end",
@@ -49,18 +49,25 @@ export function ComicBoxButton(props: Props) {
   return (
     <Popover as="div" className="relative">
       <Popover.Button as={Fragment}>
-        <Button variant="primary" size="lg" ref={setReferenceElement} onClick={onClick} disabled={disabled}>
-          {icon}
-          <span className="leading-4">{label}</span>
+        <span className="relative inline-flex" ref={setReferenceElement}>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            onClick={onClick}
+            disabled={disabled}
+            icon={icon}
+            label={label}
+          />
           <span className="relative h-2 w-2">
             <div
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              className={`bg-blue-300 absolute right-0 z-10 h-2.5 w-2.5 animate-ping rounded-full`}
+              className="bg-blue-300 absolute right-0 z-10 h-2.5 w-2.5 animate-ping rounded-full"
             />
-            <div className={`bg-blue-400/40 absolute right-0 mt-0.5 mr-0.5 h-1.5 w-1.5 rounded-full`} />
+            <div className="bg-blue-400/40 absolute right-0 mt-0.5 mr-0.5 h-1.5 w-1.5 rounded-full" />
           </span>
-        </Button>
+        </span>
       </Popover.Button>
       {isHovered && (
         <Popover.Panel className="fixed z-10" static>

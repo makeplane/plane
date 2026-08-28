@@ -6,11 +6,10 @@
 
 import { observer } from "mobx-react";
 // plane package imports
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon, ProjectIcon } from "@plane/propel/icons";
 import { CustomSearchSelect } from "@plane/ui";
-import { cn } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -50,7 +49,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
       options={options}
       className="border-none p-0"
       customButton={
-        <div className={cn(getButtonStyling("secondary", "lg"), "gap-2")}>
+        <Button variant="secondary" size="md" stretch="auto" render={<div />}>
           <ProjectIcon className="h-4 w-4" />
           {value && value.length > 3
             ? `3+ projects`
@@ -61,7 +60,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
                   .join(", ")
               : "All projects"}
           <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-        </div>
+        </Button>
       }
       customButtonClassName="border-none p-0 bg-transparent hover:bg-transparent w-auto h-auto"
       multiple

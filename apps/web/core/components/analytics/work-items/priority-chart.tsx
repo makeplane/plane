@@ -15,7 +15,7 @@ import { Download } from "lucide-react";
 import type { ChartXAxisDateGrouping } from "@plane/constants";
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
@@ -228,11 +228,12 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
             actions={(table: Table<TChartDatum>) => (
               <Button
                 variant="secondary"
-                prependIcon={<Download className="h-3.5 w-3.5" />}
+                size="sm"
+                stretch="auto"
+                icon={<Download className="h-3.5 w-3.5" />}
                 onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
-              >
-                <div>{t("exporter.csv.short_description")}</div>
-              </Button>
+                label={t("exporter.csv.short_description")}
+              />
             )}
           />
         </>

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
 import { applyCustomTheme } from "@plane/utils";
@@ -116,9 +116,14 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       </div>
       <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Save Theme Button */}
-        <Button variant="primary" size="lg" type="submit" loading={isSubmitting || isLoadingPalette}>
-          {isSubmitting ? t("common.saving") : isLoadingPalette ? "Generating" : t("set_theme")}
-        </Button>
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          label={isSubmitting ? t("common.saving") : isLoadingPalette ? "Generating" : t("set_theme")}
+          type="submit"
+          loading={isSubmitting || isLoadingPalette}
+        />
         {/* Import/Export Section */}
         <CustomThemeDownloadConfigButton getValues={getValues} />
       </div>

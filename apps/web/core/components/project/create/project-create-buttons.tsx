@@ -8,7 +8,7 @@ import { useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IProject } from "@plane/types";
 // ui
 // helpers
@@ -30,12 +30,23 @@ function ProjectCreateButtons(props: Props) {
 
   return (
     <div className="flex justify-end gap-2 border-t border-subtle py-4">
-      <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
-        {t("common.cancel")}
-      </Button>
-      <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
-        {isSubmitting ? t("creating") : t("create_project")}
-      </Button>
+      <Button
+        variant="secondary"
+        size="md"
+        stretch="auto"
+        label={t("common.cancel")}
+        onClick={handleClose}
+        tabIndex={getIndex("cancel")}
+      />
+      <Button
+        variant="primary"
+        size="md"
+        stretch="auto"
+        label={isSubmitting ? t("creating") : t("create_project")}
+        type="submit"
+        loading={isSubmitting}
+        tabIndex={getIndex("submit")}
+      />
     </div>
   );
 }

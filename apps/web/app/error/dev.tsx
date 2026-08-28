@@ -7,7 +7,7 @@
 // plane imports
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@plane/propel/banner";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { Card, ECardVariant } from "@plane/propel/card";
 import { InfoFillIcon } from "@plane/propel/icons";
 
@@ -19,14 +19,8 @@ interface ErrorActionsProps {
 function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
   return (
     <div className="flex gap-3 pt-2">
-      <Button variant="primary" size="lg" onClick={onGoHome}>
-        Go to home
-      </Button>
-      {onReload && (
-        <Button variant="secondary" size="lg" onClick={onReload}>
-          Reload page
-        </Button>
-      )}
+      <Button variant="primary" size="md" stretch="auto" label="Go to home" onClick={onGoHome} />
+      {onReload && <Button variant="secondary" size="md" stretch="auto" label="Reload page" onClick={onReload} />}
     </div>
   );
 }

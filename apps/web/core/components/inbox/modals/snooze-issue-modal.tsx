@@ -7,7 +7,7 @@
 import { useState } from "react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { Calendar } from "@plane/propel/calendar";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 
@@ -52,13 +52,14 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
         />
         <Button
           variant="primary"
+          size="sm"
+          stretch="auto"
+          label={t("inbox_issue.actions.snooze")}
           onClick={() => {
             handleClose();
             onConfirm(date);
           }}
-        >
-          {t("inbox_issue.actions.snooze")}
-        </Button>
+        />
       </div>
     </ModalCore>
   );

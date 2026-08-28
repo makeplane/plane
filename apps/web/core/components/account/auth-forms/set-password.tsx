@@ -14,7 +14,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { PasswordStrengthIndicator } from "@plane/ui";
 // components
@@ -199,9 +199,14 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {t("common.continue")}
-        </Button>
+        <Button
+          variant="primary"
+          size="lg"
+          stretch="full"
+          label={t("common.continue")}
+          type="submit"
+          disabled={isButtonDisabled}
+        />
       </form>
     </FormContainer>
   );

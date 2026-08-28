@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Row } from "@plane/ui";
 // components
@@ -46,18 +46,17 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
         </div>
         <div className="flex gap-2">
           {/* eslint-disable-next-line jsx-a11y/tabindex-no-positive */}
-          <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
-            {t("close")}
-          </Button>
-          <Link
-            href={`/${workspaceSlug}/projects/${projectId}/issues`}
-            onClick={onClose}
-            className={getButtonStyling("primary", "lg")}
+          <Button variant="secondary" size="md" stretch="auto" label={t("close")} onClick={onClose} tabIndex={1} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={t("open_project")}
+            nativeButton={false}
+            render={<Link href={`/${workspaceSlug}/projects/${projectId}/issues`} onClick={onClose} />}
             // oxlint-disable-next-line jsx-a11y/tabindex-no-positive
             tabIndex={2}
-          >
-            {t("open_project")}
-          </Link>
+          />
         </div>
       </div>
     </>

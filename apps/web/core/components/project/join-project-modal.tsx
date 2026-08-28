@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IProject } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -59,12 +59,17 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
         <div className="space-y-3" />
       </div>
       <div className="mt-5 flex justify-end gap-2 px-5 pb-8 sm:px-6 sm:pb-6">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" size="lg" tabIndex={1} type="submit" onClick={handleJoin} loading={isJoiningLoading}>
-          {isJoiningLoading ? "Joining..." : "Join Project"}
-        </Button>
+        <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          label={isJoiningLoading ? "Joining..." : "Join Project"}
+          tabIndex={1}
+          type="submit"
+          onClick={handleJoin}
+          loading={isJoiningLoading}
+        />
       </div>
     </ModalCore>
   );

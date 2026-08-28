@@ -10,10 +10,10 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // ui
+import { Button } from "@makeplane/propel/components/button";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
 import { PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
@@ -196,9 +196,14 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {t("auth.common.password.submit")}
-        </Button>
+        <Button
+          variant="primary"
+          size="lg"
+          stretch="full"
+          label={t("auth.common.password.submit")}
+          type="submit"
+          disabled={isButtonDisabled}
+        />
       </form>
     </FormContainer>
   );

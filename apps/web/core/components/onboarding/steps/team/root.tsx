@@ -24,7 +24,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EOnboardingSteps } from "@plane/types";
@@ -386,15 +386,13 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         <Button
           variant="primary"
           type="submit"
-          size="xl"
-          className="w-full"
+          size="lg"
           disabled={isInvitationDisabled || !isValid || isSubmitting}
-        >
-          {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-        </Button>
-        <Button variant="ghost" size="xl" className="w-full" onClick={nextStep}>
-          I’ll do it later
-        </Button>
+          stretch="full"
+          loading={isSubmitting}
+          label={"Continue"}
+        />
+        <Button variant="ghost" size="lg" stretch="full" label="I’ll do it later" onClick={nextStep} />
       </div>
     </form>
   );

@@ -6,7 +6,7 @@
 
 import React from "react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // assets
 import emptyApiTokens from "@/app/assets/empty-state/api-token.svg?url";
 
@@ -27,9 +27,9 @@ export function ApiTokenEmptyState(props: Props) {
         <p className="mb-7 text-tertiary sm:mb-8">
           Create API tokens for safe and easy data sharing with external apps, maintaining control and security.
         </p>
-        <Button className="flex items-center gap-1.5" onClick={onClick}>
-          Add token
-        </Button>
+        <span className="flex items-center gap-1.5">
+          <Button variant="primary" size="sm" stretch="auto" label="Add token" onClick={onClick} />
+        </span>
       </div>
     </div>
   );

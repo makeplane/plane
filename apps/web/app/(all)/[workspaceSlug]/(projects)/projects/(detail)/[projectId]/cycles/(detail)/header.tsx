@@ -8,7 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
+import { PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -18,7 +18,7 @@ import {
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { IconButton } from "@plane/propel/icon-button";
 import { CycleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -232,22 +232,23 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-                  <span className="hidden @4xl:flex">Analytics</span>
-                  <span className="@4xl:hidden">
-                    <ChartNoAxesColumn className="size-3.5" />
-                  </span>
-                </Button>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  stretch="auto"
+                  label="Analytics"
+                  onClick={() => setAnalyticsModal(true)}
+                />
                 {!isCompletedCycle && (
                   <Button
                     variant="primary"
-                    size="lg"
+                    size="md"
+                    stretch="auto"
+                    label={t("issue.add.label")}
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
-                  >
-                    {t("issue.add.label")}
-                  </Button>
+                  />
                 )}
               </>
             )}

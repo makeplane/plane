@@ -10,7 +10,7 @@ import useSWR, { mutate } from "swr";
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IExportData } from "@plane/types";
 import { Table } from "@plane/ui";
@@ -78,31 +78,38 @@ export const PrevExports = observer(function PrevExports(props: Props) {
       <div className="flex items-center justify-between border-b border-subtle pb-3.5">
         <div className="flex items-center gap-2">
           <h3 className="text-h6-medium text-primary">{t("workspace_settings.settings.exports.previous_exports")}</h3>
-          <Button variant="tertiary" className="shrink-0" onClick={handleRefresh}>
-            <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? t("refreshing") : t("refresh_status")}
-          </Button>
+          <span className="shrink-0">
+            <Button
+              variant="tertiary"
+              size="sm"
+              stretch="auto"
+              onClick={handleRefresh}
+              icon={<RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />}
+              label={refreshing ? t("refreshing") : t("refresh_status")}
+            />
+          </span>
         </div>
         {Array.isArray(exporterServices?.results) && exporterServices.results.length > 0 && (
           <div className="flex items-center gap-2 text-11">
             <Button
               variant="secondary"
-              size="sm"
+              size="xs"
+              stretch="auto"
+              label={t("prev")}
+              icon={<MoveLeft />}
               disabled={!exporterServices?.prev_page_results}
               onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
-              prependIcon={<MoveLeft />}
-            >
-              {t("prev")}
-            </Button>
+            />
             <Button
               variant="secondary"
-              size="sm"
+              size="xs"
+              stretch="auto"
+              label={t("next")}
+              icon={<MoveRight />}
+              iconPosition="end"
               disabled={!exporterServices?.next_page_results}
               onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
-              appendIcon={<MoveRight />}
-            >
-              {t("next")}
-            </Button>
+            />
           </div>
         )}
       </div>

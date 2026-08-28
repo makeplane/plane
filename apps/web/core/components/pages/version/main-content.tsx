@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EyeIcon, TriangleAlert } from "lucide-react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
@@ -93,9 +93,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-16 font-semibold">Something went wrong!</h6>
               <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
             </div>
-            <Button variant="link" onClick={handleRetry} loading={isRetrying}>
-              Try again
-            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              stretch="auto"
+              label="Try again"
+              onClick={handleRetry}
+              loading={isRetrying}
+            />
           </div>
         </div>
       ) : (
@@ -113,9 +118,16 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               </span>
             </div>
             {restoreEnabled && (
-              <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
-                {isRestoring ? "Restoring" : "Restore"}
-              </Button>
+              <span className="flex-shrink-0">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  stretch="auto"
+                  label={isRestoring ? "Restoring" : "Restore"}
+                  onClick={handleRestoreVersion}
+                  loading={isRestoring}
+                />
+              </span>
             )}
           </div>
           <div className="vertical-scrollbar scrollbar-sm h-full overflow-y-scroll pt-8">

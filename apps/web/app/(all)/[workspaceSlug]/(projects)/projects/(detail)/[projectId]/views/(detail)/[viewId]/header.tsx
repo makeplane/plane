@@ -15,7 +15,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { LockIcon, ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
@@ -198,13 +198,13 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         {canUserCreateIssue && (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label="Add work item"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
-          >
-            Add work item
-          </Button>
+          />
         )}
         <div className="hidden md:block">
           <ViewQuickActions

@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CopyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -134,14 +134,14 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
             {data && (
               <div>
                 <Button
-                  onClick={handleRegenerateSecretKey}
                   variant="secondary"
-                  size="lg"
+                  size="md"
+                  stretch="auto"
+                  label={isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
+                  icon={<RefreshCw />}
+                  onClick={handleRegenerateSecretKey}
                   loading={isRegenerating}
-                  prependIcon={<RefreshCw />}
-                >
-                  {isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
-                </Button>
+                />
               </div>
             )}
           </div>

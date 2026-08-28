@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
@@ -144,18 +144,20 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
             disabled={isUserAdmin}
             tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
           >
-            <Button
-              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
-              variant="error-fill"
-              onClick={() => {
-                if (!isUserAdmin) return;
-                handleRemoveIntegration();
-              }}
-              disabled={!isUserAdmin}
-              loading={deletingIntegration}
-            >
-              {deletingIntegration ? "Uninstalling..." : "Uninstall"}
-            </Button>
+            <span className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}>
+              <Button
+                variant="danger"
+                size="sm"
+                stretch="auto"
+                label={deletingIntegration ? "Uninstalling..." : "Uninstall"}
+                onClick={() => {
+                  if (!isUserAdmin) return;
+                  handleRemoveIntegration();
+                }}
+                disabled={!isUserAdmin}
+                loading={deletingIntegration}
+              />
+            </span>
           </Tooltip>
         ) : (
           <Tooltip
@@ -163,17 +165,19 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
             disabled={isUserAdmin}
             tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
           >
-            <Button
-              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
-              variant="primary"
-              onClick={() => {
-                if (!isUserAdmin) return;
-                startAuth();
-              }}
-              loading={isInstalling}
-            >
-              {isInstalling ? "Installing..." : "Install"}
-            </Button>
+            <span className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}>
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label={isInstalling ? "Installing..." : "Install"}
+                onClick={() => {
+                  if (!isUserAdmin) return;
+                  startAuth();
+                }}
+                loading={isInstalling}
+              />
+            </span>
           </Tooltip>
         )
       ) : (

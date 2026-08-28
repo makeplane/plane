@@ -6,9 +6,9 @@
 
 import { useEffect, useState } from "react";
 import { TwitterPicker } from "react-color";
+import { Button } from "@makeplane/propel/components/button";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
 import type { IState } from "@plane/types";
 import { Popover, TextArea } from "@plane/ui";
 type TStateForm = {
@@ -102,12 +102,23 @@ export function StateForm(props: TStateForm) {
         />
 
         <div className="flex items-center space-x-2">
-          <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
-            {buttonTitle}
-          </Button>
-          <Button type="button" variant="secondary" size="lg" disabled={buttonDisabled} onClick={onCancel}>
-            Cancel
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={buttonTitle}
+            onClick={formSubmit}
+            disabled={buttonDisabled}
+          />
+          <Button
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label="Cancel"
+            type="button"
+            disabled={buttonDisabled}
+            onClick={onCancel}
+          />
         </div>
       </div>
     </div>

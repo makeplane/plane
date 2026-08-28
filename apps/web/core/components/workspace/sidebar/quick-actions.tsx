@@ -79,12 +79,8 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
       />
       <div className="flex cursor-pointer items-center justify-between gap-2">
         <SidebarAddButton
-          label={
-            <>
-              <AddWorkItemIcon className="size-4" />
-              <span className="max-w-[145px] truncate text-13 font-medium">{t("sidebar.new_work_item")}</span>
-            </>
-          }
+          label={t("sidebar.new_work_item")}
+          icon={<AddWorkItemIcon className="size-4" />}
           onClick={() => toggleCreateIssueModal(true)}
           disabled={disabled}
           onMouseEnter={handleMouseEnter}

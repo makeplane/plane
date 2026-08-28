@@ -13,7 +13,7 @@ import { Eye, EyeOff, Info, XCircle } from "lucide-react";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CloseIcon } from "@plane/propel/icons";
 import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
@@ -280,31 +280,36 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <div className="space-y-2.5">
           {mode === EAuthModes.SIGN_IN ? (
             <>
-              <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-                {isSubmitting ? (
-                  <Spinner height="20px" width="20px" />
-                ) : isSMTPConfigured ? (
-                  t("common.continue")
-                ) : (
-                  t("common.go_to_workspace")
-                )}
-              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                stretch="full"
+                disabled={isButtonDisabled}
+                loading={isSubmitting}
+                label={isSMTPConfigured ? t("common.continue") : t("common.go_to_workspace")}
+              />
               {isSMTPConfigured && (
                 <Button
+                  variant="secondary"
+                  size="lg"
+                  stretch="full"
+                  label={t("auth.common.sign_in_with_unique_code")}
                   type="button"
                   onClick={redirectToUniqueCodeSignIn}
-                  variant="secondary"
-                  className="w-full"
-                  size="xl"
-                >
-                  {t("auth.common.sign_in_with_unique_code")}
-                </Button>
+                />
               )}
             </>
           ) : (
-            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              disabled={isButtonDisabled}
+              stretch="full"
+              loading={isSubmitting}
+              label={"Create account"}
+            />
           )}
         </div>
       </form>

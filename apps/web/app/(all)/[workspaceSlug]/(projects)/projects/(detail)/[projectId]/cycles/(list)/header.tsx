@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CycleIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -62,14 +62,13 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label={t("project_cycles.add_cycle")}
             onClick={() => {
               toggleCreateCycleModal(true);
             }}
-          >
-            <div className="block sm:hidden">{t("add")}</div>
-            <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
-          </Button>
+          />
         </Header.RightItem>
       ) : (
         <></>

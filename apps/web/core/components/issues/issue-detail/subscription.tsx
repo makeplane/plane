@@ -12,7 +12,7 @@ import { Bell, BellOff } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -82,23 +82,15 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
   return (
     <div>
       <Button
-        prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
+        icon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="secondary"
-        className="hover:!bg-accent-primary/20"
+        size="md"
+        stretch="auto"
         onClick={handleSubscription}
         disabled={!isEditable || loading}
-        size="lg"
-      >
-        {loading ? (
-          <span>
-            <span className="hidden sm:block">{t("common.loading")}</span>
-          </span>
-        ) : isSubscribed ? (
-          <div className="hidden sm:block">{t("common.actions.unsubscribe")}</div>
-        ) : (
-          <div className="hidden sm:block">{t("common.actions.subscribe")}</div>
-        )}
-      </Button>
+        loading={loading}
+        label={isSubscribed ? t("common.actions.unsubscribe") : t("common.actions.subscribe")}
+      />
     </div>
   );
 });

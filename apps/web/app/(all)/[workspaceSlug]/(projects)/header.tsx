@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { Shapes } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { HomeIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -37,15 +37,16 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={() => toggleWidgetSettings(true)}
-            className="my-auto mb-0"
-            prependIcon={<Shapes />}
-          >
-            <div className="hidden sm:hidden md:block">{t("home.manage_widgets")}</div>
-          </Button>
+          <span className="my-auto mb-0">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              onClick={() => toggleWidgetSettings(true)}
+              icon={<Shapes />}
+              label={t("home.manage_widgets")}
+            />
+          </span>
         </Header.RightItem>
       </Header>
     </>

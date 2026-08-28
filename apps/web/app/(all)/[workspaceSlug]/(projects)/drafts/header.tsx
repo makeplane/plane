@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { DraftIcon } from "@plane/propel/icons";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -66,15 +66,16 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
 
         <Header.RightItem>
           {joinedProjectIds && joinedProjectIds.length > 0 && (
-            <Button
-              variant="primary"
-              size="lg"
-              className="items-center gap-1"
-              onClick={() => setIsDraftIssueModalOpen(true)}
-              disabled={!isAuthorizedUser}
-            >
-              {t("workspace_draft_issues.draft_an_issue")}
-            </Button>
+            <span className="items-center gap-1">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("workspace_draft_issues.draft_an_issue")}
+                onClick={() => setIsDraftIssueModalOpen(true)}
+                disabled={!isAuthorizedUser}
+              />
+            </span>
           )}
         </Header.RightItem>
       </Header>

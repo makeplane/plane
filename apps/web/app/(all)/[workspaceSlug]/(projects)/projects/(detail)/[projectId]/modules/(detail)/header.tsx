@@ -8,7 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
+import { PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -16,7 +16,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ModuleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
@@ -227,22 +227,26 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
 
           {canUserCreateIssue ? (
             <>
-              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-                <span className="hidden @4xl:flex">Analytics</span>
-                <span className="@4xl:hidden">
-                  <ChartNoAxesColumn className="size-3.5" />
-                </span>
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                className="hidden sm:flex"
-                onClick={() => {
-                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
-                }}
-              >
-                Add work item
-              </Button>
+              <span className="hidden md:block">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  stretch="auto"
+                  label="Analytics"
+                  onClick={() => setAnalyticsModal(true)}
+                />
+              </span>
+              <span className="hidden sm:flex">
+                <Button
+                  variant="primary"
+                  size="md"
+                  stretch="auto"
+                  label="Add work item"
+                  onClick={() => {
+                    toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
+                  }}
+                />
+              </span>
             </>
           ) : (
             <></>

@@ -12,7 +12,7 @@ import type { LucideIcon } from "lucide-react";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { GlobeIcon, LockIcon, PageIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
@@ -147,19 +147,24 @@ export function PageForm(props: Props) {
           <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
-            Cancel
-          </Button>
+          <Button
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label="Cancel"
+            onClick={handleModalClose}
+            tabIndex={getIndex("cancel")}
+          />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label={isSubmitting ? "Creating" : "Create Page"}
             type="submit"
             loading={isSubmitting}
             disabled={isTitleLengthMoreThan255Character}
             tabIndex={getIndex("submit")}
-          >
-            {isSubmitting ? "Creating" : "Create Page"}
-          </Button>
+          />
         </div>
       </div>
     </form>

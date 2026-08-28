@@ -4,25 +4,31 @@
  * See the LICENSE file for details.
  */
 
-import { Button } from "@plane/propel/button";
+import type { MouseEventHandler, ReactNode } from "react";
+import { Button } from "@makeplane/propel/components/button";
 
-type Props = React.ComponentProps<"button"> & {
-  label: React.ReactNode;
+type Props = {
+  label: string;
+  icon?: ReactNode;
   onClick: () => void;
+  disabled?: boolean;
+  onMouseEnter?: MouseEventHandler<HTMLSpanElement>;
+  onMouseLeave?: MouseEventHandler<HTMLSpanElement>;
 };
 
 export function SidebarAddButton(props: Props) {
-  const { label, onClick, disabled, ...rest } = props;
+  const { label, icon, onClick, disabled, onMouseEnter, onMouseLeave } = props;
   return (
-    <Button
-      variant={"secondary"}
-      size={"xl"}
-      className="w-full justify-start"
-      onClick={onClick}
-      disabled={disabled}
-      {...rest}
-    >
-      {label}
-    </Button>
+    <span className="w-full justify-start" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <Button
+        variant="secondary"
+        size="lg"
+        stretch="full"
+        label={label}
+        icon={icon}
+        onClick={onClick}
+        disabled={disabled}
+      />
+    </span>
   );
 }

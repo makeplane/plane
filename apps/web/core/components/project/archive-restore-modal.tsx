@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
@@ -97,18 +97,16 @@ export function ArchiveRestoreProjectModal(props: Props) {
             : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
         </p>
         <div className="mt-3 flex justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label={archive ? (isLoading ? "Archiving" : "Archive") : isLoading ? "Restoring" : "Restore"}
             tabIndex={1}
             onClick={archive ? handleArchiveProject : handleRestoreProject}
             loading={isLoading}
-          >
-            {archive ? (isLoading ? "Archiving" : "Archive") : isLoading ? "Restoring" : "Restore"}
-          </Button>
+          />
         </div>
       </div>
     </ModalCore>

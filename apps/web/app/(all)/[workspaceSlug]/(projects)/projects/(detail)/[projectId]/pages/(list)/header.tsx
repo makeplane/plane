@@ -10,7 +10,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 // constants
 import { EPageAccess } from "@plane/constants";
 // plane types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PageIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPage } from "@plane/types";
@@ -79,9 +79,14 @@ export const PagesListHeader = observer(function PagesListHeader() {
       </Header.LeftItem>
       {canCurrentUserCreatePage && (
         <Header.RightItem>
-          <Button variant="primary" size="lg" onClick={handleCreatePage} loading={isCreatingPage}>
-            {isCreatingPage ? "Adding" : "Add page"}
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isCreatingPage ? "Adding" : "Add page"}
+            onClick={handleCreatePage}
+            loading={isCreatingPage}
+          />
         </Header.RightItem>
       )}
     </Header>

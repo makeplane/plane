@@ -15,7 +15,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
 
@@ -238,19 +238,18 @@ export const CreateUpdateLabelInline = observer(
               )}
             />
           </div>
-          <Button variant="secondary" onClick={() => handleClose()}>
-            {t("cancel")}
-          </Button>
+          <Button variant="secondary" size="sm" stretch="auto" label={t("cancel")} onClick={() => handleClose()} />
           <Button
             variant="primary"
+            size="sm"
+            stretch="auto"
+            label={isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
             onClick={(e) => {
               e.preventDefault();
               handleSubmit(handleFormSubmit)();
             }}
             loading={isSubmitting}
-          >
-            {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
-          </Button>
+          />
         </div>
         {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-danger-primary">{errors.name?.message}</p>}
       </>

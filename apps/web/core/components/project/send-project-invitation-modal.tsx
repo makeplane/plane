@@ -10,7 +10,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
 import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -297,14 +297,19 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
             {t("common.add_more")}
           </button>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="lg" onClick={handleClose}>
-              {t("cancel")}
-            </Button>
-            <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-              {isSubmitting
-                ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
-                : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`}
-            </Button>
+            <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={
+                isSubmitting
+                  ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
+                  : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`
+              }
+              type="submit"
+              loading={isSubmitting}
+            />
           </div>
         </div>
       </form>

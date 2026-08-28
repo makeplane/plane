@@ -14,7 +14,7 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EditorRefApi } from "@plane/editor";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 // components
@@ -181,13 +181,14 @@ export function GptAssistantPopover(props: Props) {
   const responseActionButton = response !== "" && (
     <Button
       variant="primary"
+      size="sm"
+      stretch="auto"
+      label="Use this response"
       onClick={() => {
         onResponse(response);
         onClose();
       }}
-    >
-      Use this response
-    </Button>
+    />
   );
 
   const generateResponseButtonText = isSubmitting
@@ -290,12 +291,15 @@ export function GptAssistantPopover(props: Props) {
               </>
             )}
             <div className="flex items-center gap-2">
-              <Button variant="secondary" onClick={onClose}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={handleSubmit(handleAIResponse)} loading={isSubmitting}>
-                {generateResponseButtonText}
-              </Button>
+              <Button variant="secondary" size="sm" stretch="auto" label="Close" onClick={onClose} />
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label={generateResponseButtonText}
+                onClick={handleSubmit(handleAIResponse)}
+                loading={isSubmitting}
+              />
             </div>
           </div>
         </Popover.Panel>

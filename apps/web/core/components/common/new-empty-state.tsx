@@ -7,7 +7,7 @@
 import React, { useState } from "react";
 
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 type Props = {
   title: string;
@@ -49,14 +49,15 @@ export function NewEmptyState({ title, description, image, primaryButton, disabl
 
           <div className="relative flex items-start justify-center">
             {primaryButton && (
-              <Button
-                className={`relative m-3 max-w-min !px-6 ${comicBox?.direction === "left" ? "flex-row-reverse" : ""}`}
-                size="xl"
-                variant="primary"
-                onClick={primaryButton.onClick}
-                disabled={disabled}
-              >
-                {primaryButton.text}
+              <span className={`relative m-3 max-w-min ${comicBox?.direction === "left" ? "flex-row-reverse" : ""}`}>
+                <Button
+                  size="lg"
+                  stretch="auto"
+                  variant="primary"
+                  onClick={primaryButton.onClick}
+                  disabled={disabled}
+                  label={primaryButton.text}
+                />
                 <div
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
@@ -69,7 +70,7 @@ export function NewEmptyState({ title, description, image, primaryButton, disabl
                     comicBox?.direction === "left" ? "left-0 ml-2.5" : "right-0 mr-2.5"
                   } h-1.5 w-1.5 rounded-full`}
                 />
-              </Button>
+              </span>
             )}
             {comicBox &&
               isHovered &&

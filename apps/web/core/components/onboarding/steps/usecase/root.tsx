@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { USE_CASES } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
@@ -150,12 +150,8 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-          Continue
-        </Button>
-        <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
-          Skip
-        </Button>
+        <Button variant="primary" size="lg" stretch="full" label="Continue" type="submit" disabled={isButtonDisabled} />
+        <Button variant="ghost" size="lg" stretch="full" label="Skip" onClick={handleSkip} />
       </div>
     </form>
   );

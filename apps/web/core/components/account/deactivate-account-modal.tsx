@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -81,12 +81,14 @@ export function DeactivateAccountModal(props: Props) {
         </div>
       </div>
       <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          {t("cancel")}
-        </Button>
-        <Button variant="error-fill" size="lg" onClick={handleDeleteAccount}>
-          {isDeactivating ? t("deactivating") : t("confirm")}
-        </Button>
+        <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
+        <Button
+          variant="danger"
+          size="md"
+          stretch="auto"
+          label={isDeactivating ? t("deactivating") : t("confirm")}
+          onClick={handleDeleteAccount}
+        />
       </div>
     </ModalCore>
   );

@@ -12,7 +12,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CheckIcon, SearchIcon, PlusIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
@@ -92,7 +92,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
   const issueLabels = values ?? [];
 
-  const label = <span className="text-body-xs-medium text-placeholder">{t("label.select")}</span>;
+  const label = t("label.select");
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -128,15 +128,15 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
       >
         <Combobox.Button as={Fragment}>
           <Button
+            variant="tertiary"
+            size="xs"
+            stretch="auto"
+            label={label}
+            icon={<PlusIcon />}
             ref={setReferenceElement}
             type="button"
-            variant="tertiary"
-            size="sm"
-            prependIcon={<PlusIcon />}
             onClick={() => !projectLabels && fetchLabels()}
-          >
-            {label}
-          </Button>
+          />
         </Combobox.Button>
 
         <Combobox.Options as="ul" className="fixed z-10">

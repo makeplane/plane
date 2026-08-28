@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useUser } from "@/hooks/store/user";
@@ -73,18 +73,24 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
         </div>
       </div>
       <div className="flex justify-end gap-2 p-4 sm:px-6">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          {t("cancel")}
-        </Button>
-        <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isRemoving}>
-          {currentUser?.id === userDetails.id
-            ? isRemoving
-              ? t("leaving")
-              : t("leave")
-            : isRemoving
-              ? t("removing")
-              : t("remove")}
-        </Button>
+        <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
+        <Button
+          variant="danger"
+          size="md"
+          stretch="auto"
+          label={
+            currentUser?.id === userDetails.id
+              ? isRemoving
+                ? t("leaving")
+                : t("leave")
+              : isRemoving
+                ? t("removing")
+                : t("remove")
+          }
+          tabIndex={1}
+          onClick={handleDeletion}
+          loading={isRemoving}
+        />
       </div>
     </ModalCore>
   );

@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { cn } from "@plane/utils";
 // constants
 import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
@@ -127,13 +127,15 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
         <div className="my-4 flex items-center justify-center gap-1 pb-2">
           <Button
             variant="ghost"
+            size="sm"
+            stretch="auto"
+            label={isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
+            icon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
+            iconPosition="end"
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}
-            appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
-          >
-            {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
-          </Button>
+          />
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
 import type {
@@ -284,18 +284,31 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          {t("common.cancel")}
-        </Button>
-        <Button variant="primary" size="lg" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? t("common.updating")
-              : t("view.update.label")
-            : isSubmitting
-              ? t("common.creating")
-              : t("view.create.label")}
-        </Button>
+        <Button
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label={t("common.cancel")}
+          onClick={handleClose}
+          tabIndex={getIndex("cancel")}
+        />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          label={
+            data
+              ? isSubmitting
+                ? t("common.updating")
+                : t("view.update.label")
+              : isSubmitting
+                ? t("common.creating")
+                : t("view.create.label")
+          }
+          type="submit"
+          tabIndex={getIndex("submit")}
+          loading={isSubmitting}
+        />
       </div>
     </form>
   );

@@ -19,7 +19,7 @@ import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter"
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -96,16 +96,9 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
             ))}
           </CustomMenu>
           <div className="shrink-0 md:hidden">
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => {
-                toggleProfileSidebar();
-              }}
-              appendIcon={
-                <PanelRight className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />
-              }
-            ></Button>
+            <Button variant="ghost" size="md" stretch="auto" onClick={() => toggleProfileSidebar()}>
+              <PanelRight className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />
+            </Button>
           </div>
         </div>
       </Header.RightItem>

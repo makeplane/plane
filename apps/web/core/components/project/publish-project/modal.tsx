@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
@@ -184,13 +184,13 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           <h5 className="text-18 font-medium text-secondary">Publish project</h5>
           {isProjectPublished && (
             <Button
-              variant="error-fill"
-              size="lg"
+              variant="danger"
+              size="md"
+              stretch="auto"
+              label={isUnPublishing ? "Unpublishing" : "Unpublish"}
               onClick={() => handleUnPublishProject(watch("id") ?? "")}
               loading={isUnPublishing}
-            >
-              {isUnPublishing ? "Unpublishing" : "Unpublish"}
-            </Button>
+            />
           )}
         </div>
 
@@ -320,19 +320,27 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">
-              <Button variant="secondary" size="lg" onClick={handleClose}>
-                Cancel
-              </Button>
+              <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
               {isProjectPublished ? (
                 isDirty && (
-                  <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-                    {isSubmitting ? "Updating" : "Update settings"}
-                  </Button>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    stretch="auto"
+                    label={isSubmitting ? "Updating" : "Update settings"}
+                    type="submit"
+                    loading={isSubmitting}
+                  />
                 )
               ) : (
-                <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-                  {isSubmitting ? "Publishing" : "Publish"}
-                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  stretch="auto"
+                  label={isSubmitting ? "Publishing" : "Publish"}
+                  type="submit"
+                  loading={isSubmitting}
+                />
               )}
             </div>
           )}

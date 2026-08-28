@@ -7,15 +7,11 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
-// types
-// constants
 
 type Props = {
   onChange: (value: TModuleOrderByOptions) => void;
@@ -35,11 +31,11 @@ export function ModuleOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("secondary", "lg"), "px-2 text-tertiary")}>
+        <Button variant="secondary" size="md" stretch="auto" render={<div />}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDownIcon className="size-3" strokeWidth={2} />
-        </div>
+        </Button>
       }
       placement="bottom-end"
       maxHeight="lg"

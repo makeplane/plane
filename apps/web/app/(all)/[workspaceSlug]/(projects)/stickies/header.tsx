@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { RecentStickyIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -45,15 +45,15 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
           <StickySearch />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label="Add sticky"
             onClick={() => {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
             loading={creatingSticky}
-          >
-            Add sticky
-          </Button>
+          />
         </Header.RightItem>
       </Header>
     </>

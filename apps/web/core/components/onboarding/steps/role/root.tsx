@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
@@ -145,12 +145,10 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       </div>
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-          Continue
-        </Button>
-        <Button variant="ghost" onClick={handleSkip} className="w-full text-tertiary" size="xl">
-          Skip
-        </Button>
+        <Button variant="primary" size="lg" stretch="full" label="Continue" type="submit" disabled={isButtonDisabled} />
+        <span className="w-full text-tertiary">
+          <Button variant="ghost" size="lg" stretch="full" label="Skip" onClick={handleSkip} />
+        </span>
       </div>
     </form>
   );

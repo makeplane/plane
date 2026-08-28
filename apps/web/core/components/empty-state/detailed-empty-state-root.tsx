@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // utils
 import { cn } from "@plane/utils";
 
@@ -50,15 +50,15 @@ function CustomButton({
 }) {
   return (
     <Button
-      variant={variant}
-      size={size}
+      variant="primary"
+      size="sm"
+      stretch="auto"
+      label={config.text}
+      icon={config.appendIcon}
+      iconPosition="end"
       onClick={config.onClick}
-      prependIcon={config.prependIcon}
-      appendIcon={config.appendIcon}
       disabled={config.disabled}
-    >
-      {config.text}
-    </Button>
+    />
   );
 }
 

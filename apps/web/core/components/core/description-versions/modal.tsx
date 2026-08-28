@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -160,20 +160,25 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyIcon} />
           </Tooltip>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={1}>
-              {t("common.cancel")}
-            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              label={t("common.cancel")}
+              onClick={handleClose}
+              tabIndex={1}
+            />
             {!isRestoreDisabled && (
               <Button
                 variant="primary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                label={t("common.actions.restore")}
                 onClick={() => {
                   handleRestore(activeVersionDescription ?? "<p></p>");
                   handleClose();
                 }}
-              >
-                {t("common.actions.restore")}
-              </Button>
+              />
             )}
           </div>
         </div>

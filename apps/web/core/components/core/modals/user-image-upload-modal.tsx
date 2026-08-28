@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 // plane imports
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { UserCirclePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -143,16 +143,25 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
         </div>
         <p className="my-4 text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
         <div className="flex items-center justify-between">
-          <Button variant="error-fill" size="lg" onClick={handleImageRemove} disabled={!value}>
-            {isRemoving ? "Removing" : "Remove"}
-          </Button>
+          <Button
+            variant="danger"
+            size="md"
+            stretch="auto"
+            label={isRemoving ? "Removing" : "Remove"}
+            onClick={handleImageRemove}
+            disabled={!value}
+          />
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="lg" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button variant="primary" size="lg" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
-              {isImageUploading ? "Uploading" : "Upload & Save"}
-            </Button>
+            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={isImageUploading ? "Uploading" : "Upload & Save"}
+              onClick={handleSubmit}
+              disabled={!image}
+              loading={isImageUploading}
+            />
           </div>
         </div>
       </div>

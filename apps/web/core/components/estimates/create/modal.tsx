@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
@@ -200,13 +200,23 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
         </div>
 
         <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
-          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
-            {t("common.cancel")}
-          </Button>
+          <Button
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label={t("common.cancel")}
+            onClick={handleClose}
+            disabled={buttonLoader}
+          />
           {estimatePoints && (
-            <Button variant="primary" size="lg" onClick={handleCreateEstimate} disabled={buttonLoader}>
-              {buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
+              onClick={handleCreateEstimate}
+              disabled={buttonLoader}
+            />
           )}
         </div>
       </div>

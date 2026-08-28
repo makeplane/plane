@@ -8,13 +8,10 @@ import { observer } from "mobx-react";
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { INBOX_ISSUE_ORDER_BY_OPTIONS, INBOX_ISSUE_SORT_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
-// constants
-// helpers
-import { cn } from "@plane/utils";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import useSize from "@/hooks/use-window-size";
@@ -33,7 +30,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
       <ArrowDownWideNarrow className="size-3" />
     );
   const largeButton = (
-    <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
+    <Button variant="secondary" size="sm" stretch="auto" render={<div />}>
       {inboxSorting?.sort_by === "asc" ? (
         <ArrowUpWideNarrow className="size-3" />
       ) : (
@@ -41,7 +38,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
       )}
       {t(orderByDetails?.i18n_label || "inbox_issue.order_by.created_at")}
       <ChevronDownIcon className="size-3" strokeWidth={2} />
-    </div>
+    </Button>
   );
   return (
     <CustomMenu

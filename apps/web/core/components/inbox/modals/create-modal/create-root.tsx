@@ -13,7 +13,7 @@ import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
@@ -218,7 +218,9 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             <div className="flex items-center gap-3">
               <Button
                 variant="secondary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                label={t("discard")}
                 type="button"
                 onClick={() => {
                   if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -232,20 +234,18 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                   }
                 }}
                 tabIndex={getIndex("discard_button")}
-              >
-                {t("discard")}
-              </Button>
+              />
               <Button
                 variant="primary"
+                size="md"
+                stretch="auto"
+                label={formSubmitting ? t("creating") : t("create_work_item")}
                 ref={submitBtnRef}
                 type="submit"
                 loading={formSubmitting}
                 disabled={isTitleLengthMoreThan255Character}
                 tabIndex={getIndex("submit_button")}
-                size="lg"
-              >
-                {formSubmitting ? t("creating") : t("create_work_item")}
-              </Button>
+              />
             </div>
           </div>
         </form>

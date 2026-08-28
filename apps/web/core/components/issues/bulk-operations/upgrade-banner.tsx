@@ -5,7 +5,7 @@
  */
 
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -22,14 +22,16 @@ export function BulkOperationsUpgradeBanner(props: Props) {
           Change state, priority, and more for several work items at once. Save three minutes on an average per
           operation.
         </p>
-        <a
-          href={MARKETING_PLANE_ONE_PAGE_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(getButtonStyling("primary", "base"), "flex-shrink-0")}
-        >
-          Upgrade to One
-        </a>
+        <span className="flex-shrink-0">
+          <Button
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            label="Upgrade to One"
+            nativeButton={false}
+            render={<a href={MARKETING_PLANE_ONE_PAGE_LINK} target="_blank" rel="noopener noreferrer" />}
+          />
+        </span>
       </div>
     </div>
   );

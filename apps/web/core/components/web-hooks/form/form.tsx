@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
 import {
@@ -97,19 +97,27 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
       {data ? (
         <div className="space-y-5 pt-0">
           <WebhookSecretKey data={data} />
-          <Button size="lg" type="submit" loading={isSubmitting}>
-            {isSubmitting ? t("updating") : t("update")}
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isSubmitting ? t("updating") : t("update")}
+            type="submit"
+            loading={isSubmitting}
+          />
         </div>
       ) : (
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            {t("cancel")}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
           {!webhookSecretKey && (
-            <Button type="submit" variant="primary" size="lg" loading={isSubmitting} className="capitalize">
-              {isSubmitting ? t("common.creating") : t("common.create")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={isSubmitting ? t("common.creating") : t("common.create")}
+              type="submit"
+              loading={isSubmitting}
+            />
           )}
         </div>
       )}

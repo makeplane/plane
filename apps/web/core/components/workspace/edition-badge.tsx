@@ -13,7 +13,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";
 // local components
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PaidPlanUpgradeModal } from "@/components/license/modal/upgrade-modal";
 
 export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
@@ -33,13 +33,13 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
       <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
         <Button
           variant="tertiary"
-          size="lg"
+          size="md"
+          stretch="auto"
+          label="Community"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"
           aria-label={t("aria_labels.projects_sidebar.edition_badge")}
-        >
-          Community
-        </Button>
+        />
       </Tooltip>
     </>
   );

@@ -8,7 +8,7 @@ import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 // plane imports
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { CheckIcon } from "@plane/propel/icons";
 import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -27,20 +27,22 @@ export function ViewOrderByDropdown(props: Props) {
   const orderByDetails = VIEW_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
   const isDescending = sortBy === "desc";
 
-  const buttonClassName = isMobile
-    ? "flex items-center text-13 text-secondary gap-2 w-full"
-    : getButtonStyling("secondary", "lg");
+  const icon = !isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />;
+  const sortLabel = orderByDetails?.i18n_label ? t(orderByDetails.i18n_label) : "";
 
-  const icon = (
-    <>{!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}</>
-  );
   return (
     <CustomMenu
       customButton={
-        <span className={buttonClassName}>
-          {!isMobile && icon}
-          <span className="shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
-        </span>
+        isMobile ? (
+          <span className="flex w-full items-center gap-2 text-13 text-secondary">
+            <span className="shrink-0">{sortLabel}</span>
+          </span>
+        ) : (
+          <Button variant="secondary" size="md" stretch="auto" render={<div />}>
+            {icon}
+            <span className="shrink-0">{sortLabel}</span>
+          </Button>
+        )
       }
       placement="bottom-end"
       className="flex w-full justify-center"

@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
@@ -69,12 +69,16 @@ export function ArchiveCycleModal(props: Props) {
           Are you sure you want to archive the cycle? All your archives can be restored later.
         </p>
         <div className="mt-3 flex justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="lg" tabIndex={1} onClick={handleArchiveCycle} loading={isArchiving}>
-            {isArchiving ? "Archiving" : "Archive"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isArchiving ? "Archiving" : "Archive"}
+            tabIndex={1}
+            onClick={handleArchiveCycle}
+            loading={isArchiving}
+          />
         </div>
       </div>
     </ModalCore>

@@ -10,7 +10,7 @@ import { Clock, FileStack, MoreHorizontal, MoveRight } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
 import {
   LinkIcon,
@@ -328,7 +328,10 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             {canMarkAsAccepted && (
               <Button
                 variant="secondary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                icon={<CheckCircleFilledIcon className="size-4 shrink-0 text-success-secondary" />}
+                label={t("inbox_issue.actions.accept")}
                 onClick={() =>
                   handleActionWithPermission(
                     isProjectAdmin,
@@ -336,16 +339,16 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                     t("inbox_issue.errors.accept_permission")
                   )
                 }
-              >
-                <CheckCircleFilledIcon className="size-4 shrink-0 text-success-secondary" />
-                {t("inbox_issue.actions.accept")}
-              </Button>
+              />
             )}
 
             {canMarkAsDeclined && (
               <Button
                 variant="secondary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                icon={<CloseCircleFilledIcon className="size-4 shrink-0 text-danger-secondary" />}
+                label={t("inbox_issue.actions.decline")}
                 onClick={() =>
                   handleActionWithPermission(
                     isProjectAdmin,
@@ -353,26 +356,27 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                     t("inbox_issue.errors.decline_permission")
                   )
                 }
-              >
-                <CloseCircleFilledIcon className="size-4 shrink-0 text-danger-secondary" />
-                {t("inbox_issue.actions.decline")}
-              </Button>
+              />
             )}
 
             {isAcceptedOrDeclined ? (
               <div className="flex items-center gap-2">
                 <Button
                   variant="secondary"
-                  size="lg"
-                  prependIcon={<LinkIcon className="h-2.5 w-2.5" />}
+                  size="md"
+                  stretch="auto"
+                  label={t("inbox_issue.actions.copy")}
+                  icon={<LinkIcon className="h-2.5 w-2.5" />}
                   onClick={() => handleCopyIssueLink(workItemLink)}
-                >
-                  {t("inbox_issue.actions.copy")}
-                </Button>
+                />
                 <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button variant="secondary" size="lg" prependIcon={<NewTabIcon className="h-2.5 w-2.5" />}>
-                    {t("inbox_issue.actions.open")}
-                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    label={t("inbox_issue.actions.open")}
+                    icon={<NewTabIcon className="h-2.5 w-2.5" />}
+                  />
                 </ControlLink>
               </div>
             ) : (

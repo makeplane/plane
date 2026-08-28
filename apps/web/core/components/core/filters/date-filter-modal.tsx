@@ -5,7 +5,7 @@
  */
 
 import { Controller, useForm } from "react-hook-form";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon } from "@plane/propel/icons";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -120,18 +120,16 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
           </h6>
         )}
         <div className="flex justify-end gap-4">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label="Apply"
             type="button"
             onClick={handleSubmit(handleFormSubmit)}
             disabled={isInvalid}
-          >
-            Apply
-          </Button>
+          />
         </div>
       </form>
     </ModalCore>

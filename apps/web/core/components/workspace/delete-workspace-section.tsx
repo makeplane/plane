@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IWorkspace } from "@plane/types";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
@@ -37,9 +37,13 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         title={t("workspace_settings.settings.general.delete_workspace")}
         description={t("workspace_settings.settings.general.delete_workspace_description")}
         control={
-          <Button variant="error-outline" onClick={() => setDeleteWorkspaceModal(true)}>
-            {t("delete")}
-          </Button>
+          <Button
+            variant="danger-outline"
+            size="sm"
+            stretch="auto"
+            label={t("delete")}
+            onClick={() => setDeleteWorkspaceModal(true)}
+          />
         }
       />
     </>

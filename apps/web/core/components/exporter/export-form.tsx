@@ -16,7 +16,7 @@ import {
   // ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // import { Tooltip } from "@plane/propel/tooltip";
 // import { EIssuesStoreType } from "@plane/types";
@@ -208,9 +208,14 @@ export const ExportForm = observer(function ExportForm(props: Props) {
           }
         />
         <div className="px-4 py-3">
-          <Button variant="primary" size="lg" type="submit" loading={exportLoading}>
-            {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
+            type="submit"
+            loading={exportLoading}
+          />
         </div>
       </div>
       {/* Rich Filters */}

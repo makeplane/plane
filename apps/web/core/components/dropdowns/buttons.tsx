@@ -6,7 +6,6 @@
 
 import React from "react";
 // helpers
-import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // types
@@ -78,11 +77,10 @@ function BorderButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <Button
-        variant="ghost"
-        size="sm"
+      <button
+        type="button"
         className={cn(
-          "flex h-full w-full items-center justify-start gap-1.5 border-[0.5px] border-strong",
+          "inline-flex h-5 w-full items-center justify-start gap-1.5 rounded-sm border-[0.5px] border-strong px-1.5 text-caption-md-medium",
           {
             "bg-layer-transparent-active": isActive,
           },
@@ -90,7 +88,7 @@ function BorderButton(props: ButtonProps) {
         )}
       >
         {children}
-      </Button>
+      </button>
     </Tooltip>
   );
 }
@@ -106,16 +104,15 @@ function BackgroundButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <Button
-        variant="ghost"
-        size="sm"
+      <button
+        type="button"
         className={cn(
-          "flex h-full w-full items-center justify-between gap-1.5 bg-layer-3 hover:bg-layer-1-hover",
+          "inline-flex h-5 w-full items-center justify-between gap-1.5 rounded-sm bg-layer-3 px-1.5 text-caption-md-medium hover:bg-layer-1-hover",
           className
         )}
       >
         {children}
-      </Button>
+      </button>
     </Tooltip>
   );
 }
@@ -131,11 +128,10 @@ function TransparentButton(props: ButtonProps) {
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
     >
-      <Button
-        variant="ghost"
-        size="sm"
+      <button
+        type="button"
         className={cn(
-          "flex h-full w-full items-center justify-between gap-1.5",
+          "inline-flex h-5 w-full items-center justify-between gap-1.5 rounded-sm px-1.5 text-caption-md-medium",
           {
             "bg-layer-transparent-active": isActive,
           },
@@ -143,7 +139,7 @@ function TransparentButton(props: ButtonProps) {
         )}
       >
         {children}
-      </Button>
+      </button>
     </Tooltip>
   );
 }

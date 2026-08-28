@@ -10,7 +10,7 @@ import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // hooks
@@ -126,12 +126,16 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (
-        <Button className="hidden px-2 md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-          <div className="hidden @4xl:flex">{t("common.analytics")}</div>
-          <div className="flex @4xl:hidden">
-            <ChartNoAxesColumn className="size-3.5" />
-          </div>
-        </Button>
+        <span className="hidden px-2 md:block">
+          <Button
+            onClick={() => setAnalyticsModal(true)}
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            icon={<ChartNoAxesColumn className="size-3.5" />}
+            label={t("common.analytics")}
+          />
+        </span>
       ) : (
         <></>
       )}

@@ -7,10 +7,9 @@
 import { observer } from "mobx-react";
 // types
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
 
@@ -72,9 +71,16 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
         </Loader>
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
-          <a href={href} target="_blank" className={cn(getButtonStyling("primary", "lg"), "w-56")} rel="noreferrer">
-            Talk to Sales
-          </a>
+          <span className="w-56">
+            <Button
+              variant="primary"
+              size="md"
+              stretch="full"
+              label="Talk to Sales"
+              nativeButton={false}
+              render={<a href={href} target="_blank" rel="noreferrer" />}
+            />
+          </span>
           {isTrialAllowed && !isSelfHosted && (
             <div className="mt-4 h-4">
               {renderTrialButton &&

@@ -5,10 +5,9 @@
  */
 
 import { ListFilter } from "lucide-react";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 // plane imports
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
@@ -20,11 +19,11 @@ import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 const smallButton = <ListFilter className="size-3" />;
 
 const largeButton = (
-  <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
+  <Button variant="secondary" size="sm" stretch="auto" render={<div />}>
     <ListFilter className="size-3" />
     <span>Filters</span>
     <ChevronDownIcon className="size-3" strokeWidth={2} />
-  </div>
+  </Button>
 );
 export function FiltersRoot() {
   const windowSize = useSize();

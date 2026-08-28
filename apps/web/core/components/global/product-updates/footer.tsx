@@ -6,10 +6,8 @@
 
 import { useTranslation } from "@plane/i18n";
 // ui
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PlaneLogo } from "@plane/propel/icons";
-// helpers
-import { cn } from "@plane/utils";
 
 export function ProductUpdatesFooter() {
   const { t } = useTranslation();
@@ -58,18 +56,15 @@ export function ProductUpdatesFooter() {
           Forum
         </a>
       </div>
-      <a
-        href="https://plane.so/pages"
-        target="_blank"
-        className={cn(
-          getButtonStyling("secondary", "base"),
-          "flex items-center gap-1.5 text-center font-medium underline-offset-2 outline-none hover:underline"
-        )}
-        rel="noreferrer"
-      >
-        <PlaneLogo className="h-4 w-auto text-primary" />
-        {t("powered_by_plane_pages")}
-      </a>
+      <Button
+        variant="secondary"
+        size="sm"
+        stretch="auto"
+        label={t("powered_by_plane_pages")}
+        icon={<PlaneLogo className="h-4 w-auto text-primary" />}
+        nativeButton={false}
+        render={<a href="https://plane.so/pages" target="_blank" rel="noreferrer" />}
+      />
     </div>
   );
 }

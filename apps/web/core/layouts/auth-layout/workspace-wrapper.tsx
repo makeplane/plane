@@ -12,11 +12,10 @@ import useSWR from "swr";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { cn } from "@plane/utils";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
@@ -179,19 +178,34 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
-                <Link href="/" className={cn(getButtonStyling("primary", "base"))}>
-                  Go Home
-                </Link>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  stretch="auto"
+                  label="Go Home"
+                  nativeButton={false}
+                  render={<Link href="/" />}
+                />
               )}
               {allWorkspaces?.length > 0 && (
-                <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
-                  Visit Profile
-                </Link>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  stretch="auto"
+                  label="Visit Profile"
+                  nativeButton={false}
+                  render={<Link href="/settings/profile/general/" />}
+                />
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
-                  Create new workspace
-                </Link>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  stretch="auto"
+                  label="Create new workspace"
+                  nativeButton={false}
+                  render={<Link href="/create-workspace/" />}
+                />
               )}
             </div>
           </div>
@@ -216,16 +230,22 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <Link href="/invitations">
-                <span>
-                  <Button variant="secondary">Check pending invites</Button>
-                </span>
-              </Link>
-              <Link href="/create-workspace">
-                <span>
-                  <Button variant="primary">Create new workspace</Button>
-                </span>
-              </Link>
+              <Button
+                variant="secondary"
+                size="sm"
+                stretch="auto"
+                label="Check pending invites"
+                nativeButton={false}
+                render={<Link href="/invitations" />}
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label="Create new workspace"
+                nativeButton={false}
+                render={<Link href="/create-workspace" />}
+              />
             </div>
           </div>
         </div>

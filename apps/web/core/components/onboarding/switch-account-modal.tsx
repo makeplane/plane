@@ -10,7 +10,7 @@ import { useTheme } from "next-themes";
 import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useUser } from "@/hooks/store/user";
@@ -104,9 +104,14 @@ export function SwitchAccountModal(props: Props) {
                   </div>
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-3 p-4 sm:px-6">
-                  <Button variant="secondary" size="lg" onClick={handleSwitchAccount} disabled={switchingAccount}>
-                    {switchingAccount ? "Switching..." : "Switch account"}
-                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    label={switchingAccount ? "Switching..." : "Switch account"}
+                    onClick={handleSwitchAccount}
+                    disabled={switchingAccount}
+                  />
                 </div>
               </Dialog.Panel>
             </Transition.Child>

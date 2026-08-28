@@ -6,7 +6,7 @@
 
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 // types
 import { CheckIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
@@ -36,10 +36,10 @@ export function PageOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={getButtonStyling("secondary", "lg")}>
+        <Button variant="secondary" size="md" stretch="auto" render={<div />}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails?.label}
-        </div>
+        </Button>
       }
       placement="bottom-end"
       maxHeight="lg"

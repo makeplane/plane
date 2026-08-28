@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -247,9 +247,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-        Continue
-      </Button>
+      <Button variant="primary" size="lg" stretch="full" label="Continue" type="submit" disabled={isButtonDisabled} />
 
       {/* Marketing Consent */}
       {!instanceConfig?.is_self_managed && (

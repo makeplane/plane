@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
@@ -199,12 +199,15 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
         {issues.length > 0 && (
           <div className="flex items-center justify-end gap-2 p-3">
-            <Button variant="secondary" size="lg" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button variant="error-fill" size="lg" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-              {isSubmitting ? "Deleting..." : "Delete selected work items"}
-            </Button>
+            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+            <Button
+              variant="danger"
+              size="md"
+              stretch="auto"
+              label={isSubmitting ? "Deleting..." : "Delete selected work items"}
+              onClick={handleSubmit(handleDelete)}
+              loading={isSubmitting}
+            />
           </div>
         )}
       </form>

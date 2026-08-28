@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import type { UseFormGetValues } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
 
@@ -58,8 +58,13 @@ export const CustomThemeDownloadConfigButton = observer(function CustomThemeDown
   };
 
   return (
-    <Button variant="secondary" size="lg" type="button" onClick={handleDownloadConfig}>
-      Download config
-    </Button>
+    <Button
+      variant="secondary"
+      size="md"
+      stretch="auto"
+      label="Download config"
+      type="button"
+      onClick={handleDownloadConfig}
+    />
   );
 });

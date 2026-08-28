@@ -14,7 +14,7 @@ import { CheckCircle2 } from "lucide-react";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -162,21 +162,22 @@ function UserInvitationsPage() {
                 <div className="flex items-center gap-3">
                   <Button
                     variant="primary"
+                    size="md"
+                    stretch="auto"
+                    label={t("accept_and_join")}
                     type="submit"
-                    size="lg"
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                  >
-                    {t("accept_and_join")}
-                  </Button>
-                  <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span>
-                      <Button variant="secondary" size="lg">
-                        {t("go_home")}
-                      </Button>
-                    </span>
-                  </Link>
+                  />
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    label={t("go_home")}
+                    nativeButton={false}
+                    render={<Link href={`/${redirectWorkspaceSlug}`} />}
+                  />
                 </div>
               </div>
             </div>

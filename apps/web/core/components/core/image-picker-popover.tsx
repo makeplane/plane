@@ -17,7 +17,8 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Tabs } from "@plane/propel/tabs";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -193,9 +194,15 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
 
   return (
     <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
-      <Popover.Button className={getButtonStyling("secondary", "sm")} onClick={handleOnClick} disabled={disabled}>
+      <ButtonElement
+        variant="secondary"
+        size="xs"
+        stretch="auto"
+        disabled={disabled}
+        render={<Popover.Button onClick={handleOnClick} disabled={disabled} />}
+      >
         {label}
-      </Popover.Button>
+      </ButtonElement>
 
       {isOpen && (
         <Popover.Panel
@@ -244,9 +251,13 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                             </InputGroup>
                           )}
                         />
-                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
-                          Search
-                        </Button>
+                        <Button
+                          variant="primary"
+                          size="lg"
+                          stretch="auto"
+                          label="Search"
+                          onClick={() => setSearchParams(formData.search)}
+                        />
                       </div>
                       {unsplashImages ? (
                         unsplashImages.length > 0 ? (
@@ -352,22 +363,23 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button
                         variant="secondary"
+                        size="sm"
+                        stretch="auto"
+                        label="Cancel"
                         onClick={() => {
                           setIsOpen(false);
                           setImage(null);
                         }}
-                      >
-                        Cancel
-                      </Button>
+                      />
                       <Button
                         variant="primary"
-                        className="w-full"
+                        size="sm"
+                        stretch="full"
+                        label={isImageUploading ? "Uploading" : "Upload & Save"}
                         onClick={handleSubmit}
                         disabled={!image}
                         loading={isImageUploading}
-                      >
-                        {isImageUploading ? "Uploading" : "Upload & Save"}
-                      </Button>
+                      />
                     </div>
                   </div>
                 </Tabs.Content>

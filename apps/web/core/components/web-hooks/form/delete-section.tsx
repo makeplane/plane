@@ -5,7 +5,7 @@
  */
 
 import { Disclosure, Transition } from "@headlessui/react";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 
 type Props = {
@@ -41,9 +41,7 @@ export function WebhookDeleteSection(props: Props) {
                   webhook.
                 </span>
                 <div>
-                  <Button variant="error-fill" size="lg" onClick={openDeleteModal}>
-                    Delete webhook
-                  </Button>
+                  <Button variant="danger" size="md" stretch="auto" label="Delete webhook" onClick={openDeleteModal} />
                 </div>
               </div>
             </Disclosure.Panel>

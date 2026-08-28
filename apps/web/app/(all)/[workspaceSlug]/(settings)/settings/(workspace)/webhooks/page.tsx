@@ -10,7 +10,7 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // components
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -78,9 +78,13 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
           title={t("workspace_settings.settings.webhooks.title")}
           description={t("workspace_settings.settings.webhooks.description")}
           control={
-            <Button variant="primary" size="lg" onClick={() => setShowCreateWebhookModal(true)}>
-              {t("workspace_settings.settings.webhooks.add_webhook")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={t("workspace_settings.settings.webhooks.add_webhook")}
+              onClick={() => setShowCreateWebhookModal(true)}
+            />
           }
         />
         {Object.keys(webhooks).length > 0 ? (

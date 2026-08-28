@@ -13,7 +13,7 @@ import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -177,16 +177,18 @@ export function IssueCommentToolbar(props: Props) {
         </div>
         {showSubmitButton && (
           <div className="sticky right-1">
-            <Button
-              type="submit"
-              variant="primary"
-              className="px-2.5 py-1.5 text-11"
-              onClick={handleSubmit}
-              disabled={isSubmitButtonDisabled}
-              loading={isSubmitting}
-            >
-              {t(submitButtonText)}
-            </Button>
+            <span className="px-2.5 py-1.5 text-11">
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label={t(submitButtonText)}
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSubmitButtonDisabled}
+                loading={isSubmitting}
+              />
+            </span>
           </div>
         )}
       </div>

@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
@@ -153,14 +153,20 @@ export const Exporter = observer(function Exporter(props: Props) {
           onCheckedChange={setMultiple}
         />
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={handleClose}>
-            {t("cancel")}
-          </Button>
-          <Button variant="primary" onClick={ExportCSVToMail} disabled={exportLoading} loading={exportLoading}>
-            {exportLoading
-              ? `${t("workspace_settings.settings.exports.exporting")}...`
-              : t("workspace_settings.settings.exports.title")}
-          </Button>
+          <Button variant="secondary" size="sm" stretch="auto" label={t("cancel")} onClick={handleClose} />
+          <Button
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            label={
+              exportLoading
+                ? `${t("workspace_settings.settings.exports.exporting")}...`
+                : t("workspace_settings.settings.exports.title")
+            }
+            onClick={ExportCSVToMail}
+            disabled={exportLoading}
+            loading={exportLoading}
+          />
         </div>
       </div>
     </ModalCore>

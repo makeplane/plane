@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
@@ -102,9 +102,13 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
           icon={<ListFilter />}
           customClassName={storeType !== EIssuesStoreType.EPIC ? "border-none" : ""}
           actionElement={
-            <Button variant="secondary" onClick={() => resetFilters(rootIssueId)}>
-              {t("sub_work_item.empty_state.list_filters.action")}
-            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              stretch="auto"
+              label={t("sub_work_item.empty_state.list_filters.action")}
+              onClick={() => resetFilters(rootIssueId)}
+            />
           }
         />
       ) : (

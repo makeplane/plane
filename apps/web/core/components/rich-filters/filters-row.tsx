@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { ListFilterPlus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 import { cn, EHeaderVariant, Header, Loader } from "@plane/ui";
@@ -79,25 +79,39 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   const rightContent = !disabledAllOperations && (
     <>
       <ElementTransition show={filter.canClearFilters}>
-        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.clearFilters}>
-          {filter.clearFilterOptions?.label ?? "Clear all"}
-        </Button>
+        <span className={COMMON_OPERATION_BUTTON_CLASSNAME}>
+          <Button
+            variant="secondary"
+            size="sm"
+            stretch="auto"
+            label={filter.clearFilterOptions?.label ?? "Clear all"}
+            onClick={filter.clearFilters}
+          />
+        </span>
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
-        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.saveView}>
-          {filter.saveViewOptions?.label ?? "Save view"}
-        </Button>
+        <span className={COMMON_OPERATION_BUTTON_CLASSNAME}>
+          <Button
+            variant="secondary"
+            size="sm"
+            stretch="auto"
+            label={filter.saveViewOptions?.label ?? "Save view"}
+            onClick={filter.saveView}
+          />
+        </span>
       </ElementTransition>
       <ElementTransition show={filter.canUpdateView}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={handleUpdate}
-          loading={isUpdating}
-          disabled={isUpdating}
-        >
-          {isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
-        </Button>
+        <span className={COMMON_OPERATION_BUTTON_CLASSNAME}>
+          <Button
+            variant="secondary"
+            size="sm"
+            stretch="auto"
+            label={isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
+            onClick={handleUpdate}
+            loading={isUpdating}
+            disabled={isUpdating}
+          />
+        </span>
       </ElementTransition>
     </>
   );

@@ -12,7 +12,7 @@ import { useParams } from "react-router";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
@@ -282,12 +282,15 @@ export function ExportPageModal(props: Props) {
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="lg" loading={isExporting} onClick={handleExport}>
-            {isExporting ? "Exporting" : "Export"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isExporting ? "Exporting" : "Export"}
+            loading={isExporting}
+            onClick={handleExport}
+          />
         </div>
       </div>
     </ModalCore>

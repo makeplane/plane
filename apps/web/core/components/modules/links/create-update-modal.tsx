@@ -7,9 +7,9 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
+import { Button } from "@makeplane/propel/components/button";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // plane ui
@@ -144,12 +144,15 @@ export function CreateUpdateModuleLinkModal(props: Props) {
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-            {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
+            type="submit"
+            loading={isSubmitting}
+          />
         </div>
       </form>
     </ModalCore>

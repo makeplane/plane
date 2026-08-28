@@ -13,7 +13,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { PasswordStrengthIndicator } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
@@ -272,11 +272,19 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
             </div>
           </div>
           <div>
-            <Button variant="primary" size="xl" type="submit" loading={isSubmitting} disabled={isButtonDisabled}>
-              {isSubmitting
-                ? `${t("auth.common.password.change_password.label.submitting")}`
-                : t("auth.common.password.change_password.label.default")}
-            </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              stretch="auto"
+              label={
+                isSubmitting
+                  ? `${t("auth.common.password.change_password.label.submitting")}`
+                  : t("auth.common.password.change_password.label.default")
+              }
+              type="submit"
+              loading={isSubmitting}
+              disabled={isButtonDisabled}
+            />
           </div>
         </div>
       </form>

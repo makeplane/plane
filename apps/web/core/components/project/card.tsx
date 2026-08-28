@@ -12,7 +12,7 @@ import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -353,17 +353,19 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   ))}
                 {!isMemberOfProject && (
                   <div className="flex items-center">
-                    <Button
-                      variant="link"
-                      className="!p-0 font-semibold"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setJoinProjectModal(true);
-                      }}
-                    >
-                      Join
-                    </Button>
+                    <span className="!p-0 font-semibold">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        stretch="auto"
+                        label="Join"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setJoinProjectModal(true);
+                        }}
+                      />
+                    </span>
                   </div>
                 )}
               </>

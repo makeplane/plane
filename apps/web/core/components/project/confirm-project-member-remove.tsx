@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IUserLite } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -82,12 +82,18 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
         </div>
       </div>
       <div className="flex justify-end gap-2 p-4 sm:px-6">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-          {isCurrentUser ? (isDeleteLoading ? "Leaving..." : "Leave") : isDeleteLoading ? "Removing..." : "Remove"}
-        </Button>
+        <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+        <Button
+          variant="danger"
+          size="md"
+          stretch="auto"
+          label={
+            isCurrentUser ? (isDeleteLoading ? "Leaving..." : "Leave") : isDeleteLoading ? "Removing..." : "Remove"
+          }
+          tabIndex={1}
+          onClick={handleDeletion}
+          loading={isDeleteLoading}
+        />
       </div>
     </ModalCore>
   );

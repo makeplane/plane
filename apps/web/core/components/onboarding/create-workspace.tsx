@@ -13,7 +13,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
@@ -106,17 +106,15 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
     <div className="space-y-4">
       {!!invitedWorkspaces && (
         <>
-          <Button
-            variant="ghost"
-            size="xl"
-            className="flex w-full items-center gap-2 bg-surface-2 text-14"
-            onClick={handleCurrentViewChange}
-          >
-            I want to join invited workspaces{" "}
-            <span className="flex h-4 w-4 items-center justify-center rounded-xs bg-accent-primary/80 text-11 font-medium text-on-color">
-              {invitedWorkspaces}
-            </span>
-          </Button>
+          <span className="flex w-full items-center gap-2 bg-surface-2 text-14">
+            <Button
+              variant="ghost"
+              size="lg"
+              stretch="full"
+              onClick={handleCurrentViewChange}
+              label={`I want to join invited workspaces (${invitedWorkspaces})`}
+            />
+          </span>
           <div className="mx-auto mt-4 flex items-center sm:w-96">
             <hr className="w-full border-strong" />
             <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
@@ -266,9 +264,15 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             )}
           </div>
         </div>
-        <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
-          {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
-        </Button>
+        <Button
+          variant="primary"
+          type="submit"
+          size="lg"
+          disabled={isButtonDisabled}
+          stretch="full"
+          loading={isSubmitting}
+          label={t("workspace_creation.button.default")}
+        />
       </form>
     </div>
   );

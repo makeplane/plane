@@ -7,7 +7,7 @@
 import { useState } from "react";
 // plane imports
 import { ROLE } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { Spinner } from "@plane/ui";
@@ -102,22 +102,21 @@ export function WorkspaceJoinInvitesStep(props: Props) {
       <div className="flex flex-col gap-4">
         <Button
           variant="primary"
-          size="xl"
-          className="w-full"
+          size="lg"
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
-        >
-          {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
-        </Button>
+          stretch="full"
+          loading={isJoiningWorkspaces}
+          label={"Continue"}
+        />
         <Button
           variant="ghost"
-          size="xl"
-          className="w-full"
+          size="lg"
+          stretch="full"
+          label="Create new workspace"
           onClick={handleCurrentViewChange}
           disabled={isJoiningWorkspaces}
-        >
-          Create new workspace
-        </Button>
+        />
       </div>
     </div>
   ) : (

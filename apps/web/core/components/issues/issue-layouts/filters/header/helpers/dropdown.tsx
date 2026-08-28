@@ -10,7 +10,7 @@ import { usePopper } from "react-popper";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 type Props = {
   children: React.ReactNode;
@@ -55,35 +55,29 @@ export function FiltersDropdown(props: Props) {
               </button>
             ) : (
               <div ref={setReferenceElement}>
-                <div className="hidden @4xl:flex">
+                <div className="relative hidden @4xl:flex">
                   <Button
                     disabled={disabled}
                     variant="secondary"
-                    prependIcon={icon}
+                    size="md"
+                    stretch="auto"
+                    icon={icon}
                     tabIndex={tabIndex}
-                    className="relative"
-                    size="lg"
-                  >
-                    <>
-                      <div className={`${open ? "text-primary" : "text-secondary"}`}>
-                        <span>{title}</span>
-                      </div>
-                      {isFiltersApplied && (
-                        <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
-                      )}
-                    </>
-                  </Button>
+                    label={title ?? ""}
+                  />
+                  {isFiltersApplied && (
+                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
+                  )}
                 </div>
                 <div className="flex @4xl:hidden">
                   <Button
-                    disabled={disabled}
-                    ref={setReferenceElement}
                     variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    label={typeof title === "string" ? title : "Filters"}
+                    disabled={disabled}
                     tabIndex={tabIndex}
-                    size="lg"
-                  >
-                    {miniIcon || title}
-                  </Button>
+                  />
                 </div>
               </div>
             )}

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Banner } from "@plane/propel/banner";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ArchiveIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 // components
@@ -74,10 +74,11 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             action={
               <Button
                 variant="secondary"
+                size="sm"
+                stretch="auto"
+                label="Go to archives"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
-              >
-                Go to archives
-              </Button>
+              />
             }
             className="border-b border-subtle"
           />

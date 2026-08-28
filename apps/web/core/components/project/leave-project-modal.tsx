@@ -9,9 +9,9 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangleIcon } from "lucide-react";
 // Plane imports
+import { Button } from "@makeplane/propel/components/button";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -171,12 +171,15 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
           />
         </div>
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="error-fill" size="lg" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Leaving..." : "Leave Project"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button
+            variant="danger"
+            size="md"
+            stretch="auto"
+            label={isSubmitting ? "Leaving..." : "Leave Project"}
+            type="submit"
+            loading={isSubmitting}
+          />
         </div>
       </form>
     </ModalCore>

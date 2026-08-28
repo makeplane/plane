@@ -12,7 +12,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 // ui
@@ -247,13 +247,24 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
       </div>
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <Button variant="primary" type="submit" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
-        </Button>
+        <Button
+          variant="primary"
+          size="lg"
+          stretch="auto"
+          label={isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
+          type="submit"
+          disabled={!isValid}
+          loading={isSubmitting}
+        />
         {!secondaryButton && (
-          <Button variant="secondary" type="button" size="xl" onClick={() => router.back()}>
-            {t("common.go_back")}
-          </Button>
+          <Button
+            variant="secondary"
+            size="lg"
+            stretch="auto"
+            label={t("common.go_back")}
+            type="button"
+            onClick={() => router.back()}
+          />
         )}
       </div>
     </form>

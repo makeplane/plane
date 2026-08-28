@@ -11,7 +11,7 @@ import { Circle } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
@@ -115,14 +115,13 @@ export const IssuesHeader = observer(function IssuesHeader() {
         {canUserCreateIssue && (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
-          >
-            <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
-            <div className="hidden sm:block">{t("issue.add.label")}</div>
-          </Button>
+            label={t("issue.add.label")}
+          />
         )}
       </Header.RightItem>
     </Header>

@@ -7,7 +7,7 @@
 import React from "react";
 import { AlertCircle } from "lucide-react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { TransferIcon } from "@plane/propel/icons";
 
 type Props = {
@@ -27,9 +27,15 @@ export function TransferIssues(props: Props) {
 
       {canTransferIssues && (
         <div>
-          <Button variant="primary" size="lg" prependIcon={<TransferIcon />} onClick={handleClick} disabled={disabled}>
-            Transfer work items
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label="Transfer work items"
+            icon={<TransferIcon />}
+            onClick={handleClick}
+            disabled={disabled}
+          />
         </div>
       )}
     </div>

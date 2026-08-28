@@ -12,7 +12,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -446,9 +446,15 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
-              {isLoading ? t("updating") : t("common.update_project")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={isLoading ? t("updating") : t("common.update_project")}
+              type="submit"
+              loading={isLoading}
+              disabled={!isAdmin}
+            />
             <span className="text-13 text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
