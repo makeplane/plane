@@ -53,7 +53,7 @@
       "features": "./*/feature/, packages/action_words, packages/api_objects, packages/page_objects ve varsa assets/ddl öğelerini okur. TestCopilot veri kaynağını paylaşabilir.",
       "wiki": "Bağlı çalışma dizinindeki docs/ veya wiki/ markdown dosyalarını okur.",
       "prd": "Bağlı çalışma dizinindeki prd/ markdown dosyalarını okur.",
-      "environments": "config/env.py ve env/*.yaml şablonlarını okur. env_local veya gizli değerleri asla okumaz."
+      "environments": "config/env.py içindeki DATABASES ile env_local.py'deki adlandırılmış ENVIRONMENTS (gizlenmiş) okunur. Yöneticiler workdir'deki env_local.py dosyasını düzenleyebilir. Gizler asla commit edilmez."
     }
   }
 }

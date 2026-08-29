@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Nessun risultato corrisponde a questo filtro.",
-    "redacted_hint": "Password e token sono oscurati. I file env locali non vengono mai letti."
+    "redacted_hint": "Password e token sono oscurati in questo elenco. Gli admin possono modificare env_local.py nel workdir associato; non viene mai committato.",
+    "named_hint": "Gli ambienti con nome provengono da ENVIRONMENTS in env_local.py. Attiva scrive config/.active_env tramite packages.config.",
+    "activate": "Attiva",
+    "activating": "Attivazione…",
+    "active": "Attivo",
+    "activated": "Ambiente attivato.",
+    "activate_failed": "Impossibile attivare questo ambiente.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Questo file è gitignored. Il salvataggio scrive solo il workdir del Runner. I segreti passano dalla sessione del browser.",
+    "env_local_save": "Salva env_local.py",
+    "env_local_saving": "Salvataggio…",
+    "env_local_saved": "env_local.py salvato.",
+    "env_local_example": "Visualizzazione di env_local.py.example. Salvare crea env_local.py nel workdir.",
+    "env_local_load_error": "Impossibile caricare env_local.py."
   }
 }

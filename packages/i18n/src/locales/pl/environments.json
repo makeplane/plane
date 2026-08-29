@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Brak wyników dla tego filtra.",
-    "redacted_hint": "Hasła i tokeny są ukryte. Lokalne pliki env nigdy nie są czytane."
+    "redacted_hint": "Hasła i tokeny są ukryte na tej liście. Administratorzy mogą edytować env_local.py w powiązanym workdir; plik nigdy nie jest commitowany.",
+    "named_hint": "Nazwane środowiska pochodzą z ENVIRONMENTS w env_local.py. Aktywacja zapisuje config/.active_env przez packages.config.",
+    "activate": "Aktywuj",
+    "activating": "Aktywowanie…",
+    "active": "Aktywne",
+    "activated": "Środowisko aktywowane.",
+    "activate_failed": "Nie można aktywować tego środowiska.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Ten plik jest w gitignore. Zapis trafia tylko do workdir Runnera. Sekrety przechodzą przez sesję przeglądarki.",
+    "env_local_save": "Zapisz env_local.py",
+    "env_local_saving": "Zapisywanie…",
+    "env_local_saved": "Zapisano env_local.py.",
+    "env_local_example": "Wyświetlanie env_local.py.example. Zapis utworzy env_local.py w workdir.",
+    "env_local_load_error": "Nie można wczytać env_local.py."
   }
 }

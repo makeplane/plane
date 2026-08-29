@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "沒有符合篩選條件的結果。",
-    "redacted_hint": "密碼與 token 已遮罩。永不讀取本機 env 檔。"
+    "redacted_hint": "此清單中的密碼與 token 已遮罩。管理員可在綁定的工作目錄編輯 env_local.py；永不提交。",
+    "named_hint": "命名環境來自 env_local.py 中的 ENVIRONMENTS。啟用會透過 packages.config 寫入 config/.active_env。",
+    "activate": "啟用",
+    "activating": "正在啟用…",
+    "active": "目前",
+    "activated": "環境已啟用。",
+    "activate_failed": "無法啟用此環境。",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "此檔案已被 gitignore。儲存只寫入 Runner 工作目錄。密鑰會經過您的瀏覽器工作階段。",
+    "env_local_save": "儲存 env_local.py",
+    "env_local_saving": "正在儲存…",
+    "env_local_saved": "env_local.py 已儲存。",
+    "env_local_example": "正在顯示 env_local.py.example。儲存後會在工作目錄建立 env_local.py。",
+    "env_local_load_error": "無法載入 env_local.py。"
   }
 }

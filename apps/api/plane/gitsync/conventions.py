@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from plane.gitsync.env_catalog import scan_named_environments
 from plane.gitsync.files import is_environment_template, is_feature_file
 from plane.gitsync.registry import (
     MODULE_ENVIRONMENTS,
@@ -87,6 +88,9 @@ def _scan_features(root: Path) -> dict[str, Any]:
 
 
 def _scan_environments(root: Path) -> dict[str, Any]:
+    named = scan_named_environments(root)
+    if named is not None:
+        return named
     environments = []
     for path in _iter_files(root):
         rel = _rel(root, path)
@@ -98,6 +102,9 @@ def _scan_environments(root: Path) -> dict[str, Any]:
             "environments": len(environments),
         },
         "environments": environments,
+        "active_env": None,
+        "env_local_present": (root / "config" / "env_local.py").is_file(),
+        "mode": "legacy",
     }
 
 
@@ -190,6 +197,8 @@ def _parse_env_file(rel: str, text: str) -> dict[str, Any]:
         "id": env_id,
         "name": env_id,
         "source": rel,
+        "mode": "legacy",
+        "active": False,
         "targets": targets,
         "datasources": list(ds_map.values()),
         "secret_keys": sorted(set(secret_keys)),

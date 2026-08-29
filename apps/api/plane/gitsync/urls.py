@@ -10,6 +10,8 @@ from plane.gitsync.views import (
     GitRemoteSyncEndpoint,
     ModuleBindingListEndpoint,
     ModuleCatalogEndpoint,
+    ModuleEnvLocalEndpoint,
+    ModuleEnvironmentActivateEndpoint,
     ModuleFileEndpoint,
 )
 
@@ -43,5 +45,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/gitsync/modules/<str:module_key>/files/",
         ModuleFileEndpoint.as_view(),
         name="gitsync-module-files",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/gitsync/modules/environments/activate/",
+        ModuleEnvironmentActivateEndpoint.as_view(),
+        name="gitsync-environments-activate",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/gitsync/modules/environments/env-local/",
+        ModuleEnvLocalEndpoint.as_view(),
+        name="gitsync-environments-env-local",
     ),
 ]

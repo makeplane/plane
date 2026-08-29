@@ -141,6 +141,83 @@ def test_scan_features_and_environments(tmp_path):
     assert "PASSWORD" in redact_secrets('PASSWORD = "x"\n')
 
 
+def test_scan_named_environments_redacts_secrets(tmp_path):
+    from plane.gitsync.conventions import scan_module_catalog
+    from plane.gitsync.env_catalog import read_env_local_payload
+    from plane.gitsync.files import FileAccessError, resolve_module_file
+
+    config = tmp_path / "config"
+    config.mkdir()
+    (config / "env.py").write_text(
+        "DATABASES = {\n"
+        '    "main": {"type": "mysql", "host": "127.0.0.1", "port": 3306,'
+        ' "user": "root", "password": "CHANGE_ME", "database": "example"}\n'
+        "}\n"
+        'TEST_BASE_URL = ""\n',
+        encoding="utf-8",
+    )
+    (config / "env_local.py").write_text(
+        "ACTIVE_ENV = \"dev\"\n"
+        "ENVIRONMENTS = {\n"
+        '    "dev": {\n'
+        '        "DATABASES": {"main": {"host": "10.0.0.1", "password": "s3cret", "database": "app_dev"}},\n'
+        '        "TEST_BASE_URL": "http://127.0.0.1:8080",\n'
+        '        "TEST_ACCOUNT": {"username": "admin", "password": "pw"},\n'
+        "    },\n"
+        '    "uat": {\n'
+        '        "DATABASES": {"main": {"host": "10.0.0.2", "password": "other", "database": "app_uat"}},\n'
+        '        "TEST_BASE_URL": "http://127.0.0.1:8081",\n'
+        "    },\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    (config / ".active_env").write_text("uat\n", encoding="utf-8")
+
+    payload = scan_module_catalog("environments", str(tmp_path))
+    assert payload["mode"] == "named"
+    assert payload["active_env"] == "uat"
+    assert payload["env_local_present"] is True
+    ids = [item["id"] for item in payload["environments"]]
+    assert ids == ["dev", "uat"]
+    uat = payload["environments"][1]
+    assert uat["active"] is True
+    assert uat["targets"][0]["base_url"] == "http://127.0.0.1:8081"
+    assert uat["datasources"][0]["alias"] == "main"
+    assert uat["datasources"][0]["engine"] == "mysql"
+    assert uat["datasources"][0]["host"] == "10.0.0.2"
+    assert uat["datasources"][0]["database"] == "app_uat"
+    assert "s3cret" not in str(payload)
+    assert "pw" not in str(uat)
+    assert any("password" in key for key in uat["secret_keys"])
+
+    with pytest.raises(FileAccessError):
+        resolve_module_file(str(tmp_path), "environments", "config/env_local.py")
+    local = read_env_local_payload(str(tmp_path))
+    assert local["exists"] is True
+    assert "s3cret" in local["content"]
+
+
+def test_scan_named_environments_falls_back_to_example(tmp_path):
+    from plane.gitsync.conventions import scan_module_catalog
+
+    config = tmp_path / "config"
+    config.mkdir()
+    (config / "env.py").write_text(
+        'DATABASES = {"main": {"type": "postgres", "host": "127.0.0.1", "database": "example", "password": "x"}}\n',
+        encoding="utf-8",
+    )
+    (config / "env_local.py.example").write_text(
+        "ENVIRONMENTS = {\n"
+        '    "dev": {"DATABASES": {"main": {"host": "127.0.0.1"}}, "TEST_BASE_URL": "http://localhost:8000"}\n'
+        "}\n",
+        encoding="utf-8",
+    )
+    payload = scan_module_catalog("environments", str(tmp_path))
+    assert payload["environments"][0]["id"] == "dev"
+    assert payload["env_local_present"] is False
+    assert payload["environments"][0]["source"] == "config/env_local.py.example"
+
+
 def test_https_repo_url_validation():
     from plane.gitsync.git_url import GitUrlError, validate_branch, validate_https_repo_url
 

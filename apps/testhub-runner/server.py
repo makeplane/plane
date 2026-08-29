@@ -17,7 +17,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from git_sync import GitSyncError, clone_or_fetch, resolve_exec_workdir
-from whitelist import validate_argv
+from whitelist import validate_argv, validate_local_file_content, validate_local_file_path
 
 WORKDIR = Path(os.environ.get("TESTHUB_WORKDIR", "/opt/testhub/workdir"))
 HOST = os.environ.get("TESTHUB_RUNNER_HOST", "0.0.0.0")
@@ -121,6 +121,11 @@ def missing_apps_module(workdir: Path, argv: list[str]) -> str | None:
         if (workdir / rel / "__main__.py").is_file():
             return None
         return f"workdir has no {module} (expected {rel.as_posix()}/__main__.py)."
+    if module == "packages.config":
+        rel = Path("packages") / "config.py"
+        if (workdir / rel).is_file():
+            return None
+        return f"workdir has no {module} (expected {rel.as_posix()})."
     if not module.startswith("apps."):
         return None
     rel = Path(*parts)
@@ -184,6 +189,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/v1/git-sync":
             self._handle_git_sync()
             return
+        if path == "/v1/local-file":
+            self._handle_local_file()
+            return
         self._json(404, {"error": "not found"})
 
     def _handle_exec(self) -> None:
@@ -242,6 +250,33 @@ class Handler(BaseHTTPRequestHandler):
                 "git": read_git_meta(workdir),
             },
         )
+
+    def _handle_local_file(self) -> None:
+        data = self._read_json()
+        if data is None:
+            return
+        op = str(data.get("op") or "write").strip().lower()
+        if op != "write":
+            self._json(400, {"error": "op must be write"})
+            return
+        try:
+            rel = validate_local_file_path(str(data.get("path") or ""))
+            content = validate_local_file_content(data.get("content") or "")
+            workdir = resolve_exec_workdir(data.get("workdir"), WORKDIR)
+        except (ValueError, GitSyncError) as exc:
+            self._json(400, {"error": str(exc)})
+            return
+        if not workdir.is_dir():
+            self._json(500, {"error": f"workdir missing: {workdir}"})
+            return
+        dest = workdir / Path(*rel.split("/"))
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(content, encoding="utf-8")
+        except OSError as exc:
+            self._json(500, {"error": str(exc)})
+            return
+        self._json(200, {"ok": True, "path": rel})
 
     def _handle_git_sync(self) -> None:
         data = self._read_json()

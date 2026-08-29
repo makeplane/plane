@@ -53,7 +53,7 @@
       "features": "Czyta ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects oraz — jeśli istnieje — assets/ddl. Może współdzielić źródło TestCopilot.",
       "wiki": "Odczytuje markdown z docs/ lub wiki/ w powiązanym katalogu roboczym.",
       "prd": "Odczytuje markdown z prd/ w powiązanym katalogu roboczym.",
-      "environments": "Czyta config/env.py i szablony env/*.yaml. Nigdy nie czyta env_local ani wartości tajnych."
+      "environments": "Czyta DATABASES z config/env.py i nazwane ENVIRONMENTS (z env_local.py, ukryte). Administratorzy mogą edytować env_local.py w workdir. Sekrety nigdy nie są commitowane."
     }
   }
 }

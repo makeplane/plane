@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "이 필터와 일치하는 결과가 없습니다.",
-    "redacted_hint": "비밀번호와 토큰은 가려집니다. 로컬 env 파일은 읽지 않습니다."
+    "redacted_hint": "이 목록의 비밀번호와 토큰은 가려집니다. 관리자는 바인딩된 workdir의 env_local.py를 편집할 수 있습니다. 커밋되지 않습니다.",
+    "named_hint": "명명된 환경은 env_local.py의 ENVIRONMENTS에서 옵니다. 활성화하면 packages.config가 config/.active_env를 씁니다.",
+    "activate": "활성화",
+    "activating": "활성화 중…",
+    "active": "사용 중",
+    "activated": "환경이 활성화되었습니다.",
+    "activate_failed": "이 환경을 활성화할 수 없습니다.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "이 파일은 gitignore됩니다. 저장은 Runner workdir에만 기록됩니다. 비밀 값은 브라우저 세션을 통과합니다.",
+    "env_local_save": "env_local.py 저장",
+    "env_local_saving": "저장 중…",
+    "env_local_saved": "env_local.py가 저장되었습니다.",
+    "env_local_example": "env_local.py.example을 표시합니다. 저장하면 workdir에 env_local.py가 만들어집니다.",
+    "env_local_load_error": "env_local.py를 불러올 수 없습니다."
   }
 }

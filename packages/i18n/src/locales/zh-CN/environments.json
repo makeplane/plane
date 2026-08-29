@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "没有符合筛选条件的结果。",
-    "redacted_hint": "密码和 token 已脱敏。永不读取本地 env 文件。"
+    "redacted_hint": "此列表中的密码和 token 已脱敏。管理员可在绑定的工作目录编辑 env_local.py；永不提交。",
+    "named_hint": "命名环境来自 env_local.py 中的 ENVIRONMENTS。激活会通过 packages.config 写入 config/.active_env。",
+    "activate": "激活",
+    "activating": "正在激活…",
+    "active": "当前",
+    "activated": "环境已激活。",
+    "activate_failed": "无法激活此环境。",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "此文件已被 gitignore。保存只写入 Runner 工作目录。密钥会经过您的浏览器会话。",
+    "env_local_save": "保存 env_local.py",
+    "env_local_saving": "正在保存…",
+    "env_local_saved": "env_local.py 已保存。",
+    "env_local_example": "正在显示 env_local.py.example。保存后会在工作目录创建 env_local.py。",
+    "env_local_load_error": "无法加载 env_local.py。"
   }
 }

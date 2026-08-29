@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from plane.db.models import Project
 from plane.testhub.models import TesthubJob
-from plane.testhub.whitelist import build_argv
+from plane.testhub.whitelist import CONFIG_USE_KIND, build_argv
 
 ACTIVE_JOB_STATUSES = (TesthubJob.Status.QUEUED, TesthubJob.Status.RUNNING)
 
@@ -47,5 +47,25 @@ def enqueue_index_platform(*, project: Project, user, touch_remote_status: bool 
         repo.last_sync_error = ""
         repo.save(update_fields=["last_sync_status", "last_sync_error", "updated_at"])
 
+    run_testhub_job.delay(str(job.id))
+    return job
+
+
+def enqueue_config_use(*, project: Project, user, name: str, workdir: str) -> TesthubJob:
+    from plane.testhub.bgtasks import run_testhub_job
+
+    if TesthubJob.objects.filter(project_id=project.id, status__in=ACTIVE_JOB_STATUSES).exists():
+        raise TesthubJobConflict("A testhub job is already running for this project.")
+
+    params = {"name": name, "workdir": workdir}
+    argv = build_argv(CONFIG_USE_KIND, params)
+    job = TesthubJob.objects.create(
+        project=project,
+        workspace_id=project.workspace_id,
+        kind=CONFIG_USE_KIND,
+        params=params,
+        argv=argv,
+        requested_by=user,
+    )
     run_testhub_job.delay(str(job.id))
     return job

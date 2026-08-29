@@ -14,6 +14,8 @@ import type {
   TGitSyncModuleKey,
   TModuleCatalogResponse,
   TProjectGitRemote,
+  TEnvLocalPayload,
+  TEnvironmentActivateResponse,
 } from "@plane/types";
 import { APIService } from "../api.service";
 
@@ -114,6 +116,34 @@ export class GitsyncService extends APIService {
     path: string
   ): Promise<{ path: string; content: string; module_key: string }> {
     return this.get(`${this.root(workspaceSlug, projectId)}/modules/${moduleKey}/files/`, { params: { path } })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async activateEnvironment(
+    workspaceSlug: string,
+    projectId: string,
+    name: string
+  ): Promise<TEnvironmentActivateResponse> {
+    return this.post(`${this.root(workspaceSlug, projectId)}/modules/environments/activate/`, { name })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getEnvLocal(workspaceSlug: string, projectId: string): Promise<TEnvLocalPayload> {
+    return this.get(`${this.root(workspaceSlug, projectId)}/modules/environments/env-local/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async putEnvLocal(workspaceSlug: string, projectId: string, content: string): Promise<{ ok: boolean; path: string }> {
+    return this.put(`${this.root(workspaceSlug, projectId)}/modules/environments/env-local/`, { content })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

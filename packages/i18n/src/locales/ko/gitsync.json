@@ -53,7 +53,7 @@
       "features": "./*/feature/, packages/action_words, packages/api_objects, packages/page_objects, 있으면 assets/ddl을 읽습니다. TestCopilot 데이터 소스를 공유할 수 있습니다.",
       "wiki": "바인딩된 작업 디렉터리에서 docs/ 또는 wiki/ markdown을 읽습니다.",
       "prd": "바인딩된 작업 디렉터리에서 prd/ markdown을 읽습니다.",
-      "environments": "config/env.py와 env/*.yaml 템플릿을 읽습니다. env_local이나 비밀 값은 읽지 않습니다."
+      "environments": "config/env.py의 DATABASES와 env_local.py의 명명된 ENVIRONMENTS(가림)를 읽습니다. 관리자는 workdir의 env_local.py를 편집할 수 있습니다. 비밀 값은 커밋하지 않습니다."
     }
   }
 }

@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Aucun résultat ne correspond à ce filtre.",
-    "redacted_hint": "Les mots de passe et jetons sont masqués. Les fichiers env locaux ne sont jamais lus."
+    "redacted_hint": "Les mots de passe et jetons sont masqués dans cette liste. Les admins peuvent modifier env_local.py sur le workdir lié ; il n’est jamais commité.",
+    "named_hint": "Les environnements nommés viennent de ENVIRONMENTS dans env_local.py. Activer écrit config/.active_env via packages.config.",
+    "activate": "Activer",
+    "activating": "Activation…",
+    "active": "Actif",
+    "activated": "Environnement activé.",
+    "activate_failed": "Impossible d’activer cet environnement.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Ce fichier est gitignored. L’enregistrement n’écrit que le workdir du Runner. Les secrets transitent par votre session navigateur.",
+    "env_local_save": "Enregistrer env_local.py",
+    "env_local_saving": "Enregistrement…",
+    "env_local_saved": "env_local.py enregistré.",
+    "env_local_example": "Affichage de env_local.py.example. Enregistrer crée env_local.py sur le workdir.",
+    "env_local_load_error": "Impossible de charger env_local.py."
   }
 }

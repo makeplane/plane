@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Tidak ada hasil yang cocok dengan filter ini.",
-    "redacted_hint": "Kata sandi dan token disembunyikan. File env lokal tidak pernah dibaca."
+    "redacted_hint": "Kata sandi dan token dalam daftar ini disamarkan. Admin dapat mengedit env_local.py pada workdir yang terikat; tidak pernah di-commit.",
+    "named_hint": "Lingkungan bernama berasal dari ENVIRONMENTS di env_local.py. Mengaktifkan menulis config/.active_env lewat packages.config.",
+    "activate": "Aktifkan",
+    "activating": "Mengaktifkan…",
+    "active": "Aktif",
+    "activated": "Lingkungan diaktifkan.",
+    "activate_failed": "Tidak dapat mengaktifkan lingkungan ini.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "File ini di-gitignore. Menyimpan hanya menulis workdir Runner. Rahasia melewati sesi browser Anda.",
+    "env_local_save": "Simpan env_local.py",
+    "env_local_saving": "Menyimpan…",
+    "env_local_saved": "env_local.py disimpan.",
+    "env_local_example": "Menampilkan env_local.py.example. Menyimpan akan membuat env_local.py di workdir.",
+    "env_local_load_error": "Tidak dapat memuat env_local.py."
   }
 }

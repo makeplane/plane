@@ -72,6 +72,18 @@ def test_index_platform_argv():
     assert build_argv("index_platform") == ["python", "-m", "apps.index_platform", "--out", "-"]
 
 
+def test_config_use_argv():
+    from plane.testhub.whitelist import CONFIG_USE_KIND, CONFIG_SHOW_KIND
+
+    assert build_argv(CONFIG_SHOW_KIND) == ["python", "-m", "packages.config", "show"]
+    assert build_argv(CONFIG_USE_KIND, {"name": "uat"}) == ["python", "-m", "packages.config", "use", "uat"]
+    with pytest.raises(WhitelistError):
+        build_argv(CONFIG_USE_KIND, {"name": "../evil"})
+    with pytest.raises(WhitelistError):
+        build_argv(CONFIG_USE_KIND, {"name": "uat; rm -rf /"})
+    assert not is_destructive(CONFIG_USE_KIND, {"name": "uat"})
+
+
 def test_db_seed_argv_from_catalog():
     argv = build_argv(
         "db_seed",

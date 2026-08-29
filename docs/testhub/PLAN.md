@@ -112,12 +112,12 @@ git merge v1.x.y
 
 ### 2. 约定目录
 
-| 产品模块    | `module_key`   | 约定                                                                                                                                                     |
-| ----------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Formulation | `features`     | `./*/feature/**/*.feature`；`assets/ddl/`（场景 / DDL）。action words / API / Page **不**靠文件扫描，只读 testhub `CatalogSnapshot` 里 `@plane_*` 注册项 |
-| 环境        | `environments` | `config/env.py`、`env/*.yaml`（非 `*local*`）。永不读 `env_local.py` 或密钥值                                                                            |
-| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI；展示 `assets/sql/` 与 `tools[]`（真 `@plane_app`）                                                      |
-| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                                                           |
+| 产品模块    | `module_key`   | 约定                                                                                                                                                                                                                                                                                                                    |
+| ----------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Formulation | `features`     | `./*/feature/**/*.feature`；`assets/ddl/`（场景 / DDL）。action words / API / Page **不**靠文件扫描，只读 testhub `CatalogSnapshot` 里 `@plane_*` 注册项                                                                                                                                                                |
+| 环境        | `environments` | `config/env.py` 的 `DATABASES` 占位；命名环境来自 workdir 上的 `env_local.py` / `env_local.py.example` 的 `ENVIRONMENTS`（AST 解析、密钥脱敏）。`.active_env` 标当前项。通用 files API 仍拒绝 `env_local.py`；Admin 专用接口可读写 workdir 副本（不回写 git）。旧 `env/*.yaml` 在无 `DATABASES`/`ENVIRONMENTS` 时仍扫描 |
+| TestCopilot | `testhub`      | 测试平台仓 + `apps.index_platform` + 白名单 CLI；展示 `assets/sql/` 与 `tools[]`（真 `@plane_app`）                                                                                                                                                                                                                     |
+| Wiki / PRD  | `wiki` / `prd` | `docs/` 或 `wiki/`；`prd/`。本阶段无独立产品页                                                                                                                                                                                                                                                                          |
 
 **只读自己绑定的 workdir。** 共仓时磁盘上自然能看到全套目录；分仓时各看各的。Formulation 的场景 / DDL 来自约定扫描；action words / API / Page 只展示 testhub snapshot 里已 `@plane_*` 注册的项。未 Sync 则空列表并引导 Sync。执行仍在 testhub workdir 跑。
 
@@ -154,8 +154,8 @@ sequenceDiagram
 
 硬约束：
 
-- 命令白名单：唯一硬编码 `index_platform`；Tools 为 catalog `tools[]` 且 `plane_runnable` 的 `python -m apps.*`；Formulation action words 为 `components.action_words` 登记的 `python -m packages.action_words`（模块名钉死，禁止任意 `packages.*`）。BDD 组合层仍在测试仓 `packages.action_words`。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上 Runner。禁止自由 shell
-- 密钥：项目密钥库或 Runner 本机 `env_local.py`，映射 `ARGON_DB_*` / `TEST_*`；永不写回 git、不进 Job 日志
+- 命令白名单：硬编码 `index_platform` 与 `packages.config`（`show` / `use <name>`）；Tools 为 catalog `tools[]` 且 `plane_runnable` 的 `python -m apps.*`；Formulation action words 为 `components.action_words` 登记的 `python -m packages.action_words`（模块名钉死，禁止任意 `packages.*`）。BDD 组合层仍在测试仓 `packages.action_words`。本地维护工具（dump_ddl / recorder / init_repo / index_ai）不上 Runner。禁止自由 shell
+- 密钥：项目密钥库或 Runner 本机 `env_local.py`；命名环境用 `python -m packages.config use <name>` 写 gitignore 的 `.active_env`。Catalog 可 AST 解析 `env_local.py` 并脱敏。Admin 可经 Runner 写 workdir 上的 `env_local.py`，永不写回 git、不进 Job 日志。通用 files API 不读 `env_local.py`
 - 破坏性操作默认 dry-run，需 Admin 二次确认
 - 同一 Project 默认串行
 - 产物：测试仓 `logs/` / `artifacts/`；大文件进 MinIO

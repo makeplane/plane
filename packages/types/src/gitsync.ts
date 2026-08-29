@@ -94,6 +94,22 @@ export type TModuleCatalogResponse = {
   error?: string;
 };
 
+export type TEnvLocalPayload = {
+  path: string;
+  exists: boolean;
+  example: boolean;
+  content: string;
+};
+
+export type TEnvironmentActivateResponse = {
+  job: {
+    id: string;
+    kind: string;
+    status: string;
+    params?: Record<string, unknown>;
+  };
+};
+
 export type TModuleCatalogPayload = {
   catalog_version: number;
   generated_at?: string;
@@ -123,12 +139,17 @@ export type TModuleCatalogPayload = {
     id: string;
     name: string;
     source?: string;
+    mode?: "named" | "flat" | "template" | "legacy";
+    active?: boolean;
     targets: Array<{ id: string; kind: string; base_url: string; source?: string }>;
     datasources: Array<{ alias: string; engine: string; database: string; host: string; secret_keys: string[] }>;
     secret_keys: string[];
     variables: Array<{ key: string; value: string }>;
     source_files: Array<{ path: string; name: string }>;
   }>;
+  active_env?: string | null;
+  env_local_present?: boolean;
+  mode?: "named" | "flat" | "template" | "legacy";
   knowledge?: {
     ddl?: Array<{ datasource: string; path: string; table_count: number; tables: string[] }>;
     sql_files?: Array<{ path: string; name: string }>;

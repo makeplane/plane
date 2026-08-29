@@ -1,4 +1,4 @@
-from whitelist import validate_argv
+from whitelist import validate_argv, validate_local_file_content, validate_local_file_path
 
 
 def test_allows_index_platform():
@@ -27,9 +27,45 @@ def test_rejects_dump_ddl_path():
     raise AssertionError("expected ValueError")
 
 
+def test_allows_packages_config_use():
+    argv = ["python", "-m", "packages.config", "use", "uat"]
+    assert validate_argv(argv) == argv
+    assert validate_argv(["python", "-m", "packages.config", "show"]) == ["python", "-m", "packages.config", "show"]
+    assert validate_argv(["python", "-m", "packages.config"]) == ["python", "-m", "packages.config"]
+
+
+def test_rejects_packages_config_injection():
+    try:
+        validate_argv(["python", "-m", "packages.config", "use", "uat;id"])
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError")
+
+
 def test_rejects_arbitrary_packages_module():
     try:
         validate_argv(["python", "-m", "packages.db", "run"])
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError")
+
+
+def test_local_file_allowlist():
+    assert validate_local_file_path("config/env_local.py") == "config/env_local.py"
+    try:
+        validate_local_file_path("config/env.py")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("expected ValueError")
+    try:
+        validate_local_file_path("../etc/passwd")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("expected ValueError")
+    try:
+        validate_local_file_content("x" * 300_000)
     except ValueError:
         return
     raise AssertionError("expected ValueError")
@@ -40,5 +76,8 @@ if __name__ == "__main__":
     test_allows_packages_action_words()
     test_rejects_shell()
     test_rejects_dump_ddl_path()
+    test_allows_packages_config_use()
+    test_rejects_packages_config_injection()
     test_rejects_arbitrary_packages_module()
+    test_local_file_allowlist()
     print("ok")

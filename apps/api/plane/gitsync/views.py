@@ -13,18 +13,19 @@ from plane.app.views.base import BaseAPIView
 from plane.db.models import Project
 from plane.gitsync.bindings import BindingError, bind_module, get_bound_remote, resolve_remote_workdir
 from plane.gitsync.conventions import ConventionError, scan_module_catalog
+from plane.gitsync.env_catalog import ENV_LOCAL_REL, ENV_NAME_RE, named_environment_ids, read_env_local_payload
 from plane.gitsync.files import FileAccessError, resolve_module_file
 from plane.gitsync.git_url import GitUrlError
 from plane.gitsync.indexes import refresh_bound_indexes
 from plane.gitsync.models import ModuleBinding, ProjectGitRemote
-from plane.gitsync.registry import MODULE_KEYS, MODULE_TESTHUB, is_known_module, module_catalog
+from plane.gitsync.registry import MODULE_ENVIRONMENTS, MODULE_KEYS, MODULE_TESTHUB, is_known_module, module_catalog
 from plane.gitsync.serializers import (
     ModuleBindingSerializer,
     ProjectGitRemoteSerializer,
     assign_git_url_workdir,
 )
 from plane.gitsync.sync import queue_git_url_sync, refresh_remote
-from plane.gitsync.workdir import GitUrlNotImplemented, WorkdirError, default_mount_workdir
+from plane.gitsync.workdir import GitUrlNotImplemented, WorkdirError, assert_allowed_workdir, default_mount_workdir
 
 
 def _project(slug: str, project_id):
@@ -224,3 +225,87 @@ class ModuleFileEndpoint(BaseAPIView):
         except (WorkdirError, GitUrlNotImplemented, BindingError, FileAccessError) as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"path": normalized, "content": content, "module_key": module_key}, status=status.HTTP_200_OK)
+
+
+def _environments_workdir(project_id) -> tuple[ProjectGitRemote, str]:
+    remote = get_bound_remote(project_id, MODULE_ENVIRONMENTS)
+    if remote is None:
+        raise BindingError("Module environments is not bound to a data source.")
+    return remote, resolve_remote_workdir(remote)
+
+
+def _require_shared_testhub_workdir(project_id, env_workdir: str) -> None:
+    testhub_remote = get_bound_remote(project_id, MODULE_TESTHUB)
+    if testhub_remote is None:
+        raise BindingError("Named env switching requires TestCopilot to be bound to the same workdir.")
+    testhub_workdir = assert_allowed_workdir(testhub_remote.workdir or default_mount_workdir())
+    if testhub_workdir != env_workdir:
+        raise BindingError("Named env switching requires Environment and TestCopilot to share the same workdir.")
+
+
+class ModuleEnvironmentActivateEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id):
+        from plane.testhub.enqueue import TesthubJobConflict, enqueue_config_use
+        from plane.testhub.serializers import TesthubJobSerializer
+
+        name = str(request.data.get("name") or "").strip()
+        if not name:
+            return Response({"error": "name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not ENV_NAME_RE.fullmatch(name):
+            return Response({"error": "invalid environment name."}, status=status.HTTP_400_BAD_REQUEST)
+        project = _project(slug, project_id)
+        remote = get_bound_remote(project_id, MODULE_ENVIRONMENTS)
+        if remote is None:
+            return Response({"error": "Module environments is not bound to a data source."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            workdir = resolve_remote_workdir(remote)
+            exec_workdir = assert_allowed_workdir(remote.workdir or workdir)
+            _require_shared_testhub_workdir(project_id, exec_workdir)
+            payload = scan_module_catalog(MODULE_ENVIRONMENTS, workdir)
+        except (WorkdirError, GitUrlNotImplemented, BindingError, ConventionError) as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        names = named_environment_ids(payload)
+        if name not in names:
+            available = ", ".join(names) if names else "(none)"
+            return Response(
+                {"error": f"Unknown environment {name!r}. Named environments: {available}."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            job = enqueue_config_use(project=project, user=request.user, name=name, workdir=exec_workdir)
+        except TesthubJobConflict as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_409_CONFLICT)
+        return Response({"job": TesthubJobSerializer(job).data}, status=status.HTTP_202_ACCEPTED)
+
+
+class ModuleEnvLocalEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN], level="PROJECT")
+    def get(self, request, slug, project_id):
+        try:
+            _remote, workdir = _environments_workdir(project_id)
+            payload = read_env_local_payload(
+                workdir,
+                max_bytes=int(getattr(settings, "TESTHUB_FILE_MAX_BYTES", 1048576)),
+            )
+        except (WorkdirError, GitUrlNotImplemented, BindingError, ValueError, OSError) as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(payload, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN], level="PROJECT")
+    def put(self, request, slug, project_id):
+        from plane.testhub.runner import RunnerError, write_local_file
+
+        content = request.data.get("content")
+        if not isinstance(content, str):
+            return Response({"error": "content must be a string."}, status=status.HTTP_400_BAD_REQUEST)
+        remote = get_bound_remote(project_id, MODULE_ENVIRONMENTS)
+        if remote is None:
+            return Response({"error": "Module environments is not bound to a data source."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            workdir = resolve_remote_workdir(remote)
+            exec_workdir = assert_allowed_workdir(remote.workdir or workdir)
+            write_local_file(workdir=exec_workdir, path=ENV_LOCAL_REL, content=content)
+        except (WorkdirError, GitUrlNotImplemented, BindingError, RunnerError, ValueError) as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"ok": True, "path": ENV_LOCAL_REL}, status=status.HTTP_200_OK)

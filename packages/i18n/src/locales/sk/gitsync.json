@@ -53,7 +53,7 @@
       "features": "Číta ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects a prípadne assets/ddl. Môže zdieľať zdroj TestCopilot.",
       "wiki": "Číta markdown z docs/ alebo wiki/ v naviazanom pracovnom adresári.",
       "prd": "Číta markdown z prd/ v naviazanom pracovnom adresári.",
-      "environments": "Číta config/env.py a šablóny env/*.yaml. Nikdy nečíta env_local ani tajné hodnoty."
+      "environments": "Číta DATABASES z config/env.py a pomenované ENVIRONMENTS (z env_local.py, skryté). Správcovia môžu upraviť env_local.py vo workdir. Tajomstvá sa nikdy necommitnú."
     }
   }
 }

@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "このフィルターに一致する結果はありません。",
-    "redacted_hint": "パスワードとトークンは伏字です。ローカル env ファイルは読みません。"
+    "redacted_hint": "この一覧のパスワードとトークンは伏字です。管理者はバインド済み workdir の env_local.py を編集できます。コミットしません。",
+    "named_hint": "名前付き環境は env_local.py の ENVIRONMENTS です。有効化すると packages.config が config/.active_env を書き込みます。",
+    "activate": "有効化",
+    "activating": "有効化中……",
+    "active": "使用中",
+    "activated": "環境を有効化しました。",
+    "activate_failed": "この環境を有効化できませんでした。",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "このファイルは gitignore されています。保存は Runner の workdir のみです。シークレットはブラウザーセッションを通ります。",
+    "env_local_save": "env_local.py を保存",
+    "env_local_saving": "保存中……",
+    "env_local_saved": "env_local.py を保存しました。",
+    "env_local_example": "env_local.py.example を表示しています。保存すると workdir に env_local.py を作成します。",
+    "env_local_load_error": "env_local.py を読み込めませんでした。"
   }
 }

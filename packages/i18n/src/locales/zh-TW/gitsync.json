@@ -53,7 +53,7 @@
       "features": "讀取 ./*/feature/、packages/action_words、packages/api_objects、packages/page_objects，以及存在時的 assets/ddl。可與 TestCopilot 共用資料來源。",
       "wiki": "從綁定的工作目錄讀取 docs/ 或 wiki/ 的 markdown。",
       "prd": "從綁定的工作目錄讀取 prd/ 的 markdown。",
-      "environments": "讀取 config/env.py 與 env/*.yaml 範本。永不讀取 env_local 或密鑰值。"
+      "environments": "讀取 config/env.py 的 DATABASES 以及命名 ENVIRONMENTS（來自 env_local.py，已遮罩）。管理員可在工作目錄編輯 env_local.py。永不提交密鑰。"
     }
   }
 }

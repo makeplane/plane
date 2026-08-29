@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Keine Ergebnisse für diesen Filter.",
-    "redacted_hint": "Passwörter und Tokens sind geschwärzt. Lokale Env-Dateien werden nie gelesen."
+    "redacted_hint": "Passwörter und Tokens sind in dieser Liste geschwärzt. Admins können env_local.py im gebundenen Workdir bearbeiten; es wird nie committet.",
+    "named_hint": "Benannte Umgebungen stammen aus ENVIRONMENTS in env_local.py. Aktivieren schreibt config/.active_env über packages.config.",
+    "activate": "Aktivieren",
+    "activating": "Wird aktiviert…",
+    "active": "Aktiv",
+    "activated": "Umgebung aktiviert.",
+    "activate_failed": "Diese Umgebung konnte nicht aktiviert werden.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Diese Datei ist gitignored. Speichern schreibt nur ins Runner-Workdir. Geheimnisse laufen über Ihre Browsersitzung.",
+    "env_local_save": "env_local.py speichern",
+    "env_local_saving": "Wird gespeichert…",
+    "env_local_saved": "env_local.py gespeichert.",
+    "env_local_example": "Anzeige von env_local.py.example. Speichern erstellt env_local.py im Workdir.",
+    "env_local_load_error": "env_local.py konnte nicht geladen werden."
   }
 }

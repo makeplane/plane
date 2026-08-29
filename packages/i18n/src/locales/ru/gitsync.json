@@ -53,7 +53,7 @@
       "features": "Читает ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects и при наличии assets/ddl. Может использовать источник TestCopilot.",
       "wiki": "Читает markdown из docs/ или wiki/ в привязанном рабочем каталоге.",
       "prd": "Читает markdown из prd/ в привязанном рабочем каталоге.",
-      "environments": "Читает config/env.py и шаблоны env/*.yaml. Никогда не читает env_local и секретные значения."
+      "environments": "Читает DATABASES из config/env.py и именованные ENVIRONMENTS (из env_local.py, скрытые). Администраторы могут править env_local.py в workdir. Секреты никогда не коммитятся."
     }
   }
 }

@@ -53,7 +53,7 @@
       "features": "Legge ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects e assets/ddl se presenti. Può condividere l’origine di TestCopilot.",
       "wiki": "Legge il markdown di docs/ o wiki/ nel workdir associato.",
       "prd": "Legge il markdown di prd/ nel workdir associato.",
-      "environments": "Legge config/env.py e i modelli env/*.yaml. Non legge mai env_local né i valori segreti."
+      "environments": "Legge DATABASES da config/env.py e ENVIRONMENTS con nome (da env_local.py, oscurati). Gli admin possono modificare env_local.py nel workdir. I segreti non vengono mai committati."
     }
   }
 }

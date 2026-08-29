@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Нет результатов по этому фильтру.",
-    "redacted_hint": "Пароли и токены скрыты. Локальные env-файлы никогда не читаются."
+    "redacted_hint": "Пароли и токены в этом списке скрыты. Администраторы могут править env_local.py в привязанном workdir; файл никогда не коммитится.",
+    "named_hint": "Именованные среды берутся из ENVIRONMENTS в env_local.py. Активация записывает config/.active_env через packages.config.",
+    "activate": "Активировать",
+    "activating": "Активация…",
+    "active": "Активна",
+    "activated": "Среда активирована.",
+    "activate_failed": "Не удалось активировать эту среду.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Этот файл в gitignore. Сохранение пишет только workdir Runner. Секреты проходят через сессию браузера.",
+    "env_local_save": "Сохранить env_local.py",
+    "env_local_saving": "Сохранение…",
+    "env_local_saved": "env_local.py сохранён.",
+    "env_local_example": "Показан env_local.py.example. Сохранение создаст env_local.py в workdir.",
+    "env_local_load_error": "Не удалось загрузить env_local.py."
   }
 }

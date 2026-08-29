@@ -42,7 +42,7 @@ Issue / Cycle 继续管缺陷和任务。**不要**因为文件在同一个仓�
 - **不改** Issue / Cycle 语义；失败只创建/链接 Issue，不把用例双写进 Issue
 - 社区版 `apps/web/app/routes/extended.ts` 是空数组，侧栏入口做成**尽量小的 adapter 补丁**
 - 禁止在 API 容器里任意 `subprocess`；执行走旁路 Runner，命令必须来自白名单
-- 密钥不进 git、不进 Job 日志、不经 files API 读取 `env_local.py`；破坏性操作默认 dry-run
+- 密钥不进 git、不进 Job 日志、不经通用 files API 读取 `env_local.py`；Admin 可经专用接口编辑 workdir 副本。破坏性操作默认 dry-run
 - 吸收官方修复：`git fetch upstream --tags` 后 `git merge <稳定tag>`；不要在 `preview` 上堆自研提交
 
 ## 落地节奏（本仓）

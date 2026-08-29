@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from plane.testhub.models import CatalogSnapshot, ProjectTestRepo, TesthubJob
 from plane.testhub.runner import RunnerError, exec_job
-from plane.testhub.whitelist import latest_catalog_payload, tool_timeout
+from plane.testhub.whitelist import CONFIG_SHOW_KIND, CONFIG_USE_KIND, latest_catalog_payload, tool_timeout
 from plane.utils.exception_logger import log_exception
 
 LOG_LIMIT = 200_000
@@ -41,7 +41,7 @@ def run_testhub_job(job_id: str) -> None:
                 catalog=latest_catalog_payload(job.project_id),
                 params=job.params if isinstance(job.params, dict) else {},
             ),
-            workdir=_exec_workdir(job.project_id),
+            workdir=_exec_workdir(job),
         )
         job.exit_code = result.exit_code
         job.stdout = _clip(result.stdout)
@@ -71,11 +71,20 @@ def run_testhub_job(job_id: str) -> None:
             _mark_index_status(job.project_id, TesthubJob.Status.FAILED, _clip(str(exc)))
 
 
-def _exec_workdir(project_id) -> str | None:
+def _exec_workdir(job: TesthubJob) -> str | None:
+    from plane.gitsync.workdir import WorkdirError, assert_allowed_workdir
     from plane.testhub.sources import TesthubUnbound, testhub_exec_workdir
 
+    params = job.params if isinstance(job.params, dict) else {}
+    if job.kind in {CONFIG_USE_KIND, CONFIG_SHOW_KIND}:
+        raw = str(params.get("workdir") or "").strip()
+        if raw:
+            try:
+                return assert_allowed_workdir(raw)
+            except WorkdirError:
+                return None
     try:
-        return testhub_exec_workdir(project_id)
+        return testhub_exec_workdir(job.project_id)
     except TesthubUnbound:
         return None
 

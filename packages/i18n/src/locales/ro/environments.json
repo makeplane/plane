@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Niciun rezultat nu se potrivește acestui filtru.",
-    "redacted_hint": "Parolele și tokenurile sunt mascate. Fișierele env locale nu sunt citite niciodată."
+    "redacted_hint": "Parolele și tokenurile sunt mascate în această listă. Administratorii pot edita env_local.py în workdir-ul asociat; nu este niciodată commis.",
+    "named_hint": "Mediile denumite vin din ENVIRONMENTS în env_local.py. Activarea scrie config/.active_env prin packages.config.",
+    "activate": "Activează",
+    "activating": "Se activează…",
+    "active": "Activ",
+    "activated": "Mediu activat.",
+    "activate_failed": "Nu s-a putut activa acest mediu.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Acest fișier este gitignored. Salvarea scrie doar workdir-ul Runner. Secretele trec prin sesiunea browserului.",
+    "env_local_save": "Salvează env_local.py",
+    "env_local_saving": "Se salvează…",
+    "env_local_saved": "env_local.py salvat.",
+    "env_local_example": "Se afișează env_local.py.example. Salvarea creează env_local.py în workdir.",
+    "env_local_load_error": "Nu s-a putut încărca env_local.py."
   }
 }

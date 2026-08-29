@@ -53,7 +53,7 @@
       "features": "Lee ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects y assets/ddl si existen. Puede compartir el origen de TestCopilot.",
       "wiki": "Lee markdown de docs/ o wiki/ en el directorio vinculado.",
       "prd": "Lee markdown de prd/ en el directorio vinculado.",
-      "environments": "Lee config/env.py y plantillas env/*.yaml. Nunca lee env_local ni valores secretos."
+      "environments": "Lee DATABASES de config/env.py y ENVIRONMENTS con nombre (desde env_local.py, ocultos). Los administradores pueden editar env_local.py en el workdir. Nunca se confirman secretos."
     }
   }
 }

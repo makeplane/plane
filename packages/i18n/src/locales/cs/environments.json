@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Žádné výsledky neodpovídají filtru.",
-    "redacted_hint": "Hesla a tokeny jsou skryté. Místní env soubory se nikdy nečtou."
+    "redacted_hint": "Hesla a tokeny jsou v tomto seznamu skryté. Správci mohou upravit env_local.py ve svázaném workdir; nikdy se necommitne.",
+    "named_hint": "Pojmenovaná prostředí pocházejí z ENVIRONMENTS v env_local.py. Aktivace zapíše config/.active_env přes packages.config.",
+    "activate": "Aktivovat",
+    "activating": "Aktivace…",
+    "active": "Aktivní",
+    "activated": "Prostředí aktivováno.",
+    "activate_failed": "Toto prostředí se nepodařilo aktivovat.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Tento soubor je v gitignore. Uložení zapisuje jen workdir Runneru. Tajemství procházejí relací prohlížeče.",
+    "env_local_save": "Uložit env_local.py",
+    "env_local_saving": "Ukládání…",
+    "env_local_saved": "env_local.py uložen.",
+    "env_local_example": "Zobrazení env_local.py.example. Uložení vytvoří env_local.py ve workdir.",
+    "env_local_load_error": "env_local.py se nepodařilo načíst."
   }
 }

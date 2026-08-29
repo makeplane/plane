@@ -53,7 +53,7 @@
       "features": "Đọc ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects và assets/ddl nếu có. Có thể dùng chung nguồn TestCopilot.",
       "wiki": "Đọc markdown docs/ hoặc wiki/ trong thư mục làm việc đã gắn.",
       "prd": "Đọc markdown prd/ trong thư mục làm việc đã gắn.",
-      "environments": "Đọc config/env.py và mẫu env/*.yaml. Không bao giờ đọc env_local hoặc giá trị bí mật."
+      "environments": "Đọc DATABASES trong config/env.py và ENVIRONMENTS có tên (từ env_local.py, đã che). Quản trị viên có thể sửa env_local.py trên workdir. Không bao giờ commit bí mật."
     }
   }
 }

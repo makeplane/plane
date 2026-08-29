@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Bu süzgeçle eşleşen sonuç yok.",
-    "redacted_hint": "Parolalar ve belirteçler gizlenir. Yerel env dosyaları asla okunmaz."
+    "redacted_hint": "Bu listedeki parolalar ve token'lar gizlenir. Yöneticiler bağlı workdir üzerindeki env_local.py dosyasını düzenleyebilir; asla commit edilmez.",
+    "named_hint": "Adlandırılmış ortamlar env_local.py içindeki ENVIRONMENTS öğesinden gelir. Etkinleştirme, packages.config ile config/.active_env yazar.",
+    "activate": "Etkinleştir",
+    "activating": "Etkinleştiriliyor…",
+    "active": "Etkin",
+    "activated": "Ortam etkinleştirildi.",
+    "activate_failed": "Bu ortam etkinleştirilemedi.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Bu dosya gitignore'dadır. Kaydetmek yalnızca Runner workdir'ine yazar. Gizler tarayıcı oturumunuzdan geçer.",
+    "env_local_save": "env_local.py kaydet",
+    "env_local_saving": "Kaydediliyor…",
+    "env_local_saved": "env_local.py kaydedildi.",
+    "env_local_example": "env_local.py.example gösteriliyor. Kaydetmek workdir'de env_local.py oluşturur.",
+    "env_local_load_error": "env_local.py yüklenemedi."
   }
 }

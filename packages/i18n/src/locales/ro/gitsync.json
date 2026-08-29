@@ -53,7 +53,7 @@
       "features": "Citește ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects și assets/ddl dacă există. Poate partaja sursa TestCopilot.",
       "wiki": "Citește markdown din docs/ sau wiki/ în directorul de lucru legat.",
       "prd": "Citește markdown din prd/ în directorul de lucru legat.",
-      "environments": "Citește config/env.py și șabloanele env/*.yaml. Nu citește niciodată env_local sau valori secrete."
+      "environments": "Citește DATABASES din config/env.py și ENVIRONMENTS denumite (din env_local.py, mascate). Administratorii pot edita env_local.py în workdir. Secretele nu sunt niciodată commise."
     }
   }
 }

@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Ningún resultado coincide con este filtro.",
-    "redacted_hint": "Las contraseñas y los tokens se ocultan. Nunca se leen archivos env locales."
+    "redacted_hint": "Las contraseñas y los tokens se ocultan en esta lista. Los administradores pueden editar env_local.py en el workdir vinculado; nunca se confirma.",
+    "named_hint": "Los entornos con nombre vienen de ENVIRONMENTS en env_local.py. Activar escribe config/.active_env mediante packages.config.",
+    "activate": "Activar",
+    "activating": "Activando…",
+    "active": "Activo",
+    "activated": "Entorno activado.",
+    "activate_failed": "No se pudo activar este entorno.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Este archivo está en gitignore. Guardar solo escribe el workdir del Runner. Los secretos pasan por su sesión del navegador.",
+    "env_local_save": "Guardar env_local.py",
+    "env_local_saving": "Guardando…",
+    "env_local_saved": "env_local.py guardado.",
+    "env_local_example": "Mostrando env_local.py.example. Guardar crea env_local.py en el workdir.",
+    "env_local_load_error": "No se pudo cargar env_local.py."
   }
 }

@@ -53,7 +53,7 @@
       "features": "Lit ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects et assets/ddl s’ils existent. Peut partager la source TestCopilot.",
       "wiki": "Lit le markdown de docs/ ou wiki/ dans le répertoire lié.",
       "prd": "Lit le markdown de prd/ dans le répertoire lié.",
-      "environments": "Lit config/env.py et les modèles env/*.yaml. Ne lit jamais env_local ni les secrets."
+      "environments": "Lit DATABASES dans config/env.py et les ENVIRONMENTS nommés (depuis env_local.py, masqués). Les admins peuvent modifier env_local.py sur le workdir. Les secrets ne sont jamais commités."
     }
   }
 }

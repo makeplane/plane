@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Немає результатів за цим фільтром.",
-    "redacted_hint": "Паролі та токени приховано. Локальні env-файли ніколи не читаються."
+    "redacted_hint": "Паролі та токени в цьому списку приховані. Адміністратори можуть редагувати env_local.py у прив’язаному workdir; файл ніколи не комітиться.",
+    "named_hint": "Іменовані середовища беруться з ENVIRONMENTS у env_local.py. Активація записує config/.active_env через packages.config.",
+    "activate": "Активувати",
+    "activating": "Активація…",
+    "active": "Активне",
+    "activated": "Середовище активовано.",
+    "activate_failed": "Не вдалося активувати це середовище.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Цей файл у gitignore. Збереження пише лише workdir Runner. Секрети проходять через сесію браузера.",
+    "env_local_save": "Зберегти env_local.py",
+    "env_local_saving": "Збереження…",
+    "env_local_saved": "env_local.py збережено.",
+    "env_local_example": "Показано env_local.py.example. Збереження створить env_local.py у workdir.",
+    "env_local_load_error": "Не вдалося завантажити env_local.py."
   }
 }

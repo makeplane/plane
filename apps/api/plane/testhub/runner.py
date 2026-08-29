@@ -64,6 +64,28 @@ def exec_job(
     )
 
 
+def write_local_file(*, workdir: str, path: str, content: str, timeout: int = 30) -> dict[str, Any]:
+    url = f"{_base_url()}/v1/local-file"
+    payload = {"op": "write", "workdir": workdir, "path": path, "content": content}
+    try:
+        response = requests.post(url, json=payload, timeout=timeout)
+    except requests.RequestException as exc:
+        raise RunnerError(f"testhub runner unreachable: {exc}") from exc
+    if response.status_code >= 400:
+        detail = response.text[:500]
+        try:
+            body = response.json()
+            if isinstance(body, dict) and body.get("error"):
+                detail = str(body["error"])
+        except ValueError:
+            pass
+        raise RunnerError(f"testhub runner rejected local-file ({response.status_code}): {detail}")
+    body = response.json()
+    if body.get("error"):
+        raise RunnerError(str(body.get("error")))
+    return body if isinstance(body, dict) else {"ok": True}
+
+
 def git_sync(
     *,
     repo_url: str,

@@ -9,11 +9,15 @@ import re
 from typing import Any
 
 BOOTSTRAP_KIND = "index_platform"
+CONFIG_USE_KIND = "config_use"
+CONFIG_SHOW_KIND = "config_show"
+CONFIG_MODULE = "packages.config"
 LEGACY_ACTION_WORDS_KIND = "action_words"
 ACTION_WORDS_MODULE = "packages.action_words"
 ACTION_WORD_KINDS = frozenset(
     {"db_seed", "db_assert", "api_request", "api_assert", "ui_action", "ui_assert"}
 )
+ENV_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 
 _APPS_MODULE_RE = re.compile(r"^apps\.[a-z][a-z0-9_]*$")
 _DESTRUCTIVE_FALLBACK = frozenset({"db_seed", "api_request", "ui_action"})
@@ -56,7 +60,7 @@ def is_destructive(
     tools: list[dict[str, Any]] | None = None,
     catalog: dict[str, Any] | None = None,
 ) -> bool:
-    if kind == BOOTSTRAP_KIND:
+    if kind in {BOOTSTRAP_KIND, CONFIG_USE_KIND, CONFIG_SHOW_KIND}:
         return False
     try:
         row = _find_runnable(kind, params or {}, tools=tools, catalog=catalog)
@@ -75,6 +79,13 @@ def build_argv(
     payload = params or {}
     if kind == BOOTSTRAP_KIND:
         return ["python", "-m", "apps.index_platform", "--out", "-"]
+    if kind == CONFIG_SHOW_KIND:
+        return ["python", "-m", CONFIG_MODULE, "show"]
+    if kind == CONFIG_USE_KIND:
+        name = str(payload.get("name") or "").strip()
+        if not ENV_NAME_RE.fullmatch(name):
+            raise WhitelistError("invalid environment name")
+        return ["python", "-m", CONFIG_MODULE, "use", name]
 
     row = _find_runnable(kind, payload, tools=tools, catalog=catalog)
     if not _is_runnable(row):
@@ -90,7 +101,7 @@ def tool_timeout(
     catalog: dict[str, Any] | None = None,
     params: dict[str, Any] | None = None,
 ) -> int:
-    if kind == BOOTSTRAP_KIND:
+    if kind in {BOOTSTRAP_KIND, CONFIG_USE_KIND, CONFIG_SHOW_KIND}:
         return 180
     try:
         row = _find_runnable(kind, params or {}, tools=tools, catalog=catalog)
@@ -159,7 +170,7 @@ def _resolve_kind(kind: str, params: dict[str, Any] | None) -> str:
 
 
 def _allowed_module(module: str) -> bool:
-    return bool(_APPS_MODULE_RE.fullmatch(module)) or module == ACTION_WORDS_MODULE
+    return bool(_APPS_MODULE_RE.fullmatch(module)) or module in {ACTION_WORDS_MODULE, CONFIG_MODULE}
 
 
 def _argv_from_tool(tool: dict[str, Any], payload: dict[str, Any]) -> list[str]:

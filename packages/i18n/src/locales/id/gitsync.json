@@ -53,7 +53,7 @@
       "features": "Membaca ./*/feature/, packages/action_words, packages/api_objects, packages/page_objects, dan assets/ddl jika ada. Dapat berbagi sumber TestCopilot.",
       "wiki": "Membaca markdown docs/ atau wiki/ di workdir yang terikat.",
       "prd": "Membaca markdown prd/ di workdir yang terikat.",
-      "environments": "Membaca config/env.py dan templat env/*.yaml. Tidak pernah membaca env_local atau nilai rahasia."
+      "environments": "Membaca DATABASES dari config/env.py dan ENVIRONMENTS bernama (dari env_local.py, disamarkan). Admin dapat mengedit env_local.py di workdir. Rahasia tidak pernah di-commit."
     }
   }
 }

@@ -80,6 +80,26 @@ def test_missing_packages_action_words():
         )
 
 
+def test_missing_packages_config():
+    with tempfile.TemporaryDirectory() as raw:
+        workdir = Path(raw)
+        msg = missing_apps_module(
+            workdir,
+            ["python", "-m", "packages.config", "use", "dev"],
+        )
+        assert msg is not None
+        assert "packages.config" in msg
+        (workdir / "packages").mkdir()
+        (workdir / "packages" / "config.py").write_text("#\n", encoding="utf-8")
+        assert (
+            missing_apps_module(
+                workdir,
+                ["python", "-m", "packages.config", "use", "dev"],
+            )
+            is None
+        )
+
+
 if __name__ == "__main__":
     test_uv_env_dir_is_outside_workdir()
     test_exec_environment_sets_isolated_venv(Path(tempfile.mkdtemp()))
@@ -87,4 +107,5 @@ if __name__ == "__main__":
     test_missing_module_when_index_platform_absent()
     test_missing_module_ok_when_present()
     test_missing_packages_action_words()
+    test_missing_packages_config()
     print("ok")

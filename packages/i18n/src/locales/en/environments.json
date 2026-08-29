@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "No results match this filter.",
-    "redacted_hint": "Passwords and tokens are redacted. Local env files are never read."
+    "redacted_hint": "Passwords and tokens are redacted in this list. Admins can edit env_local.py on the bound workdir; it is never committed.",
+    "named_hint": "Named environments come from ENVIRONMENTS in env_local.py. Activate writes config/.active_env via packages.config.",
+    "activate": "Activate",
+    "activating": "Activating…",
+    "active": "Active",
+    "activated": "Environment activated.",
+    "activate_failed": "Could not activate this environment.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "This file is gitignored. Saving writes the Runner workdir only. Secrets travel through your browser session.",
+    "env_local_save": "Save env_local.py",
+    "env_local_saving": "Saving…",
+    "env_local_saved": "env_local.py saved.",
+    "env_local_example": "Showing env_local.py.example. Save to create env_local.py on the workdir.",
+    "env_local_load_error": "Could not load env_local.py."
   }
 }

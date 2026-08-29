@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Nenhum resultado corresponde a este filtro.",
-    "redacted_hint": "Senhas e tokens são ocultados. Arquivos env locais nunca são lidos."
+    "redacted_hint": "Senhas e tokens são ocultados nesta lista. Admins podem editar env_local.py no workdir vinculado; ele nunca é commitado.",
+    "named_hint": "Ambientes nomeados vêm de ENVIRONMENTS em env_local.py. Ativar grava config/.active_env via packages.config.",
+    "activate": "Ativar",
+    "activating": "Ativando…",
+    "active": "Ativo",
+    "activated": "Ambiente ativado.",
+    "activate_failed": "Não foi possível ativar este ambiente.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Este arquivo está no gitignore. Salvar grava apenas o workdir do Runner. Segredos passam pela sua sessão do navegador.",
+    "env_local_save": "Salvar env_local.py",
+    "env_local_saving": "Salvando…",
+    "env_local_saved": "env_local.py salvo.",
+    "env_local_example": "Mostrando env_local.py.example. Salvar cria env_local.py no workdir.",
+    "env_local_load_error": "Não foi possível carregar env_local.py."
   }
 }

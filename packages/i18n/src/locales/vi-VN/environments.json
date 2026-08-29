@@ -24,6 +24,19 @@
     "ddl": "DDL",
     "sql": "SQL",
     "no_results": "Không có kết quả khớp bộ lọc này.",
-    "redacted_hint": "Mật khẩu và token bị ẩn. Không bao giờ đọc tệp env cục bộ."
+    "redacted_hint": "Mật khẩu và token trong danh sách này bị che. Quản trị viên có thể sửa env_local.py trên workdir đã gắn; không bao giờ commit.",
+    "named_hint": "Môi trường có tên đến từ ENVIRONMENTS trong env_local.py. Kích hoạt ghi config/.active_env qua packages.config.",
+    "activate": "Kích hoạt",
+    "activating": "Đang kích hoạt…",
+    "active": "Đang dùng",
+    "activated": "Đã kích hoạt môi trường.",
+    "activate_failed": "Không thể kích hoạt môi trường này.",
+    "env_local_title": "env_local.py",
+    "env_local_hint": "Tệp này nằm trong gitignore. Lưu chỉ ghi vào workdir của Runner. Bí mật đi qua phiên trình duyệt của bạn.",
+    "env_local_save": "Lưu env_local.py",
+    "env_local_saving": "Đang lưu…",
+    "env_local_saved": "Đã lưu env_local.py.",
+    "env_local_example": "Đang hiện env_local.py.example. Lưu sẽ tạo env_local.py trên workdir.",
+    "env_local_load_error": "Không thể tải env_local.py."
   }
 }
