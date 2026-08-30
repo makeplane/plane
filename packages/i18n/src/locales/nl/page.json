@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Overzicht",
+        "empty_state": {
+          "title": "Ontbrekende koppen",
+          "description": "Laten we wat koppen op deze pagina zetten om ze hier te zien."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Woorden",
+          "characters": "Tekens",
+          "paragraphs": "Alinea's",
+          "read_time": "Leestijd"
+        },
+        "actors_info": {
+          "edited_by": "Bewerkt door",
+          "created_by": "Aangemaakt door"
+        },
+        "version_history": {
+          "label": "Versiegeschiedenis",
+          "current_version": "Huidige versie",
+          "highlight_changes": "Wijzigingen markeren"
+        }
+      },
+      "assets": {
+        "label": "Assets",
+        "download_button": "Downloaden",
+        "empty_state": {
+          "title": "Ontbrekende afbeeldingen",
+          "description": "Voeg afbeeldingen toe om ze hier te zien."
+        }
+      },
+      "comments": {
+        "label": "Reacties",
+        "empty_state": {
+          "title": "Geen reacties",
+          "description": "Voeg reacties toe om ze hier te zien."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "De sticky-naam mag niet langer zijn dan 100 tekens.",
+        "already_exists": "Er bestaat al een sticky zonder omschrijving"
+      },
+      "created": {
+        "title": "Sticky aangemaakt",
+        "message": "De sticky is succesvol aangemaakt"
+      },
+      "not_created": {
+        "title": "Sticky niet aangemaakt",
+        "message": "De sticky kon niet worden aangemaakt"
+      },
+      "updated": {
+        "title": "Sticky bijgewerkt",
+        "message": "De sticky is succesvol bijgewerkt"
+      },
+      "not_updated": {
+        "title": "Sticky niet bijgewerkt",
+        "message": "De sticky kon niet worden bijgewerkt"
+      },
+      "removed": {
+        "title": "Sticky verwijderd",
+        "message": "De sticky is succesvol verwijderd"
+      },
+      "not_removed": {
+        "title": "Sticky niet verwijderd",
+        "message": "De sticky kon niet worden verwijderd"
+      }
+    },
+    "open_button": "Navigatievenster openen",
+    "close_button": "Navigatievenster sluiten",
+    "outline_floating_button": "Overzicht openen"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Verplaatsen",
+        "loading": "Verplaatsen"
+      },
+      "cannot_move_to_teamspace": "Privépagina's en gedeelde pagina's kunnen niet naar een teamspace worden verplaatst.",
+      "placeholders": {
+        "workspace_to_all": "Zoek naar projecten en teamspaces",
+        "workspace_to_project": "Zoek naar projecten",
+        "project_to_all": "Zoek naar projecten en teamspaces",
+        "project_to_project": "Zoek naar projecten",
+        "project_to_all_with_wiki": "Zoek naar wiki-collecties, projecten en teamspaces",
+        "project_to_project_with_wiki": "Zoek naar wiki-collecties en projecten"
+      },
+      "toasts": {
+        "success": {
+          "title": "Gelukt!",
+          "message": "Pagina succesvol verplaatst."
+        },
+        "error": {
+          "title": "Fout!",
+          "message": "Pagina kon niet worden verplaatst. Probeer het later opnieuw."
+        },
+        "collection_error": {
+          "title": "Verplaatst naar wiki",
+          "message": "Pagina is verplaatst naar de wiki, maar kon niet aan de geselecteerde collectie worden toegevoegd. De pagina blijft in Algemeen."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Uit collectie verwijderen",
+      "success_message": "Pagina uit collectie verwijderd.",
+      "error_message": "Pagina kon niet uit de collectie worden verwijderd. Probeer het opnieuw."
+    }
+  }
+}
