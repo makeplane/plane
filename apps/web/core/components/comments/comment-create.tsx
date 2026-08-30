@@ -14,6 +14,7 @@ import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
+import { isComposingKeyboardEvent } from "@/helpers/keyboard";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -94,6 +95,8 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
     <div
       className={cn("sticky bottom-0 z-[4] bg-surface-1 sm:static")}
       onKeyDown={(e) => {
+        if (isComposingKeyboardEvent(e.nativeEvent)) return;
+
         if (
           e.key === "Enter" &&
           !e.shiftKey &&
