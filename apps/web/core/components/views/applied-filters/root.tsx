@@ -5,10 +5,10 @@
  */
 
 import { useTranslation } from "@plane/i18n";
+import { PillButton } from "@makeplane/propel/components/pill";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
-import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // components
 import { AppliedDateFilters } from "@/components/common/applied-filters/date";
@@ -45,7 +45,10 @@ export function ViewAppliedFiltersList(props: Props) {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <Tag key={filterKey}>
+          <div
+            key={filterKey}
+            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
+          >
             <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {VIEW_ACCESS_FILTERS.includes(filterKey) && (
               <AppliedAccessFilters
@@ -77,16 +80,18 @@ export function ViewAppliedFiltersList(props: Props) {
                 <CloseIcon height={12} width={12} strokeWidth={2} />
               </button>
             )}
-          </Tag>
+          </div>
         );
       })}
       {isEditingAllowed && (
-        <button type="button" onClick={handleClearAllFilters}>
-          <Tag>
-            {t("common.clear_all")}
-            <CloseIcon height={12} width={12} strokeWidth={2} />
-          </Tag>
-        </button>
+        <PillButton
+          type="button"
+          size="md"
+          variant="outline"
+          label={t("common.clear_all")}
+          endIcon={<CloseIcon height={12} width={12} strokeWidth={2} />}
+          onClick={handleClearAllFilters}
+        />
       )}
     </div>
   );

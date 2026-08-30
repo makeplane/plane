@@ -7,7 +7,6 @@
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon, CloseIcon } from "@plane/propel/icons";
-import { Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -27,7 +26,7 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">State</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -54,6 +53,6 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
       >
         <CloseIcon className={`h-3 w-3`} />
       </div>
-    </Tag>
+    </div>
   );
 });
