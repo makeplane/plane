@@ -8,7 +8,7 @@
 import type { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 import { CORE_EXTENSIONS } from "@plane/utils";
 // plane editor imports
-import type { ExtensionFileSetStorageKey } from "@/plane-editor/types/storage";
+import type { ExtensionFileSetStorageKey } from "@/types/storage";
 
 export type NodeFileMapType = Partial<
   Record<

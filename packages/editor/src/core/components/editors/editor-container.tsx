@@ -15,7 +15,7 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
 import type { TCollabValue } from "@/contexts";
-import { LinkContainer } from "@/plane-editor/components/link-container";
+import { LinkContainer } from "@/components/link-container";
 // plugins
 import { nodeHighlightPluginKey } from "@/plugins/highlight";
 // types

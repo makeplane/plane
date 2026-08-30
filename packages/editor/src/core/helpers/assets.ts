@@ -11,7 +11,7 @@ import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { getImageBlockId } from "@/extensions/custom-image/utils";
 // plane editor imports
-import { ADDITIONAL_ASSETS_META_DATA_RECORD } from "@/plane-editor/constants/assets";
+import { ADDITIONAL_ASSETS_META_DATA_RECORD } from "@/constants/assets";
 // types
 import type { TEditorAsset } from "@/types";
 

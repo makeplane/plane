@@ -11,7 +11,7 @@ import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // extensions
 import { SideMenuExtension } from "@/extensions";
 // plane editor imports
-import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text-extensions";
+import { RichTextEditorAdditionalExtensions } from "@/extensions/rich-text-extensions";
 // types
 import type { EditorRefApi, IRichTextEditorProps } from "@/types";
 

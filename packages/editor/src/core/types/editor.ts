@@ -18,7 +18,7 @@ import type {
   IEditorPropsExtended,
   TExtendedEditorCommands,
   ICollaborativeDocumentEditorPropsExtended,
-} from "@/plane-editor/types/editor-extended";
+} from "@/types/editor-extended";
 // types
 import type {
   IMarking,

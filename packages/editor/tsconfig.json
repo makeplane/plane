@@ -6,9 +6,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "src/*": ["./src/*"],
       "@/*": ["./src/core/*"],
-      "@/plane-editor/*": ["./src/ce/*"],
       "@/styles/*": ["./src/styles/*"]
     }
   },
