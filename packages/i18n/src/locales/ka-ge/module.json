@@ -1,6 +1,7 @@
 {
   "module": {
     "label": "{count, plural, one {მოდული} other {მოდულები}}",
-    "no_module": "მოდული არ არის"
+    "no_module": "მოდული არ არის",
+    "select": "Add modules"
   }
 }

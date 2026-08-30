@@ -21,5 +21,21 @@
   "cycle": {
     "label": "{count, plural, one {ციკლი} other {ციკლები}}",
     "no_cycle": "ციკლი არ არის"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Add work items to the cycle to view it's\n progress"
+      },
+      "priority": {
+        "title": "Observe high priority work items tackled in\n the cycle at a glance."
+      },
+      "assignee": {
+        "title": "Add assignees to work items to see a\n breakdown of work by assignees."
+      },
+      "label": {
+        "title": "Add labels to work items to see the\n breakdown of work by labels."
+      }
+    }
   }
 }

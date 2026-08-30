@@ -1,22 +1,70 @@
 {
   "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "Change email",
+        "description": "Enter a new email address to receive a verification link.",
+        "toasts": {
+          "success_title": "Success!",
+          "success_message": "Email updated successfully. Please sign in again."
+        },
+        "form": {
+          "email": {
+            "label": "New email",
+            "placeholder": "Enter your email",
+            "errors": {
+              "required": "Email is required",
+              "invalid": "Email is invalid",
+              "exists": "Email already exists. Please use a different one.",
+              "validation_failed": "Email validation failed. Please try again."
+            }
+          },
+          "code": {
+            "label": "Unique code",
+            "placeholder": "123456",
+            "helper_text": "Verification code sent to your new email.",
+            "errors": {
+              "required": "Unique code is required",
+              "invalid": "Invalid verification code. Please try again."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Continue",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        },
+        "states": {
+          "sending": "Sending"
+        }
+      }
+    },
     "preferences": {
       "heading": "პრეფერენციები",
       "description": "მორგეთ თქვენი აპლიკაციის გამოცდილება თქვენი სამუშაოს მიხედვით"
     },
     "notifications": {
       "heading": "ელფოსტის შეტყობინებები",
-      "description": "იყავით ინფორმირებული თქვენს გამოწერილ სამუშაო ელემენტებზე. ჩართეთ ეს, რომ მიიღოთ შეტყობინებები."
+      "description": "იყავით ინფორმირებული თქვენს გამოწერილ სამუშაო ელემენტებზე. ჩართეთ ეს, რომ მიიღოთ შეტყობინებები.",
+      "select_default_view": "Select default view",
+      "compact": "Compact",
+      "full": "Full Screen"
     },
     "security": {
       "heading": "უსაფრთხოება"
     },
     "api_tokens": {
+      "title": "Personal Access Tokens",
       "description": "შექმენით უსაფრთხო API ტოკენები თქვენი მონაცემების ინტეგრაციისთვის გარე სისტემებთან და აპლიკაციებთან."
     },
     "activity": {
       "heading": "აქტივობა",
       "description": "თვალყური ადევნეთ თქვენს ბოლო მოქმედებებს და ცვლილებებს ყველა პროექტსა და სამუშაო ელემენტში."
+    },
+    "connections": {
+      "title": "Connections",
+      "heading": "Connections",
+      "description": "Manage your workspace connections settings."
     }
   },
   "profile": {
@@ -54,7 +102,8 @@
       "activity": "აქტივობა",
       "preferences": "პრეფერენციები",
       "notifications": "შეტყობინებები",
-      "api-tokens": "პერსონალური წვდომის ტოკენები"
+      "api-tokens": "პერსონალური წვდომის ტოკენები",
+      "connections": "Connections"
     },
     "tabs": {
       "summary": "შეჯამება",

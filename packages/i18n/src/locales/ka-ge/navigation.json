@@ -1,11 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "შედეგები არ მოიძებნა"
+      }
+    }
+  },
   "sidebar": {
     "stickies": "სტიკერები",
+    "your_work": "შენი სამუშაო",
     "projects": "პროექტები",
     "pages": "გვერდები",
     "new_work_item": "ახალი სამუშაო ელემენტი",
     "home": "მთავარი",
-    "your_work": "შენი სამუშაო",
     "inbox": "შეტყობინებები",
     "workspace": "სამუშაო სივრცე",
     "views": "ხილვები",
@@ -17,13 +24,11 @@
     "drafts": "მონახაზები",
     "favorites": "ფავორიტები",
     "pro": "პრო",
-    "upgrade": "გააუმჯობესე"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "შედეგები არ მოიძებნა"
-      }
-    }
+    "upgrade": "გააუმჯობესე",
+    "pi_chat": "Plane AI",
+    "epics": "Epics",
+    "upgrade_plan": "Upgrade plan",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
   }
 }

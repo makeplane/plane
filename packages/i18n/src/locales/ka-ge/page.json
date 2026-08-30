@@ -22,7 +22,8 @@
         },
         "version_history": {
           "label": "ვერსიის ისტორია",
-          "current_version": "მიმდინარე ვერსია"
+          "current_version": "მიმდინარე ვერსია",
+          "highlight_changes": "Highlight changes"
         }
       },
       "assets": {
@@ -32,10 +33,83 @@
           "title": "ფალტობის სურათები",
           "description": "დაამატეთ სურათები მათ აქ სანახავად."
         }
+      },
+      "comments": {
+        "label": "Comments",
+        "empty_state": {
+          "title": "No comments",
+          "description": "Add comments to see them here."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "The sticky name cannot be longer than 100 characters.",
+        "already_exists": "There already exists a sticky with no description"
+      },
+      "created": {
+        "title": "Sticky created",
+        "message": "The sticky has been successfully created"
+      },
+      "not_created": {
+        "title": "Sticky not created",
+        "message": "The sticky could not be created"
+      },
+      "updated": {
+        "title": "Sticky updated",
+        "message": "The sticky has been successfully updated"
+      },
+      "not_updated": {
+        "title": "Sticky not updated",
+        "message": "The sticky could not be updated"
+      },
+      "removed": {
+        "title": "Sticky removed",
+        "message": "The sticky has been successfully removed"
+      },
+      "not_removed": {
+        "title": "Sticky not removed",
+        "message": "The sticky could not be removed"
       }
     },
     "open_button": "ნავიგაციის პანელის გახსნა",
     "close_button": "ნავიგაციის პანელის დახურვა",
     "outline_floating_button": "კონტურის გახსნა"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Move",
+        "loading": "Moving"
+      },
+      "cannot_move_to_teamspace": "Private and shared pages cannot be moved to a teamspace.",
+      "placeholders": {
+        "workspace_to_all": "Search for projects and teamspaces",
+        "workspace_to_project": "Search for projects",
+        "project_to_all": "Search for projects and teamspaces",
+        "project_to_project": "Search for projects",
+        "project_to_all_with_wiki": "Search for wiki collections, projects, and teamspaces",
+        "project_to_project_with_wiki": "Search for wiki collections and projects"
+      },
+      "toasts": {
+        "success": {
+          "title": "Success!",
+          "message": "Page moved successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Page could not be moved. Please try again later."
+        },
+        "collection_error": {
+          "title": "Moved to wiki",
+          "message": "Page was moved to wiki, but could not be added to the selected collection. It remains in General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Remove from collection",
+      "success_message": "Page removed from collection.",
+      "error_message": "Page could not be removed from the collection. Please try again."
+    }
   }
 }

@@ -1,4 +1,10 @@
 {
+  "cloud_maintenance_message": {
+    "we_are_working_on_this_if_you_need_immediate_assistance": "We're working on this. If you need immediate assistance,",
+    "reach_out_to_us": "reach out to us",
+    "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Otherwise, try refreshing the page occasionally or visit our",
+    "status_page": "Status page"
+  },
   "submit": "გაგზავნა",
   "cancel": "გაუქმება",
   "loading": "ჩატვირთვა",
@@ -11,6 +17,7 @@
   "no": "არა",
   "ok": "კარგი",
   "name": "სახელი",
+  "unknown_user": "Unknown user",
   "description": "აღწერა",
   "search": "ძიება",
   "add_member": "წევრის დამატება",
@@ -43,6 +50,13 @@
   "your_account": "თქვენი ანგარიში",
   "security": "უსაფრთხოება",
   "activity": "აქტივობა",
+  "activity_empty_state": {
+    "no_activity": "No activity yet",
+    "no_transitions": "No transitions yet",
+    "no_comments": "No comments yet",
+    "no_worklogs": "No worklogs yet",
+    "no_history": "No history yet"
+  },
   "preferences": "პრეფერენციები",
   "language_and_time": "ენა და დრო",
   "notifications": "შეტყობინებები",
@@ -61,7 +75,9 @@
   "language_setting": "აირჩიეთ ინტერფეისში გამოყენებული ენა.",
   "settings_moved_to_preferences": "დროის სარტყელისა და ენის პარამეტრები გადატანილია პრეფერენციებში.",
   "go_to_preferences": "გადადით პრეფერენციებზე",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
   "theme": "თემა",
+  "smooth_cursor": "Smooth Cursor",
   "system_preference": "სისტემის პრეფერენცია",
   "light": "ღია",
   "dark": "მუქი",
@@ -153,6 +169,7 @@
   "project_created_successfully": "პროექტი წარმატებით შეიქმნა",
   "project_created_successfully_description": "პროექტი წარმატებით შეიქმნა. ახლა შეგიძლიათ დაიწყოთ სამუშაო ელემენტების დამატება.",
   "project_name_already_taken": "პროექტის სახელი უკვე დაკავებულია.",
+  "project_name_cannot_contain_special_characters": "The project name cannot contain special characters.",
   "project_identifier_already_taken": "პროექტის იდენტიფიკატორი უკვე დაკავებულია.",
   "project_cover_image_alt": "პროექტის საკანფეტი სურათი",
   "name_is_required": "სახელი სავალდებულოა",
@@ -199,6 +216,8 @@
   "modules": "მოდულები",
   "pages": "გვერდები",
   "intake": "მიღება",
+  "renew": "Renew",
+  "preview": "Preview",
   "time_tracking": "დროის თვალყურის დევნება",
   "work_management": "სამუშაოს მართვა",
   "projects_and_issues": "პროექტები და სამუშაო ელემენტები",
@@ -224,6 +243,7 @@
   "docs": "დოკუმენტები",
   "full_changelog": "სრული ცვლილებების ჟურნალი",
   "support": "მხარდაჭერა",
+  "forum": "Forum",
   "powered_by_plane_pages": "Plane Pages-ის მხარდაჭერით",
   "please_select_at_least_one_invitation": "გთხოვთ, აირჩიოთ მინიმუმ ერთი მოწვევა.",
   "please_select_at_least_one_invitation_description": "გთხოვთ, აირჩიოთ მინიმუმ ერთი მოწვევა სამუშაო სივრცეში შესაერთებლად.",
@@ -266,6 +286,8 @@
   "title_is_required": "სათაური სავალდებულოა",
   "title": "სათაური",
   "state": "მდგომარეობა",
+  "transition": "Transition",
+  "history": "History",
   "priority": "პრიორიტეტი",
   "none": "არცერთი",
   "urgent": "გადაუდებელი",
@@ -275,12 +297,16 @@
   "members": "წევრები",
   "assignee": "მინიჭებული",
   "assignees": "მინიჭებულები",
+  "subscriber": "{count, plural, one{# Subscriber} other{# Subscribers}}",
   "you": "თქვენ",
   "labels": "იარლიყები",
   "create_new_label": "ახალი იარლიყის შექმნა",
+  "label_name": "Label name",
+  "failed_to_create_label": "Failed to create label. Please try again.",
   "start_date": "დაწყების თარიღი",
   "end_date": "დასრულების თარიღი",
   "due_date": "ვადის თარიღი",
+  "target_date": "Target date",
   "estimate": "შეფასება",
   "change_parent_issue": "მშობელი სამუშაო ელემენტის შეცვლა",
   "remove_parent_issue": "მშობელი სამუშაო ელემენტის ამოღება",
@@ -341,6 +367,9 @@
   "bot": "ბოტი",
   "settings_description": "მართეთ თქვენი ანგარიში, სამუშაო სივრცე და პროექტის პრეფერენციები ერთ ადგილას. გადართეთ ჩანართებს შორის მარტივი კონფიგურაციისთვის.",
   "back_to_workspace": "სამუშაო სივრცეში დაბრუნება",
+  "upgrade_request": "Ask your Workspace Admin to upgrade.",
+  "copied_to_clipboard": "Copied to clipboard",
+  "copied_to_clipboard_description": "The URL has been successfully copied to your clipboard",
   "toast": {
     "success": "წარმატება!",
     "error": "შეცდომა!"
@@ -388,6 +417,8 @@
   },
   "common": {
     "all": "ყველა",
+    "no_items_in_this_group": "No items in this group",
+    "drop_here_to_move": "Drop here to move",
     "states": "მდგომარეობები",
     "state": "მდგომარეობა",
     "state_groups": "მდგომარეობის ჯგუფები",
@@ -413,6 +444,7 @@
     "estimates": "შეფასებები",
     "estimate": "შეფასება",
     "created_at": "შექმნის თარიღი",
+    "updated_at": "Updated at",
     "completed_at": "დასრულების თარიღი",
     "layout": "განლაგება",
     "filters": "ფილტრები",
@@ -433,6 +465,8 @@
     "work_item": "სამუშაო ელემენტი",
     "work_items": "სამუშაო ელემენტები",
     "sub_work_item": "ქვე-სამუშაო ელემენტი",
+    "views": "Views",
+    "pages": "Pages",
     "add": "დამატება",
     "warning": "გაფრთხილება",
     "updating": "განახლება",
@@ -451,6 +485,8 @@
     "project_id": "პროექტის ID",
     "project_timezone": "პროექტის დროის სარტყელი",
     "created_on": "შექმნილია",
+    "updated_on": "Updated on",
+    "completed_on": "Completed on",
     "update_project": "პროექტის განახლება",
     "identifier_already_exists": "იდენტიფიკატორი უკვე არსებობს",
     "add_more": "მეტის დამატება",
@@ -493,11 +529,13 @@
     },
     "comments": "კომენტარები",
     "updates": "განახლებები",
+    "additional_updates": "Additional updates",
     "clear_all": "ყველას გასუფთავება",
     "copied": "კოპირებულია!",
     "link_copied": "ბმული კოპირებულია!",
     "link_copied_to_clipboard": "ბმული კოპირებულია ბუფერში",
     "copied_to_clipboard": "სამუშაო ელემენტის ბმული კოპირებულია ბუფერში",
+    "branch_name_copied_to_clipboard": "Branch name copied to clipboard",
     "is_copied_to_clipboard": "სამუშაო ელემენტი კოპირებულია ბუფერში",
     "no_links_added_yet": "ჯერ ბმულები არ არის დამატებული",
     "add_link": "ბმულის დამატება",
@@ -510,6 +548,7 @@
     "continue": "გაგრძელება",
     "resend": "ხელახალი გაგზავნა",
     "relations": "ურთიერთობები",
+    "dependencies": "Dependencies",
     "errors": {
       "default": {
         "title": "შეცდომა!",
@@ -555,13 +594,20 @@
       "label": "ძიება",
       "placeholder": "ჩაწერეთ ძიებისთვის",
       "no_matches_found": "შესაბამისი არ მოიძებნა",
-      "no_matching_results": "შესაბამისი შედეგები არ მოიძებნა"
+      "no_matching_results": "შესაბამისი შედეგები არ მოიძებნა",
+      "min_chars": "Type at least {count} characters to search",
+      "error": "Error fetching search results",
+      "no_results": {
+        "title": "No matching results",
+        "description": "Remove the search criteria to see all results"
+      }
     },
     "actions": {
       "edit": "რედაქტირება",
       "make_a_copy": "ასლის გაკეთება",
       "open_in_new_tab": "ახალ ჩანართში გახსნა",
       "copy_link": "ბმულის კოპირება",
+      "copy_branch_name": "Copy branch name",
       "archive": "არქივირება",
       "restore": "აღდგენა",
       "delete": "წაშლა",
@@ -572,7 +618,8 @@
       "show_weekends": "შაბათ-კვირის ჩვენება",
       "enable": "ჩართვა",
       "disable": "გამორთვა",
-      "copy_markdown": "Markdown-ის კოპირება"
+      "copy_markdown": "Markdown-ის კოპირება",
+      "reply": "Reply"
     },
     "name": "სახელი",
     "discard": "გაუქმება",
@@ -585,6 +632,7 @@
     "disabled": "გამორთული",
     "mandate": "მანდატი",
     "mandatory": "სავალდებულო",
+    "global": "Global",
     "yes": "დიახ",
     "no": "არა",
     "please_wait": "გთხოვთ, მოიცადოთ",
@@ -594,6 +642,7 @@
     "or": "ან",
     "next": "შემდეგი",
     "back": "უკან",
+    "retry": "Retry",
     "cancelling": "გაუქმება",
     "configuring": "კონფიგურაცია",
     "clear": "გასუფთავება",
@@ -650,7 +699,25 @@
     "applying": "გამოყენება",
     "overview": "მიმოხილვა",
     "no_of": "{entity}-ის რაოდენობა",
-    "resolved": "გადაჭრილი"
+    "resolved": "გადაჭრილი",
+    "get_started": "Get started",
+    "worklogs": "Worklogs",
+    "project_updates": "Project Updates",
+    "workflows": "Workflows",
+    "templates": "Templates",
+    "business": "Business",
+    "members_and_teamspaces": "Members & Teamspaces",
+    "recurring_work_items": "Recurring work items",
+    "milestones": "Milestones",
+    "open_in_full_screen": "Open {page} in full screen",
+    "details": "Details",
+    "project_structure": "Project structure",
+    "custom_properties": "Custom properties",
+    "your_profile": "Your profile",
+    "developer": "Developer",
+    "work_structure": "Work structure",
+    "execution": "Execution",
+    "administration": "Administration"
   },
   "chart": {
     "x_axis": "X-ღერძი",
@@ -741,6 +808,44 @@
     "human_resources": "ადამიანური რესურსები",
     "other": "სხვა"
   },
+  "default_global_view": {
+    "all_issues": "ყველა სამუშაო ელემენტი",
+    "assigned": "მინიჭებული",
+    "created": "შექმნილი",
+    "subscribed": "გამოწერილი"
+  },
+  "description_versions": {
+    "last_edited_by": "ბოლოს დაარედაქტირა",
+    "previously_edited_by": "წინა რედაქტორი",
+    "edited_by": "დარედაქტირებულია"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane არ გაუშვია. ეს შეიძლება იყოს იმის გამო, რომ ერთი ან მეტი Plane სერვისი ვერ გაუშვეს.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "აირჩიეთ ლოგების ნახვა setup.sh-დან და Docker ლოგებიდან დასარწმუნებლად."
+  },
+  "customize_navigation": "Customize navigation",
+  "personal": "Personal",
+  "accordion_navigation_control": "Accordion sidebar navigation",
+  "horizontal_navigation_bar": "Tabbed Navigation",
+  "show_limited_projects_on_sidebar": "Show limited projects on sidebar",
+  "enter_number_of_projects": "Enter number of projects",
+  "pin": "Pin",
+  "unpin": "Unpin",
+  "workspace_dashboards": "Dashboards",
+  "pi_chat": "Plane AI",
+  "in_app": "In-app",
+  "forms": "Forms",
+  "milestones": "Milestones",
+  "milestones_description": "Milestones provide a layer to align work items toward shared completion dates.",
+  "file_upload": {
+    "upload_text": "Click here to upload file",
+    "drag_drop_text": "Drag and Drop",
+    "processing": "Processing",
+    "invalid_file_type": "Invalid file type",
+    "missing_fields": "Missing fields",
+    "success": "{fileName} Uploaded!"
+  },
+  "date": "Date",
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -762,20 +867,5 @@
       "description": "ექსპორტირეთ სამუშაო ელემენტები JSON ფაილში.",
       "short_description": "ექსპორტი json-ად"
     }
-  },
-  "default_global_view": {
-    "all_issues": "ყველა სამუშაო ელემენტი",
-    "assigned": "მინიჭებული",
-    "created": "შექმნილი",
-    "subscribed": "გამოწერილი"
-  },
-  "description_versions": {
-    "last_edited_by": "ბოლოს დაარედაქტირა",
-    "previously_edited_by": "წინა რედაქტორი",
-    "edited_by": "დარედაქტირებულია"
-  },
-  "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane არ გაუშვია. ეს შეიძლება იყოს იმის გამო, რომ ერთი ან მეტი Plane სერვისი ვერ გაუშვეს.",
-    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "აირჩიეთ ლოგების ნახვა setup.sh-დან და Docker ლოგებიდან დასარწმუნებლად."
   }
 }
