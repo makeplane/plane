@@ -4,12 +4,17 @@
 
 """Tests for plane.observability.logging.TraceContextFilter."""
 
+import copy
 import logging
 
 import pytest
 from opentelemetry.sdk.trace import TracerProvider
 
-from plane.observability.logging import TraceContextFilter
+from plane.observability.logging import (
+    TraceContextFilter,
+    extend_logging_config,
+    is_otel_active,
+)
 
 
 def _make_record() -> logging.LogRecord:
@@ -78,3 +83,110 @@ def test_trace_flags_is_int_for_log_record_compat():
         record = _make_record()
         TraceContextFilter().filter(record)
     assert isinstance(record.trace_flags, int)
+
+
+# ---------------------------------------------------------------------------
+# extend_logging_config
+# ---------------------------------------------------------------------------
+
+
+def _sample_logging_config() -> dict:
+    """A trimmed stand-in for the LOGGING dict in plane/settings/*.py."""
+    return {
+        "version": 1,
+        "disable_existing_loggers": True,
+        "formatters": {
+            "json": {
+                "()": "pythonjsonlogger.json.JsonFormatter",
+                "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
+            }
+        },
+        "handlers": {"console": {"level": "DEBUG", "class": "logging.StreamHandler", "formatter": "json"}},
+        "loggers": {"plane.api": {"level": "INFO", "handlers": ["console"], "propagate": False}},
+    }
+
+
+@pytest.mark.unit
+def test_extend_logging_config_is_a_noop_when_disabled():
+    config = _sample_logging_config()
+    before = copy.deepcopy(config)
+    extend_logging_config(config)
+    assert config == before
+
+
+@pytest.mark.unit
+def test_extend_logging_config_is_a_noop_when_enabled_without_endpoint(monkeypatch):
+    # OTEL_ENABLED=1 with no endpoint installs no TracerProvider, so the log
+    # schema must not change — otherwise every line gains empty trace ids.
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    config = _sample_logging_config()
+    before = copy.deepcopy(config)
+    extend_logging_config(config)
+    assert config == before
+
+
+@pytest.mark.unit
+def test_extend_logging_config_adds_trace_fields_when_active(monkeypatch):
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+    config = _sample_logging_config()
+
+    extend_logging_config(config)
+
+    assert "%(trace_id)s" in config["formatters"]["json"]["fmt"]
+    assert "trace_context" in config["filters"]
+    assert config["handlers"]["console"]["filters"] == ["trace_context"]
+
+
+@pytest.mark.unit
+def test_extend_logging_config_activates_on_signal_specific_endpoint(monkeypatch):
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://localhost:4318/v1/traces")
+    config = _sample_logging_config()
+
+    extend_logging_config(config)
+
+    assert "trace_context" in config["filters"]
+
+
+@pytest.mark.unit
+def test_extend_logging_config_preserves_existing_handler_filters(monkeypatch):
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+    config = _sample_logging_config()
+    config["handlers"]["console"]["filters"] = ["require_debug_true"]
+
+    extend_logging_config(config)
+
+    assert config["handlers"]["console"]["filters"] == ["require_debug_true", "trace_context"]
+
+
+@pytest.mark.unit
+def test_extend_logging_config_keeps_observability_loggers_alive(monkeypatch):
+    # disable_existing_loggers=True would otherwise silence the bootstrap and
+    # exporter loggers created before dictConfig runs.
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+    config = _sample_logging_config()
+
+    extend_logging_config(config)
+
+    assert "plane.observability" in config["loggers"]
+    assert "opentelemetry" in config["loggers"]
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "enabled,endpoint,expected",
+    [
+        ("1", "http://localhost:4317", True),
+        ("1", "", False),
+        ("0", "http://localhost:4317", False),
+        ("on", "http://localhost:4317", True),
+    ],
+)
+def test_is_otel_active(enabled, endpoint, expected, monkeypatch):
+    monkeypatch.setenv("OTEL_ENABLED", enabled)
+    if endpoint:
+        monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", endpoint)
+    assert is_otel_active() is expected

@@ -9,10 +9,15 @@
 
 - `_CONFIGURED` is reset before every test (otherwise the second test
   would always be a no-op because the first one flipped the flag).
-- Every `OTEL_*` env var is stripped before the test and restored after,
-  so what `_apply_defaults()` writes in one test doesn't leak into the
-  next (it uses `os.environ.setdefault`, which bypasses monkeypatch's
-  bookkeeping).
+- Every `OTEL_*` env var is stripped before the test, so what
+  `_apply_defaults()` writes in one test doesn't leak into the next (it
+  writes to `os.environ` directly, bypassing monkeypatch's bookkeeping).
+
+The stripping goes through `monkeypatch.delenv` rather than a manual
+save/restore: this fixture depends on `monkeypatch`, so `monkeypatch.undo()`
+runs *after* any post-yield teardown here. A manual restore would be undone
+again by that later `undo()`, permanently stripping any `OTEL_*` var the
+developer had exported in their shell.
 """
 
 import os
@@ -25,15 +30,18 @@ def isolate_otel_state(monkeypatch):
     from plane.observability import setup as otel_setup
 
     monkeypatch.setattr(otel_setup, "_CONFIGURED", False, raising=False)
+    monkeypatch.setattr(otel_setup, "_PROVIDERS_READY", False, raising=False)
     monkeypatch.setattr(otel_setup, "_TRACER_PROVIDER", None, raising=False)
     monkeypatch.setattr(otel_setup, "_METER_PROVIDER", None, raising=False)
 
-    saved = {k: v for k, v in os.environ.items() if k.startswith("OTEL_")}
-    for key in list(saved.keys()):
-        del os.environ[key]
+    for key in [k for k in os.environ if k.startswith("OTEL_")]:
+        monkeypatch.delenv(key, raising=False)
 
     yield
 
+    # Drop whatever `_apply_defaults()` wrote directly into os.environ during
+    # the test — monkeypatch knows nothing about those keys and would leave
+    # them behind. This is a delete-only teardown: the developer's original
+    # values are restored by monkeypatch.undo(), which runs after this.
     for key in [k for k in os.environ if k.startswith("OTEL_")]:
         del os.environ[key]
-    os.environ.update(saved)

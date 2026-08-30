@@ -4,6 +4,7 @@
 
 # Python imports
 import os
+import sys
 import logging
 from datetime import timedelta
 
@@ -13,6 +14,7 @@ from pythonjsonlogger.json import JsonFormatter
 from celery.signals import (
     after_setup_logger,
     after_setup_task_logger,
+    worker_process_init,
     worker_process_shutdown,
 )
 from celery.schedules import crontab, schedule
@@ -24,16 +26,55 @@ from plane.settings.redis import redis_instance
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 
 # Bootstrap OpenTelemetry before Celery wires up so CeleryInstrumentor can
-# patch task execution. No-op unless OTEL_ENABLED=1.
-from plane.observability.setup import configure_otel, flush_otel  # noqa: E402
-from plane.observability.logging import TraceContextFilter, is_otel_enabled  # noqa: E402
+# patch task execution. No-op unless OTel is active.
+from plane.observability.setup import (  # noqa: E402
+    configure_otel,
+    flush_otel,
+    init_process_providers,
+)
+from plane.observability.logging import TraceContextFilter, is_otel_active  # noqa: E402
 
-configure_otel()
 
-# Whether to trace-correlate worker logs. Uses the same shared is_otel_enabled()
+def _is_prefork_worker() -> bool:
+    """True when this process is `celery ... worker` on the (default) prefork pool.
+
+    The prefork pool forks its task children *after* this module is imported.
+    The OTLP gRPC exporter opens its channel eagerly in __init__ and registers
+    no os.register_at_fork handler, so a channel created here in the MainProcess
+    and inherited by a forked child is not safe to export on — child exports can
+    hang or fail nondeterministically. For that pool we defer exporter creation
+    to worker_process_init, which fires inside each child. `celery beat` and the
+    non-forking pools keep the import-time bootstrap.
+    """
+    argv = sys.argv
+    if "worker" not in argv:
+        return False
+    for index, arg in enumerate(argv):
+        if arg.startswith("--pool="):
+            return arg.split("=", 1)[1] == "prefork"
+        if arg in ("-P", "--pool"):
+            return index + 1 < len(argv) and argv[index + 1] == "prefork"
+    return True  # prefork is Celery's default pool
+
+
+_DEFER_OTEL_PROVIDERS = _is_prefork_worker()
+
+configure_otel(defer_providers=_DEFER_OTEL_PROVIDERS)
+
+# Whether to trace-correlate worker logs. Uses the same shared is_otel_active()
 # gate as the bootstrap (setup.configure_otel) and the Django LOGGING gate, so
-# every documented OTEL_ENABLED token behaves identically across processes.
-_OTEL_LOG_ENABLED = is_otel_enabled()
+# the log schema never changes in a process that exports no telemetry.
+_OTEL_LOG_ENABLED = is_otel_active()
+
+
+@worker_process_init.connect
+def init_otel_in_worker_child(*args, **kwargs):
+    """Create this child's OTLP exporters after the prefork fork.
+
+    No-op unless configure_otel() deferred them (see _is_prefork_worker).
+    """
+    init_process_providers()
+
 
 # Base JSON log fmt (unchanged off-path); the OTel variant appends the
 # trace-context fields that TraceContextFilter populates.

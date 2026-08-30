@@ -7,9 +7,11 @@
 Strategy: mock at the boundary. The OTLP exporter factories and the
 opentelemetry global setters (`set_tracer_provider`, `set_meter_provider`)
 are patched so tests don't open real gRPC connections or mutate global
-OTEL state. Instrumentor classes are patched at the same point — the
-real DjangoInstrumentor is a module-level singleton that would survive
-the test process and pollute other suites.
+OTEL state. Instrumentor classes are patched in their own packages — setup.py
+resolves them lazily via import_module, so there is nothing to patch on
+`plane.observability.setup` itself — because the real DjangoInstrumentor is a
+module-level singleton that would survive the test process and pollute other
+suites.
 """
 
 import logging
@@ -20,24 +22,30 @@ from unittest.mock import patch
 import pytest
 
 from plane.observability.setup import (
+    _build_resource,
     _create_metric_exporter,
     _create_span_exporter,
+    _protocol,
     configure_otel,
+    init_process_providers,
 )
 
+
+_INSTRUMENTOR_TARGETS = (
+    "opentelemetry.instrumentation.django.DjangoInstrumentor",
+    "opentelemetry.instrumentation.celery.CeleryInstrumentor",
+    "opentelemetry.instrumentation.psycopg.PsycopgInstrumentor",
+    "opentelemetry.instrumentation.redis.RedisInstrumentor",
+    "opentelemetry.instrumentation.requests.RequestsInstrumentor",
+    "opentelemetry.instrumentation.httpx.HTTPXClientInstrumentor",
+)
 
 _MOCK_TARGETS = (
     "plane.observability.setup._create_span_exporter",
     "plane.observability.setup._create_metric_exporter",
     "opentelemetry.trace.set_tracer_provider",
     "opentelemetry.metrics.set_meter_provider",
-    "plane.observability.setup.DjangoInstrumentor",
-    "plane.observability.setup.CeleryInstrumentor",
-    "plane.observability.setup.PsycopgInstrumentor",
-    "plane.observability.setup.RedisInstrumentor",
-    "plane.observability.setup.RequestsInstrumentor",
-    "plane.observability.setup.HTTPXClientInstrumentor",
-)
+) + _INSTRUMENTOR_TARGETS
 
 
 def _full_enabled_env(monkeypatch):
@@ -124,14 +132,7 @@ def test_enabled_with_endpoint_sets_providers_and_instruments(monkeypatch):
     mocks["opentelemetry.trace.set_tracer_provider"].assert_called_once()
     mocks["opentelemetry.metrics.set_meter_provider"].assert_called_once()
 
-    for instrumentor_target in (
-        "plane.observability.setup.DjangoInstrumentor",
-        "plane.observability.setup.CeleryInstrumentor",
-        "plane.observability.setup.PsycopgInstrumentor",
-        "plane.observability.setup.RedisInstrumentor",
-        "plane.observability.setup.RequestsInstrumentor",
-        "plane.observability.setup.HTTPXClientInstrumentor",
-    ):
+    for instrumentor_target in _INSTRUMENTOR_TARGETS:
         mocks[instrumentor_target].return_value.instrument.assert_called_once()
 
 
@@ -140,7 +141,7 @@ def test_psycopg_instrumentor_called_with_enable_commenter_false(monkeypatch):
     _full_enabled_env(monkeypatch)
     mocks = _patched_configure_otel()
     mocks[
-        "plane.observability.setup.PsycopgInstrumentor"
+        "opentelemetry.instrumentation.psycopg.PsycopgInstrumentor"
     ].return_value.instrument.assert_called_once_with(enable_commenter=False)
 
 
@@ -209,7 +210,7 @@ def test_idempotent_when_called_twice(monkeypatch):
     assert mocks["plane.observability.setup._create_span_exporter"].call_count == 1
     assert mocks["opentelemetry.trace.set_tracer_provider"].call_count == 1
     assert (
-        mocks["plane.observability.setup.DjangoInstrumentor"]
+        mocks["opentelemetry.instrumentation.django.DjangoInstrumentor"]
         .return_value.instrument.call_count
         == 1
     )
@@ -281,3 +282,95 @@ def test_create_metric_exporter_uses_http_when_protocol_is_http(protocol, monkey
         _create_metric_exporter()
     Http.assert_called_once()
     Grpc.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Empty-string env values (compose injects these for unset host vars)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "key,expected",
+    [
+        ("OTEL_TRACES_SAMPLER", "parentbased_traceidratio"),
+        ("OTEL_TRACES_SAMPLER_ARG", "0.1"),
+        ("OTEL_SERVICE_NAME", "plane-api"),
+        ("OTEL_EXPORTER_OTLP_PROTOCOL", "grpc"),
+    ],
+)
+def test_blank_env_value_is_replaced_by_default(key, expected, monkeypatch):
+    # `${OTEL_TRACES_SAMPLER:-}` in docker-compose sets the var to "", which
+    # plain os.environ.setdefault would leave in place.
+    _full_enabled_env(monkeypatch)
+    monkeypatch.setenv(key, "")
+
+    _patched_configure_otel()
+
+    assert os.environ[key] == expected
+
+
+@pytest.mark.unit
+def test_protocol_strips_surrounding_whitespace(monkeypatch):
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_PROTOCOL", " http/protobuf ")
+    assert _protocol() == "http/protobuf"
+
+
+# ---------------------------------------------------------------------------
+# Resource identity
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+def test_resource_carries_a_unique_service_instance_id():
+    # Every gunicorn worker / prefork child must export under its own identity
+    # or the cumulative http.server.* streams collide in the backend.
+    first = _build_resource().attributes["service.instance.id"]
+    second = _build_resource().attributes["service.instance.id"]
+    assert first and second and first != second
+
+
+# ---------------------------------------------------------------------------
+# Deferred providers (Celery prefork pool)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+def test_defer_providers_instruments_but_creates_no_exporters(monkeypatch):
+    _full_enabled_env(monkeypatch)
+
+    stack = ExitStack()
+    mocks = {target: stack.enter_context(patch(target)) for target in _MOCK_TARGETS}
+    try:
+        configure_otel(defer_providers=True)
+    finally:
+        stack.close()
+
+    mocks["plane.observability.setup._create_span_exporter"].assert_not_called()
+    mocks["plane.observability.setup._create_metric_exporter"].assert_not_called()
+    mocks["opentelemetry.instrumentation.celery.CeleryInstrumentor"].return_value.instrument.assert_called_once()
+
+
+@pytest.mark.unit
+def test_init_process_providers_creates_deferred_exporters(monkeypatch):
+    _full_enabled_env(monkeypatch)
+
+    stack = ExitStack()
+    mocks = {target: stack.enter_context(patch(target)) for target in _MOCK_TARGETS}
+    try:
+        configure_otel(defer_providers=True)
+        init_process_providers()
+        # Idempotent: a second call must not build a second exporter.
+        init_process_providers()
+    finally:
+        stack.close()
+
+    mocks["plane.observability.setup._create_span_exporter"].assert_called_once()
+    mocks["plane.observability.setup._create_metric_exporter"].assert_called_once()
+
+
+@pytest.mark.unit
+def test_init_process_providers_is_a_noop_when_otel_is_disabled():
+    with patch("plane.observability.setup._create_span_exporter") as create_exporter:
+        init_process_providers()
+    create_exporter.assert_not_called()

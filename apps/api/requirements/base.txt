@@ -80,7 +80,11 @@ opentelemetry-instrumentation-celery==0.49b1
 opentelemetry-instrumentation-psycopg==0.49b1
 opentelemetry-instrumentation-redis==0.49b1
 opentelemetry-instrumentation-requests==0.49b1
-opentelemetry-instrumentation-httpx==0.49b1
+# [instruments] extra: this package imports httpx at module scope but declares it
+# only under that extra. Requesting it keeps the instrumentor from depending on
+# httpx arriving transitively (today only via openai), without adding a top-level
+# httpx pin that would clash with the one in requirements/test.txt.
+opentelemetry-instrumentation-httpx[instruments]==0.49b1
 # OpenAPI Specification
 drf-spectacular==0.28.0
 # html sanitizer
