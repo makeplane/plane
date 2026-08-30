@@ -69,6 +69,11 @@ x-app-env: &app-env
 x-otel-env: &otel-env
   OTEL_ENABLED: ${OTEL_ENABLED:-0}
   OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+  # Signal-specific endpoints are honored by the exporters and by is_otel_active(),
+  # so they have to reach the containers too — an operator who sets only these
+  # would otherwise get telemetry silently disabled.
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-}
+  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-}
   OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}
   OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
   OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-plane-api}

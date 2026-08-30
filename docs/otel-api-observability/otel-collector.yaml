@@ -19,9 +19,14 @@ receivers:
       #    This leaves the app's own JSON as a string in attributes.log.
       - type: json_parser
       # 2. Parse the app's JSON out of that string, so trace_id / span_id /
-      #    service_name become real attributes.
+      #    service_name become real attributes. Guarded: `include` above matches
+      #    every container on the host, and plaintext lines (postgres, redis,
+      #    rabbitmq, ...) would otherwise log a parse error each. Narrowing
+      #    `include` to just the api/worker/beat containers is the tidier option
+      #    if you know their container ids.
       - type: json_parser
         parse_from: attributes.log
+        if: 'attributes.log != nil and attributes.log matches "^\\s*[{]"'
       # 3. Promote them to the log record's top-level trace context. A `move`
       #    to a non-prefixed field would target body.trace_id and never set the
       #    real trace context — trace_parser is the operator that does.

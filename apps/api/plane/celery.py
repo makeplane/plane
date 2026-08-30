@@ -20,6 +20,8 @@ from celery.signals import (
 from celery.schedules import crontab, schedule
 
 # Module imports
+from django.conf import settings
+
 from plane.settings.redis import redis_instance
 
 # Set the default Django settings module for the 'celery' program.
@@ -35,26 +37,41 @@ from plane.observability.setup import (  # noqa: E402
 from plane.observability.logging import TraceContextFilter, is_otel_active  # noqa: E402
 
 
+def _effective_pool() -> str:
+    """Resolve the pool `celery worker` will actually use.
+
+    Same precedence Celery applies: the `-P` / `--pool` CLI flag wins, then
+    `worker_pool` from the config object (`CELERY_WORKER_POOL` in Django
+    settings, via the namespaced config_from_object below), then the `prefork`
+    default. Reading argv alone would misclassify a settings-configured pool.
+    """
+    argv = sys.argv
+    for index, arg in enumerate(argv):
+        if arg.startswith("--pool="):
+            return arg.split("=", 1)[1].strip().lower()
+        if arg in ("-P", "--pool") and index + 1 < len(argv):
+            return argv[index + 1].strip().lower()
+    return str(getattr(settings, "CELERY_WORKER_POOL", "") or "prefork").strip().lower()
+
+
 def _is_prefork_worker() -> bool:
-    """True when this process is `celery ... worker` on the (default) prefork pool.
+    """True when this process is `celery ... worker` on the prefork pool.
 
     The prefork pool forks its task children *after* this module is imported.
     The OTLP gRPC exporter opens its channel eagerly in __init__ and registers
     no os.register_at_fork handler, so a channel created here in the MainProcess
     and inherited by a forked child is not safe to export on — child exports can
     hang or fail nondeterministically. For that pool we defer exporter creation
-    to worker_process_init, which fires inside each child. `celery beat` and the
-    non-forking pools keep the import-time bootstrap.
+    to worker_process_init, which fires inside each child.
+
+    Everything else keeps the import-time bootstrap: `celery beat`, and the
+    non-forking pools. That distinction matters for `threads`/`gevent`/`eventlet`,
+    which run tasks in the main process and never dispatch worker_process_init —
+    deferring there would leave the providers uninitialized and export nothing.
     """
-    argv = sys.argv
-    if "worker" not in argv:
-        return False
-    for index, arg in enumerate(argv):
-        if arg.startswith("--pool="):
-            return arg.split("=", 1)[1] == "prefork"
-        if arg in ("-P", "--pool"):
-            return index + 1 < len(argv) and argv[index + 1] == "prefork"
-    return True  # prefork is Celery's default pool
+    # Only worker processes fork, and only they need `settings` resolved this
+    # early — keep wsgi/asgi/manage.py off that path.
+    return "worker" in sys.argv and _effective_pool() == "prefork"
 
 
 _DEFER_OTEL_PROVIDERS = _is_prefork_worker()
