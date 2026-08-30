@@ -6,6 +6,7 @@
 
 import { Selection } from "@tiptap/pm/state";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+import powershell from "highlight.js/lib/languages/powershell";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 // components
@@ -14,6 +15,9 @@ import { CodeBlockComponent } from "./code-block-node-view";
 
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
+lowlight.register("powershell", powershell);
+lowlight.register("ps", powershell);
+lowlight.register("ps1", powershell);
 
 export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
   addNodeView() {
