@@ -12,10 +12,17 @@
 	# Per-client-IP rate limiting for static asset requests
 	rate_limit {
 		zone static {
-			key {remote_host}
+			key {client_ip}
 			events 300
 			window 1m
 		}
+	}
+
+	# Security headers (HSTS is set at the TLS terminator)
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
 	}
 
 	# SPA fallback
