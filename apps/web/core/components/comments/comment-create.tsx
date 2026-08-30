@@ -94,6 +94,8 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
     <div
       className={cn("sticky bottom-0 z-[4] bg-surface-1 sm:static")}
       onKeyDown={(e) => {
+        // Prevent IME composition Enter from triggering submit
+        if (e.nativeEvent.isComposing || e.keyCode === 229) return;
         if (
           e.key === "Enter" &&
           !e.shiftKey &&

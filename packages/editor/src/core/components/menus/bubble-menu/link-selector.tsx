@@ -84,6 +84,8 @@ export function BubbleMenuLinkSelector(props: Props) {
             defaultValue={editor.getAttributes("link").href || ""}
             onKeyDown={(e) => {
               setError(false);
+              // Prevent IME composition Enter from triggering submit
+              if (e.nativeEvent.isComposing || e.keyCode === 229) return;
               if (e.key === "Enter") {
                 e.preventDefault();
                 handleLinkSubmit();
