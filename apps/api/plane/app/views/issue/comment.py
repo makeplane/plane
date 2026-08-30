@@ -79,7 +79,10 @@ class IssueCommentViewSet(BaseViewSet):
                 {"error": "You are not allowed to comment on the issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = IssueCommentSerializer(data=request.data)
+        serializer = IssueCommentSerializer(
+            data=request.data,
+            context={"project_id": project_id},
+        )
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_activity.delay(
@@ -111,7 +114,12 @@ class IssueCommentViewSet(BaseViewSet):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
-        serializer = IssueCommentSerializer(issue_comment, data=request.data, partial=True)
+        serializer = IssueCommentSerializer(
+            issue_comment,
+            data=request.data,
+            partial=True,
+            context={"project_id": project_id},
+        )
         if serializer.is_valid():
             if "comment_html" in request.data and request.data["comment_html"] != issue_comment.comment_html:
                 serializer.save(edited_at=timezone.now())

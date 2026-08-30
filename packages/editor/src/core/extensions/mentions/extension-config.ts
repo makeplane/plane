@@ -6,7 +6,7 @@
 
 import { mergeAttributes } from "@tiptap/core";
 import type { MentionOptions } from "@tiptap/extension-mention";
-import Mention from "@tiptap/extension-mention";
+import MentionExtension from "@tiptap/extension-mention";
 import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import type { Node as NodeType } from "@tiptap/pm/model";
 // types
@@ -20,7 +20,7 @@ export type TMentionExtensionOptions = MentionOptions & {
   getMentionedEntityDetails: TMentionHandler["getMentionedEntityDetails"];
 };
 
-export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions>({
+export const CustomMentionExtensionConfig = MentionExtension.extend<TMentionExtensionOptions>({
   addAttributes() {
     return {
       [EMentionComponentAttributeNames.ID]: {
@@ -30,6 +30,9 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
         default: null,
       },
       [EMentionComponentAttributeNames.ENTITY_NAME]: {
+        default: null,
+      },
+      [EMentionComponentAttributeNames.ENTITY_DISPLAY_NAME]: {
         default: null,
       },
     };
@@ -67,5 +70,10 @@ function getMentionDisplayText(options: TMentionExtensionOptions, node: NodeType
   const attrs = node.attrs as TMentionComponentAttributes;
   const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
   const mentionEntityDetails = options.getMentionedEntityDetails?.(mentionEntityId ?? "");
-  return `@${mentionEntityDetails?.display_name ?? attrs[EMentionComponentAttributeNames.ID] ?? mentionEntityId}`;
+  const displayName =
+    attrs[EMentionComponentAttributeNames.ENTITY_DISPLAY_NAME] ??
+    mentionEntityDetails?.display_name ??
+    attrs[EMentionComponentAttributeNames.ID] ??
+    mentionEntityId;
+  return `@${displayName}`;
 }

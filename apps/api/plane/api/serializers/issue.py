@@ -31,6 +31,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.entity_mention_parser import apply_entity_mention_transformation
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
@@ -88,6 +89,10 @@ class IssueSerializer(BaseSerializer):
 
         except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
+
+        # Transform @issue/PROJ-123 style mentions before sanitization
+        if data.get("description_html"):
+            apply_entity_mention_transformation(data, self.context, "description_html")
 
         # Validate description content for security
         if data.get("description_html"):
@@ -719,6 +724,18 @@ class IssueCommentCreateSerializer(BaseSerializer):
             "edited_at",
         ]
 
+    def validate(self, data):
+        if "comment_html" in data and data["comment_html"]:
+            apply_entity_mention_transformation(data, self.context, "comment_html")
+
+        if "comment_html" in data and data["comment_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(data["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                data["comment_html"] = sanitized_html
+        return data
+
 
 class IssueCommentSerializer(BaseSerializer):
     """
@@ -745,6 +762,9 @@ class IssueCommentSerializer(BaseSerializer):
         exclude = ["comment_stripped", "comment_json"]
 
     def validate(self, data):
+        if "comment_html" in data and data["comment_html"]:
+            apply_entity_mention_transformation(data, self.context, "comment_html")
+
         if "comment_html" in data and data["comment_html"]:
             is_valid, error_msg, sanitized_html = validate_html_content(data["comment_html"])
             if not is_valid:

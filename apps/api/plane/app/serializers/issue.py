@@ -47,6 +47,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.entity_mention_parser import apply_entity_mention_transformation
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -131,6 +132,10 @@ class IssueCreateSerializer(BaseSerializer):
             and attrs.get("start_date", None) > attrs.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+
+        # Transform @issue/PROJ-123 style mentions before sanitization
+        if "description_html" in attrs and attrs["description_html"]:
+            apply_entity_mention_transformation(attrs, self.context, "description_html")
 
         # Validate description content for security
         if "description_html" in attrs and attrs["description_html"]:
@@ -716,6 +721,9 @@ class IssueCommentSerializer(BaseSerializer):
         ]
 
     def validate(self, attrs):
+        if "comment_html" in attrs and attrs["comment_html"]:
+            apply_entity_mention_transformation(attrs, self.context, "comment_html")
+
         if "comment_html" in attrs and attrs["comment_html"]:
             is_valid, error_msg, sanitized_html = validate_html_content(attrs["comment_html"])
             if not is_valid:

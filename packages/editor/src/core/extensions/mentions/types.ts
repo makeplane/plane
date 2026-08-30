@@ -11,10 +11,12 @@ export enum EMentionComponentAttributeNames {
   ID = "id",
   ENTITY_IDENTIFIER = "entity_identifier",
   ENTITY_NAME = "entity_name",
+  ENTITY_DISPLAY_NAME = "entity_display_name",
 }
 
 export type TMentionComponentAttributes = {
   [EMentionComponentAttributeNames.ID]: string | null;
   [EMentionComponentAttributeNames.ENTITY_IDENTIFIER]: string | null;
   [EMentionComponentAttributeNames.ENTITY_NAME]: TSearchEntities | null;
+  [EMentionComponentAttributeNames.ENTITY_DISPLAY_NAME]: string | null;
 };
