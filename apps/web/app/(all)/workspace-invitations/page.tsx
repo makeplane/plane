@@ -4,11 +4,13 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import { Boxes, Share2, Star, User2 } from "lucide-react";
+import { Boxes, LogOut, Share2, Star, User2 } from "lucide-react";
 import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
@@ -27,7 +29,16 @@ import { WorkspaceService } from "@/services/workspace.service";
 // service initialization
 const workspaceService = new WorkspaceService();
 
+const getJoinErrorMessage = (err: unknown) => {
+  if (err && typeof err === "object" && "error" in err && typeof (err as { error?: unknown }).error === "string") {
+    return (err as { error: string }).error;
+  }
+  return "Something went wrong. Please try again.";
+};
+
 function WorkspaceInvitationPage() {
+  // states
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // router
   const router = useAppRouter();
   // query params
@@ -36,7 +47,7 @@ function WorkspaceInvitationPage() {
   const slug = searchParams.get("slug");
   const token = searchParams.get("token");
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser, signOut } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
@@ -45,34 +56,80 @@ function WorkspaceInvitationPage() {
       : null
   );
 
-  const handleAccept = () => {
-    if (!invitationDetail) return;
-    workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+  const invitationEmail = invitationDetail?.email?.toLowerCase();
+  const currentEmail = currentUser?.email?.toLowerCase();
+  const isEmailMismatch = Boolean(invitationEmail && currentEmail && invitationEmail !== currentEmail);
+
+  const handleAccept = async () => {
+    if (!invitationDetail || isSubmitting) return;
+    if (isEmailMismatch) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Wrong account",
+        message: `This invitation was sent to ${invitationDetail.email}. Sign in with that email to accept.`,
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await workspaceService.joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: true,
         token: token,
-      })
-      .then(() => {
-        if (invitationDetail.email === currentUser?.email) {
-          router.push(`/${invitationDetail.workspace.slug}`);
-        } else {
-          router.push("/");
-        }
-      })
-      .catch((err: unknown) => console.error(err));
+      });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Invitation accepted",
+        message: `You joined ${invitationDetail.workspace.name}.`,
+      });
+      router.push(`/${invitationDetail.workspace.slug}`);
+    } catch (err: unknown) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Could not accept invitation",
+        message: getJoinErrorMessage(err),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleReject = () => {
-    if (!invitationDetail || !token) return;
-    void workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+  const handleReject = async () => {
+    if (!invitationDetail || !token || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await workspaceService.joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: false,
         token: token,
-      })
-      .then(() => {
-        router.push("/");
-      })
-      .catch((err: unknown) => console.error(err));
+      });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Invitation declined",
+        message: "You declined this workspace invitation.",
+      });
+      router.push("/");
+    } catch (err: unknown) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Could not decline invitation",
+        message: getJoinErrorMessage(err),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSwitchAccount = async () => {
+    try {
+      await signOut();
+      router.push(`/?next_path=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: "Could not sign out. Please try again.",
+      });
+    }
   };
 
   return (
@@ -83,13 +140,25 @@ function WorkspaceInvitationPage() {
             <div className="shadow-2xl flex w-full flex-col space-y-4 rounded-sm border border-subtle bg-surface-1 px-4 py-8 text-center md:w-1/3">
               <h2 className="text-18 uppercase">INVITATION NOT FOUND</h2>
             </div>
+          ) : isEmailMismatch ? (
+            <EmptySpace
+              title="Signed in with a different email"
+              description={`This invitation was sent to ${invitationDetail.email}, but you are signed in as ${currentUser?.email}. Switch accounts to accept it.`}
+            >
+              <EmptySpaceItem Icon={LogOut} title="Sign out and switch account" action={handleSwitchAccount} />
+              <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
+            </EmptySpace>
           ) : (
             <EmptySpace
               title={`You have been invited to ${invitationDetail.workspace.name}`}
               description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
-              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
+              <EmptySpaceItem Icon={CheckIcon} title={isSubmitting ? "Accepting..." : "Accept"} action={handleAccept} />
+              <EmptySpaceItem
+                Icon={CloseIcon}
+                title={isSubmitting ? "Please wait..." : "Ignore"}
+                action={handleReject}
+              />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
