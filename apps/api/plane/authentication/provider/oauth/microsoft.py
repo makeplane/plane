@@ -16,17 +16,16 @@ from plane.authentication.adapter.error import (
 
 
 class MicrosoftOAuthProvider(OauthAdapter):
-    token_url = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
     userinfo_url = "https://graph.microsoft.com/v1.0/me"
-    auth_url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
     scope = "openid email profile https://graph.microsoft.com/User.Read"
     provider = "microsoft"
 
     def __init__(self, request, code=None, state=None, callback=None):
-        (MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET) = get_configuration_value(
+        (MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET, MICROSOFT_TENANT_ID) = get_configuration_value(
             [
                 {"key": "MICROSOFT_CLIENT_ID", "default": os.environ.get("MICROSOFT_CLIENT_ID")},
                 {"key": "MICROSOFT_CLIENT_SECRET", "default": os.environ.get("MICROSOFT_CLIENT_SECRET")},
+                {"key": "MICROSOFT_TENANT_ID", "default": os.environ.get("MICROSOFT_TENANT_ID")},
             ]
         )
         if not (MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET):
@@ -34,6 +33,9 @@ class MicrosoftOAuthProvider(OauthAdapter):
                 error_code=AUTHENTICATION_ERROR_CODES["MICROSOFT_NOT_CONFIGURED"],
                 error_message="MICROSOFT_NOT_CONFIGURED",
             )
+        tenant = MICROSOFT_TENANT_ID or "common"
+        self.token_url = f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"
+        self.auth_url = f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize"
         redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/microsoft/callback/"""
         from urllib.parse import urlencode
         url_params = {
