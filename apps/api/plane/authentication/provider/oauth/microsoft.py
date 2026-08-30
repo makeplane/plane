@@ -36,7 +36,7 @@ class MicrosoftOAuthProvider(OauthAdapter):
         tenant = MICROSOFT_TENANT_ID or "common"
         self.token_url = f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"
         self.auth_url = f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize"
-        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/microsoft/callback/"""
+        redirect_uri = f"https://{request.get_host()}/auth/microsoft/callback/"
         from urllib.parse import urlencode
         url_params = {
             "client_id": MICROSOFT_CLIENT_ID,
