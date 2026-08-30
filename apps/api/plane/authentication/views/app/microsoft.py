@@ -48,15 +48,10 @@ class MicrosoftCallbackEndpoint(View):
     def get(self, request):
         next_path = request.GET.get("next_path")
         code = request.GET.get("code")
+        code = request.GET.get("code")
         state = request.GET.get("state")
-        stored_state = request.session.get("state")
-        if state != stored_state:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["MICROSOFT_OAUTH_PROVIDER_ERROR"],
-                error_message="MICROSOFT_OAUTH_PROVIDER_ERROR",
-            )
-            return HttpResponseRedirect(get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True), next_path=next_path,
+        if not code or not state:
+        if not code or not state:
                 params=exc.get_error_dict()))
         if not code:
             exc = AuthenticationException(
