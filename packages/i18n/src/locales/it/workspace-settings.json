@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Registrazioni di lavoro",
         "heading": "Registrazioni di lavoro",
-        "description": "Scarica le registrazioni di lavoro, alias timesheet, per chiunque in qualsiasi progetto."
+        "description": "Scarica le registrazioni di lavoro, alias timesheet, per chiunque in qualsiasi progetto.",
+        "export_success": "Registrazioni di lavoro esportate correttamente.",
+        "export_error": "Impossibile esportare le registrazioni di lavoro."
       },
       "group_syncing": {
         "title": "Sincronizzazione gruppi",

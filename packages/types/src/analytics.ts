@@ -37,7 +37,7 @@ export enum ChartYAxisMetric {
   EPIC_WORK_ITEM_COUNT = "EPIC_WORK_ITEM_COUNT",
 }
 
-export type TAnalyticsTabsBase = "overview" | "work-items";
+export type TAnalyticsTabsBase = "overview" | "work-items" | "time-tracking";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
 export interface AnalyticsTab {
   key: TAnalyticsTabsBase;
@@ -85,8 +85,15 @@ export interface WorkItemInsightColumns {
   assignee_id?: string;
 }
 
+export interface TimeTrackingInsightColumns {
+  project_id?: string;
+  project__name?: string;
+  total_minutes: number;
+}
+
 export type AnalyticsTableDataMap = {
   "work-items": WorkItemInsightColumns;
+  "time-tracking": TimeTrackingInsightColumns;
 };
 
 export interface IAnalyticsParams {

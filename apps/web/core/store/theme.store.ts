@@ -40,7 +40,7 @@ export class ThemeStore implements IThemeStore {
   sidebarPeek: boolean | undefined = undefined;
   isExtendedSidebarOpened: boolean | undefined = undefined;
   isExtendedProjectSidebarOpened: boolean | undefined = undefined;
-  profileSidebarCollapsed: boolean | undefined = undefined;
+  profileSidebarCollapsed: boolean | undefined = true;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
   epicDetailSidebarCollapsed: boolean | undefined = undefined;

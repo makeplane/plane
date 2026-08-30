@@ -7,6 +7,7 @@
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import type { TLoginMediums } from "./instance";
+import type { TPomodoroSettings } from "./pomodoro/timer";
 
 /**
  * @description The start of the week for the user
@@ -82,6 +83,7 @@ export type TUserProfile = {
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
+  pomodoro_settings: TPomodoroSettings;
 };
 
 export interface IInstanceAdminStatus {

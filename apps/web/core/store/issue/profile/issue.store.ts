@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import { action, observable, makeObservable, computed, override, runInAction } from "mobx";
 // base class
 import type {
   TIssue,
@@ -15,7 +15,9 @@ import type {
   TBulkOperationsPayload,
   TProfileViews,
 } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 import { UserService } from "@/services/user.service";
+import { clone } from "lodash-es";
 
 // services
 // types
@@ -53,6 +55,11 @@ export interface IProfileIssues extends IBaseIssuesStore {
 
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssuePlan: (
+    workspaceSlug: string,
+    issueId: string,
+    data: { planned_at?: string | null; planned_duration_minutes?: number }
+  ) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
@@ -75,6 +82,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       currentView: observable.ref,
       // computed
       viewFlags: computed,
+      groupBy: override,
       // action
       setViewId: action.bound,
       fetchIssues: action,
@@ -85,6 +93,19 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     this.issueFilterStore = issueFilterStore;
     // services
     this.userService = new UserService();
+  }
+
+  override get groupBy() {
+    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
+    if (!displayFilters || !displayFilters?.layout) return;
+
+    const layout = displayFilters?.layout;
+
+    if (layout === EIssueLayoutTypes.CALENDAR) {
+      return "planned_at";
+    }
+
+    return [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout) ? displayFilters?.group_by : undefined;
   }
 
   get viewFlags() {
@@ -225,6 +246,42 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
   fetchIssuesWithExistingPagination = async (workspaceSlug: string, userId: string, loadType: TLoader) => {
     if (!this.paginationOptions || !this.currentView) return;
     return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView, true);
+  };
+
+  updateIssuePlan = async (
+    workspaceSlug: string,
+    issueId: string,
+    data: { planned_at?: string | null; planned_duration_minutes?: number }
+  ) => {
+    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    if (!issueBeforeUpdate) {
+      throw new Error("Work item not found. Unable to update the personal plan.");
+    }
+
+    const nextPlannedAt = data.planned_at !== undefined ? data.planned_at : (issueBeforeUpdate.planned_at ?? null);
+    const updatedIssue = {
+      ...issueBeforeUpdate,
+      planned_at: nextPlannedAt,
+      planned_duration_minutes: data.planned_duration_minutes ?? issueBeforeUpdate.planned_duration_minutes ?? 60,
+    };
+
+    try {
+      this.rootIssueStore.issues.updateIssue(issueId, updatedIssue);
+      this.updateIssueList(updatedIssue as TIssue, issueBeforeUpdate);
+
+      if (nextPlannedAt === null) {
+        await this.userService.deleteUserIssuePlan(workspaceSlug, issueId);
+      } else {
+        await this.userService.upsertUserIssuePlan(workspaceSlug, issueId, {
+          planned_at: nextPlannedAt,
+          planned_duration_minutes: updatedIssue.planned_duration_minutes ?? 60,
+        });
+      }
+    } catch (error) {
+      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate);
+      this.updateIssueList(issueBeforeUpdate, updatedIssue as TIssue);
+      throw error;
+    }
   };
 
   // Using aliased names as they cannot be overridden in other stores

@@ -34,6 +34,11 @@ export interface IssueActions {
   createIssue?: (projectId: string | undefined | null, data: Partial<TIssue>) => Promise<TIssue | undefined>;
   quickAddIssue?: (projectId: string | undefined | null, data: TIssue) => Promise<TIssue | undefined>;
   updateIssue?: (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssuePlan?: (
+    workspaceSlug: string,
+    issueId: string,
+    data: { planned_at?: string | null; planned_duration_minutes?: number }
+  ) => Promise<void>;
   removeIssueFromView?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   archiveIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   restoreIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
@@ -490,6 +495,17 @@ const useProfileIssueActions = () => {
     },
     [issues.updateIssue, workspaceSlug]
   );
+  const updateIssuePlan = useCallback(
+    async (
+      _workspaceSlug: string,
+      issueId: string,
+      data: { planned_at?: string | null; planned_duration_minutes?: number }
+    ) => {
+      if (!workspaceSlug) return;
+      return await issues.updateIssuePlan(workspaceSlug, issueId, data);
+    },
+    [issues.updateIssuePlan, workspaceSlug]
+  );
   const removeIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string) => {
       if (!workspaceSlug || !projectId) return;
@@ -519,11 +535,12 @@ const useProfileIssueActions = () => {
       fetchNextIssues,
       createIssue,
       updateIssue,
+      updateIssuePlan,
       removeIssue,
       archiveIssue,
       updateFilters,
     }),
-    [fetchIssues, createIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
+    [fetchIssues, createIssue, updateIssue, updateIssuePlan, removeIssue, archiveIssue, updateFilters]
   );
 };
 

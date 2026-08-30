@@ -11,6 +11,7 @@ import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // types
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
@@ -19,7 +20,12 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarDayTile } from "./day-tile";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
@@ -29,12 +35,14 @@ type Props = {
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  enableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   handleDragAndDrop: (
     issueId: string | undefined,
     issueProjectId: string | undefined,
     sourceDate: string | undefined,
-    destinationDate: string | undefined
+    destinationDate: string | undefined,
+    destinationHour?: number
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
@@ -42,6 +50,11 @@ type Props = {
   setSelectedDate: (date: Date) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  stackProjectBadge?: boolean;
+  isCalendarDragActive?: boolean;
+  onDayClick?: (date: Date) => void;
 };
 
 export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
@@ -57,6 +70,7 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
+    enableIssueCreation,
     quickAddCallback,
     addIssuesToView,
     readOnly = false,
@@ -64,6 +78,11 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
     setSelectedDate,
     canEditProperties,
     isEpic = false,
+    showDueDateBadge = false,
+    showProjectBadge = false,
+    stackProjectBadge = false,
+    isCalendarDragActive = false,
+    onDayClick,
   } = props;
   // hooks
   const { data } = useUserProfile();
@@ -108,12 +127,18 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
             disableIssueCreation={disableIssueCreation}
+            enableIssueCreation={enableIssueCreation}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
             handleDragAndDrop={handleDragAndDrop}
             canEditProperties={canEditProperties}
             isEpic={isEpic}
+            showDueDateBadge={showDueDateBadge}
+            showProjectBadge={showProjectBadge}
+            stackProjectBadge={stackProjectBadge}
+            isCalendarDragActive={isCalendarDragActive}
+            onDayClick={onDayClick}
           />
         );
       })}

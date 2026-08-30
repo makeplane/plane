@@ -6,4 +6,5 @@
 
 export * from "./issues";
 export * from "./modules";
+export * from "./projects";
 export * from "./root";

@@ -226,6 +226,26 @@ export class UserService extends APIService {
       });
   }
 
+  async upsertUserIssuePlan(
+    workspaceSlug: string,
+    issueId: string,
+    data: { planned_at: string; planned_duration_minutes?: number }
+  ): Promise<{ planned_at: string; planned_duration_minutes: number }> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/user-issue-plans/${issueId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteUserIssuePlan(workspaceSlug: string, issueId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/user-issue-plans/${issueId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deactivateAccount() {
     return this.delete(`/api/users/me/`)
       .then((response) => response?.data)

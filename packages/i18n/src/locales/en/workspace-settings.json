@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Worklogs",
         "heading": "Worklogs",
-        "description": "Download worklogs AKA timesheets for anyone in any project."
+        "description": "Download worklogs AKA timesheets for anyone in any project.",
+        "export_success": "Worklogs exported successfully.",
+        "export_error": "Couldn't export worklogs."
       },
       "group_syncing": {
         "title": "Group syncing",

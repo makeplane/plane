@@ -18,11 +18,14 @@ export interface ICalendarStore {
   calendarFilters: {
     activeMonthDate: Date;
     activeWeekDate: Date;
+    activeHoursDate: Date;
   };
   calendarPayload: ICalendarPayload | null;
 
   // action
-  updateCalendarFilters: (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => void;
+  updateCalendarFilters: (
+    filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date }>
+  ) => void;
   updateCalendarPayload: (date: Date) => void;
   regenerateCalendar: () => void;
 
@@ -34,7 +37,7 @@ export interface ICalendarStore {
     | undefined;
   activeWeekNumber: number;
   allDaysOfActiveWeek: ICalendarWeek | undefined;
-  getStartAndEndDate: (layout: "week" | "month") => { startDate: string; endDate: string } | undefined;
+  getStartAndEndDate: (layout: "week" | "month" | "hours") => { startDate: string; endDate: string } | undefined;
 }
 
 export class CalendarStore implements ICalendarStore {
@@ -43,9 +46,10 @@ export class CalendarStore implements ICalendarStore {
   error: any | null = null;
 
   // observables
-  calendarFilters: { activeMonthDate: Date; activeWeekDate: Date } = {
+  calendarFilters: { activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date } = {
     activeMonthDate: new Date(),
     activeWeekDate: new Date(),
+    activeHoursDate: new Date(),
   };
   calendarPayload: ICalendarPayload | null = null;
   // root store
@@ -148,8 +152,9 @@ export class CalendarStore implements ICalendarStore {
     return monthData[weekKey];
   }
 
-  getStartAndEndDate = computedFn((layout: "week" | "month") => {
+  getStartAndEndDate = computedFn((layout: "week" | "month" | "hours") => {
     switch (layout) {
+      case "hours":
       case "week": {
         if (!this.allDaysOfActiveWeek) return;
         const dates = Object.keys(this.allDaysOfActiveWeek);
@@ -166,8 +171,12 @@ export class CalendarStore implements ICalendarStore {
     }
   });
 
-  updateCalendarFilters = (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => {
-    this.updateCalendarPayload(filters.activeMonthDate || filters.activeWeekDate || new Date());
+  updateCalendarFilters = (
+    filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date; activeHoursDate: Date }>
+  ) => {
+    this.updateCalendarPayload(
+      filters.activeMonthDate || filters.activeWeekDate || filters.activeHoursDate || new Date()
+    );
 
     runInAction(() => {
       this.calendarFilters = {

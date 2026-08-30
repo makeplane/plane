@@ -69,6 +69,7 @@ from .issue import (
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
+    UserIssuePlanSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
@@ -111,6 +112,12 @@ from .estimate import (
     EstimateReadSerializer,
     WorkspaceEstimateSerializer,
 )
+
+from .time_log import TimeLogSerializer, TimeLogReadSerializer
+
+from .pomodoro import PomodoroTimerSerializer, PomodoroTimerReadSerializer
+from .device import DeviceSerializer
+from .sync_event import SyncEventSerializer
 
 from .intake import (
     IntakeSerializer,

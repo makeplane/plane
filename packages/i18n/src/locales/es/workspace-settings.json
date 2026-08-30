@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Registros de trabajo",
         "heading": "Registros de trabajo",
-        "description": "Descarga los registros de trabajo, también conocidos como hojas de tiempo, de cualquier persona en cualquier proyecto."
+        "description": "Descarga los registros de trabajo, también conocidos como hojas de tiempo, de cualquier persona en cualquier proyecto.",
+        "export_success": "Registros de trabajo exportados correctamente.",
+        "export_error": "No se pudieron exportar los registros de trabajo."
       },
       "group_syncing": {
         "title": "Sincronización de grupos",

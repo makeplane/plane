@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Log kerja",
         "heading": "Log kerja",
-        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun."
+        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun.",
+        "export_success": "Log kerja berhasil diekspor.",
+        "export_error": "Log kerja gagal diekspor."
       },
       "group_syncing": {
         "title": "Sinkronisasi grup",

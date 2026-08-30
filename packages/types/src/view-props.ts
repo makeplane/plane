@@ -22,6 +22,7 @@ export type TIssueGroupByOptions =
   | "cycle"
   | "module"
   | "target_date"
+  | "planned_at"
   | "team_project"
   | null;
 
@@ -73,6 +74,8 @@ export type TIssueParams =
   | "module"
   | "start_date"
   | "target_date"
+  | "planned_at"
+  | "planned_date"
   | "project"
   | "team_project"
   | "group_by"
@@ -88,7 +91,7 @@ export type TIssueParams =
   | "expand"
   | "filters";
 
-export type TCalendarLayouts = "month" | "week";
+export type TCalendarLayouts = "month" | "week" | "hours";
 
 /**
  * Keys for the work item filter properties

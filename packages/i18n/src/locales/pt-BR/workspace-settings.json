@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Registros de trabalho",
         "heading": "Registros de trabalho",
-        "description": "Baixe registros de trabalho, também conhecidos como folhas de ponto, de qualquer pessoa em qualquer projeto."
+        "description": "Baixe registros de trabalho, também conhecidos como folhas de ponto, de qualquer pessoa em qualquer projeto.",
+        "export_success": "Registros de trabalho exportados com sucesso.",
+        "export_error": "Não foi possível exportar os registros de trabalho."
       },
       "group_syncing": {
         "title": "Sincronização de grupos",

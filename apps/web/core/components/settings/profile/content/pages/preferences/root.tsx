@@ -14,6 +14,7 @@ import { useUserProfile } from "@/hooks/store/user";
 // local imports
 import { ProfileSettingsDefaultPreferencesList } from "./default-list";
 import { ProfileSettingsLanguageAndTimezonePreferencesList } from "./language-and-timezone-list";
+import { ProfileSettingsPomodoroPreferences } from "./pomodoro-list";
 
 export const PreferencesProfileSettings = observer(function PreferencesProfileSettings() {
   const { t } = useTranslation();
@@ -35,6 +36,10 @@ export const PreferencesProfileSettings = observer(function PreferencesProfileSe
         <section className="flex flex-col gap-y-3">
           <div className="text-h6-medium text-primary">{t("language_and_time")}</div>
           <ProfileSettingsLanguageAndTimezonePreferencesList />
+        </section>
+        <section className="flex flex-col gap-y-3">
+          <div className="text-h6-medium text-primary">{t("pomodoro.title")}</div>
+          <ProfileSettingsPomodoroPreferences />
         </section>
       </div>
     </div>

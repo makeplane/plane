@@ -51,11 +51,14 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
 
   const issueCount = issues.getGroupIssueCount(undefined, undefined, false);
 
-  if (issues?.getIssueLoader() === "init-loader" || issueCount === undefined) {
+  // Only show the init loader while a first fetch is in flight. After a failed
+  // fetch the loader is cleared but issueCount may still be undefined — treat
+  // that as empty so layouts (especially calendar) do not spin forever.
+  if (issues?.getIssueLoader() === "init-loader") {
     return <ActiveLoader layout={layout} />;
   }
 
-  if (issues.getGroupIssueCount(undefined, undefined, false) === 0 && layout !== EIssueLayoutTypes.CALENDAR) {
+  if ((issueCount ?? 0) === 0 && layout !== EIssueLayoutTypes.CALENDAR) {
     return <IssueLayoutEmptyState storeType={storeType} />;
   }
 

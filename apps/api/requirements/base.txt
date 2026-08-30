@@ -57,6 +57,8 @@ urllib3>=2.7.0
 # requests — used directly for webhook delivery & link unfurling; pinned to
 # >=2.32 for the get_connection_with_tls_context adapter hook (SSRF IP pinning)
 requests==2.33.0
+# httpx — used for APNs HTTP/2 push delivery (sync_event -> apns_push_task)
+httpx[http2]==0.24.1
 # password validator
 zxcvbn==4.4.28
 # timezone

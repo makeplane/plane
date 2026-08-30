@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 // assets
 import LogoSpinnerDark from "@/app/assets/images/logo-spinner-dark.gif?url";
@@ -11,8 +12,14 @@ import LogoSpinnerLight from "@/app/assets/images/logo-spinner-light.gif?url";
 
 export function LogoSpinner() {
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  const logoSrc = resolvedTheme === "dark" ? LogoSpinnerDark : LogoSpinnerLight;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Keep prerender and first client paint on the light spinner; switch after mount.
+  const logoSrc = mounted && resolvedTheme === "dark" ? LogoSpinnerDark : LogoSpinnerLight;
 
   return (
     <div className="flex items-center justify-center">

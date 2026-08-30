@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Pomodoro",
+    "focus": "Skupienie",
+    "short_break": "Krótka przerwa",
+    "long_break": "Długa przerwa",
+    "start_focus": "Rozpocznij skupienie",
+    "pause": "Wstrzymaj",
+    "resume": "Wznów",
+    "complete": "Zakończ",
+    "discard": "Odrzuć",
+    "skip_break": "Pomiń przerwę",
+    "open_work_item": "Otwórz element pracy",
+    "session_count": "{completed} z {total} sesji",
+    "running_on": "Licznik działa dla {issue}",
+    "another_work_item": "inny element pracy"
+  }
+}

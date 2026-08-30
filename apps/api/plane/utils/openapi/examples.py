@@ -164,6 +164,16 @@ LABEL_UPDATE_EXAMPLE = OpenApiExample(
     description="Example request for updating a label",
 )
 
+# User Issue Plan (calendar schedule) Examples
+USER_ISSUE_PLAN_UPDATE_EXAMPLE = OpenApiExample(
+    "UserIssuePlanSerializer",
+    value={
+        "planned_at": "2024-01-15T14:30:00Z",
+        "planned_duration_minutes": 45,
+    },
+    description="Example request for scheduling a work item on the calling user's calendar",
+)
+
 # Issue Link Examples
 ISSUE_LINK_CREATE_EXAMPLE = OpenApiExample(
     "IssueLinkCreateSerializer",
@@ -476,6 +486,20 @@ LABEL_EXAMPLE = OpenApiExample(
         "name": "bug",
         "color": "#ff4444",
         "description": "Issues that represent bugs in the system",
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+    },
+)
+
+# User Issue Plan (calendar schedule) Response Examples
+USER_ISSUE_PLAN_EXAMPLE = OpenApiExample(
+    name="UserIssuePlan",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "issue": "550e8400-e29b-41d4-a716-446655440111",
+        "user": "550e8400-e29b-41d4-a716-446655440222",
+        "planned_at": "2024-01-15T14:30:00Z",
+        "planned_duration_minutes": 45,
         "created_at": "2024-01-01T10:30:00Z",
         "updated_at": "2024-01-10T15:45:00Z",
     },

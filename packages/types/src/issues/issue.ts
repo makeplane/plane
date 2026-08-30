@@ -68,6 +68,9 @@ export type TBaseIssue = {
   updated_at: string;
   start_date: string | null;
   target_date: string | null;
+  planned_at?: string | null;
+  planned_duration_minutes?: number | null;
+  planned_date?: string | null;
   completed_at: string | null;
   archived_at: string | null;
 
@@ -90,6 +93,8 @@ type IssueRelation = {
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
+  /** sum of all time logged against this work item, in minutes */
+  tracked_time_minutes?: number;
   parent?: Partial<TBaseIssue>;
   issue_reactions?: TIssueReaction[];
   issue_attachments?: TIssueAttachment[];
@@ -155,7 +160,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments" | "pomodoro";
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 

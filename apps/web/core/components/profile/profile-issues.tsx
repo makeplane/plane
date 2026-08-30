@@ -12,6 +12,7 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // components
+import { ProfileIssuesCalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -69,6 +70,8 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
                   <ProfileIssuesListLayout />
                 ) : activeLayout === "kanban" ? (
                   <ProfileIssuesKanBanLayout />
+                ) : activeLayout === "calendar" ? (
+                  <ProfileIssuesCalendarLayout />
                 ) : null}
               </div>
             </div>

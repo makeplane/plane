@@ -27,6 +27,9 @@ export enum EServerGroupByToFilterOptions {
   "cycle_id" = "cycle",
   "issue_module__module_id" = "module",
   "target_date" = "target_date",
+  // oxlint-disable-next-line typescript-eslint/no-duplicate-enum-values -- planned_at aliases planned_date for older clients
+  "planned_at" = "planned_date",
+  "planned_date" = "planned_date",
   "project_id" = "project",
   "created_by" = "created_by",
 }
@@ -135,6 +138,17 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         extra_options: {
           access: true,
           values: ["show_empty_groups"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["sub_issue"],
         },
       },
     },
@@ -311,6 +325,7 @@ export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFi
 export enum EActivityFilterType {
   ACTIVITY = "ACTIVITY",
   COMMENT = "COMMENT",
+  WORKLOG = "WORKLOG",
   STATE = "STATE",
   ASSIGNEE = "ASSIGNEE",
   DEFAULT = "DEFAULT",
@@ -326,6 +341,9 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   },
   [EActivityFilterType.COMMENT]: {
     labelTranslationKey: "common.comments",
+  },
+  [EActivityFilterType.WORKLOG]: {
+    labelTranslationKey: "common.time_tracking",
   },
   [EActivityFilterType.STATE]: {
     labelTranslationKey: "common.state",
@@ -345,6 +363,7 @@ export type TActivityFilterOption = {
 export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.ACTIVITY,
   EActivityFilterType.COMMENT,
+  EActivityFilterType.WORKLOG,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
 ];
@@ -353,9 +372,9 @@ export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
-  activity.filter((activity) => {
-    if (activity.activity_type === EActivityFilterType.DEFAULT) return true;
-    return filters.includes(activity.activity_type as TActivityFilters);
+  activity.filter((activityItem) => {
+    if (activityItem.activity_type === EActivityFilterType.DEFAULT) return true;
+    return filters.includes(activityItem.activity_type as TActivityFilters);
   });
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;

@@ -46,6 +46,7 @@ from plane.db.models import (
     FileAsset,
     IssueLink,
     IssueSubscriber,
+    UserIssuePlan,
     Project,
     ProjectMember,
     User,
@@ -63,6 +64,13 @@ from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, order_issue_
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
+from plane.utils.user_issue_plan import (
+    annotate_user_issue_plans,
+    filter_issues_by_planned_at_range,
+    filter_issues_by_planned_date_group,
+    get_planned_date_group_values,
+    get_profile_user_timezone,
+)
 
 
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
@@ -101,8 +109,8 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
-    def apply_annotations(self, issues):
-        return (
+    def apply_annotations(self, issues, profile_user_id=None):
+        issues = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -132,8 +140,15 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
 
+        if profile_user_id:
+            user_timezone = get_profile_user_timezone(profile_user_id)
+            issues = annotate_user_issue_plans(issues, profile_user_id, user_timezone)
+
+        return issues
+
     def get(self, request, slug, user_id):
         filters = issue_filters(request.query_params, "GET")
+        profile_user_timezone = get_profile_user_timezone(user_id)
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = Issue.issue_objects.filter(
@@ -146,6 +161,18 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             project__project_projectmember__is_active=True,
         )
 
+        planned_at_param = request.GET.get("planned_at")
+        if planned_at_param:
+            issue_queryset = filter_issues_by_planned_at_range(
+                issue_queryset, planned_at_param, user_id, profile_user_timezone
+            )
+
+        planned_date_param = request.GET.get("planned_date")
+        if planned_date_param:
+            issue_queryset = filter_issues_by_planned_date_group(
+                issue_queryset, planned_date_param, user_id, profile_user_timezone
+            )
+
         # Apply filtering from filterset
         issue_queryset = self.filter_queryset(issue_queryset)
 
@@ -156,7 +183,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         total_issue_queryset = copy.deepcopy(issue_queryset)
 
         # Apply annotations to the issue queryset
-        issue_queryset = self.apply_annotations(issue_queryset)
+        issue_queryset = self.apply_annotations(issue_queryset, profile_user_id=user_id)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -166,6 +193,19 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         # Group by
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
+
+        if group_by == "planned_at":
+            group_by = "planned_date"
+
+        def get_group_by_fields(field):
+            if field == "planned_date":
+                return get_planned_date_group_values(slug, user_id, profile_user_timezone)
+            return issue_group_values(
+                field=field,
+                slug=slug,
+                filters=filters,
+                queryset=total_issue_queryset,
+            )
 
         # issue queryset
         issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
@@ -186,21 +226,12 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                         queryset=issue_queryset,
                         total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by,
+                            extra_fields=["planned_at", "planned_duration_minutes", "planned_date"],
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
-                        group_by_fields=issue_group_values(
-                            field=group_by,
-                            slug=slug,
-                            filters=filters,
-                            queryset=total_issue_queryset,
-                        ),
-                        sub_group_by_fields=issue_group_values(
-                            field=sub_group_by,
-                            slug=slug,
-                            filters=filters,
-                            queryset=total_issue_queryset,
-                        ),
+                        group_by_fields=get_group_by_fields(group_by),
+                        sub_group_by_fields=get_group_by_fields(sub_group_by),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
                         count_filter=Q(
@@ -220,15 +251,11 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                     queryset=issue_queryset,
                     total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by,
+                        extra_fields=["planned_at", "planned_duration_minutes", "planned_date"],
                     ),
                     paginator_cls=GroupedOffsetPaginator,
-                    group_by_fields=issue_group_values(
-                        field=group_by,
-                        slug=slug,
-                        filters=filters,
-                        queryset=total_issue_queryset,
-                    ),
+                    group_by_fields=get_group_by_fields(group_by),
                     group_by_field_name=group_by,
                     count_filter=Q(
                         Q(issue_intake__status=1)
@@ -245,7 +272,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 request=request,
                 queryset=issue_queryset,
                 total_count_queryset=total_issue_queryset,
-                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by, extra_fields=["planned_at", "planned_duration_minutes", "planned_date"]),
             )
 
 

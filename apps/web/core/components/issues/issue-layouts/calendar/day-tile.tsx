@@ -7,12 +7,8 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
-// types
-// ui
 // components
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
@@ -20,15 +16,27 @@ import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { MONTHS_LIST } from "@plane/constants";
 // helpers
 // types
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlocks } from "./issue-blocks";
+import {
+  CALENDAR_DAY_DROP_TYPE,
+  CALENDAR_ISSUE_DRAG_TYPE,
+  getCalendarDestinationFromDropPayload,
+  getCalendarSourceFromDropPayload,
+} from "./utils";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -37,13 +45,15 @@ type Props = {
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   enableQuickIssueCreate?: boolean;
   disableIssueCreation?: boolean;
+  enableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
     issueId: string | undefined,
     issueProjectId: string | undefined,
     sourceDate: string | undefined,
-    destinationDate: string | undefined
+    destinationDate: string | undefined,
+    destinationHour?: number
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
@@ -51,6 +61,11 @@ type Props = {
   setSelectedDate: (date: Date) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  showDueDateBadge?: boolean;
+  showProjectBadge?: boolean;
+  stackProjectBadge?: boolean;
+  isCalendarDragActive?: boolean;
+  onDayClick?: (date: Date) => void;
 };
 
 export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
@@ -65,6 +80,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
     quickActions,
     enableQuickIssueCreate,
     disableIssueCreation,
+    enableIssueCreation,
     quickAddCallback,
     addIssuesToView,
     readOnly = false,
@@ -73,6 +89,11 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
     setSelectedDate,
     canEditProperties,
     isEpic = false,
+    showDueDateBadge = false,
+    showProjectBadge = false,
+    stackProjectBadge = false,
+    isCalendarDragActive = false,
+    onDayClick,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -81,55 +102,44 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
 
   const formattedDatePayload = renderFormattedPayloadDate(date.date);
 
-  const dayTileRef = useRef<HTMLDivElement | null>(null);
+  const dayCellRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const element = dayTileRef.current;
+    const element = dayCellRef.current;
 
-    if (!element) return;
+    if (!element || !formattedDatePayload) return;
 
     return combine(
       dropTargetForElements({
         element,
-        getData: () => ({ date: formattedDatePayload }),
+        canDrop: ({ source }) => source?.data?.type === CALENDAR_ISSUE_DRAG_TYPE,
+        getData: () => ({ date: formattedDatePayload, type: CALENDAR_DAY_DROP_TYPE }),
         onDragEnter: () => {
           setIsDraggingOver(true);
         },
         onDragLeave: () => {
           setIsDraggingOver(false);
         },
-        onDrop: ({ source, self }) => {
+        onDrop: (payload) => {
           setIsDraggingOver(false);
-          const sourceData = source?.data as { id: string; date: string } | undefined;
-          const destinationData = self?.data as { date: string } | undefined;
-          if (!sourceData || !destinationData) return;
 
-          const issueDetails = issues?.[sourceData?.id];
-          if (issueDetails?.start_date) {
-            const issueStartDate = new Date(issueDetails.start_date);
-            const targetDate = new Date(destinationData?.date);
-            const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
-            if (diffInDays < 0) {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Due date cannot be before the start date of the work item.",
-              });
-              return;
-            }
-          }
+          const source = getCalendarSourceFromDropPayload(payload);
+          const destination = getCalendarDestinationFromDropPayload(payload);
+          if (!source || !destination) return;
 
-          handleDragAndDrop(
-            sourceData?.id,
-            issueDetails?.project_id ?? undefined,
-            sourceData?.date,
-            destinationData?.date
+          void handleDragAndDrop(
+            source.id,
+            issues?.[source.id]?.project_id ?? undefined,
+            source.date,
+            destination.date,
+            destination.hour
           );
-          highlightIssueOnDrop(source?.element?.id, false);
+
+          highlightIssueOnDrop(payload.source?.element?.id, false);
         },
       })
     );
-  }, [dayTileRef?.current, formattedDatePayload]);
+  }, [formattedDatePayload, handleDragAndDrop, issues]);
 
   if (!formattedDatePayload) return null;
   const issueIds = groupedIssueIds?.[formattedDatePayload];
@@ -143,9 +153,19 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const normalBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent";
   const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent-hover";
 
+  const isProfileEnhancedDnD = showDueDateBadge;
+  const isDimmedDuringDrag = isProfileEnhancedDnD && isCalendarDragActive && !isDraggingOver;
+
   return (
     <>
-      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col">
+      <div
+        ref={dayCellRef}
+        className={cn("group relative flex h-full w-full flex-col transition-opacity", {
+          "opacity-60": isDimmedDuringDrag,
+          [`${draggingOverBackground} ring-2 ring-accent-strong`]: isProfileEnhancedDnD && isDraggingOver,
+          [`${draggingOverBackground} opacity-70`]: !isProfileEnhancedDnD && isDraggingOver,
+        })}
+      >
         {/* header */}
         <div
           className={`hidden flex-shrink-0 justify-end px-2 py-1.5 text-right text-11 md:flex ${
@@ -169,16 +189,21 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         {/* content */}
         <div className="hidden h-full w-full md:block">
           <div
-            className={cn(
-              `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
-              {
-                "min-h-[5rem]": isMonthLayout,
+            role="presentation"
+            className={cn(`h-full w-full select-none ${isDraggingOver ? draggingOverBackground : normalBackground}`, {
+              "min-h-[5rem]": true,
+              "ring-2 ring-accent-strong ring-inset": isProfileEnhancedDnD && isDraggingOver,
+              "opacity-70": !isProfileEnhancedDnD && isDraggingOver,
+            })}
+            onClick={() => {
+              if (!readOnly && !disableIssueCreation && enableIssueCreation && onDayClick) {
+                onDayClick(date.date);
               }
-            )}
+            }}
           >
             <CalendarIssueBlocks
               date={date.date}
-              issueIdList={issueIds}
+              issueIdList={issueIds ?? []}
               quickActions={quickActions}
               loadMoreIssues={loadMoreIssues}
               getPaginationData={getPaginationData}
@@ -191,12 +216,16 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
               readOnly={readOnly}
               canEditProperties={canEditProperties}
               isEpic={isEpic}
+              showDueDateBadge={showDueDateBadge}
+              showProjectBadge={showProjectBadge}
+              stackProjectBadge={stackProjectBadge}
             />
           </div>
         </div>
 
         {/* Mobile view content */}
-        <div
+        <button
+          type="button"
           onClick={() => setSelectedDate(date.date)}
           className={cn(
             "mx-auto flex h-full w-full cursor-pointer flex-col items-center justify-start py-2.5 text-13 font-medium opacity-80 md:hidden",
@@ -213,7 +242,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
           >
             {date.date.getDate()}
           </div>
-        </div>
+        </button>
       </div>
     </>
   );

@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Jurnale de lucru",
         "heading": "Jurnale de lucru",
-        "description": "Descarcă jurnale de lucru (timesheet-uri) pentru oricine din orice proiect."
+        "description": "Descarcă jurnale de lucru (timesheet-uri) pentru oricine din orice proiect.",
+        "export_success": "Jurnalele de lucru au fost exportate cu succes.",
+        "export_error": "Jurnalele de lucru nu au putut fi exportate."
       },
       "group_syncing": {
         "title": "Sincronizare grupuri",

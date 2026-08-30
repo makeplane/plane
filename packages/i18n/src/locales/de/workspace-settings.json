@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Arbeitsberichte",
         "heading": "Arbeitsberichte",
-        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter."
+        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter.",
+        "export_success": "Arbeitsberichte erfolgreich exportiert.",
+        "export_error": "Arbeitsberichte konnten nicht exportiert werden."
       },
       "group_syncing": {
         "title": "Gruppensynchronisation",

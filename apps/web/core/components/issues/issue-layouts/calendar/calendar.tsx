@@ -4,9 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { PanelRight } from "lucide-react";
 import { observer } from "mobx-react";
 // plane constants
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
@@ -21,6 +23,7 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
+import { IconButton } from "@plane/propel/icon-button";
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
 // constants
@@ -28,28 +31,49 @@ import { MONTHS_LIST } from "@plane/constants";
 // helpers
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useUser } from "@/hooks/store/user";
 import useSize from "@/hooks/use-window-size";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // local imports
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarHeader } from "./header";
+import { CalendarHoursGrid } from "./hours-grid";
 import { CalendarIssueBlocks } from "./issue-blocks";
+import { CalendarUnscheduledStrip } from "./unscheduled-strip";
 import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
+import { buildPlannedAtForDrop, CALENDAR_ISSUE_DRAG_TYPE, HOURS_MIN_DURATION_MINUTES } from "./utils";
+
+const UNSCHEDULED_SIDEBAR_COLLAPSED_KEY = "calendar_unscheduled_sidebar_collapsed";
+
+const readUnscheduledSidebarCollapsed = () => {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem(UNSCHEDULED_SIDEBAR_COLLAPSED_KEY) === "true";
+};
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  layout: "month" | "week" | undefined;
+  layout: "month" | "week" | "hours" | undefined;
   showWeekends: boolean;
   issueCalendarView: ICalendarStore;
+  storeType?: EIssuesStoreType;
+  isProfileCalendar?: boolean;
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
@@ -59,7 +83,12 @@ type Props = {
     issueId: string | undefined,
     issueProjectId: string | undefined,
     sourceDate: string | undefined,
-    destinationDate: string | undefined
+    destinationDate: string | undefined,
+    destinationHour?: number
+  ) => Promise<void>;
+  handleResizePlan?: (
+    issueId: string,
+    data: { planned_at?: string | null; planned_duration_minutes?: number }
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
@@ -82,6 +111,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     issueCalendarView,
     loadMoreIssues,
     handleDragAndDrop,
+    handleResizePlan,
     quickActions,
     quickAddCallback,
     addIssuesToView,
@@ -91,15 +121,29 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     canEditProperties,
     readOnly = false,
     isEpic = false,
+    storeType = EIssuesStoreType.PROJECT,
+    isProfileCalendar = false,
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isUnscheduledSidebarCollapsed, setIsUnscheduledSidebarCollapsed] = useState(readUnscheduledSidebarCollapsed);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createModalDate, setCreateModalDate] = useState<Date | null>(null);
+  const [createModalDuration, setCreateModalDuration] = useState<number | null>(null);
+  const [createModalPlannedAt, setCreateModalPlannedAt] = useState<string | null>(null);
+  const [isCalendarDragActive, setIsCalendarDragActive] = useState(false);
+  const pendingCreatePlanRef = useRef<{
+    plannedAt: string;
+    plannedDurationMinutes?: number;
+  } | null>(null);
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const {
     issues: { viewFlags },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssues(storeType);
+  const { data: currentUser } = useUser();
+  const { updateIssue } = useIssuesActions(storeType);
 
   const [windowWidth] = useSize();
 
@@ -110,6 +154,85 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
 
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
+
+  const handleCloseCreateModal = useCallback(() => {
+    setIsCreateModalOpen(false);
+    setCreateModalDate(null);
+    setCreateModalDuration(null);
+    setCreateModalPlannedAt(null);
+  }, []);
+
+  const handleDayClick = useCallback((date: Date) => {
+    const dateString = renderFormattedPayloadDate(date);
+    if (dateString) {
+      pendingCreatePlanRef.current = {
+        plannedAt: buildPlannedAtForDrop(dateString, null),
+      };
+    }
+
+    setCreateModalDate(date);
+    setCreateModalDuration(null);
+    setCreateModalPlannedAt(null);
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const handleTimeRangeSelect = useCallback((date: Date, startHour: number, endHour: number) => {
+    const dateString = renderFormattedPayloadDate(date);
+    if (!dateString) return;
+
+    const plannedAt = buildPlannedAtForDrop(dateString, null, startHour);
+    const durationMinutes = Math.max((endHour - startHour) * 60, HOURS_MIN_DURATION_MINUTES);
+
+    pendingCreatePlanRef.current = {
+      plannedAt,
+      plannedDurationMinutes: durationMinutes,
+    };
+
+    setCreateModalDate(date);
+    setCreateModalPlannedAt(plannedAt);
+    setCreateModalDuration(durationMinutes);
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const createModalData = createModalDate
+    ? {
+        ...(layout === "hours"
+          ? {
+              planned_at:
+                createModalPlannedAt ?? buildPlannedAtForDrop(renderFormattedPayloadDate(createModalDate) ?? "", null),
+              planned_duration_minutes: createModalDuration ?? undefined,
+            }
+          : isProfileCalendar
+            ? {
+                planned_at: buildPlannedAtForDrop(renderFormattedPayloadDate(createModalDate) ?? "", null),
+              }
+            : { target_date: renderFormattedPayloadDate(createModalDate) ?? undefined }),
+        ...(isProfileCalendar && currentUser?.id ? { assignee_ids: [currentUser.id] } : {}),
+      }
+    : undefined;
+
+  const handleCreateModalSubmit = useCallback(
+    async (issue: TIssue) => {
+      if (!isProfileCalendar || !issue.id || !issue.project_id || !currentUser?.id) return;
+
+      try {
+        if (updateIssue && !issue.assignee_ids?.includes(currentUser.id)) {
+          await updateIssue(issue.project_id, issue.id, { assignee_ids: [currentUser.id] });
+        }
+
+        const pendingPlan = pendingCreatePlanRef.current;
+        if (handleResizePlan && pendingPlan) {
+          await handleResizePlan(issue.id, {
+            planned_at: pendingPlan.plannedAt,
+            planned_duration_minutes: pendingPlan.plannedDurationMinutes,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to finalize calendar-created issue:", error);
+      }
+    },
+    [isProfileCalendar, currentUser?.id, updateIssue, handleResizePlan]
+  );
 
   // Enable Auto Scroll for calendar
   useEffect(() => {
@@ -122,7 +245,19 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
         element,
       })
     );
-  }, [scrollableContainerRef?.current]);
+  }, []);
+
+  // Profile calendar: track active drags to dim non-target day cells (month/week/hours)
+  useEffect(() => {
+    if (!isProfileCalendar) return;
+
+    return monitorForElements({
+      onDragStart: ({ source }) => {
+        if (source.data.type === CALENDAR_ISSUE_DRAG_TYPE) setIsCalendarDragActive(true);
+      },
+      onDrop: () => setIsCalendarDragActive(false),
+    });
+  }, [isProfileCalendar]);
 
   if (!calendarPayload || !formattedDatePayload)
     return (
@@ -133,6 +268,27 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : [];
 
+  const unscheduledStripProps = {
+    groupedIssueIds,
+    issues,
+    quickActions,
+    loadMoreIssues,
+    getPaginationData,
+    getGroupIssueCount,
+    readOnly,
+    canEditProperties,
+    isEpic,
+    handleDragAndDrop,
+  };
+
+  const handleToggleUnscheduledSidebar = () => {
+    setIsUnscheduledSidebarCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(UNSCHEDULED_SIDEBAR_COLLAPSED_KEY, String(next));
+      return next;
+    });
+  };
+
   return (
     <>
       <div className="flex h-full w-full flex-col overflow-hidden">
@@ -140,96 +296,159 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
           setSelectedDate={setSelectedDate}
           issuesFilterStore={issuesFilterStore}
           updateFilters={updateFilters}
+          isProfileCalendar={isProfileCalendar}
         />
 
-        <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
-          <div
-            className={cn("flex w-full flex-col overflow-y-auto md:h-full", {
-              "vertical-scrollbar scrollbar-lg": windowWidth > 768,
-            })}
-            ref={scrollableContainerRef}
-          >
-            <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
-            <div className="h-full w-full">
-              {layout === "month" && (
-                <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
-                  {allWeeksOfActiveMonth &&
-                    Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                      <CalendarWeekDays
-                        selectedDate={selectedDate}
-                        setSelectedDate={setSelectedDate}
-                        handleDragAndDrop={handleDragAndDrop}
-                        issuesFilterStore={issuesFilterStore}
-                        key={weekIndex}
-                        week={week}
-                        issues={issues}
-                        groupedIssueIds={groupedIssueIds}
-                        loadMoreIssues={loadMoreIssues}
-                        getPaginationData={getPaginationData}
-                        getGroupIssueCount={getGroupIssueCount}
-                        enableQuickIssueCreate={enableQuickAdd}
-                        disableIssueCreation={!enableIssueCreation}
-                        quickActions={quickActions}
-                        quickAddCallback={quickAddCallback}
-                        addIssuesToView={addIssuesToView}
-                        readOnly={readOnly}
-                        canEditProperties={canEditProperties}
-                        isEpic={isEpic}
-                      />
-                    ))}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <IssueLayoutHOC layout={EIssueLayoutTypes.CALENDAR}>
+            <div className="flex h-full min-h-0 w-full flex-col md:flex-row">
+              <div
+                className={cn("flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-y-auto", {
+                  "vertical-scrollbar scrollbar-lg": windowWidth > 768,
+                })}
+                ref={scrollableContainerRef}
+              >
+                {layout !== "hours" && <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />}
+                <div className="h-full w-full">
+                  {layout === "month" && (
+                    <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1">
+                      {allWeeksOfActiveMonth &&
+                        Object.entries(allWeeksOfActiveMonth).map(([weekKey, week]: [string, ICalendarWeek]) => (
+                          <CalendarWeekDays
+                            selectedDate={selectedDate}
+                            setSelectedDate={setSelectedDate}
+                            handleDragAndDrop={handleDragAndDrop}
+                            issuesFilterStore={issuesFilterStore}
+                            key={weekKey}
+                            week={week}
+                            issues={issues}
+                            groupedIssueIds={groupedIssueIds}
+                            loadMoreIssues={loadMoreIssues}
+                            getPaginationData={getPaginationData}
+                            getGroupIssueCount={getGroupIssueCount}
+                            enableQuickIssueCreate={enableQuickAdd}
+                            disableIssueCreation={!enableIssueCreation}
+                            enableIssueCreation={enableIssueCreation}
+                            quickActions={quickActions}
+                            quickAddCallback={quickAddCallback}
+                            addIssuesToView={addIssuesToView}
+                            readOnly={readOnly}
+                            canEditProperties={canEditProperties}
+                            isEpic={isEpic}
+                            showDueDateBadge={isProfileCalendar}
+                            showProjectBadge={isProfileCalendar}
+                            stackProjectBadge={isProfileCalendar}
+                            isCalendarDragActive={isCalendarDragActive}
+                            onDayClick={handleDayClick}
+                          />
+                        ))}
+                    </div>
+                  )}
+                  {layout === "week" && (
+                    <CalendarWeekDays
+                      selectedDate={selectedDate}
+                      setSelectedDate={setSelectedDate}
+                      handleDragAndDrop={handleDragAndDrop}
+                      issuesFilterStore={issuesFilterStore}
+                      week={issueCalendarView.allDaysOfActiveWeek}
+                      issues={issues}
+                      groupedIssueIds={groupedIssueIds}
+                      loadMoreIssues={loadMoreIssues}
+                      getPaginationData={getPaginationData}
+                      getGroupIssueCount={getGroupIssueCount}
+                      enableQuickIssueCreate={enableQuickAdd}
+                      disableIssueCreation={!enableIssueCreation}
+                      enableIssueCreation={enableIssueCreation}
+                      quickActions={quickActions}
+                      quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
+                      readOnly={readOnly}
+                      canEditProperties={canEditProperties}
+                      isEpic={isEpic}
+                      showDueDateBadge={isProfileCalendar}
+                      showProjectBadge={isProfileCalendar}
+                      stackProjectBadge={isProfileCalendar}
+                      isCalendarDragActive={isCalendarDragActive}
+                      onDayClick={handleDayClick}
+                    />
+                  )}
+                  {layout === "hours" && handleResizePlan && (
+                    <CalendarHoursGrid
+                      issues={issues}
+                      quickActions={quickActions}
+                      readOnly={readOnly}
+                      canEditProperties={canEditProperties}
+                      isEpic={isEpic}
+                      showDueDateBadge={isProfileCalendar}
+                      showProjectBadge={isProfileCalendar}
+                      showWeekends={showWeekends}
+                      disableIssueCreation={!enableIssueCreation}
+                      enableIssueCreation={enableIssueCreation}
+                      onDayClick={isProfileCalendar ? undefined : handleDayClick}
+                      onTimeRangeSelect={handleTimeRangeSelect}
+                      isCalendarDragActive={isCalendarDragActive}
+                      handleDragAndDrop={handleDragAndDrop}
+                      handleResizePlan={handleResizePlan}
+                    />
+                  )}
                 </div>
-              )}
-              {layout === "week" && (
-                <CalendarWeekDays
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  handleDragAndDrop={handleDragAndDrop}
-                  issuesFilterStore={issuesFilterStore}
-                  week={issueCalendarView.allDaysOfActiveWeek}
-                  issues={issues}
-                  groupedIssueIds={groupedIssueIds}
-                  loadMoreIssues={loadMoreIssues}
-                  getPaginationData={getPaginationData}
-                  getGroupIssueCount={getGroupIssueCount}
-                  enableQuickIssueCreate={enableQuickAdd}
-                  disableIssueCreation={!enableIssueCreation}
-                  quickActions={quickActions}
-                  quickAddCallback={quickAddCallback}
-                  addIssuesToView={addIssuesToView}
-                  readOnly={readOnly}
-                  canEditProperties={canEditProperties}
-                  isEpic={isEpic}
-                />
-              )}
-            </div>
 
-            {/* mobile view */}
-            <div className="md:hidden">
-              <p className="p-4 text-18 font-semibold">
-                {`${selectedDate.getDate()} ${
-                  MONTHS_LIST[selectedDate.getMonth() + 1].title
-                }, ${selectedDate.getFullYear()}`}
-              </p>
-              <CalendarIssueBlocks
-                date={selectedDate}
-                issueIdList={issueIdList}
-                loadMoreIssues={loadMoreIssues}
-                getPaginationData={getPaginationData}
-                getGroupIssueCount={getGroupIssueCount}
-                quickActions={quickActions}
-                enableQuickIssueCreate={enableQuickAdd}
-                disableIssueCreation={!enableIssueCreation}
-                quickAddCallback={quickAddCallback}
-                addIssuesToView={addIssuesToView}
-                readOnly={readOnly}
-                canEditProperties={canEditProperties}
-                isDragDisabled
-                isMobileView
-                isEpic={isEpic}
-              />
+                {isProfileCalendar && (
+                  <CalendarUnscheduledStrip {...unscheduledStripProps} variant="strip" className="md:hidden" />
+                )}
+
+                {/* mobile view */}
+                <div className="md:hidden">
+                  <p className="p-4 text-18 font-semibold">
+                    {`${selectedDate.getDate()} ${
+                      MONTHS_LIST[selectedDate.getMonth() + 1].title
+                    }, ${selectedDate.getFullYear()}`}
+                  </p>
+                  <CalendarIssueBlocks
+                    date={selectedDate}
+                    issueIdList={issueIdList}
+                    loadMoreIssues={loadMoreIssues}
+                    getPaginationData={getPaginationData}
+                    getGroupIssueCount={getGroupIssueCount}
+                    quickActions={quickActions}
+                    enableQuickIssueCreate={enableQuickAdd}
+                    disableIssueCreation={!enableIssueCreation}
+                    quickAddCallback={quickAddCallback}
+                    addIssuesToView={addIssuesToView}
+                    readOnly={readOnly}
+                    canEditProperties={canEditProperties}
+                    isDragDisabled
+                    isMobileView
+                    isEpic={isEpic}
+                    showDueDateBadge={isProfileCalendar}
+                    showProjectBadge={isProfileCalendar}
+                    stackProjectBadge={isProfileCalendar}
+                  />
+                </div>
+              </div>
+
+              {isProfileCalendar &&
+                (isUnscheduledSidebarCollapsed ? (
+                  <div className="hidden h-full shrink-0 flex-col items-center border-l border-subtle-1 bg-surface-1 py-2 md:flex">
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={PanelRight}
+                      onClick={handleToggleUnscheduledSidebar}
+                      aria-label="Show unscheduled sidebar"
+                    />
+                  </div>
+                ) : (
+                  <CalendarUnscheduledStrip
+                    {...unscheduledStripProps}
+                    variant="sidebar"
+                    className="hidden md:flex"
+                    onCollapse={handleToggleUnscheduledSidebar}
+                  />
+                ))}
             </div>
-          </div>
-        </IssueLayoutHOC>
+          </IssueLayoutHOC>
+        </div>
 
         {/* mobile view */}
         <div className="md:hidden">
@@ -254,9 +473,20 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             isDragDisabled
             isMobileView
             isEpic={isEpic}
+            showDueDateBadge={isProfileCalendar}
+            showProjectBadge={isProfileCalendar}
+            stackProjectBadge={isProfileCalendar}
           />
         </div>
       </div>
+
+      <CreateUpdateIssueModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        data={createModalData}
+        storeType={storeType}
+        onSubmit={isProfileCalendar ? handleCreateModalSubmit : undefined}
+      />
     </>
   );
 });

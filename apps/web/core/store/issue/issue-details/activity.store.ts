@@ -99,6 +99,9 @@ export class IssueActivityStore implements IIssueActivityStore {
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
       if (!activity) return;
+      // time logs render as their own dedicated cards sourced from the time log store,
+      // so skip the generic activity row to avoid showing each entry twice
+      if (activity.field === "time_log") return;
       const type =
         activity.field === "state"
           ? EActivityFilterType.STATE
@@ -121,6 +124,17 @@ export class IssueActivityStore implements IIssueActivityStore {
         id: comment.id,
         activity_type: EActivityFilterType.COMMENT,
         created_at: comment.created_at,
+      });
+    });
+
+    const timeLogs = currentStore.timeLog.getTimeLogsByIssueId(issueId) ?? [];
+    timeLogs.forEach((timeLogId) => {
+      const timeLog = currentStore.timeLog.getTimeLogById(timeLogId);
+      if (!timeLog) return;
+      activityComments.push({
+        id: timeLog.id,
+        activity_type: EActivityFilterType.WORKLOG,
+        created_at: timeLog.created_at,
       });
     });
 

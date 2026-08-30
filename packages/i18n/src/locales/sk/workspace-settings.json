@@ -187,7 +187,9 @@
       "worklogs": {
         "title": "Pracovné záznamy",
         "heading": "Záznamy práce",
-        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte."
+        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte.",
+        "export_success": "Záznamy práce boli úspešne exportované.",
+        "export_error": "Záznamy práce sa nepodarilo exportovať."
       },
       "group_syncing": {
         "title": "Synchronizácia skupín",

@@ -25,6 +25,7 @@ from plane.db.models import (
     ProjectUserProperty,
     IssueAssignee,
     IssueSubscriber,
+    UserIssuePlan,
     IssueLabel,
     Label,
     CycleIssue,
@@ -935,12 +936,14 @@ class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
     is_intake = serializers.BooleanField(read_only=True)
+    tracked_time_minutes = serializers.IntegerField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
             "description_html",
             "is_subscribed",
             "is_intake",
+            "tracked_time_minutes",
         ]
         read_only_fields = fields
 
@@ -976,6 +979,32 @@ class IssueSubscriberSerializer(BaseSerializer):
         model = IssueSubscriber
         fields = "__all__"
         read_only_fields = ["workspace", "project", "issue"]
+
+
+class UserIssuePlanSerializer(BaseSerializer):
+    class Meta:
+        model = UserIssuePlan
+        fields = ["id", "issue", "user", "planned_at", "planned_duration_minutes"]
+        read_only_fields = ["id", "issue", "user"]
+
+    def save(self, **kwargs):
+        issue = self.context["issue"]
+        request = self.context["request"]
+
+        if self.instance is None:
+            return UserIssuePlan.objects.create(
+                issue=issue,
+                user=request.user,
+                project=issue.project,
+                workspace=issue.workspace,
+                created_by=request.user,
+                updated_by=request.user,
+                **self.validated_data,
+            )
+
+        self.validated_data.pop("issue", None)
+        self.validated_data.pop("user", None)
+        return super().save(updated_by=request.user, **kwargs)
 
 
 class IssueVersionDetailSerializer(BaseSerializer):

@@ -9,6 +9,8 @@ from django.db import IntegrityError
 
 #  Third party imports
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 
 # Module imports
 from plane.db.models import (
@@ -26,6 +28,7 @@ from plane.db.models import (
     State,
     User,
     EstimatePoint,
+    UserIssuePlan,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -67,10 +70,32 @@ class IssueSerializer(BaseSerializer):
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
 
+    # Calling user's personal calendar schedule for this work item (read-only,
+    # scoped to the authenticated token's user). Populated only when the view's
+    # queryset prefetches `_prefetched_user_plans` for the requesting user (see
+    # `IssueListCreateAPIEndpoint.get_queryset` / `IssueDetailAPIEndpoint.get_queryset`).
+    # Use the dedicated user-plan endpoint to create, update, or clear the schedule.
+    planned_at = serializers.SerializerMethodField()
+    planned_duration_minutes = serializers.SerializerMethodField()
+
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
         exclude = ["description_json", "description_stripped"]
+
+    @extend_schema_field(OpenApiTypes.DATETIME)
+    def get_planned_at(self, obj):
+        plan = self._current_user_plan(obj)
+        return plan.planned_at if plan else None
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def get_planned_duration_minutes(self, obj):
+        plan = self._current_user_plan(obj)
+        return plan.planned_duration_minutes if plan else None
+
+    def _current_user_plan(self, obj):
+        plans = getattr(obj, "_prefetched_user_plans", None)
+        return plans[0] if plans else None
 
     def validate(self, data):
         if (
@@ -478,6 +503,37 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class UserIssuePlanSerializer(BaseSerializer):
+    """
+    Full serializer for a user's personal calendar schedule (date and time)
+    for a work item, backing the profile calendar feature.
+    """
+
+    class Meta:
+        model = UserIssuePlan
+        fields = ["id", "issue", "user", "planned_at", "planned_duration_minutes", "created_at", "updated_at"]
+        read_only_fields = ["id", "issue", "user", "created_at", "updated_at"]
+
+    def save(self, **kwargs):
+        issue = self.context["issue"]
+        request = self.context["request"]
+
+        if self.instance is None:
+            return UserIssuePlan.objects.create(
+                issue=issue,
+                user=request.user,
+                project=issue.project,
+                workspace=issue.workspace,
+                created_by=request.user,
+                updated_by=request.user,
+                **self.validated_data,
+            )
+
+        self.validated_data.pop("issue", None)
+        self.validated_data.pop("user", None)
+        return super().save(updated_by=request.user, **kwargs)
 
 
 class IssueRelationRefSerializer(serializers.Serializer):

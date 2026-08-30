@@ -24,8 +24,10 @@ from plane.app.serializers import (
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.sync_event_task import sync_event
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
+    SyncEvent,
     UserFavorite,
     DeployBoard,
     Intake,
@@ -307,6 +309,15 @@ class ProjectViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
             )
 
+            sync_event.delay(
+                workspace_id=str(project.workspace_id),
+                entity_type=SyncEvent.EntityType.PROJECT,
+                entity_id=str(project.id),
+                action=SyncEvent.Action.CREATED,
+                actor_id=str(request.user.id),
+                payload={},
+            )
+
             serializer = ProjectListSerializer(project)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -375,6 +386,14 @@ class ProjectViewSet(BaseViewSet):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
+            sync_event.delay(
+                workspace_id=str(project.workspace_id),
+                entity_type=SyncEvent.EntityType.PROJECT,
+                entity_id=str(project.id),
+                action=SyncEvent.Action.UPDATED,
+                actor_id=str(request.user.id),
+                payload={"changed_fields": list(request.data.keys())},
+            )
             serializer = ProjectListSerializer(project)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -409,6 +428,14 @@ class ProjectViewSet(BaseViewSet):
                 event_id=project.id,
                 old_identifier=None,
                 new_identifier=None,
+            )
+            sync_event.delay(
+                workspace_id=str(project.workspace_id),
+                entity_type=SyncEvent.EntityType.PROJECT,
+                entity_id=str(pk),
+                action=SyncEvent.Action.DELETED,
+                actor_id=str(request.user.id),
+                payload={},
             )
             # Delete the project members
             DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()

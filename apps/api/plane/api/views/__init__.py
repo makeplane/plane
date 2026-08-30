@@ -33,6 +33,8 @@ from .issue import (
     IssueRelationListCreateAPIEndpoint,
 )
 
+from .user_issue_plan import UserIssuePlanAPIEndpoint
+
 from .cycle import (
     CycleListCreateAPIEndpoint,
     CycleListLiteAPIEndpoint,

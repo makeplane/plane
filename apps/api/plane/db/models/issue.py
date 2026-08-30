@@ -597,6 +597,34 @@ class IssueSubscriber(ProjectBaseModel):
         return f"{self.issue.name} {self.subscriber.email}"
 
 
+class UserIssuePlan(ProjectBaseModel):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="user_issue_plans")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_issue_plans",
+    )
+    planned_at = models.DateTimeField()
+    planned_duration_minutes = models.PositiveIntegerField(default=60)
+
+    class Meta:
+        unique_together = ["issue", "user", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="user_issue_plan_unique_issue_user_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "User Issue Plan"
+        verbose_name_plural = "User Issue Plans"
+        db_table = "user_issue_plans"
+        ordering = ("planned_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.user.email} {self.planned_at}"
+
+
 class IssueReaction(ProjectBaseModel):
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,

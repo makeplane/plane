@@ -163,6 +163,21 @@ def label_docs(**kwargs):
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
+def user_issue_plan_docs(**kwargs):
+    """Decorator for personal work item calendar-schedule endpoints"""
+    defaults = {
+        "tags": ["Work Item Schedule"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
 def issue_link_docs(**kwargs):
     """Decorator for issue link endpoints"""
     defaults = {

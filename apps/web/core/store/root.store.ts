@@ -50,6 +50,8 @@ import type { IModuleStore } from "./module.store";
 import { ModulesStore } from "./module.store";
 import type { IModuleFilterStore } from "./module_filter.store";
 import { ModuleFilterStore } from "./module_filter.store";
+import type { IPomodoroTimerStore } from "./pomodoro/pomodoro-timer.store";
+import { PomodoroTimerStore } from "./pomodoro/pomodoro-timer.store";
 import type { IMultipleSelectStore } from "./multiple_select.store";
 import { MultipleSelectStore } from "./multiple_select.store";
 import type { IWorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
@@ -103,6 +105,7 @@ export class CoreRootStore {
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
   timelineStore: ITimelineStore;
+  pomodoroTimer: IPomodoroTimerStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -135,6 +138,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.timelineStore = new TimeLineStore(this);
+    this.pomodoroTimer = new PomodoroTimerStore(this);
   }
 
   resetOnSignOut() {
@@ -169,6 +173,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.timelineStore = new TimeLineStore(this);
+    this.pomodoroTimer = new PomodoroTimerStore(this);
   }
 }
 

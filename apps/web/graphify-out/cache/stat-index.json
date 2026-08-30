@@ -1,0 +1,27 @@
+{
+  "/Users/mauro/Development/plane/apps/web/manifest.json": {
+    "size": 751,
+    "mtime_ns": 1786278610615179266,
+    "hash": "64b42f98f8f2a4ccac3eaab1f4ff992cb4a0b551d9478ea305c8f7019e524bce"
+  },
+  "/Users/mauro/Development/plane/apps/web/package.json": {
+    "size": 3111,
+    "mtime_ns": 1786278610615332100,
+    "hash": "fc30c4186e7e6958dadab028b02de81eb8ce6ed9e722b6bc048485e4af31c375"
+  },
+  "/Users/mauro/Development/plane/apps/web/public/manifest.json": {
+    "size": 549,
+    "mtime_ns": 1786278610616082436,
+    "hash": "2049f52119fee29c677cd67e086dea3449aa2f084780b399f4acb645addf402e"
+  },
+  "/Users/mauro/Development/plane/apps/web/public/site.webmanifest.json": {
+    "size": 441,
+    "mtime_ns": 1786278610617936527,
+    "hash": "91d78138ff96fa2791618e4de6d26f67c14f4341171d048eed53db30fbf7c3c1"
+  },
+  "/Users/mauro/Development/plane/apps/web/tsconfig.json": {
+    "size": 648,
+    "mtime_ns": 1786278610619504199,
+    "hash": "0c03d85cefd7b89c15f1f3649bf23c2a53b5757dc69c8ceea809c75a2bedb92b"
+  }
+}

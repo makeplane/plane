@@ -94,6 +94,7 @@ def issue_on_results(
     issues: QuerySet[Issue],
     group_by: Optional[str],
     sub_group_by: Optional[str],
+    extra_fields: Optional[List[str]] = None,
 ) -> List[Dict[str, Any]]:
     FIELD_MAPPER: Dict[str, str] = {
         "labels__id": "label_ids",
@@ -137,6 +138,8 @@ def issue_on_results(
         original_list.remove(FIELD_MAPPER[sub_group_by])
         original_list.append(sub_group_by)
 
+    if extra_fields:
+        required_fields.extend(extra_fields)
     required_fields.extend(original_list)
     return list(issues.values(*required_fields))
 
@@ -206,6 +209,9 @@ def issue_group_values(
             return list(queryset.filter(project_id=project_id))
         else:
             return list(queryset)
+
+    if field == "planned_date":
+        return ["None"]
 
     if field == "created_by":
         queryset = queryset.values_list("created_by", flat=True).distinct()

@@ -52,6 +52,9 @@
       "medium": "Medium",
       "low": "Low"
     },
+    "properties": {
+      "scheduled": "Scheduled"
+    },
     "display": {
       "properties": {
         "label": "Display Properties",
@@ -81,6 +84,11 @@
         "calendar": "Calendar Layout",
         "spreadsheet": "Table Layout",
         "gantt": "Timeline Layout"
+      },
+      "calendar": {
+        "hours_layout": "Hours layout",
+        "unscheduled": "Unscheduled",
+        "drop_to_unschedule": "Drop here to unschedule"
       }
     },
     "states": {

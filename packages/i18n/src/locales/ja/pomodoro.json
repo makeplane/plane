@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "ポモドーロ",
+    "focus": "集中",
+    "short_break": "短い休憩",
+    "long_break": "長い休憩",
+    "start_focus": "集中を開始",
+    "pause": "一時停止",
+    "resume": "再開",
+    "complete": "完了",
+    "discard": "破棄",
+    "skip_break": "休憩をスキップ",
+    "open_work_item": "作業項目を開く",
+    "session_count": "{completed} / {total} セッション",
+    "running_on": "{issue} でタイマーが動作中",
+    "another_work_item": "別の作業項目"
+  }
+}

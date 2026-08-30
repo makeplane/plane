@@ -17,6 +17,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/hooks/use-issue-properties";
@@ -49,6 +50,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   const issueStoreType = useIssueStoreType();
   const storeType = issueStoreFromProps ?? issueStoreType;
   const { issues } = useIssues(storeType);
+  const { fetchProjectDetails } = useProject();
 
   useWorkItemProperties(
     peekIssue?.projectId,
@@ -70,6 +72,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         try {
           setError(false);
           await fetchIssue(workspaceSlug, projectId, issueId);
+          // oxlint-disable-next-line no-shadow
         } catch (error) {
           setError(true);
           console.error("Error fetching the parent issue", error);
@@ -110,6 +113,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         try {
           if (!issues?.archiveIssue) return;
           await issues.archiveIssue(workspaceSlug, projectId, issueId);
+          // oxlint-disable-next-line no-shadow
         } catch (error) {
           console.error("Error archiving the issue", error);
         }
@@ -169,6 +173,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           });
           await removeFromCyclePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
+          // oxlint-disable-next-line no-shadow
         } catch (error) {
           console.error("Error removing issue from cycle", error);
         }
@@ -206,6 +211,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           });
           await removeFromModulePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
+          // oxlint-disable-next-line no-shadow
         } catch (error) {
           console.error("Error removing issue from module", error);
         }
@@ -223,6 +229,19 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
+  );
+
+  // The workspace wrapper only loads lite project data (which omits feature
+  // flags like is_time_tracking_enabled), so fetch the full project details to
+  // power the peek's feature-gated rows (time tracking, modules, cycles).
+  useSWR(
+    peekIssue?.workspaceSlug && peekIssue?.projectId
+      ? ["peek-project-details", peekIssue.workspaceSlug, peekIssue.projectId]
+      : null,
+    peekIssue?.workspaceSlug && peekIssue?.projectId
+      ? () => fetchProjectDetails(peekIssue.workspaceSlug as string, peekIssue.projectId as string)
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;

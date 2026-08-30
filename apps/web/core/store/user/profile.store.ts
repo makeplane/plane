@@ -11,7 +11,7 @@ import { setLanguage } from "@plane/i18n";
 import type { TLanguage } from "@plane/i18n";
 // types
 import type { IUserTheme, TUserProfile } from "@plane/types";
-import { EStartOfTheWeek } from "@plane/types";
+import { DEFAULT_POMODORO_SETTINGS, EStartOfTheWeek } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store
@@ -66,6 +66,7 @@ export class ProfileStore implements IUserProfileStore {
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
+    pomodoro_settings: DEFAULT_POMODORO_SETTINGS,
   };
 
   // services

@@ -99,7 +99,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
         closeOnSelect
       >
         {ISSUE_LAYOUTS.map((layout, index) => {
-          if (layout.key === "spreadsheet" || layout.key === "gantt_chart" || layout.key === "calendar") return;
+          if (layout.key === "spreadsheet" || layout.key === "gantt_chart") return;
           return (
             <CustomMenu.MenuItem
               key={index}

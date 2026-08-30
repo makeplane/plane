@@ -28,7 +28,7 @@ import type {
 } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
-import { convertToISODateString } from "@plane/utils";
+import { convertToISODateString, renderFormattedPayloadDate } from "@plane/utils";
 // plane web imports
 // services
 import { CycleService } from "@/services/cycle.service";
@@ -46,7 +46,7 @@ import {
 } from "./base-issues-utils";
 import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
-export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
+export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date" | "planned_at";
 
 export enum EIssueGroupedAction {
   ADD = "ADD",
@@ -121,6 +121,7 @@ export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue
   created_by: "created_by",
   assignees: "assignee_ids",
   target_date: "target_date",
+  planned_at: "planned_at",
   cycle: "cycle_id",
   module: "module_ids",
   team_project: "project_id",
@@ -137,6 +138,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   created_by: "created_by",
   assignees: "assignee_ids",
   target_date: "target_date",
+  planned_at: "planned_at",
   team_project: "project_id",
 };
 
@@ -1668,6 +1670,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Handle special case for state group
     if (groupByKey === "state_detail.group") {
       return [this.rootIssueStore.rootStore.state.stateMap?.[value]?.group ?? issueObject.state__group];
+    }
+
+    if (groupByKey === "planned_at") {
+      if (!issueObject.planned_at) return ["None"];
+      // Match calendar day-tile keys (yyyy-MM-dd), not a raw UTC ISO prefix that can
+      // diverge when planned_at was built from local wall-clock times.
+      return [renderFormattedPayloadDate(issueObject.planned_at) ?? issueObject.planned_at.slice(0, 10)];
     }
 
     return [value];

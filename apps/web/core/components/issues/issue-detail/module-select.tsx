@@ -62,7 +62,7 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
   };
 
   return (
-    <div className={cn(`flex h-full items-center gap-1`, className)}>
+    <div className={cn("flex h-7.5 w-full items-center gap-1", className)}>
       <ModuleDropdown
         projectId={projectId}
         value={issue?.module_ids ?? []}
@@ -70,7 +70,7 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
         placeholder={t("module.no_module")}
         disabled={disableSelect}
         className="group h-full w-full"
-        buttonContainerClassName="w-full text-left rounded-sm"
+        buttonContainerClassName="w-full text-left h-7.5 rounded-sm"
         buttonClassName={`text-body-xs-medium justify-between ${issue?.module_ids?.length ? "" : "text-placeholder"}`}
         buttonVariant="transparent-with-text"
         hideIcon

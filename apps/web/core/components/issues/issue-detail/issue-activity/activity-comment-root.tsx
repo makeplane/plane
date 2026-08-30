@@ -14,6 +14,7 @@ import { CommentCard } from "@/components/comments/card/root";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
+import { TimeLogCard } from "../time-log/time-log-card";
 import { IssueActivityItem } from "./activity/activity-list";
 import { IssueActivityLoader } from "./loader";
 
@@ -72,6 +73,16 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             disabled={disabled}
             projectId={projectId}
             enableReplies
+          />
+        ) : activityComment.activity_type === "WORKLOG" ? (
+          <TimeLogCard
+            key={activityComment.id}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            timeLogId={activityComment.id}
+            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
+            disabled={disabled}
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem

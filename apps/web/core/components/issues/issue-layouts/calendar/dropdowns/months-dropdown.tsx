@@ -15,6 +15,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { getDate } from "@plane/utils";
 import { MONTHS_LIST } from "@plane/constants";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
+import type { IProfileIssuesFilter } from "@/store/issue/profile/filter.store";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
@@ -22,7 +23,12 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // helpers
 
 interface Props {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProfileIssuesFilter;
 }
 export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { issuesFilterStore } = props;
@@ -86,7 +92,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
           type="button"
           ref={setReferenceElement}
           className="text-18 font-semibold outline-none"
-          disabled={calendarLayout === "week"}
+          disabled={calendarLayout === "week" || calendarLayout === "hours"}
         >
           {calendarLayout === "month"
             ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`

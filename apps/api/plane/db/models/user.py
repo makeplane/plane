@@ -21,6 +21,8 @@ from plane.db.models import FileAsset
 from ..mixins import TimeAuditModel
 from plane.utils.color import get_random_color
 
+from .pomodoro import get_default_pomodoro_settings
+
 
 def get_default_onboarding():
     return {
@@ -260,6 +262,9 @@ class Profile(TimeAuditModel):
     has_marketing_email_consent = models.BooleanField(default=False)
     is_subscribed_to_changelog = models.BooleanField(default=False)
     product_tour = models.JSONField(default=get_default_product_tour)
+
+    # pomodoro
+    pomodoro_settings = models.JSONField(default=get_default_pomodoro_settings)
 
     class Meta:
         verbose_name = "Profile"

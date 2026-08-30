@@ -19,6 +19,7 @@ from django.db.models import (
     Prefetch,
     Q,
     Subquery,
+    Sum,
     UUIDField,
     Value,
 )
@@ -43,8 +44,10 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.sync_event_task import sync_event
 from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import (
+    SyncEvent,
     CycleIssue,
     FileAsset,
     IntakeIssue,
@@ -429,6 +432,14 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+            sync_event.delay(
+                workspace_id=str(project.workspace_id),
+                entity_type=SyncEvent.EntityType.ISSUE,
+                entity_id=str(serializer.data.get("id")),
+                action=SyncEvent.Action.CREATED,
+                actor_id=str(request.user.id),
+                payload={"project_id": str(project_id)},
+            )
             queryset = self.get_queryset()
             queryset = self.apply_annotations(queryset)
             issue = (
@@ -585,6 +596,15 @@ class IssueViewSet(BaseViewSet):
                     )
                 )
             )
+            .annotate(
+                tracked_time_minutes=Coalesce(
+                    Sum(
+                        "time_logs__duration_minutes",
+                        filter=Q(time_logs__deleted_at__isnull=True),
+                    ),
+                    Value(0),
+                )
+            )
         ).first()
         if not issue:
             return Response(
@@ -695,6 +715,19 @@ class IssueViewSet(BaseViewSet):
                     notification=True,
                     origin=base_host(request=request, is_app=True),
                 )
+                sync_event.delay(
+                    workspace_id=str(issue.workspace_id),
+                    entity_type=SyncEvent.EntityType.ISSUE,
+                    entity_id=str(pk),
+                    action=SyncEvent.Action.MOVED
+                    if any(k in request.data for k in ("start_date", "target_date"))
+                    else SyncEvent.Action.UPDATED,
+                    actor_id=str(request.user.id),
+                    payload={
+                        "project_id": str(project_id),
+                        "changed_fields": list(request.data.keys()),
+                    },
+                )
                 model_activity.delay(
                     model_name="issue",
                     model_id=str(serializer.data.get("id", None)),
@@ -716,6 +749,7 @@ class IssueViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        workspace_id = issue.workspace_id
 
         issue.delete()
         # delete the issue from recent visits
@@ -736,6 +770,14 @@ class IssueViewSet(BaseViewSet):
             notification=True,
             origin=base_host(request=request, is_app=True),
             subscriber=False,
+        )
+        sync_event.delay(
+            workspace_id=str(workspace_id),
+            entity_type=SyncEvent.EntityType.ISSUE,
+            entity_id=str(pk),
+            action=SyncEvent.Action.DELETED,
+            actor_id=str(request.user.id),
+            payload={"project_id": str(project_id)},
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1179,6 +1221,20 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
         # Bulk update issues
         Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
+
+        for issue in issues_to_update:
+            sync_event.delay(
+                workspace_id=str(issue.workspace_id),
+                entity_type=SyncEvent.EntityType.ISSUE,
+                entity_id=str(issue.id),
+                action=SyncEvent.Action.MOVED,
+                actor_id=str(request.user.id),
+                payload={
+                    "project_id": str(project_id),
+                    "start_date": str(issue.start_date) if issue.start_date else None,
+                    "target_date": str(issue.target_date) if issue.target_date else None,
+                },
+            )
 
         return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
 

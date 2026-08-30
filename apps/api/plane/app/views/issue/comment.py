@@ -23,6 +23,8 @@ from plane.db.models import IssueComment, ProjectMember, CommentReaction, Projec
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.sync_event_task import sync_event
+from plane.db.models import SyncEvent
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -93,6 +95,14 @@ class IssueCommentViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+            sync_event.delay(
+                workspace_id=str(project.workspace_id),
+                entity_type=SyncEvent.EntityType.ISSUE_COMMENT,
+                entity_id=str(serializer.data["id"]),
+                action=SyncEvent.Action.CREATED,
+                actor_id=str(request.user.id),
+                payload={"issue_id": str(issue_id), "project_id": str(project_id)},
+            )
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
@@ -128,6 +138,14 @@ class IssueCommentViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+            sync_event.delay(
+                workspace_id=str(issue_comment.workspace_id),
+                entity_type=SyncEvent.EntityType.ISSUE_COMMENT,
+                entity_id=str(pk),
+                action=SyncEvent.Action.UPDATED,
+                actor_id=str(request.user.id),
+                payload={"issue_id": str(issue_id), "project_id": str(project_id)},
+            )
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
@@ -145,6 +163,7 @@ class IssueCommentViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
+        workspace_id = issue_comment.workspace_id
         issue_comment.delete()
         issue_activity.delay(
             type="comment.activity.deleted",
@@ -156,6 +175,14 @@ class IssueCommentViewSet(BaseViewSet):
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
+        )
+        sync_event.delay(
+            workspace_id=str(workspace_id),
+            entity_type=SyncEvent.EntityType.ISSUE_COMMENT,
+            entity_id=str(pk),
+            action=SyncEvent.Action.DELETED,
+            actor_id=str(request.user.id),
+            payload={"issue_id": str(issue_id), "project_id": str(project_id)},
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 

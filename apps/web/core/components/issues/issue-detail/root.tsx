@@ -6,6 +6,7 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
+import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -20,6 +21,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local components
@@ -81,9 +83,11 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { allowPermissions } = useUserPermissions();
   const { issueDetailSidebarCollapsed } = useAppTheme();
+  const { fetchProjectDetails } = useProject();
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
+      // oxlint-disable-next-line no-shadow
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await fetchIssue(workspaceSlug, projectId, issueId);
@@ -91,6 +95,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           console.error("Error fetching the parent issue:", error);
         }
       },
+      // oxlint-disable-next-line no-shadow
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
@@ -103,6 +108,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           });
         }
       },
+      // oxlint-disable-next-line no-shadow
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           if (is_archived) await removeArchivedIssue(workspaceSlug, projectId, issueId);
@@ -121,6 +127,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           });
         }
       },
+      // oxlint-disable-next-line no-shadow
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
@@ -128,6 +135,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           console.log("Error in archiving issue:", error);
         }
       },
+      // oxlint-disable-next-line no-shadow
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
@@ -139,6 +147,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           });
         }
       },
+      // oxlint-disable-next-line no-shadow
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
@@ -150,6 +159,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           });
         }
       },
+      // oxlint-disable-next-line no-shadow
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           const removeFromCyclePromise = removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
@@ -169,6 +179,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           console.log("Error in removing issue from cycle:", error);
         }
       },
+      // oxlint-disable-next-line no-shadow
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
           const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
@@ -189,8 +200,11 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
         }
       },
       changeModulesInIssue: async (
+        // oxlint-disable-next-line no-shadow
         workspaceSlug: string,
+        // oxlint-disable-next-line no-shadow
         projectId: string,
+        // oxlint-disable-next-line no-shadow
         issueId: string,
         addModuleIds: string[],
         removeModuleIds: string[]
@@ -223,6 +237,15 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     projectId
+  );
+
+  // The workspace wrapper only loads lite project data (which omits feature
+  // flags like is_time_tracking_enabled), so fetch the full project details to
+  // power the sidebar's feature-gated rows (time tracking, modules, cycles).
+  useSWR(
+    workspaceSlug && projectId ? ["issue_detail_project", workspaceSlug, projectId] : null,
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   return (

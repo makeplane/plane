@@ -77,7 +77,14 @@ from .workspace.user import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
 )
+from .workspace.user_issue_plan import WorkspaceUserIssuePlanEndpoint
 from .workspace.estimate import WorkspaceEstimatesEndpoint
+
+from .workspace.time_log import (
+    WorkspaceTimeLogEndpoint,
+    WorkspaceTimeLogExportEndpoint,
+    WorkspaceTimeLogAnalyticsEndpoint,
+)
 from .workspace.module import WorkspaceModulesEndpoint
 from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
@@ -139,6 +146,12 @@ from .issue.attachment import (
 )
 
 from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+
+from .issue.time_log import IssueTimeLogViewSet
+
+from .pomodoro import PomodoroTimerViewSet, PomodoroNotifyEndpoint
+from .device import DeviceViewSet
+from .sync import SyncReplayEndpoint
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

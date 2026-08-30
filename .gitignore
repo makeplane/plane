@@ -1,119 +1,159 @@
-node_modules
-.next
-.yarn
+# =============================================================================
+# Plane monorepo — dependencies, build output, local config, and tooling caches
+# =============================================================================
 
-### NextJS ###
-# Dependencies
-/node_modules
-/.pnp
+# -----------------------------------------------------------------------------
+# Dependencies & package managers
+# -----------------------------------------------------------------------------
+node_modules/
+.pnp
 .pnp.js
+.pnpm-store/
+.yarn/
+package-lock.json
+yarn.lock
 
-# Testing
-/coverage
-
-# Next.js
-/.next/
-/out/
-
-# Production
+# -----------------------------------------------------------------------------
+# Build & bundler output
+# -----------------------------------------------------------------------------
 dist/
 out/
 build/
 .react-router/
+.turbo/
+assets/dist/
 
-# Misc
-.DS_Store
+# Next.js (legacy paths still cleaned by some apps)
+.next/
+
+# -----------------------------------------------------------------------------
+# Environment & secrets (keep *.example files tracked)
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+.secrets
 *.pem
-.history
-tsconfig.tsbuildinfo
+*.key
 
-# Debug
+# Sentry
+.sentryclirc
+.env.sentry-build-plugin
+
+# -----------------------------------------------------------------------------
+# Testing & coverage
+# -----------------------------------------------------------------------------
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+*.lcov
+test-results/
+.junit/
+
+# -----------------------------------------------------------------------------
+# Python / Django (apps/api)
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+venv/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+staticfiles/
+mediafiles/
+logs/
+
+# -----------------------------------------------------------------------------
+# TypeScript & generated sources
+# -----------------------------------------------------------------------------
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# i18n auto-generated types (regenerated on every build)
+packages/i18n/src/types/keys.generated.ts
+
+# -----------------------------------------------------------------------------
+# Storybook & local dev artifacts
+# -----------------------------------------------------------------------------
+storybook-static/
+*storybook.log
+output.css
+dev-editor
+
+# -----------------------------------------------------------------------------
+# Caches & temp files
+# -----------------------------------------------------------------------------
+.cache/
+.temp/
+tmp/
+temp/
+
+# Redis dumps
+*.rdb
+*.rdb.gz
+
+# -----------------------------------------------------------------------------
+# Deployment & local paths
+# -----------------------------------------------------------------------------
+deploy/selfhost/plane-app/
+
+# Local-only scripts (keep packages/i18n/scripts/ tracked)
+scripts/
+!packages/i18n/scripts/
+
+# Local security notes
+/security/
+
+# -----------------------------------------------------------------------------
+# IDE & editor
+# -----------------------------------------------------------------------------
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.history
+
+# Cursor
+.cursor/
+
+# Claude Code (local overrides only; skills under .claude/ remain tracked)
+.claude/settings.local.json
+CLAUDE.md
+
+# -----------------------------------------------------------------------------
+# OS files
+# -----------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------------------------------------------------------
+# Debug logs
+# -----------------------------------------------------------------------------
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .pnpm-debug.log*
 
-# Local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Vercel
+# -----------------------------------------------------------------------------
+# Hosting
+# -----------------------------------------------------------------------------
 .vercel
 
-# Turborepo
-.turbo
-
-## Django ##
-venv
-.venv
-*.pyc
-staticfiles
-mediafiles
-.env
-.DS_Store
-logs/
-htmlcov/
-.coverage
-
-node_modules/
-assets/dist/
-npm-debug.log
-yarn-error.log
-pnpm-debug.log
-
-# Editor directories and files
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-package-lock.json
-.vscode
-
-# Sentry
-.sentryclirc
-
-# lock files
-package-lock.json
-
-
-
-.secrets
-tmp/
-
-## packages
-dist
-.temp/
-deploy/selfhost/plane-app/
-
-## Storybook
-*storybook.log
-output.css
-
-dev-editor
-# Redis
-*.rdb
-*.rdb.gz
-
-storybook-static
-
-CLAUDE.md
-
-build/
-.react-router/
-
-build/
-.react-router/
-temp/
-scripts/
-!packages/i18n/scripts/
-
-# i18n auto-generated types (regenerated on every build)
-packages/i18n/src/types/keys.generated.ts
-
-# Local security notes (not for version control)
-/security/
+# polaris
+polaris.db
+polaris.db-shm
+polaris.db-wal
+.fastembed_cache/
+.mcp.json

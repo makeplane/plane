@@ -400,6 +400,8 @@ class ProjectStatsEndpoint(BaseAPIView):
             "total_members",
             "total_cycles",
             "total_modules",
+            "start_date",
+            "target_date",
         }
         requested_fields = set(filter(None, fields)) & valid_fields
 
@@ -441,6 +443,22 @@ class ProjectStatsEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+
+        if "start_date" in requested_fields:
+            annotations["start_date"] = (
+                Issue.issue_objects.filter(project_id=OuterRef("pk"), start_date__isnull=False)
+                .order_by()
+                .annotate(min_date=Func(F("start_date"), function="Min"))
+                .values("min_date")
+            )
+
+        if "target_date" in requested_fields:
+            annotations["target_date"] = (
+                Issue.issue_objects.filter(project_id=OuterRef("pk"), target_date__isnull=False)
+                .order_by()
+                .annotate(max_date=Func(F("target_date"), function="Max"))
+                .values("max_date")
             )
 
         if "total_members" in requested_fields:

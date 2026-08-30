@@ -7,6 +7,7 @@
 export * from "./issue_activity";
 export * from "./issue_comment";
 export * from "./issue_comment_reaction";
+export * from "./time_log";
 
 import type { TIssuePriorities } from "../../issues";
 

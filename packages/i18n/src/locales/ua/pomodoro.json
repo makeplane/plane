@@ -1,0 +1,18 @@
+{
+  "pomodoro": {
+    "title": "Помодоро",
+    "focus": "Фокус",
+    "short_break": "Коротка перерва",
+    "long_break": "Довга перерва",
+    "start_focus": "Розпочати фокус",
+    "pause": "Пауза",
+    "resume": "Продовжити",
+    "complete": "Завершити",
+    "discard": "Скасувати",
+    "skip_break": "Пропустити перерву",
+    "open_work_item": "Відкрити робочу одиницю",
+    "session_count": "{completed} із {total} сесій",
+    "running_on": "Таймер працює для {issue}",
+    "another_work_item": "іншу робочу одиницю"
+  }
+}
