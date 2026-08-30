@@ -15,6 +15,10 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
     addKeyboardShortcuts(this) {
       return {
         Enter: () => {
+          if (this.editor.view.composing) {
+            return false;
+          }
+
           const { activeDropbarExtensions } = this.editor.storage.utility;
 
           if (activeDropbarExtensions.length === 0) {

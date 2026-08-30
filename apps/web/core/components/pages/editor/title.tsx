@@ -54,7 +54,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
             className={cn(titleFontClassName, "block w-full resize-none rounded-none border-none p-0 outline-none")}
             placeholder="Untitled"
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.nativeEvent.isComposing) {
                 e.preventDefault();
                 editorRef?.setFocusAtPosition(0);
               }
