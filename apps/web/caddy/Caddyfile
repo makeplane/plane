@@ -1,11 +1,24 @@
 {
 	servers {
-		trusted_proxies static 0.0.0.0
+		trusted_proxies static private_ranges
 	}
+
+	order rate_limit before file_server
 }
 
 :3000 {
 	root * /usr/share/caddy/html
+
+	# Per-client-IP rate limiting for static asset requests
+	rate_limit {
+		zone static {
+			key {remote_host}
+			events 300
+			window 1m
+		}
+	}
+
+	# SPA fallback
 	try_files {path} /index.html
 	file_server
 

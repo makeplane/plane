@@ -1,12 +1,25 @@
 {
 	servers {
-		trusted_proxies static 0.0.0.0
+		trusted_proxies static private_ranges
 	}
+
+	order rate_limit before file_server
 }
 
 :3000 {
 	root * /usr/share/caddy/html
-	try_files {path} /index.html
+
+	# Per-client-IP rate limiting for static asset requests
+	rate_limit {
+		zone static {
+			key {remote_host}
+			events 300
+			window 1m
+		}
+	}
+
+	# SPA fallback: the admin build is served from /god-mode
+	try_files {path} /god-mode/index.html
 	file_server
 
 	# Access logs to stdout (default in Caddy)
