@@ -35,10 +35,19 @@ class MicrosoftOAuthProvider(OauthAdapter):
                 error_message="MICROSOFT_NOT_CONFIGURED",
             )
         redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/microsoft/callback/"""
+        from urllib.parse import urlencode
+        url_params = {
+            "client_id": MICROSOFT_CLIENT_ID,
+            "scope": self.scope,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "state": state,
+        }
+        auth_url = f"{self.auth_url}?{urlencode(url_params)}"
         super().__init__(
             request, self.provider, MICROSOFT_CLIENT_ID, self.scope, redirect_uri,
-            self.auth_url, self.token_url, self.userinfo_url,
-            client_secret=MICROSOFT_CLIENT_SECRET, code=code, state=state, callback=callback,
+            auth_url, self.token_url, self.userinfo_url,
+            client_secret=MICROSOFT_CLIENT_SECRET, code=code, callback=callback,
         )
 
     def set_token_data(self):
