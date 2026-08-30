@@ -35,9 +35,7 @@ class MicrosoftOauthInitiateEndpoint(View):
             state = uuid.uuid4().hex
             provider = MicrosoftOAuthProvider(request=request, state=state)
             request.session["state"] = state
-            auth_url = provider.get_auth_url()
-            return HttpResponseRedirect(get_safe_redirect_url(
-                base_url=auth_url, next_path=None, params={}))
+            return HttpResponseRedirect(provider.get_auth_url())
         except AuthenticationException as e:
             return HttpResponseRedirect(get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True), next_path=next_path,
@@ -48,12 +46,8 @@ class MicrosoftCallbackEndpoint(View):
     def get(self, request):
         next_path = request.GET.get("next_path")
         code = request.GET.get("code")
-        code = request.GET.get("code")
         state = request.GET.get("state")
         if not code or not state:
-        if not code or not state:
-                params=exc.get_error_dict()))
-        if not code:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["MICROSOFT_OAUTH_PROVIDER_ERROR"],
                 error_message="MICROSOFT_OAUTH_PROVIDER_ERROR",
