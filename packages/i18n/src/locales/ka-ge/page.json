@@ -1,0 +1,41 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "კონტური",
+        "empty_state": {
+          "title": "ფალტობის სათაურები",
+          "description": "დავამატოთ რამდენიმე სათაური ამ გვერდზე მათ აქ სანახავად."
+        }
+      },
+      "info": {
+        "label": "ინფო",
+        "document_info": {
+          "words": "სიტყვები",
+          "characters": "სიმბოლოები",
+          "paragraphs": "პარაგრაფები",
+          "read_time": "წაკითხვის დრო"
+        },
+        "actors_info": {
+          "edited_by": "დარედაქტირებულია",
+          "created_by": "შექმნილია"
+        },
+        "version_history": {
+          "label": "ვერსიის ისტორია",
+          "current_version": "მიმდინარე ვერსია"
+        }
+      },
+      "assets": {
+        "label": "აქტივები",
+        "download_button": "ჩამოტვირთვა",
+        "empty_state": {
+          "title": "ფალტობის სურათები",
+          "description": "დაამატეთ სურათები მათ აქ სანახავად."
+        }
+      }
+    },
+    "open_button": "ნავიგაციის პანელის გახსნა",
+    "close_button": "ნავიგაციის პანელის დახურვა",
+    "outline_floating_button": "კონტურის გახსნა"
+  }
+}
