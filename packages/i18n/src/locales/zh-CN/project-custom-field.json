@@ -1,0 +1,65 @@
+{
+  "project_custom_field": {
+    "nav_label": "自定义字段",
+    "settings": {
+      "title": "自定义字段",
+      "description": "定义项目级字段，用于追踪合同金额、预算、已回款等数字数据。",
+      "empty_state": {
+        "title": "还没有自定义字段",
+        "description": "添加一个字段，开始为此项目追踪数字数据。"
+      },
+      "add_button": "添加字段",
+      "form": {
+        "name_placeholder": "字段名称",
+        "name_required": "字段名称为必填项。",
+        "create": "创建",
+        "cancel": "取消"
+      },
+      "value_placeholder": "输入数值",
+      "delete_confirmation": {
+        "title": "删除该字段",
+        "description": "这将永久删除该字段及其在所有项目中的数值，此操作无法撤销。",
+        "confirm": "删除",
+        "cancel": "取消"
+      },
+      "toasts": {
+        "create": {
+          "success": {
+            "title": "成功！",
+            "message": "字段“{name}”创建成功。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "创建字段失败，请重试！"
+          }
+        },
+        "update": {
+          "success": {
+            "title": "成功！",
+            "message": "字段“{name}”更新成功。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "更新字段失败，请重试！"
+          }
+        },
+        "delete": {
+          "success": {
+            "title": "成功！",
+            "message": "字段删除成功。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "删除字段失败，请重试！"
+          }
+        },
+        "value_update": {
+          "error": {
+            "title": "错误！",
+            "message": "保存数值失败，请重试！"
+          }
+        }
+      }
+    }
+  }
+}

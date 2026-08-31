@@ -39,6 +39,7 @@ export * from "./page";
 export * from "./payment";
 export * from "./pragmatic";
 export * from "./project";
+export * from "./project-custom-field";
 export * from "./publish";
 export * from "./reaction";
 export * from "./intake";

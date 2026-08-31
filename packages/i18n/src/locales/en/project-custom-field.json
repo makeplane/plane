@@ -1,0 +1,65 @@
+{
+  "project_custom_field": {
+    "nav_label": "Custom Fields",
+    "settings": {
+      "title": "Custom Fields",
+      "description": "Define project-level fields to track numbers such as contract value, budget, or payment collected.",
+      "empty_state": {
+        "title": "No custom fields yet",
+        "description": "Add a field to start tracking numeric data for this project."
+      },
+      "add_button": "Add field",
+      "form": {
+        "name_placeholder": "Field name",
+        "name_required": "Field name is required.",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "value_placeholder": "Enter a value",
+      "delete_confirmation": {
+        "title": "Delete this field",
+        "description": "This will permanently delete the field and its value for every project. This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "toasts": {
+        "create": {
+          "success": {
+            "title": "Success!",
+            "message": "Field {name} created successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to create field. Please try again!"
+          }
+        },
+        "update": {
+          "success": {
+            "title": "Success!",
+            "message": "Field {name} updated successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to update field. Please try again!"
+          }
+        },
+        "delete": {
+          "success": {
+            "title": "Success!",
+            "message": "Field deleted successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to delete field. Please try again!"
+          }
+        },
+        "value_update": {
+          "error": {
+            "title": "Error!",
+            "message": "Failed to save value. Please try again!"
+          }
+        }
+      }
+    }
+  }
+}

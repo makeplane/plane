@@ -5,6 +5,7 @@
  */
 
 export * from "./project.service";
+export * from "./project-custom-field.service";
 export * from "./project-export.service";
 export * from "./project-member.service";
 export * from "./project-state.service";

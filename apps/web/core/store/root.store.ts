@@ -58,6 +58,8 @@ import type { IProjectPageStore } from "./pages/project-page.store";
 import { ProjectPageStore } from "./pages/project-page.store";
 import type { IProjectRootStore } from "./project";
 import { ProjectRootStore } from "./project";
+import type { IProjectCustomFieldStore } from "./project-custom-field.store";
+import { ProjectCustomFieldStore } from "./project-custom-field.store";
 import type { IProjectViewStore } from "./project-view.store";
 import { ProjectViewStore } from "./project-view.store";
 import type { IRouterStore } from "./router.store";
@@ -85,6 +87,7 @@ export class CoreRootStore {
   issue: IIssueRootStore;
   state: IStateStore;
   label: ILabelStore;
+  projectCustomField: IProjectCustomFieldStore;
   dashboard: IDashboardStore;
   analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
@@ -122,6 +125,7 @@ export class CoreRootStore {
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
+    this.projectCustomField = new ProjectCustomFieldStore(this);
     this.dashboard = new DashboardStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
@@ -157,6 +161,7 @@ export class CoreRootStore {
     this.issue = new IssueRootStore(this);
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
+    this.projectCustomField = new ProjectCustomFieldStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);
