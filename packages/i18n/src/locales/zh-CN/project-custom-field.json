@@ -3,10 +3,10 @@
     "nav_label": "自定义字段",
     "settings": {
       "title": "自定义字段",
-      "description": "定义项目级字段，用于追踪合同金额、预算、已回款等数字数据。",
+      "description": "定义项目级字段，用于追踪合同金额、预算、合同号、负责人等数据。",
       "empty_state": {
         "title": "还没有自定义字段",
-        "description": "添加一个字段，开始为此项目追踪数字数据。"
+        "description": "添加一个字段，开始为此项目追踪数据。"
       },
       "add_button": "添加字段",
       "form": {
@@ -15,7 +15,17 @@
         "create": "创建",
         "cancel": "取消"
       },
-      "value_placeholder": "输入数值",
+      "field_types": {
+        "number": "数字",
+        "text": "文本",
+        "date": "日期",
+        "dropdown": "下拉选择",
+        "member": "人员"
+      },
+      "value_placeholder": "请填写",
+      "options": {
+        "add_placeholder": "添加选项"
+      },
       "delete_confirmation": {
         "title": "删除该字段",
         "description": "这将永久删除该字段及其在所有项目中的数值，此操作无法撤销。",
@@ -56,7 +66,19 @@
         "value_update": {
           "error": {
             "title": "错误！",
-            "message": "保存数值失败，请重试！"
+            "message": "保存失败，请重试！"
+          }
+        },
+        "option_create": {
+          "error": {
+            "title": "错误！",
+            "message": "添加选项失败，请重试！"
+          }
+        },
+        "option_delete": {
+          "error": {
+            "title": "错误！",
+            "message": "删除选项失败，请重试！"
           }
         }
       }

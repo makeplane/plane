@@ -5,7 +5,12 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { IProjectCustomField, IProjectCustomFieldValue } from "@plane/types";
+import type {
+  IProjectCustomField,
+  IProjectCustomFieldOption,
+  IProjectCustomFieldValue,
+  TProjectCustomFieldValuePayload,
+} from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 export class ProjectCustomFieldService extends APIService {
@@ -66,9 +71,49 @@ export class ProjectCustomFieldService extends APIService {
     workspaceSlug: string,
     projectId: string,
     fieldId: string,
-    data: Partial<IProjectCustomFieldValue>
+    data: TProjectCustomFieldValuePayload
   ): Promise<IProjectCustomFieldValue> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/custom-field-values/${fieldId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCustomFieldOptions(
+    workspaceSlug: string,
+    projectId: string,
+    fieldId: string
+  ): Promise<IProjectCustomFieldOption[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/custom-fields/${fieldId}/options/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createCustomFieldOption(
+    workspaceSlug: string,
+    projectId: string,
+    fieldId: string,
+    data: Partial<IProjectCustomFieldOption>
+  ): Promise<IProjectCustomFieldOption> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/custom-fields/${fieldId}/options/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteCustomFieldOption(
+    workspaceSlug: string,
+    projectId: string,
+    fieldId: string,
+    optionId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/custom-fields/${fieldId}/options/${optionId}/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
