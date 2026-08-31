@@ -1,0 +1,426 @@
+{
+  "issue": {
+    "label": "{count, plural, one {სამუშაო ელემენტი} other {სამუშაო ელემენტები}}",
+    "all": "ყველა სამუშაო ელემენტი",
+    "edit": "სამუშაო ელემენტის რედაქტირება",
+    "title": {
+      "label": "სამუშაო ელემენტის სათაური",
+      "required": "სამუშაო ელემენტის სათაური სავალდებულოა."
+    },
+    "add": {
+      "press_enter": "დააჭირეთ 'Enter'-ს სხვა სამუშაო ელემენტის დასამატებლად",
+      "label": "სამუშაო ელემენტის დამატება",
+      "cycle": {
+        "failed": "სამუშაო ელემენტის ციკლში დამატება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+        "success": "{count, plural, one {სამუშაო ელემენტი} other {სამუშაო ელემენტები}} წარმატებით დაემატა ციკლში.",
+        "loading": "{count, plural, one {სამუშაო ელემენტი} other {სამუშაო ელემენტები}} ციკლში დამატება"
+      },
+      "assignee": "მინიჭებულის დამატება",
+      "start_date": "დაწყების თარიღის დამატება",
+      "due_date": "ვადის თარიღის დამატება",
+      "parent": "მშობელი სამუშაო ელემენტის დამატება",
+      "sub_issue": "ქვე-სამუშაო ელემენტის დამატება",
+      "dependency": "Add dependency",
+      "relation": "ურთიერთობის დამატება",
+      "link": "ბმულის დამატება",
+      "existing": "არსებული სამუშაო ელემენტის დამატება"
+    },
+    "remove": {
+      "label": "სამუშაო ელემენტის ამოღება",
+      "cycle": {
+        "loading": "სამუშაო ელემენტის ციკლიდან ამოღება",
+        "success": "სამუშაო ელემენტი წარმატებით ამოიღეს ციკლიდან.",
+        "failed": "სამუშაო ელემენტის ციკლიდან ამოღება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
+      },
+      "module": {
+        "loading": "სამუშაო ელემენტის მოდულიდან ამოღება",
+        "success": "სამუშაო ელემენტი წარმატებით ამოიღეს მოდულიდან.",
+        "failed": "სამუშაო ელემენტის მოდულიდან ამოღება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
+      },
+      "parent": {
+        "label": "მშობელი სამუშაო ელემენტის ამოღება"
+      }
+    },
+    "new": "ახალი სამუშაო ელემენტი",
+    "adding": "სამუშაო ელემენტის დამატება",
+    "create": {
+      "success": "სამუშაო ელემენტი წარმატებით შეიქმნა"
+    },
+    "priority": {
+      "urgent": "გადაუდებელი",
+      "high": "მაღალი",
+      "medium": "საშუალო",
+      "low": "დაბალი"
+    },
+    "display": {
+      "properties": {
+        "label": "ჩვენების თვისებები",
+        "id": "ID",
+        "issue_type": "სამუშაო ელემენტის ტიპი",
+        "sub_issue_count": "ქვე-სამუშაო ელემენტების რაოდენობა",
+        "attachment_count": "დანართების რაოდენობა",
+        "created_on": "შექმნილია",
+        "sub_issue": "ქვე-სამუშაო ელემენტი",
+        "work_item_count": "სამუშაო ელემენტების რაოდენობა"
+      },
+      "extra": {
+        "show_sub_issues": "ქვე-სამუშაო ელემენტების ჩვენება",
+        "show_empty_groups": "ცარიელი ჯგუფების ჩვენება"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "ეს განლაგება დალაგებულია",
+      "list": "სია",
+      "kanban": "დაფა",
+      "calendar": "კალენდარი",
+      "spreadsheet": "ცხრილი",
+      "gantt": "დროის ხაზი",
+      "title": {
+        "list": "სიის განლაგება",
+        "kanban": "დაფის განლაგება",
+        "calendar": "კალენდრის განლაგება",
+        "spreadsheet": "ცხრილის განლაგება",
+        "gantt": "დროის ხაზის განლაგება"
+      }
+    },
+    "states": {
+      "active": "აქტიური",
+      "backlog": "ჩამორჩენა"
+    },
+    "comments": {
+      "placeholder": "კომენტარის დამატება",
+      "switch": {
+        "private": "გადართვა პირად კომენტარზე",
+        "public": "გადართვა საჯარო კომენტარზე"
+      },
+      "create": {
+        "success": "კომენტარი წარმატებით შეიქმნა",
+        "error": "კომენტარის შექმნა ვერ მოხერხდა. გთხოვთ, სცადოთ მოგვიანებით."
+      },
+      "update": {
+        "success": "კომენტარი წარმატებით განახლდა",
+        "error": "კომენტარის განახლება ვერ მოხერხდა. გთხოვთ, სცადოთ მოგვიანებით."
+      },
+      "remove": {
+        "success": "კომენტარი წარმატებით წაიშალა",
+        "error": "კომენტარის წაშლა ვერ მოხერხდა. გთხოვთ, სცადოთ მოგვიანებით."
+      },
+      "upload": {
+        "error": "აქტივის ატვირთვა ვერ მოხერხდა. გთხოვთ, სცადოთ მოგვიანებით."
+      },
+      "copy_link": {
+        "success": "კომენტარის ბმული კოპირებულია ბუფერში",
+        "error": "კომენტარის ბმულის კოპირების შეცდომა. გთხოვთ, სცადოთ მოგვიანებით."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Add reply",
+          "placeholder": "Add reply"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Failed to fetch replies"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Reply created successfully"
+            },
+            "error": {
+              "message": "Failed to create reply"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Reply updated successfully"
+            },
+            "error": {
+              "message": "Failed to update reply"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Reply deleted successfully"
+            },
+            "error": {
+              "message": "Failed to delete reply"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "სამუშაო ელემენტი არ არსებობს",
+        "description": "თქვენ მიერ მოთხოვნილი სამუშაო ელემენტი არ არსებობს, დაარქივებულია ან წაშლილია.",
+        "primary_button": {
+          "text": "ნახეთ სხვა სამუშაო ელემენტები"
+        }
+      }
+    },
+    "sibling": {
+      "label": "და-ძმა სამუშაო ელემენტები"
+    },
+    "archive": {
+      "description": "მხოლოდ დასრულებული ან გაუქმებული\nსამუშაო ელემენტები შეიძლება დაარქივდეს",
+      "label": "სამუშაო ელემენტის არქივირება",
+      "confirm_message": "დარწმუნებული ხართ, რომ გსურთ სამუშაო ელემენტის არქივირება? ყველა დაარქივებული სამუშაო ელემენტი შეიძლება აღდგეს მოგვიანებით.",
+      "success": {
+        "label": "არქივირების წარმატება",
+        "message": "თქვენი არქივები შეგიძლიათ იპოვოთ პროექტის არქივებში."
+      },
+      "failed": {
+        "message": "სამუშაო ელემენტის არქივირება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "აღდგენის წარმატება",
+        "message": "თქვენი სამუშაო ელემენტი შეგიძლიათ იპოვოთ პროექტის სამუშაო ელემენტებში."
+      },
+      "failed": {
+        "message": "სამუშაო ელემენტის აღდგენა ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
+      }
+    },
+    "relation": {
+      "relates_to": "დაკავშირებულია",
+      "duplicate": "დუბლიკატია",
+      "blocked_by": "დაბლოკილია",
+      "blocking": "ბლოკავს",
+      "start_before": "Starts Before",
+      "start_after": "Starts After",
+      "finish_before": "Finishes Before",
+      "finish_after": "Finishes After",
+      "implements": "Implements",
+      "implemented_by": "Implemented By"
+    },
+    "copy_link": "სამუშაო ელემენტის ბმულის კოპირება",
+    "delete": {
+      "label": "სამუშაო ელემენტის წაშლა",
+      "error": "სამუშაო ელემენტის წაშლის შეცდომა"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "სამუშაო ელემენტი წარმატებით გამოწერილია",
+        "unsubscribed": "სამუშაო ელემენტის გამოწერა წარმატებით გაუქმებულია"
+      }
+    },
+    "select": {
+      "error": "გთხოვთ, აირჩიოთ მინიმუმ ერთი სამუშაო ელემენტი",
+      "empty": "სამუშაო ელემენტები არ არის არჩეული",
+      "add_selected": "არჩეული სამუშაო ელემენტების დამატება",
+      "select_all": "ყველას არჩევა",
+      "deselect_all": "ყველას გაუქმება"
+    },
+    "open_in_full_screen": "სამუშაო ელემენტის სრულ ეკრანზე გახსნა",
+    "duplicate": {
+      "modal": {
+        "title": "Make a copy to another project",
+        "description1": "This creates a copy of the work item.",
+        "description2": "All property data will be removed while duplicating.",
+        "placeholder": "Select a project"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Work item duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate work item"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Link pages",
+      "show_wiki_pages": "Show Wiki pages",
+      "link_pages_to": "Link pages to",
+      "linked_pages": "Linked pages",
+      "no_description": "This is an empty page. Why don't you write something inside and see it show up here like this placeholder",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Pages updated",
+            "message": "Pages updated successfully"
+          },
+          "error": {
+            "title": "Pages update failed",
+            "message": "Pages update failed"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Page removed",
+            "message": "Page removed successfully"
+          },
+          "error": {
+            "title": "Page removal failed",
+            "message": "Page removal failed"
+          }
+        }
+      }
+    },
+    "vote": {
+      "click_to_upvote": "Click to upvote",
+      "click_to_downvote": "Click to downvote",
+      "click_to_view_upvotes": "Click to view upvotes",
+      "click_to_view_downvotes": "Click to view downvotes"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "ქვე-სამუშაო ელემენტი წარმატებით განახლდა",
+      "error": "ქვე-სამუშაო ელემენტის განახლების შეცდომა"
+    },
+    "remove": {
+      "success": "ქვე-სამუშაო ელემენტი წარმატებით ამოიღეს",
+      "error": "ქვე-სამუშაო ელემენტის ამოღების შეცდომა"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "თქვენ არ გაქვთ ქვე-სამუშაო ელემენტები, რომლებიც შეესაბამება გამოყენებულ ფილტრებს.",
+        "description": "ყველა ქვე-სამუშაო ელემენტის სანახავად, გაასუფთავეთ ყველა გამოყენებული ფილტრი.",
+        "action": "ფილტრების გასუფთავება"
+      },
+      "list_filters": {
+        "title": "თქვენ არ გაქვთ სამუშაო ელემენტები, რომლებიც შეესაბამება გამოყენებულ ფილტრებს.",
+        "description": "ყველა სამუშაო ელემენტის სანახავად, გაასუფთავეთ ყველა გამოყენებული ფილტრი.",
+        "action": "ფილტრების გასუფთავება"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "შესაბამისი სამუშაო ელემენტები არ მოიძებნა"
+      },
+      "no_issues": {
+        "title": "სამუშაო ელემენტები არ მოიძებნა"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "ჯერ კომენტარები არ არის",
+        "description": "კომენტარები შეიძლება გამოყენებულ იქნეს სამუშაო ელემენტების განხილვისა და შემდგომი თვალყურის დევნების სივრცედ"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Unable to archive work items",
+        "message": "Only work items belonging to Completed or Canceled state groups can be archived."
+      },
+      "invalid_issue_start_date": {
+        "title": "Unable to update work items",
+        "message": "Start date selected succeeds the due date for some work items. Ensure start date to be before the due date."
+      },
+      "invalid_issue_target_date": {
+        "title": "Unable to update work items",
+        "message": "Due date selected precedes the start date for some work items. Ensure due date to be after the start date."
+      },
+      "invalid_state_transition": {
+        "title": "Unable to update work items",
+        "message": "State change is not allowed for some work items. Ensure the state change is allowed."
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Recurring work items",
+      "description": "Set your repeatable work once, and we’ll take care of the repeats. You’ll see everything right here when it’s time.",
+      "new_recurring_work_item": "New recurring work item",
+      "update_recurring_work_item": "Update recurring work item",
+      "form": {
+        "interval": {
+          "title": "Schedule",
+          "start_date": {
+            "validation": {
+              "required": "Start date is required"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Interval type is required"
+            }
+          }
+        },
+        "button": {
+          "create": "Create recurring work item",
+          "update": "Update recurring work item"
+        }
+      },
+      "create_button": {
+        "label": "Create recurring work item",
+        "no_permission": "Contact your project admin to create recurring work items"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Your work, on autopilot",
+        "description": "Set it once. We’ll bring it back when it’s due. Upgrade to Business to make recurring work feel effortless."
+      },
+      "no_templates": {
+        "button": "Create your first recurring work item"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Recurring work item created",
+          "message": "{name}, the recurring work item, is now available for your workspace."
+        },
+        "error": {
+          "title": "We couldn't create that recurring work item this time.",
+          "message": "Try saving your details again or copy them over to a new recurring work item, preferably in another tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Recurring work item changed",
+          "message": "{name}, the recurring work item, was changed."
+        },
+        "error": {
+          "title": "We couldn't save changes to this recurring work item.",
+          "message": "Try saving your details again or come back to this recurring work item later. If there's trouble still, reach out to us."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Recurring work item deleted",
+          "message": "{name}, the recurring work item, has now been deleted from your workspace."
+        },
+        "error": {
+          "title": "We couldn't delete that recurring work item this.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Delete recurring work item",
+      "description": {
+        "prefix": "Are you sure you want to delete recurring work item-",
+        "suffix": "? All of the data related to the recurring work item will be permanently removed. This action cannot be undone."
+      }
+    }
+  },
+  "epic": {
+    "new": "ახალი ეპიკი",
+    "label": "{count, plural, one {ეპიკი} other {ეპიკები}}",
+    "adding": "ეპიკის დამატება",
+    "create": {
+      "success": "ეპიკი წარმატებით შეიქმნა"
+    },
+    "add": {
+      "label": "ეპიკის დამატება",
+      "press_enter": "დააჭირეთ 'Enter'-ს სხვა ეპიკის დასამატებლად"
+    },
+    "title": {
+      "label": "ეპიკის სათაური",
+      "required": "ეპიკის სათაური სავალდებულოა."
+    }
+  }
+}
