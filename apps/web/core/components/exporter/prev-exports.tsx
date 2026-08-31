@@ -96,7 +96,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
               size="xs"
               stretch="auto"
               label={t("prev")}
-              icon={<MoveLeft />}
+              icon={<MoveLeft className="size-3.5" />}
               disabled={!exporterServices?.prev_page_results}
               onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
             />
@@ -105,7 +105,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
               size="xs"
               stretch="auto"
               label={t("next")}
-              icon={<MoveRight />}
+              icon={<MoveRight className="size-3.5" />}
               iconPosition="end"
               disabled={!exporterServices?.next_page_results}
               onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}

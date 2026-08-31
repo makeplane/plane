@@ -175,7 +175,7 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
           variant="ghost"
           size="sm"
           stretch="auto"
-          icon={<PlusIcon />}
+          icon={<PlusIcon className="size-3.5" />}
           onClick={handleCreate}
           label={`Add ${estimateType}`}
         />

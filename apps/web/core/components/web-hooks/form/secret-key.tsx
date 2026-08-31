@@ -138,7 +138,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
                   size="md"
                   stretch="auto"
                   label={isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
-                  icon={<RefreshCw />}
+                  icon={<RefreshCw className="size-4" />}
                   onClick={handleRegenerateSecretKey}
                   loading={isRegenerating}
                 />

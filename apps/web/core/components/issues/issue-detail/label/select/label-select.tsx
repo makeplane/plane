@@ -132,7 +132,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
             size="xs"
             stretch="auto"
             label={label}
-            icon={<PlusIcon />}
+            icon={<PlusIcon className="size-3.5" />}
             ref={setReferenceElement}
             type="button"
             onClick={() => !projectLabels && fetchLabels()}

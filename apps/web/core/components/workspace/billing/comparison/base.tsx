@@ -130,7 +130,9 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             size="sm"
             stretch="auto"
             label={isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
-            icon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
+            icon={
+              isCompareAllFeaturesSectionOpen ? <ArrowUp className="size-3.5" /> : <ArrowDown className="size-3.5" />
+            }
             iconPosition="end"
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);

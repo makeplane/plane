@@ -32,7 +32,7 @@ export function TransferIssues(props: Props) {
             size="md"
             stretch="auto"
             label="Transfer work items"
-            icon={<TransferIcon />}
+            icon={<TransferIcon className="size-4 fill-current" />}
             onClick={handleClick}
             disabled={disabled}
           />

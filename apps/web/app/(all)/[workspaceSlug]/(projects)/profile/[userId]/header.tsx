@@ -100,7 +100,11 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
               variant="ghost"
               size="md"
               aria-label="Toggle profile sidebar"
-              icon={<PanelRight className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />}
+              icon={
+                <PanelRight
+                  className={`size-4 ${!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"}`}
+                />
+              }
               onClick={() => toggleProfileSidebar()}
             />
           </div>

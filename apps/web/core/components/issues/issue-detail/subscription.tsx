@@ -82,7 +82,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
   return (
     <div>
       <Button
-        icon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
+        icon={isSubscribed ? <BellOff className="size-4" /> : <Bell className="size-4" />}
         variant="secondary"
         size="md"
         stretch="auto"

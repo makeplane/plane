@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { Fragment, useState } from "react";
+import React, { cloneElement, Fragment, isValidElement, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 // headless ui
@@ -12,6 +12,12 @@ import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
+import { cn } from "@plane/utils";
+
+function withIconSize(icon: React.ReactNode, sizeClass: string) {
+  if (!isValidElement<{ className?: string }>(icon)) return icon;
+  return cloneElement(icon, { className: cn(sizeClass, icon.props.className) });
+}
 
 type Props = {
   children: React.ReactNode;
@@ -62,7 +68,7 @@ export function FiltersDropdown(props: Props) {
                     variant="secondary"
                     size="md"
                     stretch="auto"
-                    icon={icon}
+                    icon={withIconSize(icon, "size-4")}
                     tabIndex={tabIndex}
                     label={title ?? ""}
                   />
@@ -76,7 +82,7 @@ export function FiltersDropdown(props: Props) {
                       variant="secondary"
                       size="md"
                       aria-label={typeof title === "string" ? title : "Filters"}
-                      icon={miniIcon}
+                      icon={withIconSize(miniIcon, "size-4")}
                       disabled={disabled}
                       tabIndex={tabIndex}
                     />

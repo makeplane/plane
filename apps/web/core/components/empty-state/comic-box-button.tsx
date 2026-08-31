@@ -4,12 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import type { Ref } from "react";
-import { Fragment, useState } from "react";
+import type { ReactNode, Ref } from "react";
+import { cloneElement, Fragment, isValidElement, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
+import { cn } from "@plane/utils";
+
+function withIconSize(icon: ReactNode, sizeClass: string) {
+  if (!isValidElement<{ className?: string }>(icon)) return icon;
+  return cloneElement(icon, { className: cn(sizeClass, icon.props.className) });
+}
 
 type Props = {
   label: string;
@@ -56,7 +62,7 @@ export function ComicBoxButton(props: Props) {
             stretch="auto"
             onClick={onClick}
             disabled={disabled}
-            icon={icon}
+            icon={withIconSize(icon, "size-4")}
             label={label}
           />
           <span className="relative h-2 w-2">

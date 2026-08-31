@@ -4,10 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import React, { cloneElement, isValidElement, useState } from "react";
 
 // ui
 import { Button } from "@makeplane/propel/components/button";
+import { cn } from "@plane/utils";
+
+function withIconSize(icon: React.ReactNode, sizeClass: string) {
+  if (!isValidElement<{ className?: string }>(icon)) return icon;
+  return cloneElement(icon, { className: cn(sizeClass, icon.props.className) });
+}
 
 type Props = {
   title: string;
@@ -57,7 +63,7 @@ export function NewEmptyState({ title, description, image, primaryButton, disabl
                   onClick={primaryButton.onClick}
                   disabled={disabled}
                   label={primaryButton.text}
-                  icon={primaryButton.icon}
+                  icon={withIconSize(primaryButton.icon, "size-4")}
                 />
                 <div
                   onMouseEnter={handleMouseEnter}

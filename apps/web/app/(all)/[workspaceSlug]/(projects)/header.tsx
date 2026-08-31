@@ -44,7 +44,7 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
               size="md"
               stretch="auto"
               onClick={() => toggleWidgetSettings(true)}
-              icon={<Shapes />}
+              icon={<Shapes className="size-4" />}
               label={t("home.manage_widgets")}
             />
           </span>
@@ -53,7 +53,7 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
               variant="secondary"
               size="md"
               aria-label={t("home.manage_widgets")}
-              icon={<Shapes />}
+              icon={<Shapes className="size-4" />}
               onClick={() => toggleWidgetSettings(true)}
             />
           </span>

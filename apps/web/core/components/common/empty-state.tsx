@@ -4,10 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import React, { cloneElement, isValidElement } from "react";
 
 // ui
 import { Button } from "@makeplane/propel/components/button";
+import { cn } from "@plane/utils";
+
+function withIconSize(icon: React.ReactNode, sizeClass: string) {
+  if (!isValidElement<{ className?: string }>(icon)) return icon;
+  return cloneElement(icon, { className: cn(sizeClass, icon.props.className) });
+}
 
 type Props = {
   title: string;
@@ -36,7 +42,7 @@ export function EmptyState({ title, description, image, primaryButton, secondary
               size="sm"
               stretch="auto"
               label={primaryButton.text}
-              icon={primaryButton.icon}
+              icon={withIconSize(primaryButton.icon, "size-3.5")}
               onClick={primaryButton.onClick}
               disabled={disabled}
             />
