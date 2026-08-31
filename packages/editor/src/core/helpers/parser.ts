@@ -6,13 +6,28 @@
 
 // plane imports
 import type { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse, TEditorAssetType } from "@plane/types";
-// plane web imports
-import {
-  extractAdditionalAssetsFromHTMLContent,
-  replaceAdditionalAssetsInHTMLContent,
-} from "@/plane-editor/helpers/parser";
 // local imports
 import { convertHTMLDocumentToAllFormats } from "./yjs-utils";
+
+/**
+ * @description function to extract all additional assets from HTML content
+ * @param htmlContent
+ * @returns {string[]} array of additional asset sources
+ */
+export const extractAdditionalAssetsFromHTMLContent = (_htmlContent: string): string[] => [];
+
+/**
+ * @description function to replace additional assets in HTML content with new IDs
+ * @param props
+ * @returns {string} HTML content with replaced additional assets
+ */
+export const replaceAdditionalAssetsInHTMLContent = (props: {
+  htmlContent: string;
+  assetMap: Record<string, string>;
+}): string => {
+  const { htmlContent } = props;
+  return htmlContent;
+};
 
 /**
  * @description function to extract all assets from HTML content

@@ -26,3 +26,6 @@ export * from "./quote";
 export * from "./side-menu";
 export * from "./text-align";
 export * from "./utility";
+export * from "./core";
+export * from "./document-extensions";
+export * from "./additional-slash-command-options";

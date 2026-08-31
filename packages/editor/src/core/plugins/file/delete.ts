@@ -10,11 +10,11 @@ import type { EditorState, Transaction } from "@tiptap/pm/state";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
 // plane editor imports
-import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
+import { NODE_FILE_MAP } from "@/constants/utility";
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import type { NodeFileMapType } from "../../../ce/constants/utility";
+import type { NodeFileMapType } from "../../constants/utility";
 import type { TFileNode } from "./types";
 
 const DELETE_PLUGIN_KEY = new PluginKey("delete-utility");

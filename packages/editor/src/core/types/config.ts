@@ -4,8 +4,7 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TExtendedFileHandler } from "@/plane-editor/types/config";
+export type TExtendedFileHandler = object;
 
 export type TFileHandler = {
   assetsUploadStatus: Record<string, number>; // blockId => progress percentage

@@ -42,7 +42,7 @@ import {
   openEmojiPicker,
 } from "@/helpers/editor-commands";
 // plane editor extensions
-import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
+import { coreEditorAdditionalSlashCommandOptions } from "@/extensions/additional-slash-command-options";
 // types
 import type { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
 // local types

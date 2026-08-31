@@ -34,7 +34,7 @@ import {
   UtilityExtension,
 } from "@/extensions";
 // plane editor extensions
-import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import { CoreEditorAdditionalExtensions } from "@/extensions/core";
 // types
 import type { IEditorProps } from "@/types";
 // local imports

@@ -12,11 +12,11 @@ import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { CORE_ASSETS_META_DATA_RECORD } from "@/helpers/assets";
 // plane editor imports
-import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
+import { NODE_FILE_MAP } from "@/constants/utility";
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import type { NodeFileMapType } from "../../../ce/constants/utility";
+import type { NodeFileMapType } from "../../constants/utility";
 import type { TFileNode } from "./types";
 
 const RESTORE_PLUGIN_KEY = new PluginKey("restore-utility");
