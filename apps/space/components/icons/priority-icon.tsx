@@ -18,26 +18,26 @@ interface IPriorityIcon {
   withContainer?: boolean;
 }
 
+const PRIORITY_CLASSES = {
+  urgent: "bg-layer-2 text-priority-urgent border-priority-urgent",
+  high: "bg-layer-2 text-priority-high border-priority-high",
+  medium: "bg-layer-2 text-priority-medium border-priority-medium",
+  low: "bg-layer-2 text-priority-low border-priority-low",
+  none: "bg-layer-2 text-priority-none border-priority-none",
+};
+
+const PRIORITY_ICONS = {
+  urgent: AlertCircle,
+  high: SignalHigh,
+  medium: SignalMedium,
+  low: SignalLow,
+  none: Ban,
+};
+
 export function PriorityIcon(props: IPriorityIcon) {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
-  const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent",
-    high: "bg-layer-2 text-priority-high border-priority-high",
-    medium: "bg-layer-2 text-priority-medium border-priority-medium",
-    low: "bg-layer-2 text-priority-low border-priority-low",
-    none: "bg-layer-2 text-priority-none border-priority-none",
-  };
-
-  // get priority icon
-  const icons = {
-    urgent: AlertCircle,
-    high: SignalHigh,
-    medium: SignalMedium,
-    low: SignalLow,
-    none: Ban,
-  };
-  const Icon = icons[priority ?? "none"];
+  const Icon = PRIORITY_ICONS[priority ?? "none"];
 
   if (!Icon) return null;
 
@@ -47,7 +47,7 @@ export function PriorityIcon(props: IPriorityIcon) {
         <div
           className={cn(
             "flex flex-shrink-0 items-center justify-center rounded-sm border p-0.5",
-            priorityClasses[priority ?? "none"],
+            PRIORITY_CLASSES[priority ?? "none"],
             containerClassName
           )}
         >

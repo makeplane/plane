@@ -126,7 +126,14 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
       <PopoverTrigger
-        render={<button type="button" className={cn("outline-none", buttonClassName)} disabled={disabled} />}
+        render={
+          <button
+            type="button"
+            className={cn("outline-none", buttonClassName)}
+            disabled={disabled}
+            aria-label="Open emoji picker"
+          />
+        }
       >
         {label}
       </PopoverTrigger>

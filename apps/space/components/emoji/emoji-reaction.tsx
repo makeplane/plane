@@ -24,15 +24,13 @@ interface EmojiReactionProps {
   users?: string[];
   onReactionClick?: (emoji: string) => void;
   className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 const MAX_DISPLAY_USERS = 5;
 
-const EmojiReaction = React.forwardRef(function EmojiReaction(
-  props: EmojiReactionProps,
-  ref: React.ForwardedRef<HTMLButtonElement>
-) {
-  const { emoji, count, reacted = false, users = [], onReactionClick, className } = props;
+function EmojiReaction(props: EmojiReactionProps) {
+  const { emoji, count, reacted = false, users = [], onReactionClick, className, ref } = props;
 
   const handleClick = () => {
     onReactionClick?.(emoji);
@@ -63,7 +61,7 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
   const tooltipLabel = `${emoji} ${displayUsers.join(", ")}${remainingCount > 0 ? ` and ${remainingCount} more` : ""}`;
 
   return <Tooltip label={tooltipLabel}>{button}</Tooltip>;
-});
+}
 
 export interface EmojiReactionGroupProps {
   reactions: EmojiReactionType[];
@@ -71,19 +69,17 @@ export interface EmojiReactionGroupProps {
   onAddReaction?: () => void;
   showAddButton?: boolean;
   className?: string;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-export const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
-  props: EmojiReactionGroupProps,
-  ref: React.ForwardedRef<HTMLDivElement>
-) {
-  const { reactions, onReactionClick, onAddReaction, showAddButton = true, className } = props;
+export function EmojiReactionGroup(props: EmojiReactionGroupProps) {
+  const { reactions, onReactionClick, onAddReaction, showAddButton = true, className, ref } = props;
 
   return (
     <div ref={ref} className={cn("flex flex-wrap items-center gap-2", className)}>
-      {reactions.map((reaction, index) => (
+      {reactions.map((reaction) => (
         <EmojiReaction
-          key={`${reaction.emoji}-${index}`}
+          key={reaction.emoji}
           emoji={reaction.emoji}
           count={reaction.count}
           reacted={reaction.reacted}
@@ -97,6 +93,7 @@ export const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
             type="button"
             onClick={onAddReaction}
             className="grid size-6 place-items-center rounded-full text-tertiary transition-colors outline-none hover:bg-surface-2 hover:text-secondary"
+            aria-label="Add reaction"
           >
             <ReactionOutline className="size-3.5" />
           </button>
@@ -104,7 +101,4 @@ export const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
       )}
     </div>
   );
-});
-
-EmojiReaction.displayName = "EmojiReaction";
-EmojiReactionGroup.displayName = "EmojiReactionGroup";
+}
