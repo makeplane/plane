@@ -6,8 +6,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "@/*": ["./src/core/*"],
-      "@/styles/*": ["./src/styles/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", "index.d.ts"],
