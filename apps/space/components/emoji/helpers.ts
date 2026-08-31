@@ -26,10 +26,10 @@ export function emojiToString(emoji: string): string {
  */
 export function stringToEmoji(emojiString: string): string {
   if (!emojiString) return "";
-  const decimals = emojiString
-    .split("-")
-    .map((s) => Number(s.trim()))
-    .filter((n) => Number.isFinite(n) && n >= 0 && n <= 0x10ffff);
+  const tokens = emojiString.split("-").map((s) => s.trim());
+  if (tokens.some((token) => !/^\d+$/.test(token))) return "";
+  const decimals = tokens.map(Number);
+  if (decimals.some((n) => !Number.isInteger(n) || n < 0 || n > 0x10ffff)) return "";
   try {
     return decimals.map((decimal) => String.fromCodePoint(decimal)).join("");
   } catch {
