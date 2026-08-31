@@ -602,6 +602,7 @@ ISSUE_SEARCH_EXAMPLE = OpenApiExample(
                 "project__identifier": "MAB",
                 "project_id": "550e8400-e29b-41d4-a716-446655440001",
                 "workspace__slug": "my-workspace",
+                "description_snippet": None,
             },
             {
                 "id": "550e8400-e29b-41d4-a716-446655440002",
@@ -610,6 +611,7 @@ ISSUE_SEARCH_EXAMPLE = OpenApiExample(
                 "project__identifier": "MAB",
                 "project_id": "550e8400-e29b-41d4-a716-446655440001",
                 "workspace__slug": "my-workspace",
+                "description_snippet": "Add authentication middleware to protect API requests",
             },
         ]
     },

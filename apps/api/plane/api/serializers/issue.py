@@ -877,7 +877,7 @@ class IssueSearchSerializer(serializers.Serializer):
     Serializer for work item search result data formatting.
 
     Provides standardized search result structure including work item identifiers,
-    project context, and workspace information for search API responses.
+    project context, workspace information, and a matching description snippet.
     """
 
     id = serializers.CharField(required=True, help_text="Issue ID")
@@ -886,3 +886,8 @@ class IssueSearchSerializer(serializers.Serializer):
     project__identifier = serializers.CharField(required=True, help_text="Project identifier")
     project_id = serializers.CharField(required=True, help_text="Project ID")
     workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")
+    description_snippet = serializers.CharField(
+        required=True,
+        allow_null=True,
+        help_text="Plain-text description excerpt containing the matching term, if available",
+    )

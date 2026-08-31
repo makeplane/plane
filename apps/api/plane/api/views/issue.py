@@ -89,6 +89,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.issue_search import build_search_snippet, split_search_terms
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -2227,7 +2228,10 @@ class IssueSearchEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="search_work_items",
         tags=["Work Items"],
-        description="Perform semantic search across issue names, sequence IDs, and project identifiers.",
+        description=(
+            "Search work items by name, description, sequence ID, or project identifier. "
+            "For multiple terms, all whitespace-separated terms must match the work item name or description."
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             SEARCH_PARAMETER_REQUIRED,
@@ -2250,7 +2254,8 @@ class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug):
         """Search work items
 
-        Perform semantic search across work item names, sequence IDs, and project identifiers.
+        Search work item names, descriptions, sequence IDs, and project identifiers.
+        Multiple whitespace-separated terms must all match the name or description.
         Supports workspace-wide or project-specific search with configurable result limits.
         """
         query = request.query_params.get("search", False)
@@ -2261,17 +2266,27 @@ class IssueSearchEndpoint(BaseAPIView):
         if not query:
             return Response({"issues": []}, status=status.HTTP_200_OK)
 
-        # Build search query
-        fields = ["name", "sequence_id", "project__identifier"]
+        # Keep the API-key search semantics aligned with the app-wide search:
+        # one term can match any searchable field, while multiple terms must
+        # each match the work item name or its plain-text description.
+        fields = ["name", "description_stripped", "sequence_id", "project__identifier"]
         q = Q()
-        for field in fields:
-            if field == "sequence_id":
-                # Match whole integers only (exclude decimal numbers)
-                sequences = re.findall(r"\b\d+\b", query)
-                for sequence_id in sequences:
-                    q |= Q(**{"sequence_id": sequence_id})
-            else:
-                q |= Q(**{f"{field}__icontains": query})
+        search_terms = split_search_terms(query)
+        if not search_terms:
+            q = Q(pk__in=[])
+        elif len(search_terms) == 1:
+            search_term = search_terms[0]
+            for field in fields:
+                if field == "sequence_id":
+                    # Match whole integers only (exclude decimal numbers)
+                    sequences = re.findall(r"\b\d+\b", search_term)
+                    for sequence_id in sequences:
+                        q |= Q(**{"sequence_id": sequence_id})
+                else:
+                    q |= Q(**{f"{field}__icontains": search_term})
+        else:
+            for search_term in search_terms:
+                q &= Q(name__icontains=search_term) | Q(description_stripped__icontains=search_term)
 
         # Filter issues
         issues = Issue.issue_objects.filter(
@@ -2287,14 +2302,22 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = issues.filter(project_id=project_id)
 
         # Get results
-        issue_results = issues.distinct().values(
-            "name",
-            "id",
-            "sequence_id",
-            "project__identifier",
-            "project_id",
-            "workspace__slug",
-        )[: int(limit)]
+        issue_results = list(
+            issues.distinct()
+            .values(
+                "name",
+                "id",
+                "sequence_id",
+                "project__identifier",
+                "project_id",
+                "workspace__slug",
+                "description_stripped",
+            )[: int(limit)]
+        )
+
+        for issue in issue_results:
+            description = issue.pop("description_stripped", None)
+            issue["description_snippet"] = build_search_snippet(description, query)
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
 
