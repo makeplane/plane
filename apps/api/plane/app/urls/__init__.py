@@ -14,6 +14,7 @@ from .module import urlpatterns as module_urls
 from .notification import urlpatterns as notification_urls
 from .page import urlpatterns as page_urls
 from .project import urlpatterns as project_urls
+from .project_custom_field import urlpatterns as project_custom_field_urls
 from .search import urlpatterns as search_urls
 from .state import urlpatterns as state_urls
 from .user import urlpatterns as user_urls
@@ -35,6 +36,7 @@ urlpatterns = [
     *notification_urls,
     *page_urls,
     *project_urls,
+    *project_custom_field_urls,
     *search_urls,
     *state_urls,
     *user_urls,
