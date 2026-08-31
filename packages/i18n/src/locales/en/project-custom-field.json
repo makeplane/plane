@@ -26,6 +26,13 @@
       "options": {
         "add_placeholder": "Add option"
       },
+      "send_data": {
+        "trigger_button": "Send project data",
+        "title": "Send project data",
+        "description": "Email this project's custom field data to selected project members.",
+        "recipients_placeholder": "Select recipients",
+        "send_button": "Send"
+      },
       "delete_confirmation": {
         "title": "Delete this field",
         "description": "This will permanently delete the field and its value for every project. This action cannot be undone.",
@@ -79,6 +86,16 @@
           "error": {
             "title": "Error!",
             "message": "Failed to remove option. Please try again!"
+          }
+        },
+        "send_data": {
+          "success": {
+            "title": "Success!",
+            "message": "Project data sent successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to send project data. Please try again!"
           }
         }
       }

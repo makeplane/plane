@@ -24,6 +24,7 @@ import { SettingsHeading } from "../settings/heading";
 import { ProjectCustomFieldOptionsEditor } from "./custom-field-options-editor";
 import { ProjectCustomFieldValueInput } from "./custom-field-value-input";
 import { DeleteProjectCustomFieldModal } from "./delete-custom-field-modal";
+import { SendProjectDataModal } from "./send-project-data-modal";
 
 const FIELD_TYPES: TProjectCustomFieldType[] = ["number", "text", "date", "dropdown", "member"];
 
@@ -36,6 +37,7 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
   const [newFieldType, setNewFieldType] = useState<TProjectCustomFieldType>("number");
   const [isCreating, setIsCreating] = useState(false);
   const [selectDeleteField, setSelectDeleteField] = useState<IProjectCustomField | null>(null);
+  const [showSendDataModal, setShowSendDataModal] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -109,14 +111,20 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
         data={selectDeleteField}
         onClose={() => setSelectDeleteField(null)}
       />
+      <SendProjectDataModal isOpen={showSendDataModal} onClose={() => setShowSendDataModal(false)} />
       <SettingsHeading
         title={t("project_custom_field.settings.title")}
         description={t("project_custom_field.settings.description")}
         control={
           isEditable && (
-            <Button variant="primary" size="lg" onClick={() => setShowCreateForm(true)}>
-              {t("project_custom_field.settings.add_button")}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="secondary" size="lg" onClick={() => setShowSendDataModal(true)}>
+                {t("project_custom_field.settings.send_data.trigger_button")}
+              </Button>
+              <Button variant="primary" size="lg" onClick={() => setShowCreateForm(true)}>
+                {t("project_custom_field.settings.add_button")}
+              </Button>
+            </div>
           )
         }
       />

@@ -26,6 +26,13 @@
       "options": {
         "add_placeholder": "添加选项"
       },
+      "send_data": {
+        "trigger_button": "发送项目数据",
+        "title": "发送项目数据",
+        "description": "将该项目的自定义字段数据以邮件形式发送给选定的项目成员。",
+        "recipients_placeholder": "选择收件人",
+        "send_button": "发送"
+      },
       "delete_confirmation": {
         "title": "删除该字段",
         "description": "这将永久删除该字段及其在所有项目中的数值，此操作无法撤销。",
@@ -79,6 +86,16 @@
           "error": {
             "title": "错误！",
             "message": "删除选项失败，请重试！"
+          }
+        },
+        "send_data": {
+          "success": {
+            "title": "成功！",
+            "message": "项目数据发送成功。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "发送项目数据失败，请重试！"
           }
         }
       }
