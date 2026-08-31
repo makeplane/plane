@@ -33,6 +33,9 @@
         "recipients_placeholder": "选择收件人",
         "send_button": "发送"
       },
+      "project_info_page": {
+        "ungrouped_section": "其他字段"
+      },
       "delete_confirmation": {
         "title": "删除该字段",
         "description": "这将永久删除该字段及其在所有项目中的数值，此操作无法撤销。",
@@ -74,7 +77,8 @@
           "error": {
             "title": "错误！",
             "message": "保存失败，请重试！"
-          }
+          },
+          "duplicate_value": "该值已被其他项目使用，此字段的值在每个项目之间不能重复。"
         },
         "option_create": {
           "error": {

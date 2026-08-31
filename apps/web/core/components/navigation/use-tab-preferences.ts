@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
-import { DEFAULT_TAB_KEY } from "./tab-navigation-utils";
+import { getDefaultTabKey } from "./tab-navigation-utils";
 import type { TTabPreferences } from "./tab-navigation-utils";
 
 export type TTabPreferencesHook = {
@@ -40,7 +40,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
 
   // Get preferences from store
   const storePreferences = getProjectUserProperties(projectId);
-  const defaultTab = storePreferences?.preferences?.navigation?.default_tab || DEFAULT_TAB_KEY;
+  const defaultTab = storePreferences?.preferences?.navigation?.default_tab || getDefaultTabKey("no-preference");
   const hideInMoreMenu = storePreferences?.preferences?.navigation?.hide_in_more_menu || [];
 
   // Convert store preferences to component format
@@ -70,10 +70,10 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
 
   /**
    * Toggle default tab setting
-   * If tab is already default, resets to work_items; otherwise sets as default
+   * If tab is already default, resets to the no-preference default; otherwise sets as default
    */
   const handleToggleDefaultTab = (tabKey: string) => {
-    const newDefaultTab = tabKey === tabPreferences.defaultTab ? DEFAULT_TAB_KEY : tabKey;
+    const newDefaultTab = tabKey === tabPreferences.defaultTab ? getDefaultTabKey("no-preference") : tabKey;
     const newPreferences = { ...tabPreferences, defaultTab: newDefaultTab };
     updatePreferences(newPreferences)
       .then(() => {

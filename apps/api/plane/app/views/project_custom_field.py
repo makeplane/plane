@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Third-party imports
+from django.db import connection, transaction
 from rest_framework import status
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
@@ -15,6 +16,7 @@ from plane.app.serializers import (
     ProjectCustomFieldValueSerializer,
 )
 from plane.db.models import ProjectCustomField, ProjectCustomFieldOption, ProjectCustomFieldValue, ProjectMember
+from plane.throttles.project_custom_field_value import ProjectCustomFieldValueWriteThrottle
 from .base import BaseViewSet
 
 
@@ -132,6 +134,7 @@ class ProjectCustomFieldValueViewSet(BaseViewSet):
     serializer_class = ProjectCustomFieldValueSerializer
     model = ProjectCustomFieldValue
     permission_classes = [ProjectCustomFieldAccessPermission]
+    throttle_classes = [ProjectCustomFieldValueWriteThrottle]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -156,11 +159,34 @@ class ProjectCustomFieldValueViewSet(BaseViewSet):
             return Response(
                 {"error": "Custom field not found in this project"}, status=status.HTTP_404_NOT_FOUND
             )
-        value, _ = ProjectCustomFieldValue.objects.get_or_create(project_id=project_id, custom_field=custom_field)
-        serializer = ProjectCustomFieldValueSerializer(
-            value, data=request.data, partial=True, context={"project_id": project_id}
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        with transaction.atomic():
+            if custom_field.is_unique_key:
+                # ProjectCustomFieldValueSerializer.validate()'s duplicate check is a
+                # separate SELECT before this transaction's UPDATE/INSERT commits, and
+                # no DB constraint can enforce this invariant directly (see that
+                # method's comment on why: the field lives on a per-project row, not
+                # one shared row a UniqueConstraint could target). Without a lock here,
+                # two concurrent requests targeting different projects' copies of this
+                # field could both pass validate()'s exists() check before either
+                # commits, producing a workspace-level duplicate. A Postgres advisory
+                # lock keyed on (workspace, submitted value) serializes only writers
+                # racing for the *same* value; unrelated saves never contend.
+                incoming_value = request.data.get("value_text")
+                if isinstance(incoming_value, str) and incoming_value.strip():
+                    with connection.cursor() as cursor:
+                        cursor.execute(
+                            "SELECT pg_advisory_xact_lock(hashtext(%s))",
+                            [f"{custom_field.workspace_id}:{incoming_value.strip()}"],
+                        )
+
+            value, _ = ProjectCustomFieldValue.objects.get_or_create(
+                project_id=project_id, custom_field=custom_field
+            )
+            serializer = ProjectCustomFieldValueSerializer(
+                value, data=request.data, partial=True, context={"project_id": project_id}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

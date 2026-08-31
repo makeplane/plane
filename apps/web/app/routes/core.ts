@@ -216,6 +216,14 @@ export const coreRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/page.tsx"
             ),
           ]),
+
+          // Project Info (internal addition, not part of upstream makeplane/plane)
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/project-info/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/project-info",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/project-info/page.tsx"
+            ),
+          ]),
         ]),
 
         // Project Archives - Issues, Cycles, Modules

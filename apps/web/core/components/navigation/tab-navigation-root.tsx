@@ -21,7 +21,7 @@ import { PublishProjectModal } from "../project/publish-project/modal";
 import { ProjectActionsMenu } from "./project-actions-menu";
 import { ProjectHeader } from "./project-header";
 import { TabNavigationOverflowMenu } from "./tab-navigation-overflow-menu";
-import { DEFAULT_TAB_KEY } from "./tab-navigation-utils";
+import { getDefaultTabKey } from "./tab-navigation-utils";
 import { TabNavigationVisibleItem } from "./tab-navigation-visible-item";
 import { useActiveTab } from "./use-active-tab";
 import { useProjectActions } from "./use-project-actions";
@@ -137,9 +137,11 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
       // Find the default tab in available items
       const defaultTabItem = allNavigationItems.find((item: TNavigationItem) => item.key === tabPreferences.defaultTab);
 
-      // If default tab exists and is enabled, use it; otherwise fall back to work_items
+      // If default tab exists and is enabled, use it; otherwise fall back to the
+      // GUEST-safe tab (see getDefaultTabKey's "validation-fallback" case).
       const targetItem =
-        defaultTabItem || allNavigationItems.find((item: TNavigationItem) => item.key === DEFAULT_TAB_KEY);
+        defaultTabItem ||
+        allNavigationItems.find((item: TNavigationItem) => item.key === getDefaultTabKey("validation-fallback"));
 
       if (targetItem) {
         navigate(targetItem.href, { replace: true });

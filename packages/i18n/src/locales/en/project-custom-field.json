@@ -33,6 +33,9 @@
         "recipients_placeholder": "Select recipients",
         "send_button": "Send"
       },
+      "project_info_page": {
+        "ungrouped_section": "Other fields"
+      },
       "delete_confirmation": {
         "title": "Delete this field",
         "description": "This will permanently delete the field and its value for every project. This action cannot be undone.",
@@ -74,7 +77,8 @@
           "error": {
             "title": "Error!",
             "message": "Failed to save value. Please try again!"
-          }
+          },
+          "duplicate_value": "This value is already used by another project. Each project needs a unique value for this field."
         },
         "option_create": {
           "error": {

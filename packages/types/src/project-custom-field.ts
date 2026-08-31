@@ -13,6 +13,12 @@ export interface IProjectCustomField {
   field_type: TProjectCustomFieldType;
   sort_order: number;
   is_active: boolean;
+  // Display grouping hint for the project-info page (e.g. "项目&合同基本信息");
+  // null for ad-hoc fields not created from the default set, which render ungrouped.
+  group_name: string | null;
+  // True only for default-seeded fields the backend enforces as workspace-unique
+  // (currently just "合同号&项目号"). Read-only: never settable from this app.
+  is_unique_key: boolean;
   project_id: string;
   workspace_id: string;
 }

@@ -39,11 +39,18 @@ export const ProjectCustomFieldValueInput = observer(function ProjectCustomField
   const { field, value, options, disabled, projectId, onSave } = props;
   const { t } = useTranslation();
 
-  const handleSaveError = () => {
+  const handleSaveError = (error?: unknown) => {
+    // VALUE_MUST_BE_UNIQUE (see ProjectCustomFieldValueSerializer.validate()) is
+    // common enough to deserve its own message: it fires on every normal attempt
+    // to reuse another project's identifying value, not just an edge case.
+    const nonFieldErrors = (error as { non_field_errors?: string[] } | undefined)?.non_field_errors;
+    const isDuplicateValue = nonFieldErrors?.includes("VALUE_MUST_BE_UNIQUE") ?? false;
     setToast({
       type: TOAST_TYPE.ERROR,
       title: t("project_custom_field.settings.toasts.value_update.error.title"),
-      message: t("project_custom_field.settings.toasts.value_update.error.message"),
+      message: isDuplicateValue
+        ? t("project_custom_field.settings.toasts.value_update.duplicate_value")
+        : t("project_custom_field.settings.toasts.value_update.error.message"),
     });
   };
 
@@ -55,7 +62,7 @@ export const ProjectCustomFieldValueInput = observer(function ProjectCustomField
           try {
             await onSave({ value_date: date ? renderFormattedPayloadDate(date) : null });
           } catch (error) {
-            handleSaveError();
+            handleSaveError(error);
           }
         }}
         disabled={disabled}
@@ -73,7 +80,7 @@ export const ProjectCustomFieldValueInput = observer(function ProjectCustomField
           try {
             await onSave({ value_member: memberId });
           } catch (error) {
-            handleSaveError();
+            handleSaveError(error);
           }
         }}
         multiple={false}
@@ -95,7 +102,7 @@ export const ProjectCustomFieldValueInput = observer(function ProjectCustomField
           try {
             await onSave({ value_option: optionId });
           } catch (error) {
-            handleSaveError();
+            handleSaveError(error);
           }
         }}
         disabled={disabled || !options || options.length === 0}
@@ -138,7 +145,7 @@ export const ProjectCustomFieldValueInput = observer(function ProjectCustomField
             valueKey === "value_decimal" ? { value_decimal: nextValue } : { value_text: nextValue };
           await onSave(payload);
         } catch (error) {
-          handleSaveError();
+          handleSaveError(error);
           throw error;
         }
       }}

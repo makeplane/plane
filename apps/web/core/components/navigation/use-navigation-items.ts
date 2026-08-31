@@ -7,7 +7,7 @@
 import { useMemo, useCallback } from "react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { CycleIcon, InfoFillIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 
@@ -33,6 +33,21 @@ export const useNavigationItems = ({
   const baseNavigation = useCallback(
     // oxlint-disable-next-line no-shadow
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
+      {
+        // Internal addition (not part of upstream makeplane/plane): the project's
+        // custom field data (see apps/web/core/components/project-info), shown
+        // first so it's what a project shows the moment it's opened. Not GUEST-
+        // visible: the same financial-data rule as ProjectCustomFieldAccessPermission
+        // on the backend.
+        i18n_key: "sidebar.project_info",
+        key: "project_info",
+        name: "Project info",
+        href: `/${workspaceSlug}/projects/${projectId}/project-info`,
+        icon: InfoFillIcon,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        shouldRender: true,
+        sortOrder: 0,
+      },
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
