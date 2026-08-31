@@ -11,7 +11,7 @@ import { MoreHorizontal, Pin } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { SetAsDefaultIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // local imports
 import type { TNavigationItem } from "./tab-navigation-root";
@@ -72,7 +72,7 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
                     <Pin className="size-3" />
                   </button>
                 )}
-                <Tooltip tooltipContent={isDefault ? "Clear default" : "Set as default"}>
+                <Tooltip label={isDefault ? "Clear default" : "Set as default"}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

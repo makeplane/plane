@@ -13,7 +13,7 @@ import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown } from "@plane/ui";
@@ -63,7 +63,6 @@ function BorderButton(props: ButtonProps) {
     placeholder,
     priority,
     showTooltip,
-    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -81,11 +80,8 @@ function BorderButton(props: ButtonProps) {
 
   return (
     <Tooltip
-      tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={`${t("priority")}: ${priorityDetails?.title ?? t("common.none")}`}
+      disabled={!showTooltip || isMobile}
     >
       <div
         className={cn(
@@ -154,7 +150,6 @@ function BackgroundButton(props: ButtonProps) {
     placeholder,
     priority,
     showTooltip,
-    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -171,13 +166,7 @@ function BackgroundButton(props: ButtonProps) {
   const { t } = useTranslation();
 
   return (
-    <Tooltip
-      tooltipHeading={t("priority")}
-      tooltipContent={t(priorityDetails?.key ?? "none")}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
-    >
+    <Tooltip label={`${t("priority")}: ${t(priorityDetails?.key ?? "none")}`} disabled={!showTooltip || isMobile}>
       <div
         className={cn(
           "flex h-full items-center gap-1.5 rounded-sm px-2 py-0.5",
@@ -246,7 +235,6 @@ function TransparentButton(props: ButtonProps) {
     placeholder,
     priority,
     showTooltip,
-    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -256,11 +244,8 @@ function TransparentButton(props: ButtonProps) {
 
   return (
     <Tooltip
-      tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={`${t("priority")}: ${priorityDetails?.title ?? t("common.none")}`}
+      disabled={!showTooltip || isMobile}
     >
       <div
         className={cn(

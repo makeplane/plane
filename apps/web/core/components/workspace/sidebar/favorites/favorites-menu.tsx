@@ -22,7 +22,7 @@ import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
@@ -206,7 +206,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
             <span className="text-13 font-semibold">{t("favorites")}</span>
           </Disclosure.Button>
           <div className="pointer-events-none flex items-center opacity-0 group-hover/favorites-button:pointer-events-auto group-hover/favorites-button:opacity-100">
-            <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
+            <Tooltip label={t("create_folder")}>
               <IconButton
                 variant="ghost"
                 size="sm"

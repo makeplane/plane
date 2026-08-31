@@ -15,7 +15,7 @@ import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TProject } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { TextArea } from "@plane/ui";
 import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 
@@ -124,10 +124,11 @@ function ProjectCommonAttributes(props: Props) {
           )}
         />
         <Tooltip
-          isMobile={isMobile}
-          tooltipContent={t("project_id_tooltip_content")}
-          className="text-13"
-          position="right-start"
+          label={t("project_id_tooltip_content")}
+          layout="stacked"
+          side="right"
+          align="start"
+          disabled={isMobile}
         >
           <InfoIcon className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
         </Tooltip>

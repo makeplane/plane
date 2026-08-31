@@ -23,7 +23,7 @@ import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LinkIcon, ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -302,12 +302,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           >
             {!disableDrag && (
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={
-                  project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")
-                }
-                position="top-end"
-                disabled={isDragging}
+                label={project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")}
+                align="end"
+                disabled={isDragging || isMobile}
               >
                 <button
                   type="button"

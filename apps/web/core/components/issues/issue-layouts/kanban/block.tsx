@@ -15,7 +15,7 @@ import { MoreHorizontal } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -120,7 +120,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         </div>
       </div>
 
-      <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
+      <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
         <div className="line-clamp-1 w-full text-body-sm-medium text-primary">
           <span>{issue.name}</span>
         </div>

@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { CloudOff, Dot } from "lucide-react";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Badge } from "@plane/propel/badge";
 
 type Props = {
@@ -37,14 +37,12 @@ export function PageSyncingBadge({ syncStatus }: Props) {
   const badgeContent = {
     syncing: {
       label: "Syncing...",
-      tooltipHeading: "Syncing...",
-      tooltipContent: "Your changes are being synced with the server. You can continue making changes.",
+      tooltipLabel: "Syncing... Your changes are being synced with the server. You can continue making changes.",
     },
     error: {
       label: "Connection lost",
-      tooltipHeading: "Connection lost",
-      tooltipContent:
-        "We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
+      tooltipLabel:
+        "Connection lost. We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
     },
   };
 
@@ -52,7 +50,7 @@ export function PageSyncingBadge({ syncStatus }: Props) {
   const content = badgeContent[syncStatus];
 
   return (
-    <Tooltip tooltipHeading={content.tooltipHeading} tooltipContent={content.tooltipContent}>
+    <Tooltip label={content.tooltipLabel} layout="stacked">
       <span className="animate-quickFadeIn">
         <Badge
           variant={syncStatus === "syncing" ? "brand" : "danger"}

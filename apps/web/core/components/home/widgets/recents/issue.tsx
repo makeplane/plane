@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane types
 import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // plane ui
@@ -98,7 +98,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       quickActionElement={
         <div className="flex gap-4">
-          <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
+          <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
             <div>
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
@@ -108,7 +108,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               />
             </div>
           </Tooltip>
-          <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>
+          <Tooltip label={`Priority: ${issueDetails?.priority ?? "Priority"}`}>
             <div>
               <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
             </div>

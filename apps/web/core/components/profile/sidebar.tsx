@@ -14,7 +14,7 @@ import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { IconButton } from "@plane/propel/icon-button";
 import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
@@ -171,7 +171,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
-                              <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
+                              <Tooltip label="Completion percentage" side="left" disabled={isMobile}>
                                 <div
                                   className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35

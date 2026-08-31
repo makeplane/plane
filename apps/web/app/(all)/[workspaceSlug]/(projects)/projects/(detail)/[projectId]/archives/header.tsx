@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -95,9 +95,10 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
           </Breadcrumbs>
           {activeTab === "issues" && issueCount && issueCount > 0 ? (
             <Tooltip
-              isMobile={isMobile}
-              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
-              position="bottom"
+              label={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
+              layout="stacked"
+              side="bottom"
+              disabled={isMobile}
             >
               <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-center text-11 font-semibold text-accent-primary">
                 {issueCount}

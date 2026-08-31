@@ -8,7 +8,7 @@ import type { LucideIcon } from "lucide-react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 
@@ -34,7 +34,7 @@ export function AccessField(props: Props) {
       {accessSpecifiers.map((access, index) => {
         const label = access.i18n_label ? t(access.i18n_label) : access.label;
         return (
-          <Tooltip key={access.key} tooltipContent={label} isMobile={isMobile}>
+          <Tooltip key={access.key} label={label ?? ""} layout="stacked" disabled={isMobile}>
             <button
               type="button"
               onClick={() => onChange(access.key)}

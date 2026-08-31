@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueRelationTypes } from "@plane/types";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -144,7 +144,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 )}
               </div>
 
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+              <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
                 <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>

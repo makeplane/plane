@@ -5,7 +5,7 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TBaseLayoutType } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -33,7 +33,7 @@ export function LayoutSwitcher(props: Props) {
       {BASE_LAYOUTS.filter((l) => (layouts ? layouts.includes(l.key) : true)).map((layout) => {
         const Icon = layout.icon;
         return (
-          <Tooltip key={layout.key} tooltipContent={t(layout.label)} isMobile={isMobile}>
+          <Tooltip key={layout.key} label={t(layout.label)} disabled={isMobile}>
             <button
               type="button"
               className={cn(

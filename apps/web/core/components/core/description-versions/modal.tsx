@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
@@ -156,7 +156,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         {/* End version description */}
         {/* Footer */}
         <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle pt-4">
-          <Tooltip tooltipContent={t("common.actions.copy_markdown")}>
+          <Tooltip label={t("common.actions.copy_markdown")}>
             <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyIcon} />
           </Tooltip>
           <div className="flex items-center gap-2">

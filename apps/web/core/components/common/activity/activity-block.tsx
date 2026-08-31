@@ -7,7 +7,7 @@
 import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkspaceBaseActivity } from "@plane/types";
 // ui
 // helpers
@@ -46,8 +46,8 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         </div>
         <div className="mt-1">
           <Tooltip
-            isMobile={isMobile}
-            tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            disabled={isMobile}
           >
             <span className="cursor-help font-medium whitespace-nowrap text-tertiary">
               {calculateTimeAgo(activity.created_at)}

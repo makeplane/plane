@@ -13,7 +13,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { LabelPropertyIcon } from "@plane/propel/icons";
 // types
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueLabel } from "@plane/types";
 // ui
 // hooks
@@ -53,13 +53,7 @@ const NoLabel = observer(function NoLabel({ isMobile, noLabelBorder, fullWidth, 
   const { t } = useTranslation();
 
   return (
-    <Tooltip
-      position="top"
-      tooltipHeading={t("common.labels")}
-      tooltipContent="None"
-      isMobile={isMobile}
-      renderByDefault={false}
-    >
+    <Tooltip label={`${t("common.labels")}: None`} disabled={isMobile}>
       <div
         className={cn(
           "flex h-full items-center justify-center gap-2 rounded-sm px-2.5 py-1 text-caption-sm-regular hover:bg-layer-1",
@@ -95,14 +89,14 @@ function LabelSummary({ isMobile, fullWidth, noLabelBorder, disabled, projectLab
       )}
     >
       <Tooltip
-        isMobile={isMobile}
-        position="top"
-        tooltipHeading={t("common.labels")}
-        tooltipContent={projectLabels
-          ?.filter((l) => value.includes(l?.id))
-          .map((l) => l?.name)
-          .join(", ")}
-        renderByDefault={false}
+        label={`${t("common.labels")}: ${
+          projectLabels
+            ?.filter((l) => value.includes(l?.id))
+            .map((l) => l?.name)
+            .join(", ") ?? ""
+        }`}
+        layout="stacked"
+        disabled={isMobile}
       >
         <div className="flex h-full items-center gap-1.5 text-secondary">
           <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
@@ -122,24 +116,11 @@ type LabelItemProps = {
   noLabelBorder: boolean;
 };
 
-const LabelItem = observer(function LabelItem({
-  label,
-  isMobile,
-  renderByDefault,
-  disabled,
-  fullWidth,
-  noLabelBorder,
-}: LabelItemProps) {
+const LabelItem = observer(function LabelItem({ label, isMobile, disabled, fullWidth, noLabelBorder }: LabelItemProps) {
   const { t } = useTranslation();
 
   return (
-    <Tooltip
-      position="top"
-      tooltipHeading={t("common.labels")}
-      tooltipContent={label?.name ?? ""}
-      isMobile={isMobile}
-      renderByDefault={renderByDefault}
-    >
+    <Tooltip label={`${t("common.labels")}: ${label?.name ?? ""}`} layout="stacked" disabled={isMobile}>
       <div
         className={cn(
           "flex h-full max-w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-sm px-2.5 text-caption-sm-regular hover:bg-layer-1",
