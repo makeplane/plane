@@ -63,7 +63,9 @@ export function ProductUpdatesFooter() {
         label={t("powered_by_plane_pages")}
         icon={<PlaneLogo className="h-4 w-auto text-primary" />}
         nativeButton={false}
-        render={<a href="https://plane.so/pages" target="_blank" rel="noreferrer" />}
+        render={
+          <a href="https://plane.so/pages" target="_blank" rel="noreferrer" aria-label={t("powered_by_plane_pages")} />
+        }
       />
     </div>
   );

@@ -99,7 +99,12 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
                   stretch="auto"
                   label={t("workspace_creation.errors.creation_disabled.request_button")}
                   nativeButton={false}
-                  render={<a href={getMailtoHref()} />}
+                  render={
+                    <a
+                      href={getMailtoHref()}
+                      aria-label={t("workspace_creation.errors.creation_disabled.request_button")}
+                    />
+                  }
                 />
               </div>
             </div>

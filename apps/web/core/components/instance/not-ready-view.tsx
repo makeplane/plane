@@ -45,9 +45,16 @@ export function InstanceNotReady() {
                 </p>
               </div>
             </div>
-            <a href={GOD_MODE_URL} className="w-72">
-              <Button variant="primary" size="lg" stretch="full" label="Get started" />
-            </a>
+            <span className="w-72">
+              <Button
+                variant="primary"
+                size="lg"
+                stretch="full"
+                label="Get started"
+                nativeButton={false}
+                render={<a href={GOD_MODE_URL} aria-label="Get started" />}
+              />
+            </span>
           </div>
         </div>
       </div>

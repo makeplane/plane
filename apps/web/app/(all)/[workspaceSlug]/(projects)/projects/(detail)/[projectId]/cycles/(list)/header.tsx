@@ -60,15 +60,30 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
       {canUserCreateCycle && currentProjectDetails ? (
         <Header.RightItem>
           <CyclesViewHeader projectId={currentProjectDetails.id} />
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            label={t("project_cycles.add_cycle")}
-            onClick={() => {
-              toggleCreateCycleModal(true);
-            }}
-          />
+          <>
+            <span className="block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("add")}
+                onClick={() => {
+                  toggleCreateCycleModal(true);
+                }}
+              />
+            </span>
+            <span className="hidden sm:block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("project_cycles.add_cycle")}
+                onClick={() => {
+                  toggleCreateCycleModal(true);
+                }}
+              />
+            </span>
+          </>
         </Header.RightItem>
       ) : (
         <></>

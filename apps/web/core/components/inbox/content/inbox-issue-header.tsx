@@ -369,15 +369,24 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                   icon={<LinkIcon className="h-2.5 w-2.5" />}
                   onClick={() => handleCopyIssueLink(workItemLink)}
                 />
-                <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    stretch="auto"
-                    label={t("inbox_issue.actions.open")}
-                    icon={<NewTabIcon className="h-2.5 w-2.5" />}
-                  />
-                </ControlLink>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  stretch="auto"
+                  label={t("inbox_issue.actions.open")}
+                  icon={<NewTabIcon className="h-2.5 w-2.5" />}
+                  nativeButton={false}
+                  render={
+                    <ControlLink
+                      href={workItemLink}
+                      onClick={() => router.push(workItemLink)}
+                      target="_self"
+                      aria-label={t("inbox_issue.actions.open")}
+                    >
+                      {""}
+                    </ControlLink>
+                  }
+                />
               </div>
             ) : (
               <>

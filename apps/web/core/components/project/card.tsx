@@ -353,19 +353,17 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                   ))}
                 {!isMemberOfProject && (
                   <div className="flex items-center">
-                    <span className="!p-0 font-semibold">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        stretch="auto"
-                        label="Join"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setJoinProjectModal(true);
-                        }}
-                      />
-                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      stretch="auto"
+                      label="Join"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setJoinProjectModal(true);
+                      }}
+                    />
                   </div>
                 )}
               </>

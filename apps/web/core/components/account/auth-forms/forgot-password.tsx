@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Button } from "@makeplane/propel/components/button";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
@@ -133,10 +134,9 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
           disabled={!isValid}
           loading={isSubmitting || resendTimerCode > 0}
         />
-        <Button
-          variant="ghost"
+        <AnchorButton
+          variant="primary"
           size="md"
-          stretch="full"
           label={t("auth.common.back_to_sign_in")}
           nativeButton={false}
           render={<Link href="/" />}

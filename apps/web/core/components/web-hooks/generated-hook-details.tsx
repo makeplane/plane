@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import type { IWebhook } from "@plane/types";
 // types
-import { WebhookSecretKey } from "./form";
+import { WebhookSecretKey } from "./form/secret-key";
 
 type Props = {
   handleClose: () => void;

@@ -146,7 +146,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       {/* Action Buttons */}
       <div className="space-y-3">
         <Button variant="primary" size="lg" stretch="full" label="Continue" type="submit" disabled={isButtonDisabled} />
-        <span className="w-full text-tertiary">
+        <span className="flex w-full [&_button]:text-tertiary">
           <Button variant="ghost" size="lg" stretch="full" label="Skip" onClick={handleSkip} />
         </span>
       </div>

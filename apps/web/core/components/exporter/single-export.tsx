@@ -65,9 +65,21 @@ export function SingleExport({ service, refreshing }: Props) {
         <>
           {service.status == "completed" && (
             <div>
-              <a target="_blank" href={service?.url} rel="noopener noreferrer">
-                <Button variant="primary" size="sm" stretch="full" label={isLoading ? "Downloading..." : "Download"} />
-              </a>
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="full"
+                label={isLoading ? "Downloading..." : "Download"}
+                nativeButton={false}
+                render={
+                  <a
+                    target="_blank"
+                    href={service?.url}
+                    rel="noopener noreferrer"
+                    aria-label={isLoading ? "Downloading..." : "Download"}
+                  />
+                }
+              />
             </div>
           )}
         </>

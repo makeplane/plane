@@ -78,7 +78,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               stretch="full"
               label="Talk to Sales"
               nativeButton={false}
-              render={<a href={href} target="_blank" rel="noreferrer" />}
+              render={<a href={href} target="_blank" rel="noreferrer" aria-label="Talk to Sales" />}
             />
           </span>
           {isTrialAllowed && !isSelfHosted && (

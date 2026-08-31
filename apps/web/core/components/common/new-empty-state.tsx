@@ -57,6 +57,7 @@ export function NewEmptyState({ title, description, image, primaryButton, disabl
                   onClick={primaryButton.onClick}
                   disabled={disabled}
                   label={primaryButton.text}
+                  icon={primaryButton.icon}
                 />
                 <div
                   onMouseEnter={handleMouseEnter}

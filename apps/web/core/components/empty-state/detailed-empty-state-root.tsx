@@ -42,20 +42,20 @@ const sizeClasses = {
 function CustomButton({
   config,
   variant,
-  size,
 }: {
   config: ButtonConfig;
   variant: "primary" | "secondary";
   size: EmptyStateSize;
 }) {
+  const icon = config.prependIcon ?? config.appendIcon;
   return (
     <Button
-      variant="primary"
+      variant={variant}
       size="sm"
       stretch="auto"
       label={config.text}
-      icon={config.appendIcon}
-      iconPosition="end"
+      icon={icon}
+      iconPosition={config.prependIcon ? "start" : "end"}
       onClick={config.onClick}
       disabled={config.disabled}
     />

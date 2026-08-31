@@ -29,7 +29,14 @@ export function BulkOperationsUpgradeBanner(props: Props) {
             stretch="auto"
             label="Upgrade to One"
             nativeButton={false}
-            render={<a href={MARKETING_PLANE_ONE_PAGE_LINK} target="_blank" rel="noopener noreferrer" />}
+            render={
+              <a
+                href={MARKETING_PLANE_ONE_PAGE_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Upgrade to One"
+              />
+            }
           />
         </span>
       </div>

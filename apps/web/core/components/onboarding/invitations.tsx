@@ -112,7 +112,7 @@ export function Invitations(props: Props) {
         <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
         <hr className="w-full border-strong" />
       </div>
-      <span className="w-full bg-surface-2 text-14">
+      <span className="flex w-full items-center bg-surface-2 text-14">
         <Button
           variant="ghost"
           size="lg"

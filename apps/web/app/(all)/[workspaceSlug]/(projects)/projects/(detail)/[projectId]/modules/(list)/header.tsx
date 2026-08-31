@@ -65,15 +65,30 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.RightItem>
         <ModuleViewHeader />
         {canUserCreateModule ? (
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            label={t("project_module.add_module")}
-            onClick={() => {
-              toggleCreateModuleModal(true);
-            }}
-          />
+          <>
+            <span className="block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("add")}
+                onClick={() => {
+                  toggleCreateModuleModal(true);
+                }}
+              />
+            </span>
+            <span className="hidden sm:block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("project_module.add_module")}
+                onClick={() => {
+                  toggleCreateModuleModal(true);
+                }}
+              />
+            </span>
+          </>
         ) : (
           <></>
         )}

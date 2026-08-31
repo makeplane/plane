@@ -11,6 +11,7 @@ import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 
 type Props = {
   children: React.ReactNode;
@@ -46,7 +47,7 @@ export function FiltersDropdown(props: Props) {
 
   return (
     <Popover as="div">
-      {({ open }) => (
+      {() => (
         <>
           <Popover.Button as={React.Fragment}>
             {menuButton ? (
@@ -70,14 +71,25 @@ export function FiltersDropdown(props: Props) {
                   )}
                 </div>
                 <div className="flex @4xl:hidden">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    stretch="auto"
-                    label={typeof title === "string" ? title : "Filters"}
-                    disabled={disabled}
-                    tabIndex={tabIndex}
-                  />
+                  {miniIcon ? (
+                    <IconButton
+                      variant="secondary"
+                      size="md"
+                      aria-label={typeof title === "string" ? title : "Filters"}
+                      icon={miniIcon}
+                      disabled={disabled}
+                      tabIndex={tabIndex}
+                    />
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      stretch="auto"
+                      label={typeof title === "string" ? title : "Filters"}
+                      disabled={disabled}
+                      tabIndex={tabIndex}
+                    />
+                  )}
                 </div>
               </div>
             )}
