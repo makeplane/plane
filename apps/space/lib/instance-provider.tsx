@@ -10,12 +10,12 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import { SPACE_BASE_PATH } from "@plane/constants";
-import { PlaneLockup } from "@plane/propel/icons";
 // assets
 import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dark.svg?url";
 import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PlaneLockup } from "@/components/icons";
 import { InstanceFailureView } from "@/components/instance/instance-failure-view";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";

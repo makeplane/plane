@@ -1,6 +1,9 @@
 @import "@plane/tailwind-config/index.css";
 @import "@plane/editor/styles";
-@import "@plane/propel/styles/react-day-picker.css";
+/* Design tokens already arrive via @plane/tailwind-config. The @makeplane/propel styles barrel
+   re-imports the same token files (identical content) and, crucially, registers propel's dist as a
+   Tailwind @source so the component class names are generated. */
+@import "@makeplane/propel/styles";
 @plugin "@tailwindcss/typography";
 
 /* stickies and editor colors

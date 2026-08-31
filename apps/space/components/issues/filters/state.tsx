@@ -8,8 +8,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
+// components
+import { StateGroupIcon } from "@/components/icons";
 // hooks
 import { useStates } from "@/hooks/store/use-state";
 // local imports

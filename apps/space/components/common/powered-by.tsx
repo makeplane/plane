@@ -5,8 +5,8 @@
  */
 
 import { WEBSITE_URL } from "@plane/constants";
-// assets
-import { PlaneLogo } from "@plane/propel/icons";
+// components
+import { PlaneLogo } from "@/components/icons";
 
 type TPoweredBy = {
   disabled?: boolean;

@@ -8,8 +8,7 @@ import React from "react";
 // helpers
 import { cn } from "@plane/utils";
 
-// Loading-placeholder skeleton. @makeplane/propel has no skeleton component yet;
-// this matches the API the workspace @plane/propel skeleton exposed.
+// Loading-placeholder skeleton. @makeplane/propel has no skeleton component yet, so it is kept local.
 
 type SkeletonProps = {
   children: React.ReactNode;

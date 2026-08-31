@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -53,7 +53,7 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
         if (!layoutOptions[layout.key]) return;
 
         return (
-          <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
+          <Tooltip key={layout.key} label={t(layout.titleTranslationKey)}>
             <button
               type="button"
               className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover ${

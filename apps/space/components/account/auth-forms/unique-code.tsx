@@ -7,10 +7,10 @@
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 // plane imports
+import { Button } from "@makeplane/propel/components/button";
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
-import { Input, Spinner } from "@plane/ui";
+import { Input } from "@plane/ui";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // types
@@ -148,9 +148,15 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          stretch="full"
+          disabled={isButtonDisabled}
+          loading={isSubmitting}
+          label={isRequestingNewCode ? "Sending code" : "Continue"}
+        />
       </div>
     </form>
   );

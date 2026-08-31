@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import { LabelPropertyIcon } from "@plane/propel/icons";
+import { LabelsOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 
@@ -25,11 +25,11 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
 
   if (labels.length <= 0)
     return (
-      <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
+      <Tooltip label="Labels: None">
         <div
           className={`flex h-full items-center justify-center gap-2 rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
         >
-          <LabelPropertyIcon className="h-3.5 w-3.5" strokeWidth={2} />
+          <LabelsOutline className="h-3.5 w-3.5" strokeWidth={2} />
           {shouldShowLabel && <span>No Labels</span>}
         </div>
       </Tooltip>
@@ -40,7 +40,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
       {labels.length <= 2 ? (
         <>
           {labels.map((label) => (
-            <Tooltip key={label.id} position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
+            <Tooltip key={label.id} label={`Labels: ${label?.name ?? ""}`}>
               <div
                 key={label?.id}
                 className={`flex h-full max-w-full flex-shrink-0 items-center overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
@@ -62,7 +62,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
         <div
           className={`cursor-not-allowed" flex h-full flex-shrink-0 items-center rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
         >
-          <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelsString}>
+          <Tooltip label={`Labels: ${labelsString}`}>
             <div className="flex h-full items-center gap-1.5 text-secondary">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               {`${labels.length} Labels`}

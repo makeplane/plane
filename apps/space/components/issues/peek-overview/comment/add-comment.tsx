@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 import { SitesFileService } from "@plane/services";
 import type { TIssuePublicComment } from "@plane/types";
 // editor components

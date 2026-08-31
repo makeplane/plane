@@ -7,11 +7,12 @@
 import { SignalHigh } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // types
-import { PriorityIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // constants
 import { cn, getIssuePriorityFilters } from "@plane/utils";
+// components
+import { PriorityIcon } from "@/components/icons";
 
 export function IssueBlockPriority({
   priority,
@@ -35,7 +36,7 @@ export function IssueBlockPriority({
   if (priority_detail === null) return <></>;
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
+    <Tooltip label={`Priority: ${t(priority_detail?.titleTranslationKey || "")}`}>
       <div
         className={cn(
           "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 text-11",

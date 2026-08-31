@@ -5,7 +5,7 @@
  */
 
 import { Info } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 
@@ -28,7 +28,7 @@ export function AuthBanner(props: TAuthBanner) {
         className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary/80 transition-all hover:bg-accent-primary/20"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
-        <CloseIcon className="h-4 w-4 flex-shrink-0" />
+        <CloseOutline className="h-4 w-4 flex-shrink-0" />
       </div>
     </div>
   );

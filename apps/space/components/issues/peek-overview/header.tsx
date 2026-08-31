@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { LinkOutline, ModalPeekOutline, FullScreenPeekOutline, RightSidePaneOutline } from "@makeplane/propel/icons";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -29,15 +29,15 @@ const PEEK_MODES: {
   icon: any;
   label: string;
 }[] = [
-  { key: "side", icon: SidePanelIcon, label: "Side Peek" },
+  { key: "side", icon: RightSidePaneOutline, label: "Side Peek" },
   {
     key: "modal",
-    icon: CenterPanelIcon,
+    icon: ModalPeekOutline,
     label: "Modal",
   },
   {
     key: "full",
-    icon: FullScreenPanelIcon,
+    icon: FullScreenPeekOutline,
     label: "Full Screen",
   },
 ];
@@ -60,7 +60,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
     });
   };
 
-  const Icon = PEEK_MODES.find((m) => m.key === peekMode)?.icon ?? SidePanelIcon;
+  const Icon = PEEK_MODES.find((m) => m.key === peekMode)?.icon ?? RightSidePaneOutline;
 
   return (
     <>
@@ -126,7 +126,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             className="shrink-0 text-tertiary hover:text-secondary focus:outline-none"
             tabIndex={1}
           >
-            <LinkIcon className="h-4 w-4 -rotate-45" />
+            <LinkOutline className="h-4 w-4 -rotate-45" />
           </button>
         )}
       </div>

@@ -13,7 +13,7 @@ import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { AuthService } from "@plane/services";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
@@ -119,7 +119,7 @@ export const UserAvatar = observer(function UserAvatar() {
       ) : (
         <div className="flex-shrink-0">
           <Link to={`/?next_path=${pathName}?${queryParam}`}>
-            <Button variant="secondary">Sign in</Button>
+            <Button variant="secondary" size="md" stretch="auto" label="Sign in" />
           </Link>
         </div>
       )}
