@@ -26,4 +26,4 @@ export { ADDITIONAL_EXTENSIONS } from "@/constants/extensions";
 export * from "@/types";
 
 // additional exports
-export { TrailingNode } from "./core/extensions/trailing-node";
+export { TrailingNode } from "@/extensions/trailing-node";
