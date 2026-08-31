@@ -24,7 +24,11 @@ from .project.member import (
     ProjectMemberPreferenceEndpoint,
 )
 
-from .project_custom_field import ProjectCustomFieldViewSet, ProjectCustomFieldValueViewSet
+from .project_custom_field import (
+    ProjectCustomFieldOptionViewSet,
+    ProjectCustomFieldViewSet,
+    ProjectCustomFieldValueViewSet,
+)
 
 from .user.base import (
     UserEndpoint,

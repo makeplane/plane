@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+export * from "./custom-field-options-editor";
 export * from "./custom-field-value-input";
 export * from "./delete-custom-field-modal";
 export * from "./project-custom-field-list";

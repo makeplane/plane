@@ -5,7 +5,11 @@
 from django.urls import path
 
 
-from plane.app.views import ProjectCustomFieldViewSet, ProjectCustomFieldValueViewSet
+from plane.app.views import (
+    ProjectCustomFieldOptionViewSet,
+    ProjectCustomFieldViewSet,
+    ProjectCustomFieldValueViewSet,
+)
 
 
 urlpatterns = [
@@ -18,6 +22,18 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/custom-fields/<uuid:pk>/",
         ProjectCustomFieldViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-custom-field",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/custom-fields/<uuid:custom_field_id>/options/",
+        ProjectCustomFieldOptionViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-custom-field-options",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/custom-fields/<uuid:custom_field_id>/options/<uuid:pk>/",
+        ProjectCustomFieldOptionViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="project-custom-field-option",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/custom-field-values/",

@@ -14,15 +14,18 @@ import { useTranslation } from "@plane/i18n";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IProjectCustomField } from "@plane/types";
-import { Loader } from "@plane/ui";
+import type { IProjectCustomField, TProjectCustomFieldType } from "@plane/types";
+import { CustomSelect, Loader } from "@plane/ui";
 // hooks
 import { useProjectCustomField } from "@/hooks/store/use-project-custom-field";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { SettingsHeading } from "../settings/heading";
+import { ProjectCustomFieldOptionsEditor } from "./custom-field-options-editor";
 import { ProjectCustomFieldValueInput } from "./custom-field-value-input";
 import { DeleteProjectCustomFieldModal } from "./delete-custom-field-modal";
+
+const FIELD_TYPES: TProjectCustomFieldType[] = ["number", "text", "date", "dropdown", "member"];
 
 export const ProjectCustomFieldList = observer(function ProjectCustomFieldList() {
   // router
@@ -30,6 +33,7 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
   // states
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newFieldName, setNewFieldName] = useState("");
+  const [newFieldType, setNewFieldType] = useState<TProjectCustomFieldType>("number");
   const [isCreating, setIsCreating] = useState(false);
   const [selectDeleteField, setSelectDeleteField] = useState<IProjectCustomField | null>(null);
   // plane hooks
@@ -38,8 +42,10 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
   const {
     getProjectCustomFields,
     getFieldValue,
+    getFieldOptions,
     fetchProjectCustomFields,
     fetchProjectCustomFieldValues,
+    fetchFieldOptions,
     createCustomField,
     setCustomFieldValue,
   } = useProjectCustomField();
@@ -60,15 +66,23 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
     fetchProjectCustomFieldValues(workspaceSlug.toString(), projectId.toString());
   }, [workspaceSlug, projectId, fetchProjectCustomFields, fetchProjectCustomFieldValues]);
 
+  useEffect(() => {
+    if (!workspaceSlug || !projectId || !customFields) return;
+    customFields
+      .filter((field) => field.field_type === "dropdown")
+      .forEach((field) => fetchFieldOptions(workspaceSlug.toString(), projectId.toString(), field.id));
+  }, [workspaceSlug, projectId, customFields, fetchFieldOptions]);
+
   const handleCreate = async () => {
     if (!workspaceSlug || !projectId || !newFieldName.trim() || isCreating) return;
     setIsCreating(true);
     await createCustomField(workspaceSlug.toString(), projectId.toString(), {
       name: newFieldName.trim(),
-      field_type: "number",
+      field_type: newFieldType,
     })
       .then(() => {
         setNewFieldName("");
+        setNewFieldType("number");
         setShowCreateForm(false);
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -122,11 +136,24 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
                 }}
               />
             </InputGroup>
+            <CustomSelect
+              value={newFieldType}
+              label={<span>{t(`project_custom_field.settings.field_types.${newFieldType}`)}</span>}
+              onChange={(type: TProjectCustomFieldType) => setNewFieldType(type)}
+              buttonClassName="border border-subtle rounded-sm"
+            >
+              {FIELD_TYPES.map((type) => (
+                <CustomSelect.Option key={type} value={type}>
+                  {t(`project_custom_field.settings.field_types.${type}`)}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
             <Button
               variant="secondary"
               onClick={() => {
                 setShowCreateForm(false);
                 setNewFieldName("");
+                setNewFieldType("number");
               }}
             >
               {t("project_custom_field.settings.form.cancel")}
@@ -146,28 +173,36 @@ export const ProjectCustomFieldList = observer(function ProjectCustomFieldList()
             </div>
           ) : (
             customFields.map((field) => (
-              <div
-                key={field.id}
-                className="flex w-full items-center gap-3 rounded-sm border border-subtle px-3.5 py-2"
-              >
-                <div className="w-1/3 truncate text-body-sm-medium text-primary">{field.name}</div>
-                <div className="flex-1">
-                  <ProjectCustomFieldValueInput
-                    value={getFieldValue(field.id)}
-                    disabled={!canEditValue}
-                    onSave={(valueDecimal) =>
-                      setCustomFieldValue(workspaceSlug!.toString(), projectId!.toString(), field.id, valueDecimal)
-                    }
-                  />
+              <div key={field.id} className="rounded-sm border border-subtle px-3.5 py-2">
+                <div className="flex w-full items-center gap-3">
+                  <div className="w-1/3 truncate text-body-sm-medium text-primary">{field.name}</div>
+                  <div className="flex-1">
+                    <ProjectCustomFieldValueInput
+                      field={field}
+                      value={getFieldValue(field.id)}
+                      options={getFieldOptions(field.id)}
+                      projectId={projectId!.toString()}
+                      disabled={!canEditValue}
+                      onSave={(data) => setCustomFieldValue(workspaceSlug!.toString(), projectId!.toString(), field.id, data)}
+                    />
+                  </div>
+                  {isEditable && (
+                    <button
+                      type="button"
+                      className="flex-shrink-0 rounded-sm p-1.5 text-tertiary hover:bg-surface-2 hover:text-danger-primary"
+                      onClick={() => setSelectDeleteField(field)}
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  )}
                 </div>
-                {isEditable && (
-                  <button
-                    type="button"
-                    className="flex-shrink-0 rounded-sm p-1.5 text-tertiary hover:bg-surface-2 hover:text-danger-primary"
-                    onClick={() => setSelectDeleteField(field)}
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
+                {field.field_type === "dropdown" && (
+                  <ProjectCustomFieldOptionsEditor
+                    workspaceSlug={workspaceSlug!.toString()}
+                    projectId={projectId!.toString()}
+                    fieldId={field.id}
+                    disabled={!isEditable}
+                  />
                 )}
               </div>
             ))

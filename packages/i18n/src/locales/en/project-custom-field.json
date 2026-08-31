@@ -3,10 +3,10 @@
     "nav_label": "Custom Fields",
     "settings": {
       "title": "Custom Fields",
-      "description": "Define project-level fields to track numbers such as contract value, budget, or payment collected.",
+      "description": "Define project-level fields to track data such as contract value, budget, contract number, or the account owner.",
       "empty_state": {
         "title": "No custom fields yet",
-        "description": "Add a field to start tracking numeric data for this project."
+        "description": "Add a field to start tracking data for this project."
       },
       "add_button": "Add field",
       "form": {
@@ -15,7 +15,17 @@
         "create": "Create",
         "cancel": "Cancel"
       },
+      "field_types": {
+        "number": "Number",
+        "text": "Text",
+        "date": "Date",
+        "dropdown": "Dropdown",
+        "member": "Member"
+      },
       "value_placeholder": "Enter a value",
+      "options": {
+        "add_placeholder": "Add option"
+      },
       "delete_confirmation": {
         "title": "Delete this field",
         "description": "This will permanently delete the field and its value for every project. This action cannot be undone.",
@@ -57,6 +67,18 @@
           "error": {
             "title": "Error!",
             "message": "Failed to save value. Please try again!"
+          }
+        },
+        "option_create": {
+          "error": {
+            "title": "Error!",
+            "message": "Failed to add option. Please try again!"
+          }
+        },
+        "option_delete": {
+          "error": {
+            "title": "Error!",
+            "message": "Failed to remove option. Please try again!"
           }
         }
       }

@@ -9,8 +9,12 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
-from plane.app.serializers import ProjectCustomFieldSerializer, ProjectCustomFieldValueSerializer
-from plane.db.models import ProjectCustomField, ProjectCustomFieldValue, ProjectMember
+from plane.app.serializers import (
+    ProjectCustomFieldOptionSerializer,
+    ProjectCustomFieldSerializer,
+    ProjectCustomFieldValueSerializer,
+)
+from plane.db.models import ProjectCustomField, ProjectCustomFieldOption, ProjectCustomFieldValue, ProjectMember
 from .base import BaseViewSet
 
 
@@ -62,6 +66,57 @@ class ProjectCustomFieldViewSet(BaseViewSet):
         custom_field = self.get_object()
         serializer = ProjectCustomFieldSerializer(
             custom_field, data=request.data, partial=True, context={"project_id": self.kwargs.get("project_id")}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN])
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+
+class ProjectCustomFieldOptionViewSet(BaseViewSet):
+    serializer_class = ProjectCustomFieldOptionSerializer
+    model = ProjectCustomFieldOption
+    permission_classes = [ProjectCustomFieldAccessPermission]
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(custom_field_id=self.kwargs.get("custom_field_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project", "workspace", "custom_field")
+            .distinct()
+            .order_by("sort_order")
+        )
+
+    @allow_permission([ROLE.ADMIN])
+    def create(self, request, slug, project_id, custom_field_id):
+        custom_field = ProjectCustomField.objects.filter(
+            pk=custom_field_id, project_id=project_id, workspace__slug=slug
+        ).first()
+        if custom_field is None:
+            return Response(
+                {"error": "Custom field not found in this project"}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = ProjectCustomFieldOptionSerializer(
+            data=request.data, context={"custom_field_id": custom_field_id}
+        )
+        if serializer.is_valid():
+            serializer.save(project_id=project_id, custom_field=custom_field)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN])
+    def partial_update(self, request, *args, **kwargs):
+        option = self.get_object()
+        serializer = ProjectCustomFieldOptionSerializer(
+            option, data=request.data, partial=True, context={"custom_field_id": self.kwargs.get("custom_field_id")}
         )
         if serializer.is_valid():
             serializer.save()
