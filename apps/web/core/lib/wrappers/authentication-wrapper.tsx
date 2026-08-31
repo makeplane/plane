@@ -11,6 +11,7 @@ import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // helpers
+import { isValidNextPath } from "@plane/utils";
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -24,19 +25,19 @@ type TAuthenticationWrapper = {
   pageType?: TPageType;
 };
 
-const isValidURL = (url: string): boolean => {
-  // A prefix-only scheme check (http(s)/ftp) lets an authority-relative
-  // value like "///example.com/" through: it matches none of those schemes,
-  // but the browser still resolves a leading "//" against the current
-  // origin as an authority (host), navigating off-domain. Resolve against
-  // location.origin and require the result to actually still be same-origin
-  // instead of pattern-matching the input string.
-  try {
-    return new URL(url, location.origin).origin === location.origin;
-  } catch {
-    return false;
-  }
-};
+// Delegates to the shared isValidNextPath (@plane/utils) instead of a local
+// reimplementation. A from-scratch version here previously resolved the
+// value against location.origin and required the result to stay
+// same-origin — which has its own gap: a next_path like "http:evil.com"
+// resolves AS IF relative whenever the input's scheme happens to match the
+// real origin's own scheme, e.g. any self-hosted deployment actually
+// serving over plain http (verified directly: this bypasses the
+// location.origin-based check on an http:// origin, though not on https://,
+// since the schemes then differ). isValidNextPath closes this by requiring
+// a literal leading "/" (and rejecting "//") before any URL-based
+// comparison, so it doesn't depend on which scheme the real origin happens
+// to use.
+const isValidURL = isValidNextPath;
 
 export const AuthenticationWrapper = observer(function AuthenticationWrapper(props: TAuthenticationWrapper) {
   const pathname = usePathname();
