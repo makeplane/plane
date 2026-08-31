@@ -52,6 +52,15 @@ class ProjectCustomField(ProjectBaseModel):
     is_active = models.BooleanField(default=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    # Purely a display grouping hint for the project-info page (e.g. "项目&合同基本信息");
+    # unset for ad-hoc user-created fields, which render ungrouped there.
+    group_name = models.CharField(max_length=255, blank=True, null=True)
+    # When true, ProjectCustomFieldValueSerializer.validate() rejects a value that
+    # duplicates another project's value for a field of the same name in this
+    # workspace (see that method for why the comparison is by name, not custom_field_id).
+    # Deliberately not exposed on the create/update field API: only default-seeded
+    # fields carry this, never a field a user creates ad hoc through "Add field".
+    is_unique_key = models.BooleanField(default=False)
 
     class Meta:
         constraints = [

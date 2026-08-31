@@ -142,6 +142,7 @@ REST_FRAMEWORK = {
         "anon": "30/minute",
         "asset_id": "5/minute",
         "project_custom_field_data_email": "5/minute",
+        "project_custom_field_value_write": "60/minute",
     },
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),

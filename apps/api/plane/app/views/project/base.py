@@ -25,6 +25,7 @@ from plane.app.serializers import (
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
+from plane.db.default_data.project_custom_fields import seed_default_custom_fields
 from plane.db.models import (
     UserFavorite,
     DeployBoard,
@@ -293,6 +294,14 @@ class ProjectViewSet(BaseViewSet):
                     for state in DEFAULT_STATES
                 ]
             )
+
+            # Internal addition (not part of upstream makeplane/plane): give every
+            # new project the standard set of custom fields tracked in
+            # apps/api/plane/db/default_data/project_custom_fields.py. Existing
+            # projects get the same fields via the
+            # seed_default_project_custom_fields management command; both call
+            # seed_default_custom_fields so the two never drift apart.
+            seed_default_custom_fields(serializer.instance, created_by=request.user)
 
             project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 

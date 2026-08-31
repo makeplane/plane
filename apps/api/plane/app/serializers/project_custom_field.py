@@ -35,10 +35,15 @@ class ProjectCustomFieldSerializer(BaseSerializer):
             "field_type",
             "sort_order",
             "is_active",
+            "group_name",
+            "is_unique_key",
             "project_id",
             "workspace_id",
         ]
-        read_only_fields = ["workspace", "project"]
+        # is_unique_key is deliberately read-only here: only the default-seed data
+        # (apps/api/plane/db/default_data/project_custom_fields.py) may set it,
+        # never a field created ad hoc through this API's create/update actions.
+        read_only_fields = ["workspace", "project", "is_unique_key"]
 
     def validate_name(self, value):
         project_id = self.context.get("project_id")
@@ -110,5 +115,50 @@ class ProjectCustomFieldValueSerializer(BaseSerializer):
         option = attrs.get("value_option")
         if option is not None and option.custom_field_id != self.instance.custom_field_id:
             raise serializers.ValidationError(detail="OPTION_DOES_NOT_BELONG_TO_FIELD")
+
+        value_text = attrs.get("value_text")
+        if value_text and self.instance.custom_field.is_unique_key:
+            # Only whitespace is trimmed, not case or full/half-width: those are
+            # lossy normalizations that could collapse two values a business
+            # actually intends to keep distinct. Written back into attrs so the
+            # stored value and the compared value are always the same string.
+            value_text = value_text.strip()
+            attrs["value_text"] = value_text
+
+            # Custom fields are per-project rows even when several projects share a
+            # field of the same name (e.g. every project's own "合同号&项目号" field
+            # is a distinct ProjectCustomField), so a uniqueness check keyed on
+            # custom_field_id would only ever compare a project against itself.
+            # Matching on is_unique_key alone (not also field name) is deliberate:
+            # at most one field per project ever carries is_unique_key=True (it's
+            # read-only, only set by the default-seed data), so the flag alone
+            # already identifies "the" unique-key field across every project. A
+            # name-based match would silently stop working the moment anyone
+            # renamed the field on one project, since ProjectCustomFieldSerializer
+            # leaves name editable.
+            # Nothing in this model chain (BaseModel, AuditModel) filters deleted_at
+            # automatically, unlike some Django soft-delete setups: every query that
+            # only cares about live rows must say so explicitly, matching how the
+            # UniqueConstraint above scopes itself with condition=Q(deleted_at__isnull=True).
+            # Without these two filters, a soft-deleted field or value (project
+            # archived, field deleted) would still block a live project from using
+            # its value.
+            duplicate_exists = (
+                ProjectCustomFieldValue.objects.filter(
+                    workspace_id=self.instance.workspace_id,
+                    custom_field__is_unique_key=True,
+                    custom_field__deleted_at__isnull=True,
+                    value_text=value_text,
+                    deleted_at__isnull=True,
+                )
+                .exclude(pk=self.instance.pk)
+                .exists()
+            )
+            if duplicate_exists:
+                # This exact string is matched by name on the frontend to show a
+                # specific message instead of a generic save-failed toast: see
+                # apps/web/core/components/project-custom-fields/custom-field-value-input.tsx,
+                # handleSaveError(). Changing this string needs a matching change there.
+                raise serializers.ValidationError(detail="VALUE_MUST_BE_UNIQUE")
 
         return attrs
