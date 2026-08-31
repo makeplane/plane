@@ -9,10 +9,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Row, Avatar } from "@plane/ui";
-import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+import { Row } from "@plane/ui";
+import { cn, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
@@ -127,7 +128,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
             </div>
             {/* created by */}
             {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
-              <Avatar src={getFileURL("")} name={"Plane"} size="md" showTooltip />
+              <Avatar alt="Plane" fallback="P" size="xs" />
             ) : createdByDetails ? (
               <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
             ) : null}

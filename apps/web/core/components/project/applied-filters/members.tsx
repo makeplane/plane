@@ -5,9 +5,8 @@
  */
 
 import { observer } from "mobx-react";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { CloseIcon } from "@plane/propel/icons";
-// ui
-import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // types
@@ -36,10 +35,10 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         return (
           <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             <Avatar
-              name={memberDetails.display_name}
+              alt={memberDetails.display_name}
+              fallback={memberDetails.display_name?.[0]?.toUpperCase()}
               src={getFileURL(memberDetails.avatar_url)}
-              showTooltip={false}
-              size={"sm"}
+              size="2xs"
             />
             <span className="normal-case">{memberDetails.display_name}</span>
             {editable && (

@@ -12,6 +12,7 @@ import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import type { FC } from "react";
 import { CalendarDays, LayersIcon, Paperclip } from "lucide-react";
 // plane types
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/propel/icons";
@@ -47,7 +48,7 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // plane ui
-import { Avatar } from "@plane/ui";
+
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";
@@ -314,12 +315,19 @@ const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGrou
     assigneeColumns.push({
       id: memberId,
       name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+      icon: (
+        <Avatar
+          alt={member?.display_name}
+          fallback={member?.display_name?.[0]?.toUpperCase()}
+          src={getFileURL(member?.avatar_url ?? "")}
+          size="xs"
+        />
+      ),
       payload: { assignee_ids: [memberId] },
     });
   });
   if (includeNone) {
-    assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
+    assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="xs" />, payload: {} });
   }
 
   return assigneeColumns;
@@ -337,7 +345,14 @@ const getCreatedByColumns = (): IGroupByColumn[] | undefined => {
     return {
       id: memberId,
       name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+      icon: (
+        <Avatar
+          alt={member?.display_name}
+          fallback={member?.display_name?.[0]?.toUpperCase()}
+          src={getFileURL(member?.avatar_url ?? "")}
+          size="xs"
+        />
+      ),
       payload: {},
     };
   });

@@ -7,6 +7,7 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -14,7 +15,7 @@ import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
-import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -85,9 +86,10 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               {t("description_versions.edited_by")}
               <span className="flex-shrink-0">
                 <Avatar
-                  size="sm"
+                  alt={versionCreator?.display_name}
+                  fallback={versionCreator?.display_name?.[0]?.toUpperCase()}
+                  size="2xs"
                   src={getFileURL(versionCreator?.avatar_url ?? "")}
-                  name={versionCreator?.display_name}
                 />
               </span>
             </p>
