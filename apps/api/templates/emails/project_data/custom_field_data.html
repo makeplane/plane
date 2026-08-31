@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{{project_name}} 项目数据</title>
+
+    <style>
+      /* Basic resets for email clients */
+      body,
+      table,
+      td,
+      p {
+        margin: 0;
+        padding: 0;
+      }
+
+      img {
+        border: 0;
+        line-height: 100%;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic;
+      }
+
+      table {
+        border-collapse: collapse;
+      }
+
+      /* Mobile adjustments */
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+        }
+
+        .email-content {
+          padding: 24px 20px !important;
+        }
+
+        .email-footer {
+          padding: 0 20px 16px 20px !important;
+        }
+      }
+
+      *[class="gmail-fix"] {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body
+    bgcolor="#f9f9f9"
+    style="
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        sans-serif;
+      font-weight: 400;
+      color: #474747;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: none;
+      background-color: #f9f9f9;
+    "
+  >
+    <!-- Preheader (hidden) -->
+    <span
+      class="preheader"
+      style="
+        display: none;
+        font-size: 1px;
+        color: transparent;
+        line-height: 1px;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        mso-hide: all;
+        visibility: hidden;
+      "
+    >
+      {{sender_name}} 分享了 {{project_name}} 项目的最新数据。
+    </span>
+
+    <!-- Outer Wrapper -->
+    <center
+      class="email-body"
+      style="width: 100%; background-color: #f9f9f9; padding: 40px 0;"
+    >
+      <!-- HEADER -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td
+            class="email-container"
+            width="620"
+            style="width: 620px; max-width: 620px; margin: 0 auto;"
+          >
+            <table
+              role="presentation"
+              width="100%"
+              style="background-color: #000000;"
+            >
+              <tr>
+                <td style="padding: 24px 40px; text-align: center;">
+                  <img
+                    src="https://media.docs.plane.so/logo/new-logo-dark.png"
+                    width="120"
+                    alt="Plane"
+                    style="height: auto; display: block; margin: 0 auto;"
+                  />
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- BODY -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td
+            class="email-container"
+            width="620"
+            style="width: 620px; max-width: 620px; margin: 0 auto;"
+          >
+            <table
+              role="presentation"
+              width="100%"
+              class="email-content"
+              style="background-color: #ffffff; padding: 32px 40px 32px 40px;"
+            >
+              <tr>
+                <td
+                  style="
+                    padding: 24px;
+                    font-size: 16px;
+                    line-height: 1.5;
+                    color: #474747;
+                  "
+                >
+                  <!-- ============================================= -->
+                  <!--  PLACEHOLDER TEMPLATE: to be replaced later.   -->
+                  <!--  Sending logic only depends on the context     -->
+                  <!--  variables above (project_name, workspace_name,-->
+                  <!--  sender_name, project_url, fields); everything -->
+                  <!--  below this comment can be redesigned freely.  -->
+                  <!-- ============================================= -->
+
+                  <!-- Heading -->
+                  <h1
+                    style="
+                      margin: 0 0 12px;
+                      font-size: 22px;
+                      line-height: 1.35;
+                      font-weight: 600;
+                      color: #111111;
+                    "
+                  >
+                    {{project_name}} 项目数据
+                  </h1>
+
+                  <!-- Intro text -->
+                  <p style="margin: 0 0 20px;">
+                    {{sender_name}} 从工作区
+                    <strong>{{workspace_name}}</strong> 的
+                    <strong>{{project_name}}</strong> 项目分享了以下数据:
+                  </p>
+
+                  <!-- Field data table -->
+                  <table
+                    role="presentation"
+                    width="100%"
+                    style="border: 1px solid #e9e9e9; border-radius: 6px; overflow: hidden;"
+                  >
+                    {% for field in fields %}
+                    <tr>
+                      <td
+                        style="
+                          padding: 10px 16px;
+                          width: 40%;
+                          font-size: 14px;
+                          color: #5f5e5e;
+                          background-color: #f9f9f9;
+                          border-bottom: 1px solid #e9e9e9;
+                        "
+                      >
+                        {{field.name}}
+                      </td>
+                      <td
+                        style="
+                          padding: 10px 16px;
+                          font-size: 14px;
+                          color: #111111;
+                          border-bottom: 1px solid #e9e9e9;
+                        "
+                      >
+                        {{field.value|default:"未填写"}}
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td style="padding: 16px; font-size: 14px; color: #5f5e5e;">
+                        该项目还没有配置自定义字段。
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+
+                  <!-- CTA button -->
+                  <table
+                    role="presentation"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    style="margin: 24px 0 0;"
+                  >
+                    <tr>
+                      <td>
+                        <a
+                          href="{{project_url}}"
+                          target="_blank"
+                          style="
+                            background-color: #1080bc;
+                            border-radius: 6px;
+                            color: #ffffff;
+                            padding: 12px 24px;
+                            text-align: center;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 16px;
+                            font-weight: 500;
+                            white-space: nowrap;
+                          "
+                        >
+                          在 Plane 中查看
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- FOOTER -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td
+            class="email-container"
+            width="620"
+            style="width: 620px; max-width: 620px; margin: 0 auto;"
+          >
+            <table
+              role="presentation"
+              width="100%"
+              class="email-footer"
+              style="background-color: #ffffff; padding: 0 40px 16px 40px;"
+            >
+              <tr>
+                <td
+                  style="
+                    border-top: 1px solid #e9e9e9;
+                    padding: 24px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #979797;
+                    text-align: left;
+                  "
+                >
+                  <p style="margin: 0;">Plane Software, Inc.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </center>
+
+    <base target="_blank" />
+  </body>
+</html>

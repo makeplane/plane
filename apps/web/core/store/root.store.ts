@@ -60,6 +60,8 @@ import type { IProjectRootStore } from "./project";
 import { ProjectRootStore } from "./project";
 import type { IProjectCustomFieldStore } from "./project-custom-field.store";
 import { ProjectCustomFieldStore } from "./project-custom-field.store";
+import type { IProjectDataEmailStore } from "./project-data-email.store";
+import { ProjectDataEmailStore } from "./project-data-email.store";
 import type { IProjectViewStore } from "./project-view.store";
 import { ProjectViewStore } from "./project-view.store";
 import type { IRouterStore } from "./router.store";
@@ -88,6 +90,7 @@ export class CoreRootStore {
   state: IStateStore;
   label: ILabelStore;
   projectCustomField: IProjectCustomFieldStore;
+  projectDataEmail: IProjectDataEmailStore;
   dashboard: IDashboardStore;
   analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
@@ -126,6 +129,7 @@ export class CoreRootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.projectCustomField = new ProjectCustomFieldStore(this);
+    this.projectDataEmail = new ProjectDataEmailStore(this);
     this.dashboard = new DashboardStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
@@ -162,6 +166,7 @@ export class CoreRootStore {
     this.state = new StateStore(this);
     this.label = new LabelStore(this);
     this.projectCustomField = new ProjectCustomFieldStore(this);
+    this.projectDataEmail = new ProjectDataEmailStore(this);
     this.dashboard = new DashboardStore(this);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this);

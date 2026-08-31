@@ -30,6 +30,8 @@ from .project_custom_field import (
     ProjectCustomFieldValueViewSet,
 )
 
+from .project_custom_field_email import ProjectCustomFieldDataEmailEndpoint
+
 from .user.base import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
