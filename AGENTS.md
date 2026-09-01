@@ -49,7 +49,6 @@ Every change lands through the same sequence, no exceptions for "just docs" or "
 8. **Merge with `gh pr merge <n> --merge --delete-branch=false`** -- keep the feature branch alive if more work is coming on the same line of development, matching how this repo's internal work has stacked many small PRs on one branch instead of a fresh branch per change.
 9. **Each of commit / push / merge needs its own explicit go-ahead in the current turn.** Finishing a change does not imply permission to commit it; committing does not imply permission to push; pushing does not imply permission to merge. Ask (or wait to be asked) at each step rather than bundling them because the previous step went smoothly.
 10. **Never bypass this with `--no-verify`, a force-push, or a direct commit/merge into `preview`** -- if a hook fails, fix the underlying issue and recommit; if `preview` needs a change with no corresponding feature-branch history, that is a sign the process broke down upstream, not a reason to patch it directly.
-
 ## Internal custom fields (contract + project)
 
 Three invariants introduced by Phase A (commit `260ccae81`, design in `docs/internal-contract-project-relationship.md`, implementation record in `docs/internal-contract-project-relationship-implementation-2026-09.md`). Honour these when touching `apps/api/plane/db/default_data/project_custom_fields.py`, `apps/api/plane/utils/historical_project_import.py`, `apps/api/plane/db/management/commands/import_historical_project_data.py`, or `apps/api/plane/db/models/contract.py`:
