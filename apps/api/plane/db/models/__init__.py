@@ -59,7 +59,12 @@ from .project import (
     ProjectPublicMember,
     ProjectUserProperty,
 )
-from .project_custom_field import ProjectCustomField, ProjectCustomFieldOption, ProjectCustomFieldValue
+from .project_custom_field import (
+    ProjectCustomField,
+    ProjectCustomFieldOption,
+    ProjectCustomFieldType,
+    ProjectCustomFieldValue,
+)
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State, StateGroup, DEFAULT_STATES

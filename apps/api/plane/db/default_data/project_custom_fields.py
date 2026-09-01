@@ -8,11 +8,19 @@
 # source of truth for two callers: apps/api/plane/app/views/project/base.py
 # (bootstraps these for every newly created project) and
 # apps/api/plane/db/management/commands/seed_default_project_custom_fields.py
-# (backfills them for projects that already existed before this feature shipped).
+# (backfills them for projects that already existed before this feature shipped),
+# plus a third since Phase 3:
+# apps/api/plane/db/management/commands/import_historical_project_data.py (matches
+# a source spreadsheet's header row against these entries before importing data).
 #
 # Field shape: {"name": str, "field_type": one of ProjectCustomFieldType.values,
 # "group_name": str, "is_unique_key": bool (omitted = False), "options": list[str]
-# (dropdown fields only, in display order)}.
+# (dropdown fields only, in display order), "source_header": str (omitted = name;
+# only set when the source spreadsheet's literal column header text differs from
+# this field's display name, e.g. a "（%）" unit hint added for the Plane UI),
+# "is_percent": bool (omitted = False; number fields only -- whether Phase 3's
+# import command may apply Excel's percent-format-implies-multiply-by-100
+# conversion to this field's cells)}.
 #
 # "合同号&项目号" (the first entry) is the one field with is_unique_key=True: per
 # the source spreadsheet it identifies a project uniquely, so its value must not
@@ -43,8 +51,31 @@ DEFAULT_PROJECT_CUSTOM_FIELDS = [
         "field_type": "number",
         "group_name": "项目&合同基本信息",
     },
-    {"name": "税率（%）", "field_type": "number", "group_name": "项目&合同基本信息"},
-    {"name": "合同占比（%）", "field_type": "number", "group_name": "项目&合同基本信息"},
+    # source_header: the source spreadsheet's actual column D header text is "税率"
+    # (no unit suffix); "（%）" was added only to this field's display name for
+    # clarity in the Plane UI. Phase 3's import command (import_historical_project_data)
+    # matches the header row against source_header when present, falling back to name
+    # otherwise -- see historical_project_import.validate_headers().
+    # is_percent: these are the only two "number" fields import_historical_project_data
+    # is allowed to apply Excel's percent-format-implies-multiply-by-100 conversion to
+    # (see historical_project_import.coerce_number()). Without this explicit flag, a
+    # source cell that's accidentally percent-formatted in a field like "合同净额"
+    # (a money amount, never intended as a percentage) would otherwise get silently
+    # multiplied by 100 with no way to tell it apart from a legitimate percent field.
+    {
+        "name": "税率（%）",
+        "field_type": "number",
+        "group_name": "项目&合同基本信息",
+        "source_header": "税率",
+        "is_percent": True,
+    },
+    {
+        "name": "合同占比（%）",
+        "field_type": "number",
+        "group_name": "项目&合同基本信息",
+        "source_header": "合同占比",
+        "is_percent": True,
+    },
     {"name": "客户项目名称", "field_type": "text", "group_name": "项目&合同基本信息"},
     {"name": "项目序号", "field_type": "text", "group_name": "项目&合同基本信息"},
     {"name": "公司项目名称", "field_type": "text", "group_name": "项目&合同基本信息"},
