@@ -3,6 +3,8 @@
 > 内部功能,不属于 upstream makeplane/plane。目标:用 Plane CE 自建的项目级自定义字段,替代一份手工维护的合同/交付跟踪 Excel 表(`project_summary.xlsx`,469 列 × 206 行,A-W 是核心的 23 列)。
 >
 > 这份文档是给"换 Agent 也能接着干"用的进度快照,不是设计文档。设计决策的完整推理过程在各 PR 的 commit message 里,这里只记结论 + 指向哪个文件。
+>
+> **重大架构变更进行中**:真实历史数据暴露出合同与项目其实是多对多关系,不是当前"合同号&项目号"拼成一个字段能表达的。已经写好完整实施方案,见 [internal-contract-project-relationship.md](internal-contract-project-relationship.md)——方案已设计完成、**尚未开始实施**,会影响下面列出的 23 个字段里的 6 个(A/F/G/H/I/J)。开始实施前先读那份文档,不要直接按下面这份文档里的字段清单继续加工。
 
 ## 现状(2026-09-01)
 
