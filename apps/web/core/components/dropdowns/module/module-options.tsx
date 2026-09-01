@@ -11,7 +11,7 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, ModuleIcon } from "@plane/propel/icons";
+import { ModuleOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
 import { cn, sortBySelectedFirst } from "@plane/utils";
 // hooks
@@ -89,7 +89,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       query: `${moduleDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleOutline className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{moduleDetails?.name}</span>
         </div>
       ),
@@ -101,7 +101,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       query: t("module.no_module"),
       content: (
         <div className="flex items-center gap-2">
-          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleOutline className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("module.no_module")}</span>
         </div>
       ),
@@ -121,7 +121,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+          <SearchOutline className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
@@ -155,7 +155,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>

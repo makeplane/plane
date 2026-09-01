@@ -14,7 +14,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
+import { DeactivatedUserOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import type { IUserLite } from "@plane/types";
 import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
@@ -100,7 +100,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           <div className="flex items-center gap-2">
             <div className="w-4">
               {isUserSuspended(userId, workspaceSlug?.toString()) ? (
-                <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+                <DeactivatedUserOutline className="h-3.5 w-3.5 text-placeholder" />
               ) : (
                 <Avatar
                   alt={userDetails?.display_name}
@@ -144,7 +144,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+          <SearchOutline className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
@@ -181,7 +181,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                           {isUserSuspended(option.value, workspaceSlug?.toString()) && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended

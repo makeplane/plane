@@ -15,11 +15,10 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { FolderPlus } from "lucide-react";
+import { ChevronRightOutline, CreateFolderOutline } from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -215,7 +214,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                   if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                 }}
                 aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
-                icon={FolderPlus}
+                icon={CreateFolderOutline}
               />
             </Tooltip>
             <Disclosure.Button
@@ -229,7 +228,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                   : "aria_labels.projects_sidebar.open_favorites_menu"
               )}
             >
-              <ChevronRightIcon
+              <ChevronRightOutline
                 className={cn("size-3 flex-shrink-0 transition-all", {
                   "rotate-90": isFavoriteMenuOpen,
                 })}

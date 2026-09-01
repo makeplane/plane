@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
-import { MembersPropertyIcon } from "@plane/propel/icons";
+import { MembersOutline } from "@makeplane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // plane utils
 // helpers
@@ -19,7 +19,7 @@ import { useMember } from "@/hooks/store/use-member";
 type AvatarProps = {
   showTooltip: boolean;
   userIds: string | string[] | null;
-  icon?: LucideIcon;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   size?: AvatarGroupSize;
 };
 
@@ -64,6 +64,6 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
   return Icon ? (
     <Icon className="h-3 w-3 flex-shrink-0" />
   ) : (
-    <MembersPropertyIcon className={cn("mx-[4px] h-3 w-3 flex-shrink-0")} />
+    <MembersOutline className={cn("mx-[4px] h-3 w-3 flex-shrink-0")} />
   );
 });

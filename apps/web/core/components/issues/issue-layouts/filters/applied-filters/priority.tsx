@@ -7,7 +7,8 @@
 import { observer } from "mobx-react";
 
 // icons
-import { CloseIcon, PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TIssuePriorities } from "@plane/types";
 // types
 
@@ -32,7 +33,7 @@ export const AppliedPriorityFilters = observer(function AppliedPriorityFilters(p
               className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(priority)}
             >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
+              <CloseOutline height={10} width={10} strokeWidth={2} />
             </button>
           )}
         </div>

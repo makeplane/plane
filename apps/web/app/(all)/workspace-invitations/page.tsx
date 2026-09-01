@@ -7,8 +7,14 @@
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import { Boxes, Share2, Star, User2 } from "lucide-react";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import {
+  BoxesOutline,
+  CloseOutline,
+  ShareAltOutline,
+  StarOutline,
+  TickOutline,
+  UserOutline,
+} from "@makeplane/propel/icons";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
@@ -88,8 +94,8 @@ function WorkspaceInvitationPage() {
               title={`You have been invited to ${invitationDetail.workspace.name}`}
               description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
-              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
+              <EmptySpaceItem Icon={TickOutline} title="Accept" action={handleAccept} />
+              <EmptySpaceItem Icon={CloseOutline} title="Ignore" action={handleReject} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
@@ -98,7 +104,7 @@ function WorkspaceInvitationPage() {
               title={`You are already a member of ${invitationDetail.workspace.name}`}
               description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
-              <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
+              <EmptySpaceItem Icon={BoxesOutline} title="Continue to home" href="/" />
             </EmptySpace>
           ) : (
             <EmptySpace
@@ -107,13 +113,13 @@ function WorkspaceInvitationPage() {
               link={{ text: "Or start from an empty project", href: "/" }}
             >
               {!currentUser ? (
-                <EmptySpaceItem Icon={User2} title="Sign in to continue" href="/" />
+                <EmptySpaceItem Icon={UserOutline} title="Sign in to continue" href="/" />
               ) : (
-                <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
+                <EmptySpaceItem Icon={BoxesOutline} title="Continue to home" href="/" />
               )}
-              <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/makeplane" />
+              <EmptySpaceItem Icon={StarOutline} title="StarOutline us on GitHub" href="https://github.com/makeplane" />
               <EmptySpaceItem
-                Icon={Share2}
+                Icon={ShareAltOutline}
                 title="Join our community of active creators"
                 href="https://forum.plane.so"
               />

@@ -6,9 +6,9 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IUserLite } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
@@ -25,7 +25,7 @@ import type { MemberDropdownProps } from "./types";
 
 type TMemberDropdownBaseProps = {
   getUserDetails: (userId: string) => IUserLite | undefined;
-  icon?: LucideIcon;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   memberIds?: string[];
   onClose?: () => void;
   onDropdownOpen?: () => void;
@@ -153,7 +153,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           </span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </DropdownButton>
     </button>

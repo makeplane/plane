@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { CustomMenu, Row } from "@plane/ui";
 import { ModuleLayoutIcon } from "@/components/modules";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
@@ -26,7 +26,7 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
         // placement="bottom-start"
         customButton={
           <Row className="flex flex-grow justify-center gap-2 text-13 text-secondary">
-            <span>Layout</span> <ChevronDownIcon className="my-auto h-4 w-4 text-secondary" strokeWidth={1} />
+            <span>Layout</span> <ChevronDownOutline className="my-auto h-4 w-4 text-secondary" strokeWidth={1} />
           </Row>
         }
         customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"

@@ -8,7 +8,7 @@ import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { CalendarCheck } from "lucide-react";
+import { CompletedAtOutline } from "@makeplane/propel/icons";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane imports
@@ -226,7 +226,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             {issue.target_date && (
                               <Tooltip label={`Target Date: ${renderFormattedDate(issue.target_date) ?? ""}`}>
                                 <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-11 group-hover:bg-surface-1">
-                                  <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                                  <CompletedAtOutline className="h-3 w-3 flex-shrink-0" />
                                   <span className="truncate text-11">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>

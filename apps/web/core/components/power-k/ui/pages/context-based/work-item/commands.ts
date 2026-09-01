@@ -6,22 +6,24 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
+import { Signal, TicketCheck, Triangle } from "lucide-react";
 import {
-  Bell,
-  BellOff,
-  Signal,
-  TagIcon,
-  TicketCheck,
-  Triangle,
-  Type,
-  UserMinus2,
-  UserPlus2,
-  Users,
-} from "lucide-react";
+  CyclesOutline,
+  DeleteOutline,
+  LabelsOutline,
+  LinkOutline,
+  MembersOutline,
+  ModuleOutline,
+  StateOutline,
+  SubscribeOutline,
+  TextOutline,
+  UnsubscribeOutline,
+  UserMinusOutline,
+  UserPlusOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, TrashIcon, ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ICycle, IIssueLabel, IModule, TIssue, TIssuePriorities } from "@plane/types";
 import { EIssueServiceType, EUserPermissions } from "@plane/types";
@@ -199,7 +201,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "change_work_item_state",
       i18n_title: "power_k.contextual_actions.work_item.change_state",
-      icon: DoubleCircleIcon,
+      icon: StateOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -239,7 +241,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "change_work_item_assignees",
       i18n_title: "power_k.contextual_actions.work_item.change_assignees",
-      icon: Users,
+      icon: MembersOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -258,7 +260,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       i18n_title: isCurrentUserAssigned
         ? "power_k.contextual_actions.work_item.unassign_from_me"
         : "power_k.contextual_actions.work_item.assign_to_me",
-      icon: isCurrentUserAssigned ? UserMinus2 : UserPlus2,
+      icon: isCurrentUserAssigned ? UserMinusOutline : UserPlusOutline,
       group: "contextual",
       contextType: "work-item",
       type: "action",
@@ -294,7 +296,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "add_work_item_to_cycle",
       i18n_title: "power_k.contextual_actions.work_item.add_to_cycle",
-      icon: ContrastIcon,
+      icon: CyclesOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -334,7 +336,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "add_work_item_to_modules",
       i18n_title: "power_k.contextual_actions.work_item.add_to_modules",
-      icon: DiceIcon,
+      icon: ModuleOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -366,7 +368,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "add_work_item_labels",
       i18n_title: "power_k.contextual_actions.work_item.add_labels",
-      icon: TagIcon,
+      icon: LabelsOutline,
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
@@ -391,7 +393,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       i18n_title: isSubscribed
         ? "power_k.contextual_actions.work_item.unsubscribe"
         : "power_k.contextual_actions.work_item.subscribe",
-      icon: isSubscribed ? BellOff : Bell,
+      icon: isSubscribed ? UnsubscribeOutline : SubscribeOutline,
       group: "contextual",
       contextType: "work-item",
       type: "action",
@@ -404,7 +406,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "delete_work_item",
       i18n_title: "power_k.contextual_actions.work_item.delete",
-      icon: TrashIcon,
+      icon: DeleteOutline,
       group: "contextual",
       contextType: "work-item",
       type: "action",
@@ -430,7 +432,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "copy_work_item_title",
       i18n_title: "power_k.contextual_actions.work_item.copy_title",
-      icon: Type,
+      icon: TextOutline,
       group: "contextual",
       contextType: "work-item",
       type: "action",
@@ -443,7 +445,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "copy_work_item_url",
       i18n_title: "power_k.contextual_actions.work_item.copy_url",
-      icon: LinkIcon,
+      icon: LinkOutline,
       group: "contextual",
       contextType: "work-item",
       type: "action",

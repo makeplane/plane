@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { PlusIcon, SearchIcon } from "@plane/propel/icons";
+import { AddOutline, SearchOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
@@ -123,13 +123,13 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
                     setIsProjectModalOpen(true);
                   }}
                 >
-                  <PlusIcon className="size-3" />
+                  <AddOutline className="size-3" />
                 </button>
               </Tooltip>
             )}
           </div>
           <div className="ml-auto flex w-full items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1">
-            <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
+            <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
               placeholder={t("search")}

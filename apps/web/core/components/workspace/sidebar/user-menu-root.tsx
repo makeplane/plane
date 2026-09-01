@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings, Settings2 } from "lucide-react";
+import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { GOD_MODE_URL } from "@plane/constants";
@@ -117,7 +117,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           }
           className="flex items-center gap-2"
         >
-          <Settings className="size-3.5 shrink-0" />
+          <SettingsOutline className="size-3.5 shrink-0" />
           {t("settings")}
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
@@ -129,12 +129,12 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           }
           className="flex items-center gap-2"
         >
-          <Settings2 className="size-3.5 shrink-0" />
+          <SettingsOutline className="size-3.5 shrink-0" />
           {t("preferences")}
         </CustomMenu.MenuItem>
       </div>
       <CustomMenu.MenuItem onClick={handleSignOut} className="flex items-center gap-2">
-        <LogOut className="size-3.5 shrink-0" />
+        <LogOutOutline className="size-3.5 shrink-0" />
         {t("sign_out")}
       </CustomMenu.MenuItem>
       {isUserInstanceAdmin && (

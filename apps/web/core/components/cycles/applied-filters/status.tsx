@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -41,7 +41,7 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(status)}
               >
-                <CloseIcon height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

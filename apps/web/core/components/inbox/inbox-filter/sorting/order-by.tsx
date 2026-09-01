@@ -5,11 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
+import { ChevronDownOutline, SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 import { INBOX_ISSUE_ORDER_BY_OPTIONS, INBOX_ISSUE_SORT_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // constants
@@ -28,19 +27,19 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
     INBOX_ISSUE_ORDER_BY_OPTIONS.find((option) => inboxSorting?.order_by?.includes(option.key)) || undefined;
   const smallButton =
     inboxSorting?.sort_by === "asc" ? (
-      <ArrowUpWideNarrow className="size-3" />
+      <SortAscendingOutline className="size-3" />
     ) : (
-      <ArrowDownWideNarrow className="size-3" />
+      <SortDescendingOutline className="size-3" />
     );
   const largeButton = (
     <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
       {inboxSorting?.sort_by === "asc" ? (
-        <ArrowUpWideNarrow className="size-3" />
+        <SortAscendingOutline className="size-3" />
       ) : (
-        <ArrowDownWideNarrow className="size-3" />
+        <SortDescendingOutline className="size-3" />
       )}
       {t(orderByDetails?.i18n_label || "inbox_issue.order_by.created_at")}
-      <ChevronDownIcon className="size-3" strokeWidth={2} />
+      <ChevronDownOutline className="size-3" strokeWidth={2} />
     </div>
   );
   return (
@@ -57,7 +56,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
           onClick={() => handleInboxIssueSorting("order_by", option.key as TInboxIssueSortingOrderByKeys)}
         >
           {t(option.i18n_label)}
-          {inboxSorting?.order_by?.includes(option.key) && <CheckIcon className="size-3" />}
+          {inboxSorting?.order_by?.includes(option.key) && <TickOutline className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
       <hr className="my-2 border-subtle" />
@@ -68,7 +67,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
           onClick={() => handleInboxIssueSorting("sort_by", option.key as TInboxIssueSortingSortByKeys)}
         >
           {t(option.i18n_label)}
-          {inboxSorting?.sort_by?.includes(option.key) && <CheckIcon className="size-3" />}
+          {inboxSorting?.sort_by?.includes(option.key) && <TickOutline className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
     </CustomMenu>

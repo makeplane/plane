@@ -12,7 +12,7 @@ import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // icons
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 // types
 import type {
   IIssueDisplayFilterOptions,
@@ -92,7 +92,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
         customButton={
           <div className="flex-center flex text-13 text-secondary">
             {t("common.layout")}
-            <ChevronDownIcon className="my-auto ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+            <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
           </div>
         }
         customButtonClassName="flex flex-center text-secondary text-13"
@@ -121,7 +121,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           menuButton={
             <div className="flex-center flex text-13 text-secondary">
               {t("common.display")}
-              <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+              <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
             </div>
           }
         >

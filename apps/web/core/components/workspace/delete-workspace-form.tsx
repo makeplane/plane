@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { AlertTriangle } from "lucide-react";
+import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // Plane Imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
@@ -90,7 +90,7 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
             "grid size-12 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary sm:size-10"
           )}
         >
-          <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
+          <WarningTriangleOutline className="size-5 text-danger-primary" aria-hidden="true" />
         </span>
         <div>
           <div className="text-center sm:text-left">

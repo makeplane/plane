@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
@@ -125,7 +125,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
               customButtonClassName="w-full"
               customButton={
                 <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-tertiary hover:text-tertiary">
-                  <PlusIcon className="h-3.5 w-3.5 flex-shrink-0 stroke-2" />
+                  <AddOutline className="text-2 h-3.5 w-3.5 flex-shrink-0" />
                   <span className="flex-shrink-0 text-13 font-medium">
                     {isEpic ? t("epic.add.label") : t("issue.add.label")}
                   </span>

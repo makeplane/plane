@@ -6,10 +6,15 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { CheckCircle, Clock, MoreVertical } from "lucide-react";
+import {
+  ArchiveOutline,
+  ClockOutline,
+  MoreVerticalOutline,
+  TickCircleOutline,
+  TickOutline,
+} from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { ArchiveIcon, CheckIcon } from "@plane/propel/icons";
 import type { TNotificationFilter } from "@plane/types";
 import { PopoverMenu } from "@plane/ui";
 // hooks
@@ -44,8 +49,8 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       type: "menu-item",
       label: t("notification.options.show_unread"),
       isActive: filters?.read,
-      prependIcon: <CheckCircle className="h-3 w-3 flex-shrink-0" />,
-      appendIcon: filters?.read ? <CheckIcon className="h-3 w-3" /> : undefined,
+      prependIcon: <TickCircleOutline className="h-3 w-3 flex-shrink-0" />,
+      appendIcon: filters?.read ? <TickOutline className="h-3 w-3" /> : undefined,
       onClick: () => handleFilterChange("read", !filters?.read),
     },
     {
@@ -53,8 +58,8 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       type: "menu-item",
       label: t("notification.options.show_archived"),
       isActive: filters?.archived,
-      prependIcon: <ArchiveIcon className="h-3 w-3 flex-shrink-0" />,
-      appendIcon: filters?.archived ? <CheckIcon className="h-3 w-3" /> : undefined,
+      prependIcon: <ArchiveOutline className="h-3 w-3 flex-shrink-0" />,
+      appendIcon: filters?.archived ? <TickOutline className="h-3 w-3" /> : undefined,
       onClick: () =>
         handleBulkFilterChange({
           archived: !filters?.archived,
@@ -66,8 +71,8 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       type: "menu-item",
       label: t("notification.options.show_snoozed"),
       isActive: filters?.snoozed,
-      prependIcon: <Clock className="h-3 w-3 flex-shrink-0" />,
-      appendIcon: filters?.snoozed ? <CheckIcon className="h-3 w-3" /> : undefined,
+      prependIcon: <ClockOutline className="h-3 w-3 flex-shrink-0" />,
+      appendIcon: filters?.snoozed ? <TickOutline className="h-3 w-3" /> : undefined,
       onClick: () =>
         handleBulkFilterChange({
           snoozed: !filters?.snoozed,
@@ -79,7 +84,7 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
   return (
     <PopoverMenu
       data={popoverMenuOptions}
-      button={<IconButton size="base" variant="ghost" icon={MoreVertical} />}
+      button={<IconButton size="base" variant="ghost" icon={MoreVerticalOutline} />}
       keyExtractor={(item: TPopoverMenuOptions) => item.key}
       panelClassName="p-0 py-2 rounded-md border border-subtle bg-surface-1 space-y-1"
       render={(item: TPopoverMenuOptions) => <NotificationMenuOptionItem {...item} />}

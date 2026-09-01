@@ -7,7 +7,7 @@
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
@@ -33,7 +33,7 @@ export function MobileLayoutSelection({
           {activeLayout && (
             <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
           )}
-          <ChevronDownIcon className="my-auto size-3 text-secondary" strokeWidth={2} />
+          <ChevronDownOutline className="my-auto size-3 text-secondary" strokeWidth={2} />
         </Button>
       }
       customButtonClassName="flex flex-grow justify-center text-secondary text-13"

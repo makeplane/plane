@@ -7,7 +7,7 @@
 import { useCallback, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import { Minimize2 } from "lucide-react";
+import { ArrowCollapseOutline } from "@makeplane/propel/icons";
 // plane types
 import type { TSticky } from "@plane/types";
 // plane utils
@@ -88,7 +88,7 @@ export const StickyNote = observer(function StickyNote(props: TProps) {
         {/* {isStickiesPage && <StickyItemDragHandle isDragging={false} />}{" "} */}
         {onClose && (
           <button type="button" className="flex flex-shrink-0 justify-end p-2.5" onClick={onClose}>
-            <Minimize2 className="size-4" />
+            <ArrowCollapseOutline className="size-4" />
           </button>
         )}
         {/* inputs */}

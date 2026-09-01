@@ -5,10 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import { Earth, Info, Minus } from "lucide-react";
+import { GlobeOutline, InfoOutline, LockOutline, MinusOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { FavoriteStar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
@@ -55,16 +54,16 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       </div>
       <div className="cursor-default text-tertiary">
         <Tooltip label={access === 0 ? "Public" : "Private"}>
-          {access === 0 ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
+          {access === 0 ? <GlobeOutline className="h-4 w-4" /> : <LockOutline className="h-4 w-4" />}
         </Tooltip>
       </div>
       {/* vertical divider */}
-      <Minus className="-mx-3 h-5 w-5 rotate-90 text-placeholder" strokeWidth={1} />
+      <MinusOutline className="-mx-3 h-5 w-5 rotate-90 text-placeholder" strokeWidth={1} />
 
       {/* page info */}
       <Tooltip label={`Created on ${renderFormattedDate(created_at)}`} layout="stacked">
         <span className="grid h-4 w-4 cursor-default place-items-center">
-          <Info className="h-4 w-4 text-tertiary" />
+          <InfoOutline className="h-4 w-4 text-tertiary" />
         </span>
       </Tooltip>
 

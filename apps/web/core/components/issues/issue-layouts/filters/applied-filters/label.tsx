@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 
 // icons
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 // types
 
@@ -43,7 +43,7 @@ export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(labelId)}
               >
-                <CloseIcon height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

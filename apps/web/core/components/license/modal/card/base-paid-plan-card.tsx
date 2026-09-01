@@ -6,7 +6,7 @@
 
 import { useState, Fragment } from "react";
 import { observer } from "mobx-react";
-import { CheckCircle } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 import { Tab } from "@headlessui/react";
 // plane imports
 // helpers
@@ -81,7 +81,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                       })}
                     >
                       <p className="line-clamp-1 flex w-full items-center text-caption-md-medium leading-5">
-                        <CheckCircle className="mr-2 size-4 flex-shrink-0 text-tertiary" />
+                        <TickCircleOutline className="mr-2 size-4 flex-shrink-0 text-tertiary" />
                         <span className="truncate text-secondary">{feature}</span>
                       </p>
                     </li>

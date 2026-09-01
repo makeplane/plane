@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 // Plane Imports
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -126,7 +126,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
             className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover"
             onClick={() => handleClose()}
           >
-            <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
+            <ChevronRightOutline className="text-2 size-4 text-secondary" />
           </button>
         </div>
       </div>

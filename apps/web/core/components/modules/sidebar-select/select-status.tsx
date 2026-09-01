@@ -11,7 +11,7 @@ import type { Control, UseFormWatch } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StatePropertyIcon } from "@plane/propel/icons";
+import { StateOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
@@ -30,7 +30,7 @@ export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
   return (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-13 sm:basis-1/2">
-        <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
+        <StateOutline className="h-4 w-4 flex-shrink-0" />
         <p>Status</p>
       </div>
       <div className="sm:basis-1/2">

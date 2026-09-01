@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 
 import { useTranslation } from "@plane/i18n";
-import { EditIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, EditOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
@@ -115,7 +115,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
+                  <CloseOutline className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                 </span>
               </Tooltip>
             )}
@@ -129,7 +129,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
               "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >
-            <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
+            <EditOutline className="h-2.5 w-2.5 flex-shrink-0" />
           </span>
         )}
       </button>

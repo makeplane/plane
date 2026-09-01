@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // local imports
@@ -14,7 +14,7 @@ import { MemberDropdownBase } from "./base";
 import type { MemberDropdownProps } from "./types";
 
 type TMemberDropdownProps = {
-  icon?: LucideIcon;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   memberIds?: string[];
   onClose?: () => void;
   optionsClassName?: string;

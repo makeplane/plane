@@ -6,7 +6,14 @@
 
 // ui
 import { observer } from "mobx-react";
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import { Eraser } from "lucide-react";
+import {
+  ArrowNarrowRightOutline,
+  ChevronDownOutline,
+  SortAscendingOutline,
+  SortDescendingOutline,
+  TickOutline,
+} from "@makeplane/propel/icons";
 // constants
 import type { IProjectMemberDisplayProperties, TMemberOrderByOptions } from "@plane/constants";
 import { MEMBER_PROPERTY_DETAILS } from "@plane/constants";
@@ -54,13 +61,13 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
               activeSortingProperty === propertyDetails.descendingOrderKey) && (
               <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                 {propertyDetails.ascendingOrderKey === activeSortingProperty ? (
-                  <ArrowDownWideNarrow className="h-3 w-3" />
+                  <SortDescendingOutline className="h-3 w-3" />
                 ) : (
-                  <ArrowUpNarrowWide className="h-3 w-3" />
+                  <SortAscendingOutline className="h-3 w-3" />
                 )}
               </div>
             )}
-            <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+            <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
           </div>
         </div>
       }
@@ -78,12 +85,12 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
               }`}
             >
               <div className="flex items-center gap-2">
-                <ArrowDownWideNarrow className="h-3 w-3 stroke-[1.5]" />
+                <SortDescendingOutline className="h-3 w-3 stroke-[1.5]" />
                 <span>{propertyDetails.ascendingOrderTitle}</span>
-                <MoveRight className="h-3 w-3" />
+                <ArrowNarrowRightOutline className="h-3 w-3" />
                 <span>{propertyDetails.descendingOrderTitle}</span>
               </div>
-              {activeSortingProperty === propertyDetails.ascendingOrderKey && <CheckIcon className="h-3 w-3" />}
+              {activeSortingProperty === propertyDetails.ascendingOrderKey && <TickOutline className="h-3 w-3" />}
             </div>
           </CustomMenu.MenuItem>
 
@@ -96,12 +103,12 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
               }`}
             >
               <div className="flex items-center gap-2">
-                <ArrowUpNarrowWide className="h-3 w-3 stroke-[1.5]" />
+                <SortAscendingOutline className="h-3 w-3 stroke-[1.5]" />
                 <span>{propertyDetails.descendingOrderTitle}</span>
-                <MoveRight className="h-3 w-3" />
+                <ArrowNarrowRightOutline className="h-3 w-3" />
                 <span>{propertyDetails.ascendingOrderTitle}</span>
               </div>
-              {activeSortingProperty === propertyDetails.descendingOrderKey && <CheckIcon className="h-3 w-3" />}
+              {activeSortingProperty === propertyDetails.descendingOrderKey && <TickOutline className="h-3 w-3" />}
             </div>
           </CustomMenu.MenuItem>
 

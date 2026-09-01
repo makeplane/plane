@@ -9,7 +9,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { CycleIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, CyclesOutline } from "@makeplane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -119,12 +119,12 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
         variant={buttonVariant}
         renderToolTipByDefault={renderByDefault}
       >
-        {!hideIcon && <CycleIcon className="h-3 w-3 flex-shrink-0" />}
+        {!hideIcon && <CyclesOutline className="h-3 w-3 flex-shrink-0" />}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
           <span className="max-w-40 truncate">{selectedName ?? placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </DropdownButton>
     </button>

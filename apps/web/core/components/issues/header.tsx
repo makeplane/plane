@@ -12,7 +12,7 @@ import { Circle } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { NewTabOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -71,7 +71,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
                 <BreadcrumbLink
                   label="Work Items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<WorkItemsOutline className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -98,7 +98,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
           >
             <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("workspace_projects.network.public.title")}
-            <NewTabIcon className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            <NewTabOutline className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
           <></>
