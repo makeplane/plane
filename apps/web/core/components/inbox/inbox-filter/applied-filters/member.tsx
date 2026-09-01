@@ -7,10 +7,9 @@
 import { observer } from "mobx-react";
 
 // plane types
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { CloseIcon } from "@plane/propel/icons";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
-// plane ui
-import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -49,10 +48,10 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
           <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <div className="relative flex flex-shrink-0 items-center justify-center overflow-hidden">
               <Avatar
-                name={optionDetail.display_name}
+                alt={optionDetail.display_name}
+                fallback={optionDetail.display_name?.[0]?.toUpperCase()}
                 src={getFileURL(optionDetail.avatar_url)}
-                showTooltip={false}
-                size="sm"
+                size="2xs"
               />
             </div>
             <div className="truncate text-11">{optionDetail?.display_name}</div>

@@ -6,38 +6,46 @@
 
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
 import { MembersPropertyIcon } from "@plane/propel/icons";
-// plane ui
-import { Avatar, AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // plane utils
 // helpers
 // hooks
+import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { useMember } from "@/hooks/store/use-member";
 
 type AvatarProps = {
   showTooltip: boolean;
   userIds: string | string[] | null;
   icon?: LucideIcon;
-  size?: "sm" | "md" | "base" | "lg" | number;
+  size?: AvatarGroupSize;
 };
 
 export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
-  const { showTooltip, userIds, icon: Icon, size = "md" } = props;
+  const { userIds, icon: Icon, size = "xs" } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
   if (Array.isArray(userIds)) {
     if (userIds.length > 0)
       return (
-        <AvatarGroup size={size} showTooltip={!showTooltip}>
+        <AvatarGroupOverflow size={size}>
           {userIds.map((userId) => {
             const userDetails = getUserDetails(userId);
 
             if (!userDetails) return;
-            return <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />;
+            return (
+              <Avatar
+                key={userId}
+                src={getFileURL(userDetails.avatar_url)}
+                alt={userDetails.display_name}
+                fallback={userDetails.display_name?.[0]?.toUpperCase()}
+              />
+            );
           })}
-        </AvatarGroup>
+        </AvatarGroupOverflow>
       );
   } else {
     if (userIds) {
@@ -45,9 +53,9 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
       return (
         <Avatar
           src={getFileURL(userDetails?.avatar_url ?? "")}
-          name={userDetails?.display_name}
+          alt={userDetails?.display_name}
+          fallback={userDetails?.display_name?.[0]?.toUpperCase()}
           size={size}
-          showTooltip={!showTooltip}
         />
       );
     }

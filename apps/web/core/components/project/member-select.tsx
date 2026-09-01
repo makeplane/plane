@@ -8,9 +8,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { EUserProjectRoles } from "@plane/types";
 // plane ui
-import { Avatar, CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -44,7 +45,12 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
         query: `${memberDetails?.member.display_name}`,
         content: (
           <div className="flex items-center gap-2">
-            <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+            <Avatar
+              alt={memberDetails?.member.display_name}
+              fallback={memberDetails?.member.display_name?.[0]?.toUpperCase()}
+              src={getFileURL(memberDetails?.member.avatar_url)}
+              size="xs"
+            />
             {memberDetails?.member.display_name}
           </div>
         ),
@@ -65,7 +71,12 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
       label={
         <div className="flex h-3.5 items-center gap-2">
           {selectedOption && (
-            <Avatar name={selectedOption.member?.display_name} src={getFileURL(selectedOption.member?.avatar_url)} />
+            <Avatar
+              alt={selectedOption.member?.display_name}
+              fallback={selectedOption.member?.display_name?.[0]?.toUpperCase()}
+              src={getFileURL(selectedOption.member?.avatar_url)}
+              size="xs"
+            />
           )}
           {selectedOption ? (
             selectedOption.member?.display_name

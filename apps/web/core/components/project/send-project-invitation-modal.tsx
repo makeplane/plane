@@ -8,12 +8,13 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Avatar, CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -140,7 +141,12 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="shrink-0 pt-0.5">
-              <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+              <Avatar
+                alt={memberDetails?.member.display_name}
+                fallback={memberDetails?.member.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(memberDetails?.member.avatar_url)}
+                size="xs"
+              />
             </div>
             <div className="truncate">
               {memberDetails?.member.display_name} (
@@ -200,8 +206,10 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                               {value && value !== "" ? (
                                 <div className="flex items-center gap-2">
                                   <Avatar
-                                    name={selectedMember?.member.display_name}
+                                    alt={selectedMember?.member.display_name}
+                                    fallback={selectedMember?.member.display_name?.[0]?.toUpperCase()}
                                     src={getFileURL(selectedMember?.member.avatar_url ?? "")}
+                                    size="xs"
                                   />
                                   {selectedMember?.member.display_name}
                                 </div>
