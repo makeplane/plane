@@ -26,12 +26,16 @@ function replaceDir() {
 
     if [ -d "$dest" ]; then
         mv "$dest" "$old"
+        # Restore the old data if we are interrupted mid-swap
+        trap "mv \"$old\" \"$dest\" 2>/dev/null || true; exit 1" INT TERM HUP
     fi
 
     if mv "$src" "$dest"; then
+        trap - INT TERM HUP
         rm -rf "$old"
         echo "Renamed $label"
     else
+        trap - INT TERM HUP
         echo "Error: Failed to install $label; restoring previous data"
         if [ -d "$old" ]; then
             mv "$old" "$dest"
