@@ -89,7 +89,12 @@ DEFAULT_PROJECT_CUSTOM_FIELDS = [
         "name": "客户域",
         "field_type": "dropdown",
         "group_name": "项目基本类别",
-        "options": ["支撑", "云网", "政企"],
+        # "云网域" added for the same reason as 公司产品名称/验收阶段 above: a second
+        # real-data dry-run round found 39 occurrences, missing from the seed list
+        # ("云网" without the "域" suffix is what got seeded originally but doesn't
+        # actually appear in the real data; kept rather than replaced since removing
+        # a seeded option is a bigger, less reversible change than adding one).
+        "options": ["支撑", "云网", "云网域", "政企"],
     },
     {
         "name": "业务域",

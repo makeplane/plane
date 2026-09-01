@@ -148,6 +148,15 @@ class TestCoerceDropdown:
         assert value is None
         assert warning is not None
 
+    def test_case_insensitive_match_returns_seeded_casing(self):
+        # A manually maintained spreadsheet can have the same option typed with
+        # different casing across rows; the returned value must be the option's
+        # seeded casing (PaaS), not the raw input's (PAAS), since it later has to
+        # exact-match a real ProjectCustomFieldOption.name for the FK lookup.
+        value, warning = coerce_dropdown("PAAS", ["账务处理中心", "PaaS"])
+        assert value == "PaaS"
+        assert warning is None
+
     def test_blank_returns_none_no_warning(self):
         value, warning = coerce_dropdown(None, ["A", "B", "C"])
         assert value is None

@@ -128,9 +128,18 @@ def coerce_dropdown(raw, options):
     text = str(raw).strip()
     if not text:
         return None, None
-    if text not in options:
-        return None, f"value {text!r} does not match any of this field's seeded options {options!r}"
-    return text, None
+    if text in options:
+        return text, None
+    # Case-insensitive fallback: a manually maintained spreadsheet often has the
+    # same option typed with different casing across rows (e.g. "PaaS" vs "PAAS").
+    # Returns the option's seeded casing, not the raw input's, so the downstream
+    # FK lookup against ProjectCustomFieldOption.name (an exact match, see
+    # import_historical_project_data._write_field_values) still succeeds.
+    lowered = text.lower()
+    for option in options:
+        if option.lower() == lowered:
+            return option, None
+    return None, f"value {text!r} does not match any of this field's seeded options {options!r}"
 
 
 def coerce_cell(field_type, raw, number_format=None, options=None, is_percent=False):
