@@ -7,11 +7,10 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { MessageSquare, MoreVertical } from "lucide-react";
+import { ChatOutline, CloseOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
@@ -89,7 +88,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
         )}
 
         <span className="absolute -right-1 -bottom-0.5 rounded-tl-sm bg-layer-1 px-0.5 py-px">
-          <MessageSquare className="size-3 text-secondary" aria-hidden="true" strokeWidth={2} />
+          <ChatOutline className="size-3 text-secondary" aria-hidden="true" strokeWidth={2} />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -140,14 +139,14 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                 disabled={isSubmitting}
                 className="group shadow-md rounded-sm border border-success-strong bg-success-primary p-2 duration-300 hover:bg-success-primary"
               >
-                <CheckIcon className="h-3 w-3 text-on-color" strokeWidth={2} />
+                <TickOutline className="h-3 w-3 text-on-color" strokeWidth={2} />
               </button>
               <button
                 type="button"
                 className="group shadow-md rounded-sm border border-danger-strong bg-danger-primary p-2 duration-300 hover:bg-danger-primary-hover"
                 onClick={() => setIsEditing(false)}
               >
-                <CloseIcon className="h-3 w-3 text-on-color" strokeWidth={2} />
+                <CloseOutline className="h-3 w-3 text-on-color" strokeWidth={2} />
               </button>
             </div>
           </form>
@@ -174,7 +173,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             onClick={() => {}}
             className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-tertiary outline-none hover:bg-layer-transparent-hover"
           >
-            <MoreVertical className="size-4" strokeWidth={2} />
+            <MoreVerticalOutline className="size-4" strokeWidth={2} />
           </Menu.Button>
 
           <Transition

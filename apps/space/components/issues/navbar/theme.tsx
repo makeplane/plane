@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { AppearanceOutline, MoonOutline } from "@makeplane/propel/icons";
 
 export const NavbarTheme = observer(function NavbarTheme() {
   // states
@@ -30,7 +30,11 @@ export const NavbarTheme = observer(function NavbarTheme() {
       onClick={handleTheme}
       className="relative grid size-7 place-items-center rounded-sm bg-layer-transparent text-primary hover:bg-layer-transparent-hover"
     >
-      {appTheme === "light" ? <Moon className="size-3.5 shrink-0" /> : <Sun className="size-3.5 shrink-0" />}
+      {appTheme === "light" ? (
+        <MoonOutline className="size-3.5 shrink-0" />
+      ) : (
+        <AppearanceOutline className="size-3.5 shrink-0" />
+      )}
     </button>
   );
 });

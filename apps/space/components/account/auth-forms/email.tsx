@@ -8,7 +8,7 @@ import type { FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { CircleAlert, XCircle } from "lucide-react";
+import { CloseCircleOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 // types
 import { Button } from "@plane/propel/button";
 import type { IEmailCheckData } from "@plane/types";
@@ -89,13 +89,13 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-10 w-11 stroke-placeholder px-3 text-11 hover:cursor-pointer" />
+              <CloseCircleOutline className="h-10 w-11 px-3 text-11 text-placeholder hover:cursor-pointer" />
             </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
           <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
-            <CircleAlert height={12} width={12} />
+            <WarningCircleOutline height={12} width={12} />
             {emailError.email}
           </p>
         )}

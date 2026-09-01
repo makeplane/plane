@@ -5,8 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Paperclip } from "lucide-react";
-import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
+import { AttachOutline, LinkOutline, ViewsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -147,7 +146,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               }
             )}
           >
-            <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <ViewsOutline className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
@@ -161,7 +160,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <AttachOutline className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.attachment_count}</div>
           </div>
         </Tooltip>
@@ -175,7 +174,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkOutline className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.link_count}</div>
           </div>
         </Tooltip>
