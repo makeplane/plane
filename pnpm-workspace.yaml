@@ -173,7 +173,7 @@ catalog:
   "tiptap-markdown": "^0.8.10"
   "tsdown": "0.16.0"
   "tsx": "4.20.6"
-  "turbo": "2.9.18"
+  "turbo": "2.10.11"
   "typescript": "5.8.3"
   "unified": "^11.0.5"
   "use-font-face-observer": "^1.3.0"
@@ -246,6 +246,7 @@ overrides:
   "router>path-to-regexp": "^8.4.2"
   defu: 6.1.5
   postcss: 8.5.25
+  "postcss-selector-parser@>=7.1.0 <7.1.3": "7.1.3"
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
