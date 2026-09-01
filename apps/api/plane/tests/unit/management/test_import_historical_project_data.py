@@ -22,23 +22,50 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 
 from plane.db.default_data.project_custom_fields import DEFAULT_PROJECT_CUSTOM_FIELDS
-from plane.db.models import Project, ProjectCustomFieldValue
+from plane.db.models import Contract, ContractProject, Project, ProjectCustomFieldValue
 from plane.tests.factories import ProjectFactory, UserFactory, WorkspaceFactory, WorkspaceMemberFactory
 
 FIELD_NAMES = [spec["name"] for spec in DEFAULT_PROJECT_CUSTOM_FIELDS]
-# What actually goes in the worksheet's header row: source_header when a field's
-# display name differs from the source spreadsheet's literal column text (see
-# DEFAULT_PROJECT_CUSTOM_FIELDS's module docstring), name otherwise. Mirrors the
-# real project_summary.xlsx exactly -- validate_headers() checks against this, not
-# against FIELD_NAMES.
-HEADER_TEXTS = [spec.get("source_header", spec["name"]) for spec in DEFAULT_PROJECT_CUSTOM_FIELDS]
 
+# The full A-W column layout the real source spreadsheet (项目汇总表.xlsx) uses.
+# Phase A retired column A ("合同号&项目号" composite) as data, but the layout
+# still has 23 columns: 1 retired + 17 project-side fields (DEFAULT_PROJECT_CUSTOM_FIELDS,
+# none of which is at column A anymore) + 5 contract-side columns routed into
+# Contract / ContractProject. Defining them as an explicit A-W layout (rather
+# than zipping DEFAULT_PROJECT_CUSTOM_FIELDS with positions) is the only way to
+# keep the worksheet's header row matching the real source file after Phase A's
+# schema shuffle.
+XLSX_HEADERS = [
+    "合同号&项目号",          # col 1 - retired composite, ignored at parse time
+    "区域",                    # col 2
+    "省份",                    # col 3
+    "行业",                    # col 4
+    "分支",                    # col 5
+    "合同号",                  # col 6  -> Contract.contract_no
+    "签约登记日期",             # col 7  -> Contract.sign_date
+    "合同净额/不含第三方（人民币万元）",  # col 8  -> Contract.total_amount
+    "税率",                   # col 9  -> Contract.tax_rate (source_header differs from display name)
+    "合同占比",                # col 10 -> ContractProject.allocation_ratio (source_header differs)
+    "客户项目名称",             # col 11
+    "项目序号",                # col 12 (is_unique_key=True post-Phase A)
+    "公司项目名称",             # col 13
+    "项目类别",                # col 14
+    "客户域",                  # col 15
+    "业务域",                  # col 16
+    "生产方式类别",             # col 17
+    "公司产品名称",             # col 18
+    "核心产品线",              # col 19
+    "生产状态",                # col 20
+    "验收阶段",                # col 21
+    "成本投入状态",             # col 22
+    "能否验收状态",             # col 23
+]
 
-# Column positions (1-based) of the two percent fields, whose cells must carry an
-# actual "%" number_format in the workbook -- Excel stores a percent-formatted cell
-# as the underlying fraction (13% -> 0.13), and coerce_number() only multiplies back
-# up to 13 when the cell's format says so. _row() below supplies that fraction.
-_PERCENT_COLUMNS = {FIELD_NAMES.index("税率（%）") + 1, FIELD_NAMES.index("合同占比（%）") + 1}
+# Column positions (1-based) of the two percent-formatted cells in the workbook --
+# Excel stores a percent-formatted cell as the underlying fraction (13% -> 0.13),
+# and coerce_number() only multiplies back up to 13 when the cell's format says
+# so. _row() below supplies that fraction.
+_PERCENT_COLUMNS = {9, 10}  # 税率 (Contract.tax_rate) and 合同占比 (ContractProject.allocation_ratio)
 
 
 def _build_workbook(path, rows):
@@ -48,7 +75,7 @@ def _build_workbook(path, rows):
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
     worksheet.title = "Sheet1"
-    for col_index, header_text in enumerate(HEADER_TEXTS, start=1):
+    for col_index, header_text in enumerate(XLSX_HEADERS, start=1):
         worksheet.cell(row=4, column=col_index, value=header_text)
     for row_offset, row_values in enumerate(rows):
         for col_index, value in enumerate(row_values, start=1):
@@ -60,33 +87,38 @@ def _build_workbook(path, rows):
 
 
 def _row(unique_key, customer_name="客户项目名称示例", **overrides):
+    """Build one source-spreadsheet row in A-W column order. ``unique_key`` goes
+    in column L (项目序号), the new is_unique_key column post-Phase A -- column
+    A (the retired "合同号&项目号") is filled with the same value just so legacy
+    spreadsheet readers don't show a blank, but the import command now ignores it.
+    """
     values = {
-        "合同号&项目号": unique_key,
-        "区域": "华东",
-        "省份": "江苏",
-        "行业": "金融",
-        "分支": "分支A",
-        "合同号": "HD0001",
-        "签约登记日期": "2024-03-15",
-        "合同净额/不含第三方（人民币万元）": 128.5,
-        "税率（%）": 0.13,
-        "合同占比（%）": 0.5,
-        "客户项目名称": customer_name,
-        "项目序号": "SEQ001",
-        "公司项目名称": "内部项目名A",
-        "项目类别": "A",
-        "客户域": "支撑",
-        "业务域": "政企支撑域",
-        "生产方式类别": "Z",
-        "公司产品名称": "账务处理中心",
-        "核心产品线": "核心产品线X",
-        "生产状态": "P3",
-        "验收阶段": "签约",
-        "成本投入状态": "执行（正在投入成本）",
-        "能否验收状态": "已知项目（可验收，已签约已交接）",
+        "合同号&项目号": unique_key,            # col 1, ignored by import
+        "区域": "华东",                         # col 2
+        "省份": "江苏",                         # col 3
+        "行业": "金融",                         # col 4
+        "分支": "分支A",                       # col 5
+        "合同号": "HD0001",                    # col 6 -> Contract.contract_no
+        "签约登记日期": "2024-03-15",           # col 7 -> Contract.sign_date
+        "合同净额/不含第三方（人民币万元）": 128.5,  # col 8 -> Contract.total_amount
+        "税率": 0.13,                          # col 9 -> Contract.tax_rate (is_percent)
+        "合同占比": 0.5,                       # col 10 -> ContractProject.allocation_ratio (is_percent)
+        "客户项目名称": customer_name,          # col 11
+        "项目序号": unique_key,                # col 12 (is_unique_key=True) -- use same key for easy cross-ref
+        "公司项目名称": "内部项目名A",          # col 13
+        "项目类别": "A",                       # col 14 (dropdown)
+        "客户域": "支撑",                      # col 15 (dropdown)
+        "业务域": "政企支撑域",                 # col 16 (dropdown)
+        "生产方式类别": "Z",                   # col 17 (dropdown)
+        "公司产品名称": "账务处理中心",         # col 18 (dropdown)
+        "核心产品线": "核心产品线X",           # col 19
+        "生产状态": "P3",                      # col 20 (dropdown)
+        "验收阶段": "签约",                    # col 21 (dropdown)
+        "成本投入状态": "执行（正在投入成本）",  # col 22 (dropdown)
+        "能否验收状态": "已知项目（可验收，已签约已交接）",  # col 23 (dropdown)
     }
     values.update(overrides)
-    return [values[name] for name in FIELD_NAMES]
+    return [values[header] for header in XLSX_HEADERS]
 
 
 @pytest.fixture
@@ -124,12 +156,19 @@ class TestImportHistoricalProjectData:
         unique_value = ProjectCustomFieldValue.objects.get(
             project=project, custom_field__is_unique_key=True
         )
+        # Phase A: the is_unique_key flag now points at "项目序号" (column L),
+        # not the retired "合同号&项目号" composite.
         assert unique_value.value_text == "HD2024-001&PRJ2024-001"
+        assert unique_value.custom_field.name == "项目序号"
 
-        percent_field_value = ProjectCustomFieldValue.objects.get(
-            project=project, custom_field__name="税率（%）"
-        )
-        assert percent_field_value.value_decimal == Decimal("13")
+        # The percent "税率" cell used to land on ProjectCustomFieldValue; Phase
+        # A moved it onto Contract.tax_rate, so assert that path instead.
+        contract = Contract.objects.get(workspace=workspace, contract_no="HD0001")
+        assert contract.tax_rate == Decimal("13.0000")
+        assert contract.total_amount == Decimal("128.5")
+        # The 合同占比 percent cell is per-relationship, not per-contract.
+        link = ContractProject.objects.get(contract=contract, project=project)
+        assert link.allocation_ratio == Decimal("50.0000")
 
         dropdown_value = ProjectCustomFieldValue.objects.get(project=project, custom_field__name="项目类别")
         assert dropdown_value.value_option.name == "A"
@@ -278,7 +317,10 @@ class TestImportHistoricalProjectData:
     def test_missing_unique_key_row_is_skipped_not_fatal(self, workspace_and_member, tmp_path):
         workspace, user = workspace_and_member
         bad_row = _row("HD2024-001&PRJ2024-001")
-        bad_row[0] = None  # blank out 合同号&项目号
+        # Phase A: blank out column L (项目序号, the new is_unique_key column)
+        # rather than column A (the retired 合同号&项目号) which the import
+        # command now ignores.
+        bad_row[11] = None
         good_row = _row("HD2024-002&PRJ2024-002")
         xlsx_path = _build_workbook(tmp_path / "source.xlsx", [bad_row, good_row])
 

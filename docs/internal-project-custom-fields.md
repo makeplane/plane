@@ -1,10 +1,13 @@
 # 项目自定义字段(Internal) — 进度与路线图
 
-> 内部功能,不属于 upstream makeplane/plane。目标:用 Plane CE 自建的项目级自定义字段,替代一份手工维护的合同/交付跟踪 Excel 表(`project_summary.xlsx`,469 列 × 206 行,A-W 是核心的 23 列)。
+> 内部功能,不属于 upstream makeplane/plane。目标:用 Plane CE 自建的项目级自定义字段,替代一份手工维护的合同/交付跟踪 Excel 表(`项目汇总表.xlsx`,469 列 × 206 行,A-W 是核心的 23 列,Phase A 后字段重新划分为 17 个 ProjectCustomField + 5 个 Contract/ContractProject 原生列)。
 >
 > 这份文档是给"换 Agent 也能接着干"用的进度快照,不是设计文档。设计决策的完整推理过程在各 PR 的 commit message 里,这里只记结论 + 指向哪个文件。
 >
-> **重大架构变更进行中**:真实历史数据暴露出合同与项目其实是多对多关系,不是当前"合同号&项目号"拼成一个字段能表达的。已经写好完整实施方案,见 [internal-contract-project-relationship.md](internal-contract-project-relationship.md)——方案已设计完成、**尚未开始实施**,会影响下面列出的 23 个字段里的 6 个(A/F/G/H/I/J)。开始实施前先读那份文档,不要直接按下面这份文档里的字段清单继续加工。
+> **重大架构变更完成(2026-09-01)**:真实历史数据暴露出合同与项目其实是多对多关系。完整实施方案见 [internal-contract-project-relationship.md](internal-contract-project-relationship.md)——已设计完成、**Phase A 已开工(同分支 `claude/repo-code-summary-22f444`,未合并)**。原 23 字段被重新划分为:
+> - **17 个 ProjectCustomField**(`DEFAULT_PROJECT_CUSTOM_FIELDS` 列表):区域/省份/行业/分支/客户项目名称/**项目序号**(新唯一键,从原"合同号&项目号"拆分而来)/公司项目名称/项目类别/客户域/业务域/生产方式类别/公司产品名称/核心产品线/生产状态/验收阶段/成本投入状态/能否验收状态
+> - **5 个搬去 Contract / ContractProject 原生列**(不再作为 ProjectCustomField):合同号(F)→ `Contract.contract_no`、签约登记日期(G)→ `Contract.sign_date`、合同净额(H)→ `Contract.total_amount`、税率(I)→ `Contract.tax_rate`、合同占比(J)→ `ContractProject.allocation_ratio`
+> - **1 个整体删除**:原 A 列"合同号&项目号"(2026-09-01 业务规则:由系统按 `Contract.contract_no + Project.project_number` 自动拼接,后续表格不再携带)
 
 ## 现状(2026-09-01)
 
@@ -15,7 +18,7 @@
 | #1 | Phase 1:项目级数字自定义字段(MVP) | 已合并 |
 | #2 | Phase 2:扩展文本/日期/下拉/人员选择器类型 | 已合并 |
 | #3 | 按固定模板 + 员工邮箱发送项目自定义字段数据 | 已合并 |
-| #4 | 23 个标准字段自动铺种 + "合同号&项目号"设为工作区级唯一键 + 新增"项目信息"页面 | 已合并 |
+| #4 | 17 个 ProjectCustomField 自动铺种(原 23 个里 1 个删除 + 5 个搬到 Contract) + "项目序号"设为工作区级唯一键 + 新增"项目信息"页面 | 已合并 |
 | #5 | Phase 3:历史数据批量导入命令(`import_historical_project_data`) | 已合并 |
 | #6 | 根据真实数据 dry-run 结果,扩充"公司产品名称"/"验收阶段"下拉选项 | 已合并 |
 | #7 | 根据真实数据 dry-run 结果,新增"云网域"选项;下拉匹配改成大小写不敏感 | 已合并 |
@@ -23,10 +26,11 @@
 ## 数据模型
 
 - `apps/api/plane/db/models/project_custom_field.py` — `ProjectCustomField`(字段定义,`field_type` ∈ number/text/date/dropdown/member,`group_name` 用于"项目信息"页分组,`is_unique_key` 标记全工作区唯一的那一个字段)、`ProjectCustomFieldOption`(下拉选项)、`ProjectCustomFieldValue`(值,`value_decimal`/`value_text`/`value_date`/`value_option`/`value_member` 五选一,有 CheckConstraint 保证互斥)。
-- `apps/api/plane/db/default_data/project_custom_fields.py` — **唯一数据源**,`DEFAULT_PROJECT_CUSTOM_FIELDS`(23 个字段定义,对应 Excel A-W 列)+ `seed_default_custom_fields()`(给一个 Project 铺种这 23 个字段,按名字去重,可重复调用)。三处调用方:
+- `apps/api/plane/db/default_data/project_custom_fields.py` — **唯一数据源**,`DEFAULT_PROJECT_CUSTOM_FIELDS`(Phase A 后从 23 个变成 **17 个**字段,见顶部重大架构变更说明)+ `seed_default_custom_fields()`(给一个 Project 铺种这 17 个字段,按名字去重,可重复调用;**Phase A 后这函数只处理 Project 侧字段,Contract 侧字段由 `import_historical_project_data` 单独入库**)。三处调用方:
   1. `apps/api/plane/app/views/project/base.py` 的 `ProjectViewSet.create()` — 新建项目时自动铺种
   2. `apps/api/plane/db/management/commands/seed_default_project_custom_fields.py` — 给已存在的老项目补种(**还没在任何真实数据库上跑过**,见下面"未完成事项")
-  3. `apps/api/plane/db/management/commands/import_historical_project_data.py` — 历史数据导入时,新建的每个 Project 也走同一个铺种函数
+  3. `apps/api/plane/db/management/commands/import_historical_project_data.py` — 历史数据导入时,新建的每个 Project 也走同一个铺种函数;同时读 xlsx 的合同相关列(F/G/H/I/J)写 Contract + ContractProject
+- `apps/api/plane/db/models/contract.py` — **Phase A 新增**。`Contract`(workspace 级合同主数据,字段:contract_no/sign_date/total_amount/tax_rate 等)和 `ContractProject`(Contract <-> Project 多对多关联,字段:allocation_ratio)。`is_unique_key` 不再是问题:Contract 用 DB `UniqueConstraint(workspace, contract_no)` 在 DB 层兜底,无需 advisory lock。
 
 ### 字段规格里两个容易忽略的 key
 
@@ -35,13 +39,17 @@
 
 ## 三个不平凡的技术决策(后续维护者容易踩的坑)
 
-1. **唯一键匹配用 `is_unique_key` 这个只读 flag,不用字段名字。** 每个项目自己有一份"合同号&项目号"字段(23 个字段本来就是按项目各自铺种的),按名字匹配唯一性检查只会拿项目跟自己比。按 flag 匹配是因为全工作区最多只有一个字段能标 `is_unique_key=True`(只读,只有种子数据能设),这个 flag 本身就唯一确定了"是哪个字段",且不会因为有人把字段改名而失效(名字字段是可编辑的)。见 `apps/api/plane/app/serializers/project_custom_field.py` 的 `ProjectCustomFieldValueSerializer.validate()`。
+1. **唯一键匹配用 `is_unique_key` 这个只读 flag,不用字段名字。** 每个项目自己有一份"项目序号"字段(17 个 ProjectCustomField 之一,Phase A 后是新唯一键),按名字匹配唯一性检查只会拿项目跟自己比。按 flag 匹配是因为全工作区最多只有一个字段能标 `is_unique_key=True`(只读,只有种子数据能设),这个 flag 本身就唯一确定了"是哪个字段",且不会因为有人把字段改名而失效(名字字段是可编辑的)。见 `apps/api/plane/app/serializers/project_custom_field.py` 的 `ProjectCustomFieldValueSerializer.validate()`。
+   - **Phase A 兼容警告**:已合并到生产环境的旧版本(`合同号&项目号`带 `is_unique_key=True`)已经 seed 给所有 Project。Phase A 把这个 flag 挪到"项目序号",但 `seed_default_custom_fields` 只 seed 不改旧字段,所以**老 Project 会暂时有两个 `is_unique_key=True` 的字段**。需要单独跑一个 data migration 把旧字段的 flag 改回 `False`(详见方案文档 Phase A "兼容性"小节)。
 2. **唯一性用 Postgres advisory lock 兜底,不是 DB UniqueConstraint。** 因为这个值存在"每个项目一行"的表结构里,不是一张全局共享表,DB 层面表达不出"跨项目行唯一"这个约束。应用层先查后写有 TOCTOU 窗口,两处都用 `pg_advisory_xact_lock(hashtext("workspace_id:value"))` 序列化:实时 API 见 `apps/api/plane/app/views/project_custom_field.py` 的 `partial_update()`;批量导入见 `import_historical_project_data.py`,且导入命令特意把每一行拆成独立事务(不是整个 run 一个大事务),因为 advisory lock 要到事务真正 commit 才释放,一个大事务会把锁攥一整个导入过程,可能卡住同时在用网页编辑同一个值的人。
 3. **导入脚本对"脏数据"的原则是不猜、留空 + 报警告,不是尽量让警告数字变小。** 多个真实业务值挤在一个单选下拉格子里(比如"初验终验"这种多阶段合写)时,没有写"取第一个/取最后一个"这类启发式规则去自动分类——`验收阶段`是有先后顺序的字段,猜错方向(比如取"第一个提到的阶段")反而会往库里写入一个大概率错误的具体值,比留空更糟。这个原则在会话里被至少一个"本地模型"的建议挑战过,最终维持原判,见 PR #7 的 commit message。
 
 ## 已验证但还没跑过的东西(未完成事项)
 
-- **`seed_default_project_custom_fields` 从没在真实数据库上执行过。** 新建的项目会自动带 23 个字段,但功能上线之前就存在的老项目还没补种。什么时候跑、跑给哪个 workspace,还没问过 owner。
+- **`seed_default_project_custom_fields` 从没在真实数据库上执行过。** 新建的项目会自动带 17 个 ProjectCustomField,但功能上线之前就存在的老项目还没补种。什么时候跑、跑给哪个 workspace,还没问过 owner。
+- **`Contract` / `ContractProject` 表的 data migration** 未生成(需要在 docker 环境跑 `python manage.py makemigrations`)。Phase A 完成后需要:
+  1. 跑 `makemigrations` 生成新表 schema
+  2. 跑一个独立 data migration:把老 Project 上"合同号&项目号"字段的 `is_unique_key=True` 重置为 `False`(否则新字段"项目序号"的唯一性 + 老字段的"合同号&项目号"唯一性并存,违反单字段唯一键不变量,见上面"三个不平凡的技术决策"第 1 条)
 - **`import_historical_project_data` 还没对着"完整的真实历史数据"跑过正式导入(非 dry-run)。** 目前只在 owner 自己的 WSL2 + Docker Desktop 环境里做过多轮 `--dry-run` 迭代(警告数 113 → 59 → 6),最后 6 条警告是故意留着的多值合写脏数据,owner 确认"可以先不用管"。真正的历史数据合并/正式导入还没做。
 - **员工邮件模板还是占位符。** `apps/api/templates/emails/project_data/custom_field_data.html` 是 PR #3 里的 placeholder,owner 自己说了"这个后期再导入模板",目前没有真实的 HTML 设计。
 

@@ -1,8 +1,10 @@
 # 合同-项目多对多关系重构 — 实施方案
 
-> 状态:**方案设计完成,尚未实施**。这是一份可以分阶段执行的落地方案,不是已完成工作的记录(那份是 [docs/internal-project-custom-fields.md](internal-project-custom-fields.md))。
+> 状态:**方案设计完成,Phase A 已开工(2026-09-01)**。
 >
 > 触发原因:真实历史数据里存在合同与项目的真实多对多关系(同一项目对应多个合同号,或同一合同覆盖多个项目),当前"合同号&项目号"拼串成一个字段的模型无法表达这种关系,导入时报错或被迫舍弃了受影响的行。
+>
+> **业务规则固化(2026-09-01 决策)**:合同号与项目号的拼接字段(`合同号&项目号`,原 Excel A 列)**不应作为数据字段存在**。强制约定:`{合同号}` 在前、`{项目号}` 在后直接拼接(无分隔符),由系统自动生成;**后续导入模板不再携带这个字段**,只携带 F(合同号)+ L(项目序号)两个数据源字段。这条规则消除了原"未决问题 1",同时把"未决问题 2"答案直接定下来。详见 [业务规则固化](#业务规则固化-2026-09-01) 小节。
 
 ## 一句话结论
 
@@ -105,13 +107,19 @@ class Meta:
 
 | 列 | 字段名 | 现状 | 改动后归属 |
 |---|---|---|---|
-| A | 合同号&项目号 | `is_unique_key=True` 的 Project 自定义字段 | **拆分**,见下节"唯一键怎么办" |
-| F | 合同号 | 普通文本 Project 自定义字段 | 直接搬到 `Contract.contract_no`(数据已经是干净的合同号,不用从 A 解析) |
+| A | 合同号&项目号 | `is_unique_key=True` 的 Project 自定义字段 | **整体删除**(见"业务规则固化"小节)——不再作为数据字段,后续模板不再携带 |
+| F | 合同号 | 普通文本 Project 自定义字段 | 直接搬到 `Contract.contract_no`(数据源,不是从 A 解析) |
+| L | 项目序号 | 普通文本 Project 自定义字段 | **替代原 A 列成为 Project 业务唯一键**——见"唯一键怎么办" |
 | G | 签约登记日期 | 日期 Project 自定义字段 | 搬到 `Contract.sign_date` |
 | H | 合同净额/不含第三方（人民币万元） | 数字 Project 自定义字段 | 搬到 `Contract.total_amount`——提案第八节举的就是这个例子:一份合同的总金额不该重复存在每个关联项目上 |
 | I | 税率（%） | 数字(is_percent) Project 自定义字段 | 搬到 `Contract`(新增字段,不在上面的最小 schema 里,先按 Contract 的普通 DecimalField 加) |
 | J | 合同占比（%） | 数字(is_percent) Project 自定义字段 | 搬到 `ContractProject.allocation_ratio`——这是提案里"某合同在某项目上的分摊比例"的原型字段,现在有地方放了 |
-| B/C/D/E/K/L/M/N/O/P/Q/R/S/T/U/V/W(其余 17 个) | 区域/省份/行业/分支/客户项目名称/项目序号/公司项目名称/项目类别/客户域/业务域/生产方式类别/公司产品名称/核心产品线/生产状态/验收阶段/成本投入状态/能否验收状态 | Project 自定义字段 | **不动**,继续是 `ProjectCustomFieldValue`,理由是这些字段描述的是"项目本身"的状态,不因为项目挂了几份合同而改变 |
+| B/C/D/E/K/L/M/N/O/P/Q/R/S/T/U/V/W(其余 17 个,含 L) | 区域/省份/行业/分支/客户项目名称/项目序号(L,新唯一键)/公司项目名称/项目类别/客户域/业务域/生产方式类别/公司产品名称/核心产品线/生产状态/验收阶段/成本投入状态/能否验收状态 | Project 自定义字段 | **不动**,继续是 `ProjectCustomFieldValue`,理由是这些字段描述的是"项目本身"的状态,不因为项目挂了几份合同而改变。其中 L 现在带 `is_unique_key=True`(从原 A 字段搬过来的)。 |
+
+**改动后总字段数**: `DEFAULT_PROJECT_CUSTOM_FIELDS` 从 23 个变成 **17 个**——减 1 个 A 字段(整体删除)、减 5 个 F/G/H/I/J(搬到 Contract/ContractProject 原生列)、L 仍在 ProjectCustomFieldValue 里(只是把 `is_unique_key=True` 从 A 挪到 L)。这 17 个里 L 仍是 ProjectCustomFieldValue 的一员,不需要额外加。
+- 17 个仍是 ProjectCustomFieldValue(B/C/D/E/K/L/M/N/O/P/Q/R/S/T/U/V/W,含 L)
+- F/G/H/I/J 5 个搬到 Contract/ContractProject 原生列
+- A 字段整体删除(不在任何模型里)
 
 Contract 用原生 Django 字段而不是复用 `ProjectCustomField` 引擎:Contract 的字段集合是固定的、提案里明确列出的,不是用户在 UI 里自由添加的,不需要一套通用字段引擎的灵活性,原生列更简单、能享受真正的 DB 类型约束。
 
@@ -122,18 +130,57 @@ Contract 用原生 Django 字段而不是复用 `ProjectCustomField` 引擎:Cont
 改动后:唯一性检查应该分成两层,不再是一个字段扛两件事——
 
 1. **`Contract.contract_no`**:工作区内唯一,靠上面 `Contract` 模型的 `UniqueConstraint(workspace, contract_no)` 在 DB 层面直接保证,不需要像现在这样用 Postgres advisory lock 兜底应用层查重(这是这次重构一个实打实的简化:旧模型因为"值存在每个项目自己的一行里"没法用 DB 约束,新模型里 Contract 是真正的一张共享表,可以直接用 UniqueConstraint)。
-2. **项目自己的业务唯一号**:原始表格里没有单独的"项目号"列,只有拼串后的 A 列。这里有一个**没有解决、需要实际数据核实之后才能定的问题**——见下面"未决问题"。
+2. **L 列"项目序号"** 替代 A 列成为 Project 的业务唯一键。`is_unique_key=True` 的 flag 从 A 字段挪到 L 字段("项目序号")。L 列在原始数据里已经是干净的"项目号"字段(全部形如 `W19011`、`W20343`),不需要从 A 列推导。
 
-## 未决问题(需要看真实数据样本才能定,不能瞎猜)
+**"项目序号"作为 ProjectCustomField 还是搬成原生字段?**有两个方案,倾向方案 a:
+- **(a) 保持 ProjectCustomField(改 is_unique_key 指向它)**:跟 A 列改造前一致,继续走 `ProjectCustomFieldValue` 引擎,只是把"全工作区唯一性"的责任从 A 列挪过来。改动最小,跟进度文档里"三个不平凡的技术决策"第 1 条("唯一键匹配用 `is_unique_key` 这个只读 flag")直接兼容。
+- **(b) 搬到 Plane 原生 `Project` 的 `identifier` 字段**:更彻底,但要修改 Plane 上游的 identifier 长度限制和字符集规则,会跟其他已有项目的 identifier 命名冲突,跨多个项目的历史项目没法直接套用。
 
-1. **"合同号&项目号"里,项目号那部分的拼接规则是什么?**
-   已知 F 列(合同号)是干净值,A 列的说明是"合同号&项目号拼串作为唯一标识"。需要实际打开真实数据样本,确认:A 列的值是不是真的等于"F 列值 + 某个分隔符 + 项目号"这种可以程序化拆开的格式,还是人工录入、格式不统一。如果格式不统一,就不能用字符串处理自动拆出"项目号",需要引入一个新的、人工维护的"项目号"列。
-   **负责人**:等实际做 Phase A 时,先跑一个只读的数据探查脚本样本 50-100 行 A/F 列的真实值,人工核对格式一致性,再决定要不要自动化拆分。
+**Phase A 采用方案 (a)**:L 列留在 `ProjectCustomField`,只改 `is_unique_key` flag 指向它。
 
-2. **`Project`(Plane 原生)的新业务唯一键设成什么?**
-   取决于问题 1 的结论。如果能从 A 列拆出干净的"项目号",就新增一个"项目号"自定义字段并把 `is_unique_key` 挪过去;如果拆不出来,退而求其次:项目层面的唯一性可能需要放宽(允许项目号缺失/重复,靠 Plane Project 自己的 `id`/`identifier` 兜底),这个决定会影响历史导入命令的行数据匹配逻辑(见下面 Phase A 的"复用已有 Project"部分)。
+## 未决问题
 
-这两个问题不解决,Phase A 没法真正开工,所以列在最前面,不是次要细节。
+**全部已消除(2026-09-01)**,理由见下一小节"业务规则固化"。
+
+原"未决问题 1"(A 列拼接规则)和"未决问题 2"(Project 业务唯一键)都因为"`A 列字段整体删除,由系统自动拼接`"这条业务规则而失去意义——不再需要拆 A 列,Project 唯一键也直接用 L 列。项目可以直接进入 Phase A 实施。
+
+## 业务规则固化 (2026-09-01)
+
+### 决策原文
+
+> 强制"合同号在前,项目号在后",并且这个字段后续表格中不会携带,应该由系统自动拼接而成。
+
+### 决策含义
+
+1. **`{合同号在前}{项目号在后}` 无分隔符拼接** 是**唯一合法格式**,由系统按 `Contract.contract_no + Project.project_number` 在运行时拼接,不允许任何变体(`&` 分隔、反向拼接、人工拼写等)。
+2. **后续导入模板不再携带这个字段**——只携带 F(合同号)和 L(项目序号)两个数据源字段,系统内部用这两个字段生成拼接结果。
+3. **A 列不再作为数据字段存在**:既不在 `DEFAULT_PROJECT_CUSTOM_FIELDS` 里,也不在 `ProjectCustomFieldValue` 里,UI 上也不再展示原始 A 列。
+
+### 解决了哪些问题
+
+| 原"未决问题" | 答案 |
+|---|---|
+| A 列拼接规则是否一致(原未决问题 1) | **不存在了**。系统拼接是确定性的,F+L 拼接无歧义。原始 xlsx 里 A 列的脏数据(78% 一致率、占位符、`&` 反向拼接、datetime 误解析)全部不再需要处理——脏数据在 F/L 列上做清洗即可,A 列不再读。 |
+| Project 业务唯一键(原未决问题 2) | **L 列"项目序号"** 直接做 `is_unique_key`,跟进度文档"三个不平凡的技术决策"第 1 条兼容。 |
+
+### 简化了什么
+
+- **方案文档"为什么不是提案里的三张全新表"小节的论证**得到加强:从"A 列不可信"升级为"A 列从来不该是数据字段, 它只是 F+L 的派生显示",论据更彻底。
+- **Phase A 不再有前置依赖**:之前 Phase A 标"必须先解未决问题 1 才能开工",现在没有这个问题了,直接进入实施。
+- **`import_historical_project_data` 解析层简化**:不再读 A 列,只读 F+L 两列,A 列无论填什么都不解析(只做行数对账 + 警告提示)。
+- **新导入模板设计**:只携带 18 个 ProjectCustomField 字段(A 列删除,原 23 - A - F/G/H/I/J 共 5 个搬到 Contract/ContractProject + 项目序号也保留为字段 = 18 个)。
+
+### 新增的 3 个硬约束(Phase A 必须遵守)
+
+1. **`import_historical_project_data` 不解析 A 列**——A 列只用作行数对账和导入完整性校验(`len(rows) == sum(A列非空)`),任何 A 列的脏数据都不报错(因为不是数据源)。
+2. **F 列(合同号)datetime 反解析**——原始 xlsx 67% 行的 F 列被 Excel 自动解析成 datetime 对象(`5763-5` → `datetime(5763,5,1)`),导入层必须把 datetime 转回字符串 `"YYYY-M"` 格式,否则合同号全丢。
+3. **L 列(项目序号)作为唯一键**——`is_unique_key` flag 从 A 字段挪到 L 字段,`ProjectCustomFieldValueSerializer.validate()` 的逻辑不变,只换 flag 指向。
+
+### 不影响范围(保持原状)
+
+- 多对多关系成立:148 个唯一合同号中 22 个出现 ≥2 次,方案文档 Phase A "复用已有 Project" 部分的论证不变。
+- 占位符 `暂无` / `待签约` 仍然存在:Phase A 里仍需要决策这两个值是否要进 Contract 表(候选 a/b/c 跟原方案一致)。
+- 13 行 `{项目号}&{合同号}` 反向拼接(原 xlsx Row 161-173):**不视为脏数据**,因为导入层不读 A 列,只读 F+L,只要 F/L 干净就 OK。
 
 ## 分阶段实施(每个阶段独立可合并)
 
@@ -141,13 +188,15 @@ Contract 用原生 Django 字段而不是复用 `ProjectCustomField` 引擎:Cont
 
 - 新建 `apps/api/plane/db/models/contract.py`:`Contract`、`ContractProject` 两个模型,注册进 `apps/api/plane/db/models/__init__.py`(注意:上一轮刚修过一个"定义了但没导出"的 bug,这次新加的类记得同步导出,并且照着当时补的 sibling sweep 脚本习惯,合并前再跑一遍确认)。
 - 迁移文件:新建两张表 + 索引 + 约束。
-- 解决"未决问题"1/2,定下项目层面新唯一键的方案。
-- 更新 `DEFAULT_PROJECT_CUSTOM_FIELDS`(见 [project_custom_fields.py](../apps/api/plane/db/default_data/project_custom_fields.py)):删掉 A(拆分)、F/G/H/I/J(搬去 Contract/ContractProject)这 6 个条目,只保留 17 个真正的 Project 级字段。
+- **不再有"先解未决问题"的前置依赖**(见业务规则固化小节),直接进入实施。
+- 更新 `DEFAULT_PROJECT_CUSTOM_FIELDS`(见 [project_custom_fields.py](../apps/api/plane/db/default_data/project_custom_fields.py)):**删 A 字段**(整体删除,不是拆分),**改 L 字段的 `is_unique_key=True`**(从 A 字段挪过来),**删 F/G/H/I/J**(搬去 Contract/ContractProject)——共 6 个条目变更,最终剩 18 个 ProjectCustomField(原 23 - A - F/G/H/I/J + L 升级)。
 - 新增 Contract/ContractProject 的 DRF 序列化器 + ViewSet,权限对齐现有 `ProjectCustomFieldAccessPermission` 的思路(ADMIN/MEMBER 才能读写,因为合同数据也是财务敏感信息)。
 - 改造 `apps/api/plane/db/management/commands/import_historical_project_data.py`:
-  - 每行的合同相关列(F/G/H/I)不再写入 `ProjectCustomFieldValue`,改成 `Contract.objects.get_or_create(workspace=..., contract_no=...)`。
+  - **不读 A 列**:A 列只做行数对账(检查 `len(data_rows) == sum(A列非空)`),任何 A 列值都不解析。
+  - **每行的合同相关列(F/G/H/I)** 不再写入 `ProjectCustomFieldValue`,改成 `Contract.objects.get_or_create(workspace=..., contract_no=...)`。
+  - **F 列做 datetime 反解析**:如果 F 列值是 `datetime` 类型,转成 `f"{dt.year}-{dt.month}"` 字符串;如果 F 列值是 `int` 类型(如 `5824-8` Excel 解析成整数 `5824-8`),也做对应转换;最终统一成字符串合同号。
   - J 列(合同占比)写入 `ContractProject.allocation_ratio`。
-  - **关键行为变化**:如果同一个项目(按新的项目唯一键匹配)在多行里出现、但合同号不同,不应该再各建一个新 Project——应该识别为"同一个项目、多份合同",复用已有的 Plane Project,只新增一条 `ContractProject` 关联记录。这正是这次重构要解决的真实问题,之前会各建一个 Project 或者报重复错误跳过。
+  - **关键行为变化**:如果同一个项目(按 L 列项目序号匹配)在多行里出现、但合同号不同,不应该再各建一个新 Project——应该识别为"同一个项目、多份合同",复用已有的 Plane Project,只新增一条 `ContractProject` 关联记录。这正是这次重构要解决的真实问题,之前会各建一个 Project 或者报重复错误跳过。
   - 现有的 advisory lock(见 [import_historical_project_data.py](../apps/api/plane/db/management/commands/import_historical_project_data.py))之前是为了保护 A 字段的唯一性检查,改成保护 `Contract.contract_no` 的 `get_or_create`——不过 DB UniqueConstraint 已经兜底了唯一性,lock 更多是为了避免同一次导入内并发创建重复 Contract 行时的竞态,可以简化甚至去掉,视 Phase A 实际实现时的判断。
 - 由于目前"正式导入还没做过"(见 [internal-project-custom-fields.md](internal-project-custom-fields.md) 的"未完成事项"),现网没有需要回填迁移的真实 Contract/ContractProject 数据,Phase A 不需要写数据迁移脚本——这是这次改动时机选得好的地方,越晚做这个重构,历史数据回填的工作量越大。
 

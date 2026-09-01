@@ -16,6 +16,16 @@
 # project_custom_fields.py): {"name": str, "field_type": str, "options": list[str]
 # (dropdown only)}. Passed in rather than imported so this module never needs to
 # know where that list lives.
+#
+# Column lookup: when `header_row` is provided (Phase A: yes; pre-Phase-A tests:
+# optional), parse_row / validate_headers build a {header_text: column_number}
+# map from that row and look each spec up by `source_header` (when set) or `name`,
+# in that order. Otherwise they fall back to the historical "positional" behaviour
+# (field_specs entry N is in column N). This dual mode keeps the pure-function
+# tests for positional parsing honest while letting the import command survive
+# the 2026-09-01 removal of "合同号&项目号" from the field list -- after that
+# change, DEFAULT_PROJECT_CUSTOM_FIELDS no longer lines up positionally with the
+# A-W columns of the source spreadsheet.
 
 # Python imports
 from datetime import date, datetime
@@ -154,25 +164,98 @@ def coerce_cell(field_type, raw, number_format=None, options=None, is_percent=Fa
     return None, f"unsupported field_type {field_type!r}"
 
 
-def parse_row(ws, row_idx, field_specs):
+def _build_header_to_column_map(ws, header_row):
     """
-    Reads columns 1..len(field_specs) (A.. for a 23-entry field_specs, that's A-W)
-    of one worksheet row and coerces each cell per its field_specs entry's
+    Reads every cell in `header_row` and returns {header_text: column_number} for
+    non-empty cells. Used by parse_row / validate_headers when caller passes
+    `header_row`, switching from "positional" to "by-name" column lookup.
+    """
+    header_map = {}
+    for col in range(1, ws.max_column + 1):
+        value = ws.cell(row=header_row, column=col).value
+        if value is None:
+            continue
+        text = str(value).strip()
+        if text and text not in header_map:
+            header_map[text] = col
+    return header_map
+
+
+def _resolve_column(spec, header_map, position):
+    """
+    Returns the column number for `spec`, preferring header-by-name lookup when a
+    header_map is available, falling back to positional `position` (1-based).
+    """
+    if header_map is not None:
+        for key in (spec.get("source_header"), spec["name"]):
+            if key and key in header_map:
+                return header_map[key]
+        return None
+    # Positional fallback -- warn at most once per spec per process, because the
+    # post-Phase-A shape of DEFAULT_PROJECT_CUSTOM_FIELDS no longer mirrors the
+    # source spreadsheet's A-W column order. A silent positional read would pick
+    # up the wrong cell (e.g. "区域" from column 1 instead of "合同号&项目号"
+    # from column 1) and corrupt every imported row. Stderr instead of warnings
+    # module so this shows up regardless of pytest --strict-markers config.
+    import sys
+
+    _resolve_column._warned_specs = getattr(_resolve_column, "_warned_specs", set())
+    if position not in _resolve_column._warned_specs:
+        _resolve_column._warned_specs.add(position)
+        print(
+            f"parse_row/validate_headers called without header_row; falling back to positional "
+            f"column {position} for spec '{spec['name']}'. This is the pre-Phase-A behaviour and "
+            "is only safe when DEFAULT_PROJECT_CUSTOM_FIELDS is in the same A-W order as the "
+            "source spreadsheet (not true after 2026-09-01).",
+            file=sys.stderr,
+        )
+    return position
+
+
+def _column_letter(col):
+    # Used only in error messages; keep the simple chr(64+col) form for col <= 26
+    # to match the pre-Phase-A wording callers / tests already grep for.
+    return chr(64 + col) if 1 <= col <= 26 else f"#{col}"
+
+
+def parse_row(ws, row_idx, field_specs, header_row=None):
+    """
+    Reads one worksheet row and coerces each cell per its field_specs entry's
     field_type. Never queries or writes a database; purely reads the worksheet.
 
+    Column lookup:
+    - If `header_row` is provided, the spec's column is determined by matching
+      spec["source_header"] (when present) or spec["name"] against that row's
+      cell text. Specs whose name is not found in the header row get coerced
+      value=None with a warning, instead of being silently read from a wrong
+      column.
+    - Otherwise, fall back to the pre-Phase-A positional behaviour: spec N is
+      column N (1-based).
+
     Returns (raw_values, coerced, warnings):
-    - raw_values: the untouched cell values, in column order (caller can pass this
-      straight to is_row_blank).
+    - raw_values: the untouched cell values in field_specs order (caller can pass
+      this straight to is_row_blank).
     - coerced: {field_name: typed value or None}.
-    - warnings: human-readable strings for cells that had content but could not be
-      coerced (unparseable number/date, unmatched dropdown option); the field is
-      left as None in coerced rather than aborting the row.
+    - warnings: human-readable strings for cells that had content but could not
+      be coerced (unparseable number/date, unmatched dropdown option) AND for
+      specs whose header-name lookup found no column. Fields are left as None
+      in coerced rather than aborting the row.
     """
+    header_map = _build_header_to_column_map(ws, header_row) if header_row is not None else None
     raw_values = []
     coerced = {}
     warnings = []
-    for col_index, spec in enumerate(field_specs, start=1):
-        cell = ws.cell(row=row_idx, column=col_index)
+    for position, spec in enumerate(field_specs, start=1):
+        column = _resolve_column(spec, header_map, position)
+        if column is None:
+            raw_values.append(None)
+            coerced[spec["name"]] = None
+            warnings.append(
+                f"{spec['name']}: no column found in header row {header_row} "
+                f"matching source_header={spec.get('source_header')!r} or name={spec['name']!r}"
+            )
+            continue
+        cell = ws.cell(row=row_idx, column=column)
         raw_values.append(cell.value)
         value, warning = coerce_cell(
             spec["field_type"],
@@ -190,21 +273,31 @@ def parse_row(ws, row_idx, field_specs):
 def validate_headers(ws, header_row, field_specs):
     """
     Returns a list of mismatch descriptions (empty means the header row lines up
-    exactly, in order, with field_specs). Column letters are derived assuming
-    field_specs has at most 26 entries (chr(64 + position) stays within A-Z).
+    with field_specs).
 
-    Matches against spec["source_header"] when present, spec["name"] otherwise:
-    a field's display name (shown in the Plane UI) can carry a unit hint the
-    source spreadsheet's literal column header doesn't have -- see
-    DEFAULT_PROJECT_CUSTOM_FIELDS's module docstring for why "税率（%）" and
-    "合同占比（%）" need this.
+    Column lookup:
+    - When `field_specs` is positionally aligned with the worksheet (the historical
+      case), this walks columns 1..len(field_specs) left-to-right.
+    - When a field_specs entry's name / source_header is found somewhere else in
+      the header row (i.e. `field_specs` no longer mirrors the source spreadsheet's
+      column order, which is the Phase A case after column A was retired), this
+      walks field_specs in their list order and looks each one up by header name.
+
+    In both modes, mismatch text uses the column letter of the actual header cell
+    that was inspected, not the spec's position in field_specs. Matches against
+    spec["source_header"] when present, spec["name"] otherwise (see
+    DEFAULT_PROJECT_CUSTOM_FIELDS's module docstring for why some display names
+    differ from the literal column header text in the source spreadsheet).
     """
+    header_map = _build_header_to_column_map(ws, header_row)
     mismatches = []
     for position, spec in enumerate(field_specs, start=1):
-        actual = ws.cell(row=header_row, column=position).value
-        actual = (actual or "").strip() if isinstance(actual, str) else actual
         expected = spec.get("source_header", spec["name"])
+        column = header_map.get(expected) or header_map.get(spec["name"]) or position
+        actual = ws.cell(row=header_row, column=column).value
+        actual = (actual or "").strip() if isinstance(actual, str) else actual
         if actual != expected:
-            column_letter = chr(64 + position) if position <= 26 else f"#{position}"
-            mismatches.append(f"column {column_letter}: expected {expected!r}, got {actual!r}")
+            mismatches.append(
+                f"column {_column_letter(column)}: expected {expected!r}, got {actual!r}"
+            )
     return mismatches
