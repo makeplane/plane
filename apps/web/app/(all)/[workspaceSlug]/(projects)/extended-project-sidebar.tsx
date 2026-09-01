@@ -117,6 +117,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               <Tooltip label={t("create_project")}>
                 <button
                   type="button"
+                  aria-label={t("create_project")}
                   className="flex-shrink-0 rounded-sm p-0.5 text-tertiary transition-colors hover:bg-layer-1 hover:text-secondary"
                   onClick={() => {
                     setIsProjectModalOpen(true);

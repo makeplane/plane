@@ -13,6 +13,18 @@ type Props = {
   syncStatus: "syncing" | "synced" | "error";
 };
 
+const BADGE_CONTENT = {
+  syncing: {
+    label: "Syncing...",
+    tooltipLabel: "Syncing... Your changes are being synced with the server. You can continue making changes.",
+  },
+  error: {
+    label: "Connection lost",
+    tooltipLabel:
+      "Connection lost. We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
+  },
+};
+
 export function PageSyncingBadge({ syncStatus }: Props) {
   const [prevSyncStatus, setPrevSyncStatus] = useState<"syncing" | "synced" | "error" | null>(null);
   const [isVisible, setIsVisible] = useState(syncStatus !== "synced");
@@ -34,20 +46,8 @@ export function PageSyncingBadge({ syncStatus }: Props) {
 
   if (!isVisible || syncStatus === "synced") return null;
 
-  const badgeContent = {
-    syncing: {
-      label: "Syncing...",
-      tooltipLabel: "Syncing... Your changes are being synced with the server. You can continue making changes.",
-    },
-    error: {
-      label: "Connection lost",
-      tooltipLabel:
-        "Connection lost. We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
-    },
-  };
-
-  // This way we guarantee badgeContent is defined
-  const content = badgeContent[syncStatus];
+  // The synced early-return above guarantees this key exists
+  const content = BADGE_CONTENT[syncStatus];
 
   return (
     <Tooltip label={content.tooltipLabel} layout="stacked">

@@ -79,6 +79,11 @@ type LabelSummaryProps = {
 
 function LabelSummary({ isMobile, fullWidth, noLabelBorder, disabled, projectLabels, value }: LabelSummaryProps) {
   const { t } = useTranslation();
+  // single pass: collect the selected label names instead of filter -> map -> join
+  const selectedLabelNames = projectLabels.reduce<string[]>((names, label) => {
+    if (value.includes(label?.id)) names.push(label?.name);
+    return names;
+  }, []);
   return (
     <div
       className={cn(
@@ -88,16 +93,7 @@ function LabelSummary({ isMobile, fullWidth, noLabelBorder, disabled, projectLab
         disabled ? "cursor-not-allowed" : "cursor-pointer"
       )}
     >
-      <Tooltip
-        label={`${t("common.labels")}: ${
-          projectLabels
-            ?.filter((l) => value.includes(l?.id))
-            .map((l) => l?.name)
-            .join(", ") ?? ""
-        }`}
-        layout="stacked"
-        disabled={isMobile}
-      >
+      <Tooltip label={`${t("common.labels")}: ${selectedLabelNames.join(", ")}`} layout="stacked" disabled={isMobile}>
         <div className="flex h-full items-center gap-1.5 text-secondary">
           <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
           {`${value.length} Labels`}

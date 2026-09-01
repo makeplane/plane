@@ -91,7 +91,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
                   <StickyNote
                     className="w-full"
                     workspaceSlug={workspaceSlug.toString()}
-                    stickyId={newSticky ? activeStickyId : recentStickyId || ""}
+                    stickyId={newSticky ? activeStickyId : recentStickyId}
                   />
                   <div
                     className="absolute top-0 right-0 h-full w-full"
@@ -140,7 +140,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             className={"w-[290px]"}
             onClose={() => (newSticky ? setNewSticky(false) : setShowRecentSticky(false))}
             workspaceSlug={workspaceSlug.toString()}
-            stickyId={newSticky ? activeStickyId : recentStickyId || ""}
+            stickyId={newSticky ? activeStickyId : recentStickyId}
           />
         )}
       </div>
