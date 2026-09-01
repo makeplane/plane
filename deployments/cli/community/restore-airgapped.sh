@@ -18,6 +18,28 @@ cat <<"EOF"
 EOF
 }
 
+# Replace $2 (dest) with $1 (src), keeping the old dest recoverable until the
+# swap succeeds. Rolls the old data back if the move fails.
+function replaceDir() {
+    local src="$1" dest="$2" label="$3"
+    local old="${dest}.old.$$"
+
+    if [ -d "$dest" ]; then
+        mv "$dest" "$old"
+    fi
+
+    if mv "$src" "$dest"; then
+        rm -rf "$old"
+        echo "Renamed $label"
+    else
+        echo "Error: Failed to install $label; restoring previous data"
+        if [ -d "$old" ]; then
+            mv "$old" "$dest"
+        fi
+        exit 1
+    fi
+}
+
 function restoreData() {
 
     echo ""
@@ -46,6 +68,8 @@ function restoreData() {
     # check if there are any .tar.gz files in the backup folder
     if ! ls "$BACKUP_FOLDER"/*.tar.gz 1> /dev/null 2>&1; then
         echo "Error: Backup folder does not contain .tar.gz files"
+        echo ""
+        echo "Usage: $0 /path/to/backup"
         exit 1
     fi
 
@@ -76,11 +100,19 @@ function restoreData() {
         exit 1
     fi
 
-    local dockerServiceStatus
+    local dockerServiceStatus compose_output
     if command -v jq &> /dev/null; then
-        dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-airgapped --format=json | jq -r '.[0].Status // empty')
+        if ! compose_output=$($COMPOSE_CMD ls --filter name=plane-airgapped --format=json); then
+            echo "Error: Failed to query Docker Compose services"
+            exit 1
+        fi
+        dockerServiceStatus=$(printf '%s\n' "$compose_output" | jq -r '.[0].Status // empty')
     else
-        dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-airgapped | grep -o "running" | head -n 1 || true)
+        if ! compose_output=$($COMPOSE_CMD ls --filter name=plane-airgapped); then
+            echo "Error: Failed to query Docker Compose services"
+            exit 1
+        fi
+        dockerServiceStatus=$(printf '%s\n' "$compose_output" | grep -o "running" | head -n 1 || true)
     fi
 
     if [[ "$dockerServiceStatus" == running* ]]; then
@@ -91,61 +123,47 @@ function restoreData() {
     CURRENT_USER_ID=$(id -u)
     CURRENT_GROUP_ID=$(id -g)
 
+    DATA_DIR="$AIRGAPPED_INSTALL_PATH/data"
+
     # if the data folder not exists, create it
-    if [ ! -d "$AIRGAPPED_INSTALL_PATH/data" ]; then
-        mkdir -p "$AIRGAPPED_INSTALL_PATH/data"
-        chown -R $CURRENT_USER_ID:$CURRENT_GROUP_ID "$AIRGAPPED_INSTALL_PATH/data"
+    if [ ! -d "$DATA_DIR" ]; then
+        mkdir -p "$DATA_DIR"
+        chown -R $CURRENT_USER_ID:$CURRENT_GROUP_ID "$DATA_DIR"
     fi
+
+    # Remove stale extracted source directories from a previous run so tar
+    # does not merge new files into old data
+    rm -rf "$DATA_DIR/pgdata" "$DATA_DIR/redisdata" "$DATA_DIR/uploads" "$DATA_DIR/rabbitmq_data"
 
     # Extract all backup tar files
     for BACKUP_FILE in "$BACKUP_FOLDER"/*.tar.gz; do
-        if [ -e "$BACKUP_FILE" ]; then
-            BASE_FILE_NAME=$(basename "$BACKUP_FILE" ".tar.gz")
-            echo "Extracting $BASE_FILE_NAME"
-            tar -xzvf "$BACKUP_FILE" -C "$AIRGAPPED_INSTALL_PATH/data/"
-            if [ $? -ne 0 ]; then
-                echo "Error: Failed to extract $BACKUP_FILE"
-                exit 1
-            fi
-        else
-            echo "No .tar.gz files found in the current directory."
-            echo ""
-            echo "Please provide the path to the backup file."
-            echo ""
-            echo "Usage: $0 /path/to/backup"
+        BASE_FILE_NAME=$(basename "$BACKUP_FILE" ".tar.gz")
+        echo "Extracting $BASE_FILE_NAME"
+        if ! tar -xzvf "$BACKUP_FILE" -C "$DATA_DIR/"; then
+            echo "Error: Failed to extract $BACKUP_FILE"
             exit 1
         fi
     done
-
-    DATA_DIR="$AIRGAPPED_INSTALL_PATH/data"
 
     # Rename extracted directories to match docker-compose volume paths
     # Backup tars: pgdata, redisdata, uploads, rabbitmq_data
     # Docker-compose expects: db, redis, minio/uploads, mq
 
     if [ -d "$DATA_DIR/pgdata" ]; then
-        rm -rf "$DATA_DIR/db"
-        mv "$DATA_DIR/pgdata" "$DATA_DIR/db"
-        echo "Renamed pgdata -> db"
+        replaceDir "$DATA_DIR/pgdata" "$DATA_DIR/db" "pgdata -> db"
     fi
 
     if [ -d "$DATA_DIR/redisdata" ]; then
-        rm -rf "$DATA_DIR/redis"
-        mv "$DATA_DIR/redisdata" "$DATA_DIR/redis"
-        echo "Renamed redisdata -> redis"
+        replaceDir "$DATA_DIR/redisdata" "$DATA_DIR/redis" "redisdata -> redis"
     fi
 
     if [ -d "$DATA_DIR/uploads" ]; then
         mkdir -p "$DATA_DIR/minio"
-        rm -rf "$DATA_DIR/minio/uploads"
-        mv "$DATA_DIR/uploads" "$DATA_DIR/minio/uploads"
-        echo "Renamed uploads -> minio/uploads"
+        replaceDir "$DATA_DIR/uploads" "$DATA_DIR/minio/uploads" "uploads -> minio/uploads"
     fi
 
     if [ -d "$DATA_DIR/rabbitmq_data" ]; then
-        rm -rf "$DATA_DIR/mq"
-        mv "$DATA_DIR/rabbitmq_data" "$DATA_DIR/mq"
-        echo "Renamed rabbitmq_data -> mq"
+        replaceDir "$DATA_DIR/rabbitmq_data" "$DATA_DIR/mq" "rabbitmq_data -> mq"
     fi
 
     # Fix ownership on all restored data
