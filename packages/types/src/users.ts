@@ -7,6 +7,7 @@
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import type { TLoginMediums } from "./instance";
+import type { TPaginationInfo } from "./common";
 
 /**
  * @description The start of the week for the user
@@ -42,6 +43,7 @@ export interface IUser extends IUserLite {
   email: string;
   is_active: boolean;
   is_email_verified: boolean;
+  is_instance_admin?: boolean;
   is_password_autoset: boolean;
   is_tour_completed: boolean;
   mobile_number: string | null;
@@ -51,6 +53,10 @@ export interface IUser extends IUserLite {
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
 }
+
+export type TInstanceUserPaginationInfo = TPaginationInfo & {
+  results: IUser[];
+};
 
 export interface IUserAccount {
   provider_account_id: string;
