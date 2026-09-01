@@ -14,7 +14,7 @@ import { Paperclip } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import {
@@ -410,12 +410,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           displayPropertyKey="sub_issue_count"
           shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
         >
-          <Tooltip
-            tooltipHeading={t("common.sub_work_items")}
-            tooltipContent={`${subIssueCount}`}
-            isMobile={isMobile}
-            renderByDefault={false}
-          >
+          <Tooltip label={`${t("common.sub_work_items")}: ${subIssueCount}`} disabled={isMobile}>
             {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
             <div
               onFocus={handleEventPropagation}
@@ -444,12 +439,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <Tooltip
-          tooltipHeading={t("common.attachments")}
-          tooltipContent={`${issue.attachment_count}`}
-          isMobile={isMobile}
-          renderByDefault={false}
-        >
+        <Tooltip label={`${t("common.attachments")}: ${issue.attachment_count}`} disabled={isMobile}>
           {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
@@ -468,12 +458,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <Tooltip
-          tooltipHeading={t("common.links")}
-          tooltipContent={`${issue.link_count}`}
-          isMobile={isMobile}
-          renderByDefault={false}
-        >
+        <Tooltip label={`${t("common.links")}: ${issue.link_count}`} disabled={isMobile}>
           {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"

@@ -11,7 +11,7 @@ import { ArrowRightCircle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@plane/propel/tabs";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
@@ -94,7 +94,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
       }}
     >
       <div className="mb-3.5 px-3.5">
-        <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
+        <Tooltip label={t("page_navigation_pane.close_button")}>
           <button
             type="button"
             className="grid size-3.5 place-items-center text-secondary transition-colors hover:text-primary"

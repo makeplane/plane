@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 import { EHeaderVariant, Header } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -125,14 +125,7 @@ export function ProjectAppliedFiltersList(props: Props) {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <Tooltip
-          tooltipContent={
-            <p>
-              <span className="font-semibold">{filteredProjects}</span> of{" "}
-              <span className="font-semibold">{totalProjects}</span> projects match the applied filters.
-            </p>
-          }
-        >
+        <Tooltip label={`${filteredProjects} of ${totalProjects} projects match the applied filters.`} layout="stacked">
           <span className="rounded-full bg-layer-1 px-2.5 py-1 text-13 font-medium">
             {filteredProjects}/{totalProjects}
           </span>

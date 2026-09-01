@@ -7,7 +7,7 @@
 // plane package imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -54,7 +54,7 @@ function ActiveProjectItem(props: Props) {
             )}
           </span>
         </div>
-        <Tooltip tooltipContent={projectDetails?.name} position="top-start">
+        <Tooltip label={projectDetails?.name} layout="stacked" align="start">
           <p className="truncate text-13 font-medium">{projectDetails?.name}</p>
         </Tooltip>
       </div>

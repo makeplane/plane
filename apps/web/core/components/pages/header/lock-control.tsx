@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -78,7 +78,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
   return (
     <>
       {displayState === "neutral" && (
-        <Tooltip tooltipContent="Lock" position="bottom">
+        <Tooltip label="Lock" side="bottom">
           <button
             type="button"
             onClick={toggleLock}

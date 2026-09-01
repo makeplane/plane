@@ -33,7 +33,7 @@ import {
   RelatedIcon,
   WorkItemsIcon,
 } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueActivity } from "@plane/types";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
@@ -56,8 +56,9 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
 
   return (
     <Tooltip
-      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
-      isMobile={isMobile}
+      label={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
+      layout="stacked"
+      disabled={isMobile}
     >
       {activity?.issue_detail ? (
         <a

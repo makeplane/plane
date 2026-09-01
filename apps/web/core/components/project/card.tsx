@@ -17,7 +17,7 @@ import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, FavoriteStar } from "@plane/ui";
@@ -281,12 +281,9 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           <div className="item-center flex justify-between">
             <div className="flex items-center justify-center gap-2">
               <Tooltip
-                isMobile={isMobile}
-                tooltipHeading="Members"
-                tooltipContent={
-                  project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"
-                }
-                position="top"
+                label={project.members?.length ? `Members: ${project.members.length}` : "No members"}
+                layout="stacked"
+                disabled={isMobile}
               >
                 {projectMembersIds && projectMembersIds.length > 0 ? (
                   <div className="flex cursor-pointer items-center gap-2 text-secondary">
