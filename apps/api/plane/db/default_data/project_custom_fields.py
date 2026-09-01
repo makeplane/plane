@@ -107,7 +107,12 @@ DEFAULT_PROJECT_CUSTOM_FIELDS = [
         "name": "公司产品名称",
         "field_type": "dropdown",
         "group_name": "项目基本类别",
-        "options": ["账务处理中心", "账务管理中心"],
+        # The original 2 options came from the source spreadsheet's example row
+        # only, not an exhaustive list. Phase 3's real-data dry-run against
+        # project_summary.xlsx surfaced these 5 as genuinely recurring (37
+        # occurrences combined, not one-off noise) categories missing from the
+        # seed list.
+        "options": ["账务处理中心", "账务管理中心", "PaaS", "容器管理平台", "云管平台", "监控平台", "PB"],
     },
     {"name": "核心产品线", "field_type": "text", "group_name": "项目基本类别"},
     {
@@ -120,7 +125,13 @@ DEFAULT_PROJECT_CUSTOM_FIELDS = [
         "name": "验收阶段",
         "field_type": "dropdown",
         "group_name": "项目状态",
-        "options": ["未验收", "签约", "到货", "上线", "初验", "终验", "合同内维护"],
+        # "开发"/"运营" added for the same reason as 公司产品名称 above: real-data
+        # dry-run found 18 occurrences combined, missing from the original
+        # example-row-derived list. Placed at the two ends of the delivery
+        # sequence the other 7 options already progress through (开发 before
+        # 签约, 运营 as ongoing support after 合同内维护 ends) -- this is a
+        # display-order convenience only, not an enforced state machine.
+        "options": ["开发", "未验收", "签约", "到货", "上线", "初验", "终验", "合同内维护", "运营"],
     },
     {
         "name": "成本投入状态",
