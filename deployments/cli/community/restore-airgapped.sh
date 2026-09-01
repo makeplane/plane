@@ -1,20 +1,20 @@
 #!/bin/bash
-+set -euo pipefail
+set -euo pipefail
 
 function print_header() {
 clear
 
 cat <<"EOF"
---------------------------------------------
- ____  _                          ///////// 
-|  _ \| | __ _ _ __   ___         ///////// 
-| |_) | |/ _` | '_ \ / _ \   /////    ///// 
-|  __/| | (_| | | | |  __/   /////    ///// 
-|_|   |_|\__,_|_| |_|\___|        ////      
-                                  ////      
---------------------------------------------
-Project management tool from the future
---------------------------------------------
+##+.    ##+    .##-
+ ######+.######-.######.
+ #######.   -###    +#####+.
+ #######.      +       +######.
+ #######.              .#######
+ #######.              .#######
+  #######       +      .#######
+    .+#####+    ###-   .#######
+        .######.-#####+.+######
+            -##.    -##    .+##
 EOF
 }
 
@@ -27,7 +27,7 @@ function restoreData() {
     echo ""
 
     # set the backup folder path
-    BACKUP_FOLDER=${1}
+    BACKUP_FOLDER="${1:-}"
 
     if [ -z "$BACKUP_FOLDER" ]; then
         BACKUP_FOLDER="$PWD/backup"
@@ -78,12 +78,12 @@ function restoreData() {
 
     local dockerServiceStatus
     if command -v jq &> /dev/null; then
-        dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-airgapped --format=json | jq -r .[0].Status)
+        dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-airgapped --format=json | jq -r '.[0].Status // empty')
     else
-        dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-airgapped | grep -o "running" | head -n 1)
+        dockerServiceStatus=$($COMPOSE_CMD ls --filter name=plane-airgapped | grep -o "running" | head -n 1 || true)
     fi
 
-    if [[ $dockerServiceStatus == "running" ]]; then
+    if [[ "$dockerServiceStatus" == running* ]]; then
         echo "Plane Airgapped is running. Please STOP the Plane Airgapped before restoring data."
         exit 1
     fi
@@ -97,24 +97,14 @@ function restoreData() {
         chown -R $CURRENT_USER_ID:$CURRENT_GROUP_ID "$AIRGAPPED_INSTALL_PATH/data"
     fi
 
-    for BACKUP_FILE in "$BACKUP_FOLDER/*.tar.gz"; do
+    # Extract all backup tar files
+    for BACKUP_FILE in "$BACKUP_FOLDER"/*.tar.gz; do
         if [ -e "$BACKUP_FILE" ]; then
-
-            # get the basefilename without the extension
             BASE_FILE_NAME=$(basename "$BACKUP_FILE" ".tar.gz")
-
-            # extract the restoreFile to the airgapped instance install path
-            echo "Restoring $BASE_FILE_NAME"
-            rm -rf "$AIRGAPPED_INSTALL_PATH/data/$BASE_FILE_NAME" || true
-            
-            tar -xvzf "$BACKUP_FILE" -C "$AIRGAPPED_INSTALL_PATH/data/"
+            echo "Extracting $BASE_FILE_NAME"
+            tar -xzvf "$BACKUP_FILE" -C "$AIRGAPPED_INSTALL_PATH/data/"
             if [ $? -ne 0 ]; then
                 echo "Error: Failed to extract $BACKUP_FILE"
-                exit 1
-            fi
-            chown -R $CURRENT_USER_ID:$CURRENT_GROUP_ID "$AIRGAPPED_INSTALL_PATH/data/$BASE_FILE_NAME"
-            if [ $? -ne 0 ]; then
-                echo "Error: Failed to change ownership of $AIRGAPPED_INSTALL_PATH/data/$BASE_FILE_NAME"
                 exit 1
             fi
         else
@@ -122,10 +112,44 @@ function restoreData() {
             echo ""
             echo "Please provide the path to the backup file."
             echo ""
-            echo "Usage: $0 /path/to/backup"  
+            echo "Usage: $0 /path/to/backup"
             exit 1
         fi
     done
+
+    DATA_DIR="$AIRGAPPED_INSTALL_PATH/data"
+
+    # Rename extracted directories to match docker-compose volume paths
+    # Backup tars: pgdata, redisdata, uploads, rabbitmq_data
+    # Docker-compose expects: db, redis, minio/uploads, mq
+
+    if [ -d "$DATA_DIR/pgdata" ]; then
+        rm -rf "$DATA_DIR/db"
+        mv "$DATA_DIR/pgdata" "$DATA_DIR/db"
+        echo "Renamed pgdata -> db"
+    fi
+
+    if [ -d "$DATA_DIR/redisdata" ]; then
+        rm -rf "$DATA_DIR/redis"
+        mv "$DATA_DIR/redisdata" "$DATA_DIR/redis"
+        echo "Renamed redisdata -> redis"
+    fi
+
+    if [ -d "$DATA_DIR/uploads" ]; then
+        mkdir -p "$DATA_DIR/minio"
+        rm -rf "$DATA_DIR/minio/uploads"
+        mv "$DATA_DIR/uploads" "$DATA_DIR/minio/uploads"
+        echo "Renamed uploads -> minio/uploads"
+    fi
+
+    if [ -d "$DATA_DIR/rabbitmq_data" ]; then
+        rm -rf "$DATA_DIR/mq"
+        mv "$DATA_DIR/rabbitmq_data" "$DATA_DIR/mq"
+        echo "Renamed rabbitmq_data -> mq"
+    fi
+
+    # Fix ownership on all restored data
+    chown -R $CURRENT_USER_ID:$CURRENT_GROUP_ID "$DATA_DIR"
 
     echo ""
     echo "Restore completed successfully."
