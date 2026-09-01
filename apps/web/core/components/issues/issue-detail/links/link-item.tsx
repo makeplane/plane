@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -62,7 +62,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           ) : (
             <LinkIcon className="size-4 flex-shrink-0 text-tertiary group-hover:text-primary" />
           )}
-          <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
+          <Tooltip label={linkDetail.url} layout="stacked" disabled={isMobile}>
             <a
               href={linkDetail.url}
               target="_blank"

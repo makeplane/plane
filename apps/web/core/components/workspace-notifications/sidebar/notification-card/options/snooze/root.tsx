@@ -13,7 +13,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
@@ -97,10 +97,10 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
           return (
             <>
               <Tooltip
-                tooltipContent={
+                label={
                   data.snoozed_till ? t("notification.options.mark_unsnooze") : t("notification.options.mark_snooze")
                 }
-                isMobile={isMobile}
+                disabled={isMobile}
               >
                 <Popover.Button
                   className={cn(

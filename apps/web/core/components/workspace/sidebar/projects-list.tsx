@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Loader } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
@@ -187,7 +187,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               </Disclosure.Button>
               <div className="flex items-center gap-1">
                 {isAuthorizedUser && (
-                  <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+                  <Tooltip label={t("create_project")}>
                     <IconButton
                       variant="ghost"
                       size="sm"

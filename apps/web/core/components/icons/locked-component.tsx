@@ -5,7 +5,7 @@
  */
 
 import { LockIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 
 export function LockedComponent(props: { toolTipContent?: string }) {
   const { toolTipContent } = props;
@@ -18,7 +18,13 @@ export function LockedComponent(props: { toolTipContent?: string }) {
 
   return (
     <>
-      {toolTipContent ? <Tooltip tooltipContent={toolTipContent}>{lockedComponent}</Tooltip> : <>{lockedComponent}</>}
+      {toolTipContent ? (
+        <Tooltip label={toolTipContent} layout="stacked">
+          {lockedComponent}
+        </Tooltip>
+      ) : (
+        <>{lockedComponent}</>
+      )}
     </>
   );
 }

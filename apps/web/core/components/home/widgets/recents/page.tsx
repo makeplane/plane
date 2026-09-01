@@ -5,11 +5,11 @@
  */
 
 import { useRouter } from "next/navigation";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";
-import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
@@ -65,7 +65,12 @@ export function RecentPage(props: BlockProps) {
       }
       quickActionElement={
         <div className="flex gap-4">
-          <Avatar src={getFileURL(ownerDetails?.avatar_url ?? "")} name={ownerDetails?.display_name} />
+          <Avatar
+            alt={ownerDetails?.display_name}
+            fallback={ownerDetails?.display_name?.[0]?.toUpperCase()}
+            src={getFileURL(ownerDetails?.avatar_url ?? "")}
+            size="xs"
+          />
         </div>
       }
       parentRef={ref}

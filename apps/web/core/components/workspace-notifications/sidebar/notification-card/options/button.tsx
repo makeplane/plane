@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from "react";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -24,7 +24,7 @@ export function NotificationItemOptionButton(props: TNotificationItemOptionButto
   const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipContent={tooltipContent} isMobile={isMobile}>
+    <Tooltip label={tooltipContent} layout="stacked" disabled={isMobile}>
       <button
         type="button"
         className={cn(

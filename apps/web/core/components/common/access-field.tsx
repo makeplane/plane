@@ -8,7 +8,7 @@ import type { LucideIcon } from "lucide-react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 
@@ -17,14 +17,12 @@ type Props = {
   value: number;
   accessSpecifiers: {
     key: number;
-    i18n_label?: string;
-    label?: string;
+    i18n_label: string;
     icon: LucideIcon | React.FC<ISvgIcons>;
   }[];
   isMobile?: boolean;
 };
 
-// TODO: Remove label once i18n is done
 export function AccessField(props: Props) {
   const { onChange, value, accessSpecifiers, isMobile = false } = props;
   const { t } = useTranslation();
@@ -32,11 +30,12 @@ export function AccessField(props: Props) {
   return (
     <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[1px] border-subtle p-1">
       {accessSpecifiers.map((access, index) => {
-        const label = access.i18n_label ? t(access.i18n_label) : access.label;
+        const label = t(access.i18n_label);
         return (
-          <Tooltip key={access.key} tooltipContent={label} isMobile={isMobile}>
+          <Tooltip key={access.key} label={label} layout="stacked" disabled={isMobile}>
             <button
               type="button"
+              aria-label={label}
               onClick={() => onChange(access.key)}
               className={cn(
                 "relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs p-1 transition-all",

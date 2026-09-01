@@ -6,7 +6,7 @@
 
 // plane imports
 import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
@@ -75,22 +75,15 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                   {!hideIcon && <ModuleIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
                     <Tooltip
-                      tooltipHeading="Title"
-                      tooltipContent={moduleDetails?.name}
-                      disabled={!showTooltip}
-                      isMobile={isMobile}
-                      renderByDefault={false}
+                      label={`Title: ${moduleDetails?.name ?? ""}`}
+                      layout="stacked"
+                      disabled={!showTooltip || isMobile}
                     >
                       <span className="max-w-40 truncate text-11 font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
                   {!disabled && (
-                    <Tooltip
-                      tooltipContent="Remove"
-                      disabled={!showTooltip}
-                      isMobile={isMobile}
-                      renderByDefault={false}
-                    >
+                    <Tooltip label="Remove" disabled={!showTooltip || isMobile}>
                       <button
                         type="button"
                         className="flex-shrink-0"

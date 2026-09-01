@@ -14,7 +14,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TModuleFilters } from "@plane/types";
 // ui
 import { cn, calculateTotalFilters } from "@plane/utils";
@@ -172,7 +172,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
       </FiltersDropdown>
       <div className="hidden items-center gap-1 rounded-sm bg-layer-3 p-1 md:flex">
         {MODULE_VIEW_LAYOUTS.map((layout) => (
-          <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
+          <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
             <button
               type="button"
               className={cn(

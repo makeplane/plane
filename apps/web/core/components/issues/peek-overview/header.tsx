@@ -12,7 +12,7 @@ import { MoveDiagonal, MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
@@ -159,13 +159,13 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       }`}
     >
       <div className="flex items-center gap-4">
-        <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
+        <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
           <button onClick={removeRoutePeekId}>
             <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
 
-        <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
+        <Tooltip label={t("issue.open_in_full_screen")} disabled={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
             <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
           </Link>
@@ -176,7 +176,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               value={currentMode}
               onChange={(val: any) => setPeekMode(val)}
               customButton={
-                <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
+                <Tooltip label={t("common.toggle_peek_view_layout")} disabled={isMobile}>
                   <button type="button" className="">
                     <currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />
                   </button>
@@ -205,7 +205,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
+          <Tooltip label={t("common.actions.copy_link")} disabled={isMobile}>
             <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
           </Tooltip>
           {issueDetails && (
