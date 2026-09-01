@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { PlusIcon, SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
@@ -114,9 +114,10 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
           <div className="flex items-center justify-between">
             <span className="py-1.5 text-13 font-semibold text-tertiary">Projects</span>
             {isAuthorizedUser && (
-              <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+              <Tooltip label={t("create_project")}>
                 <button
                   type="button"
+                  aria-label={t("create_project")}
                   className="flex-shrink-0 rounded-sm p-0.5 text-tertiary transition-colors hover:bg-layer-1 hover:text-secondary"
                   onClick={() => {
                     setIsProjectModalOpen(true);

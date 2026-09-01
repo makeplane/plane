@@ -13,7 +13,7 @@ import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MEN
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
@@ -166,7 +166,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
         </span>
       ) : (
-        <Tooltip tooltipContent="No lead">
+        <Tooltip label="No lead">
           <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}

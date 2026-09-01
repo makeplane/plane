@@ -12,7 +12,7 @@ import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constan
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
@@ -180,7 +180,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
           value={estimateInputValue}
         />
         {estimatePointError?.message && (
-          <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
+          <Tooltip label={estimatePointError?.message} layout="stacked" side="bottom">
             <div className="relative mr-3 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center overflow-hidden text-danger-primary">
               <Info size={14} />
             </div>

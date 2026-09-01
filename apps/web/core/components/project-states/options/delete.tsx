@@ -10,7 +10,7 @@ import { Loader } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -87,12 +87,11 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         onClick={() => setIsDeleteModal(true)}
       >
         <Tooltip
-          tooltipContent={
+          label={
             state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
           }
-          isMobile={isMobile}
-          disabled={!isDeleteDisabled}
-          className="focus:outline-none"
+          layout="stacked"
+          disabled={!isDeleteDisabled || isMobile}
         >
           {isDelete ? <Loader className="h-3.5 w-3.5 text-secondary" /> : <CloseIcon className="h-3.5 w-3.5" />}
         </Tooltip>

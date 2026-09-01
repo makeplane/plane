@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-react";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // components
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -64,7 +64,7 @@ export function AskPiMenu(props: Props) {
               >
                 Replace selection
               </button>
-              <Tooltip tooltipContent="Add to next line">
+              <Tooltip label="Add to next line">
                 <button
                   type="button"
                   className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -73,7 +73,7 @@ export function AskPiMenu(props: Props) {
                   <CornerDownRight className="size-4 text-tertiary" />
                 </button>
               </Tooltip>
-              <Tooltip tooltipContent="Re-generate response">
+              <Tooltip label="Re-generate response">
                 <button
                   type="button"
                   className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"

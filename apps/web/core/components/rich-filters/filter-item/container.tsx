@@ -6,7 +6,7 @@
 
 import { useEffect, useRef } from "react";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/propel/utils";
 import type { SingleOrArray, TFilterValue } from "@plane/types";
 import { hasValidValue } from "@plane/utils";
@@ -16,7 +16,7 @@ interface FilterItemContainerProps {
   conditionValue: SingleOrArray<TFilterValue>;
   showTransition: boolean;
   variant?: "default" | "error";
-  tooltipContent?: React.ReactNode;
+  tooltipContent?: string;
 }
 
 export function FilterItemContainer(props: FilterItemContainerProps) {
@@ -55,7 +55,7 @@ export function FilterItemContainer(props: FilterItemContainerProps) {
   }, []);
 
   return (
-    <Tooltip tooltipContent={tooltipContent} position="bottom" disabled={!tooltipContent}>
+    <Tooltip label={tooltipContent ?? ""} layout="stacked" side="bottom" disabled={!tooltipContent}>
       <div
         ref={itemRef}
         className={cn("flex h-7 items-stretch overflow-hidden rounded-sm border transition-all duration-200", {

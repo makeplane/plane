@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 // components
@@ -120,7 +120,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                   <span className="flex items-center gap-2">
                     {t(featureItem.key)}
                     {featureItem.isPro && (
-                      <Tooltip tooltipContent="Pro feature" position="top">
+                      <Tooltip label="Pro feature">
                         <UpgradeBadge className="rounded-sm" />
                       </Tooltip>
                     )}

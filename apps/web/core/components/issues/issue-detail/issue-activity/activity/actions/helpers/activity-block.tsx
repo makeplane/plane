@@ -7,7 +7,7 @@
 import type { ReactNode } from "react";
 import { Network } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -52,8 +52,8 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
         <span> {children} </span>
         <span>
           <Tooltip
-            isMobile={isMobile}
-            tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            disabled={isMobile}
           >
             <span className="whitespace-nowrap text-tertiary"> {calculateTimeAgo(activity.created_at)}</span>
           </Tooltip>

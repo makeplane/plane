@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { PlaneLockup, ChevronLeftIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TOnboardingStep } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -69,7 +69,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
   return (
     <div className="sticky top-0 z-10 flex flex-col gap-4">
       <div className="h-1.5 w-full cursor-pointer overflow-hidden rounded-t-lg bg-surface-1">
-        <Tooltip tooltipContent={`${currentStepNumber}/${totalSteps}`} position="bottom-end">
+        <Tooltip label={`${currentStepNumber}/${totalSteps}`} side="bottom" align="end">
           <div
             className="h-full bg-accent-primary transition-all duration-700 ease-out"
             style={{ width: `${(currentStepNumber / totalSteps) * 100}%` }}

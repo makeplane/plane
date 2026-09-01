@@ -14,7 +14,7 @@ import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -207,7 +207,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         >
                           <div className="flex w-full min-w-24 flex-grow items-center gap-1.5 truncate">
                             <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
-                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip label={`Title: ${issue.name}`} layout="stacked" align="start">
                               <span className="truncate text-13 text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
@@ -223,10 +223,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                               showTooltip
                             />
                             {issue.target_date && (
-                              <Tooltip
-                                tooltipHeading="Target Date"
-                                tooltipContent={renderFormattedDate(issue.target_date)}
-                              >
+                              <Tooltip label={`Target Date: ${renderFormattedDate(issue.target_date) ?? ""}`}>
                                 <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-11 group-hover:bg-surface-1">
                                   <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                                   <span className="truncate text-11">

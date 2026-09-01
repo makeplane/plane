@@ -13,7 +13,7 @@ import { useParams } from "next/navigation";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -208,13 +208,8 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               {/* select checkbox */}
               {projectId && canSelectIssues && !isEpic && (
                 <Tooltip
-                  tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
-                  }
+                  label="Only work items within the current project can be selected."
+                  layout="stacked"
                   disabled={issue.project_id === projectId}
                 >
                   <div className="absolute left-1 grid w-3.5 flex-shrink-0 place-items-center">
@@ -270,13 +265,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               )}
             </div>
 
-            <Tooltip
-              tooltipContent={issue.name}
-              isMobile={isMobile}
-              position="top-start"
-              disabled={isCurrentBlockDragging}
-              renderByDefault={false}
-            >
+            <Tooltip label={issue.name} layout="stacked" align="start" disabled={isCurrentBlockDragging || isMobile}>
               <p className="cursor-pointer truncate text-body-xs-medium text-primary">{issue.name}</p>
             </Tooltip>
           </div>

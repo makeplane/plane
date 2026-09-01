@@ -10,7 +10,7 @@ import { ListFilter } from "lucide-react";
 import type { ENotificationFilterType } from "@plane/constants";
 import { FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { PopoverMenu } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -32,7 +32,7 @@ export const NotificationFilter = observer(function NotificationFilter() {
     <PopoverMenu
       data={translatedFilterTypeOptions}
       button={
-        <Tooltip tooltipContent={t("notification.options.filters")} isMobile={isMobile} position="bottom">
+        <Tooltip label={t("notification.options.filters")} side="bottom" disabled={isMobile}>
           <IconButton size="base" variant="ghost" icon={ListFilter} />
         </Tooltip>
       }
