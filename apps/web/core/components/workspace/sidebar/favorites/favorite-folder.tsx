@@ -25,7 +25,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
 // helpers
@@ -173,7 +173,7 @@ export function FavoriteFolder(props: Props) {
               </div>
 
               <>
-                <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
+                <Tooltip label={`${favorite.name}`} layout="stacked" side="right" sideOffset={40} disabled={isMobile}>
                   <div className="flex flex-grow truncate">
                     <Disclosure.Button
                       as="button"
@@ -181,12 +181,9 @@ export function FavoriteFolder(props: Props) {
                       className="flex w-full flex-grow items-center gap-1.5 text-left select-none"
                     >
                       <Tooltip
-                        isMobile={isMobile}
-                        tooltipContent={
-                          favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
-                        }
-                        position="top-end"
-                        disabled={isDragging}
+                        label={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+                        align="end"
+                        disabled={isDragging || isMobile}
                       >
                         <button
                           type="button"

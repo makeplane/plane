@@ -8,7 +8,7 @@ import type { TPartialProject } from "@plane/types";
 // plane propel imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 
 type TProjectHeaderButtonProps = {
   project: TPartialProject;
@@ -16,7 +16,7 @@ type TProjectHeaderButtonProps = {
 
 export function ProjectHeaderButton({ project }: TProjectHeaderButtonProps) {
   return (
-    <Tooltip tooltipContent={project.name} position="bottom">
+    <Tooltip label={project.name} layout="stacked" side="bottom">
       <div className="relative flex w-full max-w-48 items-center pr-1 text-left select-none">
         <div className="flex size-7 flex-shrink-0 items-center justify-center rounded-md bg-layer-1">
           <Logo logo={project.logo_props} size={16} />

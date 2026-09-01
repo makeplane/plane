@@ -11,7 +11,7 @@ import Link from "next/link";
 import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // Plane
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
@@ -119,7 +119,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                     key={relationIssueId}
                     className={`group flex items-center gap-1 rounded-sm px-1.5 pt-1 pb-1 leading-3 hover:bg-surface-2 ${currRelationOption?.className}`}
                   >
-                    <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
+                    <Tooltip label={`Title: ${currentIssue.name}`} layout="stacked" disabled={isMobile}>
                       <Link
                         href={generateWorkItemLink({
                           workspaceSlug,
@@ -137,7 +137,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                       </Link>
                     </Tooltip>
                     {!disabled && (
-                      <Tooltip tooltipContent="Remove" position="bottom" isMobile={isMobile}>
+                      <Tooltip label="Remove" side="bottom" disabled={isMobile}>
                         {/* eslint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
                         <span
                           onClick={(e) => {

@@ -16,7 +16,7 @@ import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
 import { CustomSelect, TextArea } from "@plane/ui";
@@ -365,10 +365,11 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 )}
               />
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={t("project_id_tooltip_content")}
-                className="text-13"
-                position="right-start"
+                label={t("project_id_tooltip_content")}
+                layout="stacked"
+                side="right"
+                align="start"
+                disabled={isMobile}
               >
                 <Info className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
               </Tooltip>

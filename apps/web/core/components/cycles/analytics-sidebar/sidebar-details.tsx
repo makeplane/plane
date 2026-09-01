@@ -11,13 +11,15 @@ import { SquareUser } from "lucide-react";
 // plane types
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ICycle } from "@plane/types";
 // plane ui
-import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
+import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
 // plane web constants
@@ -83,7 +85,12 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
           </div>
           <div className="flex w-3/5 items-center rounded-xs">
             <div className="flex items-center gap-2.5">
-              <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
+              <Avatar
+                alt={cycleOwnerDetails?.display_name}
+                fallback={cycleOwnerDetails?.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")}
+                size="xs"
+              />
               <span className="text-13 text-secondary">{cycleOwnerDetails?.display_name}</span>
             </div>
           </div>
@@ -98,19 +105,19 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
             <div className="flex items-center gap-2.5">
               {cycleDetails?.assignee_ids && cycleDetails.assignee_ids.length > 0 ? (
                 <>
-                  <AvatarGroup showTooltip>
+                  <AvatarGroupOverflow size="xs">
                     {cycleDetails.assignee_ids.map((member) => {
                       const memberDetails = getUserDetails(member);
                       return (
                         <Avatar
                           key={memberDetails?.id}
-                          name={memberDetails?.display_name ?? ""}
+                          alt={memberDetails?.display_name ?? ""}
+                          fallback={memberDetails?.display_name?.[0]?.toUpperCase()}
                           src={getFileURL(memberDetails?.avatar_url ?? "")}
-                          showTooltip={false}
                         />
                       );
                     })}
-                  </AvatarGroup>
+                  </AvatarGroupOverflow>
                 </>
               ) : (
                 <span className="px-1.5 text-13 text-tertiary">{t("no_assignee")}</span>

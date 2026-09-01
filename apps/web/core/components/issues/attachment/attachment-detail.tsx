@@ -10,7 +10,7 @@ import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import {
   convertBytesToSize,
   getFileExtension,
@@ -77,14 +77,15 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
             <div className="h-7 w-7">{fileIcon}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Tooltip tooltipContent={fileName} isMobile={isMobile}>
+                <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
                   <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={`${
+                  label={`${
                     getUserDetails(attachment.updated_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
+                  layout="stacked"
+                  disabled={isMobile}
                 >
                   <span>
                     <AlertCircle className="h-3 w-3" />

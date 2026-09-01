@@ -12,7 +12,7 @@ import { CheckCircle } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -140,9 +140,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
       {workspaceIntegrations ? (
         isInstalled ? (
           <Tooltip
-            isMobile={isMobile}
-            disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            label={!isUserAdmin ? "You don't have permission to perform this" : ""}
+            layout="stacked"
+            disabled={isUserAdmin || isMobile}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
@@ -159,9 +159,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           </Tooltip>
         ) : (
           <Tooltip
-            isMobile={isMobile}
-            disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            label={!isUserAdmin ? "You don't have permission to perform this" : ""}
+            layout="stacked"
+            disabled={isUserAdmin || isMobile}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}

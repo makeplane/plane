@@ -9,10 +9,11 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings, Settings2 } from "lucide-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Avatar, CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
@@ -62,10 +63,10 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           item={{
             icon: (
               <Avatar
-                name={currentUser?.display_name}
+                alt={currentUser?.display_name}
+                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
                 src={getFileURL(currentUser?.avatar_url ?? "")}
-                size={20}
-                shape="circle"
+                size="xs"
               />
             ),
             isActive: isUserMenuOpen,
@@ -91,11 +92,10 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           <div className="flex flex-col items-center gap-y-2">
             <div>
               <Avatar
-                name={currentUser?.display_name}
+                alt={currentUser?.display_name}
+                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
                 src={getFileURL(currentUser?.avatar_url ?? "")}
-                size={40}
-                shape="circle"
-                className="text-18 font-medium"
+                size="xl"
               />
             </div>
             <div className="text-center">

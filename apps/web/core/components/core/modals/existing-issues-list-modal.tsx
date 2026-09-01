@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
@@ -193,7 +193,7 @@ export function ExistingIssuesListModal(props: Props) {
             </div>
           )}
           {workspaceLevelToggle && (
-            <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
+            <Tooltip label="Toggle workspace level search" disabled={isMobile}>
               <div
                 className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
                   isWorkspaceLevel ? "text-primary" : "text-secondary"

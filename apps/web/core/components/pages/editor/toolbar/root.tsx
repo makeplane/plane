@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { PageToolbar } from "@/components/pages/editor/toolbar";
@@ -72,7 +72,7 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
       {shouldHideToolbar && (
         <div className="absolute top-0 right-0 z-10 flex h-[52px] items-center px-page-x">
           {!isNavigationPaneOpen && (
-            <Tooltip tooltipContent={t("page_navigation_pane.open_button")}>
+            <Tooltip label={t("page_navigation_pane.open_button")}>
               <button
                 type="button"
                 className="grid size-6 shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-transparent-hover hover:text-primary"

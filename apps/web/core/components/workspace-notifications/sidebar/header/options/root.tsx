@@ -9,7 +9,7 @@ import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
@@ -54,7 +54,7 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
   return (
     <div className="relative flex items-center justify-center gap-2 text-body-xs-medium">
       {/* mark all notifications as read*/}
-      <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
+      <Tooltip label={t("notification.options.mark_all_as_read")} side="bottom" disabled={isMobile}>
         <IconButton
           size="base"
           variant="ghost"
@@ -66,7 +66,7 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
       </Tooltip>
 
       {/* refetch current notifications */}
-      <Tooltip tooltipContent={t("notification.options.refresh")} isMobile={isMobile} position="bottom">
+      <Tooltip label={t("notification.options.refresh")} side="bottom" disabled={isMobile}>
         <IconButton
           size="base"
           variant="ghost"

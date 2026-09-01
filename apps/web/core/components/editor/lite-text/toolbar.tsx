@@ -16,7 +16,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // constants
 import { cn } from "@plane/utils";
 import type { ToolbarMenuItem } from "@plane/editor";
@@ -110,7 +110,7 @@ export function IssueCommentToolbar(props: Props) {
             const isAccessActive = accessSpecifier === access.key;
 
             return (
-              <Tooltip key={access.key} tooltipContent={access.label}>
+              <Tooltip key={access.key} label={access.label} layout="stacked">
                 <button
                   type="button"
                   onClick={() => handleAccessChange?.(access.key)}
@@ -143,15 +143,7 @@ export function IssueCommentToolbar(props: Props) {
                 const isItemActive = activeStates[item.renderKey];
 
                 return (
-                  <Tooltip
-                    key={item.renderKey}
-                    tooltipContent={
-                      <p className="flex flex-col gap-1 text-center text-11">
-                        <span className="font-medium">{item.name}</span>
-                        {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
-                      </p>
-                    }
-                  >
+                  <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
                     <button
                       type="button"
                       onClick={() => executeCommand(item)}
