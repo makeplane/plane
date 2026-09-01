@@ -6,14 +6,8 @@
 
 import React from "react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { AvatarGroup, type AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
-import { cn } from "@plane/utils";
-
-const OVERFLOW_COUNTER_SIZE: Record<AvatarGroupSize, string> = {
-  "2xs": "size-4",
-  xs: "size-5",
-  sm: "size-6",
-};
 
 type Props = {
   children: React.ReactNode;
@@ -33,7 +27,8 @@ type Props = {
  * An overlapping avatar stack that collapses the tail into a `+N` counter.
  *
  * Propel's `AvatarGroup` renders every child it is given, so the capping behaviour that
- * `@plane/ui`'s `AvatarGroup` provided through `max` lives here as app chrome instead.
+ * `@plane/ui`'s `AvatarGroup` provided through `max` lives here as app chrome. The overflow
+ * indicator is a Propel `Avatar` with a `fallback`, matching the Avatar Group overflow pattern.
  */
 export function AvatarGroupOverflow(props: Props) {
   const { children, size, max = 2 } = props;
@@ -42,21 +37,13 @@ export function AvatarGroupOverflow(props: Props) {
   const totalAvatars = avatars.length;
   // If there is only one avatar past the limit, render it instead of a "+1" counter.
   const maxAvatarsToRender = totalAvatars <= max + 1 ? max + 1 : max;
+  const overflowCount = totalAvatars - max;
 
   return (
     <AvatarGroup size={size}>
       {avatars.slice(0, maxAvatarsToRender)}
       {maxAvatarsToRender < totalAvatars && (
-        <div
-          className={cn(
-            // `relative` keeps the counter above the preceding avatar, which is itself positioned
-            // and would otherwise paint over it through the group's negative spacing.
-            "relative grid shrink-0 place-items-center rounded-full border border-subtle bg-accent-subtle text-9 text-accent-primary",
-            OVERFLOW_COUNTER_SIZE[size]
-          )}
-        >
-          +{totalAvatars - max}
-        </div>
+        <Avatar alt={`${overflowCount} more members`} fallback={`+${overflowCount}`} />
       )}
     </AvatarGroup>
   );
