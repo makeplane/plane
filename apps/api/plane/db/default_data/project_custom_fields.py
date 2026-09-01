@@ -3,10 +3,11 @@
 # See the LICENSE file for details.
 #
 # Internal addition (not part of upstream makeplane/plane): the standard set of
-# project custom fields every project should carry, mirroring columns A-W of the
-# source contract/delivery tracking spreadsheet this feature replaces. Single
-# source of truth for two callers: apps/api/plane/app/views/project/base.py
-# (bootstraps these for every newly created project) and
+# project custom fields every project should carry, mirroring the project-side
+# columns of the source contract/delivery tracking spreadsheet this feature
+# replaces. Single source of truth for two callers:
+# apps/api/plane/app/views/project/base.py (bootstraps these for every newly
+# created project) and
 # apps/api/plane/db/management/commands/seed_default_project_custom_fields.py
 # (backfills them for projects that already existed before this feature shipped),
 # plus a third since Phase 3:
@@ -22,10 +23,15 @@
 # import command may apply Excel's percent-format-implies-multiply-by-100
 # conversion to this field's cells)}.
 #
-# "合同号&项目号" (the first entry) is the one field with is_unique_key=True: per
-# the source spreadsheet it identifies a project uniquely, so its value must not
-# repeat across projects in the same workspace. See
-# ProjectCustomFieldValueSerializer.validate() for the enforcement.
+# "项目序号" carries is_unique_key=True. It used to be "合同号&项目号" (a
+# concatenated contract+project number pulled from column A of the source
+# spreadsheet); see docs/internal-contract-project-relationship.md for the
+# 2026-09-01 business rule that retired column A as a data field -- the contract
+# half moved to the new Contract model, and the project half is now this plain
+# "项目序号" field (column L in the source spreadsheet, all values matching
+# /^W\d+$/). The serializer-side uniqueness check
+# (ProjectCustomFieldValueSerializer.validate()) didn't need to change: it
+# follows the flag, not a hardcoded field name.
 
 # Django imports
 from django.db.models import Max
@@ -34,50 +40,32 @@ from django.db.models import Max
 from plane.db.models import ProjectCustomField, ProjectCustomFieldOption
 
 DEFAULT_PROJECT_CUSTOM_FIELDS = [
-    {
-        "name": "合同号&项目号",
-        "field_type": "text",
-        "group_name": "项目&合同基本信息",
-        "is_unique_key": True,
-    },
     {"name": "区域", "field_type": "text", "group_name": "项目&合同基本信息"},
     {"name": "省份", "field_type": "text", "group_name": "项目&合同基本信息"},
     {"name": "行业", "field_type": "text", "group_name": "项目&合同基本信息"},
     {"name": "分支", "field_type": "text", "group_name": "项目&合同基本信息"},
-    {"name": "合同号", "field_type": "text", "group_name": "项目&合同基本信息"},
-    {"name": "签约登记日期", "field_type": "date", "group_name": "项目&合同基本信息"},
-    {
-        "name": "合同净额/不含第三方（人民币万元）",
-        "field_type": "number",
-        "group_name": "项目&合同基本信息",
-    },
-    # source_header: the source spreadsheet's actual column D header text is "税率"
-    # (no unit suffix); "（%）" was added only to this field's display name for
-    # clarity in the Plane UI. Phase 3's import command (import_historical_project_data)
-    # matches the header row against source_header when present, falling back to name
-    # otherwise -- see historical_project_import.validate_headers().
-    # is_percent: these are the only two "number" fields import_historical_project_data
-    # is allowed to apply Excel's percent-format-implies-multiply-by-100 conversion to
-    # (see historical_project_import.coerce_number()). Without this explicit flag, a
-    # source cell that's accidentally percent-formatted in a field like "合同净额"
-    # (a money amount, never intended as a percentage) would otherwise get silently
-    # multiplied by 100 with no way to tell it apart from a legitimate percent field.
-    {
-        "name": "税率（%）",
-        "field_type": "number",
-        "group_name": "项目&合同基本信息",
-        "source_header": "税率",
-        "is_percent": True,
-    },
-    {
-        "name": "合同占比（%）",
-        "field_type": "number",
-        "group_name": "项目&合同基本信息",
-        "source_header": "合同占比",
-        "is_percent": True,
-    },
+    # NOTE: the historical contract-side fields ("合同号", "签约登记日期",
+    # "合同净额", "税率", "合同占比") used to live as ProjectCustomFieldValue rows
+    # on every Project. They are NOT in this list anymore -- they moved to the
+    # new Contract / ContractProject models (see apps/api/plane/db/models/contract.py
+    # and docs/internal-contract-project-relationship.md). One Contract row per
+    # real contract number now holds 签约登记日期 / 合同净额 / 税率 once, instead of
+    # being repeated on every Project row that touched that contract. 合同占比 moved
+    # to ContractProject.allocation_ratio (per-relationship, not per-contract).
     {"name": "客户项目名称", "field_type": "text", "group_name": "项目&合同基本信息"},
-    {"name": "项目序号", "field_type": "text", "group_name": "项目&合同基本信息"},
+    {
+        # Was the 13th entry (after 合同占比); now the only is_unique_key field.
+        # The "contract half" of the old "合同号&项目号" composite identifier moved
+        # to Contract.contract_no; this field carries the project half. Its values
+        # in the source spreadsheet all match /^W\d+$/, so collision risk across
+        # workspaces is negligible and a per-workspace UniqueConstraint on this
+        # column (enforced via the existing serializer+advisory-lock path) is
+        # sufficient.
+        "name": "项目序号",
+        "field_type": "text",
+        "group_name": "项目&合同基本信息",
+        "is_unique_key": True,
+    },
     {"name": "公司项目名称", "field_type": "text", "group_name": "项目&合同基本信息"},
     {
         "name": "项目类别",

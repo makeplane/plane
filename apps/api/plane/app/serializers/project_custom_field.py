@@ -126,7 +126,7 @@ class ProjectCustomFieldValueSerializer(BaseSerializer):
             attrs["value_text"] = value_text
 
             # Custom fields are per-project rows even when several projects share a
-            # field of the same name (e.g. every project's own "合同号&项目号" field
+            # field of the same name (e.g. every project's own "项目序号" field
             # is a distinct ProjectCustomField), so a uniqueness check keyed on
             # custom_field_id would only ever compare a project against itself.
             # Matching on is_unique_key alone (not also field name) is deliberate:
