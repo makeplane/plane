@@ -246,8 +246,6 @@ overrides:
   "router>path-to-regexp": "^8.4.2"
   defu: 6.1.5
   postcss: 8.5.25
-  # GHSA DoS via uncontrolled AST recursion; 7.1.0 is pulled in transitively by
-  # postcss-modules-local-by-default and postcss-modules-scope.
   "postcss-selector-parser@>=7.1.0 <7.1.3": "7.1.3"
   axios: "catalog:"
   follow-redirects: 1.16.0
