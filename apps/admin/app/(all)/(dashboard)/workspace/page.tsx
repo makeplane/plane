@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Loader as LoaderIcon } from "lucide-react";
+import { LoadingOutline as LoaderIcon } from "@makeplane/propel/icons";
 // types
 import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Button } from "@makeplane/propel/components/button";

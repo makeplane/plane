@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { Image, BrainCog, Cog, Mail } from "lucide-react";
+import { BrainCog } from "lucide-react";
 // plane imports
-import { LockOutline, WorkspaceOutline } from "@makeplane/propel/icons";
+import { ImageOutline, LockOutline, MailOutline, SettingsOutline, WorkspaceOutline } from "@makeplane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
@@ -14,13 +14,13 @@ export type TCoreSidebarMenuKey = "general" | "email" | "workspace" | "authentic
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
-    Icon: Cog,
+    Icon: SettingsOutline,
     name: "General",
     description: "Identify your instances and get key details.",
     href: `/general/`,
   },
   email: {
-    Icon: Mail,
+    Icon: MailOutline,
     name: "Email",
     description: "Configure your SMTP controls.",
     href: `/email/`,
@@ -44,7 +44,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     href: `/ai/`,
   },
   image: {
-    Icon: Image,
+    Icon: ImageOutline,
     name: "Images in Plane",
     description: "Allow third-party image libraries.",
     href: `/image/`,
