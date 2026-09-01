@@ -6,7 +6,7 @@
 
 import React from "react";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { DropdownIcon } from "@plane/propel/icons";
+import { DropdownOutline } from "@makeplane/propel/icons";
 import { cn } from "../utils";
 
 type Props = {
@@ -29,7 +29,7 @@ export function CollapsibleButton(props: Props) {
     actionItemElement,
     className = "",
     titleClassName = "",
-    ChevronIcon = DropdownIcon,
+    ChevronIcon = DropdownOutline,
   } = props;
   return (
     <div className={cn("flex h-12 items-center justify-between gap-3 border-b border-subtle px-2.5 py-3", className)}>

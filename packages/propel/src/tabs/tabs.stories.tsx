@@ -6,8 +6,7 @@
 
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Settings, User, Bell } from "lucide-react";
-import { HomeIcon } from "../icons/workspace/home-icon";
+import { HomeOutline, SettingsOutline, SubscribeOutline, UserOutline } from "@makeplane/propel/icons";
 import { Tabs } from "./tabs";
 
 type TabOption = {
@@ -159,10 +158,10 @@ export const DisabledTab: Story = {
 export const WithIcons: Story = {
   render({ defaultValue }) {
     const tabsWithIcons = [
-      { label: "Home", value: "home", icon: HomeIcon },
-      { label: "Profile", value: "profile", icon: User },
-      { label: "Settings", value: "settings", icon: Settings },
-      { label: "Notifications", value: "notifications", icon: Bell },
+      { label: "Home", value: "home", icon: HomeOutline },
+      { label: "Profile", value: "profile", icon: UserOutline },
+      { label: "SettingsOutline", value: "settings", icon: SettingsOutline },
+      { label: "Notifications", value: "notifications", icon: SubscribeOutline },
     ];
 
     return (
@@ -191,10 +190,10 @@ export const WithIcons: Story = {
 export const IconsOnly: Story = {
   render({ defaultValue }) {
     const iconTabs = [
-      { value: "home", icon: HomeIcon },
-      { value: "profile", icon: User },
-      { value: "settings", icon: Settings },
-      { value: "notifications", icon: Bell },
+      { value: "home", icon: HomeOutline },
+      { value: "profile", icon: UserOutline },
+      { value: "settings", icon: SettingsOutline },
+      { value: "notifications", icon: SubscribeOutline },
     ];
 
     return (

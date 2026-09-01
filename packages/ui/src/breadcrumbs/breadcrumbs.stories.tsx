@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { Home, Settings } from "lucide-react";
+import { HomeOutline, SettingsOutline } from "@makeplane/propel/icons";
 import * as React from "react";
 import { Breadcrumbs } from "./breadcrumbs";
 
@@ -42,7 +42,7 @@ type Story = StoryObj<typeof Breadcrumbs>;
 export const Default: Story = {
   args: {
     children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
+      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />,
       <Breadcrumbs.Item key="projects" component={<BreadcrumbBlock href="/projects" label="Projects" />} />,
       <Breadcrumbs.Item
         key="current"
@@ -56,7 +56,7 @@ export const WithLoading: Story = {
   args: {
     isLoading: true,
     children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
+      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />,
       <Breadcrumbs.Item key="projects" component={<BreadcrumbBlock href="/projects" label="Projects" />} />,
     ],
   },
@@ -65,7 +65,7 @@ export const WithLoading: Story = {
 export const WithCustomComponent: Story = {
   args: {
     children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
+      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />,
       <Breadcrumbs.Item
         key="custom"
         component={
@@ -81,7 +81,7 @@ export const WithCustomComponent: Story = {
 
 export const SingleItem: Story = {
   args: {
-    children: [<Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />],
+    children: [<Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />],
   },
 };
 
@@ -90,11 +90,13 @@ export const WithIcons: Story = {
     children: [
       <Breadcrumbs.Item
         key="home"
-        component={<BreadcrumbBlock href="/" label="Home" icon={<Home className="size-3.5" />} />}
+        component={<BreadcrumbBlock href="/" label="HomeOutline" icon={<HomeOutline className="size-3.5" />} />}
       />,
       <Breadcrumbs.Item
         key="settings"
-        component={<BreadcrumbBlock href="/settings" label="Settings" icon={<Settings className="size-3.5" />} />}
+        component={
+          <BreadcrumbBlock href="/settings" label="SettingsOutline" icon={<SettingsOutline className="size-3.5" />} />
+        }
         isLast
       />,
     ],

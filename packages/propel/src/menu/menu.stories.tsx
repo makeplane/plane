@@ -5,7 +5,14 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Settings, User, LogOut, Mail, Bell, HelpCircle } from "lucide-react";
+import {
+  HelpOutline,
+  LogOutOutline,
+  MailOutline,
+  SettingsOutline,
+  SubscribeOutline,
+  UserOutline,
+} from "@makeplane/propel/icons";
 import { Menu } from "./menu";
 
 const meta = {
@@ -45,25 +52,25 @@ export const WithIcons: Story = {
       <Menu label="Account">
         <Menu.MenuItem onClick={() => alert("Profile")}>
           <div className="flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <UserOutline className="h-4 w-4" />
             <span>Profile</span>
           </div>
         </Menu.MenuItem>
-        <Menu.MenuItem onClick={() => alert("Settings")}>
+        <Menu.MenuItem onClick={() => alert("SettingsOutline")}>
           <div className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            <span>Settings</span>
+            <SettingsOutline className="h-4 w-4" />
+            <span>SettingsOutline</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Messages")}>
           <div className="flex items-center gap-2">
-            <Mail className="h-4 w-4" />
+            <MailOutline className="h-4 w-4" />
             <span>Messages</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Logout")}>
           <div className="flex items-center gap-2">
-            <LogOut className="h-4 w-4" />
+            <LogOutOutline className="h-4 w-4" />
             <span>Logout</span>
           </div>
         </Menu.MenuItem>
@@ -213,29 +220,29 @@ export const ComplexMenu: Story = {
       <Menu label="More Actions" buttonClassName="bg-gray-100">
         <Menu.MenuItem onClick={() => alert("Notifications")}>
           <div className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
+            <SubscribeOutline className="h-4 w-4" />
             <span>Notifications</span>
             <span className="bg-red-500 ml-auto rounded-sm px-2 py-0.5 text-11 text-on-color">3</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Help")}>
           <div className="flex items-center gap-2">
-            <HelpCircle className="h-4 w-4" />
+            <HelpOutline className="h-4 w-4" />
             <span>Help Center</span>
           </div>
         </Menu.MenuItem>
         <Menu.SubMenu
-          trigger="Settings"
+          trigger="SettingsOutline"
           className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200"
         >
-          <Menu.MenuItem onClick={() => alert("General Settings")}>General</Menu.MenuItem>
-          <Menu.MenuItem onClick={() => alert("Privacy Settings")}>Privacy</Menu.MenuItem>
-          <Menu.MenuItem onClick={() => alert("Security Settings")}>Security</Menu.MenuItem>
+          <Menu.MenuItem onClick={() => alert("General SettingsOutline")}>General</Menu.MenuItem>
+          <Menu.MenuItem onClick={() => alert("Privacy SettingsOutline")}>Privacy</Menu.MenuItem>
+          <Menu.MenuItem onClick={() => alert("Security SettingsOutline")}>Security</Menu.MenuItem>
         </Menu.SubMenu>
         <div className="border-gray-200 my-1 border-t" />
         <Menu.MenuItem onClick={() => alert("Logout")}>
           <div className="flex items-center gap-2 text-danger-primary">
-            <LogOut className="h-4 w-4" />
+            <LogOutOutline className="h-4 w-4" />
             <span>Logout</span>
           </div>
         </Menu.MenuItem>

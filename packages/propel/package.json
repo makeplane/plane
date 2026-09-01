@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "@base-ui-components/react": "catalog:",
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Download } from "lucide-react";
+import { DownloadOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 
@@ -16,14 +16,14 @@ export function ImageDownloadAction(props: Props) {
   const { src } = props;
 
   return (
-    <Tooltip tooltipContent="Download">
+    <Tooltip tooltipContent="DownloadOutline">
       <button
         type="button"
         onClick={() => window.open(src, "_blank")}
         className="grid h-full flex-shrink-0 place-items-center text-white/60 transition-colors hover:text-white"
-        aria-label="Download image"
+        aria-label="DownloadOutline image"
       >
-        <Download className="size-3" />
+        <DownloadOutline className="size-3" />
       </button>
     </Tooltip>
   );

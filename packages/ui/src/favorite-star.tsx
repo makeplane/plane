@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Star } from "lucide-react";
+import { StarOutline } from "@makeplane/propel/icons";
 import React from "react";
 // helpers
 import { cn } from "./utils";
@@ -21,7 +21,7 @@ export function FavoriteStar(props: Props) {
 
   return (
     <button type="button" className={cn("grid h-4 w-4 place-items-center", buttonClassName)} onClick={onClick}>
-      <Star
+      <StarOutline
         className={cn(
           "h-4 w-4 text-tertiary transition-all",
           {
