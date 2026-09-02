@@ -342,6 +342,30 @@ ATTACHMENT_NOT_FOUND_RESPONSE = OpenApiResponse(
     ],
 )
 
+# Page-specific Responses
+PAGE_EXTERNAL_ID_EXISTS_RESPONSE = OpenApiResponse(
+    description=(
+        "Page with same external ID already exists. The conflicting page's `id` is "
+        "only returned when that page is visible to the caller — a private page "
+        "owned by someone else conflicts without disclosing its identifier."
+    ),
+    examples=[
+        OpenApiExample(
+            name="External ID Exists",
+            value={
+                "error": "Page with the same external id and external source already exists",  # noqa: E501
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+            },
+        ),
+        OpenApiExample(
+            name="External ID Exists On A Page You Cannot See",
+            value={
+                "error": "Page with the same external id and external source already exists",  # noqa: E501
+            },
+        ),
+    ],
+)
+
 # Search-specific Responses
 BAD_SEARCH_REQUEST_RESPONSE = OpenApiResponse(
     description="Bad request - invalid search parameters",
