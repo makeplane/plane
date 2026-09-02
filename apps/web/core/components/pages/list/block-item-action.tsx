@@ -7,9 +7,10 @@
 import { observer } from "mobx-react";
 import { Earth, Info, Minus } from "lucide-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Avatar, FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -44,7 +45,12 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       {/* page details */}
       <div className="cursor-default">
         <Tooltip label={`Owned by: ${ownerDetails?.display_name ?? ""}`} layout="stacked">
-          <Avatar src={getFileURL(ownerDetails?.avatar_url ?? "")} name={ownerDetails?.display_name} />
+          <Avatar
+            alt={ownerDetails?.display_name}
+            fallback={ownerDetails?.display_name?.[0]?.toUpperCase()}
+            src={getFileURL(ownerDetails?.avatar_url ?? "")}
+            size="xs"
+          />
         </Tooltip>
       </div>
       <div className="cursor-default text-tertiary">

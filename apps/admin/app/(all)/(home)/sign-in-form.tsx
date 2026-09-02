@@ -6,7 +6,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
 import { API_BASE_URL } from "@plane/constants";
@@ -172,7 +172,7 @@ export function InstanceSignInForm() {
                     className="flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(false)}
                   >
-                    <EyeOff className="h-4 w-4" />
+                    <HideOutline className="h-4 w-4" />
                   </button>
                 ) : (
                   <button
@@ -181,7 +181,7 @@ export function InstanceSignInForm() {
                     className="flex items-center justify-center text-placeholder"
                     onClick={() => setShowPassword(true)}
                   >
-                    <Eye className="h-4 w-4" />
+                    <ShowOutline className="h-4 w-4" />
                   </button>
                 )}
               </InputGroup>
