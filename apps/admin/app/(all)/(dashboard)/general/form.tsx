@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Telescope } from "lucide-react";
+import { UsageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import { Input } from "@makeplane/propel/components/input";
@@ -101,7 +101,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
           <div className="flex grow items-center gap-4">
             <div className="shrink-0">
               <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
-                <Telescope className="size-5 text-tertiary" />
+                <UsageOutline className="size-5 text-tertiary" />
               </div>
             </div>
             <div className="grow">

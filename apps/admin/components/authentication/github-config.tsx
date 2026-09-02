@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Settings2 } from "lucide-react";
+import { SettingsOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Button } from "@makeplane/propel/components/button";
@@ -57,7 +57,7 @@ export const GithubConfiguration = observer(function GithubConfiguration(props: 
           stretch="auto"
           nativeButton={false}
           render={<Link href="/authentication/github" />}
-          icon={<Settings2 className="h-4 w-4 p-0.5 text-tertiary" />}
+          icon={<SettingsOutline className="h-4 w-4 p-0.5 text-tertiary" />}
           label="Configure"
         />
       )}
