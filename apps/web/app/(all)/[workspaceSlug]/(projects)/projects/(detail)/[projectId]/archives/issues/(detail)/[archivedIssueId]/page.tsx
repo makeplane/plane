@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
+import { ArchiveOutline } from "@makeplane/propel/icons";
 import { Button } from "@plane/propel/button";
-import { ArchiveIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
@@ -71,7 +71,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             placement="page"
             variant="warning"
             title="This work item has been archived. Visit the Archives section to restore it."
-            icon={<ArchiveIcon />}
+            icon={<ArchiveOutline />}
             actions={
               <Button
                 variant="secondary"
