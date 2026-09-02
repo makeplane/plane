@@ -55,7 +55,7 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
 
   if (!workItemIds.length) return null;
 
-  const items = workItemIds?.map((workItemId) => (
+  const items = workItemIds.map((workItemId) => (
     <SubIssuesListItem
       key={workItemId}
       workspaceSlug={workspaceSlug}
