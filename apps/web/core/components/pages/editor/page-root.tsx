@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { CollaborationState, EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
@@ -63,6 +64,8 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const [editorReady, setEditorReady] = useState(false);
   const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
   const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
+  // translation
+  const { t } = useTranslation();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // derived values
@@ -171,7 +174,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           <Banner
             placement="page"
             variant="warning"
-            title="Content limit reached and live sync is off. Create a new page or use nested pages to continue syncing."
+            title={t("page_content_limit_banner.message")}
             render={<div className="px-page-x" />}
           />
         )}

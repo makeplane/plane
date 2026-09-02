@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Banner } from "@makeplane/propel/components/banner";
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
@@ -21,6 +22,8 @@ type Props = {
 
 export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot(props: Props) {
   const { className, selectionHelpers } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { isSelectionActive } = useMultipleSelectStore();
 
@@ -32,19 +35,19 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
         placement="inline"
         variant="accent"
         icon={null}
-        title="Change state, priority, and more for several work items at once. Save three minutes on an average per operation."
+        title={t("bulk_operations.upgrade_banner.message")}
         actions={
           <AnchorButton
             variant="primary"
             size="sm"
-            label="Upgrade to One"
+            label={t("bulk_operations.upgrade_banner.cta")}
             nativeButton={false}
             render={
               <a
                 href={MARKETING_PLANE_ONE_PAGE_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Upgrade to One"
+                aria-label={t("bulk_operations.upgrade_banner.cta")}
               />
             }
           />

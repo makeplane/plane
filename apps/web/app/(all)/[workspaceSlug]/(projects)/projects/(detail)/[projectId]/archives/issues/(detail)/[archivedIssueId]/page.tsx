@@ -10,6 +10,7 @@ import useSWR from "swr";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
 import { ArchiveOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 // components
@@ -27,6 +28,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   const router = useRouter();
   // states
   // hooks
+  const { t } = useTranslation();
   const {
     fetchIssue,
     issue: { getIssueById },
@@ -70,14 +72,14 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
           <Banner
             placement="page"
             variant="warning"
-            title="This work item has been archived. Visit the Archives section to restore it."
+            title={t("issue.archive.banner_message")}
             icon={<ArchiveOutline />}
             actions={
               <Button
                 variant="secondary"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
               >
-                Go to archives
+                {t("issue.archive.go_to_archives")}
               </Button>
             }
           />
