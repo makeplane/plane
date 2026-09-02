@@ -5,8 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-// components
-import { BulkOperationsUpgradeBanner } from "@/components/issues/bulk-operations/upgrade-banner";
+// ui
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Banner } from "@makeplane/propel/components/banner";
+import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
+import { cn } from "@plane/utils";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -23,5 +26,25 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
 
   if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;
 
-  return <BulkOperationsUpgradeBanner className={className} />;
+  return (
+    <div className={cn("sticky bottom-0 left-0 z-[2] grid h-20 place-items-center px-3.5", className)}>
+      <Banner
+        placement="inline"
+        variant="accent"
+        icon={null}
+        title="Change state, priority, and more for several work items at once. Save three minutes on an average per operation."
+        actions={
+          <AnchorButton
+            variant="primary"
+            size="sm"
+            label="Upgrade to One"
+            nativeButton={false}
+            // oxlint-disable-next-line jsx_a11y/anchor-has-content -- AnchorButton injects `label` as the anchor's children at runtime
+            render={<a href={MARKETING_PLANE_ONE_PAGE_LINK} target="_blank" rel="noopener noreferrer" />}
+          />
+        }
+        render={<div className="w-full" />}
+      />
+    </div>
+  );
 });

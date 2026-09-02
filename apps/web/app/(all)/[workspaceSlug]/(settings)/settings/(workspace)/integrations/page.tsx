@@ -11,7 +11,6 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration/single-integration-card";
-import { IntegrationAndImportExportBanner } from "@/components/ui/integration-and-import-export-banner";
 import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
 import { APP_INTEGRATIONS } from "@plane/constants";
@@ -41,7 +40,9 @@ function WorkspaceIntegrationsPage() {
     <>
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
-        <IntegrationAndImportExportBanner bannerName="Integrations" />
+        <div className="flex items-start gap-3 border-b border-subtle py-3.5">
+          <h3 className="text-18 font-medium">Integrations</h3>
+        </div>
         <div>
           {appIntegrations ? (
             appIntegrations.map((integration) => (

@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { Banner } from "@plane/propel/banner";
+import { Banner } from "@makeplane/propel/components/banner";
 import { Button } from "@plane/propel/button";
 import { ArchiveIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
@@ -68,10 +68,11 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
       ) : (
         <>
           <Banner
+            placement="page"
             variant="warning"
             title="This work item has been archived. Visit the Archives section to restore it."
-            icon={<ArchiveIcon className="size-4" />}
-            action={
+            icon={<ArchiveIcon />}
+            actions={
               <Button
                 variant="secondary"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
@@ -79,7 +80,6 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
                 Go to archives
               </Button>
             }
-            className="border-b border-subtle"
           />
           <div className="flex h-full overflow-hidden">
             <div className="h-full w-full space-y-3 divide-y-2 divide-subtle-1 overflow-y-auto">
