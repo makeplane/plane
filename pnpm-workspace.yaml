@@ -161,7 +161,7 @@ catalog:
   "rehype-remark": "^10.0.1"
   "remark-gfm": "^4.0.1"
   "remark-stringify": "^11.0.0"
-  "sanitize-html": "2.17.5"
+  "sanitize-html": "2.17.7"
   "serve": "14.2.5"
   "sharp": "^0.35.3"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
