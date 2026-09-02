@@ -10,10 +10,10 @@ import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IEmailCheckData } from "@plane/types";
 // ui
-import { Input, Spinner } from "@plane/ui";
+import { Input } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { checkEmailValidity } from "@/helpers/string.helper";
@@ -100,9 +100,15 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-      </Button>
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        stretch="full"
+        disabled={isButtonDisabled}
+        loading={isSubmitting}
+        label="Continue"
+      />
     </form>
   );
 });

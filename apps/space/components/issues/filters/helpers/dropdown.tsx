@@ -9,7 +9,7 @@ import type { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 type Props = {
   children: React.ReactNode;
@@ -35,11 +35,7 @@ export function FiltersDropdown(props: Props) {
         return (
           <>
             <Popover.Button as={React.Fragment}>
-              <Button ref={setReferenceElement} variant="secondary">
-                <div className={`${open ? "text-primary" : "text-secondary"}`}>
-                  <span>{title}</span>
-                </div>
-              </Button>
+              <Button ref={setReferenceElement} variant="secondary" size="md" stretch="auto" label={title} />
             </Popover.Button>
             <Transition
               as={Fragment}

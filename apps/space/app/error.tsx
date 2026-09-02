@@ -5,7 +5,7 @@
  */
 
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 function ErrorPage() {
   const handleRetry = () => {
@@ -31,12 +31,7 @@ function ErrorPage() {
           </p>
         </div>
         <div className="flex items-center justify-center gap-2">
-          <Button variant="primary" size="lg" onClick={handleRetry}>
-            Refresh
-          </Button>
-          {/* <Button variant="secondary" size="lg" onClick={() => {}}>
-            Sign out
-          </Button> */}
+          <Button variant="primary" size="lg" stretch="auto" onClick={handleRetry} label="Refresh" />
         </div>
       </div>
     </div>

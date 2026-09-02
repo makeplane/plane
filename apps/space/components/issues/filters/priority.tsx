@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/propel/icons";
+// components
+import { PriorityIcon } from "@/components/icons";
 // local imports
 import { FilterHeader } from "./helpers/filter-header";
 import { FilterOption } from "./helpers/filter-option";

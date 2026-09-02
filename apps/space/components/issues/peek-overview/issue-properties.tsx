@@ -9,14 +9,9 @@ import { useParams } from "next/navigation";
 import { LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import {
-  StatePropertyIcon,
-  StateGroupIcon,
-  PriorityPropertyIcon,
-  DueDatePropertyIcon,
-  PriorityIcon,
-} from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { StateOutline, PriorityOutline, DueDateOutline } from "@makeplane/propel/icons";
+import { StateGroupIcon, PriorityIcon } from "@/components/icons";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -77,7 +72,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
       <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex h-8 items-center gap-3">
           <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-            <StatePropertyIcon className="size-4 flex-shrink-0" />
+            <StateOutline className="size-4 flex-shrink-0" />
             <span>State</span>
           </div>
           <div className="flex w-3/4 items-center gap-1.5 py-0.5 text-13">
@@ -88,7 +83,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
 
         <div className="flex h-8 items-center gap-3">
           <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-            <PriorityPropertyIcon className="size-4 flex-shrink-0" />
+            <PriorityOutline className="size-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
           <div className="w-3/4">
@@ -113,7 +108,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
 
         <div className="flex h-8 items-center gap-3">
           <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-            <DueDatePropertyIcon className="size-4 flex-shrink-0" />
+            <DueDateOutline className="size-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <div>
@@ -123,7 +118,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                   "text-danger-primary": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
-                <DueDatePropertyIcon className="size-3" />
+                <DueDateOutline className="size-3" />
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (

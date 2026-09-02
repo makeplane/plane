@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // types
 import type { IIssueLabel } from "@/types/issue";
 
@@ -38,7 +38,7 @@ export function AppliedLabelsFilters(props: Props) {
               className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(labelId)}
             >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
+              <CloseOutline height={10} width={10} strokeWidth={2} />
             </button>
           </div>
         );

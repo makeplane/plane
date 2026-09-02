@@ -8,8 +8,8 @@ import React, { useEffect, useState, useCallback } from "react";
 // plane imports
 import { TOOLBAR_ITEMS } from "@plane/editor";
 import type { ToolbarMenuItem, EditorRefApi } from "@plane/editor";
-import { Button } from "@plane/propel/button";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Button } from "@makeplane/propel/components/button";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -68,15 +68,7 @@ export function IssueCommentToolbar(props: Props) {
                 const isItemActive = activeStates[item.renderKey];
 
                 return (
-                  <Tooltip
-                    key={item.renderKey}
-                    tooltipContent={
-                      <p className="flex flex-col gap-1 text-center text-11">
-                        <span className="font-medium">{item.name}</span>
-                        {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
-                      </p>
-                    }
-                  >
+                  <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
                     <button
                       type="button"
                       onClick={() => executeCommand(item)}
@@ -104,13 +96,14 @@ export function IssueCommentToolbar(props: Props) {
           <div className="sticky right-1">
             <Button
               type="button"
+              label="Comment"
               variant="primary"
+              size="md"
+              stretch="auto"
               onClick={handleSubmit}
               disabled={isCommentEmpty}
               loading={isSubmitting}
-            >
-              Comment
-            </Button>
+            />
           </div>
         )}
       </div>

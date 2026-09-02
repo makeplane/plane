@@ -874,6 +874,9 @@ importers:
       '@headlessui/react':
         specifier: 'catalog:'
         version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@makeplane/propel':
+        specifier: 'catalog:'
+        version: 0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
@@ -883,9 +886,6 @@ importers:
       '@plane/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@plane/propel':
-        specifier: workspace:*
-        version: link:../../packages/propel
       '@plane/services':
         specifier: workspace:*
         version: link:../../packages/services
@@ -916,6 +916,9 @@ importers:
       date-fns:
         specifier: 'catalog:'
         version: 4.1.0
+      frimousse:
+        specifier: 'catalog:'
+        version: 0.3.0(react@19.2.8)(typescript@5.8.3)
       isbot:
         specifier: 'catalog:'
         version: 5.2.1

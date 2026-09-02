@@ -6,7 +6,8 @@
 
 import React from "react";
 import { Link } from "react-router";
-import { PlaneLockup } from "@plane/propel/icons";
+// components
+import { PlaneLockup } from "@/components/icons";
 
 export function AuthHeader() {
   return (

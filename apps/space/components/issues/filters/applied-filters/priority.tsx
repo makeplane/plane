@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { CloseIcon, PriorityIcon } from "@plane/propel/icons";
-import type { TIssuePriorities } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { PriorityIcon } from "@/components/icons";
+import type { TIssuePriorities } from "@/components/icons";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -26,7 +27,7 @@ export function AppliedPriorityFilters(props: Props) {
             className="grid place-items-center text-tertiary hover:text-secondary"
             onClick={() => handleRemove(priority)}
           >
-            <CloseIcon height={10} width={10} strokeWidth={2} />
+            <CloseOutline height={10} width={10} strokeWidth={2} />
           </button>
         </div>
       ))}
