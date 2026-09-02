@@ -119,6 +119,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         <Banner
           placement="inline"
           variant="accent"
+          role="alert"
           description={errorInfo.message}
           onDismiss={() => setErrorInfo(undefined)}
         />

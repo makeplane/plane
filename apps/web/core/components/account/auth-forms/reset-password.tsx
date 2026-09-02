@@ -106,6 +106,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
         <Banner
           placement="inline"
           variant="accent"
+          role="alert"
           description={errorInfo.message}
           onDismiss={() => setErrorInfo(undefined)}
         />
