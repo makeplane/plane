@@ -105,7 +105,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         fetchNextIssues(groupId, subgroupId);
       }
     },
-    [fetchNextIssues]
+    [issues, fetchNextIssues]
   );
 
   const groupedIssueIds = issues?.groupedIssueIds;
@@ -130,9 +130,11 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
   const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
+    (targetProjectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+        canEditPropertiesBasedOnProject && targetProjectId
+          ? canEditPropertiesBasedOnProject(targetProjectId)
+          : isEditingAllowed;
 
       return enableInlineEditing && isEditingAllowedBasedOnProject;
     },
@@ -232,6 +234,23 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   );
 
   const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const groupWidths = issuesFilter?.issueFilters?.kanbanFilters?.group_widths || {};
+
+  const handleResizeColumnWidth = useCallback(
+    async (columnId: string, width: number) => {
+      if (!workspaceSlug) return;
+      const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+      try {
+        await updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+          ...kanbanFilters,
+          group_widths: { ...kanbanFilters.group_widths, [columnId]: Math.round(width) },
+        });
+      } catch (error: unknown) {
+        console.error("Failed to save Kanban column width", error);
+      }
+    },
+    [workspaceSlug, issuesFilter, projectId, updateFilters]
+  );
 
   return (
     <>
@@ -278,6 +297,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}
                 collapsedGroups={collapsedGroups}
+                groupWidths={groupWidths}
+                onResizeColumnWidth={handleResizeColumnWidth}
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
                 quickAddCallback={quickAddIssue}
