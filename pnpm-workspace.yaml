@@ -27,7 +27,7 @@ catalog:
   "@hocuspocus/server": "2.15.2"
   "@hocuspocus/transformer": "2.15.2"
   "@hypermod/utils": "^0.7.1"
-  "@makeplane/propel": "0.2.0"
+  "@makeplane/propel": "0.3.0"
   "@popperjs/core": "^2.11.8"
   "@radix-ui/react-scroll-area": "^1.2.3"
   "@react-pdf/renderer": "^4.8.1"
@@ -279,6 +279,7 @@ minimumReleaseAgeExclude:
   - "@storybook/react-vite@10.4.6"
   - "@storybook/react@10.4.6"
   - storybook@10.4.6
+  - "@makeplane/propel@0.3.0"
 
 patchedDependencies:
   react-color@2.19.3: patches/react-color@2.19.3.patch
