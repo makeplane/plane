@@ -7,12 +7,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { CircleDashed } from "lucide-react";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { ALL_ISSUES } from "@plane/constants";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import type { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
-import { cn } from "@plane/utils";
 import { SubIssuesListItem } from "./list-item";
 
 interface TSubIssuesListGroupProps {
@@ -57,47 +55,42 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
 
   if (!workItemIds.length) return null;
 
+  const items = workItemIds?.map((workItemId) => (
+    <SubIssuesListItem
+      key={workItemId}
+      workspaceSlug={workspaceSlug}
+      projectId={projectId}
+      parentIssueId={parentIssueId}
+      rootIssueId={rootIssueId}
+      issueId={workItemId}
+      canEdit={canEdit}
+      handleIssueCrudState={handleIssueCrudState}
+      subIssueOperations={subIssueOperations}
+      issueServiceType={serviceType}
+      spacingLeft={spacingLeft}
+      storeType={storeType}
+    />
+  ));
+
+  if (isAllIssues) return <>{items}</>;
+
   return (
-    <>
-      <Collapsible
-        isOpen={isCollapsibleOpen}
-        onToggle={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
-        title={
-          !isAllIssues && (
-            <div className="flex items-center gap-2 p-3">
-              <ChevronRightIcon
-                className={cn("size-3.5 text-placeholder transition-all", {
-                  "rotate-90": isCollapsibleOpen,
-                })}
-                strokeWidth={2.5}
-              />
-              <div className="grid flex-shrink-0 place-items-center overflow-hidden">
-                {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
-              </div>
-              <span className="text-13 font-medium text-primary">{group.name}</span>
-              <span className="text-13 text-placeholder">{workItemIds.length}</span>
-            </div>
-          )
-        }
-        buttonClassName={cn("hidden", !isAllIssues && "block")}
-      >
-        {workItemIds?.map((workItemId) => (
-          <SubIssuesListItem
-            key={workItemId}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssueId={parentIssueId}
-            rootIssueId={rootIssueId}
-            issueId={workItemId}
-            canEdit={canEdit}
-            handleIssueCrudState={handleIssueCrudState}
-            subIssueOperations={subIssueOperations}
-            issueServiceType={serviceType}
-            spacingLeft={spacingLeft}
-            storeType={storeType}
-          />
-        ))}
-      </Collapsible>
-    </>
+    <Collapsible
+      open={isCollapsibleOpen}
+      onOpenChange={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
+      icon={
+        <div className="grid shrink-0 place-items-center overflow-hidden">
+          {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
+        </div>
+      }
+      trigger={
+        <>
+          <span className="text-13 font-medium text-primary">{group.name}</span>
+          <span className="text-13 text-placeholder">{workItemIds.length}</span>
+        </>
+      }
+    >
+      {items}
+    </Collapsible>
   );
 });

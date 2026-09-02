@@ -8,11 +8,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Disclosure } from "@headlessui/react";
 // plane imports
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import { Collapsible } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
@@ -80,29 +78,20 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
         <Collapsible
-          isOpen={showPendingInvites}
-          onToggle={() => setShowPendingInvites((prev) => !prev)}
-          buttonClassName="w-full"
-          className=""
-          title={
-            <div className="flex w-full items-center justify-between pt-4">
-              <div className="flex">
-                <h4 className="pt-2 pb-2 text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</h4>
-                {searchedInvitationsIds && (
-                  <CountChip count={searchedInvitationsIds.length} className="m-auto ml-2 h-5" />
-                )}
-              </div>{" "}
-              <ChevronDownIcon className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
-            </div>
+          open={showPendingInvites}
+          onOpenChange={() => setShowPendingInvites((prev) => !prev)}
+          trigger={
+            <span className="inline-flex items-center gap-2 py-2">
+              <span className="text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</span>
+              {searchedInvitationsIds && <CountChip count={searchedInvitationsIds.length} className="h-5" />}
+            </span>
           }
         >
-          <Disclosure.Panel>
-            <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
-              {searchedInvitationsIds?.map((invitationId) => (
-                <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
-              ))}
-            </div>
-          </Disclosure.Panel>
+          <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
+            {searchedInvitationsIds?.map((invitationId) => (
+              <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+            ))}
+          </div>
         </Collapsible>
       )}
     </>

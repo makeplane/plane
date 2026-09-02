@@ -10,22 +10,16 @@ import { CircularProgress } from "@makeplane/propel/components/circular-progress
 import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { SubWorkItemTitleActions } from "./title-actions";
 
 type Props = {
-  isOpen: boolean;
   parentIssueId: string;
-  disabled: boolean;
   issueServiceType?: TIssueServiceType;
-  projectId: string;
-  workspaceSlug: string;
 };
 
 export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
-  const { isOpen, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES, projectId } = props;
+  const { parentIssueId, issueServiceType = EIssueServiceType.ISSUES } = props;
   // translation
   const { t } = useTranslation();
   // store hooks
@@ -44,30 +38,19 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
   const percentage = completedCount && totalCount ? (completedCount / totalCount) * 100 : 0;
 
   return (
-    <CollapsibleButton
-      isOpen={isOpen}
-      title={`${issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}`}
-      indicatorElement={
-        <div className="flex items-center gap-1.5 text-13 text-tertiary">
-          <CircularProgress
-            value={percentage}
-            size="md"
-            variant={percentage === 100 ? "success" : "brand"}
-            aria-label="Sub-work-item progress"
-          />
-          <span>
-            {completedCount}/{totalCount} {t("common.done")}
-          </span>
-        </div>
-      }
-      actionItemElement={
-        <SubWorkItemTitleActions
-          projectId={projectId}
-          parentId={parentIssueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
+    <span className="inline-flex items-center gap-2">
+      {issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}
+      <span className="flex items-center gap-1.5 text-13 text-tertiary">
+        <CircularProgress
+          value={percentage}
+          size="md"
+          variant={percentage === 100 ? "success" : "brand"}
+          aria-label="Sub-work-item progress"
         />
-      }
-    />
+        <span>
+          {completedCount}/{totalCount} {t("common.done")}
+        </span>
+      </span>
+    </span>
   );
 });
