@@ -816,13 +816,25 @@ class IssueExpandSerializer(BaseSerializer):
     labels, assignees, and states for comprehensive data representation.
     """
 
-    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
-    module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
+    cycle = serializers.SerializerMethodField()
+    module = serializers.SerializerMethodField()
 
     labels = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
     description = serializers.JSONField(source="description_json", read_only=True)
+
+    def get_cycle(self, obj):
+        expand = self.context.get("expand", [])
+        if "cycle" in expand:
+            return CycleLiteSerializer([ic.cycle for ic in obj.issue_cycle.all()], many=True).data
+        return [ic.cycle_id for ic in obj.issue_cycle.all()]
+
+    def get_module(self, obj):
+        expand = self.context.get("expand", [])
+        if "module" in expand:
+            return ModuleLiteSerializer([im.module for im in obj.issue_module.all()], many=True).data
+        return [im.module_id for im in obj.issue_module.all()]
 
     def get_labels(self, obj):
         expand = self.context.get("expand", [])
