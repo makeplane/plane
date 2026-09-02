@@ -73,8 +73,8 @@ catalogs:
       specifier: ^0.7.1
       version: 0.7.1
     '@makeplane/propel':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.3.0
+      version: 0.3.0
     '@popperjs/core':
       specifier: ^2.11.8
       version: 2.11.8
@@ -612,8 +612,8 @@ importers:
         specifier: 'catalog:'
         version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
-        specifier: 0.2.0
-        version: 0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
+        specifier: 'catalog:'
+        version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
@@ -1030,7 +1030,7 @@ importers:
         version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
-        version: 0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
+        version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
@@ -1705,7 +1705,7 @@ importers:
     dependencies:
       '@makeplane/propel':
         specifier: 'catalog:'
-        version: 0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
+        version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.1.17
@@ -2868,8 +2868,8 @@ packages:
     peerDependencies:
       '@types/react': 19.2.17
 
-  '@makeplane/propel@0.2.0':
-    resolution: {integrity: sha512-a4gd9m9gTMbc2NOrpb1jrSkM/OtocVBTf2bmnaAdU8K8Xw3OoTgvMLM3nRtfUbSFNLl1OjG7SCXeg2x/7lYvSA==}
+  '@makeplane/propel@0.3.0':
+    resolution: {integrity: sha512-nGhiE42vLQVvv7NZOcQYKARJiTXyKDSSTcHOzPdtFpa+WkSz9B91jw6i+3Ikz5cpkv/aEKjOTJF+cByw2zv5ZQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       react: 19.2.8
@@ -10586,7 +10586,7 @@ snapshots:
     dependencies:
       '@types/react': 19.2.17
 
-  '@makeplane/propel@0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)':
+  '@makeplane/propel@0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)':
     dependencies:
       '@base-ui/react': 1.7.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       class-variance-authority: 0.7.1
