@@ -14,6 +14,7 @@ import { cn } from "@plane/utils";
 // power-k
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
 import { ProjectsAppPowerKCommandsList } from "@/components/power-k/ui/modal/commands-list";
+import { powerKCommandFilter } from "@/components/power-k/ui/modal/filter";
 import { PowerKModalFooter } from "@/components/power-k/ui/modal/footer";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -256,11 +257,7 @@ export const TopNavPowerK = observer(() => {
       >
         {isOpen && (
           <Command
-            filter={(i18nValue: string, search: string) => {
-              if (i18nValue === "no-results") return 1;
-              if (i18nValue.toLowerCase().includes(search.toLowerCase())) return 1;
-              return 0;
-            }}
+            filter={powerKCommandFilter}
             shouldFilter={searchTerm.length > 0}
             className="flex h-full w-full flex-col"
           >

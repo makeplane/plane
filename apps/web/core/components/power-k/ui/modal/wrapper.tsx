@@ -13,6 +13,7 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
 import type { TPowerKCommandsListProps } from "./commands-list";
+import { powerKCommandFilter } from "./filter";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
 
@@ -145,11 +146,7 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
             >
               <Dialog.Panel className="divide-opacity-10 relative flex w-full max-w-2xl transform flex-col items-center justify-center divide-y divide-subtle-1 rounded-lg bg-surface-1 shadow-raised-200 transition-all">
                 <Command
-                  filter={(i18nValue: string, search: string) => {
-                    if (i18nValue === "no-results") return 1;
-                    if (i18nValue.toLowerCase().includes(search.toLowerCase())) return 1;
-                    return 0;
-                  }}
+                  filter={powerKCommandFilter}
                   shouldFilter={searchTerm.length > 0}
                   onKeyDown={handleKeyDown}
                   className="w-full"
