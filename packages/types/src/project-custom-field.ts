@@ -17,7 +17,9 @@ export interface IProjectCustomField {
   // null for ad-hoc fields not created from the default set, which render ungrouped.
   group_name: string | null;
   // True only for default-seeded fields the backend enforces as workspace-unique
-  // (currently just "合同号&项目号"). Read-only: never settable from this app.
+  // (since Phase A: "项目序号"; previously "合同号&项目号" before that composite
+  // identifier was retired -- see docs/internal-contract-project-relationship.md
+  // for the 2026-09-01 business rule). Read-only: never settable from this app.
   is_unique_key: boolean;
   project_id: string;
   workspace_id: string;
