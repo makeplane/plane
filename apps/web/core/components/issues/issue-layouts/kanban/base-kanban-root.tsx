@@ -241,9 +241,16 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     group_by: [],
     sub_group_by: [],
   };
-  const [expandedGroupId, setExpandedGroupId] = useState<string>();
+  const [expandedGroupIds, setExpandedGroupIds] = useState<Set<string>>(new Set());
   const handleExpandedGroups = useCallback((_toggle: "group_by" | "sub_group_by", value: string) => {
-    setExpandedGroupId((currentGroupId) => (currentGroupId === value ? undefined : value));
+    setExpandedGroupIds((currentGroupIds) => {
+      const nextGroupIds = new Set(currentGroupIds);
+
+      if (nextGroupIds.has(value)) nextGroupIds.delete(value);
+      else nextGroupIds.add(value);
+
+      return nextGroupIds;
+    });
   }, []);
 
   return (
@@ -277,8 +284,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
           className={`horizontal-scrollbar relative flex scrollbar-lg h-full w-full bg-surface-2 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
           ref={scrollableContainerRef}
         >
-          <div className="relative h-full w-max min-w-full bg-surface-2">
-            <div className="h-full w-max min-w-full">
+          <div className="relative h-full w-full min-w-full bg-surface-2">
+            <div className="h-full w-full min-w-full">
               <KanBanView
                 issuesMap={issueMap}
                 groupedIssueIds={groupedIssueIds ?? {}}
@@ -290,7 +297,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 updateIssue={updateIssue}
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}
-                expandedGroupId={expandedGroupId}
+                expandedGroupIds={expandedGroupIds}
                 handleExpandedGroups={handleExpandedGroups}
                 collapsedGroups={collapsedGroups}
                 enableQuickIssueCreate={enableQuickAdd}

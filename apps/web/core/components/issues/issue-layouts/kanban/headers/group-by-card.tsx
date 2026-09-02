@@ -31,7 +31,7 @@ interface IHeaderGroupByCard {
   collapsedGroups: TIssueKanbanFilters;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleExpandedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  expandedGroupId?: string;
+  expandedGroupIds?: ReadonlySet<string>;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
@@ -48,7 +48,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     collapsedGroups,
     handleCollapsedGroups,
     handleExpandedGroups,
-    expandedGroupId,
+    expandedGroupIds,
     issuePayload,
     disableIssueCreation,
     addIssuesToView,
@@ -145,7 +145,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
               onClick={() => handleExpandedGroups?.("group_by", column_id)}
             >
-              {expandedGroupId === column_id ? (
+              {expandedGroupIds?.has(column_id) ? (
                 <FoldHorizontal width={14} strokeWidth={2} />
               ) : (
                 <UnfoldHorizontal width={14} strokeWidth={2} />

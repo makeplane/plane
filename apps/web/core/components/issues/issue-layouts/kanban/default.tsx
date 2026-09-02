@@ -56,7 +56,7 @@ export interface IKanBan {
   quickActions: TRenderQuickActions;
   collapsedGroups: TIssueKanbanFilters;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  expandedGroupId?: string;
+  expandedGroupIds?: ReadonlySet<string>;
   handleExpandedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
@@ -84,7 +84,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     quickActions,
     collapsedGroups,
     handleCollapsedGroups,
-    expandedGroupId,
+    expandedGroupIds,
     handleExpandedGroups,
     enableQuickIssueCreate,
     quickAddCallback,
@@ -167,7 +167,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               key={subList.id}
               className={`group relative flex flex-col ${
                 groupByVisibilityToggle.showIssues
-                  ? expandedGroupId === subList.id
+                  ? expandedGroupIds?.has(subList.id)
                     ? `min-w-[350px] flex-1`
                     : `w-[350px] flex-shrink-0`
                   : ``
@@ -191,7 +191,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     addIssuesToView={addIssuesToView}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
-                    expandedGroupId={expandedGroupId}
+                    expandedGroupIds={expandedGroupIds}
                     handleExpandedGroups={handleExpandedGroups}
                     isEpic={isEpic}
                   />
