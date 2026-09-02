@@ -38,7 +38,7 @@ export const AppliedModuleFilters = observer(function AppliedModuleFilters(props
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(moduleId)}
               >
-                <CloseOutline height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

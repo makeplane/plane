@@ -33,18 +33,14 @@ export const WorkItemsModalHeader = observer(function WorkItemsModalHeader(props
           className="hidden place-items-center p-1 text-secondary hover:text-primary md:grid"
           onClick={() => setFullScreen((prevData) => !prevData)}
         >
-          {fullScreen ? (
-            <ArrowCollapseOutline width={14} height={14} strokeWidth={2} />
-          ) : (
-            <FullScreenOutline width={14} height={14} strokeWidth={2} />
-          )}
+          {fullScreen ? <ArrowCollapseOutline width={14} height={14} /> : <FullScreenOutline width={14} height={14} />}
         </button>
         <button
           type="button"
           className="grid place-items-center p-1 text-secondary hover:text-primary"
           onClick={handleClose}
         >
-          <CloseOutline height={14} width={14} strokeWidth={2} />
+          <CloseOutline height={14} width={14} />
         </button>
       </div>
     </div>

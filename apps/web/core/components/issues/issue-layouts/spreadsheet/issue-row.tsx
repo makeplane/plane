@@ -343,7 +343,6 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
-                      strokeWidth={2.5}
                     />
                   </button>
                 )}

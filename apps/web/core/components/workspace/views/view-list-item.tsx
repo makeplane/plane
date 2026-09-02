@@ -57,7 +57,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <EditOutline width={14} height={14} strokeWidth={2} />
+                        <EditOutline width={14} height={14} />
                         <span>Edit View</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -67,7 +67,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <DeleteOutline width={14} height={14} strokeWidth={2} />
+                        <DeleteOutline width={14} height={14} />
                         <span>Delete View</span>
                       </span>
                     </CustomMenu.MenuItem>

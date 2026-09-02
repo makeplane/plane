@@ -382,7 +382,7 @@ export function InviteMembers(props: Props) {
                 className="mx-8 flex items-center gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
                 onClick={appendField}
               >
-                <AddOutline className="h-4 w-4" strokeWidth={2} />
+                <AddOutline className="h-4 w-4" />
                 Add another
               </button>
             </div>

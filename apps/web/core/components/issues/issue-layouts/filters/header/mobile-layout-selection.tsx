@@ -33,7 +33,7 @@ export function MobileLayoutSelection({
           {activeLayout && (
             <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
           )}
-          <ChevronDownOutline className="my-auto size-3 text-secondary" strokeWidth={2} />
+          <ChevronDownOutline className="my-auto size-3 text-secondary" />
         </Button>
       }
       customButtonClassName="flex flex-grow justify-center text-secondary text-13"

@@ -97,7 +97,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
           </div>
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             {progress === 100 ? (
-              <TickOutline className="text-2 h-3 w-3" />
+              <TickOutline className="h-3 w-3" />
             ) : (
               <span className="text-9 text-primary">{`${progress}%`}</span>
             )}

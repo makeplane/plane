@@ -111,11 +111,11 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                 <div
                   className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
                 >
-                  <ChevronUpOutline width={12} strokeWidth={2} />
+                  <ChevronUpOutline width={12} />
                 </div>
               </div>
               <div className="md:hidden">
-                <MoreVerticalOutline className="h-4 text-secondary" strokeWidth={2} />
+                <MoreVerticalOutline className="h-4 text-secondary" />
               </div>
             </button>
           </Popover.Button>
@@ -144,7 +144,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
-                      {calendarLayout === layout && <TickOutline width={12} height={12} strokeWidth={2} />}
+                      {calendarLayout === layout && <TickOutline width={12} height={12} />}
                     </button>
                   ))}
                   <button

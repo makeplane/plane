@@ -92,7 +92,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
         customButton={
           <div className="flex-center flex text-13 text-secondary">
             {t("common.layout")}
-            <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+            <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" />
           </div>
         }
         customButtonClassName="flex flex-center text-secondary text-13"
@@ -121,7 +121,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           menuButton={
             <div className="flex-center flex text-13 text-secondary">
               {t("common.display")}
-              <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+              <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
             </div>
           }
         >

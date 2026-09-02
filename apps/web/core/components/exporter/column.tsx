@@ -93,8 +93,8 @@ export const useExportColumns = () => {
       ),
     },
     {
-      key: "DownloadOutline",
-      content: "DownloadOutline",
+      key: "Download",
+      content: "Download",
       tdRender: (rowData: RowData) =>
         checkExpiry(rowData.created_at) ? (
           <>
@@ -102,7 +102,7 @@ export const useExportColumns = () => {
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
                 <button className="flex w-full items-center gap-1 font-medium text-accent-primary">
                   <DownloadOutline className="h-4 w-4" />
-                  <div>DownloadOutline</div>
+                  <div>Download</div>
                 </button>
               </a>
             ) : (

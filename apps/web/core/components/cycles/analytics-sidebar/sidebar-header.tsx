@@ -126,7 +126,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
             className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover"
             onClick={() => handleClose()}
           >
-            <ChevronRightOutline className="text-2 size-4 text-secondary" />
+            <ChevronRightOutline className="size-4 text-secondary" />
           </button>
         </div>
       </div>

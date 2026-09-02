@@ -425,7 +425,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                 }
               )}
             >
-              <ViewsOutline className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+              <ViewsOutline className="h-3 w-3 flex-shrink-0" />
               <div className="text-caption-sm-regular">{subIssueCount}</div>
             </div>
           </Tooltip>
@@ -445,7 +445,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <AttachOutline className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <AttachOutline className="h-3 w-3 flex-shrink-0" />
             <div className="text-caption-sm-regular">{issue.attachment_count}</div>
           </div>
         </Tooltip>
@@ -464,7 +464,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <LinkOutline className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkOutline className="h-3 w-3 flex-shrink-0" />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>

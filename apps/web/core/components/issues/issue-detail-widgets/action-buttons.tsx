@@ -38,7 +38,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.sub_issue")}
-              icon={<ViewsOutline className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<ViewsOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -65,7 +65,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.link")}
-              icon={<LinkOutline className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<LinkOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -81,7 +81,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("common.attach")}
-              icon={<AttachOutline className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<AttachOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }

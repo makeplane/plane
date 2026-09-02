@@ -40,7 +40,7 @@ export const AppliedProjectFilters = observer(function AppliedProjectFilters(pro
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(projectId)}
               >
-                <CloseOutline height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

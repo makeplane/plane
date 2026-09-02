@@ -22,7 +22,7 @@ const largeButton = (
   <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
     <FilterOutline className="size-3" />
     <span>Filters</span>
-    <ChevronDownOutline className="size-3" strokeWidth={2} />
+    <ChevronDownOutline className="size-3" />
   </div>
 );
 export function FiltersRoot() {

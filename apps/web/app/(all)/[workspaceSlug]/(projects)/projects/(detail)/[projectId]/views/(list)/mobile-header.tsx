@@ -46,7 +46,7 @@ export const ViewMobileHeader = observer(function ViewMobileHeader() {
             menuButton={
               <Row className="flex items-center text-13 text-secondary">
                 Filters
-                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </Row>
             }
           >

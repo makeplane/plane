@@ -24,7 +24,7 @@ import {
   DraftsOutline,
   DragDropOutline,
   MoreHorizontalOutline,
-  StarOutline,
+  StarFilled,
 } from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
@@ -233,7 +233,7 @@ export function FavoriteFolder(props: Props) {
                 >
                   <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                     <span className="flex items-center justify-start gap-2">
-                      <StarOutline className="fill-yellow-500 text-yellow-500 h-3.5 w-3.5" />
+                      <StarFilled className="text-yellow-500 h-3.5 w-3.5" />
                       <span>Remove from favorites</span>
                     </span>
                   </CustomMenu.MenuItem>

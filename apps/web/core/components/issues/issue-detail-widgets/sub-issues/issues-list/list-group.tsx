@@ -69,7 +69,6 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
                 className={cn("size-3.5 text-placeholder transition-all", {
                   "rotate-90": isCollapsibleOpen,
                 })}
-                strokeWidth={2.5}
               />
               <div className="grid flex-shrink-0 place-items-center overflow-hidden">
                 {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}

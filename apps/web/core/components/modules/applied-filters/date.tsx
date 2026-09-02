@@ -51,7 +51,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
               className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(date)}
             >
-              <CloseOutline height={10} width={10} strokeWidth={2} />
+              <CloseOutline height={10} width={10} />
             </button>
           )}
         </div>

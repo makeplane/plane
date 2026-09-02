@@ -254,7 +254,6 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
-                      strokeWidth={2.5}
                     />
                   </button>
                 )}

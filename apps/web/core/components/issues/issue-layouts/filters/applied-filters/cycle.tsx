@@ -43,7 +43,7 @@ export const AppliedCycleFilters = observer(function AppliedCycleFilters(props: 
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(cycleId)}
               >
-                <CloseOutline height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

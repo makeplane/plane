@@ -36,12 +36,12 @@ export function ProjectOrderByDropdown(props: Props) {
         <>
           {isMobile ? (
             <div className={getButtonStyling("secondary", "lg")}>
-              <SortDescendingOutline className="size-3.5 shrink-0" strokeWidth={2} />
+              <SortDescendingOutline className="size-3.5 shrink-0" />
               {orderByDetails && t(orderByDetails?.i18n_label)}
             </div>
           ) : (
             <div className={getButtonStyling("secondary", "lg")}>
-              <SortDescendingOutline className="size-3.5 shrink-0" strokeWidth={2} />
+              <SortDescendingOutline className="size-3.5 shrink-0" />
               {orderByDetails && t(orderByDetails?.i18n_label)}
             </div>
           )}

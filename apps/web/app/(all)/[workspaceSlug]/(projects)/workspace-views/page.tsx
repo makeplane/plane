@@ -33,7 +33,7 @@ function WorkspaceViewsPage() {
       <div className="flex h-full w-full flex-col overflow-hidden">
         <div className="flex h-11 w-full items-center overflow-hidden border-b border-subtle px-5 py-3">
           <InputGroup size="2xl">
-            <SearchOutline className="text-secondary" width={14} height={14} strokeWidth={2} />
+            <SearchOutline className="text-secondary" width={14} height={14} />
             <Input
               size="2xl"
               value={query}

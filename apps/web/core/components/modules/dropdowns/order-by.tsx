@@ -37,7 +37,7 @@ export function ModuleOrderByDropdown(props: Props) {
         <div className={cn(getButtonStyling("secondary", "lg"), "px-2 text-tertiary")}>
           {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
-          <ChevronDownOutline className="size-3" strokeWidth={2} />
+          <ChevronDownOutline className="size-3" />
         </div>
       }
       placement="bottom-end"

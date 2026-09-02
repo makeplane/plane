@@ -77,7 +77,7 @@ export const ProjectsListMobileHeader = observer(function ProjectsListMobileHead
             <div className="flex items-center gap-2 text-13 text-secondary">
               <FilterOutline className="h-3 w-3" />
               {t("common.filters")}
-              <ChevronDownOutline className="h-3 w-3" strokeWidth={2} />
+              <ChevronDownOutline className="h-3 w-3" />
             </div>
           }
           isFiltersApplied={isFiltersApplied}

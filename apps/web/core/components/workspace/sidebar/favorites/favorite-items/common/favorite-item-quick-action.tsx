@@ -6,7 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { MoreHorizontalOutline, StarOutline } from "@makeplane/propel/icons";
+import { MoreHorizontalOutline, StarFilled } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IFavorite } from "@plane/types";
@@ -47,7 +47,7 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
     >
       <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
         <span className="flex items-center justify-start gap-2">
-          <StarOutline className="fill-yellow-500 text-yellow-500 h-3.5 w-3.5 flex-shrink-0" />
+          <StarFilled className="text-yellow-500 h-3.5 w-3.5 flex-shrink-0" />
           <span>Remove from favorites</span>
         </span>
       </CustomMenu.MenuItem>

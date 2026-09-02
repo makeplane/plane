@@ -121,7 +121,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                 <>
                   {subIssueHelpers.preview_loader.includes(issue.id) ? (
                     <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-xs bg-layer-1 transition-all">
-                      <LinkOutline width={14} height={14} strokeWidth={2} className="animate-spin" />
+                      <LinkOutline width={14} height={14} className="animate-spin" />
                     </div>
                   ) : (
                     <div
@@ -141,7 +141,6 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
-                        strokeWidth={2.5}
                       />
                     </div>
                   )}
@@ -197,7 +196,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <EditOutline className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditOutline className="h-3.5 w-3.5" />
                       <span>{t("issue.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -209,7 +208,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <LinkOutline className="h-3.5 w-3.5" strokeWidth={2} />
+                    <LinkOutline className="h-3.5 w-3.5" />
                     <span>{t("issue.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
@@ -222,7 +221,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <CloseOutline className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseOutline className="h-3.5 w-3.5" />
                       {issueServiceType === EIssueServiceType.ISSUES
                         ? t("issue.remove.parent.label")
                         : t("issue.remove.label")}
@@ -238,7 +237,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <DeleteOutline className="h-3.5 w-3.5" strokeWidth={2} />
+                      <DeleteOutline className="h-3.5 w-3.5" />
                       <span>{t("issue.delete.label")}</span>
                     </div>
                   </CustomMenu.MenuItem>

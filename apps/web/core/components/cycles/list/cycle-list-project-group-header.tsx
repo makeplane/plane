@@ -35,7 +35,6 @@ export const CycleListProjectGroupHeader = observer(function CycleListProjectGro
         className={cn("h-4 w-4 text-tertiary duration-300", {
           "rotate-90": isExpanded,
         })}
-        strokeWidth={2}
       />
       <div className="flex size-4 flex-shrink-0 items-center justify-center overflow-hidden">
         <Logo logo={project.logo_props} size={16} />

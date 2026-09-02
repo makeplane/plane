@@ -47,7 +47,7 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(memberId)}
               >
-                <CloseOutline height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

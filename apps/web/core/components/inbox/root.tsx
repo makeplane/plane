@@ -68,7 +68,7 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
   if (error && error?.status === "init-error")
     return (
       <div className="relative flex h-full w-full flex-col items-center justify-center gap-3">
-        <IntakeOutline className="size-[60px]" strokeWidth={1.5} />
+        <IntakeOutline className="size-[60px]" />
         <div className="text-secondary">{error?.message}</div>
       </div>
     );

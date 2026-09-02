@@ -209,7 +209,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
                 />
               </Tooltip>
             ) : (
-              <Tooltip label="PinOutline">
+              <Tooltip label="Pin">
                 <PinOutline
                   className="size-3.5 flex-shrink-0 text-placeholder outline-none hover:text-tertiary"
                   onClick={() => pinNavigationItem(item.key)}

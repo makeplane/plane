@@ -58,7 +58,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
         </Tooltip>
       </div>
       {/* vertical divider */}
-      <MinusOutline className="-mx-3 h-5 w-5 rotate-90 text-placeholder" strokeWidth={1} />
+      <MinusOutline className="-mx-3 h-5 w-5 rotate-90 text-placeholder" />
 
       {/* page info */}
       <Tooltip label={`Created on ${renderFormattedDate(created_at)}`} layout="stacked">

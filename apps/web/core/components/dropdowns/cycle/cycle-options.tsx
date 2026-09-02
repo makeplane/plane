@@ -133,7 +133,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-          <SearchOutline className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+          <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
           <Combobox.Input
             as="input"
             ref={inputRef}

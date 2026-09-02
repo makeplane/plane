@@ -125,7 +125,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             <CustomMenu
               customButton={
                 <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">
-                  <AddOutline className="h-3.5 w-3.5" strokeWidth={2} />
+                  <AddOutline className="h-3.5 w-3.5" />
                 </span>
               }
             >
@@ -152,7 +152,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
                 setIsOpen(true);
               }}
             >
-              <AddOutline width={14} strokeWidth={2} />
+              <AddOutline width={14} />
             </div>
           ))}
 

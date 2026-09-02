@@ -397,7 +397,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                         }
                       >
                         <div className="flex items-center gap-2">
-                          <ClockOutline width={14} height={14} strokeWidth={2} />
+                          <ClockOutline width={14} height={14} />
                           {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
                             ? t("inbox_issue.actions.unsnooze")
                             : t("inbox_issue.actions.snooze")}
@@ -415,21 +415,21 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                         }
                       >
                         <div className="flex items-center gap-2">
-                          <DuplicateOfOutline width={14} height={14} strokeWidth={2} />
+                          <DuplicateOfOutline width={14} height={14} />
                           {t("inbox_issue.actions.mark_as_duplicate")}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(workItemLink)}>
                       <div className="flex items-center gap-2">
-                        <CopyOutline width={14} height={14} strokeWidth={2} />
+                        <CopyOutline width={14} height={14} />
                         {t("inbox_issue.actions.copy")}
                       </div>
                     </CustomMenu.MenuItem>
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
-                          <DeleteOutline width={14} height={14} strokeWidth={2} />
+                          <DeleteOutline width={14} height={14} />
                           {t("inbox_issue.actions.delete")}
                         </div>
                       </CustomMenu.MenuItem>

@@ -98,7 +98,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
           >
             <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("workspace_projects.network.public.title")}
-            <NewTabOutline className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            <NewTabOutline className="hidden h-3 w-3 group-hover:block" />
           </a>
         ) : (
           <></>

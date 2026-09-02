@@ -146,7 +146,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
-                  <LinkOutline width={14} height={14} strokeWidth={2} />
+                  <LinkOutline width={14} height={14} />
                   Copy work item link
                 </div>
               </CustomMenu.MenuItem>
@@ -154,7 +154,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
-                  <NewTabOutline width={14} height={14} strokeWidth={2} />
+                  <NewTabOutline width={14} height={14} />
                   Open work item
                 </div>
               </CustomMenu.MenuItem>
@@ -170,7 +170,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 }
               >
                 <div className="flex items-center gap-2">
-                  <ClockOutline width={14} height={14} strokeWidth={2} />
+                  <ClockOutline width={14} height={14} />
                   {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
                 </div>
               </CustomMenu.MenuItem>
@@ -186,7 +186,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 }
               >
                 <div className="flex items-center gap-2">
-                  <DuplicateOfOutline width={14} height={14} strokeWidth={2} />
+                  <DuplicateOfOutline width={14} height={14} />
                   Mark as duplicate
                 </div>
               </CustomMenu.MenuItem>
@@ -226,7 +226,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-danger-primary">
-                  <DeleteOutline height={14} width={14} strokeWidth={2} />
+                  <DeleteOutline height={14} width={14} />
                   Delete
                 </div>
               </CustomMenu.MenuItem>

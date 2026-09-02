@@ -93,7 +93,7 @@ export function ProjectAppliedFiltersList(props: Props) {
                   className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <CloseOutline height={12} width={12} strokeWidth={2} />
+                  <CloseOutline height={12} width={12} />
                 </button>
               )}
             </div>
@@ -119,7 +119,7 @@ export function ProjectAppliedFiltersList(props: Props) {
             size="md"
             variant="outline"
             label={t("common.clear_all")}
-            endIcon={<CloseOutline height={12} width={12} strokeWidth={2} />}
+            endIcon={<CloseOutline height={12} width={12} />}
             onClick={handleClearAllFilters}
           />
         )}

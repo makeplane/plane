@@ -26,7 +26,7 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
         // placement="bottom-start"
         customButton={
           <Row className="flex flex-grow justify-center gap-2 text-13 text-secondary">
-            <span>Layout</span> <ChevronDownOutline className="my-auto h-4 w-4 text-secondary" strokeWidth={1} />
+            <span>Layout</span> <ChevronDownOutline className="my-auto h-4 w-4 text-secondary" />
           </Row>
         }
         customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"

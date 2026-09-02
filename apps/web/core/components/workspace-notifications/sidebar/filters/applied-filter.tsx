@@ -64,7 +64,7 @@ export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFi
           size="md"
           variant="outline"
           label={t("common.clear_all")}
-          endIcon={<CloseOutline height={12} width={12} strokeWidth={2} />}
+          endIcon={<CloseOutline height={12} width={12} />}
           onClick={handleClearFilters}
         />
       </Header.LeftItem>

@@ -39,7 +39,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
         <SortDescendingOutline className="size-3" />
       )}
       {t(orderByDetails?.i18n_label || "inbox_issue.order_by.created_at")}
-      <ChevronDownOutline className="size-3" strokeWidth={2} />
+      <ChevronDownOutline className="size-3" />
     </div>
   );
   return (
