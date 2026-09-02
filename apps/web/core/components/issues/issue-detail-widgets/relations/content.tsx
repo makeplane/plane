@@ -148,15 +148,19 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
               }
               trigger={<span className="text-13 leading-5 font-medium">{relation.label}</span>}
             >
-              <RelationIssueList
-                workspaceSlug={workspaceSlug}
-                issueId={issueId}
-                relationKey={relation.relationKey}
-                issueIds={relation.issueIds}
-                disabled={disabled}
-                handleIssueCrudState={handleIssueCrudState}
-                issueServiceType={issueServiceType}
-              />
+              {/* Cancels this nested Collapsible's own panel inset so rows realign under
+                  the outer Relations collapsible's single inset instead of stacking two. */}
+              <div className="-mx-3">
+                <RelationIssueList
+                  workspaceSlug={workspaceSlug}
+                  issueId={issueId}
+                  relationKey={relation.relationKey}
+                  issueIds={relation.issueIds}
+                  disabled={disabled}
+                  handleIssueCrudState={handleIssueCrudState}
+                  issueServiceType={issueServiceType}
+                />
+              </div>
             </Collapsible>
           </div>
         ))}
