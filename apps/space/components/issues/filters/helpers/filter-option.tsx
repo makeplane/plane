@@ -30,7 +30,7 @@ export function FilterOption(props: Props) {
           isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
         } ${multiple ? "rounded-xs" : "rounded-full"}`}
       >
-        {isChecked && <TickOutline width={10} height={10} strokeWidth={3} />}
+        {isChecked && <TickOutline width={10} height={10} />}
       </div>
       <div className="flex items-center gap-2 truncate">
         {icon && <div className="grid w-5 shrink-0 place-items-center">{icon}</div>}

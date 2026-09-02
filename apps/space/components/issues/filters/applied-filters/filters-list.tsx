@@ -59,7 +59,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemoveFilter(filterKey, null)}
               >
-                <CloseOutline height={12} width={12} strokeWidth={2} />
+                <CloseOutline height={12} width={12} />
               </button>
             </div>
           </div>
@@ -71,7 +71,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
         className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1 text-11 text-tertiary hover:text-secondary"
       >
         {t("common.clear_all")}
-        <CloseOutline height={12} width={12} strokeWidth={2} />
+        <CloseOutline height={12} width={12} />
       </button>
     </div>
   );

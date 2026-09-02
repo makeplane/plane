@@ -27,7 +27,7 @@ export function AppliedPriorityFilters(props: Props) {
             className="grid place-items-center text-tertiary hover:text-secondary"
             onClick={() => handleRemove(priority)}
           >
-            <CloseOutline height={10} width={10} strokeWidth={2} />
+            <CloseOutline height={10} width={10} />
           </button>
         </div>
       ))}

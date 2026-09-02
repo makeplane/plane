@@ -102,10 +102,15 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
-            <CloseCircleOutline
-              className="absolute right-3 h-5 w-5 text-placeholder hover:cursor-pointer"
+            <button
+              type="button"
+              aria-label="Clear email"
+              className="absolute right-3 hover:cursor-pointer"
               onClick={handleEmailClear}
-            />
+              tabIndex={-1}
+            >
+              <CloseCircleOutline className="h-5 w-5 text-placeholder" />
+            </button>
           )}
         </div>
       </div>

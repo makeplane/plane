@@ -29,7 +29,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
         <div
           className={`flex h-full items-center justify-center gap-2 rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
         >
-          <LabelsOutline className="h-3.5 w-3.5" strokeWidth={2} />
+          <LabelsOutline className="h-3.5 w-3.5" />
           {shouldShowLabel && <span>No Labels</span>}
         </div>
       </Tooltip>
