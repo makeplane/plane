@@ -111,5 +111,8 @@
       "success_message": "Pagina a fost eliminată din colecție.",
       "error_message": "Pagina nu a putut fi eliminată din colecție. Te rugăm să încerci din nou."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Limita de conținut a fost atinsă, iar sincronizarea live este dezactivată. Creează o pagină nouă sau folosește pagini imbricate pentru a continua sincronizarea."
   }
 }

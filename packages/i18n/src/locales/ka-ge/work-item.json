@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "სამუშაო ელემენტის არქივირება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
-      }
+      },
+      "banner_message": "ეს სამუშაო ელემენტი დაარქივებულია. მის აღსადგენად ეწვიეთ არქივების სექციას.",
+      "go_to_archives": "არქივებზე გადასვლა"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Unable to update work items",
         "message": "State change is not allowed for some work items. Ensure the state change is allowed."
       }
+    },
+    "upgrade_banner": {
+      "message": "შეცვალეთ მდგომარეობა, პრიორიტეტი და სხვა რამდენიმე სამუშაო ელემენტისთვის ერთდროულად. საშუალოდ დაზოგეთ სამი წუთი თითოეულ ოპერაციაზე.",
+      "cta": "განახლება One-ზე"
     }
   },
   "recurring_work_items": {

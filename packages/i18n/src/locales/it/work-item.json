@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Impossibile archiviare l'elemento di lavoro. Per favore, riprova."
-      }
+      },
+      "banner_message": "Questo elemento di lavoro è stato archiviato. Vai alla sezione Archivi per ripristinarlo.",
+      "go_to_archives": "Vai agli archivi"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Impossibile aggiornare gli elementi di lavoro",
         "message": "Il cambiamento di stato non è consentito per alcuni elementi di lavoro. Assicurati che il cambiamento di stato sia consentito."
       }
+    },
+    "upgrade_banner": {
+      "message": "Cambia stato, priorità e altro per più elementi di lavoro contemporaneamente. Risparmia in media tre minuti per operazione.",
+      "cta": "Aggiorna a One"
     }
   },
   "recurring_work_items": {
