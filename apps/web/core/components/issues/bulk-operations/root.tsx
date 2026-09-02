@@ -6,8 +6,8 @@
 
 import { observer } from "mobx-react";
 // ui
-import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Banner } from "@makeplane/propel/components/banner";
+import { Button } from "@makeplane/propel/components/button";
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -37,9 +37,10 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
         icon={null}
         title={t("bulk_operations.upgrade_banner.message")}
         actions={
-          <AnchorButton
+          <Button
             variant="primary"
             size="sm"
+            stretch="auto"
             label={t("bulk_operations.upgrade_banner.cta")}
             nativeButton={false}
             render={
