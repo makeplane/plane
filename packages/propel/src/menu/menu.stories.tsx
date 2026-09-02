@@ -56,10 +56,10 @@ export const WithIcons: Story = {
             <span>Profile</span>
           </div>
         </Menu.MenuItem>
-        <Menu.MenuItem onClick={() => alert("SettingsOutline")}>
+        <Menu.MenuItem onClick={() => alert("Settings")}>
           <div className="flex items-center gap-2">
             <SettingsOutline className="h-4 w-4" />
-            <span>SettingsOutline</span>
+            <span>Settings</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Messages")}>
@@ -232,12 +232,12 @@ export const ComplexMenu: Story = {
           </div>
         </Menu.MenuItem>
         <Menu.SubMenu
-          trigger="SettingsOutline"
+          trigger="Settings"
           className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200"
         >
-          <Menu.MenuItem onClick={() => alert("General SettingsOutline")}>General</Menu.MenuItem>
-          <Menu.MenuItem onClick={() => alert("Privacy SettingsOutline")}>Privacy</Menu.MenuItem>
-          <Menu.MenuItem onClick={() => alert("Security SettingsOutline")}>Security</Menu.MenuItem>
+          <Menu.MenuItem onClick={() => alert("General Settings")}>General</Menu.MenuItem>
+          <Menu.MenuItem onClick={() => alert("Privacy Settings")}>Privacy</Menu.MenuItem>
+          <Menu.MenuItem onClick={() => alert("Security Settings")}>Security</Menu.MenuItem>
         </Menu.SubMenu>
         <div className="border-gray-200 my-1 border-t" />
         <Menu.MenuItem onClick={() => alert("Logout")}>

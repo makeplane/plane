@@ -57,7 +57,7 @@ export function CodeBlockComponent({ node }: Props) {
           onClick={(e) => void copyToClipboard(e)}
         >
           {copied ? (
-            <TickOutline className="h-3 w-3 text-success-primary" strokeWidth={3} />
+            <TickOutline className="h-3 w-3 text-success-primary" />
           ) : (
             <CopyOutline className="h-3 w-3 text-tertiary group-hover/button:text-primary" />
           )}

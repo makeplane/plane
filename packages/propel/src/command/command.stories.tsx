@@ -83,24 +83,24 @@ export const WithCategories: Story = {
           className="h-9 w-full bg-transparent py-3 text-13 outline-none"
         />
         <Command.List className="max-h-80 overflow-auto py-2">
-          <div className="text-gray-500 px-2 py-1.5 text-11 font-semibold">UserOutline</div>
+          <div className="text-gray-500 px-2 py-1.5 text-11 font-semibold">User</div>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
             <UserOutline className="h-4 w-4" />
             <span>Profile</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
             <SettingsOutline className="h-4 w-4" />
-            <span>SettingsOutline</span>
+            <span>Settings</span>
           </Command.Item>
 
           <div className="text-gray-500 mt-2 px-2 py-1.5 text-11 font-semibold">Files</div>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
             <FolderOutline className="h-4 w-4" />
-            <span>Open FolderOutline</span>
+            <span>Open Folder</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
             <FileOutline className="h-4 w-4" />
-            <span>New FileOutline</span>
+            <span>New File</span>
           </Command.Item>
         </Command.List>
         <Command.Empty className="text-gray-500 py-6 text-center text-13">No commands found.</Command.Empty>
@@ -153,7 +153,7 @@ export const WithoutSearch: Story = {
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
             <SettingsOutline className="h-4 w-4" />
-            <span>SettingsOutline</span>
+            <span>Settings</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
             <FolderOutline className="h-4 w-4" />

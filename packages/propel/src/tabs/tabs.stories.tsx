@@ -160,7 +160,7 @@ export const WithIcons: Story = {
     const tabsWithIcons = [
       { label: "Home", value: "home", icon: HomeOutline },
       { label: "Profile", value: "profile", icon: UserOutline },
-      { label: "SettingsOutline", value: "settings", icon: SettingsOutline },
+      { label: "Settings", value: "settings", icon: SettingsOutline },
       { label: "Notifications", value: "notifications", icon: SubscribeOutline },
     ];
 

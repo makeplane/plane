@@ -275,7 +275,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
               type="button"
               onClick={() => window.open(downloadSrc, "_blank")}
               className="grid size-8 flex-shrink-0 place-items-center text-white/60 transition-colors duration-200 hover:text-white"
-              aria-label="DownloadOutline image"
+              aria-label="Download image"
             >
               <DownloadOutline className="size-4" />
             </button>

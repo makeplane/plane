@@ -155,7 +155,7 @@ export const getSlashCommandFilteredSections =
           {
             commandKey: "table",
             key: "table",
-            title: "TableEditorOutline",
+            title: "Table",
             description: "Create a table",
             searchTerms: ["table", "cell", "db", "data", "tabular"],
             icon: <TableEditorOutline className="size-3.5" />,

@@ -42,7 +42,7 @@ type Story = StoryObj<typeof Breadcrumbs>;
 export const Default: Story = {
   args: {
     children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />,
+      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
       <Breadcrumbs.Item key="projects" component={<BreadcrumbBlock href="/projects" label="Projects" />} />,
       <Breadcrumbs.Item
         key="current"
@@ -56,7 +56,7 @@ export const WithLoading: Story = {
   args: {
     isLoading: true,
     children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />,
+      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
       <Breadcrumbs.Item key="projects" component={<BreadcrumbBlock href="/projects" label="Projects" />} />,
     ],
   },
@@ -65,7 +65,7 @@ export const WithLoading: Story = {
 export const WithCustomComponent: Story = {
   args: {
     children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />,
+      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
       <Breadcrumbs.Item
         key="custom"
         component={
@@ -81,7 +81,7 @@ export const WithCustomComponent: Story = {
 
 export const SingleItem: Story = {
   args: {
-    children: [<Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="HomeOutline" />} />],
+    children: [<Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />],
   },
 };
 
@@ -90,12 +90,12 @@ export const WithIcons: Story = {
     children: [
       <Breadcrumbs.Item
         key="home"
-        component={<BreadcrumbBlock href="/" label="HomeOutline" icon={<HomeOutline className="size-3.5" />} />}
+        component={<BreadcrumbBlock href="/" label="Home" icon={<HomeOutline className="size-3.5" />} />}
       />,
       <Breadcrumbs.Item
         key="settings"
         component={
-          <BreadcrumbBlock href="/settings" label="SettingsOutline" icon={<SettingsOutline className="size-3.5" />} />
+          <BreadcrumbBlock href="/settings" label="Settings" icon={<SettingsOutline className="size-3.5" />} />
         }
         isLast
       />,

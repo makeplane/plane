@@ -163,7 +163,7 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       }}
     >
       <BaseToast.Close className="absolute top-3 right-3 cursor-pointer text-icon-secondary hover:text-icon-tertiary">
-        <CloseOutline strokeWidth={1.5} width={16} height={16} />
+        <CloseOutline width={16} height={16} />
       </BaseToast.Close>
       <div className="flex w-full items-start gap-2 p-4">
         <div className="py-1">
@@ -217,7 +217,7 @@ export function ToastStatic({ type, title, message, actionItems, theme = "light"
         )}
       >
         <div className="absolute top-1 right-1 cursor-default text-icon-tertiary">
-          <CloseOutline strokeWidth={1.5} width={14} height={14} />
+          <CloseOutline width={14} height={14} />
         </div>
         <div className="flex w-full items-start gap-3 p-4">
           <div className="py-1">

@@ -47,19 +47,19 @@ export const Default: Story = {
         <div className="w-96 rounded-sm border">
           <Toolbar>
             <Toolbar.Group isFirst>
-              <Toolbar.Item icon={UndoOutline} tooltip="UndoOutline" />
-              <Toolbar.Item icon={RedoOutline} tooltip="RedoOutline" />
+              <Toolbar.Item icon={UndoOutline} tooltip="Undo" />
+              <Toolbar.Item icon={RedoOutline} tooltip="Redo" />
             </Toolbar.Group>
             <Toolbar.Group>
-              <Toolbar.Item icon={BoldOutline} tooltip="BoldOutline" />
-              <Toolbar.Item icon={ItalicOutline} tooltip="ItalicOutline" />
-              <Toolbar.Item icon={UnderlineOutline} tooltip="UnderlineOutline" />
-              <Toolbar.Item icon={StrikethroughOutline} tooltip="StrikethroughOutline" />
+              <Toolbar.Item icon={BoldOutline} tooltip="Bold" />
+              <Toolbar.Item icon={ItalicOutline} tooltip="Italic" />
+              <Toolbar.Item icon={UnderlineOutline} tooltip="Underline" />
+              <Toolbar.Item icon={StrikethroughOutline} tooltip="Strikethrough" />
             </Toolbar.Group>
             <Toolbar.Group>
-              <Toolbar.Item icon={ListOutline} tooltip="Bullet ListOutline" />
-              <Toolbar.Item icon={NumberedListOutline} tooltip="Numbered ListOutline" />
-              <Toolbar.Item icon={QuoteOutline} tooltip="QuoteOutline" />
+              <Toolbar.Item icon={ListOutline} tooltip="Bullet List" />
+              <Toolbar.Item icon={NumberedListOutline} tooltip="Numbered List" />
+              <Toolbar.Item icon={QuoteOutline} tooltip="Quote" />
             </Toolbar.Group>
             <Toolbar.Group>
               <Toolbar.Item icon={AlignLeftOutline} tooltip="Align Left" />
@@ -68,7 +68,7 @@ export const Default: Story = {
             </Toolbar.Group>
             <Toolbar.Group>
               <Toolbar.Item icon={LinkOutline} tooltip="Link" />
-              <Toolbar.Item icon={CodeOutline} tooltip="CodeOutline" />
+              <Toolbar.Item icon={CodeOutline} tooltip="Code" />
             </Toolbar.Group>
           </Toolbar>
         </div>
@@ -83,14 +83,14 @@ export const WithActiveStates: Story = {
       <div className="p-4">
         <Toolbar>
           <Toolbar.Group isFirst>
-            <Toolbar.Item icon={BoldOutline} tooltip="BoldOutline" shortcut={["Cmd", "B"]} isActive />
-            <Toolbar.Item icon={ItalicOutline} tooltip="ItalicOutline" shortcut={["Cmd", "I"]} />
-            <Toolbar.Item icon={UnderlineOutline} tooltip="UnderlineOutline" shortcut={["Cmd", "U"]} isActive />
+            <Toolbar.Item icon={BoldOutline} tooltip="Bold" shortcut={["Cmd", "B"]} isActive />
+            <Toolbar.Item icon={ItalicOutline} tooltip="Italic" shortcut={["Cmd", "I"]} />
+            <Toolbar.Item icon={UnderlineOutline} tooltip="Underline" shortcut={["Cmd", "U"]} isActive />
           </Toolbar.Group>
           <Toolbar.Group>
-            <Toolbar.Item icon={ListOutline} tooltip="Bullet ListOutline" />
-            <Toolbar.Item icon={NumberedListOutline} tooltip="Numbered ListOutline" isActive />
-            <Toolbar.Item icon={QuoteOutline} tooltip="QuoteOutline" />
+            <Toolbar.Item icon={ListOutline} tooltip="Bullet List" />
+            <Toolbar.Item icon={NumberedListOutline} tooltip="Numbered List" isActive />
+            <Toolbar.Item icon={QuoteOutline} tooltip="Quote" />
           </Toolbar.Group>
           <Toolbar.Group>
             <Toolbar.Item icon={AlignLeftOutline} tooltip="Align Left" />
@@ -119,13 +119,13 @@ export const CommentToolbar: Story = {
             <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
               <div className="flex items-stretch">
                 <Toolbar.Group isFirst>
-                  <Toolbar.Item icon={BoldOutline} tooltip="BoldOutline" shortcut={["Cmd", "B"]} />
-                  <Toolbar.Item icon={ItalicOutline} tooltip="ItalicOutline" shortcut={["Cmd", "I"]} />
-                  <Toolbar.Item icon={CodeOutline} tooltip="CodeOutline" shortcut={["Cmd", "`"]} />
+                  <Toolbar.Item icon={BoldOutline} tooltip="Bold" shortcut={["Cmd", "B"]} />
+                  <Toolbar.Item icon={ItalicOutline} tooltip="Italic" shortcut={["Cmd", "I"]} />
+                  <Toolbar.Item icon={CodeOutline} tooltip="Code" shortcut={["Cmd", "`"]} />
                 </Toolbar.Group>
                 <Toolbar.Group>
-                  <Toolbar.Item icon={ListOutline} tooltip="Bullet ListOutline" />
-                  <Toolbar.Item icon={NumberedListOutline} tooltip="Numbered ListOutline" />
+                  <Toolbar.Item icon={ListOutline} tooltip="Bullet List" />
+                  <Toolbar.Item icon={NumberedListOutline} tooltip="Numbered List" />
                 </Toolbar.Group>
               </div>
               <Toolbar.SubmitButton>Comment</Toolbar.SubmitButton>

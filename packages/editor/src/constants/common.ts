@@ -98,7 +98,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
   {
     itemKey: "bold",
     renderKey: "bold",
-    name: "BoldOutline",
+    name: "Bold",
     icon: BoldOutline,
     shortcut: ["Cmd", "B"],
     editors: ["lite", "document"],
@@ -106,7 +106,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
   {
     itemKey: "italic",
     renderKey: "italic",
-    name: "ItalicOutline",
+    name: "Italic",
     icon: ItalicOutline,
     shortcut: ["Cmd", "I"],
     editors: ["lite", "document"],
@@ -114,7 +114,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
   {
     itemKey: "underline",
     renderKey: "underline",
-    name: "UnderlineOutline",
+    name: "Underline",
     icon: UnderlineOutline,
     shortcut: ["Cmd", "U"],
     editors: ["lite", "document"],
@@ -122,7 +122,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
   {
     itemKey: "strikethrough",
     renderKey: "strikethrough",
-    name: "StrikethroughOutline",
+    name: "Strikethrough",
     icon: StrikethroughOutline,
     shortcut: ["Cmd", "Shift", "S"],
     editors: ["lite", "document"],
@@ -162,8 +162,8 @@ export const USER_ACTION_ITEMS: ToolbarMenuItem<"quote" | "code">[] = [
 ];
 
 export const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image">[] = [
-  { itemKey: "table", renderKey: "table", name: "TableEditorOutline", icon: TableEditorOutline, editors: ["document"] },
-  { itemKey: "image", renderKey: "image", name: "ImageOutline", icon: ImageOutline, editors: ["lite", "document"] },
+  { itemKey: "table", renderKey: "table", name: "Table", icon: TableEditorOutline, editors: ["document"] },
+  { itemKey: "image", renderKey: "image", name: "Image", icon: ImageOutline, editors: ["lite", "document"] },
 ];
 
 export const IMAGE_ITEM = COMPLEX_ITEMS.find((item): item is ToolbarMenuItem<"image"> => item.itemKey === "image")!;

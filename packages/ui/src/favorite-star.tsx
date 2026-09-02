@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { StarOutline } from "@makeplane/propel/icons";
+import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 import React from "react";
 // helpers
 import { cn } from "./utils";
@@ -18,14 +18,16 @@ type Props = {
 
 export function FavoriteStar(props: Props) {
   const { buttonClassName, iconClassName, onClick, selected } = props;
+  // Propel splits the star into two glyphs; the filled one matches the old solid Lucide star.
+  const Icon = selected ? StarFilled : StarOutline;
 
   return (
     <button type="button" className={cn("grid h-4 w-4 place-items-center", buttonClassName)} onClick={onClick}>
-      <StarOutline
+      <Icon
         className={cn(
           "h-4 w-4 text-tertiary transition-all",
           {
-            "fill-(--color-label-yellow-icon) stroke-(--color-label-yellow-icon)": selected,
+            "text-(--color-label-yellow-icon)": selected,
           },
           iconClassName
         )}
