@@ -48,6 +48,8 @@ from .parameters import (
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
     ESTIMATE_ID_PARAMETER,
+    PAGE_ID_PARAMETER,
+    PAGE_TYPE_PARAMETER,
 )
 
 # Responses
@@ -75,6 +77,12 @@ from .responses import (
     LABEL_NAME_EXISTS_RESPONSE,
     MODULE_NOT_FOUND_RESPONSE,
     MODULE_ISSUE_NOT_FOUND_RESPONSE,
+    PAGE_NOT_FOUND_RESPONSE,
+    PAGE_NOT_EDITABLE_RESPONSE,
+    PAGE_ACCESS_DENIED_RESPONSE,
+    PAGE_NOT_ARCHIVED_RESPONSE,
+    PAGE_DELETE_FORBIDDEN_RESPONSE,
+    PAGE_WRITE_REJECTED_RESPONSE,
     CYCLE_CANNOT_ARCHIVE_RESPONSE,
     STATE_NAME_EXISTS_RESPONSE,
     STATE_CANNOT_DELETE_RESPONSE,
@@ -131,6 +139,8 @@ from .examples import (
     ESTIMATE_UPDATE_EXAMPLE,
     ESTIMATE_POINT_CREATE_EXAMPLE,
     ESTIMATE_POINT_UPDATE_EXAMPLE,
+    PAGE_CREATE_EXAMPLE,
+    PAGE_UPDATE_EXAMPLE,
     # Response Examples
     CYCLE_EXAMPLE,
     TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE,
@@ -152,6 +162,7 @@ from .examples import (
     STICKY_EXAMPLE,
     ESTIMATE_EXAMPLE,
     ESTIMATE_POINT_EXAMPLE,
+    PAGE_EXAMPLE,
 )
 
 # Helper decorators
@@ -172,6 +183,7 @@ from .decorators import (
     issue_attachment_docs,
     module_docs,
     module_issue_docs,
+    page_docs,
     state_docs,
     estimate_docs,
     estimate_point_docs,
@@ -217,6 +229,8 @@ __all__ = [
     "FIELDS_PARAMETER",
     "EXPAND_PARAMETER",
     "ESTIMATE_ID_PARAMETER",
+    "PAGE_ID_PARAMETER",
+    "PAGE_TYPE_PARAMETER",
     # Responses
     "UNAUTHORIZED_RESPONSE",
     "FORBIDDEN_RESPONSE",
@@ -241,6 +255,12 @@ __all__ = [
     "LABEL_NAME_EXISTS_RESPONSE",
     "MODULE_NOT_FOUND_RESPONSE",
     "MODULE_ISSUE_NOT_FOUND_RESPONSE",
+    "PAGE_NOT_FOUND_RESPONSE",
+    "PAGE_NOT_EDITABLE_RESPONSE",
+    "PAGE_ACCESS_DENIED_RESPONSE",
+    "PAGE_NOT_ARCHIVED_RESPONSE",
+    "PAGE_DELETE_FORBIDDEN_RESPONSE",
+    "PAGE_WRITE_REJECTED_RESPONSE",
     "CYCLE_CANNOT_ARCHIVE_RESPONSE",
     "STATE_NAME_EXISTS_RESPONSE",
     "STATE_CANNOT_DELETE_RESPONSE",
@@ -294,6 +314,8 @@ __all__ = [
     "ESTIMATE_UPDATE_EXAMPLE",
     "ESTIMATE_POINT_CREATE_EXAMPLE",
     "ESTIMATE_POINT_UPDATE_EXAMPLE",
+    "PAGE_CREATE_EXAMPLE",
+    "PAGE_UPDATE_EXAMPLE",
     # Response Examples
     "CYCLE_EXAMPLE",
     "TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE",
@@ -315,6 +337,7 @@ __all__ = [
     "STICKY_EXAMPLE",
     "ESTIMATE_EXAMPLE",
     "ESTIMATE_POINT_EXAMPLE",
+    "PAGE_EXAMPLE",
     # Decorators
     "workspace_docs",
     "project_docs",
@@ -332,6 +355,7 @@ __all__ = [
     "issue_attachment_docs",
     "module_docs",
     "module_issue_docs",
+    "page_docs",
     "state_docs",
     "estimate_docs",
     "estimate_point_docs",
