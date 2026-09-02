@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs } from "@makeplane/propel/components/tabs";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
@@ -110,10 +110,16 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (
-          <Tabs value={activeTab} onValueChange={handleTabChange}>
-            <PageNavigationPaneTabsList />
-            <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
-          </Tabs>
+          // Row wrapper: Propel's Tabs root omits className, so it takes its full height by
+          // stretching as a flex item.
+          <div className="flex h-full w-full">
+            <Tabs variant="contained" value={activeTab} onValueChange={handleTabChange}>
+              <div className="flex h-full w-full flex-col">
+                <PageNavigationPaneTabsList />
+                <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
+              </div>
+            </Tabs>
+          </div>
         ) : null}
       </div>
     </aside>
