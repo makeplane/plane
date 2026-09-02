@@ -77,22 +77,24 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
         )}
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
-        <Collapsible
-          open={showPendingInvites}
-          onOpenChange={() => setShowPendingInvites((prev) => !prev)}
-          trigger={
-            <span className="inline-flex items-center gap-2 py-2">
-              <span className="text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</span>
-              {searchedInvitationsIds && <CountChip count={searchedInvitationsIds.length} className="h-5" />}
-            </span>
-          }
-        >
-          <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
-            {searchedInvitationsIds?.map((invitationId) => (
-              <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
-            ))}
-          </div>
-        </Collapsible>
+        <div className="pt-4">
+          <Collapsible
+            open={showPendingInvites}
+            onOpenChange={() => setShowPendingInvites((prev) => !prev)}
+            trigger={
+              <span className="inline-flex items-center gap-2 py-2">
+                <span className="text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</span>
+                {searchedInvitationsIds && <CountChip count={searchedInvitationsIds.length} className="h-5" />}
+              </span>
+            }
+          >
+            <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
+              {searchedInvitationsIds?.map((invitationId) => (
+                <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+              ))}
+            </div>
+          </Collapsible>
+        </div>
       )}
     </>
   );
