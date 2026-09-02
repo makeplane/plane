@@ -10,7 +10,7 @@ import { useArgs } from "storybook/preview-api";
 import { CloseOutline } from "@makeplane/propel/icons";
 import { Popover } from "./root";
 
-// cannot use satifies here because base-ui does not have portable types.
+// cannot use satisfies here because base-ui does not have portable types.
 const meta: Meta<typeof Popover> = {
   title: "Components/Popover",
   component: Popover,
