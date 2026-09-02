@@ -50,7 +50,7 @@
       "move": "Déplacer {value} vers les éléments de travail du projet"
     },
     "source": {
-      "in-app": "in-app"
+      "in-app": "dans l'application"
     },
     "order_by": {
       "created_at": "Créé le",
