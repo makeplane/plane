@@ -11,6 +11,7 @@ import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue, TIssueServiceType, TIssueRelationTypes } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { useTimeLineRelationOptions } from "@/components/relations";
@@ -138,7 +139,13 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
           <div key={relation.relationKey}>
             <Collapsible
               defaultOpen
-              icon={relation.icon ? relation.icon(14) : undefined}
+              icon={
+                relation.icon ? (
+                  <span className={cn("flex items-center justify-center rounded p-0.5", relation.className)}>
+                    {relation.icon(14)}
+                  </span>
+                ) : undefined
+              }
               trigger={<span className="text-13 leading-5 font-medium">{relation.label}</span>}
             >
               <RelationIssueList
