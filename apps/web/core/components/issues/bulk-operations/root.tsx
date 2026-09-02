@@ -39,8 +39,14 @@ export const IssueBulkOperationsRoot = observer(function IssueBulkOperationsRoot
             size="sm"
             label="Upgrade to One"
             nativeButton={false}
-            // oxlint-disable-next-line jsx_a11y/anchor-has-content -- AnchorButton injects `label` as the anchor's children at runtime
-            render={<a href={MARKETING_PLANE_ONE_PAGE_LINK} target="_blank" rel="noopener noreferrer" />}
+            render={
+              <a
+                href={MARKETING_PLANE_ONE_PAGE_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Upgrade to One"
+              />
+            }
           />
         }
         render={<div className="w-full" />}
