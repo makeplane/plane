@@ -4,30 +4,30 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Bold,
-  CaseSensitive,
-  Code2,
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Image,
-  Italic,
-  List,
-  ListOrdered,
-  ListTodo,
-  Strikethrough,
-  Table,
-  TextQuote,
-  Underline,
-} from "lucide-react";
+  AlignCenterOutline,
+  AlignLeftOutline,
+  AlignRightOutline,
+  BoldOutline,
+  CodeOutline,
+  H1Outline,
+  H2Outline,
+  H3Outline,
+  H4Outline,
+  H5Outline,
+  H6Outline,
+  ImageOutline,
+  ItalicOutline,
+  ListOutline,
+  NumberedListOutline,
+  QuoteOutline,
+  StrikethroughOutline,
+  TableEditorOutline,
+  TextOutline,
+  ToDoOutline,
+  UnderlineOutline,
+} from "@makeplane/propel/icons";
 import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@/types";
 
@@ -42,20 +42,20 @@ export type ToolbarMenuItem<T extends TEditorCommands = TEditorCommands> = {
   itemKey: T;
   renderKey: string;
   name: string;
-  icon: LucideIcon;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
   shortcut?: string[];
   editors: TEditorTypes[];
   extraProps?: ExtraPropsForCommand<T>;
 };
 
 export const TYPOGRAPHY_ITEMS: ToolbarMenuItem<"text" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6">[] = [
-  { itemKey: "text", renderKey: "text", name: "Text", icon: CaseSensitive, editors: ["document"] },
-  { itemKey: "h1", renderKey: "h1", name: "Heading 1", icon: Heading1, editors: ["document"] },
-  { itemKey: "h2", renderKey: "h2", name: "Heading 2", icon: Heading2, editors: ["document"] },
-  { itemKey: "h3", renderKey: "h3", name: "Heading 3", icon: Heading3, editors: ["document"] },
-  { itemKey: "h4", renderKey: "h4", name: "Heading 4", icon: Heading4, editors: ["document"] },
-  { itemKey: "h5", renderKey: "h5", name: "Heading 5", icon: Heading5, editors: ["document"] },
-  { itemKey: "h6", renderKey: "h6", name: "Heading 6", icon: Heading6, editors: ["document"] },
+  { itemKey: "text", renderKey: "text", name: "Text", icon: TextOutline, editors: ["document"] },
+  { itemKey: "h1", renderKey: "h1", name: "Heading 1", icon: H1Outline, editors: ["document"] },
+  { itemKey: "h2", renderKey: "h2", name: "Heading 2", icon: H2Outline, editors: ["document"] },
+  { itemKey: "h3", renderKey: "h3", name: "Heading 3", icon: H3Outline, editors: ["document"] },
+  { itemKey: "h4", renderKey: "h4", name: "Heading 4", icon: H4Outline, editors: ["document"] },
+  { itemKey: "h5", renderKey: "h5", name: "Heading 5", icon: H5Outline, editors: ["document"] },
+  { itemKey: "h6", renderKey: "h6", name: "Heading 6", icon: H6Outline, editors: ["document"] },
 ];
 
 export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
@@ -63,7 +63,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
     itemKey: "text-align",
     renderKey: "text-align-left",
     name: "Left align",
-    icon: AlignLeft,
+    icon: AlignLeftOutline,
     shortcut: ["Cmd", "Shift", "L"],
     editors: ["lite", "document"],
     extraProps: {
@@ -74,7 +74,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
     itemKey: "text-align",
     renderKey: "text-align-center",
     name: "Center align",
-    icon: AlignCenter,
+    icon: AlignCenterOutline,
     shortcut: ["Cmd", "Shift", "E"],
     editors: ["lite", "document"],
     extraProps: {
@@ -85,7 +85,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
     itemKey: "text-align",
     renderKey: "text-align-right",
     name: "Right align",
-    icon: AlignRight,
+    icon: AlignRightOutline,
     shortcut: ["Cmd", "Shift", "R"],
     editors: ["lite", "document"],
     extraProps: {
@@ -99,7 +99,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     itemKey: "bold",
     renderKey: "bold",
     name: "Bold",
-    icon: Bold,
+    icon: BoldOutline,
     shortcut: ["Cmd", "B"],
     editors: ["lite", "document"],
   },
@@ -107,7 +107,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     itemKey: "italic",
     renderKey: "italic",
     name: "Italic",
-    icon: Italic,
+    icon: ItalicOutline,
     shortcut: ["Cmd", "I"],
     editors: ["lite", "document"],
   },
@@ -115,7 +115,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     itemKey: "underline",
     renderKey: "underline",
     name: "Underline",
-    icon: Underline,
+    icon: UnderlineOutline,
     shortcut: ["Cmd", "U"],
     editors: ["lite", "document"],
   },
@@ -123,7 +123,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     itemKey: "strikethrough",
     renderKey: "strikethrough",
     name: "Strikethrough",
-    icon: Strikethrough,
+    icon: StrikethroughOutline,
     shortcut: ["Cmd", "Shift", "S"],
     editors: ["lite", "document"],
   },
@@ -134,7 +134,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: List,
+    icon: ListOutline,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
   },
@@ -142,7 +142,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "numbered-list",
     renderKey: "numbered-list",
     name: "Numbered list",
-    icon: ListOrdered,
+    icon: NumberedListOutline,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },
@@ -150,20 +150,20 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "to-do-list",
     renderKey: "to-do-list",
     name: "To-do list",
-    icon: ListTodo,
+    icon: ToDoOutline,
     shortcut: ["Cmd", "Shift", "9"],
     editors: ["lite", "document"],
   },
 ];
 
 export const USER_ACTION_ITEMS: ToolbarMenuItem<"quote" | "code">[] = [
-  { itemKey: "quote", renderKey: "quote", name: "Quote", icon: TextQuote, editors: ["lite", "document"] },
-  { itemKey: "code", renderKey: "code", name: "Code", icon: Code2, editors: ["lite", "document"] },
+  { itemKey: "quote", renderKey: "quote", name: "Quote", icon: QuoteOutline, editors: ["lite", "document"] },
+  { itemKey: "code", renderKey: "code", name: "Code", icon: CodeOutline, editors: ["lite", "document"] },
 ];
 
 export const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image">[] = [
-  { itemKey: "table", renderKey: "table", name: "Table", icon: Table, editors: ["document"] },
-  { itemKey: "image", renderKey: "image", name: "Image", icon: Image, editors: ["lite", "document"] },
+  { itemKey: "table", renderKey: "table", name: "Table", icon: TableEditorOutline, editors: ["document"] },
+  { itemKey: "image", renderKey: "image", name: "Image", icon: ImageOutline, editors: ["lite", "document"] },
 ];
 
 export const IMAGE_ITEM = COMPLEX_ITEMS.find((item): item is ToolbarMenuItem<"image"> => item.itemKey === "image")!;

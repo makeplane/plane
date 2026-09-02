@@ -6,11 +6,17 @@
 
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowDown, ArrowUp, ToggleRight } from "lucide-react";
+import {
+  ArrowDownOutline,
+  CloseOutline,
+  CopyOutline,
+  DeleteOutline,
+  ToggleFilled,
+  TopArrowOutline,
+} from "@makeplane/propel/icons";
 import type { LucideIcon } from "lucide-react";
 // extensions
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CopyIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 import { findTable, getSelectedRows } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateRows } from "../actions";
@@ -25,19 +31,19 @@ const DROPDOWN_ITEMS: {
   {
     key: "insert-above",
     label: "Insert above",
-    icon: ArrowUp,
+    icon: TopArrowOutline,
     action: (editor) => editor.chain().focus().addRowBefore().run(),
   },
   {
     key: "insert-below",
     label: "Insert below",
-    icon: ArrowDown,
+    icon: ArrowDownOutline,
     action: (editor) => editor.chain().focus().addRowAfter().run(),
   },
   {
     key: "duplicate",
     label: "Duplicate",
-    icon: CopyIcon,
+    icon: CopyOutline,
     action: (editor) => {
       const table = findTable(editor.state.selection);
       if (!table) return;
@@ -52,13 +58,13 @@ const DROPDOWN_ITEMS: {
   {
     key: "clear-contents",
     label: "Clear contents",
-    icon: CloseIcon,
+    icon: CloseOutline,
     action: (editor) => editor.chain().focus().clearSelectedCells().run(),
   },
   {
     key: "delete",
     label: "Delete",
-    icon: TrashIcon,
+    icon: DeleteOutline,
     action: (editor) => editor.chain().focus().deleteRow().run(),
   },
 ];
@@ -84,7 +90,7 @@ export function RowOptionsDropdown(props: Props) {
         }}
       >
         <div className="flex-grow truncate">Header row</div>
-        <ToggleRight className="size-3 shrink-0" />
+        <ToggleFilled className="size-3 shrink-0" />
       </button>
       <hr className="my-2 border-subtle" />
       <TableDragHandleDropdownColorSelector editor={editor} onSelect={onClose} />
