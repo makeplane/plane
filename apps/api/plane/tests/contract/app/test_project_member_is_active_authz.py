@@ -57,9 +57,7 @@ def project(db, workspace, create_user):
     )
     # create_user is the workspace owner (role=20 via the workspace fixture);
     # make them a project ADMIN too — this is the takeover victim.
-    ProjectMember.objects.create(
-        workspace=workspace, project=project, member=create_user, role=20, is_active=True
-    )
+    ProjectMember.objects.create(workspace=workspace, project=project, member=create_user, role=20, is_active=True)
     return project
 
 

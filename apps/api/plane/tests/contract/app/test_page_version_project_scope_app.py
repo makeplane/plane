@@ -96,9 +96,7 @@ class TestPageVersionProjectScope:
         """Reading a single cross-project page version must be denied."""
         _, project_a, _, page_b, version_b = self._setup(workspace, create_user)
 
-        response = session_client.get(
-            _page_versions_url(workspace.slug, project_a.id, page_b.id, pk=version_b.id)
-        )
+        response = session_client.get(_page_versions_url(workspace.slug, project_a.id, page_b.id, pk=version_b.id))
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -126,13 +124,9 @@ class TestPageVersionProjectScope:
         though the attacker is a member of that project."""
         victim, project_a, _, _, _ = self._setup(workspace, create_user)
 
-        page = Page.objects.create(
-            workspace=workspace, owned_by=victim, access=Page.PUBLIC_ACCESS, name="Removed page"
-        )
+        page = Page.objects.create(workspace=workspace, owned_by=victim, access=Page.PUBLIC_ACCESS, name="Removed page")
         # Link exists but is soft-deleted → the page no longer belongs to A.
-        ProjectPage.objects.create(
-            workspace=workspace, project=project_a, page=page, deleted_at=timezone.now()
-        )
+        ProjectPage.objects.create(workspace=workspace, project=project_a, page=page, deleted_at=timezone.now())
         _make_version(workspace, page, victim)
 
         response = session_client.get(_page_versions_url(workspace.slug, project_a.id, page.id))
