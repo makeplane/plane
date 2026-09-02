@@ -9,7 +9,7 @@ import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { InfoIcon } from "@plane/propel/icons";
+import { InfoOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -130,7 +130,7 @@ function ProjectCommonAttributes(props: Props) {
           align="start"
           disabled={isMobile}
         >
-          <InfoIcon className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
+          <InfoOutline className="absolute top-2.5 right-2 h-3 w-3 text-placeholder" />
         </Tooltip>
         <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>

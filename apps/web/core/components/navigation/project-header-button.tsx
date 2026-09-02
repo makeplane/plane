@@ -7,7 +7,7 @@
 import type { TPartialProject } from "@plane/types";
 // plane propel imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 
 type TProjectHeaderButtonProps = {
@@ -26,7 +26,7 @@ export function ProjectHeaderButton({ project }: TProjectHeaderButtonProps) {
           <div className="pointer-events-none absolute top-0 right-0 bottom-0 flex items-center justify-end opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <div className="relative flex h-full w-8 items-center justify-end">
               <div className="absolute inset-0 rounded-r bg-gradient-to-r from-transparent to-surface-2" />
-              <ChevronDownIcon className="relative z-10 size-4 text-tertiary" />
+              <ChevronDownOutline className="relative z-10 size-4 text-tertiary" />
             </div>
           </div>
         </div>

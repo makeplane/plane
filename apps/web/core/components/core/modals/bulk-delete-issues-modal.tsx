@@ -14,7 +14,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { SearchIcon } from "@plane/propel/icons";
+import { SearchOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -171,7 +171,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
           }}
         >
           <div className="relative m-1">
-            <SearchIcon
+            <SearchOutline
               className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
               aria-hidden="true"
             />

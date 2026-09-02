@@ -9,11 +9,10 @@ import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { UserRound } from "lucide-react";
+import { ProjectsOutline, UserOutline } from "@makeplane/propel/icons";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
 import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
@@ -91,7 +90,7 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                   {project?.logo_props ? (
                     <Logo logo={project.logo_props} size={18} />
                   ) : (
-                    <ProjectIcon className="h-4 w-4" />
+                    <ProjectsOutline className="h-4 w-4" />
                   )}
                   {project?.name}
                 </div>
@@ -122,7 +121,7 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                       {row.original.display_name ? (
                         row.original.display_name?.[0]
                       ) : (
-                        <UserRound className="text-secondary" size={12} />
+                        <UserOutline className="text-secondary" width={12} height={12} />
                       )}
                     </div>
                   )}

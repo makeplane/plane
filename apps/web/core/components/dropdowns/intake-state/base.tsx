@@ -11,7 +11,8 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, IntakeStateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { IntakeStateGroupIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, SearchOutline } from "@makeplane/propel/icons";
 import type { IIntakeState } from "@plane/types";
 import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -186,7 +187,10 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
               <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
             )}
             {dropdownArrow && (
-              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownOutline
+                className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
+                aria-hidden="true"
+              />
             )}
           </>
         )}
@@ -216,7 +220,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}

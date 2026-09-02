@@ -16,7 +16,7 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { LockIcon, ViewsIcon } from "@plane/propel/icons";
+import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
@@ -114,7 +114,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
       return {
         value: _view.id,
         query: _view.name,
-        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsOutline} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -129,7 +129,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
               <BreadcrumbLink
                 label="Views"
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
+                icon={<ViewsOutline className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -144,7 +144,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
                 title={viewDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsIcon} size={16} />
+                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsOutline} size={16} />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -156,7 +156,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         {viewDetails?.access === EViewAccess.PRIVATE ? (
           <div className="cursor-default text-tertiary">
             <Tooltip label={"Private"}>
-              <LockIcon className="h-4 w-4" />
+              <LockOutline className="h-4 w-4" />
             </Tooltip>
           </div>
         ) : (

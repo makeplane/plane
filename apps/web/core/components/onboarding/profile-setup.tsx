@@ -7,7 +7,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
@@ -409,9 +409,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                               onClick={() => handleShowPassword("password")}
                             >
                               {showPassword.password ? (
-                                <EyeOff className="size-4 stroke-placeholder" />
+                                <HideOutline className="size-4 text-placeholder" />
                               ) : (
-                                <Eye className="size-4 stroke-placeholder" />
+                                <ShowOutline className="size-4 text-placeholder" />
                               )}
                             </button>
                           </InputGroup>
@@ -452,9 +452,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                               onClick={() => handleShowPassword("retypePassword")}
                             >
                               {showPassword.retypePassword ? (
-                                <EyeOff className="size-4 stroke-placeholder" />
+                                <HideOutline className="size-4 text-placeholder" />
                               ) : (
-                                <Eye className="size-4 stroke-placeholder" />
+                                <ShowOutline className="size-4 text-placeholder" />
                               )}
                             </button>
                           </InputGroup>

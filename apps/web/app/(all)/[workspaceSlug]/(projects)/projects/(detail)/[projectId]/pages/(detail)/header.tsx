@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { PageIcon } from "@plane/propel/icons";
+import { PagesOutline } from "@makeplane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -52,7 +52,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
         query: _page.name,
         content: (
           <div className="flex items-center justify-between gap-2">
-            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PageIcon} />
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PagesOutline} />
             <PageAccessIcon {..._page} />
           </div>
         ),
@@ -73,7 +73,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 <BreadcrumbLink
                   label="Pages"
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
-                  icon={<PageIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<PagesOutline className="h-4 w-4 text-tertiary" />}
                 />
               }
             />
@@ -89,7 +89,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                   title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
-                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={PageIcon} size={16} />
+                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={PagesOutline} size={16} />
                     </Breadcrumbs.Icon>
                   }
                   isLast

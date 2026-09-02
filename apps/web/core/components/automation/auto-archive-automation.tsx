@@ -7,7 +7,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveRestore } from "lucide-react";
+import { RestoreOutline } from "@makeplane/propel/icons";
 // plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -71,7 +71,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
       <div className="flex flex-col gap-4 border-b border-subtle py-2">
         <div className="flex items-center gap-3">
           <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
-            <ArchiveRestore className="size-4 shrink-0 text-primary" />
+            <RestoreOutline className="size-4 shrink-0 text-primary" />
           </div>
           <SettingsControlItem
             title={t("project_settings.automations.auto-archive.title")}

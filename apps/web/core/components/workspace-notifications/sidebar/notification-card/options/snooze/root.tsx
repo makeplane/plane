@@ -7,7 +7,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
-import { Clock } from "lucide-react";
+import { ClockOutline } from "@makeplane/propel/icons";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
@@ -108,7 +108,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                     open ? "bg-layer-1" : ""
                   )}
                 >
-                  <Clock className="h-3 w-3 text-tertiary" />
+                  <ClockOutline className="h-3 w-3 text-tertiary" />
                 </Popover.Button>
               </Tooltip>
 

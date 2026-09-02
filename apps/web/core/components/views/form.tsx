@@ -14,7 +14,7 @@ import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ViewsOutline } from "@makeplane/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -123,7 +123,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <ViewsIcon className="h-4 w-4 text-tertiary" />
+                      <ViewsOutline className="h-4 w-4 text-tertiary" />
                     )}
                   </>
                 </span>

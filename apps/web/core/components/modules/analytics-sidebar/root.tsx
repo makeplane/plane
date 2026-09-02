@@ -8,20 +8,21 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Info, SquareUser } from "lucide-react";
+import {
+  AddOutline,
+  ChevronDownOutline,
+  ChevronRightOutline,
+  InfoOutline,
+  MembersOutline,
+  StartDateOutline,
+  UserAltOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import {
-  PlusIcon,
-  MembersPropertyIcon,
-  ModuleStatusIcon,
-  WorkItemsIcon,
-  StartDatePropertyIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -189,7 +190,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
               onClick={() => handleClose()}
             >
-              <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
+              <ChevronRightOutline className="h-3 w-3 text-on-color" />
             </button>
           </div>
         </div>
@@ -246,7 +247,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         <div className="flex flex-col gap-5 pt-2.5 pb-6">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
-              <StartDatePropertyIcon className="h-4 w-4" />
+              <StartDateOutline className="h-4 w-4" />
               <span className="text-14">{t("date_range")}</span>
             </div>
             <div className="h-7">
@@ -288,7 +289,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
-              <SquareUser className="h-4 w-4" />
+              <UserAltOutline className="h-4 w-4" />
               <span className="text-14">{t("lead")}</span>
             </div>
             <Controller
@@ -306,7 +307,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     buttonVariant="background-with-text"
                     placeholder={t("lead")}
                     disabled={!isEditingAllowed || isArchived}
-                    icon={SquareUser}
+                    icon={UserAltOutline}
                   />
                 </div>
               )}
@@ -314,7 +315,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
-              <MembersPropertyIcon className="h-4 w-4" />
+              <MembersOutline className="h-4 w-4" />
               <span className="text-14">{t("members")}</span>
             </div>
             <Controller
@@ -339,7 +340,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
-              <WorkItemsIcon className="h-4 w-4" />
+              <WorkItemsOutline className="h-4 w-4" />
               <span className="text-14">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
@@ -353,7 +354,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           {isEstimatePointValid && (
             <div className="flex items-center justify-start gap-1">
               <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
-                <WorkItemsIcon className="h-4 w-4" />
+                <WorkItemsOutline className="h-4 w-4" />
                 <span className="text-14">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
@@ -382,7 +383,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                       <span className="font-medium text-secondary">{t("common.links")}</span>
                     </div>
                     <div className="flex items-center gap-2.5">
-                      <ChevronDownIcon
+                      <ChevronDownOutline
                         className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
                         aria-hidden="true"
                       />
@@ -399,7 +400,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                                   className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
-                                  <PlusIcon className="h-3 w-3" />
+                                  <AddOutline className="h-3 w-3" />
                                   {t("add_link")}
                                 </button>
                               </div>
@@ -417,7 +418,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                              <InfoOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                               <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
                             </div>
                             {isEditingAllowed && !isArchived && (
@@ -425,7 +426,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                                 className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                 onClick={() => setModuleLinkModal(true)}
                               >
-                                <PlusIcon className="h-3 w-3" />
+                                <AddOutline className="h-3 w-3" />
                                 {t("add_link")}
                               </button>
                             )}

@@ -7,7 +7,7 @@
 // plane package imports
 import type { ReactNode } from "react";
 import React from "react";
-import { Calendar } from "lucide-react";
+import { CalendarOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -46,7 +46,7 @@ function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) 
       options={options}
       label={
         <div className="flex items-center gap-2 p-1">
-          <Calendar className="h-4 w-4" />
+          <CalendarOutline className="h-4 w-4" />
           {value ? ANALYTICS_DURATION_FILTER_OPTIONS.find((opt) => opt.value === value)?.name : placeholder}
         </div>
       }

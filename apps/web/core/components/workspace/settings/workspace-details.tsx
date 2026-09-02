@@ -13,7 +13,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EditIcon } from "@plane/propel/icons";
+import { EditOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
@@ -179,7 +179,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               >
                 {workspaceLogo && workspaceLogo !== "" ? (
                   <>
-                    <EditIcon className="h-3 w-3" />
+                    <EditOutline className="h-3 w-3" />
                     {t("workspace_settings.settings.general.edit_logo")}
                   </>
                 ) : (

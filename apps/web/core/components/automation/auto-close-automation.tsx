@@ -7,11 +7,11 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveX } from "lucide-react";
+import { AutoCloseOutline, StateOutline } from "@makeplane/propel/icons";
 // plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
 import { CustomSelect, CustomSearchSelect, Loader } from "@plane/ui";
@@ -89,7 +89,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
       <div className="flex flex-col gap-4 py-2">
         <div className="flex items-center gap-3">
           <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
-            <ArchiveX className="size-4 shrink-0 text-danger-primary" />
+            <AutoCloseOutline className="size-4 shrink-0 text-danger-primary" />
           </div>
           <SettingsControlItem
             title={t("project_settings.automations.auto-close.title")}
@@ -170,7 +170,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <StatePropertyIcon className="h-3.5 w-3.5 text-secondary" />
+                            <StateOutline className="h-3.5 w-3.5 text-secondary" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name

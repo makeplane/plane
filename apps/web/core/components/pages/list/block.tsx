@@ -7,7 +7,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PageIcon } from "@plane/propel/icons";
+import { PagesOutline } from "@makeplane/propel/icons";
 // plane imports
 import { getPageName } from "@plane/utils";
 // components
@@ -46,7 +46,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <PageIcon className="h-4 w-4 text-tertiary" />
+            <PagesOutline className="h-4 w-4 text-tertiary" />
           )}
         </>
       }

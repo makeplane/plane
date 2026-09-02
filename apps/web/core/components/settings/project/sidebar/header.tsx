@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowNarrowLeftOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
@@ -45,7 +45,7 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
         <IconButton
           variant="ghost"
           size="base"
-          icon={ArrowLeft}
+          icon={ArrowNarrowLeftOutline}
           onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
         />
         <p>Project settings</p>

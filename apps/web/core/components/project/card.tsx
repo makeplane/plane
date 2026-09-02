@@ -8,14 +8,22 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
+import {
+  DeleteOutline,
+  LinkOutline,
+  LockOutline,
+  NewTabOutline,
+  RestoreOutline,
+  SettingsOutline,
+  TickOutline,
+  UserPlusOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
@@ -129,42 +137,42 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       key: "settings",
       action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
       title: "Settings",
-      icon: Settings,
+      icon: SettingsOutline,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
       title: "Join",
-      icon: UserPlus,
+      icon: UserPlusOutline,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
-      icon: NewTabIcon,
+      icon: NewTabOutline,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: "Copy link",
-      icon: LinkIcon,
+      icon: LinkOutline,
       shouldRender: !isArchived,
     },
     {
       key: "restore",
       action: () => setRestoreProject(true),
       title: "Restore",
-      icon: ArchiveRestoreIcon,
+      icon: RestoreOutline,
       shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
-      icon: TrashIcon,
+      icon: DeleteOutline,
       shouldRender: isArchived && hasAdminRole,
     },
   ];
@@ -231,7 +239,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
                   <p className="text-11 font-medium text-on-color">{project.identifier} </p>
-                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color" />}
+                  {project.network === 0 && <LockOutline className="h-2.5 w-2.5 text-on-color" />}
                 </span>
               </div>
             </div>
@@ -246,7 +254,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     handleCopyText();
                   }}
                 >
-                  <LinkIcon className="h-3 w-3 text-on-color" />
+                  <LinkOutline className="h-3 w-3 text-on-color" />
                 </button>
                 {shouldRenderFavorite && (
                   <FavoriteStar
@@ -320,7 +328,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     }}
                   >
                     <div className="flex items-center gap-1.5">
-                      <ArchiveRestoreIcon className="h-3.5 w-3.5" />
+                      <RestoreOutline className="h-3.5 w-3.5" />
                       Restore
                     </div>
                   </div>
@@ -332,7 +340,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       setDeleteProjectModal(true);
                     }}
                   >
-                    <TrashIcon className="h-3.5 w-3.5" />
+                    <DeleteOutline className="h-3.5 w-3.5" />
                   </div>
                 </div>
               )
@@ -347,11 +355,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       }}
                       href={`/${workspaceSlug}/settings/projects/${project.id}`}
                     >
-                      <Settings className="h-3.5 w-3.5" />
+                      <SettingsOutline className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-13 text-placeholder">
-                      <CheckIcon className="h-3.5 w-3.5" />
+                      <TickOutline className="h-3.5 w-3.5" />
                       Joined
                     </span>
                   ))}

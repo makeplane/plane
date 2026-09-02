@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { CalendarDays } from "lucide-react";
+import { CalendarOutline } from "@makeplane/propel/icons";
 // ui
 import { CalendarAfterIcon, CalendarBeforeIcon } from "@plane/propel/icons";
 import { CustomSelect } from "@plane/ui";
@@ -36,7 +36,7 @@ const dueDateRange: DueDate[] = [
   {
     name: "range",
     value: "range",
-    icon: <CalendarDays className="h-4 w-4" />,
+    icon: <CalendarOutline className="h-4 w-4" />,
   },
 ];
 

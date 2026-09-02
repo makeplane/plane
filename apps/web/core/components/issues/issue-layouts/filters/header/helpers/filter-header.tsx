@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
 
 type Props = {
   title: string;
@@ -22,7 +22,7 @@ export function FilterHeader({ title, isPreviewEnabled, handleIsPreviewEnabled }
         className="grid h-5 w-5 flex-shrink-0 place-items-center rounded-sm hover:bg-layer-transparent-hover"
         onClick={handleIsPreviewEnabled}
       >
-        {isPreviewEnabled ? <ChevronUpIcon height={14} width={14} /> : <ChevronDownIcon height={14} width={14} />}
+        {isPreviewEnabled ? <ChevronUpOutline height={14} width={14} /> : <ChevronDownOutline height={14} width={14} />}
       </button>
     </div>
   );

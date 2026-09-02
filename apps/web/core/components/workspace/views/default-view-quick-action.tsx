@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { LinkIcon, NewTabIcon } from "@plane/propel/icons";
+import { LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
@@ -45,13 +45,13 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: t("open_in_new_tab"),
-      icon: NewTabIcon,
+      icon: NewTabOutline,
     },
     {
       key: "copy-link",
       action: handleCopyText,
       title: t("copy_link"),
-      icon: LinkIcon,
+      icon: LinkOutline,
     },
   ];
 

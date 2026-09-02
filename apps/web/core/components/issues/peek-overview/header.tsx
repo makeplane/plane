@@ -7,10 +7,16 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { MoveDiagonal, MoveRight } from "lucide-react";
+import {
+  ArrowNarrowRightOutline,
+  DragDropOutline,
+  FullScreenPeekOutline,
+  LinkOutline,
+  ModalPeekOutline,
+  SidePeekOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
@@ -34,17 +40,17 @@ export type TPeekModes = "side-peek" | "modal" | "full-screen";
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
   {
     key: "side-peek",
-    icon: SidePanelIcon,
+    icon: SidePeekOutline,
     i18n_title: "common.side_peek",
   },
   {
     key: "modal",
-    icon: CenterPanelIcon,
+    icon: ModalPeekOutline,
     i18n_title: "common.modal",
   },
   {
     key: "full-screen",
-    icon: FullScreenPanelIcon,
+    icon: FullScreenPeekOutline,
     i18n_title: "common.full_screen",
   },
 ];
@@ -161,13 +167,13 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       <div className="flex items-center gap-4">
         <Tooltip label={t("common.close_peek_view")} disabled={isMobile}>
           <button onClick={removeRoutePeekId}>
-            <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
+            <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
 
         <Tooltip label={t("issue.open_in_full_screen")} disabled={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
+            <DragDropOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
           </Link>
         </Tooltip>
         {currentMode && embedIssue === false && (
@@ -206,7 +212,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <Tooltip label={t("common.actions.copy_link")} disabled={isMobile}>
-            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
+            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={LinkOutline} />
           </Tooltip>
           {issueDetails && (
             <WorkItemDetailQuickActions

@@ -10,7 +10,7 @@ import { useTheme } from "next-themes";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
+import { SearchOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -139,7 +139,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
         }}
       >
         <div className="relative m-1">
-          <SearchIcon
+          <SearchOutline
             className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />

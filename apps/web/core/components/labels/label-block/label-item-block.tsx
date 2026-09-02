@@ -10,7 +10,7 @@ import type { LucideIcon } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // ui
@@ -101,7 +101,7 @@ export function LabelItemBlock(props: ILabelItemBlock) {
                   handleLabelDelete(label);
                 }}
               >
-                <CloseIcon className="size-3.5 flex-shrink-0 text-tertiary" />
+                <CloseOutline className="size-3.5 flex-shrink-0 text-tertiary" />
               </button>
             </div>
           )}

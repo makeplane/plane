@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { ParentPropertyIcon } from "@plane/propel/icons";
+import { ParentOutline } from "@makeplane/propel/icons";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -25,7 +25,7 @@ export const IssueParentActivity = observer(function IssueParentActivity(props: 
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<ParentPropertyIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />}
+      icon={<ParentOutline className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >
