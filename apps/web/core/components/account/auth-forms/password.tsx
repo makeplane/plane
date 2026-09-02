@@ -8,13 +8,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, Info, XCircle } from "lucide-react";
+import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
+import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
 import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
@@ -128,21 +128,12 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   return (
     <>
       {isBannerMessage && mode === EAuthModes.SIGN_UP && (
-        <div className="relative flex items-center gap-2 rounded-md border border-danger-strong/50 bg-danger-subtle p-2">
-          <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
-            <Info size={16} className="text-danger-primary" />
-          </div>
-          <div className="w-full text-13 font-medium text-danger-primary">
-            {t("auth.sign_up.errors.password.strength")}
-          </div>
-          <button
-            type="button"
-            className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary/80 transition-all hover:bg-danger-subtle-hover"
-            onClick={() => setBannerMessage(false)}
-          >
-            <CloseIcon className="h-4 w-4 shrink-0 text-danger-primary" />
-          </button>
-        </div>
+        <Banner
+          placement="inline"
+          variant="danger"
+          description={t("auth.sign_up.errors.password.strength")}
+          onDismiss={() => setBannerMessage(false)}
+        />
       )}
       <form
         ref={formRef}
