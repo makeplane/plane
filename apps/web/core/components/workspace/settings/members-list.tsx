@@ -80,7 +80,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
         <div className="pt-4">
           <Collapsible
             open={showPendingInvites}
-            onOpenChange={() => setShowPendingInvites((prev) => !prev)}
+            onOpenChange={setShowPendingInvites}
             trigger={
               <span className="inline-flex items-center gap-2 py-2">
                 <span className="text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</span>

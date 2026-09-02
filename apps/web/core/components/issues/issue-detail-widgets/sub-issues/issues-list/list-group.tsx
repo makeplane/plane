@@ -77,7 +77,7 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
   return (
     <Collapsible
       open={isCollapsibleOpen}
-      onOpenChange={() => setIsCollapsibleOpen(!isCollapsibleOpen)}
+      onOpenChange={setIsCollapsibleOpen}
       icon={
         <div className="grid shrink-0 place-items-center overflow-hidden">
           {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
