@@ -82,16 +82,16 @@ export const WithIcons: Story = {
             </ContextMenu.Item>
             <ContextMenu.Item>
               <EditOutline className="mr-2 h-4 w-4" />
-              EditOutline
+              Edit
             </ContextMenu.Item>
             <ContextMenu.Item>
               <DownloadOutline className="mr-2 h-4 w-4" />
-              DownloadOutline
+              Download
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item>
               <ShareOutline className="mr-2 h-4 w-4" />
-              ShareOutline
+              Share
             </ContextMenu.Item>
             <ContextMenu.Item>
               <DeleteOutline className="mr-2 h-4 w-4 text-danger-primary" />
@@ -121,13 +121,13 @@ export const WithSubmenus: Story = {
             </ContextMenu.Item>
             <ContextMenu.Item>
               <EditOutline className="mr-2 h-4 w-4" />
-              EditOutline
+              Edit
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Submenu>
               <ContextMenu.SubmenuTrigger>
                 <ShareOutline className="mr-2 h-4 w-4" />
-                ShareOutline
+                Share
                 <ChevronRightOutline className="ml-auto h-4 w-4" />
               </ContextMenu.SubmenuTrigger>
               <ContextMenu.Portal>
@@ -167,16 +167,16 @@ export const DisabledItems: Story = {
             </ContextMenu.Item>
             <ContextMenu.Item disabled>
               <EditOutline className="mr-2 h-4 w-4" />
-              EditOutline (Disabled)
+              Edit (Disabled)
             </ContextMenu.Item>
             <ContextMenu.Item>
               <DownloadOutline className="mr-2 h-4 w-4" />
-              DownloadOutline
+              Download
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item disabled>
               <ShareOutline className="mr-2 h-4 w-4" />
-              ShareOutline (Disabled)
+              Share (Disabled)
             </ContextMenu.Item>
             <ContextMenu.Item>
               <DeleteOutline className="mr-2 h-4 w-4 text-danger-primary" />
@@ -210,7 +210,7 @@ export const OnFileCard: Story = {
           <ContextMenu.Content>
             <ContextMenu.Item>
               <DownloadOutline className="mr-2 h-4 w-4" />
-              DownloadOutline
+              Download
             </ContextMenu.Item>
             <ContextMenu.Item>
               <CopyOutline className="mr-2 h-4 w-4" />
@@ -223,7 +223,7 @@ export const OnFileCard: Story = {
             <ContextMenu.Separator />
             <ContextMenu.Item>
               <ArchiveOutline className="mr-2 h-4 w-4" />
-              ArchiveOutline
+              Archive
             </ContextMenu.Item>
             <ContextMenu.Item>
               <DeleteOutline className="mr-2 h-4 w-4 text-danger-primary" />
@@ -289,7 +289,7 @@ export const OnText: Story = {
             </ContextMenu.Item>
             <ContextMenu.Item>
               <EditOutline className="mr-2 h-4 w-4" />
-              EditOutline
+              Edit
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item>Select All</ContextMenu.Item>
@@ -369,12 +369,12 @@ export const WithKeyboardShortcuts: Story = {
             </ContextMenu.Item>
             <ContextMenu.Item>
               <EditOutline className="mr-2 h-4 w-4" />
-              EditOutline
+              Edit
               <span className="ml-auto text-11 text-placeholder">⌘E</span>
             </ContextMenu.Item>
             <ContextMenu.Item>
               <DownloadOutline className="mr-2 h-4 w-4" />
-              DownloadOutline
+              Download
               <span className="ml-auto text-11 text-placeholder">⌘D</span>
             </ContextMenu.Item>
             <ContextMenu.Separator />
