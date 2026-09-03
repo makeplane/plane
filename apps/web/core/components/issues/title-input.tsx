@@ -25,7 +25,6 @@ export type IssueTitleInputProps = {
   issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;
-  className?: string;
   containerClassName?: string;
 };
 
