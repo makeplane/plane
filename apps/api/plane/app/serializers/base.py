@@ -2,7 +2,86 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from django.db import models
 from rest_framework import serializers
+
+
+# Distinguishes "the instance has no such attribute" from "the attribute is None".
+_MISSING = object()
+
+
+# Relations in the expansion mapper that are to-many.
+MANY_EXPANSION_FIELDS = frozenset(
+    {
+        "members",
+        "assignees",
+        "labels",
+        "issue_cycle",
+        "issue_relation",
+        "issue_intake",
+        "issue_reactions",
+        "issue_link",
+        "sub_issues",
+        "issue_related",
+    }
+)
+
+
+def get_expansion_mapper():
+    """Return the ``expand`` key -> serializer mapping.
+
+    Shared by ``_filter_fields`` and ``to_representation`` so the two cannot drift
+    apart -- keeping two copies is how ``updated_by`` came to be added to the
+    ``/api/v1/`` mapper and to neither of these (makeplane/plane#4639).
+
+    ``issue_attachment`` is deliberately absent: ``Issue.issue_attachment`` is the
+    reverse manager of the legacy ``IssueAttachment`` model, which
+    ``IssueAttachmentLiteSerializer`` (``model = FileAsset``) cannot serialize.
+    Attachments are served by the ``issue_attachments`` block in
+    ``to_representation`` below.
+
+    Imports stay inside the function because the serializers import this module.
+    """
+    from . import (
+        WorkspaceLiteSerializer,
+        ProjectLiteSerializer,
+        UserLiteSerializer,
+        StateLiteSerializer,
+        IssueSerializer,
+        LabelSerializer,
+        CycleIssueSerializer,
+        IssueLiteSerializer,
+        IssueRelationSerializer,
+        IntakeIssueLiteSerializer,
+        IssueReactionLiteSerializer,
+        IssueLinkLiteSerializer,
+        RelatedIssueSerializer,
+    )
+
+    return {
+        "user": UserLiteSerializer,
+        "workspace": WorkspaceLiteSerializer,
+        "project": ProjectLiteSerializer,
+        "default_assignee": UserLiteSerializer,
+        "project_lead": UserLiteSerializer,
+        "state": StateLiteSerializer,
+        "created_by": UserLiteSerializer,
+        "updated_by": UserLiteSerializer,
+        "issue": IssueSerializer,
+        "actor": UserLiteSerializer,
+        "owned_by": UserLiteSerializer,
+        "members": UserLiteSerializer,
+        "assignees": UserLiteSerializer,
+        "labels": LabelSerializer,
+        "issue_cycle": CycleIssueSerializer,
+        "parent": IssueLiteSerializer,
+        "issue_relation": IssueRelationSerializer,
+        "issue_intake": IntakeIssueLiteSerializer,
+        "issue_related": RelatedIssueSerializer,
+        "issue_reactions": IssueReactionLiteSerializer,
+        "issue_link": IssueLinkLiteSerializer,
+        "sub_issues": IssueLiteSerializer,
+    }
 
 
 class BaseSerializer(serializers.ModelSerializer):
@@ -52,70 +131,12 @@ class DynamicBaseSerializer(BaseSerializer):
             elif isinstance(item, dict):
                 allowed.append(list(item.keys())[0])
 
-        for field in allowed:
-            if field not in self.fields:
-                from . import (
-                    WorkspaceLiteSerializer,
-                    ProjectLiteSerializer,
-                    UserLiteSerializer,
-                    StateLiteSerializer,
-                    IssueSerializer,
-                    LabelSerializer,
-                    CycleIssueSerializer,
-                    IssueLiteSerializer,
-                    IssueRelationSerializer,
-                    IntakeIssueLiteSerializer,
-                    IssueReactionLiteSerializer,
-                    IssueLinkLiteSerializer,
-                    RelatedIssueSerializer,
-                )
-
-                # Expansion mapper
-                expansion = {
-                    "user": UserLiteSerializer,
-                    "workspace": WorkspaceLiteSerializer,
-                    "project": ProjectLiteSerializer,
-                    "default_assignee": UserLiteSerializer,
-                    "project_lead": UserLiteSerializer,
-                    "state": StateLiteSerializer,
-                    "created_by": UserLiteSerializer,
-                    "issue": IssueSerializer,
-                    "actor": UserLiteSerializer,
-                    "owned_by": UserLiteSerializer,
-                    "members": UserLiteSerializer,
-                    "assignees": UserLiteSerializer,
-                    "labels": LabelSerializer,
-                    "issue_cycle": CycleIssueSerializer,
-                    "parent": IssueLiteSerializer,
-                    "issue_relation": IssueRelationSerializer,
-                    "issue_intake": IntakeIssueLiteSerializer,
-                    "issue_related": RelatedIssueSerializer,
-                    "issue_reactions": IssueReactionLiteSerializer,
-                    "issue_link": IssueLinkLiteSerializer,
-                    "sub_issues": IssueLiteSerializer,
-                }
-
-            if field not in self.fields and field in expansion:
-                self.fields[field] = expansion[field](
-                    many=(
-                        True
-                        if field
-                        in [
-                            "members",
-                            "assignees",
-                            "labels",
-                            "issue_cycle",
-                            "issue_relation",
-                            "issue_intake",
-                            "issue_reactions",
-                            "issue_attachment",
-                            "issue_link",
-                            "sub_issues",
-                            "issue_related",
-                        ]
-                        else False
-                    )
-                )
+        missing = [field for field in allowed if field not in self.fields]
+        if missing:
+            expansion = get_expansion_mapper()
+            for field in missing:
+                if field in expansion:
+                    self.fields[field] = expansion[field](many=field in MANY_EXPANSION_FIELDS)
 
         return self.fields
 
@@ -124,58 +145,26 @@ class DynamicBaseSerializer(BaseSerializer):
 
         # Ensure 'expand' is iterable before processing
         if self.expand:
+            expansion = get_expansion_mapper()
             for expand in self.expand:
                 if expand in self.fields:
-                    # Import all the expandable serializers
-                    from . import (
-                        WorkspaceLiteSerializer,
-                        ProjectLiteSerializer,
-                        UserLiteSerializer,
-                        StateLiteSerializer,
-                        IssueSerializer,
-                        LabelSerializer,
-                        CycleIssueSerializer,
-                        IssueRelationSerializer,
-                        IntakeIssueLiteSerializer,
-                        IssueLiteSerializer,
-                        IssueReactionLiteSerializer,
-                        IssueAttachmentLiteSerializer,
-                        IssueLinkLiteSerializer,
-                        RelatedIssueSerializer,
-                    )
-
-                    # Expansion mapper
-                    expansion = {
-                        "user": UserLiteSerializer,
-                        "workspace": WorkspaceLiteSerializer,
-                        "project": ProjectLiteSerializer,
-                        "default_assignee": UserLiteSerializer,
-                        "project_lead": UserLiteSerializer,
-                        "state": StateLiteSerializer,
-                        "created_by": UserLiteSerializer,
-                        "issue": IssueSerializer,
-                        "actor": UserLiteSerializer,
-                        "owned_by": UserLiteSerializer,
-                        "members": UserLiteSerializer,
-                        "assignees": UserLiteSerializer,
-                        "labels": LabelSerializer,
-                        "issue_cycle": CycleIssueSerializer,
-                        "parent": IssueLiteSerializer,
-                        "issue_relation": IssueRelationSerializer,
-                        "issue_intake": IntakeIssueLiteSerializer,
-                        "issue_related": RelatedIssueSerializer,
-                        "issue_reactions": IssueReactionLiteSerializer,
-                        "issue_attachment": IssueAttachmentLiteSerializer,
-                        "issue_link": IssueLinkLiteSerializer,
-                        "sub_issues": IssueLiteSerializer,
-                    }
                     # Check if field in expansion then expand the field
                     if expand in expansion:
-                        if isinstance(response.get(expand), list):
-                            exp_serializer = expansion[expand](getattr(instance, expand), many=True)
-                        else:
-                            exp_serializer = expansion[expand](getattr(instance, expand))
-                        response[expand] = exp_serializer.data
+                        # Resolve against the instance rather than guessing arity from the
+                        # already-serialized value. `_MISSING` separates "no such relation"
+                        # from "the relation is null": `members` and `sub_issues` are
+                        # SerializerMethodField/annotation names on some serializers here,
+                        # and those must keep the value the serializer already produced.
+                        related = getattr(instance, expand, _MISSING)
+                        if isinstance(related, models.Manager):
+                            response[expand] = expansion[expand](related, many=True).data
+                        elif isinstance(related, models.Model):
+                            response[expand] = expansion[expand](related).data
+                        elif related is None:
+                            # A null relation stays null, matching the unexpanded response.
+                            # Serializing None emits an object built from the nested
+                            # serializer's field defaults instead.
+                            response[expand] = None
                     else:
                         # You might need to handle this case differently
                         response[expand] = getattr(instance, f"{expand}_id", None)
@@ -184,6 +173,7 @@ class DynamicBaseSerializer(BaseSerializer):
             if "issue_attachments" in self.fields or "issue_attachments" in self.expand:
                 # Import the model here to avoid circular imports
                 from plane.db.models import FileAsset
+                from . import IssueAttachmentLiteSerializer
 
                 issue_id = getattr(instance, "id", None)
 
