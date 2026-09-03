@@ -63,9 +63,34 @@ class S3Storage(S3Boto3Storage):
             )
 
     def generate_presigned_post(self, object_name, file_type, file_size, expiration=None):
-        """Generate a presigned URL to upload an S3 object"""
         if expiration is None:
             expiration = self.signed_url_expiration
+            
+        # Check if we are using Cloudflare R2 (which doesn't support S3 Presigned POST nicely)
+        is_r2 = self.aws_s3_endpoint_url and "r2.cloudflarestorage" in self.aws_s3_endpoint_url
+        if is_r2:
+            try:
+                response_url = self.s3_client.generate_presigned_url(
+                    ClientMethod="put_object",
+                    Params={
+                        "Bucket": self.aws_storage_bucket_name,
+                        "Key": object_name,
+                        "ContentType": file_type,
+                        "ContentLength": file_size,
+                    },
+                    ExpiresIn=expiration,
+                )
+                return {
+                    "url": response_url,
+                    "fields": {
+                        "_method": "PUT",
+                        "Content-Type": file_type
+                    }
+                }
+            except ClientError as e:
+                print(f"Error generating presigned PUT URL for R2: {e}")
+                return None
+
         fields = {"Content-Type": file_type}
 
         conditions = [
