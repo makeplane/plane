@@ -569,6 +569,7 @@ overrides:
   morgan: 1.11.0
 
 patchedDependencies:
+  '@headlessui/react@2.2.10': 8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354
   react-color@2.19.3: 311b81530f5338988f8b57718f24870a7550637159d8360d69f668cba2f2033f
 
 importers:
@@ -610,7 +611,7 @@ importers:
         version: 5.2.30
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -873,10 +874,10 @@ importers:
         version: 5.2.30
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
-        version: 0.2.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
+        version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
@@ -1030,7 +1031,7 @@ importers:
         version: 5.2.30
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -1290,7 +1291,7 @@ importers:
         version: 0.27.20(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hocuspocus/provider':
         specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
@@ -1766,7 +1767,7 @@ importers:
         version: 1.1.0
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -6131,6 +6132,10 @@ packages:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
+  detect-libc@2.0.4:
+    resolution: {integrity: sha512-3UDv+G9CsCKO1WKMGw9fwq/SWJYbI0c5Y7LU1AXYoDdbhE2AHQ6N6Nb34sG8Fj7T5APy8qXDCKuuIHd1BR0tVA==}
+    engines: {node: '>=8'}
+
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
@@ -10343,7 +10348,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@headlessui/react@2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@headlessui/react@2.2.10(patch_hash=8724cd84d4ad5d9c0d0631bc7d2636b91579f2d8f4033e62484c12b81916e354)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-aria/focus': 3.22.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -13522,6 +13527,8 @@ snapshots:
 
   destroy@1.2.0: {}
 
+  detect-libc@2.0.4: {}
+
   detect-libc@2.1.2: {}
 
   detect-node-es@1.1.0: {}
@@ -13918,7 +13925,7 @@ snapshots:
       etag: 1.8.1
       finalhandler: 1.3.1
       fresh: 0.5.2
-      http-errors: 2.0.1
+      http-errors: 2.0.0
       merge-descriptors: 1.0.3
       methods: 1.1.2
       on-finished: 2.4.1
@@ -13931,7 +13938,7 @@ snapshots:
       send: 0.19.0
       serve-static: 1.16.2
       setprototypeof: 1.2.0
-      statuses: 2.0.2
+      statuses: 2.0.1
       type-is: 1.6.18
       utils-merge: 1.0.1
       vary: 1.1.2
@@ -14875,7 +14882,7 @@ snapshots:
 
   lightningcss@1.32.0:
     dependencies:
-      detect-libc: 2.1.2
+      detect-libc: 2.0.4
     optionalDependencies:
       lightningcss-android-arm64: 1.32.0
       lightningcss-darwin-arm64: 1.32.0

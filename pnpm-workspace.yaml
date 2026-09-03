@@ -282,6 +282,7 @@ minimumReleaseAgeExclude:
   - "@makeplane/propel@0.3.0"
 
 patchedDependencies:
+  '@headlessui/react@2.2.10': patches/@headlessui__react@2.2.10.patch
   react-color@2.19.3: patches/react-color@2.19.3.patch
 
 peerDependencyRules:
