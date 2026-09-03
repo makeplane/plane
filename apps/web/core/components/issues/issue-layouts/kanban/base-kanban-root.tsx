@@ -105,7 +105,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         fetchNextIssues(groupId, subgroupId);
       }
     },
-    [fetchNextIssues]
+    [fetchNextIssues, issues]
   );
 
   const groupedIssueIds = issues?.groupedIssueIds;
@@ -130,9 +130,11 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
   const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
+    (targetProjectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+        canEditPropertiesBasedOnProject && targetProjectId
+          ? canEditPropertiesBasedOnProject(targetProjectId)
+          : isEditingAllowed;
 
       return enableInlineEditing && isEditingAllowedBasedOnProject;
     },
@@ -161,7 +163,11 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     return combine(
       dropTargetForElements({
         element,
-        getData: () => ({ columnId: "issue-trash-box", groupId: "issue-trash-box", type: "DELETE" }),
+        getData: () => ({
+          columnId: "issue-trash-box",
+          groupId: "issue-trash-box",
+          type: "DELETE",
+        }),
         onDragEnter: () => {
           setIsDragOverDelete(true);
         },
@@ -231,7 +237,21 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     [workspaceSlug, issuesFilter, projectId, updateFilters]
   );
 
-  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || {
+    group_by: [],
+    sub_group_by: [],
+  };
+  const [expandedGroupIds, setExpandedGroupIds] = useState<Set<string>>(new Set());
+  const handleExpandedGroups = useCallback((_toggle: "group_by" | "sub_group_by", value: string) => {
+    setExpandedGroupIds((currentGroupIds) => {
+      const nextGroupIds = new Set(currentGroupIds);
+
+      if (nextGroupIds.has(value)) nextGroupIds.delete(value);
+      else nextGroupIds.add(value);
+
+      return nextGroupIds;
+    });
+  }, []);
 
   return (
     <>
@@ -264,8 +284,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
           className={`horizontal-scrollbar relative scrollbar-lg flex h-full w-full bg-surface-2 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
           ref={scrollableContainerRef}
         >
-          <div className="relative h-full w-max min-w-full bg-surface-2">
-            <div className="h-full w-max">
+          <div className="relative h-full w-full min-w-full bg-surface-2">
+            <div className="h-full w-full min-w-full">
               <KanBanView
                 issuesMap={issueMap}
                 groupedIssueIds={groupedIssueIds ?? {}}
@@ -277,6 +297,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 updateIssue={updateIssue}
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}
+                expandedGroupIds={expandedGroupIds}
+                handleExpandedGroups={handleExpandedGroups}
                 collapsedGroups={collapsedGroups}
                 enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}

@@ -41,6 +41,8 @@ interface ISubGroupSwimlaneHeader {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  expandedGroupIds?: ReadonlySet<string>;
+  handleExpandedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
   isEpic?: boolean;
   list: IGroupByColumn[];
   showEmptyGroup: boolean;
@@ -64,6 +66,8 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
   getGroupIssueCount,
   group_by,
   handleCollapsedGroups,
+  expandedGroupIds,
+  handleExpandedGroups,
   isEpic = false,
   list,
   showEmptyGroup,
@@ -93,6 +97,8 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
                 count={groupCount}
                 collapsedGroups={collapsedGroups}
                 handleCollapsedGroups={handleCollapsedGroups}
+                expandedGroupIds={expandedGroupIds}
+                handleExpandedGroups={handleExpandedGroups}
                 issuePayload={_list.payload}
                 disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
                 isEpic={isEpic}
@@ -118,6 +124,8 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   ) => number | undefined;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  expandedGroupIds?: ReadonlySet<string>;
+  handleExpandedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   isEpic?: boolean;
   issuesMap: IIssueMap;
@@ -142,6 +150,8 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
     group_by,
     groupedIssueIds,
     handleCollapsedGroups,
+    expandedGroupIds,
+    handleExpandedGroups,
     handleOnDrop,
     isEpic = false,
     issuesMap,
@@ -212,6 +222,8 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
                     quickActions={quickActions}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
+                    expandedGroupIds={expandedGroupIds}
+                    handleExpandedGroups={handleExpandedGroups}
                     showEmptyGroup={showEmptyGroup}
                     enableQuickIssueCreate={enableQuickIssueCreate}
                     disableIssueCreation={disableIssueCreation}
@@ -250,6 +262,8 @@ export interface IKanBanSwimLanes {
   group_by: TIssueGroupByOptions | undefined;
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  expandedGroupIds?: ReadonlySet<string>;
+  handleExpandedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   isEpic?: boolean;
   issuesMap: IIssueMap;
@@ -276,6 +290,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     quickActions,
     collapsedGroups,
     handleCollapsedGroups,
+    expandedGroupIds,
+    handleExpandedGroups,
     loadMoreIssues,
     showEmptyGroup,
     handleOnDrop,
@@ -314,6 +330,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           sub_group_by={sub_group_by}
           collapsedGroups={collapsedGroups}
           handleCollapsedGroups={handleCollapsedGroups}
+          expandedGroupIds={expandedGroupIds}
+          handleExpandedGroups={handleExpandedGroups}
           list={groupByList}
           showEmptyGroup={showEmptyGroup}
           isEpic={isEpic}
@@ -334,6 +352,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           quickActions={quickActions}
           collapsedGroups={collapsedGroups}
           handleCollapsedGroups={handleCollapsedGroups}
+          expandedGroupIds={expandedGroupIds}
+          handleExpandedGroups={handleExpandedGroups}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           handleOnDrop={handleOnDrop}
