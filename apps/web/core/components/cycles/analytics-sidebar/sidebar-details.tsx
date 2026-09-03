@@ -67,7 +67,9 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
         : `${cycleDetails?.completed_estimate_points}/${cycleDetails?.total_estimate_points}`;
   return (
     <div className="flex w-full flex-col gap-5">
-      {cycleDetails?.description && <TextArea size="lg" surface="inline" value={cycleDetails.description} disabled />}
+      {cycleDetails?.description && (
+        <TextArea size="lg" surface="inline" autoResize maxRows={8} value={cycleDetails.description} disabled />
+      )}
 
       <div className="flex flex-col gap-5 pt-2.5 pb-6">
         <div className="flex items-center justify-start gap-1">

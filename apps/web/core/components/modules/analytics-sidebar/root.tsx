@@ -238,7 +238,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         </div>
 
         {moduleDetails.description && (
-          <TextArea size="lg" surface="inline" value={moduleDetails.description} disabled />
+          <TextArea size="lg" surface="inline" autoResize maxRows={8} value={moduleDetails.description} disabled />
         )}
 
         <div className="flex flex-col gap-5 pt-2.5 pb-6">

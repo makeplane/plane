@@ -93,10 +93,12 @@ export function StateForm(props: TStateForm) {
 
         {/* description */}
         <Field name="description" invalid={(errors && Boolean(errors.description)) || false}>
-          <TextAreaGroup>
+          <TextAreaGroup resize="none">
             <TextArea
               size="lg"
               surface="field"
+              autoResize
+              maxRows={8}
               id="description"
               name="description"
               placeholder="Describe this state for your members."

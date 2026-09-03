@@ -139,10 +139,12 @@ export function CycleForm(props: Props) {
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Field name="description" invalid={Boolean(errors?.description)}>
-                  <TextAreaGroup>
+                  <TextAreaGroup resize="none">
                     <TextArea
                       size="lg"
                       surface="field"
+                      autoResize
+                      maxRows={8}
                       name="description"
                       placeholder={t("description")}
                       value={value}

@@ -52,6 +52,8 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           <TextArea
             size={fontSize === "small-font" ? "xl" : "2xl"}
             surface="inline"
+            autoResize
+            maxRows={4}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {

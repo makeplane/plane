@@ -191,10 +191,12 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Field name="description" invalid={Boolean(errors?.description)}>
-                  <TextAreaGroup>
+                  <TextAreaGroup resize="none">
                     <TextArea
                       size="lg"
                       surface="field"
+                      autoResize
+                      maxRows={8}
                       id="description"
                       name="description"
                       placeholder={t("common.description")}

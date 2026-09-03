@@ -168,10 +168,12 @@ export function CreateApiTokenForm(props: Props) {
             name="description"
             render={({ field: { value, onChange } }) => (
               <Field name="description" invalid={Boolean(errors.description)}>
-                <TextAreaGroup>
+                <TextAreaGroup resize="none">
                   <TextArea
                     size="lg"
                     surface="field"
+                    autoResize
+                    maxRows={8}
                     value={value}
                     onChange={onChange}
                     placeholder={t("description")}

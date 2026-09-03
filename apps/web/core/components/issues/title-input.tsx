@@ -147,10 +147,12 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     <div className="flex flex-col gap-1.5">
       <div className={cn("relative", containerClassName)}>
         <Field name="title" invalid={title?.length === 0}>
-          <TextAreaGroup>
+          <TextAreaGroup resize="none">
             <TextArea
               size="2xl"
               surface="field"
+              autoResize
+              maxRows={4}
               id="title-input"
               disabled={disabled}
               value={title}
