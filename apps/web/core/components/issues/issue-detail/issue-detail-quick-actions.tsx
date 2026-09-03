@@ -8,7 +8,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CopyLinkIcon } from "@plane/propel/icons";
+import { LinkOutline } from "@makeplane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -148,7 +148,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
           )}
           <div className="flex flex-wrap items-center gap-2 text-tertiary">
             <Tooltip label={t("common.actions.copy_link")} disabled={isMobile}>
-              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
+              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={LinkOutline} />
             </Tooltip>
             <WorkItemDetailQuickActions
               parentRef={parentRef}

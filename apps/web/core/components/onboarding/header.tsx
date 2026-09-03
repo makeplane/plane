@@ -6,7 +6,8 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { PlaneLockup, ChevronLeftIcon } from "@plane/propel/icons";
+import { PlaneLockup } from "@plane/propel/icons";
+import { ChevronLeftOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TOnboardingStep } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -80,7 +81,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
         <div className="flex items-center gap-2.5">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
-              <ChevronLeftIcon className="size-6 text-placeholder" />
+              <ChevronLeftOutline className="size-6 text-placeholder" />
             </button>
           )}
           <PlaneLockup height={20} width={95} className="text-primary" />

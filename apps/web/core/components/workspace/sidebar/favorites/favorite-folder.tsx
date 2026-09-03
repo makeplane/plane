@@ -19,12 +19,18 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { orderBy } from "lodash-es";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { Star, MoreHorizontal, GripVertical } from "lucide-react";
+import {
+  ChevronRightOutline,
+  DraftsOutline,
+  DragDropOutline,
+  MoreHorizontalOutline,
+  StarFilled,
+} from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { FavoriteFolderIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
@@ -169,7 +175,7 @@ export function FavoriteFolder(props: Props) {
               {/* draggable indicator */}
 
               <div className="absolute left-0 hidden h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs bg-surface-2 text-secondary transition-colors group-hover:flex hover:text-primary">
-                <GripVertical className="h-3 w-3" />
+                <DragDropOutline className="h-3 w-3" />
               </div>
 
               <>
@@ -211,7 +217,7 @@ export function FavoriteFolder(props: Props) {
                       ref={actionSectionRef}
                       className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
                     >
-                      <MoreHorizontal className="size-3" />
+                      <MoreHorizontalOutline className="size-3" />
                     </span>
                   }
                   menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
@@ -227,13 +233,13 @@ export function FavoriteFolder(props: Props) {
                 >
                   <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                     <span className="flex items-center justify-start gap-2">
-                      <Star className="fill-yellow-500 stroke-yellow-500 h-3.5 w-3.5" />
+                      <StarFilled className="text-yellow-500 h-3.5 w-3.5" />
                       <span>Remove from favorites</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
                     <div className="flex items-center justify-start gap-2">
-                      <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                      <DraftsOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                       <span>Rename Folder</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -248,7 +254,7 @@ export function FavoriteFolder(props: Props) {
                     open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
                   )}
                 >
-                  <ChevronRightIcon
+                  <ChevronRightOutline
                     className={cn("size-3 flex-shrink-0 text-placeholder transition-transform", {
                       "rotate-90": open,
                     })}

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon } from "@plane/propel/icons";
+import { TickOutline } from "@makeplane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 import { getButtonStyling } from "@plane/propel/button";
 import { Dropdown } from "@plane/ui";
@@ -61,7 +61,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
           <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
           <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
         </div>
-        {props.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+        {props.selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>
     );
   }, []);

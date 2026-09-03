@@ -5,7 +5,7 @@
  */
 
 import { useCallback } from "react";
-import { X } from "lucide-react";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
 import { IconButton } from "@plane/propel/icon-button";
@@ -51,7 +51,7 @@ export const ProfileSettingsModal = observer(function ProfileSettingsModal() {
           <ProfileSettingsContent activeTab={activeTab} className="flex-1 rounded-r-xl" />
         </div>
         <div className="absolute top-3.5 right-3.5">
-          <IconButton size="base" variant="tertiary" icon={X} onClick={handleClose} />
+          <IconButton size="base" variant="tertiary" icon={CloseOutline} onClick={handleClose} />
         </div>
       </div>
     </ModalCore>

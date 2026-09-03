@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Info } from "lucide-react";
+import { InfoOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -46,7 +46,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
                   <div className="relative flex cursor-no-drop items-center gap-2 text-tertiary">
                     {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
                     <Tooltip label={t("common.coming_soon")}>
-                      <Info size={12} />
+                      <InfoOutline width={12} height={12} />
                     </Tooltip>
                   </div>
                 ) : !isEnabled ? (

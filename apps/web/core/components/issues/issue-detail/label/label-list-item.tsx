@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
-import { CloseIcon, LabelFilledIcon } from "@plane/propel/icons";
+import { CloseOutline, LabelsFilled } from "@makeplane/propel/icons";
 // types
 import { useLabel } from "@/hooks/store/use-label";
 import type { TLabelOperations } from "./root";
@@ -38,9 +38,9 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
   if (!label) return <></>;
   return (
     <Button variant="tertiary" size="sm" key={labelId} onClick={handleLabel} disabled={disabled}>
-      <LabelFilledIcon className="size-3" color={label.color ?? "#000000"} />
+      <LabelsFilled className="size-3" color={label.color ?? "#000000"} />
       <span className="text-body-xs-regular">{label.name}</span>
-      {!disabled && <CloseIcon className="h-2.5 w-2.5 transition-all group-hover:text-danger-primary" />}
+      {!disabled && <CloseOutline className="h-2.5 w-2.5 transition-all group-hover:text-danger-primary" />}
     </Button>
   );
 });

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // hooks
@@ -76,7 +76,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                   className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <CloseIcon height={12} width={12} strokeWidth={2} />
+                  <CloseOutline height={12} width={12} />
                 </button>
               )}
             </div>
@@ -89,7 +89,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
           size="md"
           variant="outline"
           label={t("common.clear_all")}
-          endIcon={<CloseIcon height={12} width={12} strokeWidth={2} />}
+          endIcon={<CloseOutline height={12} width={12} />}
           onClick={handleClearAllFilters}
         />
       )}

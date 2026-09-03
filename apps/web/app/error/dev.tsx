@@ -10,7 +10,6 @@ import { Banner } from "@makeplane/propel/components/banner";
 import { InfoFilled } from "@makeplane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { Card, ECardVariant } from "@plane/propel/card";
-import { InfoFillIcon } from "@plane/propel/icons";
 
 interface ErrorActionsProps {
   onGoHome: () => void;
@@ -105,7 +104,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
 
           <Card variant={ECardVariant.WITHOUT_SHADOW} className="bg-layer-1 !p-4 transition-none">
             <div className="flex items-start gap-3">
-              <InfoFillIcon className="mt-0.5 size-5 flex-shrink-0 text-tertiary" />
+              <InfoFilled className="mt-0.5 size-5 flex-shrink-0 text-tertiary" />
               <div className="space-y-1">
                 <p className="text-13 font-medium text-secondary">Development Mode</p>
                 <p className="text-11 text-tertiary">

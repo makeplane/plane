@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { LabelPropertyIcon } from "@plane/propel/icons";
+import { LabelsOutline } from "@makeplane/propel/icons";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useLabel } from "@/hooks/store/use-label";
@@ -29,7 +29,7 @@ export const IssueLabelActivity = observer(function IssueLabelActivity(props: TI
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<LabelPropertyIcon height={14} width={14} className="text-secondary" />}
+      icon={<LabelsOutline height={14} width={14} className="text-secondary" />}
       activityId={activityId}
       ends={ends}
     >

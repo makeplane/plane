@@ -5,7 +5,8 @@
  */
 
 import type { Editor } from "@tiptap/react";
-import { ALargeSmall, Ban } from "lucide-react";
+import { Ban } from "lucide-react";
+import { TextOutline } from "@makeplane/propel/icons";
 import { useMemo } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -48,7 +49,7 @@ export function BubbleMenuColorSelector(props: Props) {
               backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
             }}
           >
-            <ALargeSmall
+            <TextOutline
               className={cn("size-3.5", {
                 "text-primary": !activeTextColor,
               })}

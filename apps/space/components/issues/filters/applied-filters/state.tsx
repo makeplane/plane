@@ -7,7 +7,8 @@
 import { observer } from "mobx-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { CloseIcon, StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // hooks
 import { useStates } from "@/hooks/store/use-state";
 
@@ -37,7 +38,7 @@ export const AppliedStateFilters = observer(function AppliedStateFilters(props: 
               className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(stateId)}
             >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
+              <CloseOutline height={10} width={10} />
             </button>
           </div>
         );

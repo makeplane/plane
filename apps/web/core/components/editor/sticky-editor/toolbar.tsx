@@ -5,12 +5,11 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Palette } from "lucide-react";
+import { DeleteOutline, PaletteOutline } from "@makeplane/propel/icons";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TrashIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TSticky } from "@plane/types";
 // constants
@@ -70,7 +69,7 @@ export function StickyEditorToolbar(props: Props) {
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
         <Tooltip label="Background color">
           <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
-            <Palette className="my-auto size-4" />
+            <PaletteOutline className="my-auto size-4" />
           </button>
         </Tooltip>
 
@@ -106,7 +105,7 @@ export function StickyEditorToolbar(props: Props) {
       {/* delete action */}
       <Tooltip label="Delete">
         <button type="button" onClick={handleDelete} className="my-auto text-primary/50">
-          <TrashIcon className="size-4" />
+          <DeleteOutline className="size-4" />
         </button>
       </Tooltip>
     </div>

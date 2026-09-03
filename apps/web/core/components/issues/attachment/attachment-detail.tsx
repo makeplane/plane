@@ -7,8 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { AlertCircle } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import {
@@ -88,7 +87,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
                   disabled={isMobile}
                 >
                   <span>
-                    <AlertCircle className="h-3 w-3" />
+                    <WarningCircleOutline className="h-3 w-3" />
                   </span>
                 </Tooltip>
               </div>
@@ -103,7 +102,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
 
         {!disabled && (
           <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" />
+            <CloseOutline className="h-4 w-4 text-secondary hover:text-primary" />
           </button>
         )}
       </div>

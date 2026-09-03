@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
+import { LockedOutline, UnlockedOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
@@ -85,7 +85,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
             className="grid size-6 flex-shrink-0 place-items-center rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
             aria-label="Lock"
           >
-            <LockKeyhole className="size-3.5" />
+            <LockedOutline className="size-3.5" />
           </button>
         </Tooltip>
       )}
@@ -97,7 +97,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           className="flex h-6 items-center gap-1 rounded-sm bg-accent-primary/20 px-2 text-accent-primary transition-colors hover:bg-accent-primary/30"
           aria-label="Locked"
         >
-          <LockKeyhole className="animate-lock-icon size-3.5 flex-shrink-0" />
+          <LockedOutline className="animate-lock-icon size-3.5 flex-shrink-0" />
           <span className="animate-text-slide-in overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
             Locked
           </span>
@@ -109,7 +109,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           className="flex h-6 animate-fade-out items-center gap-1 rounded-sm px-2 text-secondary"
           aria-label="Unlocked"
         >
-          <LockKeyholeOpen className="animate-unlock-icon size-3.5 flex-shrink-0" />
+          <UnlockedOutline className="animate-unlock-icon size-3.5 flex-shrink-0" />
           <span className="animate-text-slide-in animate-text-fade-out overflow-hidden text-11 font-medium whitespace-nowrap transition-all duration-500 ease-out">
             Unlocked
           </span>

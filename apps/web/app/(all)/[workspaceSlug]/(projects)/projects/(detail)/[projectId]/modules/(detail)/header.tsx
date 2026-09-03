@@ -8,7 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
+import { BarOutline, ModuleOutline, PreferencesOutline, RightSidePaneOutline } from "@makeplane/propel/icons";
 // plane imports
 import {
   EIssueFilterType,
@@ -17,7 +17,6 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { ModuleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
@@ -117,7 +116,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
       return {
         value: _module.id,
         query: _module.name,
-        content: <SwitcherLabel name={_module.name} LabelIcon={ModuleIcon} />,
+        content: <SwitcherLabel name={_module.name} LabelIcon={ModuleOutline} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -140,7 +139,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   <BreadcrumbLink
                     label="Modules"
                     href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                    icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
+                    icon={<ModuleOutline className="h-4 w-4 text-tertiary" />}
                     isLast
                   />
                 }
@@ -155,7 +154,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
-                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-tertiary" />}
+                    icon={<ModuleOutline className="size-3.5 flex-shrink-0 text-tertiary" />}
                     isLast
                   />
                 }
@@ -207,7 +206,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
             <FiltersDropdown
               title="Display"
               placement="bottom-end"
-              miniIcon={<SlidersHorizontal className="size-3.5" />}
+              miniIcon={<PreferencesOutline className="size-3.5" />}
             >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
@@ -229,7 +228,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
               <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
                 <span className="hidden @4xl:flex">Analytics</span>
                 <span className="@4xl:hidden">
-                  <ChartNoAxesColumn className="size-3.5" />
+                  <BarOutline className="size-3.5" />
                 </span>
               </Button>
               <Button
@@ -249,7 +248,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           <IconButton
             variant="tertiary"
             size="lg"
-            icon={PanelRight}
+            icon={RightSidePaneOutline}
             onClick={toggleSidebar}
             className={cn({
               "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,

@@ -13,7 +13,7 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -91,7 +91,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
         <div className="flex items-center gap-2 border-b border-subtle px-4">
-          <SearchIcon className="size-4 flex-shrink-0 text-placeholder" aria-hidden="true" />
+          <SearchOutline className="size-4 flex-shrink-0 text-placeholder" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder="Search for projects"
@@ -117,7 +117,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                   <p className="truncate text-11 text-tertiary transition-colors group-hover:text-secondary">
                     {projectDetails.identifier}
                   </p>
-                  <CloseIcon className="size-3 flex-shrink-0 text-placeholder transition-colors group-hover:text-secondary" />
+                  <CloseOutline className="size-3 flex-shrink-0 text-placeholder transition-colors group-hover:text-secondary" />
                 </div>
               );
             })}

@@ -6,7 +6,7 @@
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CopyIcon } from "@plane/propel/icons";
+import { CopyOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IApiToken } from "@plane/types";
@@ -49,7 +49,7 @@ export function GeneratedTokenDetails(props: Props) {
       >
         <span className="truncate pr-2">{tokenDetails.token}</span>
         <Tooltip label="Copy secret key" disabled={isMobile}>
-          <CopyIcon className="h-4 w-4 flex-shrink-0 text-placeholder" />
+          <CopyOutline className="h-4 w-4 flex-shrink-0 text-placeholder" />
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">

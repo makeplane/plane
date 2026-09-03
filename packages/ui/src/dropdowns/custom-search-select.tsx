@@ -5,12 +5,11 @@
  */
 
 import { Combobox } from "@headlessui/react";
-import { Info } from "lucide-react";
+import { ChevronDownOutline, InfoOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -136,7 +135,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                 >
                   {label}
                   {!noChevron && !disabled && (
-                    <ChevronDownIcon className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
+                    <ChevronDownOutline className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
                   )}
                 </button>
               </Combobox.Button>
@@ -154,7 +153,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     {...attributes.popper}
                   >
                     <div className="mx-2 flex items-center gap-1.5 rounded-sm border border-subtle px-2">
-                      <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+                      <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                         value={query}
@@ -197,12 +196,12 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                               {({ selected }) => (
                                 <>
                                   <span className="flex-grow truncate">{option.content}</span>
-                                  {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                                  {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                                   {option.tooltip && (
                                     <>
                                       {typeof option.tooltip === "string" ? (
                                         <Tooltip tooltipContent={option.tooltip}>
-                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
+                                          <InfoOutline className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
                                         </Tooltip>
                                       ) : (
                                         option.tooltip

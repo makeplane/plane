@@ -8,7 +8,7 @@ import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Monitor } from "lucide-react";
+import { MonitorOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
@@ -240,7 +240,7 @@ export function InstanceGoogleConfigForm(props: Props) {
               {/* web service details */}
               <div className="flex flex-col overflow-hidden rounded-lg">
                 <div className="flex items-center gap-x-3 bg-layer-3 px-6 py-3 text-11 font-medium text-secondary uppercase">
-                  <Monitor className="h-3 w-3" />
+                  <MonitorOutline className="h-3 w-3" />
                   Web
                 </div>
                 <div className="flex flex-col gap-y-4 bg-layer-1 px-6 py-4">

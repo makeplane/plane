@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, XCircle } from "lucide-react";
+import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
@@ -183,7 +183,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 onClick={handleEmailClear}
                 aria-label={t("aria_labels.auth_forms.clear_email")}
               >
-                <XCircle className="size-5 stroke-placeholder" />
+                <CloseCircleOutline className="size-5 text-placeholder" />
               </button>
             )}
           </InputGroup>
@@ -216,9 +216,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               )}
             >
               {showPassword?.password ? (
-                <EyeOff className="size-5 stroke-placeholder" />
+                <HideOutline className="size-5 text-placeholder" />
               ) : (
-                <Eye className="size-5 stroke-placeholder" />
+                <ShowOutline className="size-5 text-placeholder" />
               )}
             </button>
           </InputGroup>
@@ -254,9 +254,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 onClick={() => handleShowPassword("retypePassword")}
               >
                 {showPassword?.retypePassword ? (
-                  <EyeOff className="size-5 stroke-placeholder" />
+                  <HideOutline className="size-5 text-placeholder" />
                 ) : (
-                  <Eye className="size-5 stroke-placeholder" />
+                  <ShowOutline className="size-5 text-placeholder" />
                 )}
               </button>
             </InputGroup>

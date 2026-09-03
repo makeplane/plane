@@ -6,7 +6,7 @@
 
 import React, { useState, useRef, useContext } from "react";
 import { usePopper } from "react-popper";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 // types
@@ -184,7 +184,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
                 </p>
               )}
             </div>
-            {hasNestedItems && <ChevronRightIcon className="h-3 w-3 flex-shrink-0" />}
+            {hasNestedItems && <ChevronRightOutline className="h-3 w-3 flex-shrink-0" />}
           </>
         )}
       </button>

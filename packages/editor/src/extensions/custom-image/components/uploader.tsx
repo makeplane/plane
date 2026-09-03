@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { ImageIcon, RotateCcw } from "lucide-react";
+import { ImageOutline, RefreshOutline } from "@makeplane/propel/icons";
 import type { ChangeEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 // plane imports
@@ -235,7 +235,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
         }
       }}
     >
-      <ImageIcon className="size-4" />
+      <ImageOutline className="size-4" />
       <div className="flex-1 text-14 font-medium">{getDisplayMessage()}</div>
       {hasDuplicationFailed && editor.isEditable && (
         <button
@@ -249,7 +249,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           )}
           title="Retry duplication"
         >
-          <RotateCcw className="size-3" />
+          <RefreshOutline className="size-3" />
           <span className="text-11">Retry</span>
         </button>
       )}

@@ -11,7 +11,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
-import { ModuleIcon } from "@plane/propel/icons";
+import { ModuleOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -53,7 +53,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
                 <BreadcrumbLink
                   label="Modules"
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                  icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<ModuleOutline className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }

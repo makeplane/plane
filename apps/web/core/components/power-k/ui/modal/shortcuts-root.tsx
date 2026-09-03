@@ -8,7 +8,7 @@ import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { CloseIcon, SearchIcon } from "@plane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
 
 // hooks
@@ -67,12 +67,12 @@ export function ShortcutsModal(props: Props) {
                   <Dialog.Title as="h3" className="flex justify-between px-5">
                     <span className="text-16 font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
-                      <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
+                      <CloseOutline className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
                   <div className="px-5">
                     <InputGroup size="2xl">
-                      <SearchIcon className="h-3.5 w-3.5 text-secondary" />
+                      <SearchOutline className="h-3.5 w-3.5 text-secondary" />
                       <Input
                         size="2xl"
                         id="search"

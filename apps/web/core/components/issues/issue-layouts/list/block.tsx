@@ -10,7 +10,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -250,11 +250,10 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                     className="grid size-4 place-items-center rounded-xs text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRightIcon
+                    <ChevronRightOutline
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
-                      strokeWidth={2.5}
                     />
                   </button>
                 )}

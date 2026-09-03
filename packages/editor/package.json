@@ -37,6 +37,7 @@
     "@floating-ui/react": "catalog:",
     "@headlessui/react": "catalog:",
     "@hocuspocus/provider": "catalog:",
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/propel": "workspace:*",

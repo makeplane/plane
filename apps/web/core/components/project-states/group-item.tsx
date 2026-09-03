@@ -10,7 +10,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { AddOutline, ChevronDownOutline } from "@makeplane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -71,7 +72,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
               }
             )}
           >
-            <ChevronDownIcon className="h-4 w-4" />
+            <ChevronDownOutline className="h-4 w-4" />
           </div>
           <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
@@ -92,7 +93,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           }}
           disabled={!isEditable || createState}
         >
-          <PlusIcon className="h-4 w-4" />
+          <AddOutline className="h-4 w-4" />
         </button>
       </div>
 

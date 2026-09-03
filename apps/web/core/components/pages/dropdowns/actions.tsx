@@ -7,11 +7,22 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
+import {
+  ArchiveOutline,
+  CopyOutline,
+  DeleteOutline,
+  ExportOutline,
+  GlobeOutline,
+  LinkOutline,
+  LockOutline,
+  LockedOutline,
+  NewTabOutline,
+  RestoreOutline,
+  UnlockedOutline,
+} from "@makeplane/propel/icons";
 // constants
 import { EPageAccess } from "@plane/constants";
 // plane editor
-import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -86,7 +97,7 @@ export const PageActions = observer(function PageActions(props: Props) {
             pageOperations.toggleLock();
           },
           title: is_locked ? "Unlock" : "Lock",
-          icon: is_locked ? LockKeyholeOpen : LockKeyhole,
+          icon: is_locked ? UnlockedOutline : LockedOutline,
           shouldRender: canCurrentUserLockPage,
         },
         {
@@ -95,21 +106,21 @@ export const PageActions = observer(function PageActions(props: Props) {
             pageOperations.toggleAccess();
           },
           title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
-          icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
+          icon: access === EPageAccess.PUBLIC ? LockOutline : GlobeOutline,
           shouldRender: canCurrentUserChangeAccess && !archived_at,
         },
         {
           key: "open-in-new-tab",
           action: pageOperations.openInNewTab,
           title: "Open in new tab",
-          icon: NewTabIcon,
+          icon: NewTabOutline,
           shouldRender: true,
         },
         {
           key: "copy-link",
           action: pageOperations.copyLink,
           title: "Copy link",
-          icon: LinkIcon,
+          icon: LinkOutline,
           shouldRender: true,
         },
         {
@@ -118,7 +129,7 @@ export const PageActions = observer(function PageActions(props: Props) {
             pageOperations.duplicate();
           },
           title: "Make a copy",
-          icon: CopyIcon,
+          icon: CopyOutline,
           shouldRender: canCurrentUserDuplicatePage,
         },
         {
@@ -127,7 +138,7 @@ export const PageActions = observer(function PageActions(props: Props) {
             pageOperations.toggleArchive();
           },
           title: archived_at ? "Restore" : "Archive",
-          icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+          icon: archived_at ? RestoreOutline : ArchiveOutline,
           shouldRender: canCurrentUserArchivePage,
         },
         {
@@ -136,14 +147,14 @@ export const PageActions = observer(function PageActions(props: Props) {
             setDeletePageModal(true);
           },
           title: "Delete",
-          icon: TrashIcon,
+          icon: DeleteOutline,
           shouldRender: canCurrentUserDeletePage && !!archived_at,
         },
         {
           key: "move",
           action: () => setMovePageModal(true),
           title: "Move",
-          icon: FileOutput,
+          icon: ExportOutline,
           shouldRender: canCurrentUserMovePage && isMovePageEnabled,
         },
       ];
