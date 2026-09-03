@@ -277,6 +277,13 @@
       "success": "Sub-activitatea a fost eliminată cu succes",
       "error": "Eroare la eliminarea sub-activității"
     },
+    "propagate_state": {
+      "modal": {
+        "title": "Update sub-work items?",
+        "description": "This work item has {count, plural, one {# sub-work item} other {# sub-work items}}. You can apply the same state change to them.",
+        "toggle": "Apply state to sub-work items"
+      }
+    },
     "empty_state": {
       "sub_list_filters": {
         "title": "Nu ai sub-elemente de lucru care corespund filtrelor pe care le-ai aplicat.",

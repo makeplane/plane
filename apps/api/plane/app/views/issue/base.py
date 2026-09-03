@@ -69,6 +69,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.sub_issue_state_propagation import propagate_state_to_sub_issues
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
@@ -630,6 +631,12 @@ class IssueViewSet(BaseViewSet):
         queryset = self.apply_annotations(queryset)
 
         skip_activity = request.data.pop("skip_activity", False)
+        propagate_state_to_sub_issues_flag = request.data.pop("propagate_state_to_sub_issues", False)
+        if not isinstance(propagate_state_to_sub_issues_flag, bool):
+            return Response(
+                {"propagate_state_to_sub_issues": ["This field must be a boolean."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         is_description_update = request.data.get("description_html") is not None
 
         issue = (
@@ -709,6 +716,15 @@ class IssueViewSet(BaseViewSet):
                     updated_issue=current_instance,
                     issue_id=str(serializer.data.get("id", None)),
                     user_id=request.user.id,
+                )
+            if propagate_state_to_sub_issues_flag and "state_id" in request.data:
+                issue = Issue.issue_objects.select_related("state").get(pk=issue.id)
+                propagate_state_to_sub_issues(
+                    parent=issue,
+                    new_state=issue.state,
+                    actor=request.user,
+                    workspace_slug=slug,
+                    origin=base_host(request=request, is_app=True),
                 )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

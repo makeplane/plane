@@ -277,6 +277,13 @@
       "success": "子工作项移除成功",
       "error": "移除子工作项时出错"
     },
+    "propagate_state": {
+      "modal": {
+        "title": "Update sub-work items?",
+        "description": "This work item has {count, plural, one {# sub-work item} other {# sub-work items}}. You can apply the same state change to them.",
+        "toggle": "Apply state to sub-work items"
+      }
+    },
     "empty_state": {
       "sub_list_filters": {
         "title": "您没有符合您应用的过滤器的子工作项。",

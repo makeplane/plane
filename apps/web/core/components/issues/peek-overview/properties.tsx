@@ -35,6 +35,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+// helpers
+import { updateIssueStateWithPropagation } from "@/helpers/issue-state-update";
 // plane web components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import type { TIssueOperations } from "../issue-detail";
@@ -74,6 +76,15 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
+  const handleStateChange = async (stateId: string) => {
+    await updateIssueStateWithPropagation({
+      currentStateId: issue.state_id,
+      newStateId: stateId,
+      subIssuesCount: issue.sub_issues_count ?? 0,
+      onUpdate: async (data) => issueOperations.update(workspaceSlug, projectId, issueId, data),
+    });
+  };
+
   return (
     <div>
       <h6 className="text-body-xs-medium">{t("common.properties")}</h6>
@@ -81,7 +92,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={StateOutline} label={t("common.state")}>
           <StateDropdown
             value={issue?.state_id}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+            onChange={handleStateChange}
             projectId={projectId}
             disabled={disabled}
             buttonVariant="transparent-with-text"

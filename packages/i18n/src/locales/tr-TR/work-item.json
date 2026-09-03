@@ -277,6 +277,13 @@
       "success": "Alt iş öğesi başarıyla kaldırıldı",
       "error": "Alt iş öğesi kaldırılırken hata oluştu"
     },
+    "propagate_state": {
+      "modal": {
+        "title": "Update sub-work items?",
+        "description": "This work item has {count, plural, one {# sub-work item} other {# sub-work items}}. You can apply the same state change to them.",
+        "toggle": "Apply state to sub-work items"
+      }
+    },
     "empty_state": {
       "sub_list_filters": {
         "title": "Alt iş öğelerinizin filtreleriyle eşleşmiyor.",

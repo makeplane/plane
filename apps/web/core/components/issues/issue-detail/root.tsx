@@ -16,6 +16,7 @@ import { EIssuesStoreType } from "@plane/types";
 import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
+import { PropagateStateModalRoot } from "@/components/issues/propagate-state-modal";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -266,6 +267,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
 
       {/* peek overview */}
       <IssuePeekOverview />
+      <PropagateStateModalRoot />
     </>
   );
 });
