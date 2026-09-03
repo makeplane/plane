@@ -102,7 +102,7 @@ export function StateForm(props: TStateForm) {
               id="description"
               name="description"
               placeholder="Describe this state for your members."
-              value={formData?.description}
+              value={formData?.description ?? ""}
               onChange={(e) => handleFormData("description", e.target.value)}
             />
           </TextAreaGroup>
