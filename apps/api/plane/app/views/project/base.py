@@ -561,6 +561,12 @@ class DeployBoardViewSet(BaseViewSet):
             },
         )
 
+        # project_id comes from the URL and was never checked against slug, so a
+        # caller could aim their own workspace at another tenant's project id.
+        # Defence in depth: the permission class now binds both.
+        if not Project.objects.filter(pk=project_id, workspace__slug=slug).exists():
+            return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
         project_deploy_board, _ = DeployBoard.objects.get_or_create(
             entity_name="project", entity_identifier=project_id, project_id=project_id
         )
