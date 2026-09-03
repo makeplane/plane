@@ -144,6 +144,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             {!verticalAlignPosition && (
               <button
                 className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
+                aria-label={expandedGroupIds?.has(column_id) ? "Collapse group" : "Expand group"}
                 onClick={() => handleExpandedGroups?.("group_by", column_id)}
               >
                 {expandedGroupIds?.has(column_id) ? (
