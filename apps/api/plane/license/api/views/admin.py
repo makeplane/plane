@@ -126,7 +126,18 @@ class InstanceAdminSignUpEndpoint(View):
         first_name = request.POST.get("first_name", False)
         last_name = request.POST.get("last_name", "")
         company_name = request.POST.get("company_name", "")
-        is_telemetry_enabled = request.POST.get("is_telemetry_enabled", True)
+        # Form posts may send "true"/"false" strings; coerce to a real bool so
+        # assignment to Instance.is_telemetry_enabled does not 500 on save.
+        is_telemetry_enabled_raw = request.POST.get("is_telemetry_enabled", True)
+        if isinstance(is_telemetry_enabled_raw, bool):
+            is_telemetry_enabled = is_telemetry_enabled_raw
+        else:
+            is_telemetry_enabled = str(is_telemetry_enabled_raw).strip().lower() in {
+                "1",
+                "true",
+                "yes",
+                "on",
+            }
 
         # return error if the email and password is not present
         if not email or not password or not first_name:
