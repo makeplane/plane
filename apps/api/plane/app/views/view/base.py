@@ -314,6 +314,9 @@ class IssueViewViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
         issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
+        if issue_view is None:
+            return Response({"error": "View not found"}, status=status.HTTP_404_NOT_FOUND)
+
         project = Project.objects.get(id=project_id)
         """
         if the role is guest and guest_view_all_features is false and owned by is not 

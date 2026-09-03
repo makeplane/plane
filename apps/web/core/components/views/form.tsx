@@ -26,8 +26,11 @@ import { EViewAccess, EIssuesStoreType } from "@plane/types";
 import { TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
+import { AccessField } from "@/components/common/access-field";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+// helpers
+import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -81,6 +84,8 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
   // derived values
   const projectDetails = getProjectById(projectId);
   const logoValue = watch("logo_props");
+  const accessValue = watch("access");
+  const i18nAccessLabel = VIEW_ACCESS_SPECIFIERS.find((access) => access.key === accessValue)?.i18n_label;
   const workItemFilters: IIssueFilters = {
     richFilters: getValues("rich_filters"),
     displayFilters: getValues("display_filters"),
@@ -283,19 +288,36 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          {t("common.cancel")}
-        </Button>
-        <Button variant="primary" size="lg" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? t("common.updating")
-              : t("view.update.label")
-            : isSubmitting
-              ? t("common.creating")
-              : t("view.create.label")}
-        </Button>
+      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
+        <div className="flex items-center gap-2">
+          <Controller
+            control={control}
+            name="access"
+            render={({ field: { value, onChange } }) => (
+              <AccessField
+                onChange={onChange}
+                value={value ?? EViewAccess.PUBLIC}
+                accessSpecifiers={VIEW_ACCESS_SPECIFIERS}
+                isMobile={isMobile}
+              />
+            )}
+          />
+          <h6 className="text-11 font-medium">{t(i18nAccessLabel || "")}</h6>
+        </div>
+        <div className="flex items-center justify-end gap-2">
+          <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
+            {t("common.cancel")}
+          </Button>
+          <Button variant="primary" size="lg" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
+            {data
+              ? isSubmitting
+                ? t("common.updating")
+                : t("view.update.label")
+              : isSubmitting
+                ? t("common.creating")
+                : t("view.create.label")}
+          </Button>
+        </div>
       </div>
     </form>
   );
