@@ -5,7 +5,7 @@ alwaysApply: true
 
 # TestCopilot overlay
 
-本仓是 **tuner** 在 Plane v1.4.1 上的 fork（分支 `testcopilot/v1.4.1`），要做 **TestCopilot**，不是改官方 Issue 产品。
+本仓是 **tuner** 在 Plane v1.4.2 上的 fork（分支 `testcopilot/v1.4.1`），要做 **TestCopilot**，不是改官方 Issue 产品。
 
 开工先读：
 

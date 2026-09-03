@@ -2,7 +2,7 @@
 
 本文件是 Plane fork 上 **TestCopilot** 的设计正文。作者：**tuner**。入口见仓库根 [`TESTCOPILOT.md`](../../TESTCOPILOT.md)。
 
-基线：官方 release **v1.4.1**（2026-08-07），开发分支 `testcopilot/v1.4.1`。
+基线：官方 release **v1.4.2**（2026-08-23），开发分支 `testcopilot/v1.4.1`。
 
 许可证：上游 **AGPL-3.0**。自研模块同样受约束；公开 GitHub fork 会把 overlay 一并公开。
 
@@ -82,7 +82,7 @@ C:\dev\repo\plane               = 本工作副本（只在这里写 TestCopilot 
 C:\dev\sourcecode\plane         = 上游只读参考，不要在那里开发
 ```
 
-稳定 tag：`vX.Y.Z`（忽略 `*-dev` / `*-rc*` / `*-hotfix`）。当前 Latest = **v1.4.1**。
+稳定 tag：`vX.Y.Z`（忽略 `*-dev` / `*-rc*` / `*-hotfix`）。当前 Latest = **v1.4.2**。
 
 Windows 上 `git fetch upstream` 可能因远程分支名大小写冲突失败，**tags 仍能拉到**。吸收修复：
 

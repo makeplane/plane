@@ -1,6 +1,6 @@
 # TestCopilot — 本 fork 要做什么
 
-> 作者：**tuner**。这是我在 Plane v1.4.1 上的自研层。官方 Plane 是项目管理壳；测试能力的唯一真相源是绑定的 git 仓，不在本仓、也不在 Issue 里。
+> 作者：**tuner**。这是我在 Plane v1.4.2 上的自研层。官方 Plane 是项目管理壳；测试能力的唯一真相源是绑定的 git 仓，不在本仓、也不在 Issue 里。
 >
 > 打开本仓用 Cursor 开发时：**先读本文 + [`docs/testhub/PLAN.md`](docs/testhub/PLAN.md)**。官方开发命令仍见根 [`AGENTS.md`](AGENTS.md)。
 >
@@ -56,7 +56,7 @@ Issue / Cycle 继续管缺陷和任务。**不要**因为文件在同一个仓�
 | **P3**  | behave / pytest 跑测；失败一键开 Issue                                                                                                     |
 | **P4**  | recorder、xmind、多 Runner、webhook 自动 sync                                                                                              |
 
-P0 fork 卫生已完成：`upstream` = makeplane/plane（push 禁用），基线 tag **v1.4.1**。
+P0 fork 卫生已完成：`upstream` = makeplane/plane（push 禁用），基线 tag **v1.4.2**（已从 v1.4.1 合入）。
 
 ## 明确不做
 
