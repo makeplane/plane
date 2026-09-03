@@ -274,7 +274,19 @@ class CycleIssueViewSet(BaseViewSet):
                 for issue in new_issues
             ],
             batch_size=10,
+            # Concurrent add-issue requests can both pass the unlocked
+            # existing-issue check above and insert the same (cycle, issue),
+            # violating the cycle_issue_when_deleted_at_null unique constraint.
+            # Skip the duplicates instead of raising, matching the module and
+            # external-API equivalents.
+            ignore_conflicts=True,
         )
+
+        # ON CONFLICT DO NOTHING does not populate PKs on skipped rows, so a
+        # concurrent request that lost the race gets its duplicates back here
+        # with pk=None. Drop them before the activity log below, otherwise it
+        # records a "created" entry for an insert that was silently discarded.
+        created_records = [record for record in created_records if record.pk is not None]
 
         # Updated Issues
         updated_records = []
