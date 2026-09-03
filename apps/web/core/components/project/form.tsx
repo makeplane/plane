@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
@@ -18,7 +19,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, TextArea } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -313,16 +314,19 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             name="description"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TextArea
-                id="description"
-                name="description"
-                value={value}
-                placeholder={t("project_description_placeholder")}
-                onChange={onChange}
-                className="min-h-[102px] text-13 font-medium"
-                hasError={Boolean(errors?.description)}
-                disabled={!isAdmin}
-              />
+              <Field name="description" invalid={Boolean(errors?.description)} disabled={!isAdmin}>
+                <TextAreaGroup>
+                  <TextArea
+                    size="lg"
+                    surface="field"
+                    id="description"
+                    name="description"
+                    value={value}
+                    placeholder={t("project_description_placeholder")}
+                    onChange={onChange}
+                  />
+                </TextAreaGroup>
+              </Field>
             )}
           />
         </div>

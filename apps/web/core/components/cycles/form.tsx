@@ -9,13 +9,12 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { ICycle } from "@plane/types";
-// ui
-import { TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -139,15 +138,19 @@ export function CycleForm(props: Props) {
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  name="description"
-                  placeholder={t("description")}
-                  className="min-h-24 w-full resize-none text-14"
-                  hasError={Boolean(errors?.description)}
-                  value={value}
-                  onChange={onChange}
-                  tabIndex={getIndex("description")}
-                />
+                <Field name="description" invalid={Boolean(errors?.description)}>
+                  <TextAreaGroup>
+                    <TextArea
+                      size="lg"
+                      surface="field"
+                      name="description"
+                      placeholder={t("description")}
+                      value={value}
+                      onChange={onChange}
+                      tabIndex={getIndex("description")}
+                    />
+                  </TextAreaGroup>
+                </Field>
               )}
             />
           </div>

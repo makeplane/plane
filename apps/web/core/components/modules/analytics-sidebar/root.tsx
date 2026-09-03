@@ -26,7 +26,8 @@ import { ModuleStatusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import { Loader, CustomSelect, TextArea } from "@plane/ui";
+import { Loader, CustomSelect } from "@plane/ui";
+import { TextArea } from "@makeplane/propel/components/text-area";
 // components
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -233,15 +234,11 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full text-18 font-semibold break-words text-primary">{moduleDetails.name}</h4>
+          <h4 className="w-full text-18 font-semibold wrap-break-word text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
-          <TextArea
-            className="ring-none !m-0 max-h-max w-full resize-none !border-0 bg-transparent !p-0 text-13 leading-5 text-secondary outline-none"
-            value={moduleDetails.description}
-            disabled
-          />
+          <TextArea size="lg" surface="inline" value={moduleDetails.description} disabled />
         )}
 
         <div className="flex flex-col gap-5 pt-2.5 pb-6">

@@ -6,10 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { TextArea } from "@makeplane/propel/components/text-area";
 // editor
 import type { EditorRefApi } from "@plane/editor";
-// ui
-import { TextArea } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // helpers
 // hooks
@@ -35,7 +34,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   });
 
   return (
-    <div className="relative w-full flex-shrink-0 py-3">
+    <div className="relative w-full shrink-0 py-3">
       {readOnly ? (
         <h6
           className={cn(
@@ -43,7 +42,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
             {
               "text-placeholder": !title,
             },
-            "break-words"
+            "wrap-break-word"
           )}
         >
           {getPageName(title)}
@@ -51,7 +50,8 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
       ) : (
         <div className="relative">
           <TextArea
-            className={cn(titleFontClassName, "block w-full resize-none rounded-none border-none p-0 outline-none")}
+            size={fontSize === "small-font" ? "xl" : "2xl"}
+            surface="inline"
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -68,7 +68,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           />
           <div
             className={cn(
-              "pointer-events-none absolute right-1 bottom-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 font-regular text-secondary opacity-0 transition-opacity",
+              "pointer-events-none absolute right-1 bottom-1 z-2 rounded-sm bg-surface-1 p-0.5 text-11 font-regular text-secondary opacity-0 transition-opacity",
               {
                 "opacity-100": isLengthVisible,
               }

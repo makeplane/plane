@@ -11,13 +11,14 @@ import { CalendarOutline } from "@makeplane/propel/icons";
 // types
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IApiToken } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, TextArea } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -166,13 +167,17 @@ export function CreateApiTokenForm(props: Props) {
             control={control}
             name="description"
             render={({ field: { value, onChange } }) => (
-              <TextArea
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.description)}
-                placeholder={t("description")}
-                className="min-h-24 w-full resize-none text-14"
-              />
+              <Field name="description" invalid={Boolean(errors.description)}>
+                <TextAreaGroup>
+                  <TextArea
+                    size="lg"
+                    surface="field"
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t("description")}
+                  />
+                </TextAreaGroup>
+              </Field>
             )}
           />
           <div className="flex items-center justify-between gap-2">
