@@ -48,7 +48,7 @@
         "cron_expression_placeholder": "0 9 * * 1-5",
         "cron_invalid": "無効なCron式です。",
         "cron_preview": "このCron式は「{description}」を実行します。",
-        "main_content_cron_summary": "{description} ({timezone})."
+        "main_content_cron_summary": "{description}（{timezone}）"
       },
       "button": {
         "previous": "戻る",
