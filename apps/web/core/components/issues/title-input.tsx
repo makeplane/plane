@@ -7,7 +7,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { Field } from "@makeplane/propel/components/field";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { TextArea } from "@makeplane/propel/components/text-area";
 import { useTranslation } from "@plane/i18n";
 import type { TNameDescriptionLoader } from "@plane/types";
 // types
@@ -146,12 +146,12 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     <div className="flex flex-col gap-1.5">
       <div className={cn("relative", containerClassName)}>
         <Field name="title" invalid={title?.length === 0}>
-          <TextAreaGroup resize="none">
+          <div className="flex w-full">
             <TextArea
               size="2xl"
-              surface="field"
+              surface="inline"
               autoResize
-              maxRows={4}
+              rows={1}
               id="title-input"
               disabled={disabled}
               value={title}
@@ -161,7 +161,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
               onFocus={() => setIsLengthVisible(true)}
               onBlur={() => setIsLengthVisible(false)}
             />
-          </TextAreaGroup>
+          </div>
         </Field>
         <div
           className={cn(
