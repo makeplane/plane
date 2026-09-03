@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Nie udało się dodać pliku. Spróbuj ponownie.",
-    "only_one_file_allowed": "Możesz przesłać tylko jeden plik naraz.",
-    "file_size_limit": "Plik musi być mniejszy niż {size}MB.",
     "drag_and_drop": "Przeciągnij plik w dowolne miejsce, aby przesłać",
-    "delete": "Usuń załącznik"
+    "delete": "Usuń załącznik",
+    "files_too_large": "Pominięto {count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}} z powodu przekroczenia limitu {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Załącznik przesłany} few {Załączniki przesłane} many {Załączniki przesłane} other {Załączniki przesłane}}",
+    "upload_success": "Dodano {count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}.",
+    "upload_failed_title": "{count, plural, one {Załącznik nieprzesłany} few {Załączniki nieprzesłane} many {Załączniki nieprzesłane} other {Załączniki nieprzesłane}}",
+    "upload_partial_failure": "Dodano {count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}. Nie udało się dodać: {files}",
+    "upload_failure": "Nie udało się dodać: {files}. Proszę spróbować ponownie."
   },
   "label": {
     "select": "Wybierz etykietę",

@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Datei konnte nicht angehängt werden. Bitte versuchen Sie es erneut.",
-    "only_one_file_allowed": "Es kann jeweils nur eine Datei hochgeladen werden.",
-    "file_size_limit": "Die Datei muss kleiner als {size} MB sein.",
     "drag_and_drop": "Datei hierher ziehen, um sie hochzuladen",
-    "delete": "Anhang löschen"
+    "delete": "Anhang löschen",
+    "files_too_large": "{count, plural, one {# Datei wurde} other {# Dateien wurden}} übersprungen – Limit von {size} MB überschritten: {files}",
+    "upload_success_title": "{count, plural, one {Anhang hochgeladen} other {Anhänge hochgeladen}}",
+    "upload_success": "{count, plural, one {# Datei wurde angehängt.} other {# Dateien wurden angehängt.}}",
+    "upload_failed_title": "{count, plural, one {Anhang nicht hochgeladen} other {Anhänge nicht hochgeladen}}",
+    "upload_partial_failure": "{count, plural, one {# Datei wurde angehängt.} other {# Dateien wurden angehängt.}} Nicht angehängt: {files}",
+    "upload_failure": "Nicht angehängt: {files}. Bitte erneut versuchen."
   },
   "label": {
     "select": "Label auswählen",

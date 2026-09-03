@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Súbor sa nedá pripojiť. Skúste to prosím znova.",
-    "only_one_file_allowed": "Je možné nahrať iba jeden súbor naraz.",
-    "file_size_limit": "Súbor musí byť menší ako {size}MB.",
     "drag_and_drop": "Pretiahnite súbor kamkoľvek pre nahratie",
-    "delete": "Zmazať prílohu"
+    "delete": "Zmazať prílohu",
+    "files_too_large": "Preskočené {count, plural, one {# súbor} few {# súbory} many {# súboru} other {# súborov}} nad limitom {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Príloha nahraná} few {Prílohy nahrané} many {Prílohy nahrané} other {Prílohy nahrané}}",
+    "upload_success": "{count, plural, one {Pridaný # súbor.} few {Pridané # súbory.} many {Pridaných # súboru.} other {Pridaných # súborov.}}",
+    "upload_failed_title": "{count, plural, one {Príloha nenahraná} few {Prílohy nenahrané} many {Prílohy nenahrané} other {Prílohy nenahrané}}",
+    "upload_partial_failure": "{count, plural, one {Pridaný # súbor.} few {Pridané # súbory.} many {Pridaných # súboru.} other {Pridaných # súborov.}} Nepodarilo sa pridať: {files}",
+    "upload_failure": "Nepodarilo sa pridať: {files}. Skúste to znova."
   },
   "label": {
     "select": "Vybrať štítok",

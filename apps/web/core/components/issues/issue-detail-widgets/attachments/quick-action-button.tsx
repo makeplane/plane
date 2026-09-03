@@ -4,20 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useFileSize } from "@/hooks/use-file-size";
 // local imports
-import { useAttachmentOperations } from "./helper";
+import { useAttachmentDropHandler, useAttachmentOperations } from "./helper";
 
 type Props = {
   workspaceSlug: string;
@@ -30,8 +28,6 @@ type Props = {
 
 export const IssueAttachmentActionButton = observer(function IssueAttachmentActionButton(props: Props) {
   const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
-  // state
-  const [isLoading, setIsLoading] = useState(false);
   // store hooks
   const { setLastWidgetAction, fetchActivities } = useIssueDetail(issueServiceType);
   // file size
@@ -44,64 +40,39 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
     issueServiceType
   );
   // handlers
-  const handleFetchPropertyActivities = useCallback(() => {
+  const handleUploadSettled = useCallback(() => {
     fetchActivities(workspaceSlug, projectId, issueId);
-  }, [fetchActivities, workspaceSlug, projectId, issueId]);
+    setLastWidgetAction("attachments");
+  }, [fetchActivities, workspaceSlug, projectId, issueId, setLastWidgetAction]);
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      const totalAttachedFiles = acceptedFiles.length + rejectedFiles.length;
+  const { onDrop, isUploading } = useAttachmentDropHandler({
+    create: attachmentOperations.create,
+    maxFileSize,
+    onUploadSettled: handleUploadSettled,
+  });
 
-      if (rejectedFiles.length === 0) {
-        const currentFile: File = acceptedFiles[0];
-        if (!currentFile || !workspaceSlug) return;
-
-        setIsLoading(true);
-        attachmentOperations
-          .create(currentFile)
-          .catch(() => {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "File could not be attached. Try uploading again.",
-            });
-          })
-          .finally(() => {
-            handleFetchPropertyActivities();
-            setLastWidgetAction("attachments");
-            setIsLoading(false);
-          });
-        return;
-      }
-
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message:
-          totalAttachedFiles > 1
-            ? "Only one file can be uploaded at a time."
-            : `File must be of ${maxFileSize / 1024 / 1024}MB or less in size.`,
-      });
-      return;
-    },
-    [attachmentOperations, maxFileSize, workspaceSlug, handleFetchPropertyActivities, setLastWidgetAction]
-  );
+  // react-dropzone does not forward its disabled state to the root element, so the native
+  // button has to be given the same condition or it stays clickable while doing nothing.
+  const isDropzoneDisabled = isUploading || disabled || !workspaceSlug;
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: maxFileSize,
-    multiple: false,
-    disabled: isLoading || disabled,
+    multiple: true,
+    disabled: isDropzoneDisabled,
   });
 
   return (
+    // Presentational wrapper: the button below is the real control, this only keeps the
+    // click from bubbling to the surrounding work item row.
+    // TODO: Remove extra div and move event propagation to button
     <div
+      role="presentation"
       onClick={(e) => {
-        // TODO: Remove extra div and move event propagation to button
         e.stopPropagation();
       }}
     >
-      <button {...getRootProps()} type="button" disabled={disabled}>
+      <button {...getRootProps()} type="button" disabled={isDropzoneDisabled}>
         <input {...getInputProps()} />
         {customButton ? customButton : <AddOutline className="h-4 w-4" />}
       </button>

@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "ファイルを添付できませんでした。もう一度アップロードしてください。",
-    "only_one_file_allowed": "一度にアップロードできるファイルは1つだけです。",
-    "file_size_limit": "ファイルサイズは{size}MB以下である必要があります。",
     "drag_and_drop": "どこにでもドラッグ＆ドロップでアップロード",
-    "delete": "添付ファイルを削除"
+    "delete": "添付ファイルを削除",
+    "files_too_large": "{size}MB の上限を超えたため、{count, plural, one {# 件} other {# 件}}のファイルをスキップしました：{files}",
+    "upload_success_title": "{count, plural, one {添付ファイルをアップロードしました} other {添付ファイルをアップロードしました}}",
+    "upload_success": "{count, plural, one {# 件のファイルを添付しました。} other {# 件のファイルを添付しました。}}",
+    "upload_failed_title": "{count, plural, one {添付ファイルをアップロードできませんでした} other {添付ファイルをアップロードできませんでした}}",
+    "upload_partial_failure": "{count, plural, one {# 件のファイルを添付しました。} other {# 件のファイルを添付しました。}}添付できませんでした：{files}",
+    "upload_failure": "添付できませんでした：{files}。もう一度お試しください。"
   },
   "label": {
     "select": "ラベルを選択",

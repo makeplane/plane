@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 // plane web hooks
 import { useFileSize } from "@/hooks/use-file-size";
 // types
 import type { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
+import { useAttachmentDropHandler } from "../issue-detail-widgets/attachments/helper";
 
 type TAttachmentOperationsModal = Pick<TAttachmentOperations, "create">;
 
@@ -22,31 +22,20 @@ type Props = {
 
 export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(props: Props) {
   const { workspaceSlug, disabled = false, attachmentOperations } = props;
-  // states
-  const [isLoading, setIsLoading] = useState(false);
   // file size
   const { maxFileSize } = useFileSize();
-
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const currentFile: File = acceptedFiles[0];
-      if (!currentFile || !workspaceSlug) return;
-
-      setIsLoading(true);
-      attachmentOperations.create(currentFile).finally(() => setIsLoading(false));
-    },
-    [attachmentOperations, workspaceSlug]
-  );
-
-  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
-    onDrop,
-    maxSize: maxFileSize,
-    multiple: false,
-    disabled: isLoading || disabled,
+  // drop handler
+  const { onDrop, progress, isUploading } = useAttachmentDropHandler({
+    create: attachmentOperations.create,
+    maxFileSize,
   });
 
-  const fileError =
-    fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    onDrop,
+    maxSize: maxFileSize,
+    multiple: true,
+    disabled: isUploading || disabled || !workspaceSlug,
+  });
 
   return (
     <div
@@ -59,12 +48,14 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
       <span className="flex items-center gap-2">
         {isDragActive ? (
           <p>Drop here...</p>
-        ) : fileError ? (
-          <p className="text-center text-danger-primary">{fileError}</p>
-        ) : isLoading ? (
-          <p className="text-center">Uploading...</p>
+        ) : progress ? (
+          <p className="text-center">
+            {/* Files finished, not the file being worked on: uploads run concurrently, so
+                there is no single "current" file to point at. */}
+            {progress.total > 1 ? `Uploading ${progress.completed}/${progress.total}...` : "Uploading..."}
+          </p>
         ) : (
-          <p className="text-center">Click or drag a file here</p>
+          <p className="text-center">Click or drag files here</p>
         )}
       </span>
     </div>
