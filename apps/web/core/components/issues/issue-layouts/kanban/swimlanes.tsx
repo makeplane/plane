@@ -41,6 +41,8 @@ interface ISubGroupSwimlaneHeader {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  expandedGroupIds?: ReadonlySet<string>;
+  handleExpandedGroups?: (toggle: "group_by" | "sub_group_by", value: string) => void;
   isEpic?: boolean;
   list: IGroupByColumn[];
   showEmptyGroup: boolean;
@@ -64,6 +66,8 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
   getGroupIssueCount,
   group_by,
   handleCollapsedGroups,
+  expandedGroupIds,
+  handleExpandedGroups,
   isEpic = false,
   list,
   showEmptyGroup,
@@ -93,6 +97,8 @@ const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
                 count={groupCount}
                 collapsedGroups={collapsedGroups}
                 handleCollapsedGroups={handleCollapsedGroups}
+                expandedGroupIds={expandedGroupIds}
+                handleExpandedGroups={handleExpandedGroups}
                 issuePayload={_list.payload}
                 disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
                 isEpic={isEpic}
@@ -324,6 +330,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           sub_group_by={sub_group_by}
           collapsedGroups={collapsedGroups}
           handleCollapsedGroups={handleCollapsedGroups}
+          expandedGroupIds={expandedGroupIds}
+          handleExpandedGroups={handleExpandedGroups}
           list={groupByList}
           showEmptyGroup={showEmptyGroup}
           isEpic={isEpic}
