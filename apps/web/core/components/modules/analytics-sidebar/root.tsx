@@ -235,11 +235,10 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             />
           </div>
           <h4 className="w-full text-18 font-semibold wrap-break-word text-primary">{moduleDetails.name}</h4>
+          {moduleDetails.description && (
+            <TextArea size="lg" surface="inline" autoResize value={moduleDetails.description} disabled />
+          )}
         </div>
-
-        {moduleDetails.description && (
-          <TextArea size="lg" surface="inline" autoResize value={moduleDetails.description} disabled />
-        )}
 
         <div className="flex flex-col gap-5 pt-2.5 pb-6">
           <div className="flex items-center justify-start gap-1">
