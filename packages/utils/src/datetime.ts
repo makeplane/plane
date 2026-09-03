@@ -165,55 +165,46 @@ export const findHowManyDaysLeft = (
 /**
  * @returns {string} formatted date in the form of amount of time passed since the event happened
  * @description Returns time passed since the event happened
- * @param {string | Date} time
+ * @param {string | number | Date | null | undefined} time
  * @example calculateTimeAgo("2023-01-01") // 1 year ago
  */
-export const calculateTimeAgo = (time: string | number | Date | null): string => {
+export const calculateTimeAgo = (time: string | number | Date | null | undefined): string => {
   if (!time) return "";
-  // Parse the time to check if it is valid
-  const parsedTime = typeof time === "string" || typeof time === "number" ? parseISO(String(time)) : time;
-  // return if undefined
-  if (!parsedTime) return ""; // Return empty string for invalid dates
-  // Format the time in the form of amount of time passed since the event happened
-  const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
-  return distance;
-};
-
-export function calculateTimeAgoShort(date: string | number | Date | null): string {
-  if (!date) {
+  try {
+    const parsedTime = typeof time === "number" ? new Date(time) : typeof time === "string" ? parseISO(time) : time;
+    if (!isValid(parsedTime)) return "";
+    return formatDistanceToNow(parsedTime, { addSuffix: true });
+  } catch {
     return "";
   }
+};
 
-  const parsedDate = typeof date === "string" ? parseISO(date) : new Date(date);
-  const now = new Date();
-  const diffInSeconds = (now.getTime() - parsedDate.getTime()) / 1000;
+/**
+ * @returns {string} short formatted elapsed time
+ * @description Returns compact relative time string (e.g. 5m, 2h, 3d, 1y)
+ * @param {string | number | Date | null | undefined} date
+ */
+export function calculateTimeAgoShort(date: string | number | Date | null | undefined): string {
+  if (!date) return "";
+  try {
+    const parsedDate = typeof date === "number" ? new Date(date) : typeof date === "string" ? parseISO(date) : date;
+    if (!isValid(parsedDate)) return "";
 
-  if (diffInSeconds < 60) {
-    return `${Math.floor(diffInSeconds)}s`;
+    const diffInSeconds = (Date.now() - parsedDate.getTime()) / 1000;
+    if (diffInSeconds < 0) return "0s";
+    if (diffInSeconds < 60) return `${Math.floor(diffInSeconds)}s`;
+    const diffInMinutes = diffInSeconds / 60;
+    if (diffInMinutes < 60) return `${Math.floor(diffInMinutes)}m`;
+    const diffInHours = diffInMinutes / 60;
+    if (diffInHours < 24) return `${Math.floor(diffInHours)}h`;
+    const diffInDays = diffInHours / 24;
+    if (diffInDays < 30) return `${Math.floor(diffInDays)}d`;
+    const diffInMonths = diffInDays / 30;
+    if (diffInMonths < 12) return `${Math.floor(diffInMonths)}mo`;
+    return `${Math.floor(diffInMonths / 12)}y`;
+  } catch {
+    return "";
   }
-
-  const diffInMinutes = diffInSeconds / 60;
-  if (diffInMinutes < 60) {
-    return `${Math.floor(diffInMinutes)}m`;
-  }
-
-  const diffInHours = diffInMinutes / 60;
-  if (diffInHours < 24) {
-    return `${Math.floor(diffInHours)}h`;
-  }
-
-  const diffInDays = diffInHours / 24;
-  if (diffInDays < 30) {
-    return `${Math.floor(diffInDays)}d`;
-  }
-
-  const diffInMonths = diffInDays / 30;
-  if (diffInMonths < 12) {
-    return `${Math.floor(diffInMonths)}mo`;
-  }
-
-  const diffInYears = diffInMonths / 12;
-  return `${Math.floor(diffInYears)}y`;
 }
 
 // Date Validation Helpers
@@ -284,7 +275,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
   try {
     if (!date || date === "") return;
 
-    if (typeof date !== "string" && !(date instanceof String)) return date;
+    if (typeof date !== "string") return date;
 
     const [yearString, monthString, dayString] = date.substring(0, 10).split("-");
     const year = parseInt(yearString);
@@ -331,9 +322,22 @@ export const convertToEpoch = (dateString: string | undefined) => {
  * get current Date time in UTC ISO format
  * @returns
  */
-export const getCurrentDateTimeInISO = () => {
-  const date = new Date();
-  return date.toISOString();
+export const getCurrentDateInUTC = () => new Date().toISOString();
+
+/**
+ * @description calculates the difference in hours between two dates
+ * @param startDate
+ * @param endDate
+ * @returns
+ */
+export const calculateDifferenceInHours = (startDate: string | Date, endDate: string | Date): number => {
+  const parsedStartDate = new Date(startDate);
+  const parsedEndDate = new Date(endDate);
+
+  const diffInMs = parsedEndDate.getTime() - parsedStartDate.getTime();
+  const diffInHours = diffInMs / (1000 * 60 * 60);
+
+  return Math.round(diffInHours);
 };
 
 /**
@@ -390,23 +394,16 @@ export const getReadTimeFromWordsCount = (wordsCount: number): number => {
  * @returns
  */
 export const generateDateArray = (startDate: string | Date, endDate: string | Date) => {
-  // Convert the start and end dates to Date objects if they aren't already
   const start = new Date(startDate);
-  // start.setDate(start.getDate() + 1);
   const end = new Date(endDate);
   end.setDate(end.getDate() + 2);
 
-  // Create an empty array to store the dates
   const dateArray = [];
 
-  // Use a while loop to generate dates between the range
-  while (start <= end) {
-    // Push the current date (converted to ISO string for consistency)
+  for (let current = new Date(start); current <= end; current = new Date(current.setDate(current.getDate() + 1))) {
     dateArray.push({
-      date: new Date(start).toISOString().split("T")[0],
+      date: new Date(current).toISOString().split("T")[0],
     });
-    // Increment the date by 1 day (86400000 milliseconds)
-    start.setDate(start.getDate() + 1);
   }
 
   return dateArray;
