@@ -6,4 +6,5 @@
 
 export * from "./auto-close-automation";
 export * from "./auto-archive-automation";
+export * from "./cascade-state-automation";
 export * from "./select-month-modal";

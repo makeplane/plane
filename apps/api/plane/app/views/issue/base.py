@@ -41,6 +41,7 @@ from plane.app.serializers import (
     ProjectUserPropertySerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.issue_cascade_task import cascade_state_to_sub_issues
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity
@@ -59,6 +60,8 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     ProjectMember,
+    State,
+    StateGroup,
     UserRecentVisit,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
@@ -679,6 +682,8 @@ class IssueViewSet(BaseViewSet):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
+            # Snapshot the state before saving to detect a closing transition.
+            previous_state_id = issue.state_id
             serializer.save()
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
@@ -710,6 +715,26 @@ class IssueViewSet(BaseViewSet):
                     issue_id=str(serializer.data.get("id", None)),
                     user_id=request.user.id,
                 )
+            # Cascade the closing state to non-terminal sub-issues when the parent
+            # enters a completed/cancelled group and the project has opted in.
+            new_state_id = issue.state_id
+            if new_state_id and new_state_id != previous_state_id:
+                new_group = State.objects.filter(id=new_state_id).values_list("group", flat=True).first()
+                terminal_groups = [StateGroup.COMPLETED.value, StateGroup.CANCELLED.value]
+                # Note: a terminal -> terminal move (e.g. completed -> cancelled)
+                # must cascade too, so the previous group is deliberately not
+                # gated on here.
+                if (
+                    new_group in terminal_groups
+                    and Project.objects.filter(id=project_id, cascade_state_on_close=True).exists()
+                ):
+                    cascade_state_to_sub_issues.delay(
+                        parent_issue_id=str(pk),
+                        new_state_id=str(new_state_id),
+                        actor_id=str(request.user.id),
+                        project_id=str(project_id),
+                        epoch=int(timezone.now().timestamp()),
+                    )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

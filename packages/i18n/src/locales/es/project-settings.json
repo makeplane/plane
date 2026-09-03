@@ -191,6 +191,10 @@
         "duration": "Cerrar automáticamente elementos de trabajo inactivos durante",
         "auto_close_status": "Estado de cierre automático"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Recordatorios automáticos",
         "description": "Plane enviará recordatorios automáticos via correo electrónico y notificaciones en la aplicación para mantener a tu equipo en el camino de los plazos.",

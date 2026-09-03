@@ -191,6 +191,10 @@
         "duration": "다음 기간 동안 비활성 작업 항목 자동 닫기",
         "auto_close_status": "자동 닫기 상태"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "자동 알림",
         "description": "Plane은 이메일과 앱 알림을 통해 팀이 마감일에 따라 추진하도록 자동으로 알림을 보냅니다.",
