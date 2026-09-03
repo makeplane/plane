@@ -37,8 +37,9 @@ This helps us triage and manage issues more efficiently.
 ### Requirements
 
 - Docker Engine installed and running
-- Node.js version 20+ [LTS version](https://nodejs.org/en/about/previous-releases)
-- Python version 3.8+
+- Node.js version 22+ (minimum `>=22.22.0` as specified in `package.json`)
+- pnpm version 11+ (`corepack enable pnpm`)
+- Python version 3.12+ (matching backend `apps/api/Dockerfile.api`)
 - Postgres version v14
 - Redis version v6.2.7
 - **Memory**: Minimum **12 GB RAM** recommended
@@ -64,10 +65,14 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+`setup.sh` automatically copies the required `.env` files, generates the Django `SECRET_KEY`, enables `pnpm` via Corepack, and installs dependencies (`pnpm install`).
+
+> **Manual alternative**: If configuring environment files manually without `setup.sh`, ensure you install frontend dependencies by running `pnpm install` before starting services.
+
 3. Start the containers
 
 ```bash
-docker compose -f docker-compose-local.yml up
+docker compose -f docker-compose-local.yml up -d
 ```
 
 4. Start web apps:
@@ -113,22 +118,30 @@ This guide is designed to help contributors understand how to add or update tran
 
 #### File organization
 
-Translations are organized by language in the locales directory. Each language has its own folder containing JSON files for translations. Here's how it looks:
+Translations are organized by language in the `packages/i18n/src/locales/` directory. Each language has its own folder containing modular JSON files corresponding to feature namespaces (defined in `NAMESPACES` in `packages/i18n/src/constants/namespaces.ts`). Here's how it looks:
 
 ```
 packages/i18n/src/locales/
     ├── en/
-    │   ├── core.json       # Critical translations
-    │   └── translations.json
+    │   ├── common.json            # Common UI elements, buttons, and generic labels
+    │   ├── auth.json              # Authentication, sign-in, and registration
+    │   ├── work-item.json         # Issues, tasks, and work item fields
+    │   ├── work-item-type.json    # Issue types and state transitions
+    │   ├── project.json           # Projects, project views, and dashboards
+    │   ├── project-settings.json  # Project-level settings and integrations
+    │   └── ... (28 namespace files total)
     ├── fr/
-    │   └── translations.json
+    │   ├── common.json
+    │   ├── auth.json
+    │   └── ...
     └── [language]/
-        └── translations.json
+        ├── common.json
+        └── ...
 ```
 
 #### Nested structure
 
-To keep translations organized, we use a nested structure for keys. This makes it easier to manage and locate specific translations. For example:
+To keep translations organized within each namespace, we use a nested structure for keys. For example, in `work-item.json`:
 
 ```json
 {
@@ -143,7 +156,7 @@ To keep translations organized, we use a nested structure for keys. This makes i
 
 ### Translation formatting guide
 
-We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) to handle dynamic content, such as variables and pluralization. Here's how to format your translations:
+We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) (via `i18next-icu`) to handle dynamic content, such as variables and pluralization. Here's how to format your translations:
 
 #### Examples
 
@@ -166,61 +179,45 @@ We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) 
 
 #### Updating existing translations
 
-1. Locate the key in `locales/<language>/translations.json`.
-
+1. Identify the relevant namespace (e.g., `common`, `auth`, `project`, `work-item`) and locate the file in `packages/i18n/src/locales/<language>/<namespace>.json`.
 2. Update the value while ensuring the key structure remains intact.
 3. Preserve any existing ICU formats (e.g., variables, pluralization).
 
 #### Adding new translation keys
 
-1. When introducing a new key, ensure it is added to **all** language files, even if translations are not immediately available. Use English as a placeholder if needed.
-
+1. When introducing a new key, determine its namespace and add it to the corresponding namespace file across **all** language directories. Use English (`en/<namespace>.json`) as the source of truth and reference placeholder.
 2. Keep the nesting structure consistent across all languages.
-
 3. If the new key requires dynamic content (e.g., variables or pluralization), ensure the ICU format is applied uniformly across all languages.
 
 ### Adding new languages
 
-Adding a new language involves several steps to ensure it integrates seamlessly with the project. Follow these instructions carefully:
+Adding a new language involves three straightforward steps:
 
-1.  **Update type definitions**
-    Add the new language to the TLanguage type in the language definitions file:
+1. **Update type definitions**
+   Add the new language code (e.g., `your-lang`) to the `TLanguage` type union:
 
-```ts
-// packages/i18n/src/types/language.ts
-export type TLanguage = "en" | "fr" | "your-lang";
-```
+   ```ts
+   // packages/i18n/src/types/language.ts
+   export type TLanguage = "en" | "fr" | "your-lang" | ...;
+   ```
 
-1.  **Add language configuration**
-    Include the new language in the list of supported languages:
+2. **Add language configuration**
+   Include the new language option in the `SUPPORTED_LANGUAGES` list:
 
-```ts
-// packages/i18n/src/constants/language.ts
-export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
-  { label: "English", value: "en" },
-  { label: "Your Language", value: "your-lang" },
-];
-```
+   ```ts
+   // packages/i18n/src/constants/language.ts
+   export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
+     { label: "English", value: "en" },
+     { label: "Your Language", value: "your-lang" },
+   ];
+   ```
 
-2.  **Create translation files**
-    1. Create a new folder for your language under locales (e.g., `locales/your-lang/`).
+3. **Create translation files**
+   1. Create a new folder for your language under locales (e.g., `packages/i18n/src/locales/your-lang/`).
+   2. Copy the namespace JSON files from `packages/i18n/src/locales/en/` into your new folder.
+   3. Translate the keys across the namespace files.
 
-    2. Add a `translations.json` file inside the folder.
-
-    3. Copy the structure from an existing translation file and translate all keys.
-
-3.  **Update import logic**
-    Modify the language import logic to include your new language:
-
-```ts
-      private importLanguageFile(language: TLanguage): Promise<any> {
-      switch (language) {
-          case "your-lang":
-          return import("../locales/your-lang/translations.json");
-          // ...
-      }
-      }
-```
+> **Note**: Translations are dynamically imported at runtime via `i18next-resources-to-backend` in `packages/i18n/src/core/instance.ts`. No manual loader functions or code edits to import statements are needed.
 
 ### Quality checklist
 
