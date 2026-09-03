@@ -8,7 +8,7 @@ import tlds from "./tlds";
 
 const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const LOCALHOST_ADDRESSES = ["localhost", "127.0.0.1", "0.0.0.0"];
+const LOCALHOST_ADDRESSES = new Set(["localhost", "127.0.0.1", "0.0.0.0", "::1", "[::1]", "::", "[::]"]);
 const HTTP_PROTOCOL = "http://";
 const MAILTO_PROTOCOL = "mailto:";
 const DEFAULT_PROTOCOL = HTTP_PROTOCOL;
@@ -75,7 +75,7 @@ export function validateIPAddress(ip: string): {
  */
 export function isLocalhost(url: string): boolean {
   const hostname = extractHostname(url);
-  return LOCALHOST_ADDRESSES.includes(hostname);
+  return LOCALHOST_ADDRESSES.has(hostname);
 }
 
 /**
@@ -84,7 +84,9 @@ export function isLocalhost(url: string): boolean {
  * @returns The cleaned hostname
  */
 export function extractHostname(url: string): string {
-  let hostname = url;
+  if (!url || typeof url !== "string") return "";
+
+  let hostname = url.trim();
 
   // Remove protocol if present
   if (hostname.includes("://")) {
@@ -97,8 +99,20 @@ export function extractHostname(url: string): string {
     hostname = hostname.substring(atIndex + 1);
   }
 
-  // Remove path, query, hash, and port in one pass
-  hostname = hostname.split("/")[0].split("?")[0].split("#")[0].split(":")[0];
+  // Remove path, query, hash first
+  hostname = hostname.split("/")[0].split("?")[0].split("#")[0];
+
+  // Handle port removal:
+  // For bracketed IPv6 addresses (e.g. [::1]:3000 or [2001:db8::1]:8080)
+  if (hostname.startsWith("[")) {
+    const closingBracketIndex = hostname.indexOf("]");
+    if (closingBracketIndex !== -1) {
+      hostname = hostname.substring(0, closingBracketIndex + 1);
+    }
+  } else if (!hostname.includes(":") || (hostname.match(/:/g) || []).length === 1) {
+    // IPv4 or standard hostname with optional port (e.g. localhost:3000, 127.0.0.1:8000, example.com:80)
+    hostname = hostname.split(":")[0];
+  }
 
   return hostname;
 }
