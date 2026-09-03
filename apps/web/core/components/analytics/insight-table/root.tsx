@@ -5,7 +5,7 @@
  */
 
 import type { ColumnDef, Row, Table } from "@tanstack/react-table";
-import { Download } from "lucide-react";
+import { DownloadOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { AnalyticsTableDataMap, TAnalyticsTabsBase } from "@plane/types";
@@ -39,7 +39,7 @@ export function InsightTable<T extends Exclude<TAnalyticsTabsBase, "overview">>(
         actions={(table: Table<AnalyticsTableDataMap[T]>) => (
           <Button
             variant="secondary"
-            prependIcon={<Download className="h-3.5 w-3.5" />}
+            prependIcon={<DownloadOutline className="h-3.5 w-3.5" />}
             onClick={() => onExport?.(table.getFilteredRowModel().rows)}
           >
             <div>{t("exporter.csv.short_description")}</div>

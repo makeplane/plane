@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { ArchiveOutline, CyclesOutline, ModuleOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
@@ -35,17 +35,17 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   issues: {
     label: "Work items",
     href: "/issues",
-    icon: WorkItemsIcon,
+    icon: WorkItemsOutline,
   },
   cycles: {
     label: "Cycles",
     href: "/cycles",
-    icon: CycleIcon,
+    icon: CyclesOutline,
   },
   modules: {
     label: "Modules",
     href: "/modules",
-    icon: ModuleIcon,
+    icon: ModuleOutline,
   },
 };
 
@@ -78,7 +78,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                   label="Archives"
-                  icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<ArchiveOutline className="h-4 w-4 text-tertiary" />}
                 />
               }
             />

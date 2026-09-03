@@ -7,7 +7,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import type { EditorRefApi } from "@plane/editor";
 // plane imports
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -122,7 +122,7 @@ export function PageToolbar(props: Props) {
             )}
           >
             {activeTypography?.name || "Text"}
-            <ChevronDownIcon className="size-3 shrink-0" />
+            <ChevronDownOutline className="size-3 shrink-0" />
           </span>
         }
         className="pr-2"
@@ -152,7 +152,7 @@ export function PageToolbar(props: Props) {
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && <CheckIcon className="size-3 shrink-0 text-tertiary" />}
+            {activeTypography?.itemKey === item.itemKey && <TickOutline className="size-3 shrink-0 text-tertiary" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>

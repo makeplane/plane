@@ -12,7 +12,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -120,7 +120,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                   className="place-items-center self-center rounded-sm"
                   onClick={() => remove(index)}
                 >
-                  <CloseIcon className="h-4 w-4 text-secondary" />
+                  <CloseOutline className="h-4 w-4 text-secondary" />
                 </button>
               </div>
             )}

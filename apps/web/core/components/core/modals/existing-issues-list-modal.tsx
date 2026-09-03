@@ -5,13 +5,12 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { Rocket } from "lucide-react";
+import { CloseOutline, RocketOutline, SearchOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
@@ -148,7 +147,7 @@ export function ExistingIssuesListModal(props: Props) {
         }}
       >
         <div className="relative m-1">
-          <SearchIcon
+          <SearchOutline
             className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
@@ -182,7 +181,7 @@ export function ExistingIssuesListModal(props: Props) {
                     className="group p-1"
                     onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                   >
-                    <CloseIcon className="h-3 w-3 text-secondary group-hover:text-primary" />
+                    <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
                   </button>
                 </div>
               ))}
@@ -301,7 +300,7 @@ export function ExistingIssuesListModal(props: Props) {
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Rocket className="h-4 w-4" />
+                          <RocketOutline className="h-4 w-4" />
                         </a>
                       </Combobox.Option>
                     );

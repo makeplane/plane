@@ -90,7 +90,10 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
         </>
       }
     >
-      {items}
+      {/* Cancels this nested Collapsible's own panel inset — the outer sub-work-items
+          Collapsible (root.tsx) already contributes one; without this, grouped rows
+          would sit inset twice. */}
+      <div className="-mx-3">{items}</div>
     </Collapsible>
   );
 });

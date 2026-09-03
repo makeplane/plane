@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronLeftIcon } from "@plane/propel/icons";
+import { ChevronLeftOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -155,7 +155,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
                 }}
                 className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center"
               >
-                <ChevronLeftIcon className="h-4 w-4" />
+                <ChevronLeftOutline className="h-4 w-4" />
               </div>
             )}
             <div className="text-18 font-medium text-primary">{t("project_settings.estimates.new")}</div>

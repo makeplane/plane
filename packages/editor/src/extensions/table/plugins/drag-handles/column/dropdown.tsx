@@ -6,11 +6,17 @@
 
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowLeft, ArrowRight, ToggleRight } from "lucide-react";
+import {
+  ArrowNarrowLeftOutline,
+  ArrowNarrowRightOutline,
+  CloseOutline,
+  CopyOutline,
+  DeleteOutline,
+  ToggleFilled,
+} from "@makeplane/propel/icons";
 import type { LucideIcon } from "lucide-react";
 // extensions
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CopyIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 import { findTable, getSelectedColumns } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateColumns } from "../actions";
@@ -25,19 +31,19 @@ const DROPDOWN_ITEMS: {
   {
     key: "insert-left",
     label: "Insert left",
-    icon: ArrowLeft,
+    icon: ArrowNarrowLeftOutline,
     action: (editor) => editor.chain().focus().addColumnBefore().run(),
   },
   {
     key: "insert-right",
     label: "Insert right",
-    icon: ArrowRight,
+    icon: ArrowNarrowRightOutline,
     action: (editor) => editor.chain().focus().addColumnAfter().run(),
   },
   {
     key: "duplicate",
     label: "Duplicate",
-    icon: CopyIcon,
+    icon: CopyOutline,
     action: (editor) => {
       const table = findTable(editor.state.selection);
       if (!table) return;
@@ -52,13 +58,13 @@ const DROPDOWN_ITEMS: {
   {
     key: "clear-contents",
     label: "Clear contents",
-    icon: CloseIcon,
+    icon: CloseOutline,
     action: (editor) => editor.chain().focus().clearSelectedCells().run(),
   },
   {
     key: "delete",
     label: "Delete",
-    icon: TrashIcon,
+    icon: DeleteOutline,
     action: (editor) => editor.chain().focus().deleteColumn().run(),
   },
 ];
@@ -84,7 +90,7 @@ export function ColumnOptionsDropdown(props: Props) {
         }}
       >
         <div className="flex-grow truncate">Header column</div>
-        <ToggleRight className="size-3 shrink-0" />
+        <ToggleFilled className="size-3 shrink-0" />
       </button>
       <hr className="my-2 border-subtle" />
       <TableDragHandleDropdownColorSelector editor={editor} onSelect={onClose} />

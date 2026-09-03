@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { CircleCheck, XCircle } from "lucide-react";
+import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -118,7 +118,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
               aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
             >
-              <XCircle className="size-5 stroke-placeholder" />
+              <CloseCircleOutline className="size-5 text-placeholder" />
             </button>
           )}
         </InputGroup>
@@ -142,7 +142,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         </InputGroup>
         <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
-            <CircleCheck height={12} width={12} />
+            <TickCircleOutline height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
           <button

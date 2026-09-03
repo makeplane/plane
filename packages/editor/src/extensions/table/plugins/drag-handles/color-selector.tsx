@@ -6,9 +6,9 @@
 
 import { Disclosure } from "@headlessui/react";
 import type { Editor } from "@tiptap/core";
-import { Ban, Palette } from "lucide-react";
+import { Ban } from "lucide-react";
+import { ChevronRightOutline, PaletteOutline } from "@makeplane/propel/icons";
 // plane imports
-import { ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -54,10 +54,10 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
         {({ open }) => (
           <>
             <span className="flex items-center gap-2">
-              <Palette className="size-3 shrink-0" />
+              <PaletteOutline className="size-3 shrink-0" />
               Color
             </span>
-            <ChevronRightIcon
+            <ChevronRightOutline
               className={cn("size-3 shrink-0 transition-transform duration-200", {
                 "rotate-90": open,
               })}

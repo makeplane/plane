@@ -8,13 +8,12 @@ import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Component, Loader } from "lucide-react";
+import { GroupOutline, LabelsOutline, LoadingOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 import { getRandomLabelColor } from "@plane/constants";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, LabelPropertyIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -185,7 +184,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
               buttonClassName
             )}
           >
-            <LabelPropertyIcon className="h-3 w-3 flex-shrink-0" />
+            <LabelsOutline className="h-3 w-3 flex-shrink-0" />
             <span>{t("labels")}</span>
           </div>
         )}
@@ -199,7 +198,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -242,7 +241,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                                     <span className="truncate">{label.name}</span>
                                   </div>
                                   <div className="flex shrink-0 items-center justify-center rounded-sm p-1">
-                                    <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                    <TickOutline className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                   </div>
                                 </div>
                               )}
@@ -252,7 +251,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                         return (
                           <li key={label.id} className="border-y border-subtle">
                             <div className="flex items-center gap-2 truncate p-2 text-primary select-none">
-                              <Component className="h-3 w-3" /> {label.name}
+                              <GroupOutline className="h-3 w-3" /> {label.name}
                             </div>
                             <ul>
                               {children.map((child) => (
@@ -278,7 +277,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                                         <span>{child.name}</span>
                                       </div>
                                       <div className="flex items-center justify-center rounded-sm p-1">
-                                        <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                        <TickOutline className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                       </div>
                                     </div>
                                   )}
@@ -290,7 +289,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                     })}
                   </ul>
                 ) : submitting ? (
-                  <Loader className="h-3.5 w-3.5 animate-spin" />
+                  <LoadingOutline className="h-3.5 w-3.5 animate-spin" />
                 ) : createLabelEnabled ? (
                   <p
                     onClick={() => {

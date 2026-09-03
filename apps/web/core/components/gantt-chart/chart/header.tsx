@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Expand, Shrink } from "lucide-react";
+import { ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane
 import type { TGanttViews } from "@plane/types";
@@ -79,7 +79,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
         className="flex items-center justify-center rounded-md border border-subtle bg-layer-transparent p-1 transition-all hover:bg-layer-transparent-hover"
         onClick={toggleFullScreenMode}
       >
-        {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
+        {fullScreenMode ? <ArrowCollapseOutline className="h-4 w-4" /> : <FullScreenOutline className="h-4 w-4" />}
       </button>
     </Row>
   );

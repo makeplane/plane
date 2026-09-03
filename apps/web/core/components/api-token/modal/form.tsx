@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { Calendar } from "lucide-react";
+import { CalendarOutline } from "@makeplane/propel/icons";
 // types
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
@@ -194,7 +194,7 @@ export function CreateApiTokenForm(props: Props) {
                             }
                           )}
                         >
-                          <Calendar className="h-3 w-3" />
+                          <CalendarOutline className="h-3 w-3" />
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
@@ -222,7 +222,7 @@ export function CreateApiTokenForm(props: Props) {
                     value={customDate}
                     onChange={(date) => setCustomDate(date)}
                     minDate={tomorrow}
-                    icon={<Calendar className="h-3 w-3" />}
+                    icon={<CalendarOutline className="h-3 w-3" />}
                     buttonVariant="border-with-text"
                     placeholder="Set date"
                     disabled={neverExpires}

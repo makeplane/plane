@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, CloseOutline, ModuleOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -49,7 +49,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
       <>
         {showCount ? (
           <div className="relative flex max-w-full items-center gap-1">
-            {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
+            {!hideIcon && <ModuleOutline className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
               <div className="max-w-40 truncate">
                 {value.length > 0
@@ -72,7 +72,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                     className
                   )}
                 >
-                  {!hideIcon && <ModuleIcon className="h-2.5 w-2.5 flex-shrink-0" />}
+                  {!hideIcon && <ModuleOutline className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
                     <Tooltip
                       label={`Title: ${moduleDetails?.name ?? ""}`}
@@ -92,7 +92,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                           onChange(newModuleIds);
                         }}
                       >
-                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
+                        <CloseOutline className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                       </button>
                     </Tooltip>
                   )}
@@ -102,24 +102,24 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
           </div>
         ) : (
           <>
-            {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
+            {!hideIcon && <ModuleOutline className="h-3 w-3 flex-shrink-0" />}
             <span className="flex-grow truncate text-left">{placeholder}</span>
           </>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );
   else
     return (
       <>
-        {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
+        {!hideIcon && <ModuleOutline className="h-3 w-3 flex-shrink-0" />}
         {!hideText && (
           <span className="flex-grow truncate text-left">{value ? getModuleById(value)?.name : placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );

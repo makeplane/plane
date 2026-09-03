@@ -7,7 +7,7 @@
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { TableMap } from "@tiptap/pm/tables";
 import type { Editor } from "@tiptap/react";
-import { MoveHorizontal } from "lucide-react";
+import { DragDropOutline } from "@makeplane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
@@ -84,7 +84,7 @@ const setTableToFullWidth = (editor: Editor): void => {
 
 export const getNodeOptions = (editor: Editor): BlockMenuOption[] => [
   {
-    icon: MoveHorizontal,
+    icon: DragDropOutline,
     key: "table-full-width",
     label: "Fit to width",
     isDisabled: !editor.isActive(CORE_EXTENSIONS.TABLE),

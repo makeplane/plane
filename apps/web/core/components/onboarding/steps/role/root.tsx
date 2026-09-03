@@ -6,10 +6,17 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Box, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
+import { PenTool } from "lucide-react";
+import {
+  CubeOutline,
+  MonitorOutline,
+  RefreshOutline,
+  RocketOutline,
+  TickOutline,
+  ViewsOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -24,13 +31,13 @@ type Props = {
 };
 
 const ROLES = [
-  { id: "product-manager", label: "Product Manager", icon: Box },
-  { id: "engineering-manager", label: "Engineering Manager", icon: ViewsIcon },
+  { id: "product-manager", label: "Product Manager", icon: CubeOutline },
+  { id: "engineering-manager", label: "Engineering Manager", icon: ViewsOutline },
   { id: "designer", label: "Designer", icon: PenTool },
-  { id: "developer", label: "Developer", icon: Monitor },
-  { id: "founder-executive", label: "Founder/Executive", icon: Rocket },
-  { id: "operations-manager", label: "Operations Manager", icon: RefreshCw },
-  { id: "others", label: "Others", icon: Box },
+  { id: "developer", label: "Developer", icon: MonitorOutline },
+  { id: "founder-executive", label: "Founder/Executive", icon: RocketOutline },
+  { id: "operations-manager", label: "Operations Manager", icon: RefreshOutline },
+  { id: "others", label: "Others", icon: CubeOutline },
 ];
 
 const defaultValues = {
@@ -131,7 +138,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                         <button
                           className={`border-blue-500 flex size-4 items-center justify-center rounded-sm border-2 bg-accent-primary`}
                         >
-                          <CheckIcon className="h-3 w-3 text-on-color" />
+                          <TickOutline className="h-3 w-3 text-on-color" />
                         </button>
                       </>
                     )}

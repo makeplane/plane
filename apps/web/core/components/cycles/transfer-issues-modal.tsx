@@ -7,8 +7,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AlertCircle } from "lucide-react";
-import { SearchIcon, CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
+import {
+  CloseOutline,
+  CyclesOutline,
+  SearchOutline,
+  TransferWorkItemOutline,
+  WarningCircleOutline,
+} from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -81,15 +86,15 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
       <div className="flex flex-col gap-4 py-5">
         <div className="flex items-center justify-between px-5">
           <div className="flex items-center gap-1">
-            <TransferIcon className="w-5 fill-primary" />
+            <TransferWorkItemOutline className="w-5 fill-primary" />
             <h4 className="text-18 font-medium text-primary">Transfer work items</h4>
           </div>
           <button onClick={handleClose}>
-            <CloseIcon className="h-4 w-4" />
+            <CloseOutline className="h-4 w-4" />
           </button>
         </div>
         <div className="flex items-center gap-2 border-b border-subtle px-5 pb-3">
-          <SearchIcon className="h-4 w-4 text-secondary" />
+          <SearchOutline className="h-4 w-4 text-secondary" />
           <input
             className="text-13 outline-none"
             placeholder="Search for a cycle..."
@@ -116,7 +121,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                       handleClose();
                     }}
                   >
-                    <CycleIcon className="h-5 w-5" />
+                    <CyclesOutline className="h-5 w-5" />
                     <div className="flex w-full justify-between truncate">
                       <span className="truncate">{cycleDetails?.name}</span>
                       {cycleDetails.status && (
@@ -130,7 +135,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
               })
             ) : (
               <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
-                <AlertCircle className="h-3.5 w-3.5 text-secondary" />
+                <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
                 <span className="text-center text-secondary">
                   You don’t have any current cycle. Please create one to transfer the work items.
                 </span>

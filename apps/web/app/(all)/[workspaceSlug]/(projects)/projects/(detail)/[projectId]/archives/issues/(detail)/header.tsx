@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { ArchiveOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -47,7 +47,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Archives"
-                icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
+                icon={<ArchiveOutline className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -56,7 +56,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Work items"
-                icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
+                icon={<WorkItemsOutline className="h-4 w-4 text-tertiary" />}
               />
             }
           />

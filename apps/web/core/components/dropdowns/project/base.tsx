@@ -12,7 +12,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { CheckIcon, SearchIcon, ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, ProjectsOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, sortBySelectedFirst } from "@plane/utils";
 // components
@@ -164,7 +164,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
               return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
-            <ProjectIcon className="size-3 text-tertiary" />
+            <ProjectsOutline className="size-3 text-tertiary" />
           )}
         </div>
       );
@@ -213,7 +213,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
           <span className="max-w-40 truncate">{getDisplayName(value, placeholder)}</span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </DropdownButton>
     </button>
@@ -242,7 +242,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -273,7 +273,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                         {({ selected }) => (
                           <>
                             <span className="flex-grow truncate">{option.content}</span>
-                            {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                            {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                           </>
                         )}
                       </Combobox.Option>

@@ -13,7 +13,7 @@ import { Avatar } from "@makeplane/propel/components/avatar";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
@@ -111,9 +111,9 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
       {showAccessSpecifier && (
         <div className="absolute top-2.5 right-2.5 z-[1] text-tertiary">
           {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
-            <LockIcon className="size-3" />
+            <LockOutline className="size-3" />
           ) : (
-            <GlobeIcon className="size-3" />
+            <GlobeOutline className="size-3" />
           )}
         </div>
       )}

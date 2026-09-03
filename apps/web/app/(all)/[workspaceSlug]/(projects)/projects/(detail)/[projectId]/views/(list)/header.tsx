@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ViewsOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -36,7 +36,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
                 <BreadcrumbLink
                   label="Views"
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<ViewsOutline className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }

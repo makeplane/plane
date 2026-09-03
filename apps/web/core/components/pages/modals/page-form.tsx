@@ -14,7 +14,7 @@ import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { GlobeIcon, LockIcon, PageIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline, PagesOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 
@@ -36,8 +36,8 @@ const PAGE_ACCESS_SPECIFIERS: {
   i18n_label: string;
   icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
-  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeIcon },
-  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockIcon },
+  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeOutline },
+  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockOutline },
 ];
 
 export function PageForm(props: Props) {
@@ -82,7 +82,7 @@ export function PageForm(props: Props) {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <PageIcon className="h-4 w-4 text-tertiary" />
+                    <PagesOutline className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>

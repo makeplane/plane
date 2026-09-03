@@ -9,12 +9,11 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { Info, SquareUser } from "lucide-react";
+import { InfoOutline, UserAltOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
-import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
@@ -190,7 +189,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   />
                 )}
                 <button onClick={openModuleOverview}>
-                  <Info className="h-4 w-4 text-placeholder" />
+                  <InfoOutline className="h-4 w-4 text-placeholder" />
                 </button>
               </div>
             </div>
@@ -198,7 +197,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-secondary">
-                <WorkItemsIcon className="h-4 w-4 text-tertiary" />
+                <WorkItemsOutline className="h-4 w-4 text-tertiary" />
                 <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
@@ -207,7 +206,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                 </span>
               ) : (
                 <Tooltip label="No lead">
-                  <SquareUser className="mx-1 h-4 w-4 text-tertiary" />
+                  <UserAltOutline className="mx-1 h-4 w-4 text-tertiary" />
                 </Tooltip>
               )}
             </div>

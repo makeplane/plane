@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Menu } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { useUserSettings } from "@/hooks/store/user";
 import { IconButton } from "@plane/propel/icon-button";
 
@@ -42,7 +42,7 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
       </div>
       {/* path */}
       <div className="flex items-center gap-2">
-        <ChevronRightIcon className="size-4 text-tertiary" />
+        <ChevronRightOutline className="size-4 text-tertiary" />
         <span className="text-13 font-medium text-secondary">{t(activePath)}</span>
       </div>
     </div>

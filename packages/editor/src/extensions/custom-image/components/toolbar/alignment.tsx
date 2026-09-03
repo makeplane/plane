@@ -7,7 +7,7 @@
 import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
@@ -44,7 +44,7 @@ export function ImageAlignmentAction(props: Props) {
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="size-3 flex-shrink-0" />}
-          <ChevronDownIcon className="size-2 flex-shrink-0" />
+          <ChevronDownOutline className="size-2 flex-shrink-0" />
         </button>
       </Tooltip>
       {isDropdownOpen && (

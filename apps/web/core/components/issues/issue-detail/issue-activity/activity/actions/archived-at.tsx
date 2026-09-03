@@ -5,9 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { RotateCcw } from "lucide-react";
+import { ArchiveOutline, RefreshOutline } from "@makeplane/propel/icons";
 // hooks
-import { ArchiveIcon } from "@plane/propel/icons";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -30,9 +29,9 @@ export const IssueArchivedAtActivity = observer(function IssueArchivedAtActivity
     <IssueActivityBlockComponent
       icon={
         activity.new_value === "restore" ? (
-          <RotateCcw className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />
+          <RefreshOutline className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />
         ) : (
-          <ArchiveIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />
+          <ArchiveOutline className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />
         )
       }
       activityId={activityId}

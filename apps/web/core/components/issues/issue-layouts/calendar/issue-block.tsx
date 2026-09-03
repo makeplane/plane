@@ -7,7 +7,7 @@
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Popover } from "@plane/propel/popover";
@@ -74,7 +74,7 @@ export const CalendarIssueBlock = observer(
         }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
-        <MoreHorizontal className="h-3.5 w-3.5" />
+        <MoreHorizontalOutline className="h-3.5 w-3.5" />
       </div>
     );
 

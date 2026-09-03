@@ -7,10 +7,10 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
-import { CloseIcon } from "../icons/actions/close-icon";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { Popover } from "./root";
 
-// cannot use satifies here because base-ui does not have portable types.
+// cannot use satisfies here because base-ui does not have portable types.
 const meta: Meta<typeof Popover> = {
   title: "Components/Popover",
   component: Popover,
@@ -76,7 +76,7 @@ export const Controlled: Story = {
             <div className="flex items-start justify-between">
               <h3 className="text-13 font-semibold">Controlled State</h3>
               <button onClick={() => setOpen(false)} className="hover:bg-gray-100 rounded-full p-1">
-                <CloseIcon className="h-4 w-4" />
+                <CloseOutline className="h-4 w-4" />
               </button>
             </div>
             <p className="text-gray-600 mt-2 text-13">Current state: {open ? "Open" : "Closed"}</p>

@@ -5,9 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { Link as Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, EditIcon, TrashIcon, CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline, CloseOutline, DeleteOutline, EditOutline, LinkOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
@@ -122,7 +121,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                 <>
                   {subIssueHelpers.preview_loader.includes(issue.id) ? (
                     <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-xs bg-layer-1 transition-all">
-                      <Loader width={14} strokeWidth={2} className="animate-spin" />
+                      <LinkOutline width={14} height={14} className="animate-spin" />
                     </div>
                   ) : (
                     <div
@@ -138,11 +137,10 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
                     >
-                      <ChevronRightIcon
+                      <ChevronRightOutline
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
-                        strokeWidth={2.5}
                       />
                     </div>
                   )}
@@ -198,7 +196,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditOutline className="h-3.5 w-3.5" />
                       <span>{t("issue.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -210,7 +208,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                    <LinkOutline className="h-3.5 w-3.5" />
                     <span>{t("issue.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
@@ -223,7 +221,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseOutline className="h-3.5 w-3.5" />
                       {issueServiceType === EIssueServiceType.ISSUES
                         ? t("issue.remove.parent.label")
                         : t("issue.remove.label")}
@@ -239,7 +237,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <DeleteOutline className="h-3.5 w-3.5" />
                       <span>{t("issue.delete.label")}</span>
                     </div>
                   </CustomMenu.MenuItem>

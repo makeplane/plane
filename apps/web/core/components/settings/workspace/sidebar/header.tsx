@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowNarrowLeftOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
@@ -38,7 +38,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
         <IconButton
           variant="ghost"
           size="base"
-          icon={ArrowLeft}
+          icon={ArrowNarrowLeftOutline}
           onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
         />
         <p>Workspace settings</p>
