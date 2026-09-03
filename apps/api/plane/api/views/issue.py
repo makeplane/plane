@@ -144,6 +144,9 @@ from plane.utils.openapi import (
     WORK_ITEM_NOT_FOUND_RESPONSE,
     ISSUE_NOT_FOUND_RESPONSE,
     PROJECT_NOT_FOUND_RESPONSE,
+    ARCHIVED_RESPONSE,
+    UNARCHIVED_RESPONSE,
+    CANNOT_ARCHIVE_RESPONSE,
     EXTERNAL_ID_EXISTS_RESPONSE,
     DELETED_RESPONSE,
     ADMIN_ONLY_RESPONSE,
@@ -872,6 +875,156 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueArchiveUnarchiveAPIEndpoint(BaseAPIView):
+    """Archive, unarchive and list archived work items.
+
+    Mirrors the application behaviour (and the published Python SDK
+    contract): only work items whose state group is `completed` or
+    `cancelled` can be archived; archived work items disappear from active
+    work item lists until unarchived.
+    """
+
+    model = Issue
+    webhook_event = "issue"
+    permission_classes = [ProjectEntityPermission]
+    serializer_class = IssueSerializer
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(archived_at__isnull=False)
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .order_by("-archived_at")
+        ).distinct()
+
+    @work_item_docs(
+        operation_id="list_archived_work_items",
+        summary="List archived work items",
+        description="Retrieve a paginated list of archived work items in a project.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                IssueSerializer,
+                "PaginatedArchivedWorkItemResponse",
+                "Paginated list of archived work items",
+                "Paginated Archived Work Items",
+            ),
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List archived work items
+
+        Retrieve a paginated list of archived work items in a project,
+        most recently archived first.
+        """
+        return self.paginate(
+            request=request,
+            queryset=self.get_queryset(),
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
+
+    def _record_archive_activity(self, request, project_id, issue, requested_data):
+        issue_activity.delay(
+            type="issue.activity.updated",
+            requested_data=json.dumps(requested_data),
+            actor_id=str(request.user.id),
+            issue_id=str(issue.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+
+    @work_item_docs(
+        operation_id="archive_work_item",
+        summary="Archive work item",
+        description="Archive a work item. Only work items in a completed or cancelled state group can be archived.",  # noqa: E501
+        responses={
+            200: ARCHIVED_RESPONSE,
+            400: CANNOT_ARCHIVE_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, pk):
+        """Archive work item
+
+        Archive a work item that is in a completed or cancelled state group.
+        Archived work items no longer appear in active work item lists.
+        """
+        issue = Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        if issue.state.group not in ["completed", "cancelled"]:
+            return Response(
+                {"error": "Can only archive completed or cancelled state group issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        self._record_archive_activity(
+            request,
+            project_id,
+            issue,
+            {"archived_at": str(timezone.now().date()), "automation": False},
+        )
+        issue.archived_at = timezone.now().date()
+        issue.save()
+        return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
+
+    @work_item_docs(
+        operation_id="unarchive_work_item",
+        summary="Unarchive work item",
+        description="Restore an archived work item to active status.",
+        responses={
+            204: UNARCHIVED_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+        },
+    )
+    def delete(self, request, slug, project_id, pk):
+        """Unarchive work item
+
+        Restore an archived work item to active status. The work item will
+        reappear in active work item lists.
+        """
+        issue = Issue.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            archived_at__isnull=False,
+            pk=pk,
+        )
+        self._record_archive_activity(
+            request,
+            project_id,
+            issue,
+            {"archived_at": None},
+        )
+        issue.archived_at = None
+        issue.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

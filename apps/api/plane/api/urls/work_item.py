@@ -18,6 +18,7 @@ from plane.api.views import (
     WorkspaceIssueAPIEndpoint,
     IssueSearchEndpoint,
     IssueRelationListCreateAPIEndpoint,
+    IssueArchiveUnarchiveAPIEndpoint,
 )
 
 # Deprecated url patterns
@@ -81,6 +82,21 @@ old_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue-attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/archive/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post"]),
+        name="issue-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/unarchive/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["delete"]),
+        name="issue-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["get"]),
+        name="issue-archive-unarchive",
     ),
 ]
 
@@ -150,6 +166,21 @@ new_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/",
         IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="work-item-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/archive/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/unarchive/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["delete"]),
+        name="work-item-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-work-items/",
+        IssueArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["get"]),
+        name="work-item-archive-unarchive",
     ),
 ]
 
