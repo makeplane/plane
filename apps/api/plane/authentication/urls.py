@@ -18,6 +18,8 @@ from .views import (
     GitHubOauthInitiateEndpoint,
     GoogleCallbackEndpoint,
     GoogleOauthInitiateEndpoint,
+    MicrosoftCallbackEndpoint,
+    MicrosoftOauthInitiateEndpoint,
     MagicGenerateEndpoint,
     MagicSignInEndpoint,
     MagicSignUpEndpoint,
@@ -34,6 +36,8 @@ from .views import (
     GitHubOauthInitiateSpaceEndpoint,
     GoogleCallbackSpaceEndpoint,
     GoogleOauthInitiateSpaceEndpoint,
+    MicrosoftCallbackSpaceEndpoint,
+    MicrosoftOauthInitiateSpaceEndpoint,
     MagicGenerateSpaceEndpoint,
     MagicSignInSpaceEndpoint,
     MagicSignUpSpaceEndpoint,
@@ -79,6 +83,19 @@ urlpatterns = [
     ## Google Oauth
     path("google/", GoogleOauthInitiateEndpoint.as_view(), name="google-initiate"),
     path("google/callback/", GoogleCallbackEndpoint.as_view(), name="google-callback"),
+    ## Microsoft Oauth
+    path("microsoft/", MicrosoftOauthInitiateEndpoint.as_view(), name="microsoft-initiate"),
+    path("microsoft/callback/", MicrosoftCallbackEndpoint.as_view(), name="microsoft-callback"),
+    path(
+        "spaces/microsoft/",
+        MicrosoftOauthInitiateSpaceEndpoint.as_view(),
+        name="space-microsoft-initiate",
+    ),
+    path(
+        "spaces/microsoft/callback/",
+        MicrosoftCallbackSpaceEndpoint.as_view(),
+        name="space-microsoft-callback",
+    ),
     path(
         "spaces/google/",
         GoogleOauthInitiateSpaceEndpoint.as_view(),
