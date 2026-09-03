@@ -13,8 +13,9 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
 import darkProjectAsset from "@/app/assets/empty-state/search/project-dark.webp?url";
@@ -90,7 +91,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
         <div className="flex items-center gap-2 border-b border-subtle px-4">
-          <SearchIcon className="size-4 flex-shrink-0 text-placeholder" aria-hidden="true" />
+          <SearchOutline className="size-4 flex-shrink-0 text-placeholder" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder="Search for projects"
@@ -116,13 +117,14 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                   <p className="truncate text-11 text-tertiary transition-colors group-hover:text-secondary">
                     {projectDetails.identifier}
                   </p>
-                  <CloseIcon className="size-3 flex-shrink-0 text-placeholder transition-colors group-hover:text-secondary" />
+                  <CloseOutline className="size-3 flex-shrink-0 text-placeholder transition-colors group-hover:text-secondary" />
                 </div>
               );
             })}
           </div>
         )}
         <Combobox.Options
+          as="ul"
           static
           className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto py-2 transition-[height] duration-200 ease-in-out"
         >
@@ -146,6 +148,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                 const isProjectSelected = selectedProjectIds.includes(projectDetails.id);
                 return (
                   <Combobox.Option
+                    as="li"
                     key={projectDetails.id}
                     value={projectDetails.id}
                     className={({ active }) =>
@@ -160,7 +163,9 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                   >
                     <div className="flex items-center gap-2 truncate">
                       <span className="flex flex-shrink-0 items-center gap-2.5">
-                        <Checkbox checked={isProjectSelected} />
+                        <span className="pointer-events-none">
+                          <Checkbox checked={isProjectSelected} aria-label={projectDetails.name} />
+                        </span>
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
                       <span className="flex-shrink-0 text-10">{projectDetails.identifier}</span>

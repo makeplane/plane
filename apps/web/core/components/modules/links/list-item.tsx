@@ -6,10 +6,10 @@
 
 import { observer } from "mobx-react";
 
-import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { CopyOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 // plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ILinkDetails } from "@plane/types";
 // plane ui
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -54,7 +54,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
           <span className="py-1">
             <Icon className="size-3 shrink-0 stroke-2 text-tertiary group-hover:text-primary" />
           </span>
-          <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
+          <Tooltip label={link.title && link.title !== "" ? link.title : link.url} layout="stacked" disabled={isMobile}>
             <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
               {link.title && link.title !== "" ? link.title : link.url}
             </a>
@@ -72,7 +72,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleEditLink();
               }}
             >
-              <EditIcon className="size-3 stroke-[1.5]" />
+              <EditOutline className="size-3 stroke-[1.5]" />
             </button>
           )}
           <button
@@ -80,7 +80,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
             onClick={() => copyToClipboard(link.url)}
             className="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
           >
-            <CopyIcon className="size-3 stroke-[1.5]" />
+            <CopyOutline className="size-3 stroke-[1.5]" />
           </button>
           {isEditingAllowed && (
             <button
@@ -92,7 +92,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleDeleteLink();
               }}
             >
-              <TrashIcon className="size-3 stroke-[1.5]" />
+              <DeleteOutline className="size-3 stroke-[1.5]" />
             </button>
           )}
         </div>

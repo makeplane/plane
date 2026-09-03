@@ -30,8 +30,11 @@ export const badgeVariants = cva("inline-flex items-center justify-center gap-1 
 
 export type BadgeProps = Omit<React.HTMLAttributes<HTMLSpanElement>, "className"> &
   VariantProps<typeof badgeVariants> & {
-    appendIcon?: React.ReactElement;
-    prependIcon?: React.ReactElement;
+    // React 19 defaults ReactElement's props to `unknown`, which would force every
+    // caller to redeclare the icon's props. `any` keeps the React 18 behaviour these
+    // props already had, so cloneElement below still injects className/strokeWidth.
+    appendIcon?: React.ReactElement<any>;
+    prependIcon?: React.ReactElement<any>;
   };
 
 export type TBadgeVariant = NonNullable<BadgeProps["variant"]>;

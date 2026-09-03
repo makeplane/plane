@@ -7,10 +7,9 @@
 import { observer } from "mobx-react";
 
 // plane types
-import { CloseIcon } from "@plane/propel/icons";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
-// plane ui
-import { Avatar, Tag } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -40,7 +39,7 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -49,10 +48,10 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
           <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <div className="relative flex flex-shrink-0 items-center justify-center overflow-hidden">
               <Avatar
-                name={optionDetail.display_name}
+                alt={optionDetail.display_name}
+                fallback={optionDetail.display_name?.[0]?.toUpperCase()}
                 src={getFileURL(optionDetail.avatar_url)}
-                showTooltip={false}
-                size="sm"
+                size="2xs"
               />
             </div>
             <div className="truncate text-11">{optionDetail?.display_name}</div>
@@ -60,7 +59,7 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
               className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(value))}
             >
-              <CloseIcon className={`h-3 w-3`} />
+              <CloseOutline className={`h-3 w-3`} />
             </div>
           </div>
         );
@@ -70,8 +69,8 @@ export const InboxIssueAppliedFiltersMember = observer(function InboxIssueApplie
         className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <CloseIcon className={`h-3 w-3`} />
+        <CloseOutline className={`h-3 w-3`} />
       </div>
-    </Tag>
+    </div>
   );
 });

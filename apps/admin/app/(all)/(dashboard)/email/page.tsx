@@ -7,10 +7,11 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -71,11 +72,11 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
           </>
         ),
         actions: isLoading ? (
-          <Loader>
-            <Loader.Item width="24px" height="16px" className="rounded-full" />
-          </Loader>
+          <Skeleton>
+            <Skeleton.Item width="24px" height="16px" className="rounded-full" />
+          </Skeleton>
         ) : (
-          <ToggleSwitch value={isSMTPEnabled} onChange={handleToggle} size="sm" disabled={isSubmitting} />
+          <Switch checked={isSMTPEnabled} onCheckedChange={handleToggle} size="sm" disabled={isSubmitting} />
         ),
       }}
     >
@@ -84,13 +85,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
           {formattedConfig ? (
             <InstanceEmailForm config={formattedConfig} />
           ) : (
-            <Loader className="space-y-10">
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="20%" />
-            </Loader>
+            <Skeleton className="space-y-10">
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="75%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="40%" />
+              <Skeleton.Item height="50px" width="20%" />
+            </Skeleton>
           )}
         </>
       )}

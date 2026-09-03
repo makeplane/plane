@@ -5,9 +5,9 @@
  */
 
 import type { FC, ReactNode } from "react";
-import { Network } from "lucide-react";
+import { HierarchyOutline } from "@makeplane/propel/icons";
 // types
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkspaceBaseActivity } from "@plane/types";
 // ui
 // helpers
@@ -38,7 +38,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
       }`}
     >
       <div className="z-[4] mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-subtle text-secondary shadow-raised-100">
-        {Icon ? <Icon className="h-3.5 w-3.5 shrink-0" /> : <Network className="h-3.5 w-3.5 shrink-0" />}
+        {Icon ? <Icon className="h-3.5 w-3.5 shrink-0" /> : <HierarchyOutline className="h-3.5 w-3.5 shrink-0" />}
       </div>
       <div className="w-full text-secondary">
         <div className="line-clamp-2">
@@ -46,8 +46,8 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         </div>
         <div className="mt-1">
           <Tooltip
-            isMobile={isMobile}
-            tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            disabled={isMobile}
           >
             <span className="cursor-help font-medium whitespace-nowrap text-tertiary">
               {calculateTimeAgo(activity.created_at)}

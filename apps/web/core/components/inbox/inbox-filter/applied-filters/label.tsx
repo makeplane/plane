@@ -6,8 +6,7 @@
 
 import { observer } from "mobx-react";
 // hooks
-import { CloseIcon } from "@plane/propel/icons";
-import { Tag } from "@plane/ui";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
@@ -30,7 +29,7 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">Label</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -45,7 +44,7 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
               className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters("labels", handleFilterValue(value))}
             >
-              <CloseIcon className={`h-3 w-3`} />
+              <CloseOutline className={`h-3 w-3`} />
             </div>
           </div>
         );
@@ -55,8 +54,8 @@ export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueApplied
         className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <CloseIcon className={`h-3 w-3`} />
+        <CloseOutline className={`h-3 w-3`} />
       </div>
-    </Tag>
+    </div>
   );
 });

@@ -7,14 +7,13 @@
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
-// ui
-import { CustomSelect } from "@plane/ui";
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components
@@ -59,7 +58,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       ENABLE_SMTP: config["ENABLE_SMTP"],
     },
   });
-  const emailFormFields: TControllerInputFormField[] = [
+  const emailFormFields: TControllerInputFormField<EmailFormValues>[] = [
     {
       key: "EMAIL_HOST",
       type: "text",
@@ -88,7 +87,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
     },
   ];
 
-  const OptionalEmailFormFields: TControllerInputFormField[] = [
+  const OptionalEmailFormFields: TControllerInputFormField<EmailFormValues>[] = [
     {
       key: "EMAIL_HOST_USER",
       type: "text",
@@ -164,19 +163,19 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           ))}
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Email security</h4>
-            <CustomSelect
+            <Select
               value={emailSecurityKey}
-              label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
-              onChange={handleEmailSecurityChange}
-              buttonClassName="rounded-md border-subtle"
-              input
+              onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >
-              {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
-                <CustomSelect.Option key={key} value={key} className="w-full">
-                  {value}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+              <SelectTrigger size="lg" placeholder="Select email security" />
+              <SelectContent>
+                <SelectList>
+                  {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
+                    <SelectItem key={key} value={key} label={value} size="lg" />
+                  ))}
+                </SelectList>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="my-6 flex flex-col gap-6 border-t border-subtle pt-4">
@@ -210,22 +209,22 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       <div className="flex max-w-4xl items-center gap-4 py-1">
         <Button
           variant="primary"
-          size="lg"
+          size="md"
+          stretch="auto"
           onClick={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
-        >
-          {isSubmitting ? "Saving" : "Save changes"}
-        </Button>
+          label={isSubmitting ? "Saving" : "Save changes"}
+        />
         <Button
           variant="secondary"
-          size="lg"
+          size="md"
+          stretch="auto"
           onClick={() => setIsSendTestEmailModalOpen(true)}
           loading={isSubmitting}
           disabled={!isValid}
-        >
-          Send test email
-        </Button>
+          label="Send test email"
+        />
       </div>
     </div>
   );

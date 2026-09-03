@@ -8,7 +8,7 @@ import type React from "react";
 import { useEffect } from "react";
 
 export const useOutsideClickDetector = (
-  ref: React.RefObject<HTMLElement> | any,
+  ref: React.RefObject<HTMLElement | null> | any,
   callback: () => void,
   useCapture = false
 ) => {

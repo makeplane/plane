@@ -6,10 +6,15 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { MoveRight } from "lucide-react";
+import {
+  ArrowNarrowRightOutline,
+  FullScreenPeekOutline,
+  LinkOutline,
+  ModalPeekOutline,
+  SidePeekOutline,
+} from "@makeplane/propel/icons";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
@@ -29,15 +34,15 @@ const PEEK_MODES: {
   icon: any;
   label: string;
 }[] = [
-  { key: "side", icon: SidePanelIcon, label: "Side Peek" },
+  { key: "side", icon: SidePeekOutline, label: "Side Peek" },
   {
     key: "modal",
-    icon: CenterPanelIcon,
+    icon: ModalPeekOutline,
     label: "Modal",
   },
   {
     key: "full",
-    icon: FullScreenPanelIcon,
+    icon: FullScreenPeekOutline,
     label: "Full Screen",
   },
 ];
@@ -60,7 +65,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
     });
   };
 
-  const Icon = PEEK_MODES.find((m) => m.key === peekMode)?.icon ?? SidePanelIcon;
+  const Icon = PEEK_MODES.find((m) => m.key === peekMode)?.icon ?? SidePeekOutline;
 
   return (
     <>
@@ -68,7 +73,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
         <div className="flex items-center gap-4">
           {peekMode === "side" && (
             <button type="button" onClick={handleClose} className="text-tertiary hover:text-secondary">
-              <MoveRight className="size-4" />
+              <ArrowNarrowRightOutline className="size-4" />
             </button>
           )}
           <Listbox
@@ -92,10 +97,14 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Listbox.Options className="shadow-lg absolute left-0 z-10 mt-1 min-w-[12rem] origin-top-left overflow-y-auto rounded-md border border-strong bg-surface-2 text-11 whitespace-nowrap focus:outline-none">
+              <Listbox.Options
+                as="ul"
+                className="shadow-lg absolute left-0 z-10 mt-1 min-w-[12rem] origin-top-left overflow-y-auto rounded-md border border-strong bg-surface-2 text-11 whitespace-nowrap focus:outline-none"
+              >
                 <div className="space-y-1 p-2">
                   {PEEK_MODES.map((mode) => (
                     <Listbox.Option
+                      as="li"
                       key={mode.key}
                       value={mode.key}
                       className={({ active, selected }) =>
@@ -122,7 +131,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             className="shrink-0 text-tertiary hover:text-secondary focus:outline-none"
             tabIndex={1}
           >
-            <LinkIcon className="h-4 w-4 -rotate-45" />
+            <LinkOutline className="h-4 w-4 -rotate-45" />
           </button>
         )}
       </div>

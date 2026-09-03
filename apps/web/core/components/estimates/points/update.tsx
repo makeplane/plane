@@ -7,12 +7,11 @@
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
+import { CloseOutline, InfoOutline, TickOutline } from "@makeplane/propel/icons";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
@@ -187,15 +186,16 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
         {estimatePointError?.message && (
           <>
             <Tooltip
-              tooltipContent={
+              label={
                 (estimateInputValue || "")?.length >= 1
                   ? t("project_settings.estimates.validation.unsaved_changes")
                   : estimatePointError?.message
               }
-              position="bottom"
+              layout="stacked"
+              side="bottom"
             >
               <div className="relative mr-3 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center overflow-hidden text-danger-primary">
-                <Info size={14} />
+                <InfoOutline width={14} height={14} />
               </div>
             </Tooltip>
           </>
@@ -208,7 +208,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
           className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs text-success-primary transition-colors hover:bg-layer-1"
           disabled={loader}
         >
-          {loader ? <Spinner className="h-4 w-4" /> : <CheckIcon width={14} height={14} />}
+          {loader ? <Spinner className="h-4 w-4" /> : <TickOutline width={14} height={14} />}
         </button>
       )}
       <button
@@ -217,7 +217,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
         onClick={handleClose}
         disabled={loader}
       >
-        <CloseIcon height={14} width={14} className="text-secondary" />
+        <CloseOutline height={14} width={14} className="text-secondary" />
       </button>
     </form>
   );

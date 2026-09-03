@@ -12,11 +12,11 @@ import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
+import { DeactivatedUserOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import type { IUserLite } from "@plane/types";
-import { Avatar } from "@plane/ui";
 import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -100,9 +100,14 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           <div className="flex items-center gap-2">
             <div className="w-4">
               {isUserSuspended(userId, workspaceSlug?.toString()) ? (
-                <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
+                <DeactivatedUserOutline className="h-3.5 w-3.5 text-placeholder" />
               ) : (
-                <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
+                <Avatar
+                  alt={userDetails?.display_name}
+                  fallback={userDetails?.display_name?.[0]?.toUpperCase()}
+                  src={getFileURL(userDetails?.avatar_url ?? "")}
+                  size="xs"
+                />
               )}
             </div>
             <span
@@ -126,7 +131,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
   );
 
   return createPortal(
-    <Combobox.Options data-prevent-outside-click static>
+    <Combobox.Options as="ul" data-prevent-outside-click static>
       <div
         className={cn(
           "z-30 my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none",
@@ -139,7 +144,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+          <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
           <Combobox.Input
             as="input"
             ref={inputRef}
@@ -158,6 +163,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                 (option) =>
                   option && (
                     <Combobox.Option
+                      as="li"
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
@@ -175,7 +181,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                           {isUserSuspended(option.value, workspaceSlug?.toString()) && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended

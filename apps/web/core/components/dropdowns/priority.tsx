@@ -12,8 +12,9 @@ import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { PriorityIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown } from "@plane/ui";
@@ -63,7 +64,6 @@ function BorderButton(props: ButtonProps) {
     placeholder,
     priority,
     showTooltip,
-    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -81,11 +81,8 @@ function BorderButton(props: ButtonProps) {
 
   return (
     <Tooltip
-      tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={`${t("priority")}: ${priorityDetails?.title ?? t("common.none")}`}
+      disabled={!showTooltip || isMobile}
     >
       <div
         className={cn(
@@ -136,7 +133,7 @@ function BorderButton(props: ButtonProps) {
           </span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
@@ -154,7 +151,6 @@ function BackgroundButton(props: ButtonProps) {
     placeholder,
     priority,
     showTooltip,
-    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -171,13 +167,7 @@ function BackgroundButton(props: ButtonProps) {
   const { t } = useTranslation();
 
   return (
-    <Tooltip
-      tooltipHeading={t("priority")}
-      tooltipContent={t(priorityDetails?.key ?? "none")}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
-    >
+    <Tooltip label={`${t("priority")}: ${t(priorityDetails?.key ?? "none")}`} disabled={!showTooltip || isMobile}>
       <div
         className={cn(
           "flex h-full items-center gap-1.5 rounded-sm px-2 py-0.5",
@@ -227,7 +217,7 @@ function BackgroundButton(props: ButtonProps) {
           </span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
@@ -246,7 +236,6 @@ function TransparentButton(props: ButtonProps) {
     placeholder,
     priority,
     showTooltip,
-    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -256,11 +245,8 @@ function TransparentButton(props: ButtonProps) {
 
   return (
     <Tooltip
-      tooltipHeading={t("priority")}
-      tooltipContent={priorityDetails?.title ?? t("common.none")}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={`${t("priority")}: ${priorityDetails?.title ?? t("common.none")}`}
+      disabled={!showTooltip || isMobile}
     >
       <div
         className={cn(
@@ -311,7 +297,7 @@ function TransparentButton(props: ButtonProps) {
           </span>
         )}
         {dropdownArrow && (
-          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
@@ -398,50 +384,46 @@ export function PriorityDropdown(props: Props) {
       ? BackgroundButton
       : TransparentButton;
 
-  const comboButton = (
-    <>
-      {button ? (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          {button}
-        </button>
-      ) : (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-secondary": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          <ButtonToRender
-            priority={value ?? undefined}
-            className={buttonClassName}
-            highlightUrgent={highlightUrgent}
-            dropdownArrow={dropdownArrow && !disabled}
-            dropdownArrowClassName={dropdownArrowClassName}
-            hideIcon={hideIcon}
-            placeholder={placeholder}
-            showTooltip={showTooltip}
-            hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
-            renderToolTipByDefault={renderByDefault}
-          />
-        </button>
+  const comboButton = button ? (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+      onClick={handleOnClick}
+      disabled={disabled}
+      tabIndex={tabIndex}
+    >
+      {button}
+    </button>
+  ) : (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-secondary": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
       )}
-    </>
+      onClick={handleOnClick}
+      disabled={disabled}
+      tabIndex={tabIndex}
+    >
+      <ButtonToRender
+        priority={value ?? undefined}
+        className={buttonClassName}
+        highlightUrgent={highlightUrgent}
+        dropdownArrow={dropdownArrow && !disabled}
+        dropdownArrowClassName={dropdownArrowClassName}
+        hideIcon={hideIcon}
+        placeholder={placeholder}
+        showTooltip={showTooltip}
+        hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+        renderToolTipByDefault={renderByDefault}
+      />
+    </button>
   );
 
   return (
@@ -463,7 +445,7 @@ export function PriorityDropdown(props: Props) {
       renderByDefault={renderByDefault}
     >
       {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
+        <Combobox.Options as="ul" className="fixed z-10" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
@@ -471,7 +453,7 @@ export function PriorityDropdown(props: Props) {
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -487,6 +469,7 @@ export function PriorityDropdown(props: Props) {
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <Combobox.Option
+                    as="li"
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
@@ -500,7 +483,7 @@ export function PriorityDropdown(props: Props) {
                     {({ selected }) => (
                       <>
                         <span className="flex-grow truncate">{option.content}</span>
-                        {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                        {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                       </>
                     )}
                   </Combobox.Option>

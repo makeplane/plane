@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // icons
 import type { LucideIcon } from "lucide-react";
-import { MembersPropertyIcon } from "@plane/propel/icons";
+import { MembersOutline } from "@makeplane/propel/icons";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // plane utils
@@ -56,7 +56,7 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
   return Icon ? (
     <Icon className="h-3 w-3 flex-shrink-0" />
   ) : (
-    <MembersPropertyIcon className="mx-[4px] h-3 w-3 flex-shrink-0" />
+    <MembersOutline className="mx-[4px] h-3 w-3 flex-shrink-0" />
   );
 });
 

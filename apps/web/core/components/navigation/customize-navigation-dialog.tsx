@@ -7,11 +7,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { GripVertical, X } from "lucide-react";
+import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Checkbox, EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -197,7 +198,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
             className="flex size-5 flex-shrink-0 items-center justify-center rounded-sm text-placeholder hover:bg-layer-1"
             aria-label={t("close")}
           >
-            <X className="size-4" />
+            <CloseOutline className="size-4" />
           </button>
         </div>
 
@@ -214,10 +215,11 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                 id="personal-enabled-items"
                 render={(item) => (
                   <div className="flex items-center gap-2 rounded-md px-2 py-1.5 transition-all duration-200 hover:bg-surface-2">
-                    <GripVertical className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
+                    <DragDropOutline className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
                     <Checkbox
                       checked={!!personalPreferences.items[item.key]?.enabled}
-                      onChange={(e) => togglePersonalItem(item.key, e.target.checked)}
+                      onCheckedChange={(checked) => togglePersonalItem(item.key, checked)}
+                      aria-label={t(item.labelTranslationKey)}
                     />
                     <div className="flex flex-1 items-center gap-2">
                       {getSidebarNavigationItemIcon(item.key)}
@@ -245,10 +247,11 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                   const icon = getSidebarNavigationItemIcon(item.key);
                   return (
                     <div className="group flex items-center gap-2 rounded-md px-2 py-1.5 transition-all duration-200 hover:bg-surface-2">
-                      <GripVertical className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
+                      <DragDropOutline className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
                       <Checkbox
                         checked={!!workspacePreferences.items[item.key]?.is_pinned}
-                        onChange={(e) => handleWorkspaceItemToggle(item.key, e.target.checked)}
+                        onCheckedChange={(checked) => handleWorkspaceItemToggle(item.key, checked)}
+                        aria-label={t(item.labelTranslationKey)}
                       />
                       <div className="flex flex-1 items-center gap-2">
                         {icon}
@@ -308,13 +311,14 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
                 {/* Limited Projects Checkbox */}
                 <div className="space-y-1">
-                  <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
+                  <div className="rounded-md px-2 py-1.5 hover:bg-surface-2">
                     <Checkbox
+                      label={t("show_limited_projects_on_sidebar")}
+                      stretch="full"
                       checked={projectPreferences.showLimitedProjects}
-                      onChange={(e) => updateShowLimitedProjects(e.target.checked)}
+                      onCheckedChange={updateShowLimitedProjects}
                     />
-                    <span className="text-13 text-primary">{t("show_limited_projects_on_sidebar")}</span>
-                  </label>
+                  </div>
 
                   {projectPreferences.showLimitedProjects && (
                     <div className="pl-8">

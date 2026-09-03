@@ -18,7 +18,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// import { Tooltip } from "@plane/propel/tooltip";
+// import { Tooltip } from "@makeplane/propel/components/tooltip";
 // import { EIssuesStoreType } from "@plane/types";
 import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
@@ -217,17 +217,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       {/* <div className="w-full">
         <div className="flex items-center gap-2 mb-2">
           <div className="text-13 font-medium text-secondary leading-tight">{t("common.filters")}</div>
-          <Tooltip
-            tooltipContent={
-              <div className="max-w-[238px] flex gap-2">
-                <div className=" rounded-sm bg-layer-1 flex items-center justify-center p-1 h-5 aspect-square">
-                  <Info className="h-3 w-3" />
-                </div>
-                {t("workspace_settings.settings.exports.filters_info")}
-              </div>
-            }
-            position="top"
-          >
+          <Tooltip label={t("workspace_settings.settings.exports.filters_info")} layout="stacked">
             <button type="button" className="flex items-center justify-center">
               <Info className="h-3 w-3 text-tertiary" />
             </button>

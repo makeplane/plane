@@ -6,8 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane package imports
-import { Expand, Shrink } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { ArrowCollapseOutline, CloseOutline, FullScreenOutline } from "@makeplane/propel/icons";
 import type { ICycle, IModule } from "@plane/types";
 // icons
 
@@ -34,14 +33,14 @@ export const WorkItemsModalHeader = observer(function WorkItemsModalHeader(props
           className="hidden place-items-center p-1 text-secondary hover:text-primary md:grid"
           onClick={() => setFullScreen((prevData) => !prevData)}
         >
-          {fullScreen ? <Shrink size={14} strokeWidth={2} /> : <Expand size={14} strokeWidth={2} />}
+          {fullScreen ? <ArrowCollapseOutline width={14} height={14} /> : <FullScreenOutline width={14} height={14} />}
         </button>
         <button
           type="button"
           className="grid place-items-center p-1 text-secondary hover:text-primary"
           onClick={handleClose}
         >
-          <CloseIcon height={14} width={14} strokeWidth={2} />
+          <CloseOutline height={14} width={14} />
         </button>
       </div>
     </div>

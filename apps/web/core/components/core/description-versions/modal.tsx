@@ -7,14 +7,15 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronLeftOutline, ChevronRightOutline, CopyOutline } from "@makeplane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
-import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -85,9 +86,10 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               {t("description_versions.edited_by")}
               <span className="flex-shrink-0">
                 <Avatar
-                  size="sm"
+                  alt={versionCreator?.display_name}
+                  fallback={versionCreator?.display_name?.[0]?.toUpperCase()}
+                  size="2xs"
                   src={getFileURL(versionCreator?.avatar_url ?? "")}
-                  name={versionCreator?.display_name}
                 />
               </span>
             </p>
@@ -105,7 +107,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               })}
               disabled={isPrevDisabled}
             >
-              <ChevronLeftIcon className="size-4" />
+              <ChevronLeftOutline className="size-4" />
             </button>
             <button
               type="button"
@@ -116,7 +118,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               })}
               disabled={isNextDisabled}
             >
-              <ChevronRightIcon className="size-4" />
+              <ChevronRightOutline className="size-4" />
             </button>
           </div>
         </div>
@@ -156,8 +158,8 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         {/* End version description */}
         {/* Footer */}
         <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle pt-4">
-          <Tooltip tooltipContent={t("common.actions.copy_markdown")}>
-            <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyIcon} />
+          <Tooltip label={t("common.actions.copy_markdown")}>
+            <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyOutline} />
           </Tooltip>
           <div className="flex items-center gap-2">
             <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={1}>

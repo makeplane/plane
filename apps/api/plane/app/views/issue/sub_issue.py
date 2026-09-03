@@ -35,8 +35,14 @@ class SubIssuesEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
+        # SECURITY: scope the parent lookup to the URL project. ProjectEntityPermission
+        # only checks that the caller belongs to `project_id`, not that `issue_id` lives
+        # in it, so an unscoped filter leaks sub-issue metadata across projects in the
+        # same workspace.
         sub_issues = (
-            Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
+            Issue.issue_objects.filter(
+                parent_id=issue_id, workspace__slug=slug, project_id=project_id
+            )
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -202,7 +208,17 @@ class SubIssuesEndpoint(BaseAPIView):
 
     # Assign multiple sub issues
     def post(self, request, slug, project_id, issue_id):
-        parent_issue = Issue.issue_objects.get(pk=issue_id)
+        # SECURITY: bind the parent issue to the URL workspace + project. A bare
+        # pk lookup let any project member re-parent issues under a parent in a
+        # different project/workspace.
+        parent_issue = Issue.issue_objects.filter(
+            pk=issue_id, workspace__slug=slug, project_id=project_id
+        ).first()
+        if parent_issue is None:
+            return Response(
+                {"error": "Parent issue not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         sub_issue_ids = request.data.get("sub_issue_ids", [])
 
         if not len(sub_issue_ids):
@@ -211,15 +227,25 @@ class SubIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Scope to workspace to prevent cross-tenant IDOR
-        sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids, workspace__slug=slug)
+        # Scope to workspace + project to prevent cross-project/cross-tenant IDOR
+        sub_issues = Issue.issue_objects.filter(
+            id__in=sub_issue_ids, workspace__slug=slug, project_id=project_id
+        )
 
         for sub_issue in sub_issues:
             sub_issue.parent = parent_issue
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(state_group=F("state__group"))
+        # Only the issues that were actually re-parented — i.e. the project-scoped
+        # `sub_issues`, not the raw caller-supplied ids. Otherwise a cross-project id
+        # (excluded from the update above) would still fire issue_activity, whose task
+        # does an unscoped Issue.objects.get and bumps updated_at on a foreign issue.
+        scoped_sub_issue_ids = [str(sub_issue.id) for sub_issue in sub_issues]
+
+        updated_sub_issues = Issue.issue_objects.filter(
+            id__in=scoped_sub_issue_ids, workspace__slug=slug, project_id=project_id
+        ).annotate(state_group=F("state__group"))
 
         # Track the issue
         _ = [
@@ -227,14 +253,14 @@ class SubIssuesEndpoint(BaseAPIView):
                 type="issue.activity.updated",
                 requested_data=json.dumps({"parent": str(issue_id)}),
                 actor_id=str(request.user.id),
-                issue_id=str(sub_issue_id),
+                issue_id=sub_issue_id,
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": str(sub_issue_id)}),
+                current_instance=json.dumps({"parent": sub_issue_id}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
-            for sub_issue_id in sub_issue_ids
+            for sub_issue_id in scoped_sub_issue_ids
         ]
 
         # create's a dict with state group name with their respective issue id's

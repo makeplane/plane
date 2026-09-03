@@ -8,9 +8,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { PillButton } from "@makeplane/propel/components/pill";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
-import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -50,7 +50,10 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <Tag key={filterKey}>
+          <div
+            key={filterKey}
+            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
+          >
             <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
@@ -73,20 +76,22 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                   className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <CloseIcon height={12} width={12} strokeWidth={2} />
+                  <CloseOutline height={12} width={12} />
                 </button>
               )}
             </div>
-          </Tag>
+          </div>
         );
       })}
       {isEditingAllowed && (
-        <button type="button" onClick={handleClearAllFilters}>
-          <Tag>
-            {t("common.clear_all")}
-            <CloseIcon height={12} width={12} strokeWidth={2} />
-          </Tag>
-        </button>
+        <PillButton
+          type="button"
+          size="md"
+          variant="outline"
+          label={t("common.clear_all")}
+          endIcon={<CloseOutline height={12} width={12} />}
+          onClick={handleClearAllFilters}
+        />
       )}
     </div>
   );

@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { observer } from "mobx-react";
-import { CheckCircle } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 import { Tab } from "@headlessui/react";
 // plane imports
 // helpers
@@ -42,7 +42,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
 
   return (
     <div className="flex flex-col rounded-xl border border-subtle bg-layer-2 px-3 py-6">
-      <Tab.Group selectedIndex={selectedPlan === "month" ? 0 : 1}>
+      <Tab.Group as={Fragment} selectedIndex={selectedPlan === "month" ? 0 : 1}>
         <div className="flex h-9 w-full justify-center">
           <Tab.List className="flex w-60 space-x-1 rounded-md bg-layer-3 p-0.5">
             {prices.map((price: TSubscriptionPrice) => (
@@ -81,7 +81,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                       })}
                     >
                       <p className="line-clamp-1 flex w-full items-center text-caption-md-medium leading-5">
-                        <CheckCircle className="mr-2 size-4 flex-shrink-0 text-tertiary" />
+                        <TickCircleOutline className="mr-2 size-4 flex-shrink-0 text-tertiary" />
                         <span className="truncate text-secondary">{feature}</span>
                       </p>
                     </li>

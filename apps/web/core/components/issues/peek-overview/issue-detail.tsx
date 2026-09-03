@@ -33,7 +33,7 @@ import { IssueTitleInput } from "../title-input";
 const workItemVersionService = new WorkItemVersionService();
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: React.RefObject<EditorRefApi | null>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;

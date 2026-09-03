@@ -9,31 +9,26 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // store hooks
 // icons
+import { TriangleIcon, SignalMediumIcon } from "lucide-react";
 import {
-  TagIcon,
-  CopyPlus,
-  Calendar,
-  Link2Icon,
-  Users2Icon,
-  ArchiveIcon,
-  PaperclipIcon,
-  TriangleIcon,
-  LayoutGridIcon,
-  SignalMediumIcon,
-  MessageSquareIcon,
-  UsersIcon,
-} from "lucide-react";
-import {
-  BlockedIcon,
-  BlockerIcon,
-  CycleIcon,
-  EpicIcon,
-  IntakeIcon,
-  ModuleIcon,
-  RelatedIcon,
-  WorkItemsIcon,
-} from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+  ArchiveOutline,
+  AttachOutline,
+  CalendarOutline,
+  ChatOutline,
+  CyclesOutline,
+  DuplicateOfOutline,
+  EpicOutline,
+  GridOutline,
+  IntakeOutline,
+  LabelsOutline,
+  LinkOutline,
+  MembersOutline,
+  ModuleOutline,
+  RelatesToOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
+import { BlockedIcon, BlockerIcon } from "@plane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueActivity } from "@plane/types";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
@@ -56,8 +51,9 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
 
   return (
     <Tooltip
-      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
-      isMobile={isMobile}
+      label={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
+      layout="stacked"
+      disabled={isMobile}
     >
       {activity?.issue_detail ? (
         <a
@@ -183,7 +179,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Users2Icon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <MembersOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   archived_at: {
     message: (activity) => {
@@ -200,7 +196,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ArchiveIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <ArchiveOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   attachment: {
     message: (activity, showIssue) => {
@@ -229,7 +225,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <PaperclipIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <AttachOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -243,7 +239,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <MessageSquareIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <ChatOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   estimate_point: {
     message: (activity, showIssue) => {
@@ -295,7 +291,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <WorkItemsIcon width={12} height={12} className="text-secondary" aria-hidden="true" />,
+    icon: <WorkItemsOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   epic: {
     message: (activity) => {
@@ -318,7 +314,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <EpicIcon width={12} height={12} className="text-secondary" aria-hidden="true" />,
+    icon: <EpicOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -355,7 +351,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TagIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <LabelsOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   link: {
     message: (activity, showIssue) => {
@@ -420,7 +416,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Link2Icon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <LinkOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   cycles: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -470,7 +466,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <CycleIcon height={12} width={12} className="text-secondary" aria-hidden="true" />,
+    icon: <CyclesOutline height={12} width={12} className="text-secondary" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -517,7 +513,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ModuleIcon className="h-3 w-3 !text-secondary" aria-hidden="true" />,
+    icon: <ModuleOutline className="h-3 w-3 !text-secondary" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -531,7 +527,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <MessageSquareIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <ChatOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   parent: {
     message: (activity, showIssue) => {
@@ -560,7 +556,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <UsersIcon className="h-3 w-3 !text-secondary" aria-hidden="true" />,
+    icon: <MembersOutline className="h-3 w-3 !text-secondary" aria-hidden="true" />,
   },
   priority: {
     message: (activity, showIssue) => (
@@ -596,7 +592,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <RelatedIcon height="12" width="12" className="text-secondary" />,
+    icon: <RelatesToOutline height="12" width="12" className="text-secondary" />,
   },
   blocking: {
     message: (activity, showIssue) => {
@@ -653,7 +649,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <CopyPlus size={12} className="text-secondary" />,
+    icon: <DuplicateOfOutline width={12} height={12} className="text-secondary" />,
   },
   state: {
     message: (activity, showIssue) => (
@@ -667,7 +663,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <LayoutGridIcon size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <GridOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   start_date: {
     message: (activity, showIssue) => {
@@ -699,7 +695,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <CalendarOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -730,7 +726,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-secondary" aria-hidden="true" />,
+    icon: <CalendarOutline width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   inbox: {
     message: (activity, showIssue) => (
@@ -745,7 +741,7 @@ const activityDetails: {
         {activity.verb === "2" && ` from intake by marking a duplicate work item.`}
       </>
     ),
-    icon: <IntakeIcon className="size-3 text-secondary" aria-hidden="true" />,
+    icon: <IntakeOutline className="size-3 text-secondary" aria-hidden="true" />,
   },
 };
 

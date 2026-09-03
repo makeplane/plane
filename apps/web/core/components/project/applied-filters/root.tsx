@@ -5,11 +5,12 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { PillButton } from "@makeplane/propel/components/pill";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
-import { EHeaderVariant, Header, Tag } from "@plane/ui";
+import { EHeaderVariant, Header } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // local imports
 import { AppliedAccessFilters } from "./access";
@@ -60,7 +61,10 @@ export function ProjectAppliedFiltersList(props: Props) {
           if (Array.isArray(value) && value.length === 0) return;
 
           return (
-            <Tag key={filterKey}>
+            <div
+              key={filterKey}
+              className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
+            >
               <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {filterKey === "access" && (
                 <AppliedAccessFilters
@@ -89,41 +93,39 @@ export function ProjectAppliedFiltersList(props: Props) {
                   className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <CloseIcon height={12} width={12} strokeWidth={2} />
+                  <CloseOutline height={12} width={12} />
                 </button>
               )}
-            </Tag>
+            </div>
           );
         })}
         {/* Applied display filters */}
         {appliedDisplayFilters.length > 0 && (
-          <Tag key="project_display_filters">
+          <div
+            key="project_display_filters"
+            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
+          >
             <span className="text-11 text-tertiary">{t("common.projects")}</span>
             <AppliedProjectDisplayFilters
               editable={isEditingAllowed}
               values={appliedDisplayFilters}
               handleRemove={(key) => handleRemoveDisplayFilter(key)}
             />
-          </Tag>
+          </div>
         )}
         {isEditingAllowed && (
-          <button type="button" onClick={handleClearAllFilters}>
-            <Tag>
-              {t("common.clear_all")}
-              <CloseIcon height={12} width={12} strokeWidth={2} />
-            </Tag>
-          </button>
+          <PillButton
+            type="button"
+            size="md"
+            variant="outline"
+            label={t("common.clear_all")}
+            endIcon={<CloseOutline height={12} width={12} />}
+            onClick={handleClearAllFilters}
+          />
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <Tooltip
-          tooltipContent={
-            <p>
-              <span className="font-semibold">{filteredProjects}</span> of{" "}
-              <span className="font-semibold">{totalProjects}</span> projects match the applied filters.
-            </p>
-          }
-        >
+        <Tooltip label={`${filteredProjects} of ${totalProjects} projects match the applied filters.`} layout="stacked">
           <span className="rounded-full bg-layer-1 px-2.5 py-1 text-13 font-medium">
             {filteredProjects}/{totalProjects}
           </span>

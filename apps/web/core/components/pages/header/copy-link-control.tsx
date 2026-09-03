@@ -7,9 +7,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 
-import { LinkIcon, CheckIcon } from "@plane/propel/icons";
+import { LinkOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { IconButton } from "@plane/propel/icon-button";
 import { cn } from "@plane/utils";
 // hooks
@@ -57,11 +57,11 @@ export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page 
   }, [pageOperations]);
 
   return (
-    <Tooltip tooltipContent={isCopied ? "Copied!" : "Copy link"} position="bottom">
+    <Tooltip label={isCopied ? "Copied!" : "Copy link"} side="bottom">
       <IconButton
         variant="ghost"
         size="lg"
-        icon={isCopied ? CheckIcon : LinkIcon}
+        icon={isCopied ? TickOutline : LinkOutline}
         onClick={handleCopy}
         aria-label={isCopied ? "Copied link" : "Copy link"}
         className={cn(isCopied && "text-success-primary")}

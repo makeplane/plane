@@ -5,9 +5,9 @@
  */
 
 import Link from "next/link";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 import { joinUrlPath } from "@plane/utils";
 
 type Props = {
@@ -31,15 +31,16 @@ export function ProjectFeatureToggle(props: Props) {
         >
           {value ? "Enabled" : "Disabled"}
         </Pill>
-        <ChevronRightIcon className="h-4 w-4 text-tertiary" />
+        <ChevronRightOutline className="h-4 w-4 text-tertiary" />
       </div>
     </Link>
   ) : (
-    <ToggleSwitch
-      value={value}
-      onChange={() => handleSubmit(featureItem?.key, featureItem?.property)}
-      disabled={disabled}
+    <Switch
       size="sm"
+      checked={value}
+      onCheckedChange={() => handleSubmit(featureItem?.key, featureItem?.property)}
+      disabled={disabled}
+      aria-label="Toggle project feature"
     />
   );
 }

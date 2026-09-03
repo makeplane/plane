@@ -9,19 +9,17 @@ catalog:
   "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "1.4.0"
   "@atlaskit/pragmatic-drag-and-drop-hitbox": "1.1.0"
   "@base-ui-components/react": "1.0.0-beta.3"
-  "@blueprintjs/core": "^4.16.3"
-  "@blueprintjs/popover2": "^1.13.3"
   "@bprogress/core": "^1.3.4"
   "@chromatic-com/storybook": "5.2.1"
   "@effect/platform": "^0.94.0"
   "@effect/platform-node": "^0.104.0"
   "@floating-ui/dom": "^1.7.1"
-  "@floating-ui/react": "^0.26.4"
+  "@floating-ui/react": "^0.27.20"
   "@fontsource-variable/inter": "5.2.8"
   "@fontsource/ibm-plex-mono": "5.2.7"
   "@fontsource/inter": "5.2.8"
   "@fontsource/material-symbols-rounded": "5.2.30"
-  "@headlessui/react": "^1.7.19"
+  "@headlessui/react": "^2.2.10"
   "@hocuspocus/extension-database": "2.15.2"
   "@hocuspocus/extension-logger": "2.15.2"
   "@hocuspocus/extension-redis": "2.15.2"
@@ -29,13 +27,14 @@ catalog:
   "@hocuspocus/server": "2.15.2"
   "@hocuspocus/transformer": "2.15.2"
   "@hypermod/utils": "^0.7.1"
+  "@makeplane/propel": "0.3.0"
   "@popperjs/core": "^2.11.8"
   "@radix-ui/react-scroll-area": "^1.2.3"
-  "@react-pdf/renderer": "^4.3.0"
-  "@react-pdf/types": "^2.9.2"
-  "@react-router/dev": "7.17.0"
-  "@react-router/node": "7.18.1"
-  "@react-router/serve": "7.18.1"
+  "@react-pdf/renderer": "^4.8.1"
+  "@react-pdf/types": "^2.13.1"
+  "@react-router/dev": "8.3.0"
+  "@react-router/node": "8.3.0"
+  "@react-router/serve": "8.3.0"
   "@storybook/addon-designs": "11.1.3"
   "@storybook/addon-docs": "10.4.6"
   "@storybook/addon-links": "10.4.6"
@@ -83,9 +82,9 @@ catalog:
   "@types/mdast": "^4.0.4"
   "@types/node": "22.12.0"
   "@types/pdf-parse": "^1.1.5"
-  "@types/react": "18.3.11"
+  "@types/react": "19.2.17"
   "@types/react-color": "^3.0.9"
-  "@types/react-dom": "18.3.1"
+  "@types/react-dom": "19.2.3"
   "@types/sanitize-html": "2.16.0"
   "@types/ws": "^8.18.1"
   "@vitest/coverage-v8": "^4.1.8"
@@ -132,7 +131,7 @@ catalog:
   "lucide-react": "0.469.0"
   "mdast": "^3.0.0"
   "mobx": "6.12.0"
-  "mobx-react": "9.1.1"
+  "mobx-react": "9.2.2"
   "mobx-utils": "6.0.8"
   "next-themes": "0.4.6"
   "oxfmt": "0.35.0"
@@ -142,39 +141,39 @@ catalog:
   "postcss-cli": "^11.0.0"
   "postcss-nested": "^6.0.1"
   "prosemirror-codemark": "^0.4.2"
-  "react": "18.3.1"
+  "react": "19.2.8"
   "react-color": "^2.19.3"
   "react-day-picker": "9.5.0"
-  "react-dom": "18.3.1"
+  "react-dom": "19.2.8"
   "react-dropzone": "^14.2.3"
   "react-fast-compare": "^3.2.2"
-  "react-hook-form": "7.51.5"
+  "react-hook-form": "^7.84.0"
   "react-i18next": "16.6.6"
-  "react-is": "^18.2.0"
-  "react-markdown": "^8.0.7"
+  "react-is": "^19.2.8"
+  "react-markdown": "^10.1.0"
   "react-masonry-component": "^6.3.0"
   "react-pdf-html": "^2.1.2"
   "react-popper": "^2.3.0"
-  "react-router": "7.18.1"
-  "recharts": "^2.15.1"
+  "react-router": "8.3.0"
+  "recharts": "^2.15.4"
   "reflect-metadata": "^0.2.2"
   "rehype-parse": "^9.0.1"
   "rehype-remark": "^10.0.1"
   "remark-gfm": "^4.0.1"
   "remark-stringify": "^11.0.0"
-  "sanitize-html": "2.17.5"
+  "sanitize-html": "2.17.7"
   "serve": "14.2.5"
   "sharp": "^0.35.3"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
   "storybook": "10.4.6"
-  "swr": "2.2.4"
+  "swr": "2.4.2"
   "tailwind-merge": "3.4.0"
   "tailwindcss": "4.1.17"
   "tippy.js": "^6.3.7"
   "tiptap-markdown": "^0.8.10"
   "tsdown": "0.16.0"
   "tsx": "4.20.6"
-  "turbo": "2.9.18"
+  "turbo": "2.10.11"
   "typescript": "5.8.3"
   "unified": "^11.0.5"
   "use-font-face-observer": "^1.3.0"
@@ -191,12 +190,29 @@ catalog:
   "zod": "^3.25.76"
 
 overrides:
+  # Force a single React across the whole graph. With node-linker=isolated,
+  # auto-install-peers and resolution-mode=highest, a dependency still declaring a
+  # React 18 peer can otherwise pull in a second copy, which surfaces as an invalid
+  # hook call rather than as an install error. The vite `resolve.dedupe` entries only
+  # cover the three app client bundles, not the SSR build, the tsdown package builds
+  # or Storybook.
+  react: "catalog:"
+  react-dom: "catalog:"
+  react-is: "catalog:"
+  "@types/react": "catalog:"
+  "@types/react-dom": "catalog:"
   express: "catalog:"
+  # @react-router/serve v8 needs Express 5 — it mounts with the Express 5 path syntax
+  # `app.all("/{*splat}")`, which Express 4 silently fails to match, 404ing every route.
+  # The catalog stays on Express 4 for apps/live, which depends on express-ws (Express 4 only).
+  "@react-router/serve>express": "^5.2.1"
   mdast-util-to-hast: 13.2.1
   valibot: 1.4.2
   glob: 11.1.0
-  brace-expansion: 5.0.7
-  nanoid: 3.3.8
+  # brace-expansion <5.0.9 has two DoS advisories (GHSA-mh99-v99m-4gvg, GHSA-rgw5-rvv9-x895,
+  # the second bypasses the first's mitigation) reachable via serve>serve-handler>minimatch.
+  brace-expansion: 5.0.9
+  nanoid: 3.3.18
   esbuild: 0.28.1
   "@babel/core": 7.29.7
   "@babel/helpers": 7.29.7
@@ -223,17 +239,21 @@ overrides:
   picomatch: 2.3.2
   "yaml@1": 1.10.3
   "yaml@2": 2.8.3
+  # Pinned for Express 4 (apps/live), which needs path-to-regexp ~0.1.12.
   path-to-regexp: 0.1.13
+  # Express 5's router needs path-to-regexp 8; the pin above would otherwise reach it
+  # and break route matching at startup with `pathRegexp.match is not a function`.
+  "router>path-to-regexp": "^8.4.2"
   defu: 6.1.5
   postcss: 8.5.25
+  "postcss-selector-parser@>=7.1.0 <7.1.3": "7.1.3"
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
   "fast-uri@<3.1.5": "3.1.5"
-  "js-yaml@4": 4.3.0
+  "js-yaml@4": 4.3.1
   linkify-it: 5.0.2
   body-parser: 1.20.6
-  "@react-router/node": 7.18.1
   tmp: 0.2.7
   form-data: 4.0.6
   "ws@8": 8.21.0
@@ -252,10 +272,26 @@ allowBuilds:
   sharp: false
 
 minimumReleaseAgeExclude:
-  - '@storybook/addon-docs@10.4.6'
-  - '@storybook/builder-vite@10.4.6'
-  - '@storybook/csf-plugin@10.4.6'
-  - '@storybook/react-dom-shim@10.4.6'
-  - '@storybook/react-vite@10.4.6'
-  - '@storybook/react@10.4.6'
+  - "@storybook/addon-docs@10.4.6"
+  - "@storybook/builder-vite@10.4.6"
+  - "@storybook/csf-plugin@10.4.6"
+  - "@storybook/react-dom-shim@10.4.6"
+  - "@storybook/react-vite@10.4.6"
+  - "@storybook/react@10.4.6"
   - storybook@10.4.6
+  - "@makeplane/propel@0.3.0"
+
+patchedDependencies:
+  react-color@2.19.3: patches/react-color@2.19.3.patch
+
+peerDependencyRules:
+  allowedVersions:
+    # react-popper 2.3.0 is unmaintained and its peer range stops at React 18, but it
+    # only uses hooks — no findDOMNode, no string refs, no element.ref reads and no
+    # defaultProps on function components — so it runs unchanged on React 19. All 32
+    # call sites import usePopper only. Recorded here so the acceptance is explicit
+    # rather than hidden behind the global strict-peer-dependencies=false.
+    "react-popper>react": "19"
+    # Same situation: peer range predates React 19, uses nothing React 19 removed.
+    "react-masonry-component>react": "19"
+    "use-font-face-observer>react": "19"

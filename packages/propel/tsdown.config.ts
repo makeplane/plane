@@ -29,6 +29,7 @@ export default defineConfig({
     "src/portal/index.ts",
     "src/scrollarea/index.ts",
     "src/skeleton/index.ts",
+    "src/spinners/index.ts",
     "src/switch/index.ts",
     "src/table/index.ts",
     "src/tab-navigation/index.ts",

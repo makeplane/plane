@@ -6,13 +6,15 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { AlertTriangle } from "lucide-react";
+import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // Plane Imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
-import { Input } from "@plane/ui";
+
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -88,7 +90,7 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
             "grid size-12 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary sm:size-10"
           )}
         >
-          <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
+          <WarningTriangleOutline className="size-5 text-danger-primary" aria-hidden="true" />
         </span>
         <div>
           <div className="text-center sm:text-left">
@@ -106,18 +108,21 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
               control={control}
               name="workspaceName"
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="workspaceName"
-                  name="workspaceName"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.workspaceName)}
-                  placeholder={data?.name}
-                  className="mt-2 w-full"
-                  autoComplete="off"
-                />
+                <Field name="workspaceName" invalid={Boolean(errors.workspaceName)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="workspaceName"
+                      name="workspaceName"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={data?.name}
+                      autoComplete="off"
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
           </div>
@@ -132,18 +137,21 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
               control={control}
               name="confirmDelete"
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="confirmDelete"
-                  name="confirmDelete"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.confirmDelete)}
-                  placeholder=""
-                  className="mt-2 w-full"
-                  autoComplete="off"
-                />
+                <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="confirmDelete"
+                      name="confirmDelete"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder=""
+                      autoComplete="off"
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
           </div>

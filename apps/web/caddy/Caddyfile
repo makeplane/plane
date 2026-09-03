@@ -1,0 +1,37 @@
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+
+	order rate_limit before file_server
+}
+
+:3000 {
+	root * /usr/share/caddy/html
+
+	# Per-client-IP rate limiting for static asset requests
+	rate_limit {
+		zone static {
+			key {client_ip}
+			events 300
+			window 1m
+		}
+	}
+
+	# Security headers (HSTS is set at the TLS terminator)
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+	}
+
+	# SPA fallback
+	try_files {path} /index.html
+	file_server
+
+	# Access logs to stdout (default in Caddy)
+	log {
+		output stdout
+		format console
+	}
+}

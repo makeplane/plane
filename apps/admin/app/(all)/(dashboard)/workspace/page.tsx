@@ -8,16 +8,18 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Loader as LoaderIcon } from "lucide-react";
+import { LoadingOutline as LoaderIcon } from "@makeplane/propel/icons";
 // types
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { setPromiseToast } from "@plane/propel/toast";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Button } from "@makeplane/propel/components/button";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceConfigurationKeys } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
+import { Skeleton } from "@/components/common/skeleton";
 import { WorkspaceListItem } from "@/components/workspace/list-item";
+import { setPromiseToast } from "@/providers/toast";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
 // types
@@ -94,9 +96,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             </div>
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
-                <ToggleSwitch
-                  value={Boolean(parseInt(disableWorkspaceCreation))}
-                  onChange={() => {
+                <Switch
+                  checked={Boolean(parseInt(disableWorkspaceCreation))}
+                  onCheckedChange={() => {
                     if (Boolean(parseInt(disableWorkspaceCreation)) === true) {
                       updateConfig("DISABLE_WORKSPACE_CREATION", "0");
                     } else {
@@ -110,9 +112,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             </div>
           </div>
         ) : (
-          <Loader>
-            <Loader.Item height="50px" width="100%" />
-          </Loader>
+          <Skeleton>
+            <Skeleton.Item height="50px" width="100%" />
+          </Skeleton>
         )}
         {workspaceLoader !== "init-loader" ? (
           <>
@@ -130,9 +132,14 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
-                  Create workspace
-                </Link>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  stretch="auto"
+                  nativeButton={false}
+                  render={<Link href="/workspace/create" />}
+                  label="Create workspace"
+                />
               </div>
             </div>
             <div className="flex flex-col gap-4 py-2">
@@ -142,25 +149,23 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             </div>
             {hasNextPage && (
               <div className="flex justify-center">
-                <Button
-                  variant="link"
-                  size="lg"
+                <AnchorButton
+                  variant="primary"
+                  size="md"
                   onClick={() => fetchNextWorkspaces()}
-                  disabled={workspaceLoader === "pagination"}
-                >
-                  Load more
-                  {workspaceLoader === "pagination" && <LoaderIcon className="h-3 w-3 animate-spin" />}
-                </Button>
+                  loading={workspaceLoader === "pagination"}
+                  label="Load more"
+                />
               </div>
             )}
           </>
         ) : (
-          <Loader className="space-y-10 py-8">
-            <Loader.Item height="24px" width="20%" />
-            <Loader.Item height="92px" width="100%" />
-            <Loader.Item height="92px" width="100%" />
-            <Loader.Item height="92px" width="100%" />
-          </Loader>
+          <Skeleton className="space-y-10 py-8">
+            <Skeleton.Item height="24px" width="20%" />
+            <Skeleton.Item height="92px" width="100%" />
+            <Skeleton.Item height="92px" width="100%" />
+            <Skeleton.Item height="92px" width="100%" />
+          </Skeleton>
         )}
       </div>
     </PageWrapper>

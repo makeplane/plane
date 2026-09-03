@@ -6,10 +6,10 @@
 
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
-import { GripVertical } from "lucide-react";
+import { DragDropOutline, EditOutline } from "@makeplane/propel/icons";
 import { EIconSize } from "@plane/constants";
 // plane imports
-import { EditIcon, StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/propel/icons";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 // local imports
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -47,7 +47,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
         {/* draggable indicator */}
         {!disabled && stateCount != 1 && (
           <div className="absolute -left-1.5 hidden h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs bg-surface-2 text-secondary transition-colors group-hover:flex hover:text-primary">
-            <GripVertical className="h-3 w-3" />
+            <DragDropOutline className="h-3 w-3" />
           </div>
         )}
         {/* state icon */}
@@ -76,7 +76,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
               className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
             >
-              <EditIcon className="h-3 w-3" />
+              <EditOutline className="h-3 w-3" />
             </button>
             <StateDelete
               totalStates={stateCount}

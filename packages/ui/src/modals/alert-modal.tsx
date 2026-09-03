@@ -4,8 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, Info } from "lucide-react";
+import { InfoOutline, WarningTriangleOutline } from "@makeplane/propel/icons";
 import React from "react";
 // components
 import type { TButtonVariant } from "@plane/propel/button";
@@ -37,9 +36,9 @@ type Props = {
   customIcon?: React.ReactNode;
 };
 
-const VARIANT_ICONS: Record<TModalVariant, LucideIcon> = {
-  danger: AlertTriangle,
-  primary: Info,
+const VARIANT_ICONS: Record<TModalVariant, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+  danger: WarningTriangleOutline,
+  primary: InfoOutline,
 };
 
 const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {

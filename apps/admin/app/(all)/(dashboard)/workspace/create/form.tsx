@@ -10,13 +10,14 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
 import { validateSlug, validateWorkspaceName } from "@plane/utils";
 // components
-import { CustomSelect, Input } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
@@ -106,22 +107,24 @@ export function WorkspaceCreateForm() {
                 validate: (value) => validateWorkspaceName(value, true),
               }}
               render={({ field: { value, ref, onChange } }) => (
-                <Input
-                  id="workspaceName"
-                  type="text"
-                  value={value}
-                  onChange={(e) => {
-                    onChange(e.target.value);
-                    setValue("name", e.target.value);
-                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
-                      shouldValidate: true,
-                    });
-                  }}
-                  ref={ref}
-                  hasError={Boolean(errors.name)}
-                  placeholder="Something familiar and recognizable is always best."
-                  className="w-full"
-                />
+                <InputGroup size="lg">
+                  <Input
+                    size="lg"
+                    id="workspaceName"
+                    type="text"
+                    value={value}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      setValue("name", e.target.value);
+                      setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                        shouldValidate: true,
+                      });
+                    }}
+                    ref={ref}
+                    aria-invalid={Boolean(errors.name)}
+                    placeholder="Something familiar and recognizable is always best."
+                  />
+                </InputGroup>
               )}
             />
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -141,6 +144,7 @@ export function WorkspaceCreateForm() {
                 <Input
                   id="workspaceUrl"
                   type="text"
+                  size="lg"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
                     if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
@@ -148,9 +152,8 @@ export function WorkspaceCreateForm() {
                     onChange(e.target.value.toLowerCase());
                   }}
                   ref={ref}
-                  hasError={Boolean(errors.slug)}
+                  aria-invalid={Boolean(errors.slug)}
                   placeholder="workspace-name"
-                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-13"
                 />
               )}
             />
@@ -169,23 +172,16 @@ export function WorkspaceCreateForm() {
               control={control}
               rules={{ required: "This is a required field." }}
               render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  onChange={onChange}
-                  label={
-                    ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-placeholder">Select a range</span>
-                    )
-                  }
-                  buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
-                  input
-                >
-                  {ORGANIZATION_SIZE.map((item) => (
-                    <CustomSelect.Option key={item} value={item}>
-                      {item}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
+                <Select value={value} onValueChange={onChange}>
+                  <SelectTrigger size="lg" placeholder={<span className="text-placeholder">Select a range</span>} />
+                  <SelectContent>
+                    <SelectList>
+                      {ORGANIZATION_SIZE.map((item) => (
+                        <SelectItem key={item} value={item} label={item} size="lg" />
+                      ))}
+                    </SelectList>
+                  </SelectContent>
+                </Select>
               )}
             />
             {errors.organization_size && (
@@ -197,16 +193,21 @@ export function WorkspaceCreateForm() {
       <div className="flex max-w-4xl items-center gap-4 py-1">
         <Button
           variant="primary"
-          size="lg"
+          size="md"
+          stretch="auto"
           onClick={handleSubmit(handleCreateWorkspace)}
           disabled={!isValid}
           loading={isSubmitting}
-        >
-          {isSubmitting ? "Creating workspace" : "Create workspace"}
-        </Button>
-        <Link className={getButtonStyling("secondary", "lg")} href="/workspace">
-          Go back
-        </Link>
+          label={isSubmitting ? "Creating workspace" : "Create workspace"}
+        />
+        <Button
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          nativeButton={false}
+          render={<Link href="/workspace" />}
+          label="Go back"
+        />
       </div>
     </div>
   );

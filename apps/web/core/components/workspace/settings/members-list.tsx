@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { Collapsible } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
@@ -92,7 +92,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
                   <CountChip count={searchedInvitationsIds.length} className="m-auto ml-2 h-5" />
                 )}
               </div>{" "}
-              <ChevronDownIcon className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
+              <ChevronDownOutline className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
             </div>
           }
         >

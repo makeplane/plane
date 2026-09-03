@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -49,7 +49,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-          icon={SearchIcon}
+          icon={SearchOutline}
         />
       )}
       <div
@@ -60,7 +60,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
           }
         )}
       >
-        <SearchIcon className="h-3.5 w-3.5" />
+        <SearchOutline className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
@@ -78,7 +78,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
               setIsSearchOpen(false);
             }}
           >
-            <CloseIcon className="h-3 w-3" />
+            <CloseOutline className="h-3 w-3" />
           </button>
         )}
       </div>

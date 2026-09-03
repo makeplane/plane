@@ -6,10 +6,11 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { CircularProgress } from "@makeplane/propel/components/circular-progress";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
+import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { SubWorkItemTitleActions } from "./title-actions";
@@ -48,7 +49,12 @@ export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleT
       title={`${issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}`}
       indicatorElement={
         <div className="flex items-center gap-1.5 text-13 text-tertiary">
-          <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
+          <CircularProgress
+            value={percentage}
+            size="md"
+            variant={percentage === 100 ? "success" : "brand"}
+            aria-label="Sub-work-item progress"
+          />
           <span>
             {completedCount}/{totalCount} {t("common.done")}
           </span>

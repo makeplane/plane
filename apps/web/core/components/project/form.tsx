@@ -6,18 +6,19 @@
 
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Info } from "lucide-react";
+import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TextArea } from "@plane/ui";
+import { CustomSelect, TextArea } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -247,7 +248,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
-                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color" />}
+                  {project.network === 0 && <LockOutline className="h-2.5 w-2.5 text-on-color" />}
                   {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
@@ -287,18 +288,21 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                ref={ref}
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.name)}
-                className="rounded-md !p-3 font-medium"
-                placeholder={t("common.project_name")}
-                disabled={!isAdmin}
-              />
+              <Field name="name" invalid={Boolean(errors.name)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="name"
+                    name="name"
+                    type="text"
+                    ref={ref}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t("common.project_name")}
+                    disabled={!isAdmin}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -342,27 +346,31 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   },
                 }}
                 render={({ field: { value, ref } }) => (
-                  <Input
-                    id="identifier"
-                    name="identifier"
-                    type="text"
-                    value={value}
-                    onChange={handleIdentifierChange}
-                    ref={ref}
-                    hasError={Boolean(errors.identifier)}
-                    placeholder={t("project_settings.general.enter_project_id")}
-                    className="w-full font-medium"
-                    disabled={!isAdmin}
-                  />
+                  <Field name="identifier" invalid={Boolean(errors.identifier)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="identifier"
+                        name="identifier"
+                        type="text"
+                        value={value}
+                        onChange={handleIdentifierChange}
+                        ref={ref}
+                        placeholder={t("project_settings.general.enter_project_id")}
+                        disabled={!isAdmin}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={t("project_id_tooltip_content")}
-                className="text-13"
-                position="right-start"
+                label={t("project_id_tooltip_content")}
+                layout="stacked"
+                side="right"
+                align="start"
+                disabled={isMobile}
               >
-                <Info className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
+                <InfoOutline className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
             <span className="text-11 text-danger-primary">

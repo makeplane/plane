@@ -14,7 +14,7 @@ export type GanttChartBlocksProps = {
   enableBlockLeftResize: boolean | ((blockId: string) => boolean);
   enableBlockRightResize: boolean | ((blockId: string) => boolean);
   enableBlockMove: boolean | ((blockId: string) => boolean);
-  ganttContainerRef: React.RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>;
   showAllBlocks: boolean;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
   enableDependency: boolean | ((blockId: string) => boolean);

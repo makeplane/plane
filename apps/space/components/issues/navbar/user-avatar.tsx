@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Link } from "react-router";
 import { usePathname, useSearchParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { LogOut } from "lucide-react";
+import { LogOutOutline } from "@makeplane/propel/icons";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
@@ -106,7 +106,7 @@ export const UserAvatar = observer(function UserAvatar() {
                         type="submit"
                         className="flex min-w-36 cursor-pointer items-center gap-2 rounded-sm p-2 text-13 whitespace-nowrap hover:bg-layer-transparent-hover"
                       >
-                        <LogOut size={12} className="shrink-0 text-danger-primary" />
+                        <LogOutOutline width={12} height={12} className="shrink-0 text-danger-primary" />
                         <div>Sign out</div>
                       </button>
                     </form>

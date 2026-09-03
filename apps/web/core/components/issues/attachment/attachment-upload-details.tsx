@@ -5,8 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { Tooltip } from "@plane/propel/tooltip";
-import { CircularProgressIndicator } from "@plane/ui";
+import { CircularProgress } from "@makeplane/propel/components/circular-progress";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { getFileExtension, truncateText } from "@plane/utils";
 // ui
 // icons
@@ -37,7 +37,7 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
         <div className="h-7 w-7">{fileIcon}</div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <Tooltip tooltipContent={fileName} isMobile={isMobile}>
+            <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
               <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
             </Tooltip>
           </div>
@@ -49,7 +49,7 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
       </div>
       <div className="flex flex-shrink-0 items-center gap-2">
         <span className="flex-shrink-0">
-          <CircularProgressIndicator size={20} strokeWidth={3} percentage={uploadStatus.progress} />
+          <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
         </span>
         <div className="flex-shrink-0 text-13 font-medium">{uploadStatus.progress}% done</div>
       </div>

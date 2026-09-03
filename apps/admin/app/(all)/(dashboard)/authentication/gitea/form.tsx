@@ -10,8 +10,8 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@/providers/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
 // components
 import { CodeBlock } from "@/components/common/code-block";
@@ -59,7 +59,7 @@ export function InstanceGiteaConfigForm(props: Props) {
 
   const originURL = !isEmpty(API_BASE_URL) ? API_BASE_URL : typeof window !== "undefined" ? window.location.origin : "";
 
-  const GITEA_FORM_FIELDS: TControllerInputFormField[] = [
+  const GITEA_FORM_FIELDS: TControllerInputFormField<GiteaConfigFormValues>[] = [
     {
       key: "GITEA_HOST",
       type: "text",
@@ -195,16 +195,21 @@ export function InstanceGiteaConfigForm(props: Props) {
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
-                  size="lg"
+                  size="md"
+                  stretch="auto"
                   onClick={(e) => void handleSubmit(onSubmit)(e)}
                   loading={isSubmitting}
                   disabled={!isDirty}
-                >
-                  {isSubmitting ? "Saving" : "Save changes"}
-                </Button>
-                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Go back
-                </Link>
+                  label={isSubmitting ? "Saving" : "Save changes"}
+                />
+                <Button
+                  variant="secondary"
+                  size="md"
+                  stretch="auto"
+                  nativeButton={false}
+                  render={<Link href="/authentication" onClick={handleGoBack} />}
+                  label="Go back"
+                />
               </div>
             </div>
           </div>

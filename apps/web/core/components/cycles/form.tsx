@@ -7,13 +7,15 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { ICycle } from "@plane/types";
 // ui
-import { Input, TextArea } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -113,18 +115,21 @@ export function CycleForm(props: Props) {
                 },
               }}
               render={({ field: { value, onChange } }) => (
-                <Input
-                  name="name"
-                  type="text"
-                  placeholder={t("title")}
-                  className="w-full text-14"
-                  value={value}
-                  inputSize="md"
-                  onChange={onChange}
-                  hasError={Boolean(errors?.name)}
-                  tabIndex={getIndex("description")}
-                  autoFocus
-                />
+                <Field name="name" invalid={Boolean(errors?.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      name="name"
+                      type="text"
+                      placeholder={t("title")}
+                      value={value}
+                      onChange={onChange}
+                      tabIndex={getIndex("description")}
+                      autoFocus
+                      aria-label={t("title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>

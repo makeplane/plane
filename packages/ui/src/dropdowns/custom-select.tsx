@@ -10,7 +10,7 @@ import React, { createContext, useCallback, useContext, useRef, useState } from 
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 // plane helpers
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
@@ -112,14 +112,14 @@ function CustomSelect(props: ICustomSelectProps) {
                 onClick={toggleDropdown}
               >
                 {label}
-                {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+                {!noChevron && !disabled && <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />}
               </button>
             </Combobox.Button>
           )}
         </>
         {isOpen &&
           createPortal(
-            <Combobox.Options data-prevent-outside-click>
+            <Combobox.Options as="ul" data-prevent-outside-click>
               <div
                 className={cn(
                   "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
@@ -163,6 +163,7 @@ function Option(props: ICustomSelectItemProps) {
 
   return (
     <Combobox.Option
+      as="li"
       value={value}
       className={({ active }) =>
         cn(
@@ -178,7 +179,7 @@ function Option(props: ICustomSelectItemProps) {
       {({ selected }) => (
         <div className="flex w-full items-center justify-between gap-2">
           {children}
-          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+          {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>
       )}
     </Combobox.Option>

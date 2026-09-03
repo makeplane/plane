@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
@@ -80,7 +80,7 @@ export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHe
             menuButton={
               <span className="flex items-center text-13 text-secondary">
                 {t("common.display")}
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >

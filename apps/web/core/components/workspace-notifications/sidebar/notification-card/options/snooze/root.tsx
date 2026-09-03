@@ -7,13 +7,13 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
-import { Clock } from "lucide-react";
+import { ClockOutline } from "@makeplane/propel/icons";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
@@ -97,10 +97,10 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
           return (
             <>
               <Tooltip
-                tooltipContent={
+                label={
                   data.snoozed_till ? t("notification.options.mark_unsnooze") : t("notification.options.mark_snooze")
                 }
-                isMobile={isMobile}
+                disabled={isMobile}
               >
                 <Popover.Button
                   className={cn(
@@ -108,7 +108,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                     open ? "bg-layer-1" : ""
                   )}
                 >
-                  <Clock className="h-3 w-3 text-tertiary" />
+                  <ClockOutline className="h-3 w-3 text-tertiary" />
                 </Popover.Button>
               </Tooltip>
 

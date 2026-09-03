@@ -9,14 +9,15 @@ import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { GlobeIcon, LockIcon, PageIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline, PagesOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { Input } from "@plane/ui";
+
 import { getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";
@@ -35,8 +36,8 @@ const PAGE_ACCESS_SPECIFIERS: {
   i18n_label: string;
   icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
-  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeIcon },
-  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockIcon },
+  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeOutline },
+  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockOutline },
 ];
 
 export function PageForm(props: Props) {
@@ -81,7 +82,7 @@ export function PageForm(props: Props) {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <PageIcon className="h-4 w-4 text-tertiary" />
+                    <PagesOutline className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>
@@ -114,17 +115,19 @@ export function PageForm(props: Props) {
             }
           />
           <div className="flew-grow w-full space-y-1">
-            <Input
-              id="name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleFormData("name", e.target.value)}
-              placeholder="Title"
-              className="w-full resize-none text-14"
-              tabIndex={getIndex("name")}
-              required
-              autoFocus
-            />
+            <InputGroup size="2xl">
+              <Input
+                size="2xl"
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleFormData("name", e.target.value)}
+                placeholder="Title"
+                tabIndex={getIndex("name")}
+                required
+                autoFocus
+              />
+            </InputGroup>
             {isTitleLengthMoreThan255Character && (
               <span className="text-11 text-danger-primary">
                 Max length of the name should be less than 255 characters

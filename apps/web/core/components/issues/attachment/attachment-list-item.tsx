@@ -7,8 +7,8 @@
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { TrashIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { DeleteOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -63,7 +63,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
         <div className="group flex h-11 items-center justify-between gap-3 pr-2 pl-9 hover:bg-surface-2">
           <div className="flex items-center gap-3 truncate text-13">
             <div className="flex items-center gap-3">{fileIcon}</div>
-            <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
+            <Tooltip label={`${fileName}.${fileExtension}`} layout="stacked" disabled={isMobile}>
               <p className="truncate font-medium text-secondary">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
             <span className="flex size-1.5 rounded-full bg-layer-1" />
@@ -74,10 +74,11 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
             {attachment?.created_by && (
               <>
                 <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={`${
+                  label={`${
                     getUserDetails(attachment?.created_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
+                  layout="stacked"
+                  disabled={isMobile}
                 >
                   <div className="flex items-center justify-center">
                     <ButtonAvatars showTooltip userIds={attachment?.created_by} />
@@ -93,7 +94,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <DeleteOutline className="h-3.5 w-3.5" />
                   <span>{t("common.actions.delete")}</span>
                 </div>
               </CustomMenu.MenuItem>

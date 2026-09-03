@@ -11,9 +11,9 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { PlusIcon, SearchIcon } from "@plane/propel/icons";
+import { AddOutline, SearchOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
@@ -114,21 +114,22 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
           <div className="flex items-center justify-between">
             <span className="py-1.5 text-13 font-semibold text-tertiary">Projects</span>
             {isAuthorizedUser && (
-              <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+              <Tooltip label={t("create_project")}>
                 <button
                   type="button"
+                  aria-label={t("create_project")}
                   className="flex-shrink-0 rounded-sm p-0.5 text-tertiary transition-colors hover:bg-layer-1 hover:text-secondary"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
                 >
-                  <PlusIcon className="size-3" />
+                  <AddOutline className="size-3" />
                 </button>
               </Tooltip>
             )}
           </div>
           <div className="ml-auto flex w-full items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1">
-            <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
+            <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
               placeholder={t("search")}
@@ -149,7 +150,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             />
           </div>
         ) : (
-          <div className="vertical-scrollbar mt-4 flex scrollbar-sm flex-grow flex-col gap-0.5 overflow-x-hidden overflow-y-auto pr-2 pl-9">
+          <div className="vertical-scrollbar mt-4 scrollbar-sm flex flex-grow flex-col gap-0.5 overflow-x-hidden overflow-y-auto pr-2 pl-9">
             {filteredProjects.map((projectId, index) => (
               <SidebarProjectsListItem
                 key={projectId}
