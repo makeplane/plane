@@ -18,7 +18,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.utils.encoding import DjangoUnicodeDecodeError, smart_bytes, smart_str
+from django.utils.encoding import smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 
@@ -98,79 +98,75 @@ class ForgotPasswordEndpoint(APIView):
 
 class ResetPasswordEndpoint(View):
     def post(self, request, uidb64, token):
+        """Set a new password for the user encoded in uidb64.
+
+        Always redirects: to sign-in on success, back to the reset-password page with an error code when the
+        link or the submitted password is rejected.
+        """
         try:
             # Decode the id from the uidb64
-            try:
-                id = smart_str(urlsafe_base64_decode(uidb64))
-                user = User.objects.get(id=id)
-            except (ValueError, User.DoesNotExist):
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
-                    error_message="INVALID_PASSWORD_TOKEN",
-                )
-                params = exc.get_error_dict()
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "accounts/reset-password?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
-
-            # check if the token is valid for the user
-            if not PasswordResetTokenGenerator().check_token(user, token):
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
-                    error_message="INVALID_PASSWORD_TOKEN",
-                )
-                params = exc.get_error_dict()
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "accounts/reset-password?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
-
-            password = request.POST.get("password", False)
-
-            if not password:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                    error_message="INVALID_PASSWORD",
-                )
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "accounts/reset-password?" + urlencode(exc.get_error_dict()),
-                )
-                return HttpResponseRedirect(url)
-
-            # Check the password complexity
-            results = zxcvbn(password)
-            if results["score"] < 3:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
-                    error_message="PASSWORD_TOO_WEAK",
-                )
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "accounts/reset-password?" + urlencode(exc.get_error_dict()),
-                )
-                return HttpResponseRedirect(url)
-
-            # set_password also hashes the password that the user will get
-            user.set_password(password)
-            user.is_password_autoset = False
-            user.save()
-
+            id = smart_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(id=id)
+        except (ValueError, ValidationError, User.DoesNotExist):
+            # Malformed base64, bytes that are not utf-8 (DjangoUnicodeDecodeError subclasses ValueError),
+            # a non-UUID id or an id that matches no user
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
+                error_message="INVALID_PASSWORD_TOKEN",
+            )
+            params = exc.get_error_dict()
             url = urljoin(
                 base_host(request=request, is_app=True),
-                "sign-in?" + urlencode({"success": True}),
+                "accounts/reset-password?" + urlencode(params),
             )
             return HttpResponseRedirect(url)
-        except DjangoUnicodeDecodeError:
+
+        # check if the token is valid for the user
+        if not PasswordResetTokenGenerator().check_token(user, token):
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_PASSWORD_TOKEN"],
-                error_message="EXPIRED_PASSWORD_TOKEN",
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
+                error_message="INVALID_PASSWORD_TOKEN",
+            )
+            params = exc.get_error_dict()
+            url = urljoin(
+                base_host(request=request, is_app=True),
+                "accounts/reset-password?" + urlencode(params),
+            )
+            return HttpResponseRedirect(url)
+
+        password = request.POST.get("password", False)
+
+        if not password:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
+                error_message="INVALID_PASSWORD",
             )
             url = urljoin(
                 base_host(request=request, is_app=True),
                 "accounts/reset-password?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
+
+        # Check the password complexity
+        results = zxcvbn(password)
+        if results["score"] < 3:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
+            )
+            url = urljoin(
+                base_host(request=request, is_app=True),
+                "accounts/reset-password?" + urlencode(exc.get_error_dict()),
+            )
+            return HttpResponseRedirect(url)
+
+        # set_password also hashes the password that the user will get
+        user.set_password(password)
+        user.is_password_autoset = False
+        user.save()
+
+        url = urljoin(
+            base_host(request=request, is_app=True),
+            "sign-in?" + urlencode({"success": True}),
+        )
+        return HttpResponseRedirect(url)
