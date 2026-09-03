@@ -12,9 +12,8 @@ import { MembersOutline, UserAltOutline, WorkItemsOutline } from "@makeplane/pro
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { TextArea } from "@makeplane/propel/components/text-area";
 import type { ICycle } from "@plane/types";
-// plane ui
-import { TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -69,11 +68,7 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
   return (
     <div className="flex w-full flex-col gap-5">
       {cycleDetails?.description && (
-        <TextArea
-          className="ring-none !m-0 max-h-max w-full resize-none !border-0 bg-transparent !p-0 text-13 leading-5 text-secondary outline-none"
-          value={cycleDetails.description}
-          disabled
-        />
+        <TextArea size="lg" surface="inline" autoResize value={cycleDetails.description} disabled />
       )}
 
       <div className="flex flex-col gap-5 pt-2.5 pb-6">

@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -23,7 +24,6 @@ import type {
   IIssueFilters,
 } from "@plane/types";
 import { EViewAccess, EIssuesStoreType } from "@plane/types";
-import { TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -190,16 +190,22 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  placeholder={t("common.description")}
-                  className="min-h-24 w-full resize-none text-14"
-                  hasError={Boolean(errors?.description)}
-                  value={value}
-                  onChange={onChange}
-                  tabIndex={getIndex("descriptions")}
-                />
+                <Field name="description" invalid={Boolean(errors?.description)}>
+                  <TextAreaGroup resize="none">
+                    <TextArea
+                      size="lg"
+                      surface="field"
+                      autoResize
+                      maxRows={8}
+                      id="description"
+                      name="description"
+                      placeholder={t("common.description")}
+                      value={value}
+                      onChange={onChange}
+                      tabIndex={getIndex("descriptions")}
+                    />
+                  </TextAreaGroup>
+                </Field>
               )}
             />
           </div>
