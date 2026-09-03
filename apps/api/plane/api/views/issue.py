@@ -349,7 +349,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
         # Reject any field not in the allowlist before it reaches .order_by().
         # An unrecognised value is replaced with the safe default, preventing
-        # ORM order_by injection via relational traversal (GHSA-p885-6jpg-cr2p).
+        # ORM order_by injection via relational traversal.
         order_by_param = sanitize_order_by(
             request.GET.get("order_by", "-created_at"),
             ISSUE_ORDER_BY_ALLOWLIST,
@@ -1591,6 +1591,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 examples=[ISSUE_COMMENT_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
             404: COMMENT_NOT_FOUND_RESPONSE,
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
@@ -1602,6 +1603,16 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Validates external ID uniqueness if provided.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        # Only the comment author or a project admin may modify a comment.
+        # ProjectLitePermission alone lets any active member (incl. Guest) reach
+        # here, so enforce the same author/admin rule the app applies.
+        if issue_comment.created_by_id != request.user.id and not ProjectMember.objects.filter(
+            project_id=project_id, member_id=request.user.id, role=ROLE.ADMIN.value, is_active=True
+        ).exists():
+            return Response(
+                {"error": "Only the comment author or a project admin can modify this comment."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
@@ -1661,6 +1672,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         ],
         responses={
             204: OpenApiResponse(description="Work item comment deleted successfully"),
+            403: FORBIDDEN_RESPONSE,
             404: COMMENT_NOT_FOUND_RESPONSE,
         },
     )
@@ -1671,6 +1683,14 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity for audit purposes.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        # Only the comment author or a project admin may delete a comment.
+        if issue_comment.created_by_id != request.user.id and not ProjectMember.objects.filter(
+            project_id=project_id, member_id=request.user.id, role=ROLE.ADMIN.value, is_active=True
+        ).exists():
+            return Response(
+                {"error": "Only the comment author or a project admin can delete this comment."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
@@ -1994,6 +2014,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 examples=[ISSUE_ATTACHMENT_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
@@ -2002,6 +2023,21 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
         List all attachments for an issue.
         """
+        # Bare IsAuthenticated here, and API tokens authenticate globally rather
+        # than per workspace, so enforce project membership as post() does --
+        # otherwise any token holder reads any issue's attachment metadata.
+        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
+        if not user_has_issue_permission(
+            request.user.id,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
+            allow_creator=True,
+        ):
+            return Response(
+                {"error": "You are not allowed to view these attachments"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
             issue_id=issue_id,
@@ -2040,20 +2076,34 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Records deletion activity and triggers metadata cleanup.
         """
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the request user is creator or admin then delete the attachment
-        if not user_has_issue_permission(
+
+        # Bind the asset to the URL work item and to the attachment entity type,
+        # matching the sibling list handler. Resolved before authorizing, so the
+        # check below applies to the object actually being acted on.
+        issue_attachment = FileAsset.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        )
+
+        # Admin or the uploader, as the app surface allows. allow_creator is off
+        # because it compares against the work item's author, not this file's
+        # uploader, so the ownership test is done explicitly below.
+        is_project_admin = user_has_issue_permission(
             request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
+            allowed_roles=[ROLE.ADMIN.value],
+            allow_creator=False,
+        )
+        if not (is_project_admin or issue_attachment.created_by_id == request.user.id):
             return Response(
                 {"error": "You are not allowed to delete this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
         issue_attachment.save()
@@ -2126,8 +2176,16 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Get the asset
-        asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        # Bind to the URL work item and entity type: scoped to the project alone,
+        # this route issued a presigned URL for any asset in it, page and comment
+        # images included.
+        asset = FileAsset.objects.get(
+            id=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        )
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -2191,7 +2249,14 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+        # Bound as in the delete and retrieve handlers above.
+        issue_attachment = FileAsset.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        )
         serializer = IssueAttachmentSerializer(issue_attachment)
 
         # Send this activity only if the attachment is not uploaded before
@@ -2208,9 +2273,10 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
                 origin=base_host(request=request, is_app=True),
             )
 
-            # Update the attachment
+            # created_by is deliberately not reassigned: confirming an upload is
+            # not authorship, and rewriting it would hand the caller the
+            # creator-based delete right on someone else's attachment.
             issue_attachment.is_uploaded = True
-            issue_attachment.created_by = request.user
 
         # Get the storage metadata
         if not issue_attachment.storage_metadata:
