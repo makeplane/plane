@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { CollaborationState, EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
@@ -16,11 +17,12 @@ import { usePagesPaneExtensions, useExtendedEditorProps } from "@/hooks/pages";
 import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+// ui
+import { Banner } from "@makeplane/propel/components/banner";
 // local imports
 import { PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
-import { ContentLimitBanner } from "./content-limit-banner";
 import { PageEditorBody } from "./editor-body";
 import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
@@ -62,6 +64,8 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const [editorReady, setEditorReady] = useState(false);
   const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
   const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
+  // translation
+  const { t } = useTranslation();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // derived values
@@ -166,7 +170,14 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
         />
-        {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
+        {showContentTooLargeBanner && (
+          <Banner
+            placement="page"
+            variant="warning"
+            title={t("page_content_limit_banner.message")}
+            render={<div className="px-page-x" />}
+          />
+        )}
         <PageEditorBody
           config={config}
           customRealtimeEventHandlers={mergedCustomEventHandlers}

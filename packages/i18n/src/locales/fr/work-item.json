@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "L’élément de travail n’a pas pu être archivé. Veuillez réessayer."
-      }
+      },
+      "banner_message": "Cet élément de travail a été archivé. Accédez à la section Archives pour le restaurer.",
+      "go_to_archives": "Accéder aux archives"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Impossible de mettre à jour les éléments de travail",
         "message": "Le changement d'état n'est pas autorisé pour certains éléments de travail. Assurez-vous que le changement d'état est autorisé."
       }
+    },
+    "upgrade_banner": {
+      "message": "Modifiez l’état, la priorité et bien plus pour plusieurs éléments de travail à la fois. Économisez en moyenne trois minutes par opération.",
+      "cta": "Mettre à niveau vers One"
     }
   },
   "recurring_work_items": {

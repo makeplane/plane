@@ -111,5 +111,8 @@
       "success_message": "Página removida da coleção.",
       "error_message": "Não foi possível remover a página da coleção. Tente novamente."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Limite de conteúdo atingido e a sincronização em tempo real está desativada. Crie uma nova página ou use páginas aninhadas para continuar sincronizando."
   }
 }

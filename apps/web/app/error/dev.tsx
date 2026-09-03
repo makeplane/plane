@@ -6,10 +6,10 @@
 
 // plane imports
 import { isRouteErrorResponse } from "react-router";
-import { Banner } from "@plane/propel/banner";
+import { Banner } from "@makeplane/propel/components/banner";
+import { InfoFilled } from "@makeplane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { Card, ECardVariant } from "@plane/propel/card";
-import { InfoFilled } from "@makeplane/propel/icons";
 
 interface ErrorActionsProps {
   onGoHome: () => void;
@@ -42,12 +42,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
     return (
       <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
         <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
-          <Banner
-            variant="error"
-            icon={<InfoFilled className="size-5" />}
-            title="Route Error Response"
-            animationDuration={0}
-          />
+          <Banner placement="page" variant="danger" icon={<InfoFilled />} title="Route Error Response" />
 
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
@@ -77,12 +72,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
     return (
       <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
         <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
-          <Banner
-            variant="error"
-            icon={<InfoFilled className="size-5" />}
-            title="Runtime Error"
-            animationDuration={0}
-          />
+          <Banner placement="page" variant="danger" icon={<InfoFilled />} title="Runtime Error" />
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
@@ -132,7 +122,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
   return (
     <div className="flex min-h-screen items-start justify-center bg-surface-2 p-6 transition-none">
       <div className="mt-12 w-full max-w-4xl space-y-4 transition-none">
-        <Banner variant="error" icon={<InfoFilled className="size-5" />} title="Unknown Error" animationDuration={0} />
+        <Banner placement="page" variant="danger" icon={<InfoFilled />} title="Unknown Error" />
 
         <Card variant={ECardVariant.WITH_SHADOW} className="!p-6">
           <div className="space-y-4">
