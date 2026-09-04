@@ -4,10 +4,11 @@
  * See the LICENSE file for details.
  */
 
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Loader } from "@plane/ui";
 // local imports
 import useCyclesDetails from "../active-cycle/use-cycles-details";
 import { CycleAnalyticsProgress } from "./issue-progress";
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: Props) {
+  const { t } = useTranslation();
   const { handleClose, isArchived, projectId, workspaceSlug, cycleId } = props;
 
   // store hooks
@@ -34,17 +36,19 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
 
   if (!cycleDetails)
     return (
-      <Loader className="px-5">
-        <div className="space-y-2">
-          <Loader.Item height="15px" width="50%" />
-          <Loader.Item height="15px" width="30%" />
+      <Skeleton aria-label={t("aria_labels.loading.cycle_sidebar_details")}>
+        <div className="px-5">
+          <div className="space-y-2">
+            <SkeletonItem blockSize="15px" inlineSize="50%" />
+            <SkeletonItem blockSize="15px" inlineSize="30%" />
+          </div>
+          <div className="mt-8 space-y-3">
+            <SkeletonItem blockSize="30px" />
+            <SkeletonItem blockSize="30px" />
+            <SkeletonItem blockSize="30px" />
+          </div>
         </div>
-        <div className="mt-8 space-y-3">
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-        </div>
-      </Loader>
+      </Skeleton>
     );
 
   return (

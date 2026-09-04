@@ -6,12 +6,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
-import { Header, Loader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
@@ -174,10 +175,12 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             )}
             <div ref={setElementRef}>
               {inboxIssuePaginationInfo?.next_page_results && (
-                <Loader className="mx-auto w-full space-y-4 px-2 py-4">
-                  <Loader.Item height="64px" width="w-100" />
-                  <Loader.Item height="64px" width="w-100" />
-                </Loader>
+                <Skeleton aria-label={t("aria_labels.loading.more_work_items")}>
+                  <div className="mx-auto w-full space-y-4 px-2 py-4">
+                    <SkeletonItem blockSize="64px" />
+                    <SkeletonItem blockSize="64px" />
+                  </div>
+                </Skeleton>
               )}
             </div>
           </div>

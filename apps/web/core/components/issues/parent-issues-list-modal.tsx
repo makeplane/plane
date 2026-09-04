@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
 import { RocketOutline, SearchOutline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // i18n
@@ -15,7 +16,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";
@@ -129,12 +130,14 @@ export function ParentIssuesListModal({
           )}
 
           {isSearching || isLoading ? (
-            <Loader className="space-y-3 p-3">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
+            <Skeleton aria-label={t("aria_labels.loading.work_items")}>
+              <div className="space-y-3 p-3">
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+              </div>
+            </Skeleton>
           ) : (
             <>
               {issues.length === 0 ? (

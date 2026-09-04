@@ -8,6 +8,7 @@ import { useState } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 import { SubscribeOutline, UnsubscribeOutline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 // plane-i18n
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +16,6 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
-import { Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -74,9 +74,9 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
 
   if (isNil(isSubscribed))
     return (
-      <Loader>
-        <Loader.Item width="106px" height="28px" />
-      </Loader>
+      <Skeleton aria-label={t("aria_labels.loading.subscription")}>
+        <SkeletonItem blockSize="28px" inlineSize="106px" />
+      </Skeleton>
     );
 
   return (

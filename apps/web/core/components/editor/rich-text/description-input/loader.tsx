@@ -5,7 +5,8 @@
  */
 
 // plane imports
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -13,27 +14,30 @@ type Props = {
 };
 
 export function DescriptionInputLoader(props: Props) {
+  const { t } = useTranslation();
   const { className } = props;
 
   return (
-    <Loader className={cn("space-y-2", className)}>
-      <Loader.Item width="100%" height="26px" />
-      <div className="flex items-center gap-2">
-        <Loader.Item width="26px" height="26px" />
-        <Loader.Item width="400px" height="26px" />
+    <Skeleton aria-label={t("aria_labels.loading.description")}>
+      <div className={cn("space-y-2", className)}>
+        <SkeletonItem blockSize="26px" />
+        <div className="flex items-center gap-2">
+          <SkeletonItem blockSize="26px" inlineSize="26px" />
+          <SkeletonItem blockSize="26px" inlineSize="400px" />
+        </div>
+        <div className="flex items-center gap-2">
+          <SkeletonItem blockSize="26px" inlineSize="26px" />
+          <SkeletonItem blockSize="26px" inlineSize="400px" />
+        </div>
+        <SkeletonItem blockSize="26px" inlineSize="80%" />
+        <div className="flex items-center gap-2">
+          <SkeletonItem blockSize="26px" inlineSize="50%" />
+        </div>
+        <div className="border-0.5 absolute right-3.5 bottom-2 z-10 flex items-center gap-2">
+          <SkeletonItem blockSize="26px" inlineSize="100px" />
+          <SkeletonItem blockSize="26px" inlineSize="50px" />
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Loader.Item width="26px" height="26px" />
-        <Loader.Item width="400px" height="26px" />
-      </div>
-      <Loader.Item width="80%" height="26px" />
-      <div className="flex items-center gap-2">
-        <Loader.Item width="50%" height="26px" />
-      </div>
-      <div className="border-0.5 absolute right-3.5 bottom-2 z-10 flex items-center gap-2">
-        <Loader.Item width="100px" height="26px" />
-        <Loader.Item width="50px" height="26px" />
-      </div>
-    </Loader>
+    </Skeleton>
   );
 }

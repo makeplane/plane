@@ -15,7 +15,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 // constants
 import { PROJECT_DETAILS } from "@plane/constants";
 // hooks
@@ -156,9 +156,11 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
             )}
           />
         ) : (
-          <Loader className="h-9 w-full">
-            <Loader.Item width="100%" height="100%" />
-          </Loader>
+          <Skeleton aria-label={t("aria_labels.loading.member_defaults")}>
+            <div className="h-9 w-full">
+              <SkeletonItem blockSize="100%" />
+            </div>
+          </Skeleton>
         )}
       </DefaultSettingItem>
       <DefaultSettingItem title="Default Assignee" description="Select the default assignee for the project.">
@@ -177,9 +179,11 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
             )}
           />
         ) : (
-          <Loader className="h-9 w-full">
-            <Loader.Item width="100%" height="100%" />
-          </Loader>
+          <Skeleton aria-label={t("aria_labels.loading.member_defaults")}>
+            <div className="h-9 w-full">
+              <SkeletonItem blockSize="100%" />
+            </div>
+          </Skeleton>
         )}
       </DefaultSettingItem>
       {currentProjectDetails && (

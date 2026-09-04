@@ -6,8 +6,9 @@
 
 // plane package imports
 import React from "react";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { IAnalyticsResponseFields } from "@plane/types";
-import { Loader } from "@plane/ui";
 
 export type InsightCardProps = {
   data?: IAnalyticsResponseFields;
@@ -16,6 +17,7 @@ export type InsightCardProps = {
 };
 
 function InsightCard(props: InsightCardProps) {
+  const { t } = useTranslation();
   const { data, label, isLoading = false } = props;
   const count = data?.count ?? 0;
 
@@ -27,7 +29,9 @@ function InsightCard(props: InsightCardProps) {
           <div className="text-20 font-bold text-primary">{count}</div>
         </div>
       ) : (
-        <Loader.Item height="50px" width="100%" />
+        <Skeleton aria-label={t("aria_labels.loading.insight")}>
+          <SkeletonItem blockSize="50px" />
+        </Skeleton>
       )}
     </div>
   );

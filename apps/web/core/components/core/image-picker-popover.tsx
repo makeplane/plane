@@ -14,13 +14,14 @@ import useSWR from "swr";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Tabs } from "@plane/propel/tabs";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Loader } from "@plane/ui";
 // helpers
 import { STATIC_COVER_IMAGES, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
@@ -53,6 +54,7 @@ type Props<TFieldValues extends FieldValues = FieldValues> = {
 const fileService = new FileService();
 
 function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldValues>(props: Props<TFieldValues>) {
+  const { t } = useTranslation();
   const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
@@ -272,16 +274,18 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                           <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
                         )
                       ) : (
-                        <Loader className="grid grid-cols-4 gap-4">
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                        </Loader>
+                        <Skeleton aria-label={t("aria_labels.loading.images")}>
+                          <div className="grid grid-cols-4 gap-4">
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                            <SkeletonItem blockSize="80px" />
+                          </div>
+                        </Skeleton>
                       )}
                     </>
                   )}

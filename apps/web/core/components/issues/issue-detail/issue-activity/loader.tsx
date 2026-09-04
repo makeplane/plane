@@ -4,36 +4,45 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 
 export function IssueActivityLoader() {
+  const { t } = useTranslation();
   return (
-    <Loader className="space-y-8">
-      <div className="flex items-start gap-3">
-        <Loader.Item className="shrink-0" height="28px" width="28px" />
-        <div className="w-full space-y-2">
-          <Loader.Item height="8px" width="60%" />
-          <Loader.Item height="8px" width="40%" />
-          <Loader.Item height="10px" width="100%" />
+    <Skeleton aria-label={t("aria_labels.loading.issue_activity")}>
+      <div className="space-y-8">
+        <div className="flex items-start gap-3">
+          <div className="shrink-0">
+            <SkeletonItem blockSize="28px" inlineSize="28px" />
+          </div>
+          <div className="w-full space-y-2">
+            <SkeletonItem blockSize="8px" inlineSize="60%" />
+            <SkeletonItem blockSize="8px" inlineSize="40%" />
+            <SkeletonItem blockSize="10px" />
+          </div>
+        </div>
+        <div className="flex items-start gap-3">
+          <div className="shrink-0">
+            <SkeletonItem blockSize="28px" inlineSize="28px" />
+          </div>
+          <div className="w-full space-y-2">
+            <SkeletonItem blockSize="8px" inlineSize="40%" />
+            <SkeletonItem blockSize="8px" inlineSize="60%" />
+            <SkeletonItem blockSize="10px" inlineSize="80%" />
+          </div>
+        </div>
+        <div className="flex items-start gap-3">
+          <div className="shrink-0">
+            <SkeletonItem blockSize="28px" inlineSize="28px" />
+          </div>
+          <div className="w-full space-y-2">
+            <SkeletonItem blockSize="8px" inlineSize="60%" />
+            <SkeletonItem blockSize="8px" inlineSize="40%" />
+            <SkeletonItem blockSize="10px" />
+          </div>
         </div>
       </div>
-      <div className="flex items-start gap-3">
-        <Loader.Item className="shrink-0" height="28px" width="28px" />
-        <div className="w-full space-y-2">
-          <Loader.Item height="8px" width="40%" />
-          <Loader.Item height="8px" width="60%" />
-          <Loader.Item height="10px" width="80%" />
-        </div>
-      </div>
-      <div className="flex items-start gap-3">
-        <Loader.Item className="shrink-0" height="28px" width="28px" />
-        <div className="w-full space-y-2">
-          <Loader.Item height="8px" width="60%" />
-          <Loader.Item height="8px" width="40%" />
-          <Loader.Item height="10px" width="100%" />
-        </div>
-      </div>
-    </Loader>
+    </Skeleton>
   );
 }

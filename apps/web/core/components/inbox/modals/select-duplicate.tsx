@@ -11,9 +11,10 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { SearchOutline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
-import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -153,12 +154,14 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
         <Combobox.Options as="ul" static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
           {isSearching ? (
-            <Loader className="space-y-3 p-3">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
+            <Skeleton aria-label={t("aria_labels.loading.work_items")}>
+              <div className="space-y-3 p-3">
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+              </div>
+            </Skeleton>
           ) : (
             <>{issueList}</>
           )}

@@ -11,8 +11,9 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { LayerStackIcon } from "@plane/propel/icons";
 import { AddOutline, UserOutline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { IUserProfileData } from "@plane/types";
-import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
+import { Card, ECardSpacing, ECardDirection } from "@plane/ui";
 // types
 
 type Props = {
@@ -65,11 +66,13 @@ export function ProfileStats({ userProfile }: Props) {
           ))}
         </div>
       ) : (
-        <Loader className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Loader.Item height="80px" />
-          <Loader.Item height="80px" />
-          <Loader.Item height="80px" />
-        </Loader>
+        <Skeleton aria-label={t("aria_labels.loading.profile_stats")}>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <SkeletonItem blockSize="80px" />
+            <SkeletonItem blockSize="80px" />
+            <SkeletonItem blockSize="80px" />
+          </div>
+        </Skeleton>
       )}
     </div>
   );

@@ -4,30 +4,43 @@
  * See the LICENSE file for details.
  */
 
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 
 export function ProjectInsightsLoader() {
+  const { t } = useTranslation();
   return (
     <div className="flex h-[200px] gap-1">
-      <Loader className="h-full w-full">
-        <Loader.Item height="100%" width="100%" />
-      </Loader>
+      <div className="h-[200px] w-full">
+        <Skeleton aria-label={t("aria_labels.loading.chart")}>
+          <div className="h-full w-full">
+            <SkeletonItem blockSize="100%" inlineSize="100%" />
+          </div>
+        </Skeleton>
+      </div>
       <div className="flex h-full w-full flex-col gap-1">
-        <Loader className="h-12 w-full">
-          <Loader.Item height="100%" width="100%" />
-        </Loader>
-        <Loader className="h-full w-full">
-          <Loader.Item height="100%" width="100%" />
-        </Loader>
+        <Skeleton aria-label={t("aria_labels.loading.chart")}>
+          <div className="h-12 w-full">
+            <SkeletonItem blockSize="100%" />
+          </div>
+        </Skeleton>
+        <Skeleton aria-label={t("aria_labels.loading.chart")}>
+          <div className="h-full w-full">
+            <SkeletonItem blockSize="100%" />
+          </div>
+        </Skeleton>
       </div>
     </div>
   );
 }
 
 export function ChartLoader() {
+  const { t } = useTranslation();
   return (
-    <Loader className="h-[350px] w-full">
-      <Loader.Item height="100%" width="100%" />
-    </Loader>
+    <Skeleton aria-label={t("aria_labels.loading.chart")}>
+      <div className="h-[350px] w-full">
+        <SkeletonItem blockSize="100%" />
+      </div>
+    </Skeleton>
   );
 }

@@ -11,8 +11,8 @@ import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { ICycle } from "@plane/types";
-import { Loader } from "@plane/ui";
 // assets
 import darkProgressAsset from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
 import lightProgressAsset from "@/app/assets/empty-state/active-cycle/progress-light.webp?url";
@@ -116,8 +116,10 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
       )}
     </div>
   ) : (
-    <Loader className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
-      <Loader.Item width="100%" height="100%" />
-    </Loader>
+    <Skeleton aria-label={t("aria_labels.loading.cycle_progress")}>
+      <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
+        <SkeletonItem blockSize="100%" />
+      </div>
+    </Skeleton>
   );
 });

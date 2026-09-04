@@ -6,9 +6,10 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { Loader } from "@plane/ui";
 // local imports
 import { DiscountInfo } from "./discount-info";
 
@@ -33,6 +34,7 @@ type Props = {
 };
 
 export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Props) {
+  const { t } = useTranslation();
   const {
     planeName,
     planVariant,
@@ -52,9 +54,11 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
       <div className="pb-4 text-center">
         <div className="h-9 text-20 font-semibold">
           {isLoading ? (
-            <Loader className="flex flex-col items-center justify-center">
-              <Loader.Item height="36px" width="4rem" />
-            </Loader>
+            <Skeleton aria-label={t("aria_labels.loading.checkout_button")}>
+              <div className="flex flex-col items-center justify-center">
+                <SkeletonItem blockSize="36px" inlineSize="4rem" />
+              </div>
+            </Skeleton>
           ) : (
             <DiscountInfo
               currency={price.currency}
@@ -68,9 +72,11 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
         <div className="text-caption-md-medium text-tertiary">per user per month</div>
       </div>
       {isLoading ? (
-        <Loader className="flex flex-col items-center justify-center">
-          <Loader.Item height="38px" width="14rem" />
-        </Loader>
+        <Skeleton aria-label={t("aria_labels.loading.checkout_button")}>
+          <div className="flex flex-col items-center justify-center">
+            <SkeletonItem blockSize="38px" inlineSize="14rem" />
+          </div>
+        </Skeleton>
       ) : (
         <div className="flex w-full flex-col items-center justify-center space-y-4">
           <Button

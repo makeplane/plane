@@ -9,9 +9,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // types
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "@plane/constants";
 // hooks
@@ -27,6 +28,7 @@ type Props = {
 const appInstallationService = new AppInstallationService();
 
 export const SelectChannel = observer(function SelectChannel({ integration }: Props) {
+  const { t } = useTranslation();
   // store hooks
   const { config } = useInstance();
   // states
@@ -102,9 +104,9 @@ export const SelectChannel = observer(function SelectChannel({ integration }: Pr
           />
         </button>
       ) : (
-        <Loader>
-          <Loader.Item height="35px" width="150px" />
-        </Loader>
+        <Skeleton aria-label={t("aria_labels.loading.slack_channel")}>
+          <SkeletonItem blockSize="35px" inlineSize="150px" />
+        </Skeleton>
       )}
     </>
   );

@@ -7,9 +7,10 @@
 import { observer } from "mobx-react";
 // types
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
@@ -30,6 +31,7 @@ export type TalkToSalesCardProps = {
 };
 
 export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
+  const { t } = useTranslation();
   const {
     planVariant,
     href,
@@ -57,9 +59,11 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
       <div className="pb-4 text-center">
         <div className="flex h-9 items-center justify-center text-20 font-semibold">
           {isLoading ? (
-            <Loader className="flex flex-col items-center justify-center">
-              <Loader.Item height="36px" width="4rem" />
-            </Loader>
+            <Skeleton aria-label={t("aria_labels.loading.price")}>
+              <div className="flex flex-col items-center justify-center">
+                <SkeletonItem blockSize="36px" inlineSize="4rem" />
+              </div>
+            </Skeleton>
           ) : (
             <>Quote on request</>
           )}
@@ -67,9 +71,11 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
         <div className="text-caption-md-medium text-tertiary">per user per month</div>
       </div>
       {isLoading ? (
-        <Loader className="flex flex-col items-center justify-center">
-          <Loader.Item height="38px" width="14rem" />
-        </Loader>
+        <Skeleton aria-label={t("aria_labels.loading.price")}>
+          <div className="flex flex-col items-center justify-center">
+            <SkeletonItem blockSize="38px" inlineSize="14rem" />
+          </div>
+        </Skeleton>
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
           <a href={href} target="_blank" className={cn(getButtonStyling("primary", "lg"), "w-56")} rel="noreferrer">

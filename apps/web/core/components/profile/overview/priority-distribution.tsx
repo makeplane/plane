@@ -5,11 +5,12 @@
  */
 
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IUserProfileData } from "@plane/types";
-import { Loader, Card } from "@plane/ui";
+import { Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
 
 type Props = {
@@ -72,13 +73,15 @@ export function ProfilePriorityDistribution({ userProfile }: Props) {
         </Card>
       ) : (
         <div className="grid place-items-center p-7">
-          <Loader className="flex items-end gap-12">
-            <Loader.Item width="30px" height="200px" />
-            <Loader.Item width="30px" height="150px" />
-            <Loader.Item width="30px" height="250px" />
-            <Loader.Item width="30px" height="150px" />
-            <Loader.Item width="30px" height="100px" />
-          </Loader>
+          <Skeleton aria-label={t("aria_labels.loading.priority_distribution")}>
+            <div className="flex items-end gap-12">
+              <SkeletonItem blockSize="200px" inlineSize="30px" />
+              <SkeletonItem blockSize="150px" inlineSize="30px" />
+              <SkeletonItem blockSize="250px" inlineSize="30px" />
+              <SkeletonItem blockSize="150px" inlineSize="30px" />
+              <SkeletonItem blockSize="100px" inlineSize="30px" />
+            </div>
+          </Skeleton>
         </div>
       )}
     </div>

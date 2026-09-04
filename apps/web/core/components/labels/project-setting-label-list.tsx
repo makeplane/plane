@@ -8,12 +8,12 @@ import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IIssueLabel } from "@plane/types";
-import { Loader } from "@plane/ui";
 import type { TLabelOperationsCallbacks } from "@/components/labels";
 import {
   CreateUpdateLabelInline,
@@ -160,12 +160,14 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
           )
         ) : (
           !showLabelForm && (
-            <Loader className="space-y-5">
-              <Loader.Item height="42px" />
-              <Loader.Item height="42px" />
-              <Loader.Item height="42px" />
-              <Loader.Item height="42px" />
-            </Loader>
+            <Skeleton aria-label={t("aria_labels.loading.labels")}>
+              <div className="space-y-5">
+                <SkeletonItem blockSize="42px" />
+                <SkeletonItem blockSize="42px" />
+                <SkeletonItem blockSize="42px" />
+                <SkeletonItem blockSize="42px" />
+              </div>
+            </Skeleton>
           )
         )}
       </div>

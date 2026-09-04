@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { AiStar1Outline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -16,7 +17,6 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popover";
@@ -156,25 +156,27 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
   return (
     <div className="relative rounded-lg border-[0.5px] border-subtle-1 bg-layer-2">
       {descriptionHtmlData === undefined || !projectId ? (
-        <Loader className="max-h-64 min-h-[120px] space-y-2 overflow-hidden rounded-md border border-subtle p-3 py-2 pt-3">
-          <Loader.Item width="100%" height="26px" />
-          <div className="flex items-center gap-2">
-            <Loader.Item width="26px" height="26px" />
-            <Loader.Item width="400px" height="26px" />
+        <Skeleton aria-label={t("aria_labels.loading.description")}>
+          <div className="max-h-64 min-h-[120px] space-y-2 overflow-hidden rounded-md border border-subtle p-3 py-2 pt-3">
+            <SkeletonItem blockSize="26px" />
+            <div className="flex items-center gap-2">
+              <SkeletonItem blockSize="26px" inlineSize="26px" />
+              <SkeletonItem blockSize="26px" inlineSize="400px" />
+            </div>
+            <div className="flex items-center gap-2">
+              <SkeletonItem blockSize="26px" inlineSize="26px" />
+              <SkeletonItem blockSize="26px" inlineSize="400px" />
+            </div>
+            <SkeletonItem blockSize="26px" inlineSize="80%" />
+            <div className="flex items-center gap-2">
+              <SkeletonItem blockSize="26px" inlineSize="50%" />
+            </div>
+            <div className="border-0.5 absolute right-3.5 bottom-2 z-10 flex items-center gap-2">
+              <SkeletonItem blockSize="26px" inlineSize="100px" />
+              <SkeletonItem blockSize="26px" inlineSize="50px" />
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Loader.Item width="26px" height="26px" />
-            <Loader.Item width="400px" height="26px" />
-          </div>
-          <Loader.Item width="80%" height="26px" />
-          <div className="flex items-center gap-2">
-            <Loader.Item width="50%" height="26px" />
-          </div>
-          <div className="border-0.5 absolute right-3.5 bottom-2 z-10 flex items-center gap-2">
-            <Loader.Item width="100px" height="26px" />
-            <Loader.Item width="50px" height="26px" />
-          </div>
-        </Loader>
+        </Skeleton>
       ) : (
         <>
           <Controller

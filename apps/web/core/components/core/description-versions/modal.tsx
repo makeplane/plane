@@ -14,8 +14,9 @@ import { Button } from "@plane/propel/button";
 import { ChevronLeftOutline, ChevronRightOutline, CopyOutline } from "@makeplane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { TDescriptionVersion } from "@plane/types";
-import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -139,20 +140,22 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               workspaceSlug={workspaceSlug}
             />
           ) : (
-            <div className="space-y-1">
-              <Loader.Item width="300px" height="15px" />
-              <Loader.Item width="400px" height="15px" />
-              <div className="flex items-center gap-2">
-                <Loader.Item width="20px" height="15px" />
-                <Loader.Item width="500px" height="15px" />
+            <Skeleton aria-label={t("aria_labels.loading.description_version")}>
+              <div className="space-y-1">
+                <SkeletonItem blockSize="15px" inlineSize="300px" />
+                <SkeletonItem blockSize="15px" inlineSize="400px" />
+                <div className="flex items-center gap-2">
+                  <SkeletonItem blockSize="15px" inlineSize="20px" />
+                  <SkeletonItem blockSize="15px" inlineSize="500px" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <SkeletonItem blockSize="15px" inlineSize="20px" />
+                  <SkeletonItem blockSize="15px" inlineSize="200px" />
+                </div>
+                <SkeletonItem blockSize="15px" inlineSize="300px" />
+                <SkeletonItem blockSize="15px" inlineSize="200px" />
               </div>
-              <div className="flex items-center gap-2">
-                <Loader.Item width="20px" height="15px" />
-                <Loader.Item width="200px" height="15px" />
-              </div>
-              <Loader.Item width="300px" height="15px" />
-              <Loader.Item width="200px" height="15px" />
-            </div>
+            </Skeleton>
           )}
         </div>
         {/* End version description */}

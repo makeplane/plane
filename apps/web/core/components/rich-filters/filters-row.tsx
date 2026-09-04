@@ -7,12 +7,14 @@
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { AddFilterOutline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
-import { cn, EHeaderVariant, Header, Loader } from "@plane/ui";
+import { cn, EHeaderVariant, Header } from "@plane/ui";
 // local imports
 import type { TAddFilterButtonProps } from "./add-filters/button";
 import { AddFilterButton } from "./add-filters/button";
@@ -28,6 +30,7 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
 export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersRowProps<K, E>
 ) {
+  const { t } = useTranslation();
   const { buttonConfig, disabledAllOperations: disabledAllOperationsProp = false, filter, variant = "header" } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
@@ -128,9 +131,11 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   if (!filter.configManager.areConfigsReady && !hasAnyConditions) {
     return (
       <RowTransition show={filter.isVisible}>
-        <Loader>
-          <Loader.Item height="44px" width="100%" className={cn({ "rounded-none": variant === "header" })} />
-        </Loader>
+        <Skeleton aria-label={t("aria_labels.loading.filters")}>
+          <div className={cn("overflow-hidden", { "rounded-none": variant === "header" })}>
+            <SkeletonItem blockSize="44px" />
+          </div>
+        </Skeleton>
       </RowTransition>
     );
   }

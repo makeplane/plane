@@ -9,13 +9,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
 import { ChevronDownOutline, LogOutOutline, MailOutline, PlusCircleOutline } from "@makeplane/propel/icons";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
@@ -178,10 +178,12 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       </div>
                     ) : (
                       <div className="w-full">
-                        <Loader className="space-y-2">
-                          <Loader.Item height="30px" />
-                          <Loader.Item height="30px" />
-                        </Loader>
+                        <Skeleton aria-label={t("aria_labels.loading.workspaces")}>
+                          <div className="space-y-2">
+                            <SkeletonItem blockSize="30px" />
+                            <SkeletonItem blockSize="30px" />
+                          </div>
+                        </Skeleton>
                       </div>
                     )}
                   </div>
