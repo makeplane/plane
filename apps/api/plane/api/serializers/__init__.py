@@ -67,4 +67,12 @@ from .member import (
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
+from .service_account import (
+    ServiceAccountCreateSerializer,
+    ServiceAccountSerializer,
+    ServiceAccountTokenCreateSerializer,
+    ServiceAccountTokenCreatedSerializer,
+    ServiceAccountTokenRotateSerializer,
+    ServiceAccountTokenSerializer,
+)
 from .sticky import StickySerializer
