@@ -17,8 +17,8 @@ export function HomeLoader() {
               <div className="mb-4">
                 <SkeletonItem blockSize="20px" inlineSize="100px" />
               </div>
-              <div className="flex h-[110px] w-full items-center justify-center gap-2 rounded-sm text-placeholder">
-                <SkeletonItem blockSize="100%" />
+              <div className="h-[110px] w-full rounded-sm">
+                <SkeletonItem blockSize="100%" inlineSize="100%" />
               </div>
             </div>
           </Skeleton>

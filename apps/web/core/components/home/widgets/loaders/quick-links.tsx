@@ -6,7 +6,6 @@
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { range } from "lodash-es";
-// ui
 
 export function QuickLinksWidgetLoader() {
   return (

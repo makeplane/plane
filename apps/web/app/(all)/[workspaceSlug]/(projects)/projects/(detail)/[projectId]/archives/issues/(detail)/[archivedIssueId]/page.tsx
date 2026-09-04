@@ -51,22 +51,24 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       {issueLoader ? (
-        <Skeleton aria-label="Loading work item details">
-          <div className="flex h-full gap-5 p-5">
-            <div className="basis-2/3 space-y-2">
-              <SkeletonItem blockSize="30px" inlineSize="40%" />
-              <SkeletonItem blockSize="15px" inlineSize="60%" />
-              <SkeletonItem blockSize="15px" inlineSize="60%" />
-              <SkeletonItem blockSize="15px" inlineSize="40%" />
+        <div className="flex h-full gap-5 p-5">
+          <Skeleton aria-label="Loading work item details">
+            <div className="flex w-full gap-5">
+              <div className="basis-2/3 space-y-2">
+                <SkeletonItem blockSize="30px" inlineSize="40%" />
+                <SkeletonItem blockSize="15px" inlineSize="60%" />
+                <SkeletonItem blockSize="15px" inlineSize="60%" />
+                <SkeletonItem blockSize="15px" inlineSize="40%" />
+              </div>
+              <div className="basis-1/3 space-y-3">
+                <SkeletonItem blockSize="30px" />
+                <SkeletonItem blockSize="30px" />
+                <SkeletonItem blockSize="30px" />
+                <SkeletonItem blockSize="30px" />
+              </div>
             </div>
-            <div className="basis-1/3 space-y-3">
-              <SkeletonItem blockSize="30px" />
-              <SkeletonItem blockSize="30px" />
-              <SkeletonItem blockSize="30px" />
-              <SkeletonItem blockSize="30px" />
-            </div>
-          </div>
-        </Skeleton>
+          </Skeleton>
+        </div>
       ) : (
         <>
           <Banner

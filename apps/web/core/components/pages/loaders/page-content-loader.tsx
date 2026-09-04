@@ -17,9 +17,9 @@ export function PageContentLoader(props: Props) {
 
   return (
     <div className={cn("relative flex size-full flex-col", className)}>
-      {/* header */}
-      <div className="relative flex h-12 w-full flex-shrink-0 items-center divide-x divide-subtle border-b border-subtle">
-        <Skeleton aria-label="Loading page content">
+      <Skeleton aria-label="Loading page content">
+        {/* header */}
+        <div className="relative flex h-12 w-full flex-shrink-0 items-center divide-x divide-subtle border-b border-subtle">
           <div className="relative flex items-center gap-1 pr-2">
             <SkeletonItem blockSize="26px" inlineSize="26px" />
             <SkeletonItem blockSize="26px" inlineSize="26px" />
@@ -29,32 +29,24 @@ export function PageContentLoader(props: Props) {
             <SkeletonItem blockSize="26px" inlineSize="26px" />
             <SkeletonItem blockSize="26px" inlineSize="26px" />
           </div>
-        </Skeleton>
-        <Skeleton aria-label="Loading page content">
           <div className="relative flex items-center gap-1 px-2">
             <SkeletonItem blockSize="26px" inlineSize="26px" />
             <SkeletonItem blockSize="26px" inlineSize="26px" />
           </div>
-        </Skeleton>
-        <Skeleton aria-label="Loading page content">
           <div className="relative flex items-center gap-1 px-2">
             <SkeletonItem blockSize="26px" inlineSize="26px" />
             <SkeletonItem blockSize="26px" inlineSize="26px" />
           </div>
-        </Skeleton>
-        <Skeleton aria-label="Loading page content">
           <div className="relative flex items-center gap-1 pl-2">
             <SkeletonItem blockSize="26px" inlineSize="26px" />
             <SkeletonItem blockSize="26px" inlineSize="26px" />
           </div>
-        </Skeleton>
-      </div>
+        </div>
 
-      {/* content */}
-      <div className="relative flex size-full overflow-hidden pt-[64px]">
-        {/* editor loader */}
-        <div className="size-full py-5">
-          <Skeleton aria-label="Loading page content">
+        {/* content */}
+        <div className="relative flex size-full overflow-hidden pt-[64px]">
+          {/* editor loader */}
+          <div className="size-full py-5">
             <div className="relative space-y-4">
               <SkeletonItem blockSize="36px" inlineSize="50%" />
               <div className="space-y-2">
@@ -91,9 +83,9 @@ export function PageContentLoader(props: Props) {
                 </div>
               </div>
             </div>
-          </Skeleton>
+          </div>
         </div>
-      </div>
+      </Skeleton>
     </div>
   );
 }

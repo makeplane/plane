@@ -11,7 +11,9 @@ export function ProjectDetailsFormLoader() {
     <>
       <div className="relative mt-6 h-44 w-full">
         <Skeleton aria-label="Loading project form">
-          <SkeletonItem inlineSize="46px" />
+          <div className="h-full w-full">
+            <SkeletonItem blockSize="100%" inlineSize="100%" />
+          </div>
         </Skeleton>
         <div className="absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
@@ -39,7 +41,7 @@ export function ProjectDetailsFormLoader() {
           <h4 className="text-13">Description</h4>
           <Skeleton aria-label="Loading project form">
             <div className="w-full">
-              <SkeletonItem blockSize="102px" inlineSize="full" />
+              <SkeletonItem blockSize="102px" inlineSize="100%" />
             </div>
           </Skeleton>
         </div>

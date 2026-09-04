@@ -9,11 +9,13 @@ import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 export function ProjectInsightsLoader() {
   return (
     <div className="flex h-[200px] gap-1">
-      <Skeleton aria-label="Loading chart">
-        <div className="h-full w-full">
-          <SkeletonItem blockSize="100%" />
-        </div>
-      </Skeleton>
+      <div className="h-[200px] w-full">
+        <Skeleton aria-label="Loading chart">
+          <div className="h-full w-full">
+            <SkeletonItem blockSize="100%" inlineSize="100%" />
+          </div>
+        </Skeleton>
+      </div>
       <div className="flex h-full w-full flex-col gap-1">
         <Skeleton aria-label="Loading chart">
           <div className="h-12 w-full">

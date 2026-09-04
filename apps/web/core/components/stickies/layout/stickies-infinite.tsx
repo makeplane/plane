@@ -51,14 +51,14 @@ export const StickiesInfinite = observer(function StickiesInfinite() {
           hasNextPage &&
           workspaceStickies?.length >= STICKIES_PER_PAGE && (
             <div
-              className={cn("box-border flex min-h-[300px] w-full p-2")}
+              className={cn("box-border flex min-h-75 w-full p-2")}
               ref={setElementRef}
               id="intersection-element"
             >
-              <div className="flex min-h-[300px] w-full rounded-sm">
+              <div className="min-h-75 w-full rounded-sm">
                 <Skeleton aria-label="Loading more stickies">
-                  <div className="h-full w-full">
-                    <SkeletonItem blockSize="100%" />
+                  <div className="h-75 w-full">
+                    <SkeletonItem blockSize="100%" inlineSize="100%" />
                   </div>
                 </Skeleton>
               </div>
