@@ -134,6 +134,8 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                 <div key={row.key} className="grid grid-cols-[1fr_1fr_1fr_2rem] items-center gap-2">
                   <div>
                     <CustomSelect
+                      className="w-full"
+                      customButtonClassName="w-full"
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
                           <span className="truncate">
@@ -160,6 +162,8 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                   </div>
                   <div>
                     <CustomSelect
+                      className="w-full"
+                      customButtonClassName="w-full"
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
                           <span className="truncate">
@@ -181,6 +185,8 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                   </div>
                   <div>
                     <CustomSelect
+                      className="w-full"
+                      customButtonClassName="w-full"
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
                           <span className="truncate">
