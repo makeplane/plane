@@ -22,7 +22,7 @@ class PageViewSet(AppPageViewSet):
     authentication_classes = [APIKeyAuthentication]
 
     def list(self, request, slug, project_id):
-        """Return project pages in the pagination format used by the SDK."""
+        """Return project pages in the v1 cursor-pagination envelope."""
         queryset = self.get_queryset()
         project = Project.objects.get(pk=project_id)
         if (
