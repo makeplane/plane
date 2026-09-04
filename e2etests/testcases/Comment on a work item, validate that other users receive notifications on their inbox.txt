@@ -1,0 +1,18 @@
+save value "Comment work item" as "commentItem"
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+create work item saved value "commentItem" on project stored value "projectName"
+click stored value "projectName" below "Projects" within the context of "sidebar"
+click "Work items"
+click stored value "commentItem"
+click "Add comment"
+type string with parameters "@${projectUser}"
+click stored value "projectUser"
+click "Comment"
+log out
+Log stored value "projectUser" to website
+click "Inbox"
+check that page contains "1" on the right of "Mentions"
+log out
+Log stored value "adminUser" to website
+delete work item saved value "commentItem" from project stored value "projectName"

@@ -1,0 +1,16 @@
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+add a cycle "Cycle 1" to project stored value "projectName"
+click stored value "projectName" below "Project" within the context of "sidebar"
+click "Cycles" below stored value "projectName"
+click button "Add Cycle"
+enter "Cycle 2" into "Title"
+click "Start date"
+click stored value "todayDayOfMonth"
+click button "Create cycle"
+check that page contains "You already have a cycle on the given dates"
+click "Cancel"
+check that page does not contain "Cycle 2"
+click "Completed cycle"
+click stored value "projectName" below "Project" within the context of "sidebar"
+remove cycle "Cycle 1" from project stored value "projectName"

@@ -1,0 +1,7 @@
+click stored value "projectName" below "Project" within the context of "sidebar"
+click "Work items" below stored value "projectName"
+click button "Add work item"
+enter stored value "workItem" into "Title"
+click button "Save"
+check that page contains stored value "workItem"
+click stored value "projectName" below "Project" within the context of "sidebar"
