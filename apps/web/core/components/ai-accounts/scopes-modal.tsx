@@ -46,6 +46,9 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
   const { projectMap, workspaceProjectIds, fetchProjects } = useProject();
   // refs
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Bumped on close so a save response that lands after the modal was closed
+  // cannot close or reset the state of a reopened modal
+  const requestGenerationRef = useRef(0);
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
@@ -79,14 +82,15 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
 
   const removeScopeRow = (rowKey: string) => setScopeRows((prevRows) => prevRows.filter((row) => row.key !== rowKey));
 
-  // Reopening before the delayed reset fires must run the reset immediately
-  // instead of just cancelling the timer — otherwise stale rows from the
-  // previous session would survive into the reopened modal
+  // Reopening before the delayed reset fires must cancel the timer and clear
+  // the submitting lock — but NOT the rows: closing nulls the SWR key, so the
+  // hydration effect above always repopulates scopeRows on reopen (and it runs
+  // before this effect), wiping them here could send an empty save that
+  // deletes all existing policies
   useEffect(() => {
     if (isOpen && resetTimerRef.current) {
       clearTimeout(resetTimerRef.current);
       resetTimerRef.current = null;
-      setScopeRows([]);
       setIsSubmitting(false);
     }
   }, [isOpen]);
@@ -100,6 +104,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
 
   const handleClose = () => {
     onClose();
+    requestGenerationRef.current += 1;
     resetTimerRef.current = setTimeout(() => {
       setScopeRows([]);
       setIsSubmitting(false);
@@ -108,6 +113,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
   };
 
   const handleUpdateScopes = async () => {
+    const generation = ++requestGenerationRef.current;
     setIsSubmitting(true);
     try {
       await aiAccountService.updateAIScopes(
@@ -115,6 +121,9 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
         account.id,
         scopeRows.map(({ project, resource_type, action }) => ({ project, resource_type, action }))
       );
+      // Stale completion: the modal was closed (and maybe reopened) while the
+      // request was in flight — never touch the new session's state
+      if (generation !== requestGenerationRef.current) return;
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("workspace_settings.settings.ai_accounts.scopes.success.title"),
@@ -124,6 +133,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
       mutate(AI_ACCOUNT_SCOPES(workspaceSlug, account.id));
       handleClose();
     } catch (err) {
+      if (generation !== requestGenerationRef.current) return;
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workspace_settings.settings.ai_accounts.scopes.error.title"),
@@ -131,7 +141,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
           (err as { message?: string })?.message ?? t("workspace_settings.settings.ai_accounts.scopes.error.message"),
       });
     } finally {
-      setIsSubmitting(false);
+      if (generation === requestGenerationRef.current) setIsSubmitting(false);
     }
   };
 

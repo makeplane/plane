@@ -95,7 +95,10 @@ export function CreateAIAccountModal(props: Props) {
           t("workspace_settings.settings.ai_accounts.toasts.not_created.message"),
       });
     } finally {
-      setIsSubmitting(false);
+      // A stale request must not unlock the submitting state of a newer one
+      if (generation === requestGenerationRef.current) {
+        setIsSubmitting(false);
+      }
     }
   };
 
