@@ -20,6 +20,7 @@ from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
 from plane.app.views.issue.link import IssueLinkViewSet
+from plane.api.views.issue import IssueLinkDetailAPIEndpoint
 
 
 @pytest.mark.unit
@@ -119,6 +120,87 @@ class TestIssueLinkPartialUpdate:
         request = self._create_mock_request({"url": new_url})
         response = self.view.partial_update(
             request,
+            slug=self.workspace_slug,
+            project_id=self.project_id,
+            issue_id=self.issue_id,
+            pk=self.link_id,
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        mock_crawl.delay.assert_called_once_with(self.link_id, new_url)
+        mock_activity.delay.assert_called_once()
+
+
+@pytest.mark.unit
+class TestIssueLinkDetailPatch:
+    @pytest.fixture(autouse=True)
+    def setup_view(self):
+        self.factory = APIRequestFactory()
+        self.view = IssueLinkDetailAPIEndpoint()
+        self.workspace_slug = "test-workspace"
+        self.project_id = str(uuid.uuid4())
+        self.issue_id = str(uuid.uuid4())
+        self.link_id = str(uuid.uuid4())
+        self.user_id = str(uuid.uuid4())
+
+    def _create_mock_request(self, data):
+        wsgi_request = self.factory.patch("/api/test/", data=data, format="json")
+        request = Request(wsgi_request, parsers=[JSONParser()])
+        request.user = MagicMock()
+        request.user.id = self.user_id
+        return request
+
+    @patch("plane.api.views.issue.issue_activity")
+    @patch("plane.api.views.issue.crawl_work_item_link_title")
+    @patch("plane.api.views.issue.IssueLinkSerializer")
+    @patch("plane.api.views.issue.IssueLink.objects.get")
+    def test_patch_does_not_recrawl_when_url_unchanged(
+        self, mock_get_link, mock_serializer_cls, mock_crawl, mock_activity
+    ):
+        initial_url = "https://github.com/makeplane/plane"
+        mock_instance = MagicMock()
+        mock_instance.id = self.link_id
+        mock_instance.url = initial_url
+        mock_get_link.return_value = mock_instance
+
+        mock_serializer_instance = MagicMock()
+        mock_serializer_instance.is_valid.return_value = True
+        mock_serializer_instance.data = {"id": self.link_id, "url": initial_url}
+        mock_serializer_cls.return_value = mock_serializer_instance
+
+        response = self.view.patch(
+            self._create_mock_request({"title": "Custom Renamed Title"}),
+            slug=self.workspace_slug,
+            project_id=self.project_id,
+            issue_id=self.issue_id,
+            pk=self.link_id,
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        mock_crawl.delay.assert_not_called()
+        mock_activity.delay.assert_called_once()
+
+    @patch("plane.api.views.issue.issue_activity")
+    @patch("plane.api.views.issue.crawl_work_item_link_title")
+    @patch("plane.api.views.issue.IssueLinkSerializer")
+    @patch("plane.api.views.issue.IssueLink.objects.get")
+    def test_patch_triggers_crawl_when_url_changed(
+        self, mock_get_link, mock_serializer_cls, mock_crawl, mock_activity
+    ):
+        initial_url = "https://github.com/makeplane/plane"
+        new_url = "https://github.com/makeplane/plane/pull/123"
+        mock_instance = MagicMock()
+        mock_instance.id = self.link_id
+        mock_instance.url = initial_url
+        mock_get_link.return_value = mock_instance
+
+        mock_serializer_instance = MagicMock()
+        mock_serializer_instance.is_valid.return_value = True
+        mock_serializer_instance.data = {"id": self.link_id, "url": new_url}
+        mock_serializer_cls.return_value = mock_serializer_instance
+
+        response = self.view.patch(
+            self._create_mock_request({"url": new_url}),
             slug=self.workspace_slug,
             project_id=self.project_id,
             issue_id=self.issue_id,
