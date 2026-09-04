@@ -18,6 +18,7 @@ import AnalyticsFilterActions from "@/components/analytics/analytics-filter-acti
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useInstance } from "@/hooks/store/use-instance";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -38,6 +39,9 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const { workspaceProjectIds, loader } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+  const { config: instanceConfig } = useInstance();
+
+  const isSelfManaged = instanceConfig?.is_self_managed ?? false;
 
   const pageTitle = currentWorkspace?.name
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
@@ -71,7 +75,16 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
       <PageHead title={pageTitle} />
       {workspaceProjectIds && (
         <>
-          {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
+          {isSelfManaged ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <h3 className="text-18 font-semibold">{t("workspace_analytics.not_available_ce.title")}</h3>
+                <p className="max-w-[400px] text-13 text-tertiary">
+                  {t("workspace_analytics.not_available_ce.description")}
+                </p>
+              </div>
+            </div>
+          ) : workspaceProjectIds.length > 0 || loader === "init-loader" ? (
             <div className="flex h-full overflow-hidden">
               <Tabs value={selectedTab} onValueChange={handleTabChange} className="h-full w-full">
                 <div className={"flex h-full w-full flex-col"}>
