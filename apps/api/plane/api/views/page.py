@@ -86,7 +86,7 @@ class PageListCreateAPIEndpoint(BaseAPIView):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg("projects__id", distinct=True, filter=Q(projects__id__isnull=False)),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
@@ -227,7 +227,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg("projects__id", distinct=True, filter=Q(projects__id__isnull=False)),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
@@ -288,12 +288,10 @@ class PageDetailAPIEndpoint(BaseAPIView):
         Modify an existing page's properties like name, content, labels, or hierarchy.
         Locked pages cannot be edited and access changes are restricted to the owner.
         """
-        page = Page.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-            projects__id=project_id,
-            project_pages__deleted_at__isnull=True,
-        )
+        # Resolve through get_queryset() so the owner-or-public visibility rule
+        # is applied before any mutation — a project member must not be able to
+        # update another user's private page
+        page = self.get_queryset().get(pk=pk)
 
         if page.is_locked:
             return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)

@@ -125,6 +125,23 @@ class TestPageListCreateAPIEndpoint:
         assert str(label.id) in response.data["label_ids"]
 
     @pytest.mark.django_db
+    def test_create_page_rejects_foreign_label(self, api_key_client, workspace, project, page_data, create_user):
+        """Test that labels from another project cannot be attached"""
+        other_project = Project.objects.create(
+            name="Other Project",
+            identifier="OP",
+            workspace=workspace,
+            created_by=create_user,
+        )
+        foreign_label = Label.objects.create(name="Foreign", project=other_project, workspace=workspace)
+        url = self.get_page_url(workspace.slug, project.id)
+
+        response = api_key_client.post(url, {**page_data, "labels": [str(foreign_label.id)]}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert Page.objects.count() == 0
+
+    @pytest.mark.django_db
     def test_create_page_invalid_parent(self, api_key_client, workspace, project, page_data):
         """Test page creation with a parent that does not exist in the project"""
         url = self.get_page_url(workspace.slug, project.id)
@@ -290,6 +307,42 @@ class TestPageDetailAPIEndpoint:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "owned by someone else" in response.data["error"]
+
+    @pytest.mark.django_db
+    def test_update_private_page_by_non_owner(self, other_api_key_client, workspace, project, create_page, other_user):
+        """Test that a project member cannot update another user's private page"""
+        create_page.access = 1  # Private
+        create_page.save()
+        ProjectMember.objects.create(
+            project=project,
+            member=other_user,
+            role=15,
+            is_active=True,
+        )
+
+        url = self.get_page_detail_url(workspace.slug, project.id, create_page.id)
+        response = other_api_key_client.patch(url, {"name": "Hijacked"}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        create_page.refresh_from_db()
+        assert create_page.name == "Existing Page"
+
+    @pytest.mark.django_db
+    def test_update_page_rejects_foreign_label(self, api_key_client, workspace, project, create_page, create_user):
+        """Test that labels from another project cannot be attached on update"""
+        other_project = Project.objects.create(
+            name="Other Project",
+            identifier="OP",
+            workspace=workspace,
+            created_by=create_user,
+        )
+        foreign_label = Label.objects.create(name="Foreign", project=other_project, workspace=workspace)
+
+        url = self.get_page_detail_url(workspace.slug, project.id, create_page.id)
+        response = api_key_client.patch(url, {"labels": [str(foreign_label.id)]}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert create_page.labels.count() == 0
 
     @pytest.mark.django_db
     def test_delete_unarchived_page(self, api_key_client, workspace, project, create_page):

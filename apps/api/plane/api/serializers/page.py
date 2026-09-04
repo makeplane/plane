@@ -25,10 +25,18 @@ class PageCreateSerializer(BaseSerializer):
     """
 
     labels = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
+        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.none()),
         write_only=True,
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Labels are project-scoped: only labels of the current project may be
+        # attached, on both create and update
+        project_id = self.context.get("project_id")
+        if project_id:
+            self.fields["labels"].child.queryset = Label.objects.filter(project_id=project_id)
 
     class Meta:
         model = Page
