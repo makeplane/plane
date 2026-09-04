@@ -140,9 +140,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       (m) => m.member !== this.userStore?.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
-    //filter out bots (AI agent bots stay visible)
+    //filter out bots (AI agent bots stay visible) and inactive members
     const memberIds = members
-      .filter((m) => isVisibleMember(this.memberRoot?.memberMap?.[m.member]))
+      .filter((m) => m.is_active !== false && isVisibleMember(this.memberRoot?.memberMap?.[m.member]))
       .map((m) => m.member);
     return memberIds;
   });
