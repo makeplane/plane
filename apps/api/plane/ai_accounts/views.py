@@ -2,18 +2,19 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from uuid import uuid4
+from uuid import UUID, uuid4
 from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import APIToken, ProjectMember, User, Workspace, WorkspaceMember
+from plane.db.models import APIToken, FileAsset, ProjectMember, User, Workspace, WorkspaceMember
 
 from .constants import BOT_TYPE_AI_AGENT
 from .models import AIAccount, AIScopePolicy
@@ -129,13 +130,44 @@ class AIAccountDetailAPIEndpoint(BaseAPIView):
         account.is_active = is_active
         account.save()
 
-        # Custom avatar for the backing bot user; an explicit avatar URL
-        # replaces any previously set avatar asset
+        # Custom avatar for the backing bot user. The avatar rides the
+        # avatar_asset FK (same model as regular user avatars): the asset is
+        # uploaded as a workspace asset bound to the bot, so it is never
+        # touched by the uploader's own profile-avatar replacement flow.
         if "avatar" in request.data:
             bot_user = account.bot_user
-            bot_user.avatar = request.data.get("avatar") or ""
-            bot_user.avatar_asset = None
+            old_asset_id = bot_user.avatar_asset_id
+            avatar_url = request.data.get("avatar") or ""
+            if avatar_url:
+                asset_id = avatar_url.rstrip("/").rsplit("/", 1)[-1]
+                try:
+                    asset_id = UUID(asset_id)
+                except ValueError:
+                    asset_id = None
+                asset = (
+                    FileAsset.objects.filter(
+                        id=asset_id, workspace__slug=slug, is_deleted=False
+                    ).first()
+                    if asset_id
+                    else None
+                )
+                if asset is None:
+                    return Response(
+                        {"error": "Avatar asset not found"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                bot_user.avatar_asset = asset
+                bot_user.avatar = ""
+            else:
+                bot_user.avatar_asset = None
+                bot_user.avatar = ""
             bot_user.save(update_fields=["avatar", "avatar_asset", "updated_at"])
+
+            # Delete the previously attached avatar asset
+            if old_asset_id and old_asset_id != bot_user.avatar_asset_id:
+                FileAsset.objects.filter(id=old_asset_id).update(
+                    is_deleted=True, deleted_at=timezone.now()
+                )
 
         # Toggling the account toggles its tokens with it
         APIToken.objects.filter(user=account.bot_user, is_service=True).update(

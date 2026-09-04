@@ -4,12 +4,14 @@
 
 """Contract tests: AI account management endpoints (internal app API, session auth)."""
 
+from uuid import uuid4
+
 import pytest
 from rest_framework import status
 
 from plane.ai_accounts.constants import BOT_TYPE_AI_AGENT
 from plane.ai_accounts.models import AIAccount
-from plane.db.models import APIToken, Project, ProjectMember, User, WorkspaceMember
+from plane.db.models import APIToken, FileAsset, Project, ProjectMember, User, WorkspaceMember
 
 
 @pytest.fixture
@@ -145,30 +147,59 @@ class TestAIAccountManagement:
         )
         account = AIAccount.objects.get(pk=create.data["id"])
 
+        # Avatar assets are workspace assets bound to the bot user
+        asset = FileAsset.objects.create(
+            attributes={"name": "avatar.png", "type": "image/png", "size": 100},
+            asset=f"{workspace.id}/avatar.png",
+            size=100,
+            workspace=workspace,
+            entity_type="USER_AVATAR",
+            user=account.bot_user,
+            is_uploaded=True,
+        )
+
         response = session_client.patch(
             f"{accounts_url(workspace.slug)}{account.id}/",
-            {"avatar": "/api/assets/v2/user-assets/some-asset/"},
+            {"avatar": asset.asset_url},
             format="json",
         )
         assert response.status_code == status.HTTP_200_OK
         account.bot_user.refresh_from_db()
-        assert account.bot_user.avatar == "/api/assets/v2/user-assets/some-asset/"
-        assert account.bot_user.avatar_asset is None
-        assert response.data["bot_user"]["avatar_url"] == "/api/assets/v2/user-assets/some-asset/"
+        assert account.bot_user.avatar_asset_id == asset.id
+        assert account.bot_user.avatar == ""
+        assert response.data["bot_user"]["avatar_url"] == asset.asset_url
+
+        # Unknown or malformed asset references are rejected
+        response = session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/",
+            {"avatar": "/api/assets/v2/static/not-a-uuid/"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        response = session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/",
+            {"avatar": f"/api/assets/v2/static/{uuid4()}/"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         # Omitting the key leaves the avatar untouched; empty string clears it
+        # and deletes the previously attached asset
         session_client.patch(
             f"{accounts_url(workspace.slug)}{account.id}/",
             {"description": "no avatar key"},
             format="json",
         )
         account.bot_user.refresh_from_db()
-        assert account.bot_user.avatar == "/api/assets/v2/user-assets/some-asset/"
+        assert account.bot_user.avatar_asset_id == asset.id
         session_client.patch(
             f"{accounts_url(workspace.slug)}{account.id}/", {"avatar": ""}, format="json"
         )
         account.bot_user.refresh_from_db()
+        assert account.bot_user.avatar_asset_id is None
         assert account.bot_user.avatar == ""
+        asset.refresh_from_db()
+        assert asset.is_deleted is True
 
     def test_delete_disables_everything(self, session_client, workspace):
         create = session_client.post(

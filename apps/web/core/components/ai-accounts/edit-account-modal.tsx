@@ -11,16 +11,19 @@ import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TAIAccount } from "@plane/types";
+import { EFileAssetType, type TAIAccount } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
 import { aiAccountService } from "@/services/ai-account.service";
+import { FileService } from "@/services/file.service";
 // local imports
 import { AIAccountForm, type TAIAccountFormValues } from "./account-form";
 import { AI_ACCOUNTS_LIST } from "./constants";
+
+const fileService = new FileService();
 
 type Props = {
   account: TAIAccount;
@@ -102,6 +105,23 @@ export function EditAIAccountModal(props: Props) {
         onClose={() => setIsAvatarUploadModalOpen(false)}
         onSuccess={handleAvatarChange}
         value={account.bot_user.avatar_url || null}
+        // Bot avatars are uploaded as workspace assets bound to the bot user,
+        // so the current user's own avatar is never clobbered or GC'd
+        uploadAsset={async (image) => {
+          const { asset_url } = await fileService.uploadWorkspaceAsset(
+            workspaceSlug,
+            {
+              entity_type: EFileAssetType.USER_AVATAR,
+              entity_identifier: account.bot_user.id,
+            },
+            image
+          );
+          return asset_url;
+        }}
+        removeAsset={async (value) => {
+          const assetId = getAssetIdFromUrl(value);
+          await fileService.deleteWorkspaceAsset(workspaceSlug, assetId);
+        }}
       />
       <div className="flex items-center gap-4 border-b-[0.5px] border-subtle px-5 py-4">
         <Avatar
