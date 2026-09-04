@@ -21,7 +21,9 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
+from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, APIToken
+from plane.ai_accounts.constants import AI_VISIBLE_MEMBER_Q
+from plane.ai_accounts.models import AIAccount
 from plane.utils.cache import invalidate_cache
 
 from .. import BaseViewSet
@@ -76,7 +78,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
-            pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
+            AI_VISIBLE_MEMBER_Q, pk=pk, workspace__slug=slug, is_active=True
         )
         if request.user.id == workspace_member.member_id:
             return Response(
@@ -99,7 +101,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, pk=pk, member__is_bot=False, is_active=True
+            AI_VISIBLE_MEMBER_Q, workspace__slug=slug, pk=pk, is_active=True
         )
 
         # check requesting user role
@@ -147,6 +149,17 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Removing an AI agent bot from the workspace also deactivates the
+        # backing AI account, so the settings page and the members page stay
+        # consistent (mirrors AIAccountDetailAPIEndpoint.delete)
+        ai_account = AIAccount.objects.filter(
+            workspace__slug=slug, bot_user_id=workspace_member.member_id
+        ).first()
+        if ai_account:
+            APIToken.objects.filter(user_id=workspace_member.member_id, is_service=True).update(is_active=False)
+            ai_account.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(

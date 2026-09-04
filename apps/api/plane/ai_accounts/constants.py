@@ -2,11 +2,19 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db.models import Q
+
 # bot_type value written on the bot User rows backing AI accounts.
 # Deliberately NOT added to plane.db BotTypeEnum: choices are not enforced at
 # the DB level, and keeping plane/db untouched avoids migration conflicts when
 # following upstream.
 BOT_TYPE_AI_AGENT = "AI_AGENT"
+
+# Predicate for member querysets: AI agent bots are treated as regular
+# members (visible, removable, role-editable) while other bot types
+# (e.g. WORKSPACE_SEED) stay hidden. Use as a positional filter arg.
+AI_VISIBLE_MEMBER_Q = Q(member__is_bot=False) | Q(member__bot_type=BOT_TYPE_AI_AGENT)
 
 
 class ResourceType:

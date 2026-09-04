@@ -9,7 +9,12 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import type { EUserPermissions } from "@plane/constants";
-import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
+import type {
+  IWorkspaceBulkInviteFormData,
+  IUserLite,
+  IWorkspaceMember,
+  IWorkspaceMemberInvitation,
+} from "@plane/types";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
@@ -27,6 +32,9 @@ export interface IWorkspaceMembership {
   role: EUserPermissions;
   is_active?: boolean;
 }
+
+// AI agent bots are managed like regular members; other bot types stay hidden
+const isVisibleMember = (user: IUserLite | undefined) => !user?.is_bot || user?.bot_type === "AI_AGENT";
 
 export interface IWorkspaceMemberStore {
   // observables
@@ -132,8 +140,10 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       (m) => m.member !== this.userStore?.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
-    //filter out bots
-    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
+    //filter out bots (AI agent bots stay visible)
+    const memberIds = members
+      .filter((m) => isVisibleMember(this.memberRoot?.memberMap?.[m.member]))
+      .map((m) => m.member);
     return memberIds;
   });
 
@@ -143,8 +153,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    */
   getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
-    //filter out bots and inactive members
-    members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+    //filter out bots and inactive members (AI agent bots stay visible)
+    members = members.filter((m) => isVisibleMember(this.memberRoot?.memberMap?.[m.member]));
 
     // Use filters store to get filtered member ids
     const memberIds = this.filtersStore.getFilteredMemberIds(

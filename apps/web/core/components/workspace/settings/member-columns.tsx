@@ -45,7 +45,7 @@ type AccountTypeProps = {
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   // derived values
-  const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
+  const { avatar_url, display_name, email, first_name, id, is_bot, last_name } = rowData.member;
   const isSuspended = rowData.is_active === false;
 
   return (
@@ -78,6 +78,9 @@ export function NameColumn(props: NameProps) {
               <span className={isSuspended ? "text-placeholder" : ""}>
                 {first_name} {last_name}
               </span>
+              {is_bot && (
+                <span className="flex-shrink-0 rounded bg-layer-1 px-1.5 py-0.5 text-11 text-tertiary">AI</span>
+              )}
             </div>
 
             {!isSuspended && (isAdmin || id === currentUser?.id) && (
