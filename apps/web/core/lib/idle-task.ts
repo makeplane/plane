@@ -36,10 +36,14 @@ export const cancelIdle = (id: number) => {
 };
 
 export const installIdleCallbackPolyfill = () => {
-  if (typeof globalThis === "undefined") return;
-
-  globalThis.requestIdleCallback = globalThis.requestIdleCallback ?? requestIdleFallback;
-  globalThis.cancelIdleCallback = globalThis.cancelIdleCallback ?? cancelIdleFallback;
+  if (typeof globalThis !== "undefined") {
+    globalThis.requestIdleCallback = globalThis.requestIdleCallback ?? requestIdleFallback;
+    globalThis.cancelIdleCallback = globalThis.cancelIdleCallback ?? cancelIdleFallback;
+  }
+  if (typeof window !== "undefined") {
+    (window as any).requestIdleCallback = (window as any).requestIdleCallback ?? requestIdleFallback;
+    (window as any).cancelIdleCallback = (window as any).cancelIdleCallback ?? cancelIdleFallback;
+  }
 };
 
 /**
