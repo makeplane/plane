@@ -46,8 +46,8 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
         linkOperations={linkOperations}
         preloadedData={linkData}
       />
-      <div className="mb-2">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="mb-2 max-sm:mb-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div className="text-14 font-semibold text-tertiary">{t("home.quick_links.title_plural")}</div>
           <button
             onClick={handleCreateLinkModal}
