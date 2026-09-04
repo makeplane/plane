@@ -150,6 +150,112 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI 账户",
+        "description": "创建和管理机器人账户,让 AI 代理以限定范围的权限访问您的工作空间。",
+        "add_account": "添加 AI 账户",
+        "modal": {
+          "create_title": "创建 AI 账户",
+          "edit_title": "编辑 AI 账户",
+          "name": "名称",
+          "name_required": "名称为必填项",
+          "description": "描述",
+          "create": "创建账户",
+          "update": "更新账户",
+          "creating": "创建中",
+          "updating": "更新中"
+        },
+        "token": {
+          "title": "账户已创建",
+          "copy_warning": "请立即复制并保存此令牌。关闭此对话框后,您将无法再次查看它。",
+          "copied": "令牌已复制到剪贴板。"
+        },
+        "list": {
+          "created_on": "创建于",
+          "edit": "编辑",
+          "delete": "删除",
+          "manage_scopes": "管理权限范围"
+        },
+        "avatar": {
+          "label": "头像",
+          "upload": "上传头像",
+          "remove": "移除"
+        },
+        "delete": {
+          "title": "删除 AI 账户",
+          "description": "使用此账户的任何集成都将无法再访问您的工作空间。此操作无法撤消。",
+          "success": {
+            "title": "成功!",
+            "message": "AI 账户已成功删除"
+          },
+          "error": {
+            "title": "错误!",
+            "message": "无法删除 AI 账户"
+          }
+        },
+        "scopes": {
+          "title": "管理权限范围",
+          "description": "权限范围定义此账户可以访问的内容。保存将替换所有现有权限范围。",
+          "project": "项目",
+          "all_projects": "所有项目",
+          "resource_type": "资源",
+          "action": "操作",
+          "resources": {
+            "all": "所有资源",
+            "project": "项目",
+            "member": "成员",
+            "user": "用户",
+            "asset": "附件",
+            "estimate": "估算",
+            "cycle": "周期",
+            "module": "模块",
+            "sticky": "便签",
+            "label": "标签",
+            "intake": "接收",
+            "work_item": "工作项",
+            "comment": "评论",
+            "state": "状态",
+            "page": "页面",
+            "invite": "邀请"
+          },
+          "actions": {
+            "all": "所有操作",
+            "read": "读取",
+            "create": "创建",
+            "update": "更新",
+            "delete": "删除"
+          },
+          "add_scope": "添加权限范围",
+          "save": "保存权限范围",
+          "saving": "保存中",
+          "success": {
+            "title": "成功!",
+            "message": "权限范围已成功更新"
+          },
+          "error": {
+            "title": "错误!",
+            "message": "无法更新权限范围"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI 账户已创建",
+            "message": "AI 账户已成功创建"
+          },
+          "not_created": {
+            "title": "AI 账户未创建",
+            "message": "无法创建 AI 账户"
+          },
+          "updated": {
+            "title": "AI 账户已更新",
+            "message": "AI 账户已成功更新"
+          },
+          "not_updated": {
+            "title": "AI 账户未更新",
+            "message": "无法更新 AI 账户"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API 令牌",
         "description": "生成安全的 API 令牌，将您的数据与外部系统和应用程序集成。",

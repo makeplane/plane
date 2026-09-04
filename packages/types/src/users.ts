@@ -24,6 +24,7 @@ export enum EStartOfTheWeek {
 
 export interface IUserLite {
   avatar_url: string;
+  bot_type?: string | null;
   display_name: string;
   email?: string;
   first_name: string;

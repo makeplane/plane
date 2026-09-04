@@ -46,7 +46,23 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator):
+class AIScopeEnforcementMixin:
+    """Enforce per-account scope policies for AI (bot) service accounts.
+
+    Human requests are completely untouched. Bot requests must additionally
+    satisfy the allow-listed scope policies on their AIAccount (default-deny).
+    """
+
+    def check_permissions(self, request):
+        super().check_permissions(request)
+        if getattr(request.user, "is_bot", False):
+            # Local import to avoid a circular import at module load time
+            from plane.ai_accounts.policy import enforce_ai_scope
+
+            enforce_ai_scope(request, self)
+
+
+class BaseAPIView(AIScopeEnforcementMixin, TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator):
     authentication_classes = [APIKeyAuthentication]
 
     permission_classes = [IsAuthenticated]
@@ -151,7 +167,7 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         return expand if expand else None
 
 
-class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
+class BaseViewSet(AIScopeEnforcementMixin, TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
     model = None
 
     authentication_classes = [APIKeyAuthentication]

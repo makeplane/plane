@@ -21,7 +21,10 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
+from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, APIToken
+from plane.ai_accounts.constants import AI_VISIBLE_MEMBER_Q
+from plane.ai_accounts.models import AIAccount
+from plane.ai_accounts.utils import is_sole_project_admin
 from plane.utils.cache import invalidate_cache
 
 from .. import BaseViewSet
@@ -76,7 +79,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
-            pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
+            AI_VISIBLE_MEMBER_Q, pk=pk, workspace__slug=slug, is_active=True
         )
         if request.user.id == workspace_member.member_id:
             return Response(
@@ -99,7 +102,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, pk=pk, member__is_bot=False, is_active=True
+            AI_VISIBLE_MEMBER_Q, workspace__slug=slug, pk=pk, is_active=True
         )
 
         # check requesting user role
@@ -140,6 +143,24 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Removing an AI agent bot from the workspace also deactivates the
+        # backing AI account, so the settings page and the members page stay
+        # consistent (mirrors AIAccountDetailAPIEndpoint.delete)
+        ai_account = AIAccount.objects.filter(
+            workspace__slug=slug, bot_user_id=workspace_member.member_id
+        ).first()
+
+        # Removing the bot deactivates it in every project; refuse when it is
+        # the only active admin of one. (The generic sole-admin check above
+        # never matches bots: it compares member_id to the membership id.)
+        if ai_account and is_sole_project_admin(slug, workspace_member.member_id):
+            return Response(
+                {
+                    "error": "This AI account is the only admin of some projects. Promote another member to admin before removing it."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
@@ -147,6 +168,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        if ai_account:
+            APIToken.objects.filter(user_id=workspace_member.member_id, is_service=True).update(is_active=False)
+            ai_account.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(

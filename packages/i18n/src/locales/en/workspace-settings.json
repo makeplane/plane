@@ -150,6 +150,112 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI accounts",
+        "description": "Create and manage bot accounts that let AI agents access your workspace with scoped permissions.",
+        "add_account": "Add AI account",
+        "modal": {
+          "create_title": "Create AI account",
+          "edit_title": "Edit AI account",
+          "name": "Name",
+          "name_required": "Name is required",
+          "description": "Description",
+          "create": "Create account",
+          "update": "Update account",
+          "creating": "Creating",
+          "updating": "Updating"
+        },
+        "token": {
+          "title": "Account created",
+          "copy_warning": "Copy and save this token now. You won't be able to see it again after you close this dialog.",
+          "copied": "Token copied to clipboard."
+        },
+        "list": {
+          "created_on": "Created on",
+          "edit": "Edit",
+          "delete": "Delete",
+          "manage_scopes": "Manage scopes"
+        },
+        "avatar": {
+          "label": "Avatar",
+          "upload": "Upload",
+          "remove": "Remove"
+        },
+        "delete": {
+          "title": "Delete AI account",
+          "description": "Any integration using this account will no longer be able to access your workspace. This action cannot be undone.",
+          "success": {
+            "title": "Success!",
+            "message": "The AI account has been successfully deleted"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "The AI account could not be deleted"
+          }
+        },
+        "scopes": {
+          "title": "Manage scopes",
+          "description": "Scopes define what this account can access. Saving replaces all existing scopes.",
+          "project": "Project",
+          "all_projects": "All projects",
+          "resource_type": "Resource",
+          "action": "Action",
+          "resources": {
+            "all": "All",
+            "project": "Project",
+            "member": "Member",
+            "user": "User",
+            "asset": "Asset",
+            "estimate": "Estimate",
+            "cycle": "Cycle",
+            "module": "Module",
+            "sticky": "Sticky",
+            "label": "Label",
+            "intake": "Intake",
+            "work_item": "Work item",
+            "comment": "Comment",
+            "state": "State",
+            "page": "Page",
+            "invite": "Invite"
+          },
+          "actions": {
+            "all": "All",
+            "read": "Read",
+            "create": "Create",
+            "update": "Update",
+            "delete": "Delete"
+          },
+          "add_scope": "Add scope",
+          "save": "Save scopes",
+          "saving": "Saving",
+          "success": {
+            "title": "Success!",
+            "message": "Scopes updated successfully"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Scopes could not be updated"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI account created",
+            "message": "The AI account has been successfully created"
+          },
+          "not_created": {
+            "title": "AI account not created",
+            "message": "The AI account could not be created"
+          },
+          "updated": {
+            "title": "AI account updated",
+            "message": "The AI account has been successfully updated"
+          },
+          "not_updated": {
+            "title": "AI account not updated",
+            "message": "The AI account could not be updated"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Access Tokens",
         "description": "Generate secure API tokens to integrate your data with external systems and applications.",

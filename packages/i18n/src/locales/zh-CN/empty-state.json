@@ -226,6 +226,11 @@
       "description": "在项目事件发生时自动向外部服务发送通知。",
       "cta_primary": "添加 webhook"
     },
+    "ai_accounts": {
+      "title": "暂无 AI 账户",
+      "description": "创建 AI 账户,让 AI 代理以限定范围的权限访问您的工作空间。",
+      "cta_primary": "添加 AI 账户"
+    },
     "work_item_types": {
       "title": "创建和自定义工作项类型",
       "description": "为项目定义独特的工作项类型。每种类型都可以有自己的属性、工作流程和字段 — 根据项目和团队需求量身定制。",

@@ -25,10 +25,15 @@ type Props = {
   onClose: () => void;
   onSuccess: (url: string) => void;
   value: string | null;
+  // optional overrides for the upload/remove mechanics (e.g. bot avatars are
+  // uploaded as workspace assets bound to the bot, not as the current user's
+  // USER_AVATAR asset)
+  uploadAsset?: (image: File) => Promise<string>;
+  removeAsset?: (value: string) => Promise<void>;
 };
 
 export const UserImageUploadModal = observer(function UserImageUploadModal(props: Props) {
-  const { handleRemove, isOpen, onClose, onSuccess, value } = props;
+  const { handleRemove, isOpen, onClose, onSuccess, value, uploadAsset, removeAsset } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -54,13 +59,17 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
     setIsImageUploading(true);
 
     try {
-      const { asset_url } = await fileService.uploadUserAsset(
-        {
-          entity_identifier: "",
-          entity_type: EFileAssetType.USER_AVATAR,
-        },
-        image
-      );
+      const asset_url = uploadAsset
+        ? await uploadAsset(image)
+        : (
+            await fileService.uploadUserAsset(
+              {
+                entity_identifier: "",
+                entity_type: EFileAssetType.USER_AVATAR,
+              },
+              image
+            )
+          ).asset_url;
       onSuccess(asset_url);
       setImage(null);
     } catch (error) {
@@ -79,7 +88,9 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
     if (!value) return;
     setIsRemoving(true);
     try {
-      if (checkURLValidity(value)) {
+      if (removeAsset) {
+        await removeAsset(value);
+      } else if (checkURLValidity(value)) {
         await fileService.deleteOldUserAsset(value);
       } else {
         const assetId = getAssetIdFromUrl(value);

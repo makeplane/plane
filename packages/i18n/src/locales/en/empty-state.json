@@ -226,6 +226,11 @@
       "description": "Automate notifications to external services when project events occur.",
       "cta_primary": "Add webhook"
     },
+    "ai_accounts": {
+      "title": "No AI accounts yet",
+      "description": "Create AI accounts to let AI agents access your workspace with scoped permissions.",
+      "cta_primary": "Add AI account"
+    },
     "work_item_types": {
       "title": "Create and customize work item types",
       "description": "Define unique work item types for your project. Each type can have its own properties, workflows, and fields - tailored to your project and team's needs.",
