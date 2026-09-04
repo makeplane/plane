@@ -96,6 +96,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
+          !e.nativeEvent.isComposing &&
           !e.shiftKey &&
           !e.ctrlKey &&
           !e.metaKey &&
@@ -122,7 +123,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 onEnterKeyPress={(e) => {
-                  if (!isEmpty && !isSubmitting) {
+                  if (!e.nativeEvent.isComposing && !isEmpty && !isSubmitting) {
                     handleSubmit(onSubmit)(e);
                   }
                 }}
