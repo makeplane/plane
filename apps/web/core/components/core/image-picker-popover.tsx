@@ -219,7 +219,7 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
                     </TabsList>
                   </div>
                   {/* Grid wrapper: published TabsPanel omits className, so fill height comes from a one-row grid. */}
-                  <div className="vertical-scrollbar scrollbar-sm grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto pt-1">
+                  <div className="vertical-scrollbar mt-3 scrollbar-sm grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto p-3">
                     <TabsPanel value="unsplash">
                       <div className="space-y-4">
                         {(unsplashImages || !unsplashError) && (
