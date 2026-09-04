@@ -14,7 +14,7 @@ import { Button } from "@plane/propel/button";
 import { Switch } from "@makeplane/propel/components/switch";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TAIAccount } from "@plane/types";
-import { renderFormattedDate } from "@plane/utils";
+import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { aiAccountService } from "@/services/ai-account.service";
 // local imports
@@ -78,7 +78,7 @@ export function AIAccountsListItem(props: Props) {
       <div className="flex items-center justify-between gap-4 rounded-lg border border-subtle bg-layer-2 px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar
-            src={account.bot_user.avatar_url}
+            src={getFileURL(account.bot_user.avatar_url)}
             alt={account.bot_user.display_name}
             fallback={account.bot_user.display_name.charAt(0)}
             size="md"

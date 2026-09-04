@@ -176,6 +176,11 @@
           "delete": "删除",
           "manage_scopes": "管理权限范围"
         },
+        "avatar": {
+          "label": "头像",
+          "upload": "上传头像",
+          "remove": "移除"
+        },
         "delete": {
           "title": "删除 AI 账户",
           "description": "使用此账户的任何集成都将无法再访问您的工作空间。此操作无法撤消。",
@@ -195,6 +200,29 @@
           "all_projects": "所有项目",
           "resource_type": "资源",
           "action": "操作",
+          "resources": {
+            "project": "项目",
+            "member": "成员",
+            "user": "用户",
+            "asset": "附件",
+            "estimate": "估算",
+            "cycle": "周期",
+            "module": "模块",
+            "sticky": "便签",
+            "label": "标签",
+            "intake": "接收",
+            "work_item": "工作项",
+            "comment": "评论",
+            "state": "状态",
+            "page": "页面",
+            "invite": "邀请"
+          },
+          "actions": {
+            "read": "读取",
+            "create": "创建",
+            "update": "更新",
+            "delete": "删除"
+          },
           "add_scope": "添加权限范围",
           "save": "保存权限范围",
           "saving": "保存中",

@@ -105,6 +105,37 @@ class TestAIAccountManagement:
         assert response.data["is_active"] is False
         assert not APIToken.objects.get(user=account.bot_user).is_active
 
+    def test_patch_avatar_sets_bot_user_avatar(self, session_client, workspace):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-avatar", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+
+        response = session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/",
+            {"avatar": "/api/assets/v2/user-assets/some-asset/"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK
+        account.bot_user.refresh_from_db()
+        assert account.bot_user.avatar == "/api/assets/v2/user-assets/some-asset/"
+        assert account.bot_user.avatar_asset is None
+        assert response.data["bot_user"]["avatar_url"] == "/api/assets/v2/user-assets/some-asset/"
+
+        # Omitting the key leaves the avatar untouched; empty string clears it
+        session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/",
+            {"description": "no avatar key"},
+            format="json",
+        )
+        account.bot_user.refresh_from_db()
+        assert account.bot_user.avatar == "/api/assets/v2/user-assets/some-asset/"
+        session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/", {"avatar": ""}, format="json"
+        )
+        account.bot_user.refresh_from_db()
+        assert account.bot_user.avatar == ""
+
     def test_delete_disables_everything(self, session_client, workspace):
         create = session_client.post(
             accounts_url(workspace.slug), {"name": "bot-3", "role": 15}, format="json"

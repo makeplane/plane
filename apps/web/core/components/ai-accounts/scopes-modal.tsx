@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import useSWR, { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon, TrashIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, PlusIcon, TrashIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TAIAccount, TAIScopeAction, TAIScopePolicyInput, TAIScopeResourceType } from "@plane/types";
@@ -141,8 +141,10 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                               ? (projectMap?.[row.project]?.name ?? row.project)
                               : t("workspace_settings.settings.ai_accounts.scopes.all_projects")}
                           </span>
+                          <ChevronDownIcon className="size-3 flex-shrink-0 text-tertiary" aria-hidden="true" />
                         </div>
                       }
+                      optionsClassName="max-h-60 overflow-y-auto"
                       value={row.project ?? "all"}
                       onChange={(val: string) => updateScopeRow(row.key, { project: val === "all" ? null : val })}
                     >
@@ -160,15 +162,19 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                     <CustomSelect
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
-                          <span className="truncate">{row.resource_type}</span>
+                          <span className="truncate">
+                            {t(`workspace_settings.settings.ai_accounts.scopes.resources.${row.resource_type}`)}
+                          </span>
+                          <ChevronDownIcon className="size-3 flex-shrink-0 text-tertiary" aria-hidden="true" />
                         </div>
                       }
+                      optionsClassName="max-h-60 overflow-y-auto"
                       value={row.resource_type}
                       onChange={(val: TAIScopeResourceType) => updateScopeRow(row.key, { resource_type: val })}
                     >
                       {AI_SCOPE_RESOURCE_TYPES.map((resourceType) => (
                         <CustomSelect.Option key={resourceType} value={resourceType}>
-                          {resourceType}
+                          {t(`workspace_settings.settings.ai_accounts.scopes.resources.${resourceType}`)}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -177,15 +183,19 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                     <CustomSelect
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
-                          <span className="truncate">{row.action}</span>
+                          <span className="truncate">
+                            {t(`workspace_settings.settings.ai_accounts.scopes.actions.${row.action}`)}
+                          </span>
+                          <ChevronDownIcon className="size-3 flex-shrink-0 text-tertiary" aria-hidden="true" />
                         </div>
                       }
+                      optionsClassName="max-h-60 overflow-y-auto"
                       value={row.action}
                       onChange={(val: TAIScopeAction) => updateScopeRow(row.key, { action: val })}
                     >
                       {AI_SCOPE_ACTIONS.map((action) => (
                         <CustomSelect.Option key={action} value={action}>
-                          {action}
+                          {t(`workspace_settings.settings.ai_accounts.scopes.actions.${action}`)}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>

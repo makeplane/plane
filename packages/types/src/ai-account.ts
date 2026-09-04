@@ -62,6 +62,7 @@ export type TAIAccountUpdatePayload = {
   name?: string;
   description?: string;
   is_active?: boolean;
+  avatar?: string;
 };
 
 export type TAIScopePolicyInput = {

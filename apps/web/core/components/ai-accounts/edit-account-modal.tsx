@@ -7,10 +7,16 @@
 import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
-import type { TAIAccount } from "@plane/types";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TAIAccount } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
+// components
+import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
+// hooks
 import { aiAccountService } from "@/services/ai-account.service";
 // local imports
 import { AIAccountForm, type TAIAccountFormValues } from "./account-form";
@@ -27,12 +33,38 @@ export function EditAIAccountModal(props: Props) {
   const { account, isOpen, onClose, workspaceSlug } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAvatarUploadModalOpen, setIsAvatarUploadModalOpen] = useState(false);
+  const [isAvatarUpdating, setIsAvatarUpdating] = useState(false);
   // hooks
   const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
     setTimeout(() => setIsSubmitting(false), 350);
+  };
+
+  const handleAvatarChange = async (avatar: string) => {
+    setIsAvatarUpdating(true);
+    try {
+      await aiAccountService.updateAIAccount(workspaceSlug, account.id, { avatar });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("workspace_settings.settings.ai_accounts.toasts.updated.title"),
+        message: t("workspace_settings.settings.ai_accounts.toasts.updated.message"),
+      });
+      mutate<TAIAccount[]>(AI_ACCOUNTS_LIST(workspaceSlug));
+      setIsAvatarUploadModalOpen(false);
+    } catch (err) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_settings.settings.ai_accounts.toasts.not_updated.title"),
+        message:
+          (err as { message?: string })?.message ??
+          t("workspace_settings.settings.ai_accounts.toasts.not_updated.message"),
+      });
+    } finally {
+      setIsAvatarUpdating(false);
+    }
   };
 
   const handleUpdateAccount = async (data: TAIAccountFormValues) => {
@@ -64,6 +96,47 @@ export function EditAIAccountModal(props: Props) {
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+      <UserImageUploadModal
+        handleRemove={() => handleAvatarChange("")}
+        isOpen={isAvatarUploadModalOpen}
+        onClose={() => setIsAvatarUploadModalOpen(false)}
+        onSuccess={handleAvatarChange}
+        value={account.bot_user.avatar_url || null}
+      />
+      <div className="flex items-center gap-4 border-b-[0.5px] border-subtle px-5 py-4">
+        <Avatar
+          src={getFileURL(account.bot_user.avatar_url)}
+          alt={account.bot_user.display_name}
+          fallback={account.bot_user.display_name.charAt(0)}
+          size="lg"
+          tooltip
+        />
+        <div className="flex flex-col gap-2">
+          <span className="text-13 font-medium text-secondary">
+            {t("workspace_settings.settings.ai_accounts.avatar.label")}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              loading={isAvatarUpdating}
+              onClick={() => setIsAvatarUploadModalOpen(true)}
+            >
+              {t("workspace_settings.settings.ai_accounts.avatar.upload")}
+            </Button>
+            {account.bot_user.avatar_url && (
+              <Button
+                variant="error-outline"
+                size="sm"
+                loading={isAvatarUpdating}
+                onClick={() => handleAvatarChange("")}
+              >
+                {t("workspace_settings.settings.ai_accounts.avatar.remove")}
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
       <AIAccountForm
         defaultValues={{ name: account.name, description: account.description }}
         handleClose={handleClose}

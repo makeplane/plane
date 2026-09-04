@@ -176,6 +176,11 @@
           "delete": "Delete",
           "manage_scopes": "Manage scopes"
         },
+        "avatar": {
+          "label": "Avatar",
+          "upload": "Upload",
+          "remove": "Remove"
+        },
         "delete": {
           "title": "Delete AI account",
           "description": "Any integration using this account will no longer be able to access your workspace. This action cannot be undone.",
@@ -195,6 +200,29 @@
           "all_projects": "All projects",
           "resource_type": "Resource",
           "action": "Action",
+          "resources": {
+            "project": "Project",
+            "member": "Member",
+            "user": "User",
+            "asset": "Asset",
+            "estimate": "Estimate",
+            "cycle": "Cycle",
+            "module": "Module",
+            "sticky": "Sticky",
+            "label": "Label",
+            "intake": "Intake",
+            "work_item": "Work item",
+            "comment": "Comment",
+            "state": "State",
+            "page": "Page",
+            "invite": "Invite"
+          },
+          "actions": {
+            "read": "Read",
+            "create": "Create",
+            "update": "Update",
+            "delete": "Delete"
+          },
           "add_scope": "Add scope",
           "save": "Save scopes",
           "saving": "Saving",

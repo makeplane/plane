@@ -114,6 +114,14 @@ class AIAccountDetailAPIEndpoint(BaseAPIView):
         account.is_active = is_active
         account.save()
 
+        # Custom avatar for the backing bot user; an explicit avatar URL
+        # replaces any previously set avatar asset
+        if "avatar" in request.data:
+            bot_user = account.bot_user
+            bot_user.avatar = request.data.get("avatar") or ""
+            bot_user.avatar_asset = None
+            bot_user.save(update_fields=["avatar", "avatar_asset", "updated_at"])
+
         # Toggling the account toggles its tokens with it
         APIToken.objects.filter(user=account.bot_user, is_service=True).update(
             is_active=is_active
