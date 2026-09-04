@@ -7,9 +7,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { TDisplayConfig } from "@plane/editor";
 import type { JSONContent, TPageVersion } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { isJSONContentEmpty } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
@@ -45,42 +45,44 @@ export const PagesVersionEditor = observer(function PagesVersionEditor(props: TV
   if (!versionDetails)
     return (
       <div className="size-full px-5">
-        <Loader className="relative space-y-4">
-          <Loader.Item width="50%" height="36px" />
-          <div className="space-y-2">
-            <div className="py-2">
-              <Loader.Item width="100%" height="36px" />
-            </div>
-            <Loader.Item width="80%" height="22px" />
-            <div className="relative flex items-center gap-2">
-              <Loader.Item width="30px" height="30px" />
-              <Loader.Item width="30%" height="22px" />
-            </div>
-            <div className="py-2">
-              <Loader.Item width="60%" height="36px" />
-            </div>
-            <Loader.Item width="70%" height="22px" />
-            <Loader.Item width="30%" height="22px" />
-            <div className="relative flex items-center gap-2">
-              <Loader.Item width="30px" height="30px" />
-              <Loader.Item width="30%" height="22px" />
-            </div>
-            <div className="py-2">
-              <Loader.Item width="50%" height="30px" />
-            </div>
-            <Loader.Item width="100%" height="22px" />
-            <div className="py-2">
-              <Loader.Item width="30%" height="30px" />
-            </div>
-            <Loader.Item width="30%" height="22px" />
-            <div className="relative flex items-center gap-2">
+        <Skeleton aria-label="Loading page version">
+          <div className="relative space-y-4">
+            <SkeletonItem blockSize="36px" inlineSize="50%" />
+            <div className="space-y-2">
               <div className="py-2">
-                <Loader.Item width="30px" height="30px" />
+                <SkeletonItem blockSize="36px" />
               </div>
-              <Loader.Item width="30%" height="22px" />
+              <SkeletonItem blockSize="22px" inlineSize="80%" />
+              <div className="relative flex items-center gap-2">
+                <SkeletonItem blockSize="30px" inlineSize="30px" />
+                <SkeletonItem blockSize="22px" inlineSize="30%" />
+              </div>
+              <div className="py-2">
+                <SkeletonItem blockSize="36px" inlineSize="60%" />
+              </div>
+              <SkeletonItem blockSize="22px" inlineSize="70%" />
+              <SkeletonItem blockSize="22px" inlineSize="30%" />
+              <div className="relative flex items-center gap-2">
+                <SkeletonItem blockSize="30px" inlineSize="30px" />
+                <SkeletonItem blockSize="22px" inlineSize="30%" />
+              </div>
+              <div className="py-2">
+                <SkeletonItem blockSize="30px" inlineSize="50%" />
+              </div>
+              <SkeletonItem blockSize="22px" />
+              <div className="py-2">
+                <SkeletonItem blockSize="30px" inlineSize="30%" />
+              </div>
+              <SkeletonItem blockSize="22px" inlineSize="30%" />
+              <div className="relative flex items-center gap-2">
+                <div className="py-2">
+                  <SkeletonItem blockSize="30px" inlineSize="30px" />
+                </div>
+                <SkeletonItem blockSize="22px" inlineSize="30%" />
+              </div>
             </div>
           </div>
-        </Loader>
+        </Skeleton>
       </div>
     );
 

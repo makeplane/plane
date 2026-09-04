@@ -6,8 +6,8 @@
 
 // plane package imports
 import React from "react";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { IAnalyticsResponseFields } from "@plane/types";
-import { Loader } from "@plane/ui";
 
 export type InsightCardProps = {
   data?: IAnalyticsResponseFields;
@@ -27,7 +27,9 @@ function InsightCard(props: InsightCardProps) {
           <div className="text-20 font-bold text-primary">{count}</div>
         </div>
       ) : (
-        <Loader.Item height="50px" width="100%" />
+        <Skeleton aria-label="Loading insight">
+          <SkeletonItem blockSize="50px" />
+        </Skeleton>
       )}
     </div>
   );

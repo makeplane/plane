@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import React from "react";
 // ui
-import { Loader } from "@plane/ui";
 import { InboxSidebarLoader } from "./inbox-sidebar-loader";
 
 export function InboxLayoutLoader() {
@@ -16,15 +16,17 @@ export function InboxLayoutLoader() {
         <InboxSidebarLoader />
       </div>
       <div className="w-4/6">
-        <Loader className="flex h-full flex-col gap-5 p-5">
-          <div className="space-y-2">
-            <Loader.Item height="30px" width="40%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="40%" />
+        <Skeleton aria-label="Loading inbox">
+          <div className="flex h-full flex-col gap-5 p-5">
+            <div className="space-y-2">
+              <SkeletonItem blockSize="30px" inlineSize="40%" />
+              <SkeletonItem blockSize="15px" inlineSize="60%" />
+              <SkeletonItem blockSize="15px" inlineSize="60%" />
+              <SkeletonItem blockSize="15px" inlineSize="40%" />
+            </div>
+            <SkeletonItem blockSize="150px" />
           </div>
-          <Loader.Item height="150px" />
-        </Loader>
+        </Skeleton>
       </div>
     </div>
   );

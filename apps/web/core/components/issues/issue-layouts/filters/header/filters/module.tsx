@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { ModuleOutline } from "@makeplane/propel/icons";
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useModule } from "@/hooks/store/use-module";
 // ui
@@ -88,11 +88,13 @@ export const FilterModule = observer(function FilterModule(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Loader className="space-y-2">
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-            </Loader>
+            <Skeleton aria-label="Loading modules">
+              <div className="space-y-2">
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+              </div>
+            </Skeleton>
           )}
         </div>
       )}

@@ -8,10 +8,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/propel/avatar";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { Loader, Card } from "@plane/ui";
+import { Card } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core/activity";
@@ -46,13 +47,15 @@ export const ProfileActivity = observer(function ProfileActivity() {
       <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
       <Card>
         {!userProfileActivity ? (
-          <Loader className="space-y-5">
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-          </Loader>
+          <Skeleton aria-label="Loading recent activity">
+            <div className="space-y-5">
+              <SkeletonItem blockSize="40px" />
+              <SkeletonItem blockSize="40px" />
+              <SkeletonItem blockSize="40px" />
+              <SkeletonItem blockSize="40px" />
+              <SkeletonItem blockSize="40px" />
+            </div>
+          </Skeleton>
         ) : Array.isArray(userProfileActivity.results) && userProfileActivity.results.length > 0 ? (
           <div className="space-y-5">
             {userProfileActivity.results.map((activity) => (

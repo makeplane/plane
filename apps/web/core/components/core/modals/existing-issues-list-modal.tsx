@@ -16,7 +16,8 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -235,12 +236,14 @@ export function ExistingIssuesListModal(props: Props) {
           )}
 
           {isSearching || isLoading ? (
-            <Loader className="space-y-3 p-3">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
+            <Skeleton aria-label="Loading work items">
+              <div className="space-y-3 p-3">
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+                <SkeletonItem blockSize="40px" />
+              </div>
+            </Skeleton>
           ) : (
             <>
               {filteredIssues.length === 0 ? (

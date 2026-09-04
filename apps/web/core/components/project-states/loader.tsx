@@ -4,15 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { Loader } from "@plane/ui";
-
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 export function ProjectStateLoader() {
   return (
-    <Loader className="space-y-5 md:w-2/3">
-      <Loader.Item height="40px" />
-      <Loader.Item height="40px" />
-      <Loader.Item height="40px" />
-      <Loader.Item height="40px" />
-    </Loader>
+    <Skeleton aria-label="Loading project states">
+      <div className="space-y-5 md:w-2/3">
+        <SkeletonItem blockSize="40px" />
+        <SkeletonItem blockSize="40px" />
+        <SkeletonItem blockSize="40px" />
+        <SkeletonItem blockSize="40px" />
+      </div>
+    </Skeleton>
   );
 }

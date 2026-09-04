@@ -6,8 +6,8 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { IIssueLabel } from "@plane/types";
-import { Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
@@ -81,11 +81,13 @@ export const FilterLabels = observer(function FilterLabels(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Loader className="space-y-2">
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-            </Loader>
+            <Skeleton aria-label="Loading labels">
+              <div className="space-y-2">
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+              </div>
+            </Skeleton>
           )}
         </div>
       )}

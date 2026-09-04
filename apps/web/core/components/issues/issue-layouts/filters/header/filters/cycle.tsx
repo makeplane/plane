@@ -8,10 +8,10 @@ import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { CycleGroupIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // components
-import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useCycle } from "@/hooks/store/use-cycle";
 // ui
@@ -98,11 +98,13 @@ export const FilterCycle = observer(function FilterCycle(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Loader className="space-y-2">
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-            </Loader>
+            <Skeleton aria-label="Loading cycles">
+              <div className="space-y-2">
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+              </div>
+            </Skeleton>
           )}
         </div>
       )}

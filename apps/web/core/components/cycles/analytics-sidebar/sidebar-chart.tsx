@@ -7,9 +7,9 @@
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import type { TCycleEstimateType } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { getDate } from "@plane/utils";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
@@ -79,9 +79,11 @@ export const SidebarChart = observer(function SidebarChart(props: ProgressChartP
               />
             </Fragment>
           ) : (
-            <Loader className="mt-4 h-[160px] w-full">
-              <Loader.Item width="100%" height="100%" />
-            </Loader>
+            <Skeleton aria-label="Loading cycle progress chart">
+              <div className="mt-4 h-[160px] w-full">
+                <SkeletonItem blockSize="100%" />
+              </div>
+            </Skeleton>
           )}
         </div>
       </div>

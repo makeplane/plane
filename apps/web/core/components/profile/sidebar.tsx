@@ -15,8 +15,8 @@ import { Logo } from "@plane/propel/emoji-icon-picker";
 import { IconButton } from "@plane/propel/icon-button";
 import { ChevronDownOutline, EditOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
@@ -280,16 +280,18 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
           </div>
         </>
       ) : (
-        <Loader className="space-y-7 px-5">
-          <Loader.Item height="130px" />
-          <div className="space-y-5">
-            <Loader.Item height="20px" />
-            <Loader.Item height="20px" />
-            <Loader.Item height="20px" />
-            <Loader.Item height="20px" />
-            <Loader.Item height="20px" />
+        <Skeleton aria-label="Loading sidebar">
+          <div className="space-y-7 px-5">
+            <SkeletonItem blockSize="130px" />
+            <div className="space-y-5">
+              <SkeletonItem blockSize="20px" />
+              <SkeletonItem blockSize="20px" />
+              <SkeletonItem blockSize="20px" />
+              <SkeletonItem blockSize="20px" />
+              <SkeletonItem blockSize="20px" />
+            </div>
           </div>
-        </Loader>
+        </Skeleton>
       )}
     </div>
   );

@@ -8,8 +8,9 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { STICKIES_PER_PAGE } from "@plane/constants";
-import { ContentWrapper, Loader } from "@plane/ui";
+import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
@@ -55,9 +56,11 @@ export const StickiesInfinite = observer(function StickiesInfinite() {
               id="intersection-element"
             >
               <div className="flex min-h-[300px] w-full rounded-sm">
-                <Loader className="h-full w-full">
-                  <Loader.Item height="100%" width="100%" />
-                </Loader>
+                <Skeleton aria-label="Loading more stickies">
+                  <div className="h-full w-full">
+                    <SkeletonItem blockSize="100%" />
+                  </div>
+                </Skeleton>
               </div>
             </div>
           )

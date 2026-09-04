@@ -4,15 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import { Loader } from "@plane/ui";
-
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 export function EstimateLoaderScreen() {
   return (
-    <Loader className="mt-5 space-y-5">
-      <Loader.Item height="40px" />
-      <Loader.Item height="40px" />
-      <Loader.Item height="40px" />
-      <Loader.Item height="40px" />
-    </Loader>
+    <Skeleton aria-label="Loading estimates">
+      <div className="mt-5 space-y-5">
+        <SkeletonItem blockSize="40px" />
+        <SkeletonItem blockSize="40px" />
+        <SkeletonItem blockSize="40px" />
+        <SkeletonItem blockSize="40px" />
+      </div>
+    </Skeleton>
   );
 }

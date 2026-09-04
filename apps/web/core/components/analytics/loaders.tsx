@@ -4,21 +4,27 @@
  * See the LICENSE file for details.
  */
 
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 
 export function ProjectInsightsLoader() {
   return (
     <div className="flex h-[200px] gap-1">
-      <Loader className="h-full w-full">
-        <Loader.Item height="100%" width="100%" />
-      </Loader>
+      <Skeleton aria-label="Loading chart">
+        <div className="h-full w-full">
+          <SkeletonItem blockSize="100%" />
+        </div>
+      </Skeleton>
       <div className="flex h-full w-full flex-col gap-1">
-        <Loader className="h-12 w-full">
-          <Loader.Item height="100%" width="100%" />
-        </Loader>
-        <Loader className="h-full w-full">
-          <Loader.Item height="100%" width="100%" />
-        </Loader>
+        <Skeleton aria-label="Loading chart">
+          <div className="h-12 w-full">
+            <SkeletonItem blockSize="100%" />
+          </div>
+        </Skeleton>
+        <Skeleton aria-label="Loading chart">
+          <div className="h-full w-full">
+            <SkeletonItem blockSize="100%" />
+          </div>
+        </Skeleton>
       </div>
     </div>
   );
@@ -26,8 +32,10 @@ export function ProjectInsightsLoader() {
 
 export function ChartLoader() {
   return (
-    <Loader className="h-[350px] w-full">
-      <Loader.Item height="100%" width="100%" />
-    </Loader>
+    <Skeleton aria-label="Loading chart">
+      <div className="h-[350px] w-full">
+        <SkeletonItem blockSize="100%" />
+      </div>
+    </Skeleton>
   );
 }

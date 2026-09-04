@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -19,69 +19,79 @@ export function PageContentLoader(props: Props) {
     <div className={cn("relative flex size-full flex-col", className)}>
       {/* header */}
       <div className="relative flex h-12 w-full flex-shrink-0 items-center divide-x divide-subtle border-b border-subtle">
-        <Loader className="relative flex items-center gap-1 pr-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
-        <Loader className="relative flex items-center gap-1 px-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
-        <Loader className="relative flex items-center gap-1 px-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
-        <Loader className="relative flex items-center gap-1 pl-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
+        <Skeleton aria-label="Loading page content">
+          <div className="relative flex items-center gap-1 pr-2">
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+          </div>
+        </Skeleton>
+        <Skeleton aria-label="Loading page content">
+          <div className="relative flex items-center gap-1 px-2">
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+          </div>
+        </Skeleton>
+        <Skeleton aria-label="Loading page content">
+          <div className="relative flex items-center gap-1 px-2">
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+          </div>
+        </Skeleton>
+        <Skeleton aria-label="Loading page content">
+          <div className="relative flex items-center gap-1 pl-2">
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+            <SkeletonItem blockSize="26px" inlineSize="26px" />
+          </div>
+        </Skeleton>
       </div>
 
       {/* content */}
       <div className="relative flex size-full overflow-hidden pt-[64px]">
         {/* editor loader */}
         <div className="size-full py-5">
-          <Loader className="relative space-y-4">
-            <Loader.Item width="50%" height="36px" />
-            <div className="space-y-2">
-              <div className="py-2">
-                <Loader.Item width="100%" height="36px" />
-              </div>
-              <Loader.Item width="80%" height="22px" />
-              <div className="relative flex items-center gap-2">
-                <Loader.Item width="30px" height="30px" />
-                <Loader.Item width="30%" height="22px" />
-              </div>
-              <div className="py-2">
-                <Loader.Item width="60%" height="36px" />
-              </div>
-              <Loader.Item width="70%" height="22px" />
-              <Loader.Item width="30%" height="22px" />
-              <div className="relative flex items-center gap-2">
-                <Loader.Item width="30px" height="30px" />
-                <Loader.Item width="30%" height="22px" />
-              </div>
-              <div className="py-2">
-                <Loader.Item width="50%" height="30px" />
-              </div>
-              <Loader.Item width="100%" height="22px" />
-              <div className="py-2">
-                <Loader.Item width="30%" height="30px" />
-              </div>
-              <Loader.Item width="30%" height="22px" />
-              <div className="relative flex items-center gap-2">
+          <Skeleton aria-label="Loading page content">
+            <div className="relative space-y-4">
+              <SkeletonItem blockSize="36px" inlineSize="50%" />
+              <div className="space-y-2">
                 <div className="py-2">
-                  <Loader.Item width="30px" height="30px" />
+                  <SkeletonItem blockSize="36px" />
                 </div>
-                <Loader.Item width="30%" height="22px" />
+                <SkeletonItem blockSize="22px" inlineSize="80%" />
+                <div className="relative flex items-center gap-2">
+                  <SkeletonItem blockSize="30px" inlineSize="30px" />
+                  <SkeletonItem blockSize="22px" inlineSize="30%" />
+                </div>
+                <div className="py-2">
+                  <SkeletonItem blockSize="36px" inlineSize="60%" />
+                </div>
+                <SkeletonItem blockSize="22px" inlineSize="70%" />
+                <SkeletonItem blockSize="22px" inlineSize="30%" />
+                <div className="relative flex items-center gap-2">
+                  <SkeletonItem blockSize="30px" inlineSize="30px" />
+                  <SkeletonItem blockSize="22px" inlineSize="30%" />
+                </div>
+                <div className="py-2">
+                  <SkeletonItem blockSize="30px" inlineSize="50%" />
+                </div>
+                <SkeletonItem blockSize="22px" />
+                <div className="py-2">
+                  <SkeletonItem blockSize="30px" inlineSize="30%" />
+                </div>
+                <SkeletonItem blockSize="22px" inlineSize="30%" />
+                <div className="relative flex items-center gap-2">
+                  <div className="py-2">
+                    <SkeletonItem blockSize="30px" inlineSize="30px" />
+                  </div>
+                  <SkeletonItem blockSize="22px" inlineSize="30%" />
+                </div>
               </div>
             </div>
-          </Loader>
+          </Skeleton>
         </div>
       </div>
     </div>

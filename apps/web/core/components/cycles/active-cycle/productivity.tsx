@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import type { ICycle, TCycleEstimateType } from "@plane/types";
-import { Loader } from "@plane/ui";
 // assets
 import darkChartAsset from "@/app/assets/empty-state/active-cycle/chart-dark.webp?url";
 import lightChartAsset from "@/app/assets/empty-state/active-cycle/chart-light.webp?url";
@@ -101,8 +101,10 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
       </Link>
     </div>
   ) : (
-    <Loader className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
-      <Loader.Item width="100%" height="100%" />
-    </Loader>
+    <Skeleton aria-label="Loading cycle productivity">
+      <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
+        <SkeletonItem blockSize="100%" />
+      </div>
+    </Skeleton>
   );
 });

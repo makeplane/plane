@@ -8,8 +8,8 @@ import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
@@ -89,11 +89,13 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Loader className="space-y-2">
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-              <Loader.Item height="20px" />
-            </Loader>
+            <Skeleton aria-label="Loading projects">
+              <div className="space-y-2">
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+                <SkeletonItem blockSize="20px" />
+              </div>
+            </Skeleton>
           )}
         </div>
       )}

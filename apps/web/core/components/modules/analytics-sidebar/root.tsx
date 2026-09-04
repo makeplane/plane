@@ -19,6 +19,7 @@ import {
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -26,7 +27,7 @@ import { ModuleStatusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import { Loader, CustomSelect, TextArea } from "@plane/ui";
+import { CustomSelect, TextArea } from "@plane/ui";
 // components
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -139,17 +140,17 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
 
   if (!moduleDetails)
     return (
-      <Loader>
+      <Skeleton aria-label="Loading module sidebar details">
         <div className="space-y-2">
-          <Loader.Item height="15px" width="50%" />
-          <Loader.Item height="15px" width="30%" />
+          <SkeletonItem blockSize="15px" inlineSize="50%" />
+          <SkeletonItem blockSize="15px" inlineSize="30%" />
         </div>
         <div className="mt-8 space-y-3">
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
+          <SkeletonItem blockSize="30px" />
+          <SkeletonItem blockSize="30px" />
+          <SkeletonItem blockSize="30px" />
         </div>
-      </Loader>
+      </Skeleton>
     );
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);

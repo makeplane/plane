@@ -4,12 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { Loader } from "@plane/ui";
-
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 export function FilterItemLoader() {
   return (
-    <Loader>
-      <Loader.Item height="28px" width="180px" />
-    </Loader>
+    <Skeleton aria-label="Loading filter">
+      <SkeletonItem blockSize="28px" inlineSize="180px" />
+    </Skeleton>
   );
 }

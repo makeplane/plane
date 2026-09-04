@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { Banner } from "@plane/propel/banner";
 import { Button } from "@plane/propel/button";
 import { ArchiveOutline } from "@makeplane/propel/icons";
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
@@ -51,20 +51,22 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title={pageTitle} />
       {issueLoader ? (
-        <Loader className="flex h-full gap-5 p-5">
-          <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="40%" />
+        <Skeleton aria-label="Loading work item details">
+          <div className="flex h-full gap-5 p-5">
+            <div className="basis-2/3 space-y-2">
+              <SkeletonItem blockSize="30px" inlineSize="40%" />
+              <SkeletonItem blockSize="15px" inlineSize="60%" />
+              <SkeletonItem blockSize="15px" inlineSize="60%" />
+              <SkeletonItem blockSize="15px" inlineSize="40%" />
+            </div>
+            <div className="basis-1/3 space-y-3">
+              <SkeletonItem blockSize="30px" />
+              <SkeletonItem blockSize="30px" />
+              <SkeletonItem blockSize="30px" />
+              <SkeletonItem blockSize="30px" />
+            </div>
           </div>
-          <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </div>
-        </Loader>
+        </Skeleton>
       ) : (
         <>
           <Banner

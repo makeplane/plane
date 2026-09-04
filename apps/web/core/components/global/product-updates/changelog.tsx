@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { Loader } from "@plane/ui";
 import { ProductUpdatesFallback } from "@/components/global/product-updates/fallback";
 import { useInstance } from "@/hooks/store/use-instance";
 
@@ -74,9 +74,11 @@ export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog
   return (
     <div className="vertical-scrollbar relative mx-0.5 flex scrollbar-xs h-[550px] flex-col overflow-hidden overflow-y-scroll px-6">
       {isLoading && (
-        <Loader className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3">
-          <Loader.Item height="95%" width="95%" />
-        </Loader>
+        <Skeleton aria-label="Loading changelog">
+          <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3">
+            <SkeletonItem blockSize="95%" inlineSize="95%" />
+          </div>
+        </Skeleton>
       )}
       {/* eslint-disable-next-line react/iframe-missing-sandbox oxlint-disable-next-line jsx_a11y/iframe-has-title */}
       <iframe

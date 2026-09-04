@@ -17,7 +17,8 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -196,12 +197,14 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
 
         {/* content */}
         {fetchSettingsLoader ? (
-          <Loader className="space-y-4 px-5">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </Loader>
+          <Skeleton aria-label="Loading publish settings">
+            <div className="space-y-4 px-5">
+              <SkeletonItem blockSize="30px" />
+              <SkeletonItem blockSize="30px" />
+              <SkeletonItem blockSize="30px" />
+              <SkeletonItem blockSize="30px" />
+            </div>
+          </Skeleton>
         ) : (
           <div className="space-y-4 px-5">
             {isProjectPublished && projectPublishSettings && (

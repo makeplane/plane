@@ -4,16 +4,18 @@
  * See the LICENSE file for details.
  */
 
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { range } from "lodash-es";
 // ui
-import { Loader } from "@plane/ui";
 
 export function QuickLinksWidgetLoader() {
   return (
-    <Loader className="flex flex-wrap gap-2 rounded-xl bg-surface-1">
-      {range(4).map((index) => (
-        <Loader.Item key={index} height="56px" width="230px" />
-      ))}
-    </Loader>
+    <Skeleton aria-label="Loading quick links">
+      <div className="flex flex-wrap gap-2 rounded-xl bg-surface-1">
+        {range(4).map((index) => (
+          <SkeletonItem key={index} blockSize="56px" inlineSize="230px" />
+        ))}
+      </div>
+    </Skeleton>
   );
 }

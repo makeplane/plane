@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
@@ -227,11 +227,13 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               leaveTo="transform scale-95 opacity-0"
             >
               {loader === "init-loader" && (
-                <Loader className="w-full space-y-1.5">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Loader.Item key={index} height="28px" />
-                  ))}
-                </Loader>
+                <Skeleton aria-label="Loading projects">
+                  <div className="w-full space-y-1.5">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      <SkeletonItem key={index} blockSize="28px" />
+                    ))}
+                  </div>
+                </Skeleton>
               )}
               {isAllProjectsListOpen && (
                 <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>

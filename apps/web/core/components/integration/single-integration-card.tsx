@@ -13,9 +13,9 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
 // assets
 import GithubLogo from "@/app/assets/services/github.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
@@ -177,9 +177,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           </Tooltip>
         )
       ) : (
-        <Loader>
-          <Loader.Item height="32px" width="64px" />
-        </Loader>
+        <Skeleton aria-label="Loading integration status">
+          <SkeletonItem blockSize="32px" inlineSize="64px" />
+        </Skeleton>
       )}
     </div>
   );

@@ -7,8 +7,9 @@
 import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { IBaseLayoutsBaseItem, IBlockUpdateData } from "@plane/types";
-import { Loader, Row } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
@@ -143,12 +144,14 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
           )}
         </>
       ) : (
-        <Loader className="space-y-3 pr-2">
-          <Loader.Item height="34px" />
-          <Loader.Item height="34px" />
-          <Loader.Item height="34px" />
-          <Loader.Item height="34px" />
-        </Loader>
+        <Skeleton aria-label="Loading sidebar">
+          <div className="space-y-3 pr-2">
+            <SkeletonItem blockSize="34px" />
+            <SkeletonItem blockSize="34px" />
+            <SkeletonItem blockSize="34px" />
+            <SkeletonItem blockSize="34px" />
+          </div>
+        </Skeleton>
       )}
     </div>
   );

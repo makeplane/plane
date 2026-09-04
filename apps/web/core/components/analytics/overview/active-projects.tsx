@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
-import { Loader } from "@plane/ui";
 // plane web hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProject } from "@/hooks/store/use-project";
@@ -39,8 +39,15 @@ const ActiveProjects = observer(function ActiveProjects() {
       className="md:col-span-2"
     >
       <div className="flex h-[350px] flex-col gap-4 overflow-auto">
-        {isProjectAnalyticsCountLoading &&
-          Array.from({ length: 5 }).map((_, index) => <Loader.Item key={index} height="40px" width="100%" />)}
+        {isProjectAnalyticsCountLoading && (
+          <Skeleton aria-label="Loading active projects">
+            <div className="flex flex-col gap-4">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <SkeletonItem key={index} blockSize="40px" />
+              ))}
+            </div>
+          </Skeleton>
+        )}
         {!isProjectAnalyticsCountLoading &&
           projectAnalyticsCount?.map((project) => <ActiveProjectItem key={project.id} project={project} />)}
       </div>

@@ -7,12 +7,12 @@
 import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text/editor";
@@ -61,9 +61,11 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
 
   if (loader === "issue-loading")
     return (
-      <Loader className="min-h-[6rem] rounded-md border border-subtle">
-        <Loader.Item width="100%" height="140px" />
-      </Loader>
+      <Skeleton aria-label="Loading issue description">
+        <div className="min-h-[6rem] rounded-md border border-subtle">
+          <SkeletonItem blockSize="140px" />
+        </div>
+      </Skeleton>
     );
 
   return (

@@ -13,7 +13,8 @@ import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } fr
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, Loader } from "@plane/ui";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { CustomSelect } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
@@ -125,9 +126,11 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
             </div>
           )
         ) : (
-          <Loader className="ml-13">
-            <Loader.Item height="50px" />
-          </Loader>
+          <Skeleton aria-label="Loading auto-archive settings">
+            <div className="ml-13">
+              <SkeletonItem blockSize="50px" />
+            </div>
+          </Skeleton>
         )}
       </div>
     </>

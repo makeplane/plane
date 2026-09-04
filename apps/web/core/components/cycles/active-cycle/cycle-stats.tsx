@@ -16,11 +16,11 @@ import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // assets
 import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
@@ -97,11 +97,13 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
   const loaders = (
-    <Loader className="space-y-3">
-      <Loader.Item height="30px" />
-      <Loader.Item height="30px" />
-      <Loader.Item height="30px" />
-    </Loader>
+    <Skeleton aria-label="Loading cycle stats">
+      <div className="space-y-3">
+        <SkeletonItem blockSize="30px" />
+        <SkeletonItem blockSize="30px" />
+        <SkeletonItem blockSize="30px" />
+      </div>
+    </Skeleton>
   );
 
   return cycleId ? (
@@ -370,8 +372,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       </Tab.Group>
     </div>
   ) : (
-    <Loader className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
-      <Loader.Item width="100%" height="17rem" />
-    </Loader>
+    <Skeleton aria-label="Loading cycle stats">
+      <div className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
+        <SkeletonItem blockSize="17rem" />
+      </div>
+    </Skeleton>
   );
 });

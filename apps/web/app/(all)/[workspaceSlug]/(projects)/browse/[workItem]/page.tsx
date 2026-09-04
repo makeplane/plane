@@ -9,10 +9,10 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { Loader } from "@plane/ui";
 // assets
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -107,20 +107,22 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
 
   if (issueLoader) {
     return (
-      <Loader className="flex h-full gap-5 p-5">
-        <div className="basis-2/3 space-y-2">
-          <Loader.Item height="30px" width="40%" />
-          <Loader.Item height="15px" width="60%" />
-          <Loader.Item height="15px" width="60%" />
-          <Loader.Item height="15px" width="40%" />
+      <Skeleton aria-label="Loading work item details">
+        <div className="flex h-full gap-5 p-5">
+          <div className="basis-2/3 space-y-2">
+            <SkeletonItem blockSize="30px" inlineSize="40%" />
+            <SkeletonItem blockSize="15px" inlineSize="60%" />
+            <SkeletonItem blockSize="15px" inlineSize="60%" />
+            <SkeletonItem blockSize="15px" inlineSize="40%" />
+          </div>
+          <div className="basis-1/3 space-y-3">
+            <SkeletonItem blockSize="30px" />
+            <SkeletonItem blockSize="30px" />
+            <SkeletonItem blockSize="30px" />
+            <SkeletonItem blockSize="30px" />
+          </div>
         </div>
-        <div className="basis-1/3 space-y-3">
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-          <Loader.Item height="30px" />
-        </div>
-      </Loader>
+      </Skeleton>
     );
   }
 

@@ -7,9 +7,9 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "@plane/propel/icons";
-import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -52,10 +52,12 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
 
   if (stateLoader) {
     return (
-      <Loader className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-        <Loader.Item height="16px" width="16px" className="rounded-full" />
-        <Loader.Item height="16px" width="50px" />
-      </Loader>
+      <Skeleton aria-label="Loading states">
+        <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
+          <SkeletonItem variant="circle" blockSize="16px" inlineSize="16px" />
+          <SkeletonItem blockSize="16px" inlineSize="50px" />
+        </div>
+      </Skeleton>
     );
   }
 
