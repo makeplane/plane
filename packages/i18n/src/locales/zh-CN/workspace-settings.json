@@ -201,6 +201,7 @@
           "resource_type": "资源",
           "action": "操作",
           "resources": {
+            "all": "所有资源",
             "project": "项目",
             "member": "成员",
             "user": "用户",
@@ -218,6 +219,7 @@
             "invite": "邀请"
           },
           "actions": {
+            "all": "所有操作",
             "read": "读取",
             "create": "创建",
             "update": "更新",

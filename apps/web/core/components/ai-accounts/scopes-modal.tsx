@@ -121,18 +121,18 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
             {t("workspace_settings.settings.ai_accounts.scopes.title")}
           </h3>
           <p className="text-13 text-placeholder">{t("workspace_settings.settings.ai_accounts.scopes.description")}</p>
-          <div className="space-y-2">
-            <div className="grid grid-cols-12 gap-2 text-11 text-tertiary">
-              <div className="col-span-4">{t("workspace_settings.settings.ai_accounts.scopes.project")}</div>
-              <div className="col-span-4">{t("workspace_settings.settings.ai_accounts.scopes.resource_type")}</div>
-              <div className="col-span-3">{t("workspace_settings.settings.ai_accounts.scopes.action")}</div>
+          <div className="space-y-1.5">
+            <div className="grid grid-cols-[1fr_1fr_1fr_2rem] gap-2 text-11 text-tertiary">
+              <div>{t("workspace_settings.settings.ai_accounts.scopes.project")}</div>
+              <div>{t("workspace_settings.settings.ai_accounts.scopes.resource_type")}</div>
+              <div>{t("workspace_settings.settings.ai_accounts.scopes.action")}</div>
             </div>
             {isLoading ? (
               <div className="py-4 text-13 text-placeholder">{t("loading")}</div>
             ) : (
               scopeRows.map((row) => (
-                <div key={row.key} className="grid grid-cols-12 items-center gap-2">
-                  <div className="col-span-4">
+                <div key={row.key} className="grid grid-cols-[1fr_1fr_1fr_2rem] items-center gap-2">
+                  <div>
                     <CustomSelect
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
@@ -158,7 +158,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                       ))}
                     </CustomSelect>
                   </div>
-                  <div className="col-span-4">
+                  <div>
                     <CustomSelect
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
@@ -179,7 +179,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                       ))}
                     </CustomSelect>
                   </div>
-                  <div className="col-span-3">
+                  <div>
                     <CustomSelect
                       customButton={
                         <div className="flex h-8 w-full items-center justify-between gap-2 rounded-md border-[0.5px] border-subtle px-2 text-13">
@@ -200,7 +200,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
                       ))}
                     </CustomSelect>
                   </div>
-                  <div className="col-span-1 flex justify-end">
+                  <div className="flex justify-end">
                     <button
                       type="button"
                       onClick={() => removeScopeRow(row.key)}
@@ -218,7 +218,7 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
               onClick={() =>
                 setScopeRows((prevRows) => [
                   ...prevRows,
-                  createScopeRow({ project: null, resource_type: "work_item", action: "read" }),
+                  createScopeRow({ project: null, resource_type: "all", action: "all" }),
                 ])
               }
             >

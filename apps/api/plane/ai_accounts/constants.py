@@ -10,6 +10,8 @@ BOT_TYPE_AI_AGENT = "AI_AGENT"
 
 
 class ResourceType:
+    # Wildcard: a policy row with this resource type matches any resource
+    ALL = "all"
     PROJECT = "project"
     MEMBER = "member"
     USER = "user"
@@ -28,6 +30,7 @@ class ResourceType:
 
 
 RESOURCE_CHOICES = (
+    (ResourceType.ALL, "All"),
     (ResourceType.PROJECT, "Project"),
     (ResourceType.MEMBER, "Member"),
     (ResourceType.USER, "User"),
@@ -47,6 +50,8 @@ RESOURCE_CHOICES = (
 
 
 class Action:
+    # Wildcard: a policy row with this action matches any action
+    ALL = "all"
     READ = "read"
     CREATE = "create"
     UPDATE = "update"
@@ -54,6 +59,7 @@ class Action:
 
 
 ACTION_CHOICES = (
+    (Action.ALL, "All"),
     (Action.READ, "Read"),
     (Action.CREATE, "Create"),
     (Action.UPDATE, "Update"),

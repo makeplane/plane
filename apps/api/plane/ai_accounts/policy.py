@@ -143,12 +143,15 @@ def enforce_ai_scope(request, view):
     if action is None:
         raise PermissionDenied(f"Method {request.method} is not available to AI accounts.")
 
-    # 2. Scope policy: project-specific row wins, else workspace-wide row
+    # 2. Scope policy: project-specific row wins, else workspace-wide row.
+    # A policy row may use the "all" wildcard for resource_type and/or action.
     from .models import AIScopePolicy
 
     project_id = view.project_id
     policies = AIScopePolicy.objects.filter(
-        ai_account=account, resource_type=resource_type, action=action
+        ai_account=account,
+        resource_type__in=[resource_type, ResourceType.ALL],
+        action__in=[action, Action.ALL],
     )
     if project_id:
         allowed = policies.filter(project_id=project_id).exists() or policies.filter(

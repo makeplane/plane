@@ -201,6 +201,7 @@
           "resource_type": "Resource",
           "action": "Action",
           "resources": {
+            "all": "All",
             "project": "Project",
             "member": "Member",
             "user": "User",
@@ -218,6 +219,7 @@
             "invite": "Invite"
           },
           "actions": {
+            "all": "All",
             "read": "Read",
             "create": "Create",
             "update": "Update",

@@ -117,6 +117,32 @@ class TestAIScopeEnforcement:
         response = bot_client.get(issues_url(workspace, project))
         assert response.status_code == status.HTTP_200_OK
 
+    def test_wildcard_action_matches_any_action(self, bot_client, ai_account, workspace, project):
+        AIScopePolicy.objects.create(
+            ai_account=ai_account,
+            project=project,
+            resource_type="work_item",
+            action="all",
+        )
+        assert bot_client.get(issues_url(workspace, project)).status_code == status.HTTP_200_OK
+        response = bot_client.post(
+            issues_url(workspace, project), {"name": "bot issue"}, format="json"
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+
+    def test_wildcard_resource_matches_any_resource(self, bot_client, ai_account, workspace, project):
+        AIScopePolicy.objects.create(
+            ai_account=ai_account,
+            project=project,
+            resource_type="all",
+            action="read",
+        )
+        assert bot_client.get(issues_url(workspace, project)).status_code == status.HTTP_200_OK
+        cycles_url = (
+            f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/cycles/"
+        )
+        assert bot_client.get(cycles_url).status_code == status.HTTP_200_OK
+
     def test_denied_when_account_inactive(self, bot_client, ai_account, workspace, project):
         ai_account.is_active = False
         ai_account.save()

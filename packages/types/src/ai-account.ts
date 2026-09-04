@@ -14,6 +14,7 @@ export type TAIAccountBotUser = {
 };
 
 export type TAIScopeResourceType =
+  | "all"
   | "project"
   | "member"
   | "user"
@@ -30,7 +31,7 @@ export type TAIScopeResourceType =
   | "page"
   | "invite";
 
-export type TAIScopeAction = "read" | "create" | "update" | "delete";
+export type TAIScopeAction = "all" | "read" | "create" | "update" | "delete";
 
 export type TAIScopePolicy = {
   id: string;

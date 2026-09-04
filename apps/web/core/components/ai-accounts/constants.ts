@@ -12,6 +12,7 @@ export const AI_ACCOUNT_SCOPES = (workspaceSlug: string, accountId: string) =>
   `AI_ACCOUNT_SCOPES_${workspaceSlug}_${accountId}`;
 
 export const AI_SCOPE_RESOURCE_TYPES: TAIScopeResourceType[] = [
+  "all",
   "project",
   "member",
   "user",
@@ -29,4 +30,4 @@ export const AI_SCOPE_RESOURCE_TYPES: TAIScopeResourceType[] = [
   "invite",
 ];
 
-export const AI_SCOPE_ACTIONS: TAIScopeAction[] = ["read", "create", "update", "delete"];
+export const AI_SCOPE_ACTIONS: TAIScopeAction[] = ["all", "read", "create", "update", "delete"];
