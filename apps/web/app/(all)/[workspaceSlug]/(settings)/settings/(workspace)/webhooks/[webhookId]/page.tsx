@@ -12,7 +12,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook } from "@plane/types";
 // ui
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
@@ -90,7 +90,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   if (!currentWebhook)
     return (
       <div className="grid h-full w-full place-items-center p-4">
-        <LogoSpinner />
+        <LogoSpinner size="fluid" alt="Loading" />
       </div>
     );
 

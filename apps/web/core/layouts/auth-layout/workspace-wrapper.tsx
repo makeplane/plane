@@ -20,7 +20,7 @@ import { cn } from "@plane/utils";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // constants
 import {
   WORKSPACE_MEMBERS,
@@ -137,12 +137,14 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     );
   };
 
-  // if list of workspaces are not there then we have to render the spinner
-  if (isParentLoading || allWorkspaces === undefined || loader) {
+  // Spinner only on first load. `loader` is also set true on a workspace-info
+  // refetch; swapping to LogoSpinner then would unmount the home dashboard and
+  // put it back — the jitter after the page was already on screen.
+  if (isParentLoading || allWorkspaces === undefined || (loader && !currentWorkspaceInfo)) {
     return (
       <div className="grid h-full place-items-center rounded-lg border border-subtle p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <LogoSpinner />
+          <LogoSpinner size="fluid" alt="Loading" />
         </div>
       </div>
     );

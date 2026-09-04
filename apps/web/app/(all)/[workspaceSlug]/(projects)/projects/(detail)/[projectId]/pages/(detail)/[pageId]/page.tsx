@@ -16,7 +16,7 @@ import { EFileAssetType } from "@plane/types";
 // plane utils
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import type { TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
@@ -154,7 +154,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   if ((!page || !id) && !pageDetailsError)
     return (
       <div className="grid size-full place-items-center">
-        <LogoSpinner />
+        <LogoSpinner size="fluid" alt="Loading" />
       </div>
     );
 

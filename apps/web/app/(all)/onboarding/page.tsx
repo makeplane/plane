@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { OnboardingRoot } from "@/components/onboarding";
 // constants
 import { USER_WORKSPACES_LIST } from "@plane/constants";
@@ -53,7 +53,7 @@ function OnboardingPage() {
               <OnboardingRoot invitations={invitations ?? []} />
             ) : (
               <div className="grid h-full w-full place-items-center">
-                <LogoSpinner />
+                <LogoSpinner size="fluid" alt="Loading" />
               </div>
             )}
           </div>

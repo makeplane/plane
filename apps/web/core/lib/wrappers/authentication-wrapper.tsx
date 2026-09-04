@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -81,7 +81,7 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
   if ((isUserSWRLoading || isUserLoading || workspacesLoader) && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
+        <LogoSpinner size="fluid" alt="Loading" />
       </div>
     );
 

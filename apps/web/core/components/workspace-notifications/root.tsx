@@ -12,7 +12,7 @@ import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constan
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -94,7 +94,7 @@ export const NotificationsRoot = observer(function NotificationsRoot({ workspace
             <>
               {projectMemberInfoLoader ? (
                 <div className="flex h-full w-full items-center justify-center">
-                  <LogoSpinner />
+                  <LogoSpinner size="fluid" alt="Loading" />
                 </div>
               ) : (
                 <InboxContentRoot

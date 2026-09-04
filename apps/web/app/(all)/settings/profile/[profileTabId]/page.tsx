@@ -10,7 +10,7 @@ import { PROFILE_SETTINGS_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TProfileSettingsTabs } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingsContent } from "@/components/settings/profile/content";
 import { ProfileSettingsSidebarRoot } from "@/components/settings/profile/sidebar";
@@ -34,7 +34,7 @@ function ProfileSettingsPage(props: Route.ComponentProps) {
   if (!currentUser || !isAValidTab)
     return (
       <div className="grid size-full place-items-center px-4">
-        <LogoSpinner />
+        <LogoSpinner size="fluid" alt="Loading" />
       </div>
     );
 

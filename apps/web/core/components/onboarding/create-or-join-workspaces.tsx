@@ -10,7 +10,7 @@ import { AlertOctagonOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useInstance } from "@/hooks/store/use-instance";
@@ -87,7 +87,7 @@ export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(p
             )
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
-              <LogoSpinner />
+              <LogoSpinner size="fluid" alt="Loading" />
             </div>
           )}
         </div>

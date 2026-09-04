@@ -16,7 +16,7 @@ import {
   UserOutline,
 } from "@makeplane/propel/icons";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
 // constants
 import { WORKSPACE_INVITATION } from "@plane/constants";
@@ -127,7 +127,7 @@ function WorkspaceInvitationPage() {
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <LogoSpinner />
+            <LogoSpinner size="fluid" alt="Loading" />
           </div>
         )}
       </div>
