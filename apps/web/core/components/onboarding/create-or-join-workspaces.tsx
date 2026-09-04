@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { AlertOctagonOutline } from "@makeplane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
 import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
@@ -35,6 +36,8 @@ export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(p
   const { invitations, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { data: user } = useUser();
   const { config } = useInstance();
@@ -87,7 +90,7 @@ export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(p
             )
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
-              <LogoSpinner size="fluid" alt="Loading" />
+              <LogoSpinner size="fluid" alt={t("common.loading")} />
             </div>
           )}
         </div>

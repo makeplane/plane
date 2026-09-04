@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 // plane types
+import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
@@ -43,6 +44,8 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = params;
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
@@ -154,7 +157,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   if ((!page || !id) && !pageDetailsError)
     return (
       <div className="grid size-full place-items-center">
-        <LogoSpinner size="fluid" alt="Loading" />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 

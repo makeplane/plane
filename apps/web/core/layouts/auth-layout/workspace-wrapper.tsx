@@ -12,6 +12,7 @@ import useSWR from "swr";
 // ui
 import { LogOutOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -50,6 +51,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { signOut, data: currentUser } = useUser();
   const { fetchPartialProjects } = useProject();
@@ -144,7 +147,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     return (
       <div className="grid h-full place-items-center rounded-lg border border-subtle p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <LogoSpinner size="fluid" alt="Loading" />
+          <LogoSpinner size="fluid" alt={t("common.loading")} />
         </div>
       </div>
     );

@@ -12,6 +12,7 @@ import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { OnboardingRoot } from "@/components/onboarding";
 // constants
 import { USER_WORKSPACES_LIST } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -28,6 +29,8 @@ function OnboardingPage() {
   // store hooks
   const { data: user } = useUser();
   const { fetchWorkspaces } = useWorkspace();
+  // translation
+  const { t } = useTranslation();
 
   // fetching workspaces list
   useSWR(USER_WORKSPACES_LIST, () => {
@@ -53,7 +56,7 @@ function OnboardingPage() {
               <OnboardingRoot invitations={invitations ?? []} />
             ) : (
               <div className="grid h-full w-full place-items-center">
-                <LogoSpinner size="fluid" alt="Loading" />
+                <LogoSpinner size="fluid" alt={t("common.loading")} />
               </div>
             )}
           </div>

@@ -102,7 +102,7 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
   if (isLoading)
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <LogoSpinner size="fluid" alt="Loading" />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 

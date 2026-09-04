@@ -34,7 +34,7 @@ function ProfileSettingsPage(props: Route.ComponentProps) {
   if (!currentUser || !isAValidTab)
     return (
       <div className="grid size-full place-items-center px-4">
-        <LogoSpinner size="fluid" alt="Loading" />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 

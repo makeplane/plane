@@ -66,7 +66,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="flex size-full items-center justify-center">
-      <LogoSpinner size="fluid" alt="Loading" />
+      <LogoSpinner size="fluid" alt={t("common.loading")} />
     </div>
   );
 }

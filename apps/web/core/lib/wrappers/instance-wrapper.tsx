@@ -7,6 +7,8 @@
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { InstanceNotReady, MaintenanceView } from "@/components/instance";
@@ -19,6 +21,8 @@ type TInstanceWrapper = {
 
 const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
   const { children } = props;
+  // translation
+  const { t } = useTranslation();
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
 
@@ -32,7 +36,7 @@ const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrappe
   if ((isLoading || isInstanceSWRLoading) && !instance)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner size="fluid" alt="Loading" />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 

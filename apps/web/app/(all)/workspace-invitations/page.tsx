@@ -20,6 +20,7 @@ import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
 // constants
 import { WORKSPACE_INVITATION } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -41,6 +42,8 @@ function WorkspaceInvitationPage() {
   const invitation_id = searchParams.get("invitation_id");
   const slug = searchParams.get("slug");
   const token = searchParams.get("token");
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -127,7 +130,7 @@ function WorkspaceInvitationPage() {
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <LogoSpinner size="fluid" alt="Loading" />
+            <LogoSpinner size="fluid" alt={t("common.loading")} />
           </div>
         )}
       </div>

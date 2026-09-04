@@ -8,6 +8,8 @@ import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // helpers
@@ -36,6 +38,8 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
   const nextPath = searchParams.get("next_path");
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
+  // translation
+  const { t } = useTranslation();
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
   const { data: currentUserProfile } = useUserProfile();
@@ -81,7 +85,7 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
   if ((isUserSWRLoading || isUserLoading || workspacesLoader) && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner size="fluid" alt="Loading" />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 
