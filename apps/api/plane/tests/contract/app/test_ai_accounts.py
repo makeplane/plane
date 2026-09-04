@@ -288,10 +288,17 @@ class TestAIAccountManagement:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert AIAccount.objects.filter(pk=account.pk).exists()
 
-        # Promoting another admin unblocks the deletion
+        # An active non-admin member does not change anything: the bot is
+        # still the only admin
+        member_user = User.objects.create(email="plain-member@plane.so", username="plain-member")
         ProjectMember.objects.create(
-            project=project, member=create_user, role=20, workspace=workspace, is_active=True
+            project=project, member=member_user, role=15, workspace=workspace, is_active=True
         )
+        response = session_client.delete(f"{accounts_url(workspace.slug)}{account.id}/")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        # Promoting another admin unblocks the deletion
+        ProjectMember.objects.filter(project=project, member=member_user).update(role=20)
         response = session_client.delete(f"{accounts_url(workspace.slug)}{account.id}/")
         assert response.status_code == status.HTTP_204_NO_CONTENT
 

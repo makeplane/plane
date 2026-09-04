@@ -38,12 +38,15 @@ export function CreateAIAccountModal(props: Props) {
   const requestGenerationRef = useRef(0);
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Reopening before the delayed reset fires must cancel it, otherwise the
-  // old timer would wipe the fresh state mid-interaction
+  // Reopening before the delayed reset fires must run the reset immediately
+  // instead of just cancelling the timer — otherwise the stale token screen
+  // or a stuck submitting state would survive into the reopened modal
   useEffect(() => {
     if (isOpen && resetTimerRef.current) {
       clearTimeout(resetTimerRef.current);
       resetTimerRef.current = null;
+      setIsSubmitting(false);
+      setCreatedAccount(null);
     }
   }, [isOpen]);
 

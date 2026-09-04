@@ -79,12 +79,15 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
 
   const removeScopeRow = (rowKey: string) => setScopeRows((prevRows) => prevRows.filter((row) => row.key !== rowKey));
 
-  // Reopening before the delayed reset fires must cancel it, otherwise the
-  // old timer would wipe the freshly loaded rows
+  // Reopening before the delayed reset fires must run the reset immediately
+  // instead of just cancelling the timer — otherwise stale rows from the
+  // previous session would survive into the reopened modal
   useEffect(() => {
     if (isOpen && resetTimerRef.current) {
       clearTimeout(resetTimerRef.current);
       resetTimerRef.current = null;
+      setScopeRows([]);
+      setIsSubmitting(false);
     }
   }, [isOpen]);
 
