@@ -2,16 +2,21 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import uuid
+
 # Django imports
 from django.utils import timezone
 from lxml import html
 from django.db import IntegrityError
+from django.db.models import Q
 
 #  Third party imports
 from rest_framework import serializers
 
 # Module imports
 from plane.db.models import (
+    BotTypeEnum,
     Issue,
     IssueType,
     IssueActivity,
@@ -27,6 +32,7 @@ from plane.db.models import (
     User,
     EstimatePoint,
 )
+from plane.bgtasks.notification_task import extract_comment_mentions
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
@@ -701,13 +707,72 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+# The editor represents an in-text user mention as a ``<mention-component>`` node
+# tagged with ``entity_name="user_mention"``. The reference/notification pipeline
+# (see ``plane.bgtasks.notification_task.extract_comment_mentions``) parses
+# ``comment_html`` for exactly these tags, so rendering the same markup server-side
+# is what makes an API-supplied mention behave like one typed in the web app.
+USER_MENTION_ENTITY_NAME = "user_mention"
+
+
+def render_user_mention(user_id) -> str:
+    """Render the internal editor markup for a single user mention.
+
+    Mirrors the ``<mention-component>`` node produced by the web editor. The
+    ``id`` attribute is a per-node identifier (the editor uses a random UUID);
+    ``entity_identifier`` carries the mentioned user's id and ``entity_name`` is
+    fixed to ``user_mention`` so the notification pipeline recognises it.
+    """
+    return (
+        f'<mention-component id="{uuid.uuid4()}" '
+        f'entity_identifier="{user_id}" '
+        f'entity_name="{USER_MENTION_ENTITY_NAME}"></mention-component>'
+    )
+
+
+def append_user_mentions(comment_html, user_ids) -> str:
+    """Append user mention markup to a comment's HTML body.
+
+    The mentions are added as a trailing paragraph so the markup round-trips
+    through the editor's block-based document model.
+    """
+    mention_markup = " ".join(render_user_mention(user_id) for user_id in user_ids)
+    return f"{comment_html or ''}<p>{mention_markup}</p>"
+
+
 class IssueCommentCreateSerializer(BaseSerializer):
     """
     Serializer for creating work item comments.
 
     Handles comment creation with JSON and HTML content support,
-    access control, and external integration tracking.
+    access control, and external integration tracking. Accepts an optional
+    ``mentions`` list of user ids; the corresponding mention markup is rendered
+    into ``comment_html`` server-side so mentioned users are notified without the
+    caller having to hand-craft ``<mention-component>`` tags.
     """
+
+    # The `values_list("id", flat=True)` queryset makes each PrimaryKeyRelatedField
+    # child resolve to the user's UUID (not a User instance). validate() below relies
+    # on this: it filters ProjectMember with `member_id__in=<uuids>` and tests
+    # `user_id in valid_member_ids` (a set of UUIDs). Do NOT change this to a queryset
+    # of User instances — those comparisons would break. This mirrors the `assignees`
+    # and `labels` fields on IssueSerializer.
+    mentions = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.values_list("id", flat=True)),
+        write_only=True,
+        required=False,
+        # Bound the input so a single comment cannot render an unbounded amount of
+        # mention markup / drive an unbounded member_id__in query. 100 comfortably
+        # covers any realistic mention set while preventing abuse.
+        max_length=100,
+        help_text=(
+            "List of user ids to mention in the comment (max 100). Each id must belong to an "
+            "existing user (unknown ids are rejected). Only active project members that are "
+            "human users or service accounts (bot_type=SERVICE) can be mentioned; other bots "
+            "(e.g. workspace-seed) are ignored. The server renders the mention markup into "
+            "comment_html and notifies the mentioned users."
+        ),
+    )
 
     class Meta:
         model = IssueComment
@@ -717,6 +782,7 @@ class IssueCommentCreateSerializer(BaseSerializer):
             "access",
             "external_source",
             "external_id",
+            "mentions",
         ]
         read_only_fields = [
             "id",
@@ -732,6 +798,66 @@ class IssueCommentCreateSerializer(BaseSerializer):
             "comment_stripped",
             "edited_at",
         ]
+
+    def validate(self, data):
+        # Render server-side mention markup for the supplied user ids. Unknown user
+        # ids are already rejected by the field above; here we keep only active
+        # project members that can receive a mention and ignore the rest, mirroring
+        # assignee/label handling and the notification pipeline's own member filter
+        # (bgtasks.notification_task).
+        #
+        # Mentionable = human users OR service accounts (bot_type=SERVICE); service
+        # accounts are first-class actors that external systems react to via webhooks.
+        # Other bots (e.g. workspace-seed) are excluded — they have no notification
+        # preference and are not addressable teammates. The Q(...) is passed as the
+        # leading positional filter arg per Django's requirement.
+        mention_user_ids = data.pop("mentions", None)
+        if mention_user_ids:
+            valid_member_ids = set(
+                ProjectMember.objects.filter(
+                    Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.SERVICE),
+                    project_id=self.context.get("project_id"),
+                    is_active=True,
+                    member_id__in=mention_user_ids,
+                ).values_list("member_id", flat=True)
+            )
+
+            # Preserve caller order and de-duplicate the mentioned users.
+            ordered_mentions = []
+            seen = set()
+            for user_id in mention_user_ids:
+                if user_id in valid_member_ids and user_id not in seen:
+                    seen.add(user_id)
+                    ordered_mentions.append(user_id)
+
+            if ordered_mentions:
+                base_html = data.get("comment_html")
+                if base_html is None and self.instance is not None:
+                    base_html = self.instance.comment_html
+                base_html = base_html or ""
+                # Skip users already mentioned in the body so repeated updates stay
+                # idempotent instead of accumulating duplicate mention markup. The body
+                # is parsed for real <mention-component> nodes — using the same parser
+                # the notification pipeline uses — rather than substring-matching the
+                # id, which would false-positive on an id that merely appears as text
+                # or in some other attribute and silently drop the mention.
+                already_mentioned = set(extract_comment_mentions(base_html))
+                new_mentions = [user_id for user_id in ordered_mentions if str(user_id) not in already_mentioned]
+                if new_mentions:
+                    data["comment_html"] = append_user_mentions(base_html, new_mentions)
+
+        # Sanitize the (possibly mention-augmented) HTML with the same rules the
+        # internal app applies, so external clients cannot store unsafe or invalid
+        # markup. This runs after mention rendering; the whitelisted
+        # <mention-component> markup survives sanitization.
+        if data.get("comment_html"):
+            is_valid, error_msg, sanitized_html = validate_html_content(data["comment_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"comment_html": "HTML content is not valid"})
+            if sanitized_html is not None:
+                data["comment_html"] = sanitized_html
+
+        return data
 
 
 class IssueCommentSerializer(BaseSerializer):
