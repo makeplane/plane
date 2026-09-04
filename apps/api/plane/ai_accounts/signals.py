@@ -27,17 +27,16 @@ def add_ai_bots_to_new_project(sender, instance, created, **kwargs):
         workspace_id=instance.workspace_id, is_active=True
     ).select_related("bot_user")
     for account in accounts:
-        # The project role mirrors the bot's workspace role
-        role = (
-            WorkspaceMember.objects.filter(
-                workspace_id=instance.workspace_id,
-                member=account.bot_user,
-                is_active=True,
-            )
-            .values_list("role", flat=True)
-            .first()
-            or 15
-        )
+        # The project role mirrors the bot's workspace role. A bot that has
+        # been removed from the workspace has no active membership — skip it
+        # instead of re-activating it in the new project with a default role.
+        role = WorkspaceMember.objects.filter(
+            workspace_id=instance.workspace_id,
+            member=account.bot_user,
+            is_active=True,
+        ).values_list("role", flat=True).first()
+        if role is None:
+            continue
         membership = ProjectMember.objects.filter(
             project=instance, member=account.bot_user
         ).first()

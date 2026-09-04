@@ -111,10 +111,15 @@ ACTION_BY_METHOD = {
 }
 
 
+# Sentinel for the per-request AIAccount cache: a cached None (no account)
+# must not be confused with "not resolved yet".
+_CACHE_MISS = object()
+
+
 def get_ai_account(request):
     """Lazily resolve and cache the AIAccount for the request's bot user."""
-    cached = getattr(request, "_ai_account_cache", None)
-    if cached is not None:
+    cached = getattr(request, "_ai_account_cache", _CACHE_MISS)
+    if cached is not _CACHE_MISS:
         return cached
 
     from .models import AIAccount

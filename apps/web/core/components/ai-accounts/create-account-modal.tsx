@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -32,23 +32,51 @@ export function CreateAIAccountModal(props: Props) {
   const [createdAccount, setCreatedAccount] = useState<TCreatedAIAccount | null>(null);
   // hooks
   const { t } = useTranslation();
+  // refs
+  // Bumped on close so a create response that lands after the modal was
+  // closed cannot resurrect the stale token screen on the next open
+  const requestGenerationRef = useRef(0);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Reopening before the delayed reset fires must cancel it, otherwise the
+  // old timer would wipe the fresh state mid-interaction
+  useEffect(() => {
+    if (isOpen && resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    }
+  }, [isOpen]);
+
+  useEffect(
+    () => () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    },
+    []
+  );
 
   const handleClose = () => {
     onClose();
-    setTimeout(() => {
+    requestGenerationRef.current += 1;
+    resetTimerRef.current = setTimeout(() => {
       setIsSubmitting(false);
       setCreatedAccount(null);
+      resetTimerRef.current = null;
     }, 350);
   };
 
   const handleCreateAccount = async (data: TAIAccountFormValues) => {
+    const generation = ++requestGenerationRef.current;
     setIsSubmitting(true);
     try {
       const res = await aiAccountService.createAIAccount(workspaceSlug, {
         name: data.name,
         description: data.description,
       });
-      setCreatedAccount(res);
+      // The account is created either way, but only show the token screen
+      // when the modal is still on this same request
+      if (generation === requestGenerationRef.current) {
+        setCreatedAccount(res);
+      }
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("workspace_settings.settings.ai_accounts.toasts.created.title"),

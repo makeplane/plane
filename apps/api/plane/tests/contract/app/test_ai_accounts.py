@@ -98,6 +98,26 @@ class TestAIAccountManagement:
             project=other_project, member=account.bot_user
         ).exists()
 
+    def test_new_project_skips_bot_without_workspace_membership(
+        self, session_client, workspace, create_user
+    ):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-removed", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+        # The bot was removed from the workspace but the account stayed active;
+        # the signal must not re-activate it in new projects
+        WorkspaceMember.objects.filter(
+            workspace=workspace, member=account.bot_user
+        ).update(is_active=False)
+
+        project = Project.objects.create(
+            name="Skip Project", identifier="SP", workspace=workspace, created_by=create_user
+        )
+        assert not ProjectMember.objects.filter(
+            project=project, member=account.bot_user
+        ).exists()
+
     def test_create_forbidden_for_non_admin(
         self, api_client, workspace, member_user
     ):
@@ -154,7 +174,7 @@ class TestAIAccountManagement:
             size=100,
             workspace=workspace,
             entity_type="USER_AVATAR",
-            user=account.bot_user,
+            entity_identifier=str(account.bot_user.id),
             is_uploaded=True,
         )
 
@@ -183,6 +203,23 @@ class TestAIAccountManagement:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+        # Assets uploaded for a different entity cannot be attached
+        other_asset = FileAsset.objects.create(
+            attributes={"name": "other.png", "type": "image/png", "size": 100},
+            asset=f"{workspace.id}/other.png",
+            size=100,
+            workspace=workspace,
+            entity_type="USER_AVATAR",
+            entity_identifier=str(uuid4()),
+            is_uploaded=True,
+        )
+        response = session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/",
+            {"avatar": other_asset.asset_url},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
         # Omitting the key leaves the avatar untouched; empty string clears it
         # and deletes the previously attached asset
         session_client.patch(
@@ -201,6 +238,22 @@ class TestAIAccountManagement:
         asset.refresh_from_db()
         assert asset.is_deleted is True
 
+    def test_patch_with_invalid_avatar_changes_nothing(self, session_client, workspace):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-atomic", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+
+        # An invalid avatar must reject the whole PATCH, not just the avatar part
+        response = session_client.patch(
+            f"{accounts_url(workspace.slug)}{account.id}/",
+            {"name": "renamed", "avatar": f"/api/assets/v2/static/{uuid4()}/"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        account.refresh_from_db()
+        assert account.name == "bot-atomic"
+
     def test_delete_disables_everything(self, session_client, workspace):
         create = session_client.post(
             accounts_url(workspace.slug), {"name": "bot-3", "role": 15}, format="json"
@@ -213,6 +266,34 @@ class TestAIAccountManagement:
         assert not WorkspaceMember.objects.get(
             workspace=workspace, member=account.bot_user
         ).is_active
+
+    def test_delete_blocked_when_bot_is_sole_project_admin(
+        self, session_client, workspace, create_user
+    ):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-admin", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+
+        # A project where the bot ends up as the only active admin (an admin
+        # promoted it through the project member endpoint)
+        project = Project.objects.create(
+            name="Bot Owned", identifier="BO", workspace=workspace, created_by=create_user
+        )
+        membership = ProjectMember.objects.get(project=project, member=account.bot_user)
+        membership.role = 20
+        membership.save()
+
+        response = session_client.delete(f"{accounts_url(workspace.slug)}{account.id}/")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert AIAccount.objects.filter(pk=account.pk).exists()
+
+        # Promoting another admin unblocks the deletion
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, workspace=workspace, is_active=True
+        )
+        response = session_client.delete(f"{accounts_url(workspace.slug)}{account.id}/")
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
     def test_scopes_replace(self, session_client, workspace, project):
         create = session_client.post(
@@ -268,3 +349,21 @@ class TestAIAccountManagement:
             format="json",
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.contract
+class TestAIAccountPolicyCache:
+    def test_get_ai_account_caches_negative_result(
+        self, db, create_user, django_assert_num_queries
+    ):
+        """A request without an AI account must hit the DB only once."""
+        from plane.ai_accounts.policy import get_ai_account
+
+        class _Request:
+            def __init__(self, user):
+                self.user = user
+
+        request = _Request(create_user)
+        assert get_ai_account(request) is None
+        with django_assert_num_queries(0):
+            assert get_ai_account(request) is None

@@ -24,6 +24,7 @@ from .serializers import (
     AIScopePolicyInputSerializer,
     AIScopePolicySerializer,
 )
+from .utils import is_sole_project_admin
 
 
 class AIAccountListCreateAPIEndpoint(BaseAPIView):
@@ -125,18 +126,19 @@ class AIAccountDetailAPIEndpoint(BaseAPIView):
         description = request.data.get("description", account.description)
         is_active = request.data.get("is_active", account.is_active)
 
-        account.name = name
-        account.description = description
-        account.is_active = is_active
-        account.save()
+        bot_user = account.bot_user
+        avatar_provided = "avatar" in request.data
+        new_avatar_asset = None
+        old_asset_id = bot_user.avatar_asset_id
 
         # Custom avatar for the backing bot user. The avatar rides the
         # avatar_asset FK (same model as regular user avatars): the asset is
         # uploaded as a workspace asset bound to the bot, so it is never
         # touched by the uploader's own profile-avatar replacement flow.
-        if "avatar" in request.data:
-            bot_user = account.bot_user
-            old_asset_id = bot_user.avatar_asset_id
+        # The asset is resolved and validated BEFORE anything is saved, so an
+        # invalid avatar rejects the whole PATCH instead of leaving the
+        # account fields half-updated.
+        if avatar_provided:
             avatar_url = request.data.get("avatar") or ""
             if avatar_url:
                 asset_id = avatar_url.rstrip("/").rsplit("/", 1)[-1]
@@ -144,40 +146,61 @@ class AIAccountDetailAPIEndpoint(BaseAPIView):
                     asset_id = UUID(asset_id)
                 except ValueError:
                     asset_id = None
-                asset = (
+                # Only assets uploaded for THIS bot (workspace asset with the
+                # bot as entity) may be attached — anything else is rejected.
+                new_avatar_asset = (
                     FileAsset.objects.filter(
-                        id=asset_id, workspace__slug=slug, is_deleted=False
+                        id=asset_id,
+                        workspace__slug=slug,
+                        entity_type=FileAsset.EntityTypeContext.USER_AVATAR,
+                        entity_identifier=str(bot_user.id),
+                        is_deleted=False,
                     ).first()
                     if asset_id
                     else None
                 )
-                if asset is None:
+                if new_avatar_asset is None:
                     return Response(
                         {"error": "Avatar asset not found"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                bot_user.avatar_asset = asset
-                bot_user.avatar = ""
-            else:
-                bot_user.avatar_asset = None
-                bot_user.avatar = ""
-            bot_user.save(update_fields=["avatar", "avatar_asset", "updated_at"])
 
-            # Delete the previously attached avatar asset
-            if old_asset_id and old_asset_id != bot_user.avatar_asset_id:
-                FileAsset.objects.filter(id=old_asset_id).update(
-                    is_deleted=True, deleted_at=timezone.now()
-                )
+        with transaction.atomic():
+            account.name = name
+            account.description = description
+            account.is_active = is_active
+            account.save()
 
-        # Toggling the account toggles its tokens with it
-        APIToken.objects.filter(user=account.bot_user, is_service=True).update(
-            is_active=is_active
-        )
+            if avatar_provided:
+                bot_user.avatar_asset = new_avatar_asset
+                bot_user.avatar = ""
+                bot_user.save(update_fields=["avatar", "avatar_asset", "updated_at"])
+
+                # Delete the previously attached avatar asset
+                if old_asset_id and old_asset_id != bot_user.avatar_asset_id:
+                    FileAsset.objects.filter(id=old_asset_id).update(
+                        is_deleted=True, deleted_at=timezone.now()
+                    )
+
+            # Toggling the account toggles its tokens with it
+            APIToken.objects.filter(user=bot_user, is_service=True).update(
+                is_active=is_active
+            )
         return Response(AIAccountSerializer(account).data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def delete(self, request, slug, pk):
         account = self.get_account(slug, pk)
+        # Deleting the account removes the bot from every project; refuse when
+        # the bot is the only active admin of one (same protection as removing
+        # a human member)
+        if is_sole_project_admin(slug, account.bot_user_id):
+            return Response(
+                {
+                    "error": "This AI account is the only admin of some projects. Promote another member to admin before deleting it."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         with transaction.atomic():
             APIToken.objects.filter(user=account.bot_user, is_service=True).update(
                 is_active=False

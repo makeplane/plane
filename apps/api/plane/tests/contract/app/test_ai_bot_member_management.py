@@ -170,3 +170,34 @@ class TestWorkspaceMemberAIBots:
         response = admin_client.delete(f"/api/workspaces/{workspace.slug}/members/{ws_membership.id}/")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_destroy_ai_bot_blocked_when_sole_project_admin(self, workspace, project, create_user, admin_client):
+        ai_bot = _make_bot("ai-bot@plane.so")
+        ws_membership = WorkspaceMember.objects.create(
+            workspace=workspace, member=ai_bot, role=20, is_active=True
+        )
+        AIAccount.objects.create(
+            workspace=workspace, owner=create_user, bot_user=ai_bot, name="test-bot"
+        )
+        # The bot is the only active admin of a project: the post_save signal
+        # auto-joins it with its workspace role (20)
+        owned_project = Project.objects.create(
+            name="Bot Owned", identifier="BOWN", workspace=workspace, created_by=create_user
+        )
+        assert ProjectMember.objects.filter(
+            project=owned_project, member=ai_bot, role=20, is_active=True
+        ).exists()
+
+        response = admin_client.delete(f"/api/workspaces/{workspace.slug}/members/{ws_membership.id}/")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        ws_membership.refresh_from_db()
+        assert ws_membership.is_active is True
+
+        # Promoting another admin unblocks the removal
+        ProjectMember.objects.create(
+            workspace=workspace, project=owned_project, member=create_user, role=20, is_active=True
+        )
+        response = admin_client.delete(f"/api/workspaces/{workspace.slug}/members/{ws_membership.id}/")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT

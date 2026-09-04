@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR, { mutate } from "swr";
 // plane imports
@@ -44,6 +44,8 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
   // hooks
   const { t } = useTranslation();
   const { projectMap, workspaceProjectIds, fetchProjects } = useProject();
+  // refs
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
@@ -77,11 +79,28 @@ export const AIScopesModal = observer(function AIScopesModal(props: Props) {
 
   const removeScopeRow = (rowKey: string) => setScopeRows((prevRows) => prevRows.filter((row) => row.key !== rowKey));
 
+  // Reopening before the delayed reset fires must cancel it, otherwise the
+  // old timer would wipe the freshly loaded rows
+  useEffect(() => {
+    if (isOpen && resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    }
+  }, [isOpen]);
+
+  useEffect(
+    () => () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    },
+    []
+  );
+
   const handleClose = () => {
     onClose();
-    setTimeout(() => {
+    resetTimerRef.current = setTimeout(() => {
       setScopeRows([]);
       setIsSubmitting(false);
+      resetTimerRef.current = null;
     }, 350);
   };
 
