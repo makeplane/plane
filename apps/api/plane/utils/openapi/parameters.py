@@ -240,6 +240,21 @@ ATTACHMENT_ID_PARAMETER = OpenApiParameter(
     ],
 )
 
+SUBSCRIBER_ID_PARAMETER = OpenApiParameter(
+    name="subscriber_id",
+    description="Subscriber (watcher) user ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example subscriber ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical subscriber user UUID",
+        )
+    ],
+)
+
 ACTIVITY_ID_PARAMETER = OpenApiParameter(
     name="pk",
     description="Activity ID",
