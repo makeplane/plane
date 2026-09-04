@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { TDisplayConfig } from "@plane/editor";
 import type { JSONContent, TPageVersion } from "@plane/types";
 import { isJSONContentEmpty } from "@plane/utils";
@@ -26,6 +27,7 @@ export type TVersionEditorProps = {
 };
 
 export const PagesVersionEditor = observer(function PagesVersionEditor(props: TVersionEditorProps) {
+  const { t } = useTranslation();
   const { activeVersion, versionDetails } = props;
   // params
   const { workspaceSlug, projectId } = useParams();
@@ -45,7 +47,7 @@ export const PagesVersionEditor = observer(function PagesVersionEditor(props: TV
   if (!versionDetails)
     return (
       <div className="size-full px-5">
-        <Skeleton aria-label="Loading page version">
+        <Skeleton aria-label={t("aria_labels.loading.page_version")}>
           <div className="relative space-y-4">
             <SkeletonItem blockSize="36px" inlineSize="50%" />
             <div className="space-y-2">

@@ -175,7 +175,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             )}
             <div ref={setElementRef}>
               {inboxIssuePaginationInfo?.next_page_results && (
-                <Skeleton aria-label="Loading more work items">
+                <Skeleton aria-label={t("aria_labels.loading.more_work_items")}>
                   <div className="mx-auto w-full space-y-4 px-2 py-4">
                     <SkeletonItem blockSize="64px" />
                     <SkeletonItem blockSize="64px" />

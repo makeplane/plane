@@ -66,7 +66,7 @@ export function ProfileStats({ userProfile }: Props) {
           ))}
         </div>
       ) : (
-        <Skeleton aria-label="Loading profile stats">
+        <Skeleton aria-label={t("aria_labels.loading.profile_stats")}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <SkeletonItem blockSize="80px" />
             <SkeletonItem blockSize="80px" />

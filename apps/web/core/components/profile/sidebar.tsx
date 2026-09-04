@@ -280,7 +280,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
           </div>
         </>
       ) : (
-        <Skeleton aria-label="Loading sidebar">
+        <Skeleton aria-label={t("aria_labels.loading.sidebar")}>
           <div className="space-y-7 px-5">
             <SkeletonItem blockSize="130px" />
             <div className="space-y-5">

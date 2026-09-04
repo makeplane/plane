@@ -79,7 +79,7 @@ export const SidebarChart = observer(function SidebarChart(props: ProgressChartP
               />
             </Fragment>
           ) : (
-            <Skeleton aria-label="Loading cycle progress chart">
+            <Skeleton aria-label={t("aria_labels.loading.cycle_progress_chart")}>
               <div className="mt-4 h-[160px] w-full">
                 <SkeletonItem blockSize="100%" />
               </div>

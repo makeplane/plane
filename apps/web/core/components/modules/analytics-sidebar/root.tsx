@@ -140,7 +140,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
 
   if (!moduleDetails)
     return (
-      <Skeleton aria-label="Loading module sidebar details">
+      <Skeleton aria-label={t("aria_labels.loading.module_sidebar_details")}>
         <div className="space-y-2">
           <SkeletonItem blockSize="15px" inlineSize="50%" />
           <SkeletonItem blockSize="15px" inlineSize="30%" />

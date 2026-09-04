@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 // plane ui
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 // components
 import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -26,6 +27,7 @@ type Props = {
 };
 
 export const FilterMentions = observer(function FilterMentions(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -103,7 +105,7 @@ export const FilterMentions = observer(function FilterMentions(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Skeleton aria-label="Loading mentions">
+            <Skeleton aria-label={t("aria_labels.loading.mentions")}>
               <div className="space-y-2">
                 <SkeletonItem blockSize="20px" />
                 <SkeletonItem blockSize="20px" />

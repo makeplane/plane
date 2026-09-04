@@ -130,7 +130,7 @@ export function ParentIssuesListModal({
           )}
 
           {isSearching || isLoading ? (
-            <Skeleton aria-label="Loading work items">
+            <Skeleton aria-label={t("aria_labels.loading.work_items")}>
               <div className="space-y-3 p-3">
                 <SkeletonItem blockSize="40px" />
                 <SkeletonItem blockSize="40px" />

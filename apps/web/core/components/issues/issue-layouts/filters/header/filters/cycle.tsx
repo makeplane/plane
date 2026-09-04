@@ -9,6 +9,7 @@ import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { CycleGroupIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // components
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export const FilterCycle = observer(function FilterCycle(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks
@@ -98,7 +100,7 @@ export const FilterCycle = observer(function FilterCycle(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Skeleton aria-label="Loading cycles">
+            <Skeleton aria-label={t("aria_labels.loading.cycles")}>
               <div className="space-y-2">
                 <SkeletonItem blockSize="20px" />
                 <SkeletonItem blockSize="20px" />

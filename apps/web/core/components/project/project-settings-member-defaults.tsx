@@ -156,7 +156,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
             )}
           />
         ) : (
-          <Skeleton aria-label="Loading member defaults">
+          <Skeleton aria-label={t("aria_labels.loading.member_defaults")}>
             <div className="h-9 w-full">
               <SkeletonItem blockSize="100%" />
             </div>
@@ -179,7 +179,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
             )}
           />
         ) : (
-          <Skeleton aria-label="Loading member defaults">
+          <Skeleton aria-label={t("aria_labels.loading.member_defaults")}>
             <div className="h-9 w-full">
               <SkeletonItem blockSize="100%" />
             </div>

@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 // plane types
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 // components
@@ -29,6 +30,7 @@ type Props = {
 };
 
 export const FilterMember = observer(function FilterMember(props: Props) {
+  const { t } = useTranslation();
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -111,7 +113,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Skeleton aria-label="Loading members">
+            <Skeleton aria-label={t("aria_labels.loading.members")}>
               <div className="space-y-2">
                 <SkeletonItem blockSize="20px" />
                 <SkeletonItem blockSize="20px" />

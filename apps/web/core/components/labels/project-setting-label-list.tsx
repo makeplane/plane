@@ -160,7 +160,7 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
           )
         ) : (
           !showLabelForm && (
-            <Skeleton aria-label="Loading labels">
+            <Skeleton aria-label={t("aria_labels.loading.labels")}>
               <div className="space-y-5">
                 <SkeletonItem blockSize="42px" />
                 <SkeletonItem blockSize="42px" />

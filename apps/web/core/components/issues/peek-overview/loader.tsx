@@ -7,6 +7,7 @@
 import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -15,12 +16,13 @@ type TIssuePeekOverviewLoader = {
 };
 
 export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
+  const { t } = useTranslation();
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
 
   return (
-    <Skeleton aria-label="Loading work item">
+    <Skeleton aria-label={t("aria_labels.loading.work_item")}>
       <div className="h-screen w-full space-y-6 overflow-hidden p-5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">

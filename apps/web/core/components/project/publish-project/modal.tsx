@@ -18,6 +18,7 @@ import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/typ
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
@@ -50,6 +51,7 @@ const VIEW_OPTIONS: {
 ];
 
 export const PublishProjectModal = observer(function PublishProjectModal(props: Props) {
+  const { t } = useTranslation();
   const { isOpen, onClose, projectId } = props;
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
@@ -197,7 +199,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
 
         {/* content */}
         {fetchSettingsLoader ? (
-          <Skeleton aria-label="Loading publish settings">
+          <Skeleton aria-label={t("aria_labels.loading.publish_settings")}>
             <div className="space-y-4 px-5">
               <SkeletonItem blockSize="30px" />
               <SkeletonItem blockSize="30px" />

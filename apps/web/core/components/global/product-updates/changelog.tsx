@@ -5,6 +5,7 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -12,6 +13,7 @@ import { ProductUpdatesFallback } from "@/components/global/product-updates/fall
 import { useInstance } from "@/hooks/store/use-instance";
 
 export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog() {
+  const { t } = useTranslation();
   // refs
   const isLoadingRef = useRef(true);
   // states
@@ -74,7 +76,7 @@ export const ProductUpdatesChangelog = observer(function ProductUpdatesChangelog
   return (
     <div className="vertical-scrollbar relative mx-0.5 flex scrollbar-xs h-[550px] flex-col overflow-hidden overflow-y-scroll px-6">
       {isLoading && (
-        <Skeleton aria-label="Loading changelog">
+        <Skeleton aria-label={t("aria_labels.loading.changelog")}>
           <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3">
             <SkeletonItem blockSize="95%" inlineSize="95%" />
           </div>

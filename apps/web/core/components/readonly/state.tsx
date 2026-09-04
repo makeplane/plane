@@ -52,7 +52,7 @@ export const ReadonlyState = observer(function ReadonlyState(props: TReadonlySta
 
   if (stateLoader) {
     return (
-      <Skeleton aria-label="Loading states">
+      <Skeleton aria-label={t("aria_labels.loading.states")}>
         <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
           <SkeletonItem variant="circle" blockSize="16px" inlineSize="16px" />
           <SkeletonItem blockSize="16px" inlineSize="50px" />

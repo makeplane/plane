@@ -5,24 +5,26 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 
 export function ProjectInsightsLoader() {
+  const { t } = useTranslation();
   return (
     <div className="flex h-[200px] gap-1">
       <div className="h-[200px] w-full">
-        <Skeleton aria-label="Loading chart">
+        <Skeleton aria-label={t("aria_labels.loading.chart")}>
           <div className="h-full w-full">
             <SkeletonItem blockSize="100%" inlineSize="100%" />
           </div>
         </Skeleton>
       </div>
       <div className="flex h-full w-full flex-col gap-1">
-        <Skeleton aria-label="Loading chart">
+        <Skeleton aria-label={t("aria_labels.loading.chart")}>
           <div className="h-12 w-full">
             <SkeletonItem blockSize="100%" />
           </div>
         </Skeleton>
-        <Skeleton aria-label="Loading chart">
+        <Skeleton aria-label={t("aria_labels.loading.chart")}>
           <div className="h-full w-full">
             <SkeletonItem blockSize="100%" />
           </div>
@@ -33,8 +35,9 @@ export function ProjectInsightsLoader() {
 }
 
 export function ChartLoader() {
+  const { t } = useTranslation();
   return (
-    <Skeleton aria-label="Loading chart">
+    <Skeleton aria-label={t("aria_labels.loading.chart")}>
       <div className="h-[350px] w-full">
         <SkeletonItem blockSize="100%" />
       </div>

@@ -5,10 +5,12 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 
 export function IssueActivityLoader() {
+  const { t } = useTranslation();
   return (
-    <Skeleton aria-label="Loading issue activity">
+    <Skeleton aria-label={t("aria_labels.loading.issue_activity")}>
       <div className="space-y-8">
         <div className="flex items-start gap-3">
           <div className="shrink-0">

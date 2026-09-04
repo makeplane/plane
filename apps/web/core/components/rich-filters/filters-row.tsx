@@ -8,6 +8,7 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { AddFilterOutline } from "@makeplane/propel/icons";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { Button } from "@plane/propel/button";
@@ -29,6 +30,7 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
 export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersRowProps<K, E>
 ) {
+  const { t } = useTranslation();
   const { buttonConfig, disabledAllOperations: disabledAllOperationsProp = false, filter, variant = "header" } = props;
   // states
   const [isUpdating, setIsUpdating] = useState(false);
@@ -129,7 +131,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   if (!filter.configManager.areConfigsReady && !hasAnyConditions) {
     return (
       <RowTransition show={filter.isVisible}>
-        <Skeleton aria-label="Loading filters">
+        <Skeleton aria-label={t("aria_labels.loading.filters")}>
           <div className={cn("overflow-hidden", { "rounded-none": variant === "header" })}>
             <SkeletonItem blockSize="44px" />
           </div>

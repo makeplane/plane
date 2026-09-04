@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // types
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
 // fetch-keys
@@ -27,6 +28,7 @@ type Props = {
 const appInstallationService = new AppInstallationService();
 
 export const SelectChannel = observer(function SelectChannel({ integration }: Props) {
+  const { t } = useTranslation();
   // store hooks
   const { config } = useInstance();
   // states
@@ -102,7 +104,7 @@ export const SelectChannel = observer(function SelectChannel({ integration }: Pr
           />
         </button>
       ) : (
-        <Skeleton aria-label="Loading slack channel">
+        <Skeleton aria-label={t("aria_labels.loading.slack_channel")}>
           <SkeletonItem blockSize="35px" inlineSize="150px" />
         </Skeleton>
       )}

@@ -154,7 +154,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
         <Combobox.Options as="ul" static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
           {isSearching ? (
-            <Skeleton aria-label="Loading work items">
+            <Skeleton aria-label={t("aria_labels.loading.work_items")}>
               <div className="space-y-3 p-3">
                 <SkeletonItem blockSize="40px" />
                 <SkeletonItem blockSize="40px" />

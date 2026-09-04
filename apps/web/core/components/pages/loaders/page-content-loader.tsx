@@ -6,6 +6,7 @@
 
 // plane imports
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -13,11 +14,12 @@ type Props = {
 };
 
 export function PageContentLoader(props: Props) {
+  const { t } = useTranslation();
   const { className } = props;
 
   return (
     <div className={cn("relative flex size-full flex-col", className)}>
-      <Skeleton aria-label="Loading page content">
+      <Skeleton aria-label={t("aria_labels.loading.page_content")}>
         {/* header */}
         <div className="relative flex h-12 w-full flex-shrink-0 items-center divide-x divide-subtle border-b border-subtle">
           <div className="relative flex items-center gap-1 pr-2">

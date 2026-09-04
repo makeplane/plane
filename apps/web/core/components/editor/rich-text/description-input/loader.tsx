@@ -6,6 +6,7 @@
 
 // plane imports
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -13,10 +14,11 @@ type Props = {
 };
 
 export function DescriptionInputLoader(props: Props) {
+  const { t } = useTranslation();
   const { className } = props;
 
   return (
-    <Skeleton aria-label="Loading description">
+    <Skeleton aria-label={t("aria_labels.loading.description")}>
       <div className={cn("space-y-2", className)}>
         <SkeletonItem blockSize="26px" />
         <div className="flex items-center gap-2">

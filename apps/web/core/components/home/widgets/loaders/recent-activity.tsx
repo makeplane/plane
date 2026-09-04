@@ -5,11 +5,13 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { range } from "lodash-es";
 
 export function RecentActivityWidgetLoader() {
+  const { t } = useTranslation();
   return (
-    <Skeleton aria-label="Loading recent activity">
+    <Skeleton aria-label={t("aria_labels.loading.recent_activity")}>
       <div className="space-y-6 rounded-xl px-2">
         {range(5).map((index) => (
           <div key={index} className="flex items-start gap-3.5">

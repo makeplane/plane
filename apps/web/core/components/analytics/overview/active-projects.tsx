@@ -40,7 +40,7 @@ const ActiveProjects = observer(function ActiveProjects() {
     >
       <div className="flex h-[350px] flex-col gap-4 overflow-auto">
         {isProjectAnalyticsCountLoading && (
-          <Skeleton aria-label="Loading active projects">
+          <Skeleton aria-label={t("aria_labels.loading.active_projects")}>
             <div className="flex flex-col gap-4">
               {Array.from({ length: 5 }).map((_, index) => (
                 <SkeletonItem key={index} blockSize="40px" />

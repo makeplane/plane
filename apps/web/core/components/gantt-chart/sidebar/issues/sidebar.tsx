@@ -9,6 +9,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type { IBlockUpdateData } from "@plane/types";
 // components
@@ -38,6 +39,7 @@ type Props = {
 };
 
 export const IssueGanttSidebar = observer(function IssueGanttSidebar(props: Props) {
+  const { t } = useTranslation();
   const {
     blockUpdateHandler,
     blockIds,
@@ -122,7 +124,7 @@ export const IssueGanttSidebar = observer(function IssueGanttSidebar(props: Prop
           )}
         </>
       ) : (
-        <Skeleton aria-label="Loading sidebar">
+        <Skeleton aria-label={t("aria_labels.loading.sidebar")}>
           <div className="space-y-3 pr-2">
             <SkeletonItem blockSize="34px" />
             <SkeletonItem blockSize="34px" />

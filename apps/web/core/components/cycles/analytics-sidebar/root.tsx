@@ -5,6 +5,7 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: Props) {
+  const { t } = useTranslation();
   const { handleClose, isArchived, projectId, workspaceSlug, cycleId } = props;
 
   // store hooks
@@ -34,7 +36,7 @@ export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: 
 
   if (!cycleDetails)
     return (
-      <Skeleton aria-label="Loading cycle sidebar details">
+      <Skeleton aria-label={t("aria_labels.loading.cycle_sidebar_details")}>
         <div className="px-5">
           <div className="space-y-2">
             <SkeletonItem blockSize="15px" inlineSize="50%" />

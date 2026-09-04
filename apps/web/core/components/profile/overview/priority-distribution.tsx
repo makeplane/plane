@@ -73,7 +73,7 @@ export function ProfilePriorityDistribution({ userProfile }: Props) {
         </Card>
       ) : (
         <div className="grid place-items-center p-7">
-          <Skeleton aria-label="Loading priority distribution">
+          <Skeleton aria-label={t("aria_labels.loading.priority_distribution")}>
             <div className="flex items-end gap-12">
               <SkeletonItem blockSize="200px" inlineSize="30px" />
               <SkeletonItem blockSize="150px" inlineSize="30px" />

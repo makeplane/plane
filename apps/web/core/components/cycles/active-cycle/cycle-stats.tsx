@@ -97,7 +97,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
   const loaders = (
-    <Skeleton aria-label="Loading cycle stats">
+    <Skeleton aria-label={t("aria_labels.loading.cycle_stats")}>
       <div className="space-y-3">
         <SkeletonItem blockSize="30px" />
         <SkeletonItem blockSize="30px" />
@@ -372,7 +372,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       </Tab.Group>
     </div>
   ) : (
-    <Skeleton aria-label="Loading cycle stats">
+    <Skeleton aria-label={t("aria_labels.loading.cycle_stats")}>
       <div className="col-span-1 flex min-h-[17rem] flex-col gap-4 overflow-hidden bg-surface-1 lg:col-span-2 xl:col-span-1">
         <SkeletonItem blockSize="17rem" />
       </div>

@@ -47,7 +47,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
       <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
       <Card>
         {!userProfileActivity ? (
-          <Skeleton aria-label="Loading recent activity">
+          <Skeleton aria-label={t("aria_labels.loading.recent_activity")}>
             <div className="space-y-5">
               <SkeletonItem blockSize="40px" />
               <SkeletonItem blockSize="40px" />

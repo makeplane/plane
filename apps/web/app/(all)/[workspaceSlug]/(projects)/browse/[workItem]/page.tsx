@@ -108,7 +108,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   if (issueLoader) {
     return (
       <div className="flex h-full gap-5 p-5">
-        <Skeleton aria-label="Loading work item details">
+        <Skeleton ariaLabel={t("aria_labels.loading.work_item_details")}>
           <div className="flex w-full gap-5">
             <div className="basis-2/3 space-y-2">
               <SkeletonItem blockSize="30px" inlineSize="40%" />

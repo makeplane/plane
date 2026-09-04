@@ -9,6 +9,7 @@ import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export const FilterProjects = observer(function FilterProjects(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -89,7 +91,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Skeleton aria-label="Loading projects">
+            <Skeleton aria-label={t("aria_labels.loading.projects")}>
               <div className="space-y-2">
                 <SkeletonItem blockSize="20px" />
                 <SkeletonItem blockSize="20px" />

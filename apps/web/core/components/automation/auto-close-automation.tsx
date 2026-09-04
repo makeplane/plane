@@ -189,7 +189,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             </div>
           )
         ) : (
-          <Skeleton aria-label="Loading auto-close settings">
+          <Skeleton aria-label={t("aria_labels.loading.auto_close_settings")}>
             <div className="ml-13">
               <SkeletonItem blockSize="50px" />
             </div>

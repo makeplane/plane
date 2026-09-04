@@ -61,7 +61,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
 
   if (loader === "issue-loading")
     return (
-      <Skeleton aria-label="Loading issue description">
+      <Skeleton aria-label={t("aria_labels.loading.issue_description")}>
         <div className="min-h-[6rem] rounded-md border border-subtle">
           <SkeletonItem blockSize="140px" />
         </div>

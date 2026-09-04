@@ -74,7 +74,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
 
   if (isNil(isSubscribed))
     return (
-      <Skeleton aria-label="Loading subscription">
+      <Skeleton aria-label={t("aria_labels.loading.subscription")}>
         <SkeletonItem blockSize="28px" inlineSize="106px" />
       </Skeleton>
     );

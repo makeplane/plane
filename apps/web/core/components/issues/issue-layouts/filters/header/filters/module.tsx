@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 // components
 import { ModuleOutline } from "@makeplane/propel/icons";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useModule } from "@/hooks/store/use-module";
 // ui
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export const FilterModule = observer(function FilterModule(props: Props) {
+  const { t } = useTranslation();
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // hooks
   const { projectId } = useParams();
@@ -88,7 +90,7 @@ export const FilterModule = observer(function FilterModule(props: Props) {
               <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
-            <Skeleton aria-label="Loading modules">
+            <Skeleton aria-label={t("aria_labels.loading.modules")}>
               <div className="space-y-2">
                 <SkeletonItem blockSize="20px" />
                 <SkeletonItem blockSize="20px" />

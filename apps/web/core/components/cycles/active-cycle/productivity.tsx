@@ -101,7 +101,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
       </Link>
     </div>
   ) : (
-    <Skeleton aria-label="Loading cycle productivity">
+    <Skeleton aria-label={t("aria_labels.loading.cycle_productivity")}>
       <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
         <SkeletonItem blockSize="100%" />
       </div>

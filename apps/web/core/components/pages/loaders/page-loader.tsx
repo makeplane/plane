@@ -5,11 +5,13 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { range } from "lodash-es";
 
 export function PageLoader() {
+  const { t } = useTranslation();
   return (
-    <Skeleton aria-label="Loading page">
+    <Skeleton aria-label={t("aria_labels.loading.page")}>
       <div className="relative flex h-full w-full flex-col">
         <div className="border-b border-subtle px-3 py-3">
           <div className="relative flex items-center gap-2">

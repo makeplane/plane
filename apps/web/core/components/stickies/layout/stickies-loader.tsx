@@ -5,13 +5,15 @@
  */
 
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 // plane ui
 
 export function StickiesLoader() {
+  const { t } = useTranslation();
   return (
     <div className="grid grid-cols-4 gap-4 overflow-scroll pb-2">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Skeleton aria-label="Loading sticky" key={index}>
+        <Skeleton aria-label={t("aria_labels.loading.sticky")} key={index}>
           <div className="space-y-5 rounded-sm border border-subtle p-3">
             <div className="space-y-2">
               <SkeletonItem blockSize="20px" />

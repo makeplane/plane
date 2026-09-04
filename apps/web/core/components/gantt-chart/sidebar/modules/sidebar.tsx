@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // ui
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type { IBlockUpdateData } from "@plane/types";
 // components
@@ -25,6 +26,7 @@ type Props = {
 };
 
 export const ModuleGanttSidebar = observer(function ModuleGanttSidebar(props: Props) {
+  const { t } = useTranslation();
   const { blockUpdateHandler, blockIds, enableReorder } = props;
 
   const { getBlockById } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
@@ -52,7 +54,7 @@ export const ModuleGanttSidebar = observer(function ModuleGanttSidebar(props: Pr
           </GanttDnDHOC>
         ))
       ) : (
-        <Skeleton aria-label="Loading sidebar">
+        <Skeleton aria-label={t("aria_labels.loading.sidebar")}>
           <div className="space-y-3 pr-2">
             <SkeletonItem blockSize="34px" />
             <SkeletonItem blockSize="34px" />

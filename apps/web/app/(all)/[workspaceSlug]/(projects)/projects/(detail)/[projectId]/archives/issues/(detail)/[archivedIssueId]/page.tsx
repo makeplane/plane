@@ -12,6 +12,7 @@ import { Banner } from "@plane/propel/banner";
 import { Button } from "@plane/propel/button";
 import { ArchiveOutline } from "@makeplane/propel/icons";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
@@ -22,6 +23,7 @@ import { useProject } from "@/hooks/store/use-project";
 import type { Route } from "./+types/page";
 
 function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId, archivedIssueId } = params;
   const router = useRouter();
@@ -52,7 +54,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
       <PageHead title={pageTitle} />
       {issueLoader ? (
         <div className="flex h-full gap-5 p-5">
-          <Skeleton aria-label="Loading work item details">
+          <Skeleton aria-label={t("aria_labels.loading.work_item_details")}>
             <div className="flex w-full gap-5">
               <div className="basis-2/3 space-y-2">
                 <SkeletonItem blockSize="30px" inlineSize="40%" />

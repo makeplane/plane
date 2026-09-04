@@ -7,6 +7,7 @@
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 
 interface TableSkeletonProps {
@@ -15,8 +16,9 @@ interface TableSkeletonProps {
 }
 
 export function TableLoader({ columns, rows }: TableSkeletonProps) {
+  const { t } = useTranslation();
   return (
-    <Skeleton aria-label="Loading table">
+    <Skeleton aria-label={t("aria_labels.loading.table")}>
       <Table>
         <TableHeader>
           <TableRow>

@@ -140,7 +140,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               workspaceSlug={workspaceSlug}
             />
           ) : (
-            <Skeleton aria-label="Loading description version">
+            <Skeleton aria-label={t("aria_labels.loading.description_version")}>
               <div className="space-y-1">
                 <SkeletonItem blockSize="15px" inlineSize="300px" />
                 <SkeletonItem blockSize="15px" inlineSize="400px" />

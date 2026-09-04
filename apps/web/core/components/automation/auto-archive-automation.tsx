@@ -126,7 +126,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
             </div>
           )
         ) : (
-          <Skeleton aria-label="Loading auto-archive settings">
+          <Skeleton aria-label={t("aria_labels.loading.auto_archive_settings")}>
             <div className="ml-13">
               <SkeletonItem blockSize="50px" />
             </div>

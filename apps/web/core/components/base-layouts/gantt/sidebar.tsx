@@ -8,6 +8,7 @@ import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { IBaseLayoutsBaseItem, IBlockUpdateData } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -32,6 +33,7 @@ type Props<T extends IBaseLayoutsBaseItem> = {
 };
 
 export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBaseLayoutsBaseItem>(props: Props<T>) {
+  const { t } = useTranslation();
   const {
     blockUpdateHandler,
     blockIds,
@@ -144,7 +146,7 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
           )}
         </>
       ) : (
-        <Skeleton aria-label="Loading sidebar">
+        <Skeleton aria-label={t("aria_labels.loading.sidebar")}>
           <div className="space-y-3 pr-2">
             <SkeletonItem blockSize="34px" />
             <SkeletonItem blockSize="34px" />

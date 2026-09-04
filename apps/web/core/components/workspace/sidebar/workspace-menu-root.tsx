@@ -178,7 +178,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       </div>
                     ) : (
                       <div className="w-full">
-                        <Skeleton aria-label="Loading workspaces">
+                        <Skeleton aria-label={t("aria_labels.loading.workspaces")}>
                           <div className="space-y-2">
                             <SkeletonItem blockSize="30px" />
                             <SkeletonItem blockSize="30px" />

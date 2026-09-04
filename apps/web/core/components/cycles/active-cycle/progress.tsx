@@ -116,7 +116,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
       )}
     </div>
   ) : (
-    <Skeleton aria-label="Loading cycle progress">
+    <Skeleton aria-label={t("aria_labels.loading.cycle_progress")}>
       <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
         <SkeletonItem blockSize="100%" />
       </div>

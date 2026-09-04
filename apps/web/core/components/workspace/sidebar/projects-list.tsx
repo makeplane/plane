@@ -227,7 +227,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               leaveTo="transform scale-95 opacity-0"
             >
               {loader === "init-loader" && (
-                <Skeleton aria-label="Loading projects">
+                <Skeleton aria-label={t("aria_labels.loading.projects")}>
                   <div className="w-full space-y-1.5">
                     {Array.from({ length: 4 }).map((_, index) => (
                       <SkeletonItem key={index} blockSize="28px" />

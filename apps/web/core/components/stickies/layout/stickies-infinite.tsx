@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import { STICKIES_PER_PAGE } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -17,6 +18,7 @@ import { useSticky } from "@/hooks/use-stickies";
 import { StickiesLayout } from "./stickies-list";
 
 export const StickiesInfinite = observer(function StickiesInfinite() {
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   // hooks
   const { fetchWorkspaceStickies, fetchNextWorkspaceStickies, getWorkspaceStickyIds, loader, paginationInfo } =
@@ -56,7 +58,7 @@ export const StickiesInfinite = observer(function StickiesInfinite() {
               id="intersection-element"
             >
               <div className="min-h-75 w-full rounded-sm">
-                <Skeleton aria-label="Loading more stickies">
+                <Skeleton aria-label={t("aria_labels.loading.more_stickies")}>
                   <div className="h-75 w-full">
                     <SkeletonItem blockSize="100%" inlineSize="100%" />
                   </div>

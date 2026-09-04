@@ -14,6 +14,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
 // assets
@@ -50,6 +51,7 @@ const integrationDetails: { [key: string]: any } = {
 const integrationService = new IntegrationService();
 
 export const SingleIntegrationCard = observer(function SingleIntegrationCard({ integration }: Props) {
+  const { t } = useTranslation();
   // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
   // router
@@ -177,7 +179,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           </Tooltip>
         )
       ) : (
-        <Skeleton aria-label="Loading integration status">
+        <Skeleton aria-label={t("aria_labels.loading.integration_status")}>
           <SkeletonItem blockSize="32px" inlineSize="64px" />
         </Skeleton>
       )}

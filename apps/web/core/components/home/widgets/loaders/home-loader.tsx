@@ -6,13 +6,15 @@
 
 import { range } from "lodash-es";
 import { Skeleton, SkeletonItem } from "@makeplane/propel/components/skeleton";
+import { useTranslation } from "@plane/i18n";
 
 export function HomeLoader() {
+  const { t } = useTranslation();
   return (
     <>
       {range(3).map((index) => (
         <div key={index}>
-          <Skeleton aria-label="Loading home widget">
+          <Skeleton aria-label={t("aria_labels.loading.home_widget")}>
             <div className="mb-2">
               <div className="mb-4">
                 <SkeletonItem blockSize="20px" inlineSize="100px" />
