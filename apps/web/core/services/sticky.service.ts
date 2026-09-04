@@ -43,7 +43,7 @@ export class StickyService extends APIService {
   }
 
   async getSticky(workspaceSlug: string, id: string) {
-    return this.get(`/api/workspaces/${workspaceSlug}/stickies/${id}`)
+    return this.get(`/api/workspaces/${workspaceSlug}/stickies/${id}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -59,7 +59,7 @@ export class StickyService extends APIService {
   }
 
   async deleteSticky(workspaceSlug: string, id: string) {
-    return await this.delete(`/api/workspaces/${workspaceSlug}/stickies/${id}`)
+    return await this.delete(`/api/workspaces/${workspaceSlug}/stickies/${id}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
