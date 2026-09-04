@@ -62,6 +62,40 @@ class TestAIAccountManagement:
             workspace=workspace, member=account.bot_user, role=15, is_active=True
         ).exists()
 
+    def test_create_joins_existing_projects(self, session_client, workspace, project):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-join", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+        assert ProjectMember.objects.filter(
+            project=project, member=account.bot_user, role=15, is_active=True
+        ).exists()
+
+    def test_new_project_auto_adds_bot(self, session_client, workspace, create_user):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-inherit", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+
+        # A project created after the account picks the bot up via signal
+        new_project = Project.objects.create(
+            name="Later Project", identifier="LP", workspace=workspace, created_by=create_user
+        )
+        assert ProjectMember.objects.filter(
+            project=new_project, member=account.bot_user, role=15, is_active=True
+        ).exists()
+
+        # Deactivated membership is reactivated when the project signal re-fires
+        # (covered by create path above); inactive accounts are not added
+        account.is_active = False
+        account.save()
+        other_project = Project.objects.create(
+            name="Other Project", identifier="OP", workspace=workspace, created_by=create_user
+        )
+        assert not ProjectMember.objects.filter(
+            project=other_project, member=account.bot_user
+        ).exists()
+
     def test_create_forbidden_for_non_admin(
         self, api_client, workspace, member_user
     ):

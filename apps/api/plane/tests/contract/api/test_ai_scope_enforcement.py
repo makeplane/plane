@@ -143,6 +143,18 @@ class TestAIScopeEnforcement:
         )
         assert bot_client.get(cycles_url).status_code == status.HTTP_200_OK
 
+    def test_users_me_allowed_with_user_scope(self, bot_client, ai_account):
+        """Slug-less endpoints fall back to the account's own workspace."""
+        AIScopePolicy.objects.create(
+            ai_account=ai_account, project=None, resource_type="user", action="read"
+        )
+        response = bot_client.get("/api/v1/users/me/")
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_users_me_denied_without_scope(self, bot_client, ai_account):
+        response = bot_client.get("/api/v1/users/me/")
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
     def test_denied_when_account_inactive(self, bot_client, ai_account, workspace, project):
         ai_account.is_active = False
         ai_account.save()

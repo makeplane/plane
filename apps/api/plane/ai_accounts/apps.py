@@ -7,3 +7,6 @@ from django.apps import AppConfig
 
 class AIAccountsConfig(AppConfig):
     name = "plane.ai_accounts"
+
+    def ready(self):
+        from . import signals  # noqa: F401

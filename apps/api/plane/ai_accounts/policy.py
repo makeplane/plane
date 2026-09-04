@@ -165,8 +165,10 @@ def enforce_ai_scope(request, view):
         )
 
     # 3. Owner-subset: the owner must still be an active workspace member, and
-    # for project resources an active project member whose role covers the bot's
-    slug = view.workspace_slug
+    # for project resources an active project member whose role covers the bot's.
+    # Endpoints without a workspace in the URL (e.g. /users/me/) fall back to
+    # the account's own workspace.
+    slug = view.workspace_slug or account.workspace.slug
     if not WorkspaceMember.objects.filter(
         workspace__slug=slug, member=account.owner, is_active=True
     ).exists():

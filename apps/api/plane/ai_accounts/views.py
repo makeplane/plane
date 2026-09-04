@@ -13,7 +13,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import APIToken, User, Workspace, WorkspaceMember
+from plane.db.models import APIToken, ProjectMember, User, Workspace, WorkspaceMember
 
 from .constants import BOT_TYPE_AI_AGENT
 from .models import AIAccount, AIScopePolicy
@@ -69,6 +69,21 @@ class AIAccountListCreateAPIEndpoint(BaseAPIView):
             )
             WorkspaceMember.objects.create(
                 workspace=workspace, member=bot_user, role=role
+            )
+            # Workspace membership inherits into all existing projects;
+            # future projects are covered by the post_save signal
+            ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        project_id=project_id,
+                        member=bot_user,
+                        role=role,
+                        workspace=workspace,
+                    )
+                    for project_id in workspace.workspace_project.values_list(
+                        "id", flat=True
+                    )
+                ]
             )
             account = AIAccount.objects.create(
                 workspace=workspace,
