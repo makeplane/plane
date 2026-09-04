@@ -271,6 +271,12 @@ allowBuilds:
   turbo: true
   sharp: false
 
+minimumReleaseAge: 10080
+
+blockExoticSubdeps: true
+
+trustPolicy: no-downgrade
+
 minimumReleaseAgeExclude:
   - "@storybook/addon-docs@10.4.6"
   - "@storybook/builder-vite@10.4.6"
