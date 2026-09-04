@@ -138,17 +138,15 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
 
   const marginLeft = `${spacingLeft}px`;
 
-  const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleToggleExpand = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (nestingLevel >= 3) {
       handleIssuePeekOverview(issue);
     } else {
-      setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issue && issue.project_id)
-          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
-        return !prevState;
-      });
+      if (!isExpanded && workspaceSlug && issue.project_id)
+        await subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
+      setExpanded((prevState) => !prevState);
     }
   };
 
@@ -296,11 +294,16 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               />
               {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
               <div
+                role="presentation"
                 className={cn("hidden", {
                   "md:flex": isSidebarCollapsed,
                   "lg:flex": !isSidebarCollapsed,
                 })}
                 onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onKeyDown={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
