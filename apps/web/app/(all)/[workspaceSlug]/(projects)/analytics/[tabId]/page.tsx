@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { Tabs } from "@plane/propel/tabs";
+import { Tab, Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
 // components
 import { cn } from "@plane/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
@@ -73,45 +73,32 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
             <div className="flex h-full overflow-hidden">
-              <Tabs value={selectedTab} onValueChange={handleTabChange} className="h-full w-full">
+              <Tabs variant="contained" value={selectedTab} onValueChange={handleTabChange}>
                 <div className={"flex h-full w-full flex-col"}>
                   <div
                     className={cn(
                       "flex w-full items-center justify-between gap-4 overflow-hidden border-b border-subtle bg-surface-1 px-6 py-2"
                     )}
                   >
-                    <Tabs.List className={"flex h-7 w-fit overflow-x-auto"}>
+                    <TabsList>
                       {ANALYTICS_TABS.map((tab) => (
-                        <Tabs.Trigger
-                          key={tab.key}
-                          value={tab.key}
-                          disabled={tab.isDisabled}
-                          size="md"
-                          className="h-6 px-3"
-                          onClick={() => {
-                            if (!tab.isDisabled) {
-                              handleTabChange(tab.key);
-                            }
-                          }}
-                        >
-                          {tab.label}
-                        </Tabs.Trigger>
+                        <Tab key={tab.key} value={tab.key} disabled={tab.isDisabled} label={tab.label} />
                       ))}
-                    </Tabs.List>
+                    </TabsList>
 
                     <div className="flex-shrink-0">
                       <AnalyticsFilterActions />
                     </div>
                   </div>
-                  {ANALYTICS_TABS.map((tab) => (
-                    <Tabs.Content
-                      key={tab.key}
-                      value={tab.key}
-                      className={"h-full overflow-hidden overflow-y-auto px-2"}
-                    >
-                      <tab.content />
-                    </Tabs.Content>
-                  ))}
+                  {/* Grid wrapper: Propel's TabsPanel omits className, so the single mounted panel
+                      gets its fill height from a one-row grid instead. */}
+                  <div className="grid min-h-0 w-full flex-1 grid-rows-1 overflow-x-hidden overflow-y-auto px-2">
+                    {ANALYTICS_TABS.map((tab) => (
+                      <TabsPanel key={tab.key} value={tab.key}>
+                        <tab.content />
+                      </TabsPanel>
+                    ))}
+                  </div>
                 </div>
               </Tabs>
             </div>

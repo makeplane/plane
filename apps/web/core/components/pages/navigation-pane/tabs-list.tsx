@@ -5,8 +5,8 @@
  */
 
 // plane imports
+import { Tab, TabsList } from "@makeplane/propel/components/tabs";
 import { useTranslation } from "@plane/i18n";
-import { Tabs } from "@plane/propel/tabs";
 // plane web components
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/components/pages/navigation-pane/tab-panels";
 
@@ -16,14 +16,11 @@ export function PageNavigationPaneTabsList() {
 
   return (
     <div className="mx-3.5">
-      <Tabs.List>
+      <TabsList>
         {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-          <Tabs.Trigger key={tab.key} value={tab.key}>
-            {t(tab.i18n_label)}
-          </Tabs.Trigger>
+          <Tab key={tab.key} value={tab.key} label={t(tab.i18n_label)} />
         ))}
-        <Tabs.Indicator />
-      </Tabs.List>
+      </TabsList>
     </div>
   );
 }
