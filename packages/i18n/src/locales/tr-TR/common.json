@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Aynı anda yalnızca bir dosya yüklenebilir.",
     "file_size_limit": "Dosya boyutu {size}MB veya daha az olmalıdır.",
     "drag_and_drop": "Yüklemek için herhangi bir yere sürükleyip bırakın",
-    "delete": "Eki sil"
+    "delete": "Eki sil",
+    "delete_confirmation": {
+      "prefix": "“",
+      "suffix": "” adlı eki silmek istediğinizden emin misiniz? Bu ek kalıcı olarak kaldırılacaktır. Bu işlem geri alınamaz."
+    }
   },
   "label": {
     "select": "Etiket seç",
