@@ -14,6 +14,8 @@ import { cn } from "@plane/utils";
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useEffect } from "react";
+import { getLayoutFromUrl, setLayoutInQuery } from "./layout-selection.logic";
 
 type Props = {
   layouts: EIssueLayoutTypes[];
@@ -25,9 +27,27 @@ export function LayoutSelection(props: Props) {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
+
+  // Read layout from URL once on mount and apply if valid
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const layout = getLayoutFromUrl(window.location.search, layouts);
+    if (layout && (layout as EIssueLayoutTypes) !== selectedLayout) {
+      onChange(layout as EIssueLayoutTypes);
+    }
+  }, [layouts, onChange, selectedLayout]);
+
   const handleOnChange = (layoutKey: EIssueLayoutTypes) => {
     if (selectedLayout !== layoutKey) {
       onChange(layoutKey);
+
+      if (typeof window !== "undefined") {
+        const newQuery = setLayoutInQuery(window.location.search, layoutKey);
+        const newUrl = newQuery ? `${window.location.pathname}?${newQuery}` : window.location.pathname;
+
+        window.history.replaceState({}, "", newUrl);
+      }
     }
   };
 
