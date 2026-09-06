@@ -7,7 +7,6 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
 import { CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
@@ -20,6 +19,8 @@ import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
+// local imports
+import { useAnchoredPosition } from "./use-anchored-position";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -80,19 +81,8 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
   const startOfWeek = data?.start_of_the_week;
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
 
   const isDateSelected = value && value.toString().trim() !== "";
 
@@ -167,6 +157,10 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
   return (
     <ComboDropDown
       as="div"
+      // The wrapper carries the keyboard handling for the combobox it contains,
+      // so it needs a role; `group` describes a container of controls without
+      // claiming to be a control itself.
+      role="group"
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
@@ -187,9 +181,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
                 "z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200",
                 optionsClassName
               )}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
+              style={panelStyle}
             >
               <Calendar
                 className="rounded-md border border-subtle p-3"

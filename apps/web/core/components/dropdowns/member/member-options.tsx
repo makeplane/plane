@@ -9,7 +9,6 @@ import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
@@ -20,6 +19,7 @@ import type { IUserLite } from "@plane/types";
 import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { useAnchoredPosition } from "../use-anchored-position";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -52,7 +52,6 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
   const [query, setQuery] = useState("");
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -61,27 +60,16 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     workspace: { isUserSuspended },
   } = useMember();
   const { isMobile } = usePlatformOS();
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
 
   useEffect(() => {
     if (isOpen) {
       onDropdownOpen?.();
       if (!isMobile) {
-        inputRef.current && inputRef.current.focus();
+        inputRef.current?.focus();
       }
     }
-  }, [isOpen, isMobile]);
+  }, [isOpen, isMobile, onDropdownOpen]);
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -137,11 +125,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           "z-30 my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none",
           optionsClassName
         )}
-        ref={setPopperElement}
-        style={{
-          ...styles.popper,
-        }}
-        {...attributes.popper}
+        style={panelStyle}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
           <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />

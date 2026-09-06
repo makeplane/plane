@@ -17,6 +17,12 @@ type Props = {
   onChange?: (value: any) => void;
   disabled?: boolean | undefined;
   onKeyDown?: KeyboardEventHandler<HTMLDivElement> | undefined;
+  /**
+   * Forwarded to the rendered element. Callers that render as a `div` and
+   * attach keyboard handling need one so the wrapper is not a static element
+   * with event handlers.
+   */
+  role?: string;
   multiple?: boolean;
   renderByDefault?: boolean;
   button: ReactNode;

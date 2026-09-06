@@ -8,7 +8,6 @@ import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -23,6 +22,8 @@ import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
+// local imports
+import { useAnchoredPosition } from "./use-anchored-position";
 // components
 import { DropdownButton } from "./buttons";
 import { MergedDateDisplay } from "./merged-date";
@@ -115,19 +116,8 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
 
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();
@@ -259,9 +249,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
     <Combobox.Options as="ul" data-prevent-outside-click static>
       <div
         className="z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1"
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
+        style={panelStyle}
       >
         <Calendar
           className="rounded-md border border-subtle p-3 text-12"
@@ -286,6 +274,10 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   return (
     <ComboDropDown
       as="div"
+      // The wrapper carries the keyboard handling for the combobox it contains,
+      // so it needs a role; `group` describes a container of controls without
+      // claiming to be a control itself.
+      role="group"
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
