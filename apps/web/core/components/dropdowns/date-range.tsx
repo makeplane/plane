@@ -16,14 +16,13 @@ import { useTranslation } from "@plane/i18n";
 import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon, DueDatePropertyIcon } from "@plane/propel/icons";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // local imports
-import { useAnchoredPosition } from "./use-anchored-position";
 // components
 import { DropdownButton } from "./buttons";
 import { MergedDateDisplay } from "./merged-date";
@@ -117,7 +116,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   // popper-js init
-  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
+  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start", { width: 640 });
 
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();

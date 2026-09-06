@@ -19,9 +19,9 @@ import type { IUserLite } from "@plane/types";
 import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useAnchoredPosition } from "../use-anchored-position";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useAnchoredPosition } from "@plane/ui";
 
 interface Props {
   className?: string;

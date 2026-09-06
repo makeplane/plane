@@ -11,12 +11,17 @@ import type { Placement } from "@popperjs/core";
 /**
  * Position a portalled dropdown panel against its trigger.
  *
- * Replaces `usePopper` for the three dropdowns whose panel is rendered through
- * `createPortal` into `document.body`. In those, the panel's
+ * Replaces `usePopper` across the dropdowns. In all of them the panel's
  * `ref={setPopperElement}` callback is never invoked, so react-popper only ever
  * sees a null popper element, never builds an instance, and leaves its
- * pre-computation default of `position:absolute; left:0; top:0` -- which is the
- * panel sitting in the top-left corner of the page.
+ * pre-computation default of `position:absolute; left:0; top:0`.
+ *
+ * The three portalled dropdowns showed that as a panel in the page's top-left
+ * corner. The rest hid it: their panel sits inside a `position:fixed` list that
+ * normal layout happens to place near the trigger, so they looked right until
+ * the trigger was near a viewport edge -- a compact icon in a work-item row --
+ * and the panel then ran off the screen with nothing to clamp it, because
+ * popper's `preventOverflow` was never running either.
  *
  * This needs no ref on the panel at all: everything is derived from the trigger,
  * which is reliably available. The trade-off against a full positioning engine
@@ -28,13 +33,22 @@ import type { Placement } from "@popperjs/core";
 export const useAnchoredPosition = (
   referenceElement: HTMLElement | null,
   placement: Placement = "bottom-start",
-  options?: { gap?: number; padding?: number }
+  options?: { gap?: number; padding?: number; width?: number }
 ): CSSProperties => {
   const gap = options?.gap ?? 4;
   const padding = options?.padding ?? 12;
+  // The panel's own width, so it can be kept on screen. It has to be supplied:
+  // the panel is not measured here, and a compact icon trigger in a list row is
+  // a fraction of the width of the calendar or member list it opens.
+  const width = options?.width ?? 192;
 
   const [style, setStyle] = useState<CSSProperties>({
-    position: "absolute",
+    // `fixed`, not `absolute`. Some of these panels sit inside a
+    // `position:fixed` list, and an absolutely-positioned child resolves
+    // against that list rather than the page, which doubles the offset and
+    // throws the panel off screen. Fixed coordinates are viewport-relative and
+    // so mean the same thing wherever the panel is mounted.
+    position: "fixed",
     // Off-screen rather than at 0,0 until the first measurement lands, so a
     // panel is never briefly painted in the corner.
     left: -9999,
@@ -48,10 +62,6 @@ export const useAnchoredPosition = (
     const [side, align = "start"] = placement.split("-");
     const viewportW = document.documentElement.clientWidth;
     const viewportH = document.documentElement.clientHeight;
-
-    // The panel is not measured, so assume nothing about its size beyond a
-    // sensible cap; clamping below keeps it on screen either way.
-    const width = Math.min(anchor.width, 320);
 
     let left: number;
     if (side === "left") left = anchor.left - gap - width;
@@ -75,11 +85,11 @@ export const useAnchoredPosition = (
     top = Math.min(Math.max(padding, top), Math.max(padding, viewportH - padding - 40));
 
     setStyle({
-      position: "absolute",
-      left: Math.round(left + window.scrollX),
-      top: Math.round(top + window.scrollY),
+      position: "fixed",
+      left: Math.round(left),
+      top: Math.round(top),
     });
-  }, [referenceElement, placement, gap, padding]);
+  }, [referenceElement, placement, gap, padding, width]);
 
   useLayoutEffect(() => {
     compute();

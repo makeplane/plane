@@ -13,14 +13,13 @@ import { Combobox } from "@headlessui/react";
 import type { Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon } from "@plane/propel/icons";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // local imports
-import { useAnchoredPosition } from "./use-anchored-position";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -82,7 +81,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   // popper-js init
-  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
+  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start", { width: 320 });
 
   const isDateSelected = value && value.toString().trim() !== "";
 

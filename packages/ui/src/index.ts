@@ -16,6 +16,7 @@ export * from "./dropdown";
 export * from "./dropdowns";
 export * from "./favorite-star";
 export * from "./form-fields";
+export * from "./hooks/use-anchored-position";
 export * from "./header";
 export * from "./link";
 export * from "./loader";

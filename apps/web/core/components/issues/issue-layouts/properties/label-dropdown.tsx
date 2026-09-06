@@ -7,7 +7,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
 import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -19,7 +18,7 @@ import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
 import { sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
@@ -45,6 +44,11 @@ export interface ILabelDropdownProps {
   fullHeight?: boolean;
   label: React.ReactNode;
 }
+
+const preventPropagation = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  e.stopPropagation();
+  e.preventDefault();
+};
 
 export function LabelDropdown(props: ILabelDropdownProps) {
   const {
@@ -83,7 +87,6 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   //hooks
   const { fetchProjectLabels, getProjectLabels, createLabel } = useLabel();
@@ -99,18 +102,18 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   const options = useMemo(
     () =>
-      projectLabels.map((label) => ({
-        value: label?.id,
-        query: label?.name,
+      projectLabels.map((projectLabel) => ({
+        value: projectLabel?.id,
+        query: projectLabel?.name,
         content: (
           <div className="flex items-center justify-start gap-2 overflow-hidden">
             <span
               className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
               style={{
-                backgroundColor: label?.color,
+                backgroundColor: projectLabel?.color,
               }}
             />
-            <div className="line-clamp-1 inline-block truncate">{label?.name}</div>
+            <div className="line-clamp-1 inline-block truncate">{projectLabel?.name}</div>
           </div>
         ),
       })),
@@ -126,17 +129,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
     [options, query, value]
   );
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  const popperElementStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
 
   const onOpen = useCallback(() => {
     if (!storeLabels && workspaceSlug && projectId)
@@ -163,8 +156,11 @@ export function LabelDropdown(props: ILabelDropdownProps) {
   const handleAddLabel = async (labelName: string) => {
     if (!projectId) return;
     setSubmitting(true);
-    const label = await createLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
-    onChange([...value, label.id]);
+    const createdLabel = await createLabel(workspaceSlug, projectId, {
+      name: labelName,
+      color: getRandomLabelColor(),
+    });
+    onChange([...value, createdLabel.id]);
     setQuery("");
     setSubmitting(false);
   };
@@ -232,15 +228,14 @@ export function LabelDropdown(props: ILabelDropdownProps) {
     ]
   );
 
-  const preventPropagation = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
   return (
-    <div className={`${fullHeight ? "h-full" : "h-5"}`} onClick={preventPropagation}>
+    // `presentation`: this wrapper exists only to stop a click reaching the row
+    // behind it, so it is not itself a control and announces nothing.
+    <div className={`${fullHeight ? "h-full" : "h-5"}`} role="presentation" onClick={preventPropagation}>
       <ComboDropDown
         as="div"
+        // Carries the keyboard handling for the combobox it contains.
+        role="group"
         ref={dropdownRef}
         className={`h-full w-auto max-w-full flex-shrink-0 text-left ${className}`}
         value={value}
@@ -255,9 +250,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
           <Combobox.Options as="ul" className="fixed z-10" static>
             <div
               className={`z-10 my-1 h-auto w-48 rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular whitespace-nowrap shadow-raised-200 focus:outline-none ${optionsClassName}`}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
+              style={popperElementStyle}
             >
               <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
                 <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
@@ -309,7 +302,8 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                 ) : submitting ? (
                   <Loader className="h-3.5 w-3.5 animate-spin" />
                 ) : canCreateLabel ? (
-                  <p
+                  <button
+                    type="button"
                     onClick={() => {
                       if (!query.length) return;
                       handleAddLabel(query);
@@ -324,7 +318,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                     ) : (
                       t("label.create.type")
                     )}
-                  </p>
+                  </button>
                 ) : (
                   <p className="text-left text-secondary">{t("common.search.no_matching_results")}</p>
                 )}

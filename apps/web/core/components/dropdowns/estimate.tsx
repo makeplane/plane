@@ -8,13 +8,12 @@ import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon, SearchIcon, EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { EEstimateSystem } from "@plane/types";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -76,19 +75,8 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  const panelStyle = useAnchoredPosition(referenceElement, placement ?? "bottom-start");
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -119,7 +107,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             </div>
           ),
         };
-      else undefined;
+      return undefined;
     })
     .filter((estimatePointDropdownOption) => estimatePointDropdownOption != undefined) as DropdownOptions;
   options?.unshift({
@@ -217,6 +205,9 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
   return (
     <ComboDropDown
       as="div"
+      // Carries the keyboard handling for the combobox it contains, so it needs
+      // a role; `group` is a container of controls, not a control itself.
+      role="group"
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full w-full", className)}
@@ -231,9 +222,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
         <Combobox.Options as="ul" className="fixed z-10" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
+            style={panelStyle}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
