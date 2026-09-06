@@ -36,15 +36,27 @@ class Command(BaseCommand):
             # Scoped cache clear using KEY_PREFIX
             key_prefix = getattr(cache, "key_prefix", None) or getattr(settings, "REDIS_KEY_PREFIX", None)
 
-            if key_prefix and hasattr(cache, "delete_pattern"):
-                pattern = f"{key_prefix}:*"
-                cache.delete_pattern(pattern)
-                self.stdout.write(self.style.SUCCESS(f"Cache Cleared for pattern: {pattern}"))
+            if not key_prefix:
+                self.stdout.write(
+                    self.style.ERROR(
+                        "Cannot clear cache: KEY_PREFIX is not configured. "
+                        "Use --all if you explicitly wish to flush the entire database."
+                    )
+                )
                 return
 
-            # Fallback to cache.clear() if no prefix or if cache backend doesn't support delete_pattern (e.g. LocMemCache)
-            cache.clear()
-            self.stdout.write(self.style.SUCCESS("Cache Cleared"))
+            if not hasattr(cache, "delete_pattern"):
+                self.stdout.write(
+                    self.style.ERROR(
+                        "Cannot clear cache: Cache backend does not support delete_pattern(). "
+                        "Use --all if you explicitly wish to flush the entire database."
+                    )
+                )
+                return
+
+            pattern = f"{key_prefix}:*"
+            cache.delete_pattern(pattern)
+            self.stdout.write(self.style.SUCCESS(f"Cache Cleared for pattern: {pattern}"))
             return
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Failed to clear cache: {e}"))

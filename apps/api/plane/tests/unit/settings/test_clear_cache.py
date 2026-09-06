@@ -43,14 +43,27 @@ class TestClearCacheCommand:
         mock_cache.delete_pattern.assert_not_called()
 
     @patch("plane.db.management.commands.clear_cache.cache")
-    def test_clear_cache_fallback_when_no_delete_pattern(self, mock_cache):
-        """Test graceful fallback to cache.clear() if backend does not support delete_pattern."""
+    def test_clear_cache_errors_when_no_delete_pattern(self, mock_cache):
+        """Test that missing delete_pattern does NOT fall back to flushdb."""
         mock_cache.key_prefix = "plane"
-        del mock_cache.delete_pattern  # Simulate backend without delete_pattern (e.g. LocMemCache)
+        del mock_cache.delete_pattern
 
         call_command("clear_cache")
 
-        mock_cache.clear.assert_called_once()
+        # Crucial safeguard: FLUSHDB must NOT be called
+        mock_cache.clear.assert_not_called()
+
+    @patch("plane.db.management.commands.clear_cache.cache")
+    def test_clear_cache_errors_when_prefix_is_empty(self, mock_cache):
+        """Test that an empty prefix does NOT fall back to flushdb."""
+        mock_cache.key_prefix = ""
+        mock_cache.delete_pattern = MagicMock()
+
+        call_command("clear_cache")
+
+        # Crucial safeguard: FLUSHDB must NOT be called
+        mock_cache.clear.assert_not_called()
+        mock_cache.delete_pattern.assert_not_called()
 
 
 @pytest.mark.unit
