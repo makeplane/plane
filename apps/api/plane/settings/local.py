@@ -23,6 +23,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": REDIS_URL,  # noqa
+        "KEY_PREFIX": REDIS_KEY_PREFIX, # noqa
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
