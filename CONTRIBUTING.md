@@ -120,7 +120,7 @@ This guide is designed to help contributors understand how to add or update tran
 
 Translations are organized by language in the `packages/i18n/src/locales/` directory. Each language has its own folder containing modular JSON files corresponding to feature namespaces (defined in `NAMESPACES` in `packages/i18n/src/constants/namespaces.ts`). Here's how it looks:
 
-```
+```text
 packages/i18n/src/locales/
     ├── en/
     │   ├── common.json            # Common UI elements, buttons, and generic labels
@@ -198,7 +198,7 @@ Adding a new language involves three straightforward steps:
 
    ```ts
    // packages/i18n/src/types/language.ts
-   export type TLanguage = "en" | "fr" | "your-lang" | ...;
+   export type TLanguage = "en" | "fr" | "your-lang";
    ```
 
 2. **Add language configuration**
