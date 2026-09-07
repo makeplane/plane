@@ -26,10 +26,23 @@ WORKDIR /app
 ARG APK_SECURITY_PATCH=2026-09-07
 RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
 
+# All apk work must happen BEFORE the `COPY --from=node /usr/lib` below: that
+# copy overwrites /usr/lib/libapk.so.* with node:22-alpine's copy, which is a
+# different Alpine release, leaving /sbin/apk linked against a libapk that no
+# longer exports the symbols it needs. Every later apk call then dies with
+# "Error relocating /sbin/apk: ... symbol not found" (exit 127), and apk cannot
+# repair itself because apk is the broken binary. So the runtime tools that used
+# to be installed further down are folded in here.
 RUN apk add --no-cache \
     "libpq" \
     "libxslt" \
-    "xmlsec"
+    "xmlsec" \
+    "nss-tools" \
+    "bash" \
+    "curl" \
+    "uuidgen" \
+    "ncdu" \
+    "vim"
 
 
 COPY --from=node /usr/lib /usr/lib
@@ -50,8 +63,6 @@ COPY dist/Caddyfile /app/proxy/Caddyfile
 COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=backend-img /usr/local/bin/ /usr/local/bin/
-
-RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim
 
 RUN pip install supervisor
 RUN mkdir -p /etc/supervisor/conf.d

@@ -25,7 +25,7 @@ COPY requirements.txt ./
 COPY requirements ./requirements
 RUN apk add --no-cache libffi-dev
 RUN apk add --no-cache --virtual .build-deps \
-    "bash~=5.2" \
+    "bash~=5.3" \
     "g++" \
     "gcc" \
     "cargo" \
@@ -48,7 +48,7 @@ COPY plane plane/
 COPY templates templates/
 COPY package.json package.json
 
-RUN apk --no-cache add "bash~=5.2"
+RUN apk --no-cache add "bash~=5.3"
 COPY ./bin ./bin/
 
 RUN mkdir -p /code/plane/logs
