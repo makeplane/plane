@@ -23,7 +23,7 @@ type Props = {
   handleRemove: () => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (url: string) => void;
+  onSuccess: (url: string) => void | Promise<void>;
   value: string | null;
   // optional overrides for the upload/remove mechanics (e.g. bot avatars are
   // uploaded as workspace assets bound to the bot, not as the current user's
@@ -58,8 +58,9 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
     if (!image) return;
     setIsImageUploading(true);
 
+    let assetUrl: string;
     try {
-      const asset_url = uploadAsset
+      assetUrl = uploadAsset
         ? await uploadAsset(image)
         : (
             await fileService.uploadUserAsset(
@@ -70,15 +71,29 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
               image
             )
           ).asset_url;
-      onSuccess(asset_url);
-      setImage(null);
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: error?.toString() ?? "Something went wrong. Please try again.",
       });
-      throw new Error("Error in uploading file.");
+      setIsImageUploading(false);
+      throw new Error("Error in uploading file.", { cause: error });
+    }
+
+    try {
+      // associate the uploaded asset with the owning entity; on failure the
+      // fresh asset is orphaned, so remove it again
+      await onSuccess(assetUrl);
+      setImage(null);
+    } catch {
+      if (removeAsset) {
+        try {
+          await removeAsset(assetUrl);
+        } catch (rollbackError) {
+          console.error("Failed to remove orphaned asset after a failed upload:", rollbackError);
+        }
+      }
     } finally {
       setIsImageUploading(false);
     }
@@ -88,17 +103,22 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
     if (!value) return;
     setIsRemoving(true);
     try {
-      if (removeAsset) {
-        await removeAsset(value);
-      } else if (checkURLValidity(value)) {
-        await fileService.deleteOldUserAsset(value);
-      } else {
-        const assetId = getAssetIdFromUrl(value);
-        await fileService.deleteUserAsset(assetId);
-      }
+      // update the owning entity first — the old asset must stay put until
+      // nothing references it anymore
       await handleRemove();
+      // with overridden asset mechanics (e.g. bot avatars), handleRemove owns
+      // the asset lifecycle, so the asset is only deleted here in the default
+      // user-avatar flow
+      if (!removeAsset) {
+        if (checkURLValidity(value)) {
+          await fileService.deleteOldUserAsset(value);
+        } else {
+          const assetId = getAssetIdFromUrl(value);
+          await fileService.deleteUserAsset(assetId);
+        }
+      }
     } catch (error) {
-      console.log("Error in uploading user asset:", error);
+      console.log("Error in removing user asset:", error);
     } finally {
       setIsRemoving(false);
     }
@@ -128,7 +148,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                   </button>
                   <img
                     src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
-                    alt="image"
+                    alt="avatar"
                     className="absolute top-0 left-0 h-full w-full rounded-md object-cover"
                   />
                 </>

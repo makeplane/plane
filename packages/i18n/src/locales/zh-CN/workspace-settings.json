@@ -152,7 +152,7 @@
       },
       "ai_accounts": {
         "title": "AI 账户",
-        "description": "创建和管理机器人账户,让 AI 代理以限定范围的权限访问您的工作空间。",
+        "description": "创建和管理机器人账户，让 AI 代理以限定范围的权限访问您的工作空间。",
         "add_account": "添加 AI 账户",
         "modal": {
           "create_title": "创建 AI 账户",
@@ -167,8 +167,9 @@
         },
         "token": {
           "title": "账户已创建",
-          "copy_warning": "请立即复制并保存此令牌。关闭此对话框后,您将无法再次查看它。",
-          "copied": "令牌已复制到剪贴板。"
+          "copy_warning": "请立即复制并保存此令牌。关闭此对话框后，您将无法再次查看它。",
+          "copied": "令牌已复制到剪贴板。",
+          "not_copied": "令牌复制失败，请重试。"
         },
         "list": {
           "created_on": "创建于",

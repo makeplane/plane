@@ -28,13 +28,23 @@ export function GeneratedTokenDetails(props: Props) {
   const { t } = useTranslation();
 
   const copyAccountToken = (token: string) => {
-    copyTextToClipboard(token).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: `${t("success")}!`,
-        message: t("workspace_settings.settings.ai_accounts.token.copied"),
-      })
-    );
+    copyTextToClipboard(token)
+      .then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: `${t("success")}!`,
+          message: t("workspace_settings.settings.ai_accounts.token.copied"),
+        })
+      )
+      .catch((error: unknown) => {
+        // never log the token itself
+        console.error("Failed to copy AI account token to clipboard", error instanceof Error ? error.message : error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: `${t("error")}!`,
+          message: t("workspace_settings.settings.ai_accounts.token.not_copied"),
+        });
+      });
   };
 
   return (

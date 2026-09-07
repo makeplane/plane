@@ -180,6 +180,20 @@ class TestAIScopeEnforcement:
         response = bot_client.get(issues_url(workspace, project))
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    def test_denied_when_bot_removed_from_project(self, bot_client, ai_account, workspace, project):
+        """Workspace-wide policy must not resurrect access after project removal."""
+        AIScopePolicy.objects.create(
+            ai_account=ai_account,
+            project=None,
+            resource_type="work_item",
+            action="read",
+        )
+        ProjectMember.objects.filter(project=project, member=ai_account.bot_user).update(
+            is_active=False
+        )
+        response = bot_client.get(issues_url(workspace, project))
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
     def test_denied_when_owner_role_below_bot(self, bot_client, ai_account, workspace, project, create_user):
         AIScopePolicy.objects.create(
             ai_account=ai_account,

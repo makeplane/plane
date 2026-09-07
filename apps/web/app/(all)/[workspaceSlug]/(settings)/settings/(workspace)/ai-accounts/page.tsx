@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { WarningTriangleOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -41,7 +42,12 @@ function AIAccountsListPage({ params }: Route.ComponentProps) {
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  const { data: accounts, isLoading } = useSWR(
+  const {
+    data: accounts,
+    isLoading,
+    error,
+    mutate,
+  } = useSWR(
     canPerformWorkspaceAdminActions ? AI_ACCOUNTS_LIST(workspaceSlug) : null,
     canPerformWorkspaceAdminActions ? () => aiAccountService.fetchAIAccountsList(workspaceSlug) : null
   );
@@ -72,7 +78,15 @@ function AIAccountsListPage({ params }: Route.ComponentProps) {
             </Button>
           }
         />
-        {isLoading || !accounts ? (
+        {error ? (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 py-20 text-center">
+            <WarningTriangleOutline className="size-8 text-tertiary" />
+            <p className="text-14 text-secondary">{t("something_went_wrong")}</p>
+            <Button variant="secondary" size="sm" onClick={() => mutate()}>
+              {t("common.retry")}
+            </Button>
+          </div>
+        ) : isLoading || !accounts ? (
           <div className="mt-4">
             <AIAccountSettingsLoader />
           </div>

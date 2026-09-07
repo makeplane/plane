@@ -168,7 +168,8 @@
         "token": {
           "title": "Account created",
           "copy_warning": "Copy and save this token now. You won't be able to see it again after you close this dialog.",
-          "copied": "Token copied to clipboard."
+          "copied": "Token copied to clipboard.",
+          "not_copied": "Token could not be copied. Please try again."
         },
         "list": {
           "created_on": "Created on",

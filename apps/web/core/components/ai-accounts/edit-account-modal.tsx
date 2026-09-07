@@ -46,10 +46,24 @@ export function EditAIAccountModal(props: Props) {
     setTimeout(() => setIsSubmitting(false), 350);
   };
 
+  const deleteBotAvatarAsset = async (avatarUrl: string) => {
+    const assetId = getAssetIdFromUrl(avatarUrl);
+    await fileService.deleteWorkspaceAsset(workspaceSlug, assetId);
+  };
+
   const handleAvatarChange = async (avatar: string) => {
     setIsAvatarUpdating(true);
+    const previousAvatar = account.bot_user.avatar_url;
     try {
       await aiAccountService.updateAIAccount(workspaceSlug, account.id, { avatar });
+      // the account no longer references the previous asset — it is safe to delete
+      if (previousAvatar && previousAvatar !== avatar) {
+        try {
+          await deleteBotAvatarAsset(previousAvatar);
+        } catch (cleanupError) {
+          console.error("Failed to delete the previous bot avatar asset:", cleanupError);
+        }
+      }
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("workspace_settings.settings.ai_accounts.toasts.updated.title"),
@@ -65,6 +79,8 @@ export function EditAIAccountModal(props: Props) {
           (err as { message?: string })?.message ??
           t("workspace_settings.settings.ai_accounts.toasts.not_updated.message"),
       });
+      // propagate so the upload modal can roll back the freshly uploaded asset
+      throw err;
     } finally {
       setIsAvatarUpdating(false);
     }

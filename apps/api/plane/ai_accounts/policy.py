@@ -180,16 +180,21 @@ def enforce_ai_scope(request, view):
         raise PermissionDenied("AI account owner is not an active workspace member.")
 
     if project_id:
+        # The bot itself must still be an active project member. Safe-method
+        # project endpoints only require workspace membership at the base
+        # permission layer, so a bot removed from the project would otherwise
+        # keep read access whenever a workspace-wide policy row exists.
         bot_membership = ProjectMember.objects.filter(
             project_id=project_id, member=account.bot_user, is_active=True
         ).first()
+        if bot_membership is None:
+            raise PermissionDenied("AI account is not a member of this project.")
         owner_membership = ProjectMember.objects.filter(
             project_id=project_id, member=account.owner, is_active=True
         ).first()
-        if bot_membership is not None:
-            if owner_membership is None:
-                raise PermissionDenied("AI account owner is not a member of this project.")
-            if owner_membership.role < bot_membership.role:
-                raise PermissionDenied(
-                    "AI account owner no longer holds the role this account was granted."
-                )
+        if owner_membership is None:
+            raise PermissionDenied("AI account owner is not a member of this project.")
+        if owner_membership.role < bot_membership.role:
+            raise PermissionDenied(
+                "AI account owner no longer holds the role this account was granted."
+            )
