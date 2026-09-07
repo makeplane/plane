@@ -50,6 +50,14 @@ COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
 
+# The copy above re-introduces node:22-alpine's npm, whose bundled dependencies
+# carry known vulnerabilities (pacote, ip-address, brace-expansion, tar,
+# sigstore) -- the per-service images strip npm, so without this the AIO is the
+# only place they come back. npm is not needed at runtime: the space program in
+# supervisor.conf execs its react-router-serve bin shim directly rather than
+# going through npx.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+
 COPY --from=web-img /usr/share/caddy/html /app/web
 COPY --from=space-img /app /app/space
 COPY --from=admin-img /usr/share/caddy/html/god-mode /app/admin
