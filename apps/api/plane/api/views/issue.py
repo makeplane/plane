@@ -1118,6 +1118,18 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     use_read_replica = True
 
+    def get_scoped_issue(self):
+        return (
+            Issue.objects.select_related("project__workspace")
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+                project__archived_at__isnull=True,
+                pk=self.kwargs.get("issue_id"),
+            )
+            .first()
+        )
+
     def get_queryset(self):
         return (
             IssueLink.objects.filter(workspace__slug=self.kwargs.get("slug"))
@@ -1159,6 +1171,9 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
         Retrieve all links associated with a work item.
         """
+        if self.get_scoped_issue() is None:
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -1193,13 +1208,19 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
         Add a new external link to a work item with URL, title, and metadata.
         Automatically tracks link creation activity.
         """
+        issue = self.get_scoped_issue()
+        if issue is None:
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = IssueLinkCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id)
+            serializer.save(
+                project=issue.project,
+                issue_id=issue.id,
+                created_by_id=request.user.id,
+            )
             crawl_work_item_link_title.delay(serializer.instance.id, serializer.instance.url)
-            link = IssueLink.objects.get(pk=serializer.instance.id)
-            link.created_by_id = request.data.get("created_by", request.user.id)
-            link.save(update_fields=["created_by"])
+            link = serializer.instance
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
