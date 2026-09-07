@@ -9,6 +9,7 @@ import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { InfoOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
@@ -16,8 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TProject } from "@plane/types";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { TextArea } from "@plane/ui";
-import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
+import { projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 
 type Props = {
   setValue: UseFormSetValue<TProject>;
@@ -139,19 +139,25 @@ function ProjectCommonAttributes(props: Props) {
           name="description"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <TextArea
-              id="description"
-              name="description"
-              value={value}
-              placeholder={t("description")}
-              onChange={(e) => {
-                onChange(e);
-                handleFormOnChange?.();
-              }}
-              className="focus:border-blue-400 !h-24 text-13"
-              hasError={Boolean(errors?.description)}
-              tabIndex={getIndex("description")}
-            />
+            <Field name="description" invalid={Boolean(errors?.description)}>
+              <TextAreaGroup resize="none">
+                <TextArea
+                  size="lg"
+                  surface="field"
+                  autoResize
+                  maxRows={8}
+                  id="description"
+                  name="description"
+                  value={value}
+                  placeholder={t("description")}
+                  onChange={(e) => {
+                    onChange(e);
+                    handleFormOnChange?.();
+                  }}
+                  tabIndex={getIndex("description")}
+                />
+              </TextAreaGroup>
+            </Field>
           )}
         />
       </div>
