@@ -193,6 +193,30 @@ smtp_config_variables = [
         "category": "SMTP",
         "is_encrypted": False,
     },
+    {
+        "key": "EMAIL_PROVIDER",
+        "value": os.environ.get("EMAIL_PROVIDER", "SMTP"),
+        "category": "SMTP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "EMAIL_GRAPH_TENANT_ID",
+        "value": os.environ.get("EMAIL_GRAPH_TENANT_ID", ""),
+        "category": "SMTP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "EMAIL_GRAPH_CLIENT_ID",
+        "value": os.environ.get("EMAIL_GRAPH_CLIENT_ID", ""),
+        "category": "SMTP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "EMAIL_GRAPH_CLIENT_SECRET",
+        "value": os.environ.get("EMAIL_GRAPH_CLIENT_SECRET", ""),
+        "category": "SMTP",
+        "is_encrypted": True,
+    },
 ]
 
 llm_config_variables = [
