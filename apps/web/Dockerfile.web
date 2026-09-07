@@ -77,7 +77,11 @@ RUN pnpm turbo run build --filter=web
 # *****************************************************************************
 FROM nginx:1.31-alpine AS production
 
-RUN apk update && apk upgrade --no-cache && rm -rf /var/cache/apk/*
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available && rm -rf /var/cache/apk/*
 
 COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html
