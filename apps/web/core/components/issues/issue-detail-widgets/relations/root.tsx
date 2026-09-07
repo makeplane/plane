@@ -7,13 +7,14 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import type { TIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { RelationsCollapsibleContent } from "./content";
 import { RelationsCollapsibleTitle } from "./title";
+import { RelationActionButton } from "./quick-action-button";
 
 type Props = {
   workspaceSlug: string;
@@ -31,17 +32,14 @@ export const RelationsCollapsible = observer(function RelationsCollapsible(props
 
   return (
     <Collapsible
-      isOpen={isCollapsibleOpen}
-      onToggle={() => toggleOpenWidget("relations")}
-      title={
-        <RelationsCollapsibleTitle
-          isOpen={isCollapsibleOpen}
-          issueId={issueId}
-          disabled={disabled}
-          issueServiceType={issueServiceType}
-        />
+      open={isCollapsibleOpen}
+      onOpenChange={() => toggleOpenWidget("relations")}
+      trigger={<RelationsCollapsibleTitle issueId={issueId} issueServiceType={issueServiceType} />}
+      trailing={
+        isCollapsibleOpen && !disabled ? (
+          <RelationActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
+        ) : undefined
       }
-      buttonClassName="w-full"
     >
       <RelationsCollapsibleContent
         workspaceSlug={workspaceSlug}
