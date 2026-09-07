@@ -9,13 +9,13 @@ import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TIssueServiceType } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TIssueServiceType } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web hooks
+// workspaces web hooks
 import { useFileSize } from "@/hooks/use-file-size";
 // types
 import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";

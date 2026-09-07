@@ -8,13 +8,13 @@ import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ISearchIssueResponse } from "@plane/types";
-import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+// workspaces imports
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateDetailed } from "@workspaces/propel/empty-state";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { ISearchIssueResponse } from "@workspaces/types";
+import { EIssuesStoreType, EUserProjectRoles } from "@workspaces/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -31,7 +31,7 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
   const cycleId = routerCycleId ? routerCycleId.toString() : undefined;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { getCycleById } = useCycle();

@@ -7,7 +7,7 @@
 import React from "react";
 
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import type {
   TFilterConditionNode,
   TFilterValue,
@@ -18,8 +18,8 @@ import type {
   TDateFilterFieldConfig,
   TDateRangeFilterFieldConfig,
   TFilterConditionNodeForDisplay,
-} from "@plane/types";
-import { FILTER_FIELD_TYPE } from "@plane/types";
+} from "@workspaces/types";
+import { FILTER_FIELD_TYPE } from "@workspaces/types";
 import type { TFilterValueInputProps } from "../shared";
 import { DateRangeFilterValueInput } from "./date/range";
 import { SingleDateFilterValueInput } from "./date/single";

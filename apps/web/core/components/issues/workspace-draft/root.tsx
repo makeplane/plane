@@ -7,13 +7,13 @@
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// plane imports
-import { EUserPermissionsLevel, EDraftIssuePaginationType } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
+// workspaces imports
+import { EUserPermissionsLevel, EDraftIssuePaginationType } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateDetailed } from "@workspaces/propel/empty-state";
+import { EUserWorkspaceRoles } from "@workspaces/types";
 // components
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
@@ -31,7 +31,7 @@ type TWorkspaceDraftIssuesRoot = {
 
 export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRoot(props: TWorkspaceDraftIssuesRoot) {
   const { workspaceSlug } = props;
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // hooks
   const { loader, paginationInfo, fetchIssues, issueIds } = useWorkspaceDraftIssues();

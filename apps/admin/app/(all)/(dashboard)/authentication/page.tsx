@@ -8,10 +8,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// plane internal packages
+// workspaces internal packages
 import { Switch } from "@makeplane/propel/components/switch";
-import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
-import { cn, resolveGeneralTheme } from "@plane/utils";
+import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@workspaces/types";
+import { cn, resolveGeneralTheme } from "@workspaces/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
@@ -172,6 +172,6 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Plane Web" }];
+export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Workspaces Web" }];
 
 export default InstanceAuthenticationPage;

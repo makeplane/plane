@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
-// plane imports
-import type { EViewAccess, TViewFilterProps } from "@plane/types";
-import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+import { CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import type { EViewAccess, TViewFilterProps } from "@workspaces/types";
+import { replaceUnderscoreIfSnakeCase } from "@workspaces/utils";
 // components
 import { AppliedDateFilters } from "@/components/common/applied-filters/date";
 import { AppliedMembersFilters } from "@/components/common/applied-filters/members";
@@ -23,7 +23,7 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
-const MEMBERS_FILTERS = ["owned_by"];
+const MEMBERS_FILTERS = new Set(["owned_by"]);
 const DATE_FILTERS = ["created_at"];
 const VIEW_ACCESS_FILTERS = ["view_type"];
 
@@ -64,7 +64,7 @@ export function ViewAppliedFiltersList(props: Props) {
                 values={Array.isArray(value) ? (value as string[]) : []}
               />
             )}
-            {MEMBERS_FILTERS.includes(filterKey) && (
+            {MEMBERS_FILTERS.has(filterKey) && (
               <AppliedMembersFilters
                 editable={isEditingAllowed}
                 handleRemove={(val) => handleRemoveFilter(filterKey, val)}

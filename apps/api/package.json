@@ -1,7 +1,7 @@
 {
-  "name": "plane-api",
+  "name": "workspaces-api",
   "version": "1.4.2",
   "private": true,
-  "description": "API server powering Plane's backend",
+  "description": "API server powering the Workspaces backend",
   "license": "AGPL-3.0"
 }

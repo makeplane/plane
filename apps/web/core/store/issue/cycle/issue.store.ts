@@ -7,8 +7,8 @@
 import { get, set, concat, uniq, update } from "lodash-es";
 import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane imports
-import { ALL_ISSUES } from "@plane/constants";
+// workspaces imports
+import { ALL_ISSUES } from "@workspaces/constants";
 import type {
   TIssue,
   TLoader,
@@ -16,9 +16,9 @@ import type {
   TIssuesResponse,
   ViewFlags,
   TBulkOperationsPayload,
-} from "@plane/types";
+} from "@workspaces/types";
 // helpers
-import { getDistributionPathsPostUpdate } from "@plane/utils";
+import { getDistributionPathsPostUpdate } from "@workspaces/utils";
 //local
 import { storage } from "@/lib/local-storage";
 import type { IBaseIssuesStore } from "../helpers/base-issues.store";

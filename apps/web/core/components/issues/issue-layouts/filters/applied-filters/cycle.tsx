@@ -5,8 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { CloseIcon, CycleGroupIcon } from "@plane/propel/icons";
-import type { TCycleGroups } from "@plane/types";
+import { CloseIcon, CycleGroupIcon } from "@workspaces/propel/icons";
+import type { TCycleGroups } from "@workspaces/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 // ui

@@ -7,10 +7,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-// Plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IModule } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+// Workspaces imports
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IModule } from "@workspaces/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 // components
 import { ModuleForm } from "@/components/modules";
 // hooks

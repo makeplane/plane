@@ -5,7 +5,7 @@
  */
 
 // components
-import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
+import type { IBlockUpdateData, IGanttBlock } from "@workspaces/types";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // hooks
 import { BlockRow } from "@/components/gantt-chart/blocks/block-row";

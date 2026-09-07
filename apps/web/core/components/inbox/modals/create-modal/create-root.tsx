@@ -9,15 +9,15 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { ETabIndices } from "@plane/constants";
-import type { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TIssue } from "@plane/types";
+// workspaces imports
+import { ETabIndices } from "@workspaces/constants";
+import type { EditorRefApi } from "@workspaces/editor";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TIssue } from "@workspaces/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { renderFormattedPayloadDate, getTabIndex } from "@workspaces/utils";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useWorkspace } from "@/hooks/store/use-workspace";

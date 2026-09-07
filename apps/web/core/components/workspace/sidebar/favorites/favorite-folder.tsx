@@ -21,15 +21,15 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { Star, MoreHorizontal, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane imports
-import { useOutsideClickDetector } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
-import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@plane/propel/icons";
+// workspaces imports
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { useTranslation } from "@workspaces/i18n";
+import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
+import type { IFavorite, InstructionType } from "@workspaces/types";
+import { CustomMenu, DropIndicator, DragHandle } from "@workspaces/ui";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";

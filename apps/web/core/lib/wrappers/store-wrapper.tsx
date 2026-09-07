@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // helpers
-import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
+import { applyCustomTheme, clearCustomTheme } from "@workspaces/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useRouterParams } from "@/hooks/store/use-router-params";

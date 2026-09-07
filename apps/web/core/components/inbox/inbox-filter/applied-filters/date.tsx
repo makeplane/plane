@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
-import type { TInboxIssueFilterDateKeys } from "@plane/types";
-import { renderFormattedDate } from "@plane/utils";
+import { PAST_DURATION_FILTER_OPTIONS } from "@workspaces/constants";
+import { CloseIcon } from "@workspaces/propel/icons";
+import type { TInboxIssueFilterDateKeys } from "@workspaces/types";
+import { renderFormattedDate } from "@workspaces/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type InboxIssueAppliedFiltersDate = {

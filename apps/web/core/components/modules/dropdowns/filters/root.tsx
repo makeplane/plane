@@ -6,10 +6,10 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import type { TModuleStatus } from "@plane/propel/icons";
-// plane imports
-import { CloseIcon, SearchIcon } from "@plane/propel/icons";
-import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
+import type { TModuleStatus } from "@workspaces/propel/icons";
+// workspaces imports
+import { CloseIcon, SearchIcon } from "@workspaces/propel/icons";
+import type { TModuleDisplayFilters, TModuleFilters } from "@workspaces/types";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
 import { FilterLead, FilterMembers, FilterStartDate, FilterStatus, FilterTargetDate } from "@/components/modules";

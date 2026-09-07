@@ -5,7 +5,7 @@
  */
 
 // FIXME: fix this!!!
-import type { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@workspaces/types";
 
 type Placement =
   | "top"

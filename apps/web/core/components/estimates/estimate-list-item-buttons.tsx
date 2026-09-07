@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { TrashIcon } from "@plane/propel/icons";
+import { TrashIcon } from "@workspaces/propel/icons";
 
 type TEstimateListItem = {
   estimateId: string;

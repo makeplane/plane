@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssueRelationTypes } from "@plane/types";
+import type { TIssueRelationTypes } from "@workspaces/types";
 
 export const REVERSE_RELATIONS: { [key in TIssueRelationTypes]: TIssueRelationTypes } = {
   blocked_by: "blocking",

@@ -9,8 +9,8 @@ import type { Editor } from "@tiptap/core";
 import { BubbleMenu, useEditorState } from "@tiptap/react";
 import type { BubbleMenuProps } from "@tiptap/react";
 import { useEffect, useState, useRef } from "react";
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // components
 import type { EditorMenuItem } from "@/components/menus";
 import {

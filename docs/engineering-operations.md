@@ -1,10 +1,10 @@
 # Engineering Operations
 
-The implementation of [`PROJECT.md`](../PROJECT.md) — the operational layer that sits beside Plane's
+The implementation of [`PROJECT.md`](../PROJECT.md) — the operational layer that sits beside the Workspaces
 work tracking so developers, QA, PMs and DevOps rarely need to leave the workspace.
 
-Everything here follows the spec's first principle: **nothing duplicates a Plane concept.** Projects,
-cycles, modules, issues, states, labels and members stay exactly as Plane defines them. What this
+Everything here follows the spec's first principle: **nothing duplicates a Workspaces concept.** Projects,
+cycles, modules, issues, states, labels and members stay exactly as Workspaces defines them. What this
 layer adds is the operations _around_ execution — attendance, the day people actually had, requests
 that have not yet earned an issue, the documents that were never work, what got deployed, and the
 metrics that fall out of all of it.
@@ -13,22 +13,22 @@ metrics that fall out of all of it.
 
 ## Where it lives
 
-| Layer                | Path                                                          |
-| -------------------- | ------------------------------------------------------------- |
-| Models               | `apps/api/plane/db/models/operations.py`                      |
-| Migration            | `apps/api/plane/db/migrations/0123_engineering_operations.py` |
-| Serializers          | `apps/api/plane/app/serializers/operations.py`                |
-| Views                | `apps/api/plane/app/views/operations/`                        |
-| Routes               | `apps/api/plane/app/urls/operations.py`                       |
-| Workflow vocabulary  | `apps/api/plane/utils/engineering_ops.py`                     |
-| Bootstrap            | `apps/api/plane/utils/engineering_ops_setup.py`               |
-| Reminders            | `apps/api/plane/bgtasks/operations_reminder_task.py`          |
-| Odoo client          | `apps/api/plane/utils/odoo_bridge.py`                         |
-| Attendance endpoints | `apps/api/plane/app/views/attendance/`                        |
-| Web services         | `apps/web/core/services/operations/`                          |
-| Web components       | `apps/web/core/components/operations/`                        |
-| Web routes           | `apps/web/app/(all)/[workspaceSlug]/(projects)/operations/`   |
-| Tests                | `apps/api/plane/tests/unit/views/test_operations.py`          |
+| Layer                | Path                                                               |
+| -------------------- | ------------------------------------------------------------------ |
+| Models               | `apps/api/workspaces/db/models/operations.py`                      |
+| Migration            | `apps/api/workspaces/db/migrations/0123_engineering_operations.py` |
+| Serializers          | `apps/api/workspaces/app/serializers/operations.py`                |
+| Views                | `apps/api/workspaces/app/views/operations/`                        |
+| Routes               | `apps/api/workspaces/app/urls/operations.py`                       |
+| Workflow vocabulary  | `apps/api/workspaces/utils/engineering_ops.py`                     |
+| Bootstrap            | `apps/api/workspaces/utils/engineering_ops_setup.py`               |
+| Reminders            | `apps/api/workspaces/bgtasks/operations_reminder_task.py`          |
+| Odoo client          | `apps/api/workspaces/utils/odoo_bridge.py`                         |
+| Attendance endpoints | `apps/api/workspaces/app/views/attendance/`                        |
+| Web services         | `apps/web/core/services/operations/`                               |
+| Web components       | `apps/web/core/components/operations/`                             |
+| Web routes           | `apps/web/app/(all)/[workspaceSlug]/(projects)/operations/`        |
+| Tests                | `apps/api/workspaces/tests/unit/views/test_operations.py`          |
 
 The web section is at `/<workspace>/operations`, reachable from a permanent sidebar entry.
 
@@ -36,10 +36,10 @@ The web section is at `/<workspace>/operations`, reachable from a permanent side
 
 ## The workflow
 
-`PROJECT.md` fixes a nine-state workflow and assigns each state an owner. Because Plane states are
+`PROJECT.md` fixes a nine-state workflow and assigns each state an owner. Because Workspaces states are
 per project and freely renamed, **no code hard-codes a state name at the point of use.** Instead:
 
-- `ENGINEERING_WORKFLOW_STATES` in `engineering_ops.py` holds the canonical states and their Plane
+- `ENGINEERING_WORKFLOW_STATES` in `engineering_ops.py` holds the canonical states and their Workspaces
   state-group mapping (which is what board columns and cycle progress read).
 - `DEFAULT_STATE_MAPPING` maps semantic buckets (`qa`, `blocked`, `developer_owned`, …) onto those
   names.
@@ -99,7 +99,7 @@ nobody can count, and "who is missing a log?" is the question the PM dashboard i
 
 ### Operations tickets
 
-A request that has not yet earned a Plane issue. The lifecycle in `ALLOWED_TRANSITIONS`
+A request that has not yet earned a Workspaces issue. The lifecycle in `ALLOWED_TRANSITIONS`
 (`views/operations/ticket.py`) is the graph from `PROJECT.md`, and it is enforced server-side — the
 frontend's copy in `components/operations/constants.ts` only decides which buttons to draw.
 
@@ -165,8 +165,8 @@ disagree with the tables under it. Every report copies as plain text.
 
 ### Notifications
 
-Celery tasks in `operations_reminder_task.py`, landing in Plane's own inbox rather than email or a
-webhook — the point of the extension is that people stop leaving Plane.
+Celery tasks in `operations_reminder_task.py`, landing in the Workspaces inbox rather than email or a
+webhook — the point of the extension is that people stop leaving Workspaces.
 
 Two rules hold across all of them: **never notify twice for the same thing in a day** (a reminder that
 repeats hourly is a reminder people mute), and **respect the workspace's configuration**. The
@@ -177,8 +177,8 @@ firing, which is how one UTC schedule respects a team in Kathmandu and a team in
 
 ## Odoo
 
-Odoo stays the source of truth for attendance; Plane is the interface. The browser never holds the
-bridge key and never talks to Odoo — Plane's Django layer proxies, authenticated by the session
+Odoo stays the source of truth for attendance; Workspaces is the interface. The browser never holds the
+bridge key and never talks to Odoo — the Workspaces Django layer proxies, authenticated by the session
 cookie like every other call.
 
 Three bridge endpoints are deployed and working: today's status, check in, check out. Four more are
@@ -186,7 +186,7 @@ called but not yet served — history, leave, holidays, working hours — plus a
 answer **200 with `available: false`**, not an error, and the UI says so plainly instead of showing a
 plausible zero. Their contracts are written up in
 [`odoo-implementation/ODOO_MODULE_SPEC.md`](../odoo-implementation/ODOO_MODULE_SPEC.md); once the
-module ships they start returning data with no change on the Plane side.
+module ships they start returning data with no change on the Workspaces side.
 
 Team availability tries the bridge's team endpoint first and falls back to a bounded, parallel,
 one-minute-cached fan-out over `/attendance/me`. That fallback is why the PM dashboard can answer
@@ -227,7 +227,7 @@ Stated plainly so nobody goes looking:
   Grafana, Prometheus, Loki; the AI features). `PROJECT.md` lists these as future phases, and none of
   them are in the phase 1–7 roadmap this implements.
 - **Modules are suggested, not created.** The twelve business domains are offered in Settings;
-  creating them is Plane's own per-project module screen, which already does the job.
+  creating them is the Workspaces per-project module screen, which already does the job.
 
 ---
 
@@ -236,12 +236,12 @@ Stated plainly so nobody goes looking:
 ```bash
 # Backend checks
 cd apps/api && python manage.py check
-python -m pytest plane/tests/unit/views/test_operations.py -m unit
+python -m pytest workspaces/tests/unit/views/test_operations.py -m unit
 
 # Frontend
 pnpm turbo run check:types --filter=web
 pnpm exec oxlint apps/web/core/components/operations
 
 # Locales (a new sidebar string was added to all 20)
-pnpm --filter @plane/i18n run sync:check
+pnpm --filter @workspaces/i18n run sync:check
 ```

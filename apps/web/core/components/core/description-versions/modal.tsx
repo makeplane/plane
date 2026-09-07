@@ -6,23 +6,23 @@
 
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import type { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { EditorRefApi } from "@workspaces/editor";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@workspaces/propel/icons";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TDescriptionVersion } from "@plane/types";
-import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
-import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
+import type { TDescriptionVersion } from "@workspaces/types";
+import { EModalPosition, EModalWidth, Loader, ModalCore } from "@workspaces/ui";
+import { calculateTimeAgo, cn, getFileURL } from "@workspaces/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@workspaces/propel/icon-button";
 
 type Props = {
   activeVersionDescription: string | undefined;

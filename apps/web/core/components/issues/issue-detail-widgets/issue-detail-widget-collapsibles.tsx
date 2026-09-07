@@ -6,8 +6,8 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-// plane imports
-import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+// workspaces imports
+import type { TIssueServiceType, TWorkItemWidgets } from "@workspaces/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineRelationOptions } from "@/components/relations";

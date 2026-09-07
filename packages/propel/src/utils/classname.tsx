@@ -20,7 +20,7 @@ const isCustomTypography = (value: string) =>
 const isCustomFontSize = (value: string) => /^(9|10|11|12|13|14|16|18|20|24|28|32|40)$/.test(value);
 
 // Matches custom text color classes: text-primary, text-on-color, text-secondary, etc.
-const CUSTOM_TEXT_COLORS = [
+const CUSTOM_TEXT_COLORS = new Set([
   "primary",
   "secondary",
   "tertiary",
@@ -40,8 +40,8 @@ const CUSTOM_TEXT_COLORS = [
   "danger",
   "danger-primary",
   "danger-secondary",
-];
-const isCustomTextColor = (value: string) => CUSTOM_TEXT_COLORS.includes(value);
+]);
+const isCustomTextColor = (value: string) => CUSTOM_TEXT_COLORS.has(value);
 
 const twMerge = extendTailwindMerge<"custom-typography" | "custom-text-color">({
   override: {

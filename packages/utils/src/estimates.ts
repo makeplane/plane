@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane web constants
-import { EEstimateSystem } from "@plane/constants";
+// workspaces web constants
+import { EEstimateSystem } from "@workspaces/constants";
 
 export const isEstimatePointValuesRepeated = (
   estimatePoints: string[],

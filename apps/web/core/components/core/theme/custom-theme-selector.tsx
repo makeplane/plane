@@ -7,12 +7,12 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IUserTheme } from "@plane/types";
-import { applyCustomTheme } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IUserTheme } from "@workspaces/types";
+import { applyCustomTheme } from "@workspaces/utils";
 // components
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 // hooks

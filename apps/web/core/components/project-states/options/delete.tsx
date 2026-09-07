@@ -7,13 +7,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
-// plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IState, TStateOperationsCallbacks } from "@plane/types";
-import { AlertModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+import type { IState, TStateOperationsCallbacks } from "@workspaces/types";
+import { AlertModalCore } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

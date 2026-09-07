@@ -6,14 +6,14 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EEstimateSystem } from "@plane/constants";
-import { ProjectIcon } from "@plane/propel/icons";
-import type { ChartYAxisMetric } from "@plane/types";
-// plane package imports
-import { CustomSelect } from "@plane/ui";
+import { EEstimateSystem } from "@workspaces/constants";
+import { ProjectIcon } from "@workspaces/propel/icons";
+import type { ChartYAxisMetric } from "@workspaces/types";
+// workspaces package imports
+import { CustomSelect } from "@workspaces/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-// plane web constants
+// workspaces web constants
 type Props = {
   value: ChartYAxisMetric;
   onChange: (val: ChartYAxisMetric | null) => void;

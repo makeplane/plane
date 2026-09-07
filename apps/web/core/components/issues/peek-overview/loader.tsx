@@ -6,7 +6,7 @@
 
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Loader } from "@plane/ui";
+import { Loader } from "@workspaces/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

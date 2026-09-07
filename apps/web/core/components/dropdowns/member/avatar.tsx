@@ -8,9 +8,9 @@ import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
-import { MembersPropertyIcon } from "@plane/propel/icons";
-import { cn, getFileURL } from "@plane/utils";
-// plane utils
+import { MembersPropertyIcon } from "@workspaces/propel/icons";
+import { cn, getFileURL } from "@workspaces/utils";
+// workspaces utils
 // helpers
 // hooks
 import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";

@@ -6,9 +6,9 @@
 
 // external imports
 import { fileTypeFromBuffer } from "file-type";
-// plane imports
-import type { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
-import { DANGEROUS_EXTENSIONS } from "@plane/constants";
+// workspaces imports
+import type { TFileMetaDataLite, TFileSignedURLResponse } from "@workspaces/types";
+import { DANGEROUS_EXTENSIONS } from "@workspaces/constants";
 
 /**
  * @description Filename validation - checks for double extensions and dangerous patterns

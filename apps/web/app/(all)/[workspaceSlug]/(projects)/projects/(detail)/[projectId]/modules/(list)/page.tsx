@@ -7,12 +7,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TModuleFilters } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
-import { calculateTotalFilters } from "@plane/utils";
+// workspaces imports
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TModuleFilters } from "@workspaces/types";
+import { EUserProjectRoles } from "@workspaces/types";
+import { calculateTotalFilters } from "@workspaces/utils";
 // assets
 import darkModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-dark.webp?url";
 import lightModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-light.webp?url";
@@ -33,7 +33,7 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store
   const { getProjectById, currentProjectDetails } = useProject();

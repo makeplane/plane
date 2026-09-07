@@ -7,8 +7,8 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-// plane imports
-import { Button } from "@plane/propel/button";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // services

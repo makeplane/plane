@@ -6,8 +6,8 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-// plane types
-import type { ILinkDetails } from "@plane/types";
+// workspaces types
+import type { ILinkDetails } from "@workspaces/types";
 // components
 import { ModulesLinksListItem } from "@/components/modules";
 // hooks

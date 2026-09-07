@@ -6,8 +6,8 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-// plane imports
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// workspaces imports
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
 // services
 import attendanceService, {
   type TAttendanceCoordinates,

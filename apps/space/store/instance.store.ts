@@ -6,9 +6,9 @@
 
 import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
-// plane imports
-import { InstanceService } from "@plane/services";
-import type { IInstance, IInstanceConfig } from "@plane/types";
+// workspaces imports
+import { InstanceService } from "@workspaces/services";
+import type { IInstance, IInstanceConfig } from "@workspaces/types";
 // store
 import type { RootStore } from "@/store/root.store";
 

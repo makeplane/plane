@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize } from "@plane/types";
-import { cn } from "@plane/utils";
+import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 
 const SIZE_MAP: Record<TIssueIdentifierSize, string> = {
   xs: "text-caption-sm-regular",

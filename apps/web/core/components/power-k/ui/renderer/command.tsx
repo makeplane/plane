@@ -6,8 +6,8 @@
 
 import React from "react";
 import { Command } from "cmdk";
-// plane imports
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
 // local imports
 import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../../core/types";
 import { PowerKModalCommandItem } from "../modal/command-item";

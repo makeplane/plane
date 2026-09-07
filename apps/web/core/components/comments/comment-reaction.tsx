@@ -6,11 +6,11 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
-import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
-import type { TCommentsOperations, TIssueComment } from "@plane/types";
+// workspaces imports
+import { stringToEmoji } from "@workspaces/propel/emoji-icon-picker";
+import { EmojiReactionGroup, EmojiReactionPicker } from "@workspaces/propel/emoji-reaction";
+import type { EmojiReactionType } from "@workspaces/propel/emoji-reaction";
+import type { TCommentsOperations, TIssueComment } from "@workspaces/types";
 // helpers
 // local imports
 

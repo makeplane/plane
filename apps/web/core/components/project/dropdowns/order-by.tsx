@@ -5,13 +5,13 @@
  */
 
 import { ArrowDownWideNarrow } from "lucide-react";
-// plane imports
-import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
-import { CheckIcon } from "@plane/propel/icons";
-import type { TProjectOrderByOptions } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+// workspaces imports
+import { PROJECT_ORDER_BY_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { getButtonStyling } from "@workspaces/propel/button";
+import { CheckIcon } from "@workspaces/propel/icons";
+import type { TProjectOrderByOptions } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
 
 type Props = {
   onChange: (value: TProjectOrderByOptions) => void;
@@ -19,7 +19,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const DISABLED_ORDERING_OPTIONS = ["sort_order"];
+const DISABLED_ORDERING_OPTIONS = new Set(["sort_order"]);
 
 export function ProjectOrderByDropdown(props: Props) {
   const { onChange, value, isMobile = false } = props;
@@ -28,7 +28,7 @@ export function ProjectOrderByDropdown(props: Props) {
   const orderByDetails = PROJECT_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
   const isDescending = value?.[0] === "-";
-  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.includes(value);
+  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.has(value);
 
   return (
     <CustomMenu

@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { PlaneLockup, ChevronLeftIcon } from "@plane/propel/icons";
+// workspaces imports
+import { WorkspacesLockup, ChevronLeftIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TOnboardingStep } from "@plane/types";
-import { EOnboardingSteps } from "@plane/types";
-import { cn } from "@plane/utils";
+import type { TOnboardingStep } from "@workspaces/types";
+import { EOnboardingSteps } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/user";
@@ -83,7 +83,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
               <ChevronLeftIcon className="size-6 text-placeholder" />
             </button>
           )}
-          <PlaneLockup height={20} width={95} className="text-primary" />
+          <WorkspacesLockup height={20} width={95} className="text-primary" />
         </div>
         <SwitchAccountDropdown fullName={userName} />
       </div>

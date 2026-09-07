@@ -7,10 +7,10 @@
 import { useCallback } from "react";
 import { useTheme } from "next-themes";
 import { Calendar, Earth, Languages, Palette } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
+import type { EStartOfTheWeek, TUserProfile } from "@workspaces/types";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks

@@ -42,11 +42,11 @@ docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m u
 
 # A single directory, filtered by name
 docker compose -f docker-compose-test.yml run --rm api-tests \
-  pytest plane/tests/unit -k "test_workspace"
+  pytest workspaces/tests/unit -k "test_workspace"
 
 # Single file with verbose output
 docker compose -f docker-compose-test.yml run --rm api-tests \
-  pytest plane/tests/unit/models/test_workspace.py -vv
+  pytest workspaces/tests/unit/models/test_workspace.py -vv
 ```
 
 The available markers (`unit`, `contract`, `smoke`, `slow`) are declared in `apps/api/pytest.ini`.
@@ -71,7 +71,7 @@ docker compose -f docker-compose-test.yml down -v
 
 All four dependencies expose health checks; `api-tests` waits for `service_healthy` on each via `depends_on`, so pytest only starts once the stack is ready.
 
-Test-time env overrides live in the compose file itself (`POSTGRES_HOST=test-db`, `REDIS_URL=redis://test-redis:6379/`, `AWS_S3_ENDPOINT_URL=http://test-minio:9000`, `DJANGO_SETTINGS_MODULE=plane.settings.test`). Everything else is inherited from `apps/api/.env`.
+Test-time env overrides live in the compose file itself (`POSTGRES_HOST=test-db`, `REDIS_URL=redis://test-redis:6379/`, `AWS_S3_ENDPOINT_URL=http://test-minio:9000`, `DJANGO_SETTINGS_MODULE=workspaces.settings.test`). Everything else is inherited from `apps/api/.env`.
 
 ## Troubleshooting
 

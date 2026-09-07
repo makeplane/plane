@@ -7,9 +7,9 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import type { IWebhook, TWebhookEventTypes } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import type { IWebhook, TWebhookEventTypes } from "@workspaces/types";
 // hooks
 import {
   WebhookIndividualEventOptions,

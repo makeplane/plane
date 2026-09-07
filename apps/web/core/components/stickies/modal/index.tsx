@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { EModalWidth, ModalCore } from "@plane/ui";
+import { EModalWidth, ModalCore } from "@workspaces/ui";
 import { Stickies } from "./stickies";
 
 type TProps = {

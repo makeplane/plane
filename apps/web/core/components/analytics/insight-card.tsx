@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-// plane package imports
+// workspaces package imports
 import React from "react";
-import type { IAnalyticsResponseFields } from "@plane/types";
-import { Loader } from "@plane/ui";
+import type { IAnalyticsResponseFields } from "@workspaces/types";
+import { Loader } from "@workspaces/ui";
 
 export type InsightCardProps = {
   data?: IAnalyticsResponseFields;

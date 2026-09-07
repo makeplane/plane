@@ -6,7 +6,7 @@
 
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 import { runIdleTask } from "@/lib/idle-task";
 
 type Props = {

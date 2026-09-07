@@ -9,17 +9,17 @@ import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// plane imports
-import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
-import { useOutsideClickDetector } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
+// workspaces imports
+import { EUserPermissionsLevel, getRandomLabelColor } from "@workspaces/constants";
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { useTranslation } from "@workspaces/i18n";
+import { CheckIcon, SearchIcon, ChevronDownIcon } from "@workspaces/propel/icons";
 // types
-import type { IIssueLabel } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
+import type { IIssueLabel } from "@workspaces/types";
+import { EUserProjectRoles } from "@workspaces/types";
 // components
-import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
-import { sortBySelectedFirst } from "@plane/utils";
+import { ComboDropDown, useAnchoredPosition } from "@workspaces/ui";
+import { sortBySelectedFirst } from "@workspaces/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";

@@ -7,10 +7,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import type { EditorRefApi } from "@plane/editor";
-import type { TNameDescriptionLoader } from "@plane/types";
-import { EFileAssetType, EIssueServiceType } from "@plane/types";
+// workspaces imports
+import type { EditorRefApi } from "@workspaces/editor";
+import type { TNameDescriptionLoader } from "@workspaces/types";
+import { EFileAssetType, EIssueServiceType } from "@workspaces/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";

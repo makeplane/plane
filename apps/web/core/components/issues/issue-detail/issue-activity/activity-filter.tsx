@@ -6,14 +6,14 @@
 
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
-// plane imports
-import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { CheckIcon } from "@plane/propel/icons";
-import { PopoverMenu } from "@plane/ui";
+// workspaces imports
+import type { TActivityFilters, TActivityFilterOption } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { IconButton } from "@workspaces/propel/icon-button";
+import { CheckIcon } from "@workspaces/propel/icons";
+import { PopoverMenu } from "@workspaces/ui";
 // helper
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // constants
 
 type TActivityFilter = {

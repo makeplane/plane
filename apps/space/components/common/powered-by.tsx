@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { WEBSITE_URL } from "@plane/constants";
+import { WEBSITE_URL } from "@workspaces/constants";
 // assets
-import { PlaneLogo } from "@plane/propel/icons";
+import { WorkspacesLogo } from "@workspaces/propel/icons";
 
 type TPoweredBy = {
   disabled?: boolean;
@@ -25,9 +25,9 @@ export function PoweredBy(props: TPoweredBy) {
       target="_blank"
       rel="noreferrer noopener"
     >
-      <PlaneLogo className="h-3 w-auto text-primary" />
+      <WorkspacesLogo className="h-3 w-auto text-primary" />
       <div className="text-11">
-        Powered by <span className="font-semibold">Plane Publish</span>
+        Powered by <span className="font-semibold">Workspaces Publish</span>
       </div>
     </a>
   );

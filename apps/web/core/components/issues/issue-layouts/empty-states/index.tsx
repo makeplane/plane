@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane web components
-import { EIssuesStoreType } from "@plane/types";
+// workspaces web components
+import { EIssuesStoreType } from "@workspaces/types";
 // components
 import { ProjectArchivedEmptyState } from "./archived-issues";
 import { CycleEmptyState } from "./cycle";

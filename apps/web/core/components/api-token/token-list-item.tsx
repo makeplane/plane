@@ -6,10 +6,10 @@
 
 import { useState } from "react";
 import { XCircle } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IApiToken } from "@plane/types";
-import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
+import type { IApiToken } from "@workspaces/types";
+import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@workspaces/utils";
 // components
 import { DeleteApiTokenModal } from "@/components/api-token/delete-token-modal";
 // hooks

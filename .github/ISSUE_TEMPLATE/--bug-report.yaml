@@ -2,7 +2,7 @@ name: Bug report
 description: Create a bug report to help us improve Plane
 title: "[bug]: "
 type: Bug
-labels: [🐛bug, plane]
+labels: [🐛bug, workspaces]
 assignees: [vihar, pushya22]
 body:
 - type: markdown

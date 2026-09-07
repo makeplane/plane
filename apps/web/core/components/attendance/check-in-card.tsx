@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 import { Clock, LogIn, LogOut, TriangleAlert } from "lucide-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { cn } from "@workspaces/utils";
 // local imports
 import { ATTENDANCE_STRINGS } from "./constants";
 import { formatHours, formatTime, useAttendanceControl } from "./use-attendance";

@@ -5,13 +5,13 @@
  */
 
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
-// plane imports
+// workspaces imports
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
-} from "@plane/editor";
-import type { TDocumentPayload } from "@plane/types";
-import { logger } from "@plane/logger";
+} from "@workspaces/editor";
+import type { TDocumentPayload } from "@workspaces/types";
+import { logger } from "@workspaces/logger";
 // lib
 import { AppError } from "@/lib/errors";
 // services

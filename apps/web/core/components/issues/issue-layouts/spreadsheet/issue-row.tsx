@@ -9,17 +9,17 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
-import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
-// plane helpers
-import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { SPREADSHEET_SELECT_GROUP } from "@workspaces/constants";
+// workspaces helpers
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { ChevronRightIcon } from "@workspaces/propel/icons";
 // types
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IIssueDisplayProperties, TIssue } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
 // ui
-import { ControlLink, Row } from "@plane/ui";
-import { cn, generateWorkItemLink } from "@plane/utils";
+import { ControlLink, Row } from "@workspaces/ui";
+import { cn, generateWorkItemLink } from "@workspaces/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";

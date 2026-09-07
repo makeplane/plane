@@ -10,7 +10,7 @@ import { EditorWrapper } from "@/components/editors";
 import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // extensions
 import { SideMenuExtension } from "@/extensions";
-// plane editor imports
+// workspaces editor imports
 import { RichTextEditorAdditionalExtensions } from "@/extensions/rich-text-extensions";
 // types
 import type { EditorRefApi, IRichTextEditorProps } from "@/types";

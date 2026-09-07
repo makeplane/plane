@@ -5,9 +5,9 @@
  */
 
 import { Mail, MessageCircle, MessageSquare } from "lucide-react";
-import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-import { cn } from "@plane/utils";
+import { EProductSubscriptionEnum } from "@workspaces/types";
+// workspaces imports
+import { cn } from "@workspaces/utils";
 
 export type TPlanFeatureData = React.ReactNode | boolean | null;
 

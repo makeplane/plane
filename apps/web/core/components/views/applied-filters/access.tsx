@@ -6,11 +6,11 @@
 
 import { observer } from "mobx-react";
 // icons
-import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { CloseIcon } from "@workspaces/propel/icons";
 // constants
 // helpers
-import type { EViewAccess } from "@plane/types";
+import type { EViewAccess } from "@workspaces/types";
 import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 
 type Props = {

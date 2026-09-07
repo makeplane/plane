@@ -6,10 +6,10 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { CycleIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { CycleIcon } from "@workspaces/propel/icons";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 

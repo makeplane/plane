@@ -10,18 +10,18 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { Combobox } from "@headlessui/react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
-import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
-import type { IUserLite } from "@plane/types";
-import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
+import { useTranslation } from "@workspaces/i18n";
+import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@workspaces/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@workspaces/propel/pill";
+import type { IUserLite } from "@workspaces/types";
+import { cn, getFileURL, sortByCurrentUserThenSelected } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useAnchoredPosition } from "@plane/ui";
+import { useAnchoredPosition } from "@workspaces/ui";
 
 interface Props {
   className?: string;
@@ -52,7 +52,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
   const [query, setQuery] = useState("");
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
@@ -100,7 +100,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
             </div>
             <span
               className={cn(
-                "flex-grow truncate",
+                "grow truncate",
                 isUserSuspended(userId, workspaceSlug?.toString()) ? "text-placeholder" : ""
               )}
             >
@@ -164,8 +164,8 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                     >
                       {({ selected }) => (
                         <>
-                          <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                          <span className="grow truncate">{option.content}</span>
+                          {selected && <CheckIcon className="h-3.5 w-3.5 shrink-0" />}
                           {isUserSuspended(option.value, workspaceSlug?.toString()) && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended

@@ -7,11 +7,11 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { AddWorkItemIcon } from "@plane/propel/icons";
-import type { TIssue } from "@plane/types";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { AddWorkItemIcon } from "@workspaces/propel/icons";
+import type { TIssue } from "@workspaces/types";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { SidebarAddButton } from "@/components/sidebar/add-button";

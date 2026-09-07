@@ -6,9 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // components
 import { GroupItem } from "@/components/project-states";
 

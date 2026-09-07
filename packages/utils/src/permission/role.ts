@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { EUserPermissions } from "@plane/constants";
-import type { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
+// workspaces imports
+import { EUserPermissions } from "@workspaces/constants";
+import type { EUserProjectRoles, EUserWorkspaceRoles } from "@workspaces/types";
 
 export const getUserRole = (role: EUserPermissions | EUserWorkspaceRoles | EUserProjectRoles) => {
   switch (role) {

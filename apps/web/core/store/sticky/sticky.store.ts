@@ -7,8 +7,8 @@
 import { orderBy, set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { STICKIES_PER_PAGE } from "@plane/constants";
-import type { InstructionType, TLoader, TPaginationInfo, TSticky } from "@plane/types";
+import { STICKIES_PER_PAGE } from "@workspaces/constants";
+import type { InstructionType, TLoader, TPaginationInfo, TSticky } from "@workspaces/types";
 import { StickyService } from "@/services/sticky.service";
 
 export interface IStickyStore {
@@ -205,7 +205,7 @@ export class StickyStore implements IStickyStore {
     } catch (error) {
       console.error("Error in updating sticky:", error);
       this.stickies[id] = sticky;
-      throw new Error();
+      throw new Error("", { cause: error });
     }
   };
 

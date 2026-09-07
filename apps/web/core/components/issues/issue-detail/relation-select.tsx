@@ -8,12 +8,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 
-import { EditIcon, CloseIcon } from "@plane/propel/icons";
-// Plane
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EditIcon, CloseIcon } from "@workspaces/propel/icons";
+// Workspaces
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { ISearchIssueResponse } from "@plane/types";
-import { cn, generateWorkItemLink } from "@plane/utils";
+import type { ISearchIssueResponse } from "@workspaces/types";
+import { cn, generateWorkItemLink } from "@workspaces/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
@@ -21,9 +21,9 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// Plane web imports
+// Workspaces web imports
 import { useTimeLineRelationOptions } from "@/components/relations";
-import type { TIssueRelationTypes } from "@plane/types";
+import type { TIssueRelationTypes } from "@workspaces/types";
 import type { TRelationObject } from "../issue-detail-widgets/relations";
 
 type TIssueRelationSelect = {

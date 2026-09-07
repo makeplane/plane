@@ -6,11 +6,11 @@
 
 import { Link } from "react-router";
 import { PinOff } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { ContextMenu } from "@plane/propel/context-menu";
-import { SetAsDefaultIcon } from "@plane/propel/icons";
-import { TabNavigationItem } from "@plane/propel/tab-navigation";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { ContextMenu } from "@workspaces/propel/context-menu";
+import { SetAsDefaultIcon } from "@workspaces/propel/icons";
+import { TabNavigationItem } from "@workspaces/propel/tab-navigation";
 // local imports
 import type { TNavigationItem } from "./tab-navigation-root";
 import type { TTabPreferences } from "./tab-navigation-utils";

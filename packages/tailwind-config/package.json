@@ -1,5 +1,5 @@
 {
-  "name": "@plane/tailwind-config",
+  "name": "@workspaces/tailwind-config",
   "version": "1.4.2",
   "private": true,
   "description": "common tailwind configuration across monorepo",

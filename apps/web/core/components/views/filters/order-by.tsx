@@ -5,13 +5,13 @@
  */
 
 import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
-// plane imports
-import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
-import { CheckIcon } from "@plane/propel/icons";
-import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+// workspaces imports
+import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { getButtonStyling } from "@workspaces/propel/button";
+import { CheckIcon } from "@workspaces/propel/icons";
+import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
 
 type Props = {
   onChange: (value: { key?: TViewFiltersSortKey; order?: TViewFiltersSortBy }) => void;

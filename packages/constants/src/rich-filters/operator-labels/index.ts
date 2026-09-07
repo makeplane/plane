@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TAllAvailableOperatorsForDisplay, TAllAvailableDateFilterOperatorsForDisplay } from "@plane/types";
+import type { TAllAvailableOperatorsForDisplay, TAllAvailableDateFilterOperatorsForDisplay } from "@workspaces/types";
 import { CORE_OPERATOR_LABELS_MAP, CORE_DATE_OPERATOR_LABELS_MAP } from "./core";
 import {
   EXTENDED_OPERATOR_LABELS_MAP,

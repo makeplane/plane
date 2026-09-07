@@ -10,7 +10,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
 import { Menu, Settings } from "lucide-react";
-// plane internal packages
+// workspaces internal packages
 import {
   Breadcrumb,
   BreadcrumbItem,

@@ -5,11 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import type { TRecentActivityFilterKeys } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { useTranslation } from "@workspaces/i18n";
+import { ChevronDownIcon } from "@workspaces/propel/icons";
+import type { TRecentActivityFilterKeys } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 
 export type TFiltersDropdown = {
   className?: string;

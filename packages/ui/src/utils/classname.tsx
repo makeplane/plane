@@ -4,4 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export { cn } from "@plane/utils";
+export { cn } from "@workspaces/utils";

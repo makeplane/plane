@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { ISSUE_LAYOUTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import type { EIssueLayoutTypes } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { ISSUE_LAYOUTS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { ChevronDownIcon } from "@workspaces/propel/icons";
+import type { EIssueLayoutTypes } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
 
 export function MobileLayoutSelection({

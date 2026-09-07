@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { useTranslation } from "@plane/i18n";
-import type { TDescriptionVersion } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
-import { calculateTimeAgo, getFileURL } from "@plane/utils";
+import { useTranslation } from "@workspaces/i18n";
+import type { TDescriptionVersion } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
+import { calculateTimeAgo, getFileURL } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 

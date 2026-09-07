@@ -11,14 +11,14 @@ import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE,
-} from "@plane/constants";
+} from "@workspaces/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
   TIssueServiceType,
-} from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
+} from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";

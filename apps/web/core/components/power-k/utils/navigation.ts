@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { joinUrlPath } from "@plane/utils";
+// workspaces imports
+import { joinUrlPath } from "@workspaces/utils";
 // local imports
 import type { TPowerKContext } from "../core/types";
 

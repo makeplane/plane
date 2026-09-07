@@ -10,14 +10,14 @@ import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
 // ui
-import type { DateRange, Matcher } from "@plane/propel/calendar";
-import { Calendar } from "@plane/propel/calendar";
-import { CloseIcon, DueDatePropertyIcon } from "@plane/propel/icons";
-import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
-import { cn, renderFormattedDate } from "@plane/utils";
+import type { DateRange, Matcher } from "@workspaces/propel/calendar";
+import { Calendar } from "@workspaces/propel/calendar";
+import { CloseIcon, DueDatePropertyIcon } from "@workspaces/propel/icons";
+import { ComboDropDown, useAnchoredPosition } from "@workspaces/ui";
+import { cn, renderFormattedDate } from "@workspaces/utils";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";

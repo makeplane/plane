@@ -7,11 +7,11 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-// plane imports
-import type { EditorRefApi } from "@plane/editor";
-import type { TNameDescriptionLoader } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { EditorRefApi } from "@workspaces/editor";
+import type { TNameDescriptionLoader } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";

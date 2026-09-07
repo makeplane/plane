@@ -7,12 +7,12 @@
 import React from "react";
 import { Link } from "react-router";
 import { MoreHorizontal, Pin } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { SetAsDefaultIcon } from "@plane/propel/icons";
-import { Menu } from "@plane/propel/menu";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { SetAsDefaultIcon } from "@workspaces/propel/icons";
+import { Menu } from "@workspaces/propel/menu";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // local imports
 import type { TNavigationItem } from "./tab-navigation-root";
 import type { TTabPreferences } from "./tab-navigation-utils";

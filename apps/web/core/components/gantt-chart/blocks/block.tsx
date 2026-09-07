@@ -8,8 +8,8 @@ import type { RefObject } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // components
-import type { IBlockUpdateDependencyData } from "@plane/types";
-import { cn } from "@plane/utils";
+import type { IBlockUpdateDependencyData } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helpers
 // hooks

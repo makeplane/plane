@@ -6,7 +6,7 @@
 
 import { useForm } from "react-hook-form";
 import { Button } from "@makeplane/propel/components/button";
-import type { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
+import type { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@workspaces/types";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 import { TOAST_TYPE, setToast } from "@/providers/toast";

@@ -7,12 +7,12 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 
-// plane imports
-import { EIconSize } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
-import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { EIconSize } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // components
 import { StateList, StateCreate } from "@/components/project-states";
 
@@ -44,7 +44,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   } = props;
   // refs
   const dropElementRef = useRef<HTMLDivElement | null>(null);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // state
   const [createState, setCreateState] = useState(false);

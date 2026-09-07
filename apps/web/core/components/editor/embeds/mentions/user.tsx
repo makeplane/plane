@@ -7,11 +7,11 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link } from "react-router";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { ROLE } from "@plane/constants";
-import { Popover } from "@plane/propel/popover";
-import { cn, getFileURL } from "@plane/utils";
+import { ROLE } from "@workspaces/constants";
+import { Popover } from "@workspaces/propel/popover";
+import { cn, getFileURL } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";

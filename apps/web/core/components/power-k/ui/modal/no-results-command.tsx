@@ -5,8 +5,8 @@
  */
 
 import { Command } from "cmdk";
-import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { SearchIcon } from "@workspaces/propel/icons";
 // components
 import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";

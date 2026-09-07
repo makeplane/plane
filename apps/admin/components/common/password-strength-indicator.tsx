@@ -5,9 +5,9 @@
  */
 
 import { CircleCheck } from "lucide-react";
-// plane internal packages
-import { E_PASSWORD_STRENGTH } from "@plane/constants";
-import { cn, getPasswordCriteria, getPasswordStrength } from "@plane/utils";
+// workspaces internal packages
+import { E_PASSWORD_STRENGTH } from "@workspaces/constants";
+import { cn, getPasswordCriteria, getPasswordStrength } from "@workspaces/utils";
 
 interface StrengthInfo {
   message: string;

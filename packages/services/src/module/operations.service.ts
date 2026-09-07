@@ -5,7 +5,7 @@
  */
 
 // types
-// import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/types";
+// import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@workspaces/types";
 // services
 import { APIService } from "../api.service";
 

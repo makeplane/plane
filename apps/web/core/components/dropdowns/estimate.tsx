@@ -9,12 +9,12 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Combobox } from "@headlessui/react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
-import { EEstimateSystem } from "@plane/types";
-import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
-import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { CheckIcon, SearchIcon, EstimatePropertyIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import { EEstimateSystem } from "@workspaces/types";
+import { ComboDropDown, useAnchoredPosition } from "@workspaces/ui";
+import { convertMinutesToHoursMinutesString, cn } from "@workspaces/utils";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";

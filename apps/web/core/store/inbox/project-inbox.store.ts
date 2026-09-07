@@ -7,7 +7,7 @@
 import { uniq, update, isEmpty, omit, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import type { EPastDurationFilters } from "@plane/constants";
+import type { EPastDurationFilters } from "@workspaces/constants";
 // types
 import type {
   TInboxIssue,
@@ -16,9 +16,9 @@ import type {
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
-} from "@plane/types";
-import { EInboxIssueCurrentTab, EInboxIssueStatus } from "@plane/types";
-import { getCustomDates } from "@plane/utils";
+} from "@workspaces/types";
+import { EInboxIssueCurrentTab, EInboxIssueStatus } from "@workspaces/types";
+import { getCustomDates } from "@workspaces/utils";
 // helpers
 // services
 import { InboxIssueService } from "@/services/inbox";

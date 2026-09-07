@@ -7,17 +7,17 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
 import {
   StatePropertyIcon,
   StateGroupIcon,
   PriorityPropertyIcon,
   DueDatePropertyIcon,
   PriorityIcon,
-} from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getIssuePriorityFilters } from "@plane/utils";
+} from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import { cn, getIssuePriorityFilters } from "@workspaces/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";

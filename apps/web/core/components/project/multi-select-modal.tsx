@@ -9,14 +9,14 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Combobox } from "@headlessui/react";
-// plane ui
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+// workspaces ui
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { Logo } from "@workspaces/propel/emoji-icon-picker";
+import { SearchIcon, CloseIcon } from "@workspaces/propel/icons";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // assets
 import darkProjectAsset from "@/app/assets/empty-state/search/project-dark.webp?url";
 import lightProjectAsset from "@/app/assets/empty-state/search/project-light.webp?url";
@@ -43,7 +43,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
   const moveButtonRef = useRef<HTMLButtonElement>(null);
   // theme hook
   const { resolvedTheme } = useTheme();
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();

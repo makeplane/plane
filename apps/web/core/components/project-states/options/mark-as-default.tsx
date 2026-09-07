@@ -6,9 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import type { TStateOperationsCallbacks } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { TStateOperationsCallbacks } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 
 type TStateMarksAsDefault = {
   stateId: string;

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TOAuthConfigs } from "@plane/types";
+// workspaces imports
+import type { TOAuthConfigs } from "@workspaces/types";
 // local imports
 import { useCoreOAuthConfig } from "./core";
 import { useExtendedOAuthConfig } from "./extended";

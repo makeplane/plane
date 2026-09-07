@@ -9,11 +9,11 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { CircularProgress } from "@makeplane/propel/components/circular-progress";
-import { CheckIcon } from "@plane/propel/icons";
-// plane imports
-import type { TCycleGroups } from "@plane/types";
+import { CheckIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import type { TCycleGroups } from "@workspaces/types";
 // components
-import { generateQueryParams, calculateCycleProgress } from "@plane/utils";
+import { generateQueryParams, calculateCycleProgress } from "@workspaces/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";

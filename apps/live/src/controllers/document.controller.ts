@@ -7,10 +7,10 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 // helpers
-import { Controller, Post } from "@plane/decorators";
-import { convertHTMLDocumentToAllFormats } from "@plane/editor";
+import { Controller, Post } from "@workspaces/decorators";
+import { convertHTMLDocumentToAllFormats } from "@workspaces/editor";
 // logger
-import { logger } from "@plane/logger";
+import { logger } from "@workspaces/logger";
 import type { TConvertDocumentRequestBody } from "@/types";
 
 // Define the schema with more robust validation

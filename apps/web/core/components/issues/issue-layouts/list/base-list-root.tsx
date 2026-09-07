@@ -8,11 +8,11 @@ import type { FC } from "react";
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// workspaces constants
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
 // types
-import type { EIssuesStoreType, GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+import type { EIssuesStoreType, GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@workspaces/types";
+import { EIssueLayoutTypes } from "@workspaces/types";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";

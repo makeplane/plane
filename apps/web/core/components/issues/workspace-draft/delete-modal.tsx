@@ -6,12 +6,12 @@
 
 import { useEffect, useState } from "react";
 // types
-import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TWorkspaceDraftIssue } from "@plane/types";
+import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TWorkspaceDraftIssue } from "@workspaces/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@workspaces/ui";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";

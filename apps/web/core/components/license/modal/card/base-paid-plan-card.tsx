@@ -8,10 +8,10 @@ import { useState, Fragment } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
-// plane imports
+// workspaces imports
 // helpers
-import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
-import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
+import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@workspaces/types";
+import { cn, getBaseSubscriptionName, getSubscriptionName } from "@workspaces/utils";
 
 export type TBasePaidPlanCardProps = {
   planVariant: EProductSubscriptionEnum;

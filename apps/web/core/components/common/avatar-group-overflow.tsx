@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { AvatarGroup, type AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
 
@@ -27,7 +27,7 @@ type Props = {
  * An overlapping avatar stack that collapses the tail into a `+N` counter.
  *
  * Propel's `AvatarGroup` renders every child it is given, so the capping behaviour that
- * `@plane/ui`'s `AvatarGroup` provided through `max` lives here as app chrome. The overflow
+ * `@workspaces/ui`'s `AvatarGroup` provided through `max` lives here as app chrome. The overflow
  * indicator is a Propel `Avatar` with a `fallback`, matching the Avatar Group overflow pattern.
  */
 export function AvatarGroupOverflow(props: Props) {

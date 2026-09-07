@@ -6,8 +6,8 @@
 
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IWorkspaceIntegration } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IWorkspaceIntegration } from "@workspaces/types";
 // assets
 import GithubLogo from "@/app/assets/logos/github-square.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
@@ -15,7 +15,7 @@ import SlackLogo from "@/app/assets/services/slack.png?url";
 import { SelectChannel } from "@/components/integration/slack/select-channel";
 import { SelectRepository } from "@/components/integration/github/select-repository";
 // constants
-import { PROJECT_GITHUB_REPOSITORY } from "@plane/constants";
+import { PROJECT_GITHUB_REPOSITORY } from "@workspaces/constants";
 // services
 import { ProjectService } from "@/services/project";
 

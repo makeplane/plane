@@ -7,7 +7,7 @@
 /**
  * Deployment history.
  *
- * The record of what actually went out, which Plane otherwise has no opinion
+ * The record of what actually went out, which Workspaces otherwise has no opinion
  * about. Timestamps are set by the API from the status change rather than
  * typed in — a history whose times were typed by hand is not a history.
  */
@@ -17,11 +17,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Plus } from "lucide-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
+import { EModalWidth, ModalCore } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // services

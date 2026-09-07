@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TStateGroups } from "@plane/types";
+import type { TStateGroups } from "@workspaces/types";
 
 export type TDraggableData = {
   groupKey: TStateGroups;

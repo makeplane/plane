@@ -7,7 +7,7 @@
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { CheckboxField } from "@makeplane/propel/components/checkbox-field";
-import type { IWebhook } from "@plane/types";
+import type { IWebhook } from "@workspaces/types";
 
 export const INDIVIDUAL_WEBHOOK_OPTIONS: {
   key: keyof IWebhook;

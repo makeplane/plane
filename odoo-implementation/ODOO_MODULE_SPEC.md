@@ -1,20 +1,20 @@
-# Odoo bridge: the endpoints Plane is already asking for
+# Odoo bridge: the endpoints Workspaces is already asking for
 
 **Status: specification.** The three attendance endpoints in
-[`PLANE_ODOO_ATTENDANCE.md`](./PLANE_ODOO_ATTENDANCE.md) are deployed and working. The endpoints
-below are **not** — Plane calls them, gets a 404, and reports the feature as unavailable rather
-than broken. Implementing them in `atlas-odoo-bridge` switches the corresponding Plane screens on
-with no change on the Plane side.
+[`WORKSPACES_ODOO_ATTENDANCE.md`](./WORKSPACES_ODOO_ATTENDANCE.md) are deployed and working. The endpoints
+below are **not** — Workspaces calls them, gets a 404, and reports the feature as unavailable rather
+than broken. Implementing them in `atlas-odoo-bridge` switches the corresponding Workspaces screens on
+with no change on the Workspaces side.
 
 Everything here follows the conventions the deployed bridge already set:
 
 - Auth is the single shared `X-Atlas-Key` header. No new credential.
 - Times are **UTC with an explicit `Z`**. Dates are `YYYY-MM-DD`.
 - Errors are `{"error": {"message": "...", "code": "..."}}` with a real status code.
-- A person is identified by their **work email**, never by an Odoo id Plane would have to store.
+- A person is identified by their **work email**, never by an Odoo id Workspaces would have to store.
 - The bridge stores nothing of its own. Odoo remains the source of truth.
 
-Plane's client (`plane/utils/odoo_bridge.py`) treats `404`, `405` and `501` as _"this deployment
+the Workspaces client (`workspaces/utils/odoo_bridge.py`) treats `404`, `405` and `501` as _"this deployment
 does not have that route yet"_ and everything ≥ 500 as an outage. So an unimplemented endpoint is
 safe to leave unimplemented.
 
@@ -45,7 +45,7 @@ Called by `/api/attendance/history/` — the attendance history screen.
 }
 ```
 
-`status` is one of `present`, `absent`, `leave`, `holiday`, `weekend`. Plane renders the calendar
+`status` is one of `present`, `absent`, `leave`, `holiday`, `weekend`. Workspaces renders the calendar
 straight off it, so a day the employee was not expected to work must say so rather than be omitted.
 
 ---
@@ -78,7 +78,7 @@ Called by `/api/attendance/leave/` — the leave panel.
 ```
 
 `state` uses Odoo's own `hr.leave` states (`draft`, `confirm`, `refuse`, `validate1`, `validate`)
-— Plane maps them to labels rather than inventing its own vocabulary.
+— Workspaces maps them to labels rather than inventing its own vocabulary.
 
 ---
 
@@ -123,7 +123,7 @@ Called by `/api/attendance/working-hours/`.
 
 Called by `/api/workspaces/<slug>/operations/team-availability/` — the PM dashboard's team panel.
 
-**This is the one that matters most for load.** Without it Plane falls back to calling
+**This is the one that matters most for load.** Without it Workspaces falls back to calling
 `/attendance/me` once per member, in a bounded thread pool, cached for a minute. That works, but it
 is N requests where one would do.
 
@@ -149,7 +149,7 @@ is N requests where one would do.
 }
 ```
 
-An address with no employee behind it goes in `unmatched` rather than producing an error — Plane
+An address with no employee behind it goes in `unmatched` rather than producing an error — Workspaces
 shows those people as "not linked", which is a provisioning problem for HR, not a failure of the
 request.
 
@@ -168,11 +168,11 @@ and because grouping the team panel by department is the obvious next thing some
 
 ## Implementation notes
 
-- **Read-only.** Nothing above writes to Odoo. The only writes Plane performs are the two punches
-  that already exist, and that should stay true: a leave request approved from Plane would need an
-  approval chain Plane does not model.
+- **Read-only.** Nothing above writes to Odoo. The only writes Workspaces performs are the two punches
+  that already exist, and that should stay true: a leave request approved from Workspaces would need an
+  approval chain Workspaces does not model.
 - **`_resolve_employee` is already the right lookup.** Reuse it rather than adding a second
   email-matching path — the existing behaviour (match on `work_email`, 400 when nothing matches) is
-  what Plane's error handling is written against.
+  what the Workspaces error handling is written against.
 - **Pagination is not needed.** Every response above is bounded by a year, a team or a calendar.
 - **Do not regenerate the API key.** Atlas is a separate consumer of the same bridge.

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { BoardLayoutIcon, ListLayoutIcon, TimelineLayoutIcon } from "@plane/propel/icons";
-import type { IBaseLayoutConfig } from "@plane/types";
+import { BoardLayoutIcon, ListLayoutIcon, TimelineLayoutIcon } from "@workspaces/propel/icons";
+import type { IBaseLayoutConfig } from "@workspaces/types";
 
 export const BASE_LAYOUTS: IBaseLayoutConfig[] = [
   {

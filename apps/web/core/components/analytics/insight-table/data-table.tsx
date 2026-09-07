@@ -22,13 +22,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-// plane package imports
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
-import { cn } from "@plane/utils";
-// plane web components
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateCompact } from "@workspaces/propel/empty-state";
+import { SearchIcon, CloseIcon } from "@workspaces/propel/icons";
+// workspaces package imports
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspaces/propel/table";
+import { cn } from "@workspaces/utils";
+// workspaces web components
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

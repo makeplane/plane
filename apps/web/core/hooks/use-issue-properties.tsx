@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@workspaces/types";
 
 export const useWorkItemProperties = (
   projectId: string | null | undefined,

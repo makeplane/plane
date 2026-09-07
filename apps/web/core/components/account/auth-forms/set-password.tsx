@@ -10,15 +10,15 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { E_PASSWORD_STRENGTH } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { PasswordStrengthIndicator } from "@plane/ui";
+import { E_PASSWORD_STRENGTH } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import { PasswordStrengthIndicator } from "@workspaces/ui";
 // components
-import { getPasswordStrength } from "@plane/utils";
+import { getPasswordStrength } from "@workspaces/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -60,7 +60,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // hooks
   const { data: user, handleSetPassword } = useUser();

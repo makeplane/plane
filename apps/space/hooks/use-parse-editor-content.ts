@@ -6,7 +6,7 @@
 
 import { useCallback } from "react";
 // helpers
-import type { TCustomComponentsMetaData } from "@plane/utils";
+import type { TCustomComponentsMetaData } from "@workspaces/utils";
 // helpers
 import { getEditorAssetSrc } from "@/helpers/editor.helper";
 // hooks

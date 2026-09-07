@@ -7,7 +7,7 @@
 import type { ReactNode } from "react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

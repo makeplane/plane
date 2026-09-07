@@ -36,7 +36,7 @@ def main():
 
     # Add coverage
     if args.coverage:
-        cmd.extend(["--cov=plane", "--cov-report=term", "--cov-report=html"])
+        cmd.extend(["--cov=workspaces", "--cov-report=term", "--cov-report=html"])
 
     # Add parallel
     if args.parallel:

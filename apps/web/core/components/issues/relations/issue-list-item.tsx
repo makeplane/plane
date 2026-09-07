@@ -6,15 +6,15 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
-// plane imports
+import { useTranslation } from "@workspaces/i18n";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TIssueRelationTypes } from "@plane/types";
-import type { TIssue, TIssueServiceType } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
-import { ControlLink, CustomMenu } from "@plane/ui";
-import { generateWorkItemLink } from "@plane/utils";
+import type { TIssueRelationTypes } from "@workspaces/types";
+import type { TIssue, TIssueServiceType } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
+import { ControlLink, CustomMenu } from "@workspaces/ui";
+import { generateWorkItemLink } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";

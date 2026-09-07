@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TExternalFilter } from "@plane/types";
+import type { TExternalFilter } from "@workspaces/types";
 
 /**
  * Filter config options.

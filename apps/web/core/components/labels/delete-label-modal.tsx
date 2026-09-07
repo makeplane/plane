@@ -8,10 +8,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IIssueLabel } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IIssueLabel } from "@workspaces/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@workspaces/ui";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 

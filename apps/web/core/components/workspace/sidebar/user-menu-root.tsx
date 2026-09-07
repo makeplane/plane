@@ -8,13 +8,13 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings, Settings2 } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { GOD_MODE_URL } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { CustomMenu } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { GOD_MODE_URL } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import { CustomMenu } from "@workspaces/ui";
+import { getFileURL } from "@workspaces/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";

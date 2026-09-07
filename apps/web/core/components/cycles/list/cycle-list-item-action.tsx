@@ -10,17 +10,17 @@ import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, CalendarDays } from "lucide-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
+import { useTranslation } from "@workspaces/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/icons";
-import { setPromiseToast } from "@plane/propel/toast";
+import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@workspaces/propel/icons";
+import { setPromiseToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { ICycle, TCycleGroups } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
-import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
+import type { ICycle, TCycleGroups } from "@workspaces/types";
+import { FavoriteStar } from "@workspaces/ui";
+import { getDate, getFileURL, generateQueryParams } from "@workspaces/utils";
 // components
 import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

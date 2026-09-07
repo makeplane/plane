@@ -8,11 +8,11 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
-// plane imports
-import { CORE_EXTENSIONS } from "@plane/editor";
-import type { TEditorAsset } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
-import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
+// workspaces imports
+import { CORE_EXTENSIONS } from "@workspaces/editor";
+import type { TEditorAsset } from "@workspaces/editor";
+import { useTranslation } from "@workspaces/i18n";
+import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@workspaces/utils";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local import

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes } from "@workspaces/types";
 
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 

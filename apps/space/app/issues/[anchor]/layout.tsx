@@ -19,8 +19,9 @@ import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 import type { Route } from "./+types/layout";
 
-const DEFAULT_TITLE = "Plane";
-const DEFAULT_DESCRIPTION = "Made with Plane, an AI-powered work management platform with publishing capabilities.";
+const DEFAULT_TITLE = "Workspaces";
+const DEFAULT_DESCRIPTION =
+  "Made with Workspaces, an AI-powered work management platform with publishing capabilities.";
 
 interface IssueMetadata {
   name?: string;

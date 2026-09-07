@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { ArchiveIcon } from "@plane/propel/icons";
-import { renderFormattedDate } from "@plane/utils";
+// workspaces imports
+import { ArchiveIcon } from "@workspaces/propel/icons";
+import { renderFormattedDate } from "@workspaces/utils";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

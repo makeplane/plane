@@ -9,12 +9,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Settings, UserPlus } from "lucide-react";
 import { Menu } from "@headlessui/react";
-// plane imports
-import { EUserPermissions } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { CheckIcon } from "@plane/propel/icons";
-import type { IWorkspace } from "@plane/types";
-import { cn, getFileURL, getUserRole } from "@plane/utils";
+// workspaces imports
+import { EUserPermissions } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { CheckIcon } from "@workspaces/propel/icons";
+import type { IWorkspace } from "@workspaces/types";
+import { cn, getFileURL, getUserRole } from "@workspaces/utils";
 
 type TProps = {
   workspace: IWorkspace;

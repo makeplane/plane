@@ -40,7 +40,7 @@ export const Default: Story = {
   render() {
     const [activeNavTab, setActiveNavTab] = useState("work_items");
 
-    // Example navigation items (matching actual Plane project navigation)
+    // Example navigation items (matching actual Workspaces project navigation)
     const navItems = [
       { key: "overview", name: "Overview", href: "#overview", icon: OverviewIcon },
       { key: "work_items", name: "Work items", href: "#work_items", icon: WorkItemsIcon },

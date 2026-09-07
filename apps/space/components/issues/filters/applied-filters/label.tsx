@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon } from "@workspaces/propel/icons";
 // types
 import type { IIssueLabel } from "@/types/issue";
 

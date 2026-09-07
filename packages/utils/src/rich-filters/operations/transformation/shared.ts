@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TFilterGroupNode, TFilterProperty } from "@plane/types";
+import type { TFilterGroupNode, TFilterProperty } from "@workspaces/types";
 import { processGroupNode } from "../../types/shared";
 import type { TTreeTransformFn, TTreeTransformResult } from "./core";
 import { transformGroupWithChildren } from "./core";

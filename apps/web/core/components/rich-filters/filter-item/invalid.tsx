@@ -7,8 +7,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CircleAlert } from "lucide-react";
-// plane imports
-import type { TExternalFilter, TFilterProperty } from "@plane/types";
+// workspaces imports
+import type { TExternalFilter, TFilterProperty } from "@workspaces/types";
 // local imports
 import { FilterItemCloseButton } from "./close-button";
 import { FilterItemContainer } from "./container";

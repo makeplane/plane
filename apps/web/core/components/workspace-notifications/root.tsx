@@ -7,10 +7,10 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// plane imports
-import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { ENotificationLoader, ENotificationQueryParamType } from "@workspaces/constants";
+import { EmptyStateCompact } from "@workspaces/propel/empty-state";
+import { cn } from "@workspaces/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
 // api services
 import { APIService } from "../api.service";
 

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane types
-import type { TSearchEntities } from "@plane/types";
+// workspaces types
+import type { TSearchEntities } from "@workspaces/types";
 
 export type TMentionSuggestion = {
   entity_identifier: string;

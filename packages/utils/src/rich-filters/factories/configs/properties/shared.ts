@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
-import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
+// workspaces imports
+import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@workspaces/types";
+import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@workspaces/types";
 // local imports
 import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
 import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams, TFilterIconType } from "../shared";

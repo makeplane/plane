@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { ADDITIONAL_EXTENSIONS } from "@plane/utils";
-import { CORE_EXTENSIONS } from "@plane/utils";
-// plane editor imports
+// workspaces imports
+import type { ADDITIONAL_EXTENSIONS } from "@workspaces/utils";
+import { CORE_EXTENSIONS } from "@workspaces/utils";
+// workspaces editor imports
 import type { ExtensionFileSetStorageKey } from "@/types/storage";
 
 export type NodeFileMapType = Partial<

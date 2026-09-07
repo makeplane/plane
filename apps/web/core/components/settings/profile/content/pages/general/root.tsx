@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 // components
 import { PageHead } from "@/components/core/page-title";
 // hooks

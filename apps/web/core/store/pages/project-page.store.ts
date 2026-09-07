@@ -8,13 +8,13 @@ import { unset, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EUserPermissions } from "@plane/constants";
-import type { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
+import { EUserPermissions } from "@workspaces/constants";
+import type { TPage, TPageFilters, TPageNavigationTabs } from "@workspaces/types";
+import { EUserProjectRoles } from "@workspaces/types";
 // helpers
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
-// plane web constants
-// plane web store
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@workspaces/utils";
+// workspaces web constants
+// workspaces web store
 // services
 import { ProjectPageService } from "@/services/page";
 // store

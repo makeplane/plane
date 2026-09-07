@@ -6,10 +6,10 @@
 
 import { useRouter } from "next/navigation";
 // types
-import type { TIssue } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
+import type { TIssue } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
 // helpers
-import { generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "./store/use-issue-detail";
 import { useProject } from "./store/use-project";

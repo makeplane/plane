@@ -6,9 +6,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TIssueOrderByOptions } from "@plane/types";
+import { ISSUE_ORDER_BY_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TIssueOrderByOptions } from "@workspaces/types";
 
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";

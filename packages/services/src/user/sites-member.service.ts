@@ -4,17 +4,17 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
-import type { TPublicMember } from "@plane/types";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
+import type { TPublicMember } from "@workspaces/types";
 // api service
 import { APIService } from "../api.service";
 
 /**
- * Service class for managing members operations within plane sites application.
+ * Service class for managing members operations within the Workspaces sites application.
  * Extends APIService to handle HTTP requests to the member-related endpoints.
  * @extends {APIService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for Workspaces sites
  */
 export class SitesMemberService extends APIService {
   constructor(BASE_URL?: string) {

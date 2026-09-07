@@ -6,9 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-// plane imports
-import type { TCycleFilters, TCycleGroups } from "@plane/types";
+import { SearchIcon, CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import type { TCycleFilters, TCycleGroups } from "@workspaces/types";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports

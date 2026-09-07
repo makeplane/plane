@@ -4,8 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { API_BASE_URL } from "@plane/constants";
-import type { THomeDashboardResponse, TWidget, TWidgetStatsResponse, TWidgetStatsRequestParams } from "@plane/types";
+import { API_BASE_URL } from "@workspaces/constants";
+import type {
+  THomeDashboardResponse,
+  TWidget,
+  TWidgetStatsResponse,
+  TWidgetStatsRequestParams,
+} from "@workspaces/types";
 import { APIService } from "../api.service";
 
 export default class DashboardService extends APIService {

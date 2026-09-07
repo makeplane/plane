@@ -7,10 +7,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-// plane imports
+// workspaces imports
 // components
-import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
-import { cn } from "@plane/utils";
+import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
 // hooks

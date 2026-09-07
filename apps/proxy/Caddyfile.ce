@@ -1,4 +1,4 @@
-(plane_proxy) {
+(workspaces_proxy) {
 	request_body {
 		max_size {$FILE_SIZE_LIMIT:5242880}
 	}
@@ -17,8 +17,8 @@
 
 	reverse_proxy /static/* api:8000
 
-	reverse_proxy /{$BUCKET_NAME:uploads}/* plane-minio:9000
-	reverse_proxy /{$BUCKET_NAME:uploads} plane-minio:9000
+	reverse_proxy /{$BUCKET_NAME:uploads}/* workspaces-minio:9000
+	reverse_proxy /{$BUCKET_NAME:uploads} workspaces-minio:9000
 
 	reverse_proxy /* web:3000
 }
@@ -35,5 +35,5 @@
 }
 
 {$SITE_ADDRESS::80} {
-	import plane_proxy
+	import workspaces_proxy
 }

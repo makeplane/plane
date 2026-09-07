@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TPage, TPageExtended } from "@plane/types";
+import type { TPage, TPageExtended } from "@workspaces/types";
 import type { CoreRootStore } from "@/store/root.store";
 import type { TBasePageServices } from "@/store/pages/base-page";
 

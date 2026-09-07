@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { NewTabIcon, EditIcon, TrashIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
+import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";

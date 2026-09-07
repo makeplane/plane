@@ -6,8 +6,8 @@
 
 import type { LucideIcon } from "lucide-react";
 import { Users, Zap } from "lucide-react";
-// plane imports
-import type { ISvgIcons } from "@plane/propel/icons";
+// workspaces imports
+import type { ISvgIcons } from "@workspaces/propel/icons";
 import {
   CycleIcon,
   EstimatePropertyIcon,
@@ -17,8 +17,8 @@ import {
   PageIcon,
   StatePropertyIcon,
   ViewsIcon,
-} from "@plane/propel/icons";
-import type { TProjectSettingsTabs } from "@plane/types";
+} from "@workspaces/propel/icons";
+import type { TProjectSettingsTabs } from "@workspaces/types";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 

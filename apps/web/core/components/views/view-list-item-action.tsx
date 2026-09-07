@@ -8,15 +8,15 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth } from "lucide-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
-import { LockIcon } from "@plane/propel/icons";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
+import { LockIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IProjectView } from "@plane/types";
-import { EViewAccess } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
-import { getPublishViewLink } from "@plane/utils";
+import type { IProjectView } from "@workspaces/types";
+import { EViewAccess } from "@workspaces/types";
+import { FavoriteStar } from "@workspaces/ui";
+import { getPublishViewLink } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";

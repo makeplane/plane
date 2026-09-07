@@ -7,8 +7,8 @@
 import { clone, update, unset, orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane imports
-import { EDraftIssuePaginationType } from "@plane/constants";
+// workspaces imports
+import { EDraftIssuePaginationType } from "@workspaces/constants";
 import type {
   TWorkspaceDraftIssue,
   TWorkspaceDraftPaginationInfo,
@@ -21,8 +21,8 @@ import type {
   ViewFlags,
   TIssue,
   TBulkOperationsPayload,
-} from "@plane/types";
-import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
+} from "@workspaces/types";
+import { getCurrentDateTimeInISO, convertToISODateString } from "@workspaces/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
@@ -292,7 +292,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         set(this.issuesMap, [issueId], {
           ...issueBeforeUpdate,
           ...payload,
-          ...{ updated_at: getCurrentDateTimeInISO() },
+          updated_at: getCurrentDateTimeInISO(),
         });
       });
       const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);

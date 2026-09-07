@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TAllAvailableOperatorsForDisplay, TSupportedOperators } from "@plane/types";
+import type { TAllAvailableOperatorsForDisplay, TSupportedOperators } from "@workspaces/types";
 
 /**
  * Result type for operator conversion

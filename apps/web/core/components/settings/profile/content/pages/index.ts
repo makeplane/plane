@@ -5,8 +5,8 @@
  */
 
 import { lazy } from "react";
-// plane imports
-import type { TProfileSettingsTabs } from "@plane/types";
+// workspaces imports
+import type { TProfileSettingsTabs } from "@workspaces/types";
 
 export const PROFILE_SETTINGS_PAGES_MAP: Record<TProfileSettingsTabs, React.LazyExoticComponent<React.FC>> = {
   general: lazy(() => import("./general").then((m) => ({ default: m.GeneralProfileSettings }))),

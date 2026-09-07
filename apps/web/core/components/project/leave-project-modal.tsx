@@ -8,13 +8,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangleIcon } from "lucide-react";
-// Plane imports
+// Workspaces imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IProject } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IProject } from "@workspaces/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";

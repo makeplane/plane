@@ -8,7 +8,7 @@
 #
 # Never used on its own. Compose merges it over docker-compose.yml:
 #
-#   COMPOSE_FILE=docker-compose.yml:deployments/production/compose.yml[:deployments/virex/compose.yml]
+#   COMPOSE_FILE=docker-compose.yml:deployments/production/compose.yml[:deployments/workspaces/compose.yml]
 #
 # Needs Compose v2.24 or newer.
 
@@ -25,15 +25,15 @@ x-healthy: &healthy
 # and the migrator having exited 0. A failed migration must stop the deploy,
 # not leave an api running on a half-migrated schema.
 x-django-depends: &django-depends
-  plane-db: *healthy
-  plane-redis: *healthy
-  plane-mq: *healthy
+  workspaces-db: *healthy
+  workspaces-redis: *healthy
+  workspaces-mq: *healthy
   migrator:
     condition: service_completed_successfully
 
 services:
   # --------------------------------------------------------- backing services
-  plane-db:
+  workspaces-db:
     logging: *logging
     healthcheck:
       # $$ keeps compose from interpolating; the shell in the container expands it.
@@ -43,7 +43,7 @@ services:
       retries: 12
       start_period: 30s
 
-  plane-redis:
+  workspaces-redis:
     logging: *logging
     healthcheck:
       test: ["CMD", "valkey-cli", "ping"]
@@ -52,7 +52,7 @@ services:
       retries: 12
       start_period: 15s
 
-  plane-mq:
+  workspaces-mq:
     logging: *logging
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
@@ -62,7 +62,7 @@ services:
       # RabbitMQ is the slowest service to boot on a small VPS.
       start_period: 90s
 
-  plane-minio:
+  workspaces-minio:
     logging: *logging
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:9000/minio/health/live"]
@@ -75,13 +75,13 @@ services:
   migrator:
     logging: *logging
     depends_on:
-      plane-db: *healthy
-      plane-redis: *healthy
+      workspaces-db: *healthy
+      workspaces-redis: *healthy
 
   api:
     logging: *logging
     healthcheck:
-      # plane.web.urls answers {"status": "OK"} at the root. Checked with
+      # workspaces.web.urls answers {"status": "OK"} at the root. Checked with
       # python because the image ships no HTTP client.
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/', timeout=4).status == 200 else 1)"]
       interval: 30s
@@ -93,7 +93,7 @@ services:
     depends_on:
       <<: *django-depends
       # create_bucket runs at start-up and needs MinIO to answer.
-      plane-minio: *healthy
+      workspaces-minio: *healthy
 
   worker:
     logging: *logging
@@ -114,7 +114,7 @@ services:
       retries: 3
       start_period: 20s
     depends_on:
-      plane-redis: *healthy
+      workspaces-redis: *healthy
       api: *healthy
 
   # web, admin and space carry a HEALTHCHECK in their images.
@@ -141,4 +141,4 @@ services:
       space: *healthy
       live: *healthy
       api: *healthy
-      plane-minio: *healthy
+      workspaces-minio: *healthy

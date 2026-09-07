@@ -18,7 +18,7 @@ import type {
   TSupportedFilterFieldConfigs,
   TSupportedOperators,
   TOperatorSpecificConfigs,
-} from "@plane/types";
+} from "@workspaces/types";
 
 /**
  * Helper to create a type-safe filter config

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { EViewAccess } from "@plane/types";
+import { EViewAccess } from "@workspaces/types";
 
 export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;

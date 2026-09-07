@@ -4,14 +4,14 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
+// workspaces imports
 import type { SyntheticEvent } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-import { StartDatePropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
-import type { IIssueDisplayProperties, TIssue } from "@plane/types";
-import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { useTranslation } from "@workspaces/i18n";
+import { StartDatePropertyIcon, DueDatePropertyIcon } from "@workspaces/propel/icons";
+import type { IIssueDisplayProperties, TIssue } from "@workspaces/types";
+import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@workspaces/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

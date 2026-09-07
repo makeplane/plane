@@ -5,12 +5,12 @@
  */
 
 import type { LucideIcon } from "lucide-react";
-// plane ui
-import { useTranslation } from "@plane/i18n";
-import type { ISvgIcons } from "@plane/propel/icons";
+// workspaces ui
+import { useTranslation } from "@workspaces/i18n";
+import type { ISvgIcons } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 
 type Props = {
   onChange: (value: number) => void;

@@ -6,15 +6,15 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane-i18n
-import { useTranslation } from "@plane/i18n";
+// workspaces-i18n
+import { useTranslation } from "@workspaces/i18n";
 // types
-import type { TIssueServiceType } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@workspaces/ui";
 // helper
-import { getFileName } from "@plane/utils";
+import { getFileName } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types

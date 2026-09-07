@@ -6,7 +6,7 @@
 
 import { Combobox } from "@headlessui/react";
 import React, { useEffect, useRef } from "react";
-import { SearchIcon } from "@plane/propel/icons";
+import { SearchIcon } from "@workspaces/propel/icons";
 // helpers
 import { cn } from "../../utils";
 

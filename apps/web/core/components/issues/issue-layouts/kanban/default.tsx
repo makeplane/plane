@@ -17,9 +17,9 @@ import type {
   TIssueKanbanFilters,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-} from "@plane/types";
+} from "@workspaces/types";
 // constants
-import { ContentWrapper } from "@plane/ui";
+import { ContentWrapper } from "@workspaces/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";

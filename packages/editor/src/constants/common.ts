@@ -28,7 +28,7 @@ import {
   TextQuote,
   Underline,
 } from "lucide-react";
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@workspaces/propel/icons";
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@/types";
 
 export type TEditorTypes = "lite" | "document" | "sticky";

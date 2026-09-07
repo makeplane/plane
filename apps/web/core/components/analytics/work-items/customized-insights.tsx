@@ -7,12 +7,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-// plane package imports
-import { useTranslation } from "@plane/i18n";
-import type { IAnalyticsParams } from "@plane/types";
-import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
-import { cn } from "@plane/utils";
-// plane web components
+// workspaces package imports
+import { useTranslation } from "@workspaces/i18n";
+import type { IAnalyticsParams } from "@workspaces/types";
+import { ChartXAxisProperty, ChartYAxisMetric } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
+// workspaces web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";

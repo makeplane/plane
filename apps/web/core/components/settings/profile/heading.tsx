@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { cn } from "@plane/ui";
+// workspaces imports
+import { cn } from "@workspaces/ui";
 
 type Props = {
   className?: string;

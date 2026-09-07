@@ -5,9 +5,9 @@
  */
 
 import React from "react";
-// plane utils
-import { calculateTimeAgo, cn, getIconForLink } from "@plane/utils";
-// plane ui
+// workspaces utils
+import { calculateTimeAgo, cn, getIconForLink } from "@workspaces/utils";
+// workspaces ui
 import type { TContextMenuItem } from "../dropdowns/context-menu/root";
 import { CustomMenu } from "../dropdowns/custom-menu";
 

@@ -5,7 +5,7 @@
  */
 
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -6,9 +6,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { CYCLE_STATUS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TCycleGroups } from "@plane/types";
+import { CYCLE_STATUS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TCycleGroups } from "@workspaces/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // types

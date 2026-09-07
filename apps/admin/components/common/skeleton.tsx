@@ -6,10 +6,10 @@
 
 import React from "react";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 
 // Loading-placeholder skeleton. @makeplane/propel has no skeleton component yet;
-// this matches the API the workspace @plane/propel skeleton exposed.
+// this matches the API the workspace @workspaces/propel skeleton exposed.
 
 type SkeletonProps = {
   children: React.ReactNode;

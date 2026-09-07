@@ -8,14 +8,14 @@ import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, ModuleIcon } from "@plane/propel/icons";
-import type { IModule } from "@plane/types";
-import { cn, sortBySelectedFirst } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { CheckIcon, SearchIcon, ModuleIcon } from "@workspaces/propel/icons";
+import type { IModule } from "@workspaces/types";
+import { cn, sortBySelectedFirst } from "@workspaces/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useAnchoredPosition } from "@plane/ui";
+import { useAnchoredPosition } from "@workspaces/ui";
 
 type DropdownOptions =
   | {
@@ -42,7 +42,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
   const [query, setQuery] = useState("");
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();

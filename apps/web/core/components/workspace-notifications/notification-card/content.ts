@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+import { replaceUnderscoreIfSnakeCase } from "@workspaces/utils";
 import type { TNotificationContentMap } from "@/components/workspace-notifications/sidebar/notification-card/content";
 
 // Additional notification content map for CE (empty - EE extends this)

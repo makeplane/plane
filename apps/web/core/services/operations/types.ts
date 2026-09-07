@@ -7,7 +7,7 @@
 /**
  * Wire types for the Engineering Operations API.
  *
- * These mirror `plane/app/serializers/operations.py` and the dashboard,
+ * These mirror `workspaces/app/serializers/operations.py` and the dashboard,
  * analytics and report endpoints. Kept in one file next to the services so
  * that a change on the Django side has exactly one place to land here.
  */
@@ -487,7 +487,7 @@ export type TTeamAvailability =
       })[];
     };
 
-/** Plane's cursor pagination envelope, as the operations list endpoints return it. */
+/** the Workspaces cursor pagination envelope, as the operations list endpoints return it. */
 export type TPaginated<T> = {
   grouped_by: string | null;
   sub_grouped_by: string | null;

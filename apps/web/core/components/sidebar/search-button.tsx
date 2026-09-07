@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { SearchIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
+import { SearchIcon } from "@workspaces/propel/icons";
+import { cn } from "@workspaces/utils";
 
 type Props = {
   isActive?: boolean;

@@ -14,7 +14,7 @@ import { CORE_EXTENSIONS, BLOCK_NODE_TYPES } from "@/constants/extension";
 import { ADDITIONAL_BLOCK_NODE_TYPES } from "@/constants/extensions";
 import { createUniqueIDPlugin } from "./plugin";
 import { createIdsForView } from "./utils";
-// plane imports
+// workspaces imports
 
 const COMBINED_BLOCK_NODE_TYPES = [...BLOCK_NODE_TYPES, ...ADDITIONAL_BLOCK_NODE_TYPES];
 export type UniqueIDGenerationContext = {

@@ -1,5 +1,5 @@
 [run]
-source = plane
+source = workspaces
 omit =
     */tests/*
     */migrations/*

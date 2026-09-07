@@ -5,11 +5,11 @@
  */
 
 import { forwardRef } from "react";
-// plane imports
-import { DocumentEditorWithRef } from "@plane/editor";
-import type { IEditorPropsExtended, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
-import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { DocumentEditorWithRef } from "@workspaces/editor";
+import type { IEditorPropsExtended, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@workspaces/editor";
+import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";

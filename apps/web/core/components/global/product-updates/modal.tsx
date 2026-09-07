@@ -6,10 +6,10 @@
 
 import { observer } from "mobx-react";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
-// plane web components
+// workspaces web components
 import { ProductUpdatesChangelog } from "@/components/global/product-updates/changelog";
 import { ProductUpdatesHeader } from "@/components/global/product-updates/header";
 

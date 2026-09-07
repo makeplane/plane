@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Plane Project Setup Script
+# Workspaces Project Setup Script
 # This script prepares the local development environment by setting up all necessary .env files
-# https://github.com/makeplane/plane
+# https://github.com/HimalayanGuardian/workspaces
 
 # Set colors for output messages
 GREEN='\033[0;32m'
@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Print header
 echo -e "${BOLD}${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}${BLUE}                   Plane - Project Management Tool                    ${NC}"
+echo -e "${BOLD}${BLUE}                   Workspaces - Engineering Operations Platform       ${NC}"
 echo -e "${BOLD}${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${BOLD}Setting up your development environment...${NC}\n"
 
@@ -92,6 +92,6 @@ if [ "$success" = true ]; then
     echo -e "\n${GREEN}Happy coding! 🚀${NC}"
 else
     echo -e "${RED}✗${NC} Some issues occurred during setup. Please check the errors above.\n"
-    echo -e "For help, visit: ${BLUE}https://github.com/makeplane/plane${NC}"
+    echo -e "For help, visit: ${BLUE}https://github.com/HimalayanGuardian/workspaces${NC}"
     exit 1
 fi

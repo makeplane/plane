@@ -5,7 +5,7 @@
 # `context: ./apps/api`. Without this file every __pycache__ directory in the
 # tree (89 of them at the time of writing), the local log file and any local
 # virtualenv are shipped into the context and copied into the image by
-# `COPY plane plane/`.
+# `COPY workspaces workspaces/`.
 
 # Secrets. Not copied by the Dockerfile today, but keeping them out of the
 # context means a future COPY cannot leak them by accident.
@@ -33,10 +33,10 @@ htmlcov/
 .coverage.*
 coverage.xml
 
-# Runtime output. `plane/logs` is created by the image and written at runtime;
+# Runtime output. `workspaces/logs` is created by the image and written at runtime;
 # a copy of the host's log file has no business in it.
-plane/logs/
-plane/static-assets/
+workspaces/logs/
+workspaces/static-assets/
 mediafiles/
 
 # NOTE: `tests/`, `pytest.ini` and `run_tests.*` are deliberately NOT ignored.

@@ -6,13 +6,13 @@
 
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-// plane imports
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TWorkItemFilterCondition } from "@plane/shared-state";
+// workspaces imports
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TWorkItemFilterCondition } from "@workspaces/shared-state";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
-import type { ICycle } from "@plane/types";
-import { Loader } from "@plane/ui";
+import type { ICycle } from "@workspaces/types";
+import { Loader } from "@workspaces/ui";
 // assets
 import darkProgressAsset from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
 import lightProgressAsset from "@/app/assets/empty-state/active-cycle/progress-light.webp?url";
@@ -30,7 +30,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   const { handleFiltersUpdate, cycle } = props;
   // theme hook
   const { resolvedTheme } = useTheme();
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // derived values
   const closedIssues = cycle ? cycle.completed_issues + cycle.cancelled_issues : 0;

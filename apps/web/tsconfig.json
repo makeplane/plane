@@ -16,6 +16,6 @@
     "noImplicitOverride": false,
     "types": ["vite/client"]
   },
-  "extends": "@plane/typescript-config/react-router.json",
+  "extends": "@workspaces/typescript-config/react-router.json",
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"]
 }

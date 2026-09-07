@@ -7,10 +7,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Row } from "@plane/ui";
-import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
+import { Row } from "@workspaces/ui";
+import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@workspaces/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useNotification } from "@/hooks/store/notifications/use-notification";

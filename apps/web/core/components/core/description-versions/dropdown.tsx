@@ -6,11 +6,11 @@
 
 import { observer } from "mobx-react";
 import { History } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import type { TDescriptionVersion } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
-import { calculateTimeAgo } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import type { TDescriptionVersion } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
+import { calculateTimeAgo } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // local imports

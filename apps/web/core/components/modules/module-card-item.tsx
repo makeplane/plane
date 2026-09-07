@@ -10,16 +10,16 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
-// plane package imports
-import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
+// workspaces package imports
+import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
-import { WorkItemsIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { WorkItemsIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IModule } from "@plane/types";
-import { Card, FavoriteStar } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
+import type { IModule } from "@workspaces/types";
+import { Card, FavoriteStar } from "@workspaces/ui";
+import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@workspaces/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";

@@ -8,13 +8,13 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveX } from "lucide-react";
-// plane imports
-import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
-import type { IProject } from "@plane/types";
+// workspaces imports
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { StateGroupIcon, StatePropertyIcon } from "@workspaces/propel/icons";
+import type { IProject } from "@workspaces/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, CustomSearchSelect, Loader } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect, Loader } from "@workspaces/ui";
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks

@@ -15,10 +15,10 @@ import type {
   TWidgetStatsResponse,
   TWidgetKeys,
   TWidgetStatsRequestParams,
-} from "@plane/types";
+} from "@workspaces/types";
 // services
 import { DashboardService } from "@/services/dashboard.service";
-// plane web store
+// workspaces web store
 import type { CoreRootStore } from "./root.store";
 
 export interface IDashboardStore {

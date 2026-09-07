@@ -18,10 +18,10 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Check, LoaderCircle } from "lucide-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
+import { cn } from "@workspaces/utils";
 // services
 import { operationsService, type TWorkLog, type TWorkLogPayload } from "@/services/operations";
 // local imports

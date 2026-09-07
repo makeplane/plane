@@ -8,9 +8,9 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-// plane imports
-import { Tooltip } from "@plane/propel/tooltip";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Tooltip } from "@workspaces/propel/tooltip";
+import { cn } from "@workspaces/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks

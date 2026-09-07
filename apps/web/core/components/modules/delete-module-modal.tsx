@@ -8,12 +8,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IModule } from "@plane/types";
+import { PROJECT_ERROR_MESSAGES } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IModule } from "@workspaces/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@workspaces/ui";
 // constants
 // hooks
 import { useModule } from "@/hooks/store/use-module";

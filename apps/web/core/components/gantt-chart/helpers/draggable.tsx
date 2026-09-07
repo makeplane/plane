@@ -8,9 +8,9 @@ import type { RefObject } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
-import type { IGanttBlock } from "@plane/types";
+import type { IGanttBlock } from "@workspaces/types";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // components
 import { LeftResizable } from "./blockResizables/left-resizable";
 import { RightResizable } from "./blockResizables/right-resizable";

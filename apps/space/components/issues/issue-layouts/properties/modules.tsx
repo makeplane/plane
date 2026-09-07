@@ -5,11 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-// plane ui
-import { ModuleIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces ui
+import { ModuleIcon } from "@workspaces/propel/icons";
+import { Tooltip } from "@workspaces/propel/tooltip";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 

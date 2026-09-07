@@ -5,15 +5,15 @@
  */
 
 import { useState } from "react";
-// plane imports
-import { ROLE } from "@plane/constants";
+// workspaces imports
+import { ROLE } from "@workspaces/constants";
 // types
-import { Button } from "@plane/propel/button";
-import type { IWorkspaceMemberInvitation } from "@plane/types";
+import { Button } from "@workspaces/propel/button";
+import type { IWorkspaceMemberInvitation } from "@workspaces/types";
 // ui
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { Spinner } from "@plane/ui";
-import { truncateText } from "@plane/utils";
+import { Spinner } from "@workspaces/ui";
+import { truncateText } from "@workspaces/utils";
 // constants
 // helpers
 import { WorkspaceLogo } from "@/components/workspace/logo";

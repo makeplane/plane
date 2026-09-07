@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // local imports
 import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
 

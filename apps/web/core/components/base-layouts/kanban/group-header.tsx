@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { IGroupHeaderProps } from "@plane/types";
+import type { IGroupHeaderProps } from "@workspaces/types";
 
 export function GroupHeader({ group, itemCount, onToggleGroup }: IGroupHeaderProps) {
   return (

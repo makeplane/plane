@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { STATE_GROUPS } from "@plane/constants";
-import type { IState, TFilterProperty, TStateGroups, TSupportedOperators } from "@plane/types";
-import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
+// workspaces imports
+import { STATE_GROUPS } from "@workspaces/constants";
+import type { IState, TFilterProperty, TStateGroups, TSupportedOperators } from "@workspaces/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@workspaces/types";
 // local imports
 import type { IFilterIconConfig, TCreateFilterConfig, TCreateFilterConfigParams } from "../../../rich-filters";
 import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";

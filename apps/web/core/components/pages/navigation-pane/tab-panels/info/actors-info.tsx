@@ -7,10 +7,10 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { useTranslation } from "@plane/i18n";
-import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@plane/utils";
+import { useTranslation } from "@workspaces/i18n";
+import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // store

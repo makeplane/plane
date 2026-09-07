@@ -6,9 +6,9 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import type { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@workspaces/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 // constants
 // hooks
 

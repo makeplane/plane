@@ -7,10 +7,10 @@
 import { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { API_BASE_URL } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Spinner } from "@plane/ui";
+import { API_BASE_URL } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { Spinner } from "@workspaces/ui";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
@@ -52,7 +52,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
 
   const handleFormChange = (key: keyof TUniqueCodeFormValues, value: string) =>

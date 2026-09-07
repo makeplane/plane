@@ -10,18 +10,18 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Hotel } from "lucide-react";
-// plane ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
-import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
-import { cn, getFileURL } from "@plane/utils";
+// workspaces ui
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
+import { useTranslation } from "@workspaces/i18n";
+import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@workspaces/propel/icons";
+import { cn, getFileURL } from "@workspaces/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane web constants
+// workspaces web constants
 
 export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
   // navigation

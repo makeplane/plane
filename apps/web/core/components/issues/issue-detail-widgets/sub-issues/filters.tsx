@@ -7,10 +7,10 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
-import type { IIssueFilterOptions, IState } from "@plane/types";
-import { cn } from "@plane/utils";
+import { useTranslation } from "@workspaces/i18n";
+import { SearchIcon, CloseIcon } from "@workspaces/propel/icons";
+import type { IIssueFilterOptions, IState } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 import {
   FilterAssignees,
   FilterDueDate,
@@ -32,7 +32,7 @@ type TSubIssueFiltersProps = {
 
 export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssueFiltersProps) {
   const { handleFiltersUpdate, filters, memberIds, states, availableFilters } = props;
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

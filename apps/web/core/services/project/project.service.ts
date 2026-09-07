@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL } from "@workspaces/constants";
 import type {
   GithubRepositoriesResponse,
   IProjectUserPropertiesResponse,
@@ -12,10 +12,10 @@ import type {
   TProjectAnalyticsCount,
   TProjectAnalyticsCountParams,
   TProjectIssuesSearchParams,
-} from "@plane/types";
+} from "@workspaces/types";
 // helpers
-// plane web types
-import type { TProject, TPartialProject } from "@plane/types";
+// workspaces web types
+import type { TProject, TPartialProject } from "@workspaces/types";
 // services
 import { APIService } from "@/services/api.service";
 

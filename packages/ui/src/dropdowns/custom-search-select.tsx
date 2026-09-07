@@ -9,11 +9,11 @@ import { Info } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { useOutsideClickDetector } from "@plane/hooks";
-import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
-// plane imports
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { CheckIcon, SearchIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+// workspaces imports
 // local imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@workspaces/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 import type { ICustomSearchSelectProps } from "./helper";

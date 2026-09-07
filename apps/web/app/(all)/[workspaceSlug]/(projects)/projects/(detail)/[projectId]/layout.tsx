@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
-// plane imports
-import { Header, Row } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Header, Row } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // components
 import { TabNavigationRoot } from "@/components/navigation/tab-navigation-root";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";

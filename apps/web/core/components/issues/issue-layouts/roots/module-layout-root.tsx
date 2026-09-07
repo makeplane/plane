@@ -8,10 +8,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Row, ERowVariant } from "@plane/ui";
+// workspaces imports
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@workspaces/types";
+import { Row, ERowVariant } from "@workspaces/ui";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";

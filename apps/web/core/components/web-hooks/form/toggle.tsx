@@ -7,7 +7,7 @@
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // constants
-import type { IWebhook } from "@plane/types";
+import type { IWebhook } from "@workspaces/types";
 import { Switch } from "@makeplane/propel/components/switch";
 
 interface IWebHookToggle {

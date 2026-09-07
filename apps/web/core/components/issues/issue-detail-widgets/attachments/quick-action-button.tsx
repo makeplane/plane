@@ -8,13 +8,13 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { PlusIcon } from "@plane/propel/icons";
-// plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TIssueServiceType } from "@plane/types";
+import { PlusIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TIssueServiceType } from "@workspaces/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web hooks
+// workspaces web hooks
 import { useFileSize } from "@/hooks/use-file-size";
 // local imports
 import { useAttachmentOperations } from "./helper";

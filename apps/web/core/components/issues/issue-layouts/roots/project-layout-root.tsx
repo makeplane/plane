@@ -7,10 +7,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane constants
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
-import { Spinner } from "@plane/ui";
+// workspaces constants
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@workspaces/types";
+import { Spinner } from "@workspaces/ui";
 // components
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";

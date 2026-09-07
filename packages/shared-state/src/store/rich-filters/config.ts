@@ -7,8 +7,8 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane imports
-import { EMPTY_OPERATOR_LABEL } from "@plane/constants";
+// workspaces imports
+import { EMPTY_OPERATOR_LABEL } from "@workspaces/constants";
 import type {
   TSupportedOperators,
   TFilterConfig,
@@ -16,15 +16,15 @@ import type {
   TFilterValue,
   TOperatorSpecificConfigs,
   TAllAvailableOperatorsForDisplay,
-} from "@plane/types";
-import { FILTER_FIELD_TYPE } from "@plane/types";
+} from "@workspaces/types";
+import { FILTER_FIELD_TYPE } from "@workspaces/types";
 import {
   getOperatorLabel,
   isDateFilterType,
   getDateOperatorLabel,
   isDateFilterOperator,
   getOperatorForPayload,
-} from "@plane/utils";
+} from "@workspaces/utils";
 
 type TOperatorOptionForDisplay = {
   value: TAllAvailableOperatorsForDisplay;

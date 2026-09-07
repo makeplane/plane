@@ -6,9 +6,9 @@
 
 import type { Editor } from "@tiptap/react";
 
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
-// plane utils
-import { cn } from "@plane/utils";
+import { CheckIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // components
 import type { EditorMenuItem } from "@/components/menus";
 import {

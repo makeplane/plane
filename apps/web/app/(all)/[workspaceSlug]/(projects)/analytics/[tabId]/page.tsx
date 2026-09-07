@@ -7,13 +7,13 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-// plane package imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { Tabs } from "@plane/propel/tabs";
+// workspaces package imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateDetailed } from "@workspaces/propel/empty-state";
+import { Tabs } from "@workspaces/propel/tabs";
 // components
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
 // hooks
@@ -30,7 +30,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   // hooks
   const router = useRouter();
 
-  // plane imports
+  // workspaces imports
   const { t } = useTranslation();
 
   // store hooks

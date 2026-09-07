@@ -6,7 +6,7 @@
 
 import { describe, it, expect } from "vitest";
 import { PDFParse } from "pdf-parse";
-import { renderPlaneDocToPdfBuffer } from "@/lib/pdf";
+import { renderWorkspacesDocToPdfBuffer } from "@/lib/pdf";
 import type { TipTapDocument, PDFExportMetadata } from "@/lib/pdf";
 
 const PDF_HEADER = "%PDF-";
@@ -22,14 +22,14 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
 }
 
 describe("PDF Rendering Integration", () => {
-  describe("renderPlaneDocToPdfBuffer", () => {
+  describe("renderWorkspacesDocToPdfBuffer", () => {
     it("should render empty document to valid PDF", async () => {
       const doc: TipTapDocument = {
         type: "doc",
         content: [],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
 
       expect(buffer).toBeInstanceOf(Buffer);
       expect(buffer.length).toBeGreaterThan(0);
@@ -47,7 +47,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc, {
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc, {
         title: "Test Document",
       });
 
@@ -77,7 +77,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Main Heading");
@@ -95,7 +95,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("This is a test paragraph with some content.");
@@ -140,7 +140,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("First item");
@@ -180,7 +180,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Step one");
@@ -222,7 +222,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Completed task");
@@ -243,7 +243,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("const greeting");
@@ -266,7 +266,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("This is a quoted text.");
@@ -330,7 +330,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Header 1");
@@ -355,7 +355,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Before rule");
@@ -387,7 +387,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Normal");
@@ -415,7 +415,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Click");
@@ -436,8 +436,8 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const a4Buffer = await renderPlaneDocToPdfBuffer(doc, { pageSize: "A4" });
-      const letterBuffer = await renderPlaneDocToPdfBuffer(doc, { pageSize: "LETTER" });
+      const a4Buffer = await renderWorkspacesDocToPdfBuffer(doc, { pageSize: "A4" });
+      const letterBuffer = await renderWorkspacesDocToPdfBuffer(doc, { pageSize: "LETTER" });
 
       const a4Text = await extractPdfText(a4Buffer);
       const letterText = await extractPdfText(letterBuffer);
@@ -459,8 +459,8 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const portraitBuffer = await renderPlaneDocToPdfBuffer(doc, { pageOrientation: "portrait" });
-      const landscapeBuffer = await renderPlaneDocToPdfBuffer(doc, { pageOrientation: "landscape" });
+      const portraitBuffer = await renderWorkspacesDocToPdfBuffer(doc, { pageOrientation: "portrait" });
+      const landscapeBuffer = await renderWorkspacesDocToPdfBuffer(doc, { pageOrientation: "landscape" });
 
       const portraitText = await extractPdfText(portraitBuffer);
       const landscapeText = await extractPdfText(landscapeBuffer);
@@ -481,7 +481,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc, {
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc, {
         author: "Test Author",
       });
 
@@ -504,7 +504,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc, {
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc, {
         subject: "Technical Documentation",
       });
 
@@ -542,7 +542,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc, { metadata });
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc, { metadata });
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Hello");
@@ -622,7 +622,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc, {
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc, {
         title: "Project Overview",
         author: "Development Team",
         subject: "Technical Documentation",
@@ -698,7 +698,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc);
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Level 1");
@@ -723,7 +723,7 @@ describe("PDF Rendering Integration", () => {
         ],
       };
 
-      const buffer = await renderPlaneDocToPdfBuffer(doc, { noAssets: true });
+      const buffer = await renderWorkspacesDocToPdfBuffer(doc, { noAssets: true });
       const text = await extractPdfText(buffer);
 
       expect(text).toContain("Text after image");

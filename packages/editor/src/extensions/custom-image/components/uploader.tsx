@@ -7,8 +7,8 @@
 import { ImageIcon, RotateCcw } from "lucide-react";
 import type { ChangeEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-// plane imports
-import { cn } from "@plane/utils";
+// workspaces imports
+import { cn } from "@workspaces/utils";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";

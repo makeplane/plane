@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { logger } from "@plane/logger";
-import type { TDocumentPayload, TPage } from "@plane/types";
+import { logger } from "@workspaces/logger";
+import type { TDocumentPayload, TPage } from "@workspaces/types";
 // services
 import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";
@@ -18,10 +18,6 @@ export type TUserMention = {
 
 export abstract class PageCoreService extends APIService {
   protected abstract basePath: string;
-
-  constructor() {
-    super();
-  }
 
   async fetchDetails(pageId: string): Promise<TPage> {
     try {

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { ScrollArea } from "@plane/propel/scrollarea";
+// workspaces imports
+import { ScrollArea } from "@workspaces/propel/scrollarea";
 // local imports
 import { ProjectSettingsSidebarHeader } from "./header";
 import { ProjectSettingsSidebarItemCategories } from "./item-categories";

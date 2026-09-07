@@ -7,8 +7,8 @@
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-// plane imports
-import type { IUserTheme } from "@plane/types";
+// workspaces imports
+import type { IUserTheme } from "@workspaces/types";
 
 type Props = {
   control: Control<IUserTheme>;

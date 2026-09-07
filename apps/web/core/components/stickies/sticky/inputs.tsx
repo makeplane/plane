@@ -7,10 +7,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-// plane imports
-import type { EditorRefApi } from "@plane/editor";
-import type { TSticky } from "@plane/types";
-import { cn, isCommentEmpty } from "@plane/utils";
+// workspaces imports
+import type { EditorRefApi } from "@workspaces/editor";
+import type { TSticky } from "@workspaces/types";
+import { cn, isCommentEmpty } from "@workspaces/utils";
 import { StickyEditor } from "@/components/editor/sticky-editor";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

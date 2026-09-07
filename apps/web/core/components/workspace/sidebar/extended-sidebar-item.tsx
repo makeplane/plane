@@ -12,13 +12,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Pin, PinOff } from "lucide-react";
-// plane imports
-import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import type { IWorkspaceSidebarNavigationItem } from "@workspaces/constants";
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { DragHandle, DropIndicator } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { DragHandle, DropIndicator } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { UpgradeBadge } from "@/components/workspace/upgrade-badge";

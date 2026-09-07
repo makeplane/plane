@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
-import { Row } from "@plane/ui";
+import { useTranslation } from "@workspaces/i18n";
+import { PlusIcon } from "@workspaces/propel/icons";
+import { Row } from "@workspaces/ui";
 import type { TQuickAddIssueButton } from "../root";
 
 export const ListQuickAddIssueButton = observer(function ListQuickAddIssueButton(props: TQuickAddIssueButton) {

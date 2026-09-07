@@ -9,9 +9,9 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane constants
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+// workspaces constants
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@workspaces/types";
 // components
 import { TransferIssues } from "@/components/cycles/transfer-issues";
 import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";

@@ -9,18 +9,18 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
-import { EPageAccess } from "@plane/constants";
-// plane editor
-import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
-// plane ui
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { EPageAccess } from "@workspaces/constants";
+// workspaces editor
+import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@workspaces/propel/icons";
+// workspaces ui
+import type { TContextMenuItem } from "@workspaces/ui";
+import { ContextMenu, CustomMenu } from "@workspaces/ui";
 // components
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
-// plane web hooks
+// workspaces web hooks
 import type { EPageStoreType } from "@/hooks/store";
 import { usePageFlag } from "@/hooks/use-page-flag";
 // store types

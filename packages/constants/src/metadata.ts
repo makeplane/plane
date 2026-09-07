@@ -4,20 +4,20 @@
  * See the LICENSE file for details.
  */
 
-export const SITE_NAME = "Plane | Simple, extensible, open-source project management tool.";
-export const SITE_TITLE = "Plane | Simple, extensible, open-source project management tool.";
+export const SITE_NAME = "Workspaces | Engineering operations and project management for HG Software.";
+export const SITE_TITLE = "Workspaces | Engineering operations and project management for HG Software.";
 export const SITE_DESCRIPTION =
-  "Open-source project management tool to manage work items, cycles, and product roadmaps easily";
+  "Engineering operations platform to manage work items, cycles, attendance, and delivery in one place";
 export const SITE_KEYWORDS =
   "software development, plan, ship, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration";
-export const SITE_URL = "https://app.plane.so/";
-export const TWITTER_USER_NAME = "Plane | Simple, extensible, open-source project management tool.";
+export const SITE_URL = "https://workspaces.hgsoftware.com.np/";
+export const TWITTER_USER_NAME = "Workspaces | Engineering operations and project management for HG Software.";
 
-// Plane Sites Metadata
-export const SPACE_SITE_NAME = "Plane Publish | Make your Plane boards and roadmaps pubic with just one-click. ";
-export const SPACE_SITE_TITLE = "Plane Publish | Make your Plane boards public with one-click";
-export const SPACE_SITE_DESCRIPTION = "Plane Publish is a customer feedback management tool built on top of plane.so";
+// Workspaces Sites Metadata
+export const SPACE_SITE_NAME = "Workspaces Publish | Make your boards and roadmaps public with just one click.";
+export const SPACE_SITE_TITLE = "Workspaces Publish | Make your boards public with one click";
+export const SPACE_SITE_DESCRIPTION = "Workspaces Publish shares boards and roadmaps publicly from Workspaces.";
 export const SPACE_SITE_KEYWORDS =
   "software development, customer feedback, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration";
-export const SPACE_SITE_URL = "https://app.plane.so/";
-export const SPACE_TWITTER_USER_NAME = "planepowers";
+export const SPACE_SITE_URL = "https://workspaces.hgsoftware.com.np/";
+export const SPACE_TWITTER_USER_NAME = "";

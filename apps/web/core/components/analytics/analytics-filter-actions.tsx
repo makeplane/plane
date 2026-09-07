@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-// plane web components
+// workspaces web components
 import { observer } from "mobx-react";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";

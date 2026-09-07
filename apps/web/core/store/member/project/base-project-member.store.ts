@@ -7,16 +7,16 @@
 import { uniq, unset, set, update, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane imports
-import { EUserPermissions } from "@plane/constants";
+// workspaces imports
+import { EUserPermissions } from "@workspaces/constants";
 import type {
   EUserProjectRoles,
   IProjectBulkAddFormData,
   IProjectUserPropertiesResponse,
   IUserLite,
   TProjectMembership,
-} from "@plane/types";
-// plane web imports
+} from "@workspaces/types";
+// workspaces web imports
 import type { RootStore } from "@/store/root.store";
 // services
 import { ProjectMemberService, ProjectService } from "@/services/project";

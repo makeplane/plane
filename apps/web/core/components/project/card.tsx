@@ -9,19 +9,19 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Button } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Button } from "@workspaces/propel/button";
+import { Logo } from "@workspaces/propel/emoji-icon-picker";
+import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@workspaces/propel/icons";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IProject } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, FavoriteStar } from "@plane/ui";
-import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
+import type { IProject } from "@workspaces/types";
+import type { TContextMenuItem } from "@workspaces/ui";
+import { ContextMenu, FavoriteStar } from "@workspaces/ui";
+import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@workspaces/utils";
 // components
 // hooks
 import { useMember } from "@/hooks/store/use-member";

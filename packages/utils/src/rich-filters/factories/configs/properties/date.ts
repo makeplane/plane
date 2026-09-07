@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TFilterProperty } from "@plane/types";
+// workspaces imports
+import type { TFilterProperty } from "@workspaces/types";
 // local imports
 import type { TCreateDateFilterParams, TCreateFilterConfig } from "../shared";
 import { createFilterConfig } from "../shared";

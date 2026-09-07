@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { Loader } from "@plane/ui";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@workspaces/types";
+import { Loader } from "@workspaces/ui";
 // local imports
 import { DiscountInfo } from "./discount-info";
 

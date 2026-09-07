@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 

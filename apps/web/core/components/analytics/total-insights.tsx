@@ -4,15 +4,15 @@
  * See the LICENSE file for details.
  */
 
-// plane package imports
+// workspaces package imports
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import type { IInsightField } from "@plane/constants";
-import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
-import { cn } from "@plane/utils";
+import type { IInsightField } from "@workspaces/constants";
+import { ANALYTICS_INSIGHTS_FIELDS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { IAnalyticsResponse, TAnalyticsTabsBase } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services

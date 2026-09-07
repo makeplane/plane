@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { MAX_FILE_SIZE } from "@plane/constants";
-import type { TFileHandler } from "@plane/editor";
-import { SitesFileService } from "@plane/services";
-import { getFileURL } from "@plane/utils";
+// workspaces imports
+import { MAX_FILE_SIZE } from "@workspaces/constants";
+import type { TFileHandler } from "@workspaces/editor";
+import { SitesFileService } from "@workspaces/services";
+import { getFileURL } from "@workspaces/utils";
 // services
 const sitesFileService = new SitesFileService();
 

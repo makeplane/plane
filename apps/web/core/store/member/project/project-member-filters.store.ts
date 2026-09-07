@@ -7,7 +7,7 @@
 import { action, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { IUserLite, TProjectMembership } from "@plane/types";
+import type { IUserLite, TProjectMembership } from "@workspaces/types";
 // local imports
 import type { IMemberFilters } from "../utils";
 import { sortProjectMembers } from "../utils";

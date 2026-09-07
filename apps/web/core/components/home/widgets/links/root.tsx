@@ -8,9 +8,9 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 
-import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
-import type { THomeWidgetProps } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { PlusIcon } from "@workspaces/propel/icons";
+import type { THomeWidgetProps } from "@workspaces/types";
 import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
 import { ProjectLinkList } from "./links";

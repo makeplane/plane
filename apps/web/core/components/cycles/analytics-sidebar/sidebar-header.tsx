@@ -7,13 +7,13 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// Plane Imports
-import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ICycle } from "@plane/types";
-import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+// Workspaces Imports
+import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { ChevronRightIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { ICycle } from "@workspaces/types";
+import { getDate, renderFormattedPayloadDate } from "@workspaces/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // hooks

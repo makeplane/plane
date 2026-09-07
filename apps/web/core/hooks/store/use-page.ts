@@ -7,7 +7,7 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
-// plane web hooks
+// workspaces web hooks
 import type { EPageStoreType } from "./use-page-store";
 import { usePageStore } from "./use-page-store";
 

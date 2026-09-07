@@ -7,10 +7,10 @@
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
-import { EIconSize } from "@plane/constants";
-// plane imports
-import { EditIcon, StateGroupIcon } from "@plane/propel/icons";
-import type { IState, TStateOperationsCallbacks } from "@plane/types";
+import { EIconSize } from "@workspaces/constants";
+// workspaces imports
+import { EditIcon, StateGroupIcon } from "@workspaces/propel/icons";
+import type { IState, TStateOperationsCallbacks } from "@workspaces/types";
 // local imports
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { StateDelete, StateMarksAsDefault } from "./options";

@@ -5,11 +5,11 @@
  */
 
 import { enableStaticRendering } from "mobx-react";
-// plane imports
-import { FALLBACK_LANGUAGE, setLanguage } from "@plane/i18n";
-import type { IWorkItemFilterStore } from "@plane/shared-state";
-import { WorkItemFilterStore } from "@plane/shared-state";
-// plane web store
+// workspaces imports
+import { FALLBACK_LANGUAGE, setLanguage } from "@workspaces/i18n";
+import type { IWorkItemFilterStore } from "@workspaces/shared-state";
+import { WorkItemFilterStore } from "@workspaces/shared-state";
+// workspaces web store
 import type { IBaseAnalyticsStore as IAnalyticsStore } from "@/store/analytics.store";
 import { BaseAnalyticsStore as AnalyticsStore } from "@/store/analytics.store";
 import type { IBasePowerKStore as IPowerKStore } from "@/store/base-power-k.store";

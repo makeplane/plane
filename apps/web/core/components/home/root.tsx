@@ -7,12 +7,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane imports
-import { ContentWrapper } from "@plane/ui";
+// workspaces imports
+import { ContentWrapper } from "@workspaces/ui";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
-// plane web imports
+// workspaces web imports
 import { AttendanceCheckInCard } from "@/components/attendance";
 import { TourRoot } from "@/components/onboarding/tour/root";
 // local imports

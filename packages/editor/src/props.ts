@@ -5,8 +5,8 @@
  */
 
 import type { EditorProps } from "@tiptap/pm/view";
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // helpers
 import { processAssetDuplication } from "@/helpers/paste-asset";
 

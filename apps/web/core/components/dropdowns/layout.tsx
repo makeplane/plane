@@ -6,14 +6,14 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { ISSUE_LAYOUT_MAP } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { CheckIcon } from "@plane/propel/icons";
-import { EIssueLayoutTypes } from "@plane/types";
-import { getButtonStyling } from "@plane/propel/button";
-import { Dropdown } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { ISSUE_LAYOUT_MAP } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { CheckIcon } from "@workspaces/propel/icons";
+import { EIssueLayoutTypes } from "@workspaces/types";
+import { getButtonStyling } from "@workspaces/propel/button";
+import { Dropdown } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // components
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 
@@ -25,7 +25,7 @@ type TLayoutDropDown = {
 
 export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDropDown) {
   const { onChange, value = EIssueLayoutTypes.LIST, disabledLayouts = [] } = props;
-  // plane i18n
+  // workspaces i18n
   const { t } = useTranslation();
   // derived values
   const availableLayouts = useMemo(

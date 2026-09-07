@@ -5,10 +5,10 @@
  */
 
 import { CalendarDays } from "lucide-react";
-// plane imports
-import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
-import type { TStateGroups } from "@plane/types";
-import { cn, renderFormattedDate, shouldHighlightIssueDueDate } from "@plane/utils";
+// workspaces imports
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@workspaces/propel/icons";
+import type { TStateGroups } from "@workspaces/types";
+import { cn, renderFormattedDate, shouldHighlightIssueDueDate } from "@workspaces/utils";
 
 type Props = {
   startDate: string | null;

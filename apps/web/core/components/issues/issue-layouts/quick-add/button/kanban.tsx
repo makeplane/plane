@@ -6,8 +6,8 @@
 
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { PlusIcon } from "@workspaces/propel/icons";
 import type { TQuickAddIssueButton } from "../root";
 
 export const KanbanQuickAddIssueButton = observer(function KanbanQuickAddIssueButton(props: TQuickAddIssueButton) {

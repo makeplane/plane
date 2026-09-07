@@ -8,12 +8,12 @@ import type { MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Row } from "@plane/ui";
-import { cn, renderFormattedDate } from "@plane/utils";
+import { Row } from "@workspaces/ui";
+import { cn, renderFormattedDate } from "@workspaces/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
@@ -124,7 +124,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
             </div>
             {/* created by */}
             {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
-              <Avatar alt="Plane" fallback="P" size="xs" />
+              <Avatar alt="Workspaces" fallback="P" size="xs" />
             ) : createdByDetails ? (
               <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
             ) : null}

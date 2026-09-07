@@ -5,11 +5,11 @@
  */
 
 import useSWR from "swr";
-// plane imports
-import { GROUP_CHOICES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { IUserStateDistribution, TStateGroups } from "@plane/types";
-import { ContentWrapper } from "@plane/ui";
+// workspaces imports
+import { GROUP_CHOICES } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { IUserStateDistribution, TStateGroups } from "@workspaces/types";
+import { ContentWrapper } from "@workspaces/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { ProfileActivity } from "@/components/profile/overview/activity";
@@ -18,7 +18,7 @@ import { ProfileStateDistribution } from "@/components/profile/overview/state-di
 import { ProfileStats } from "@/components/profile/overview/stats";
 import { ProfileWorkload } from "@/components/profile/overview/workload";
 // constants
-import { USER_PROFILE_DATA } from "@plane/constants";
+import { USER_PROFILE_DATA } from "@workspaces/constants";
 // services
 import { UserService } from "@/services/user.service";
 import type { Route } from "./+types/page";

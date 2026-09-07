@@ -7,12 +7,12 @@
 import { set, groupBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane imports
-import { STATE_GROUPS } from "@plane/constants";
-import type { IIntakeState, IState } from "@plane/types";
+// workspaces imports
+import { STATE_GROUPS } from "@workspaces/constants";
+import type { IIntakeState, IState } from "@workspaces/types";
 // helpers
-import { sortStates } from "@plane/utils";
-// plane web
+import { sortStates } from "@workspaces/utils";
+// workspaces web
 import { ProjectStateService } from "@/services/project/project-state.service";
 import type { RootStore } from "@/store/root.store";
 

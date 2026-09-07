@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { IUserLite, TFilterProperty } from "@plane/types";
-import { EQUALITY_OPERATOR } from "@plane/types";
+// workspaces imports
+import type { IUserLite, TFilterProperty } from "@workspaces/types";
+import { EQUALITY_OPERATOR } from "@workspaces/types";
 // local imports
 import type { TCreateFilterConfig } from "../shared";
 import { createFilterConfig, createOperatorConfigEntry } from "../shared";

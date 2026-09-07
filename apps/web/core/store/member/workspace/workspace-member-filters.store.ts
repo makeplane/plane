@@ -7,8 +7,8 @@
 import { action, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { EUserPermissions } from "@plane/constants";
-import type { IUserLite } from "@plane/types";
+import type { EUserPermissions } from "@workspaces/constants";
+import type { IUserLite } from "@workspaces/types";
 // local imports
 import type { IMemberFilters } from "../utils";
 import { sortWorkspaceMembers } from "../utils";

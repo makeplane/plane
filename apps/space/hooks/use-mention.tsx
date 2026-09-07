@@ -6,9 +6,9 @@
 
 import { useRef, useEffect } from "react";
 import useSWR from "swr";
-// plane imports
-import { UserService } from "@plane/services";
-import type { IUser } from "@plane/types";
+// workspaces imports
+import { UserService } from "@workspaces/services";
+import type { IUser } from "@workspaces/types";
 
 export const useMention = () => {
   const userService = new UserService();

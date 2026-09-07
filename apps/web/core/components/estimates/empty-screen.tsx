@@ -5,8 +5,8 @@
  */
 
 import { useTheme } from "next-themes";
-// plane imports
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 

@@ -5,5 +5,5 @@
  */
 
 export * from "./pi-chat";
-export * from "./plane-icon";
+export * from "./workspaces-icon";
 export * from "./wiki-icon";

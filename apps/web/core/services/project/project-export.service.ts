@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { API_BASE_URL } from "@plane/constants";
-import type { TWorkItemFilterExpression } from "@plane/types";
+import { API_BASE_URL } from "@workspaces/constants";
+import type { TWorkItemFilterExpression } from "@workspaces/types";
 import { APIService } from "@/services/api.service";
 // helpers
 

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { Loader } from "@plane/ui";
+// workspaces imports
+import { Loader } from "@workspaces/ui";
 
 export function IssueActivityLoader() {
   return (

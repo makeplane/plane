@@ -11,14 +11,14 @@ import { Calendar } from "lucide-react";
 // types
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IApiToken } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IApiToken } from "@workspaces/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, TextArea } from "@plane/ui";
-import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { CustomSelect, TextArea } from "@workspaces/ui";
+import { cn, renderFormattedDate, renderFormattedTime } from "@workspaces/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // helpers

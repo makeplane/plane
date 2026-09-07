@@ -6,7 +6,7 @@
 
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 
 type Props = {
   value: string;

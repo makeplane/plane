@@ -15,8 +15,8 @@ import type {
   TIssueGroupByOptions,
   TPaginationData,
   TLoader,
-} from "@plane/types";
-import { cn } from "@plane/utils";
+} from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 // local imports

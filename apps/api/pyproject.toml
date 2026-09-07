@@ -77,7 +77,7 @@ max-complexity = 10
 combine-as-imports = true
 detect-same-package = true
 force-wrap-aliases = true
-known-first-party = ["plane"]
+known-first-party = ["workspaces"]
 known-third-party = ["rest_framework"]
 relative-imports-order = "closest-to-furthest"
 

@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
-// plane imports
-import type { TPageFilterProps } from "@plane/types";
-import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+import { CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import type { TPageFilterProps } from "@workspaces/types";
+import { replaceUnderscoreIfSnakeCase } from "@workspaces/utils";
 // components
 import { AppliedDateFilters } from "@/components/common/applied-filters/date";
 import { AppliedMembersFilters } from "@/components/common/applied-filters/members";
@@ -21,7 +21,7 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
-const MEMBERS_FILTERS = ["created_by"];
+const MEMBERS_FILTERS = new Set(["created_by"]);
 const DATE_FILTERS = ["created_at"];
 
 export function PageAppliedFiltersList(props: Props) {
@@ -55,7 +55,7 @@ export function PageAppliedFiltersList(props: Props) {
                   values={Array.isArray(value) ? value : []}
                 />
               )}
-              {MEMBERS_FILTERS.includes(filterKey) && (
+              {MEMBERS_FILTERS.has(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}

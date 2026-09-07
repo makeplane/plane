@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+// workspaces imports
+import type { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@workspaces/types";
 // local imports
 
 export type TNetworkChoiceIconKey = "Lock" | "Globe2";

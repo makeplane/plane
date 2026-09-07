@@ -6,7 +6,7 @@
 
 import { createContext, useContext } from "react";
 import { useParams } from "next/navigation";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssuesStoreType } from "@workspaces/types";
 import { useIssues } from "./store/use-issues";
 
 export const IssuesStoreContext = createContext<EIssuesStoreType | undefined>(undefined);

@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EEstimateSystem } from "@plane/constants";
-import { convertMinutesToHoursMinutesString } from "@plane/utils";
+// workspaces imports
+import { EEstimateSystem } from "@workspaces/constants";
+import { convertMinutesToHoursMinutesString } from "@workspaces/utils";
 // components
 import { EstimateListItemButtons } from "./estimate-list-item-buttons";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";

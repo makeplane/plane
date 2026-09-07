@@ -31,7 +31,7 @@ type Props = { workspaceSlug: string; projectId?: string };
 /**
  * The project manager's single screen.
  *
- * Two requests: one for everything Plane knows, one for who is checked in.
+ * Two requests: one for everything Workspaces knows, one for who is checked in.
  * They are separate because the second talks to Odoo and can be slow or
  * absent, and a dashboard that waits on an external system to render its own
  * data is a dashboard that feels broken whenever that system is.
@@ -114,7 +114,7 @@ export const PMDashboard = observer(function PMDashboard({ workspaceSlug, projec
           description={
             attendanceAvailable
               ? `${team.work_logs_filed} of ${team.total} filed a work log today`
-              : "Work logs from Plane; attendance from Odoo"
+              : "Work logs from Workspaces; attendance from Odoo"
           }
         >
           <div className="flex flex-col gap-4">

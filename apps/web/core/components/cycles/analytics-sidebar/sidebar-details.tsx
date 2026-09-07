@@ -8,21 +8,21 @@ import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { SquareUser } from "lucide-react";
-// plane types
-import { EEstimateSystem } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces types
+import { EEstimateSystem } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
-import type { ICycle } from "@plane/types";
-// plane ui
-import { TextArea } from "@plane/ui";
+import { MembersPropertyIcon, WorkItemsIcon } from "@workspaces/propel/icons";
+import type { ICycle } from "@workspaces/types";
+// workspaces ui
+import { TextArea } from "@workspaces/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL } from "@workspaces/utils";
 // hooks
 import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
-// plane web constants
+// workspaces web constants
 
 type Props = {
   projectId: string;

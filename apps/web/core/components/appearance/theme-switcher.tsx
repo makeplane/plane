@@ -7,12 +7,12 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-// plane imports
-import type { I_THEME_OPTION } from "@plane/constants";
-import { THEME_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { setPromiseToast } from "@plane/propel/toast";
-import { applyCustomTheme } from "@plane/utils";
+// workspaces imports
+import type { I_THEME_OPTION } from "@workspaces/constants";
+import { THEME_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { setPromiseToast } from "@workspaces/propel/toast";
+import { applyCustomTheme } from "@workspaces/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";

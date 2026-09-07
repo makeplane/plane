@@ -1,5 +1,5 @@
 {
-  "extends": "@plane/typescript-config/base.json",
+  "extends": "@workspaces/typescript-config/base.json",
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
     "noUnusedParameters": false,

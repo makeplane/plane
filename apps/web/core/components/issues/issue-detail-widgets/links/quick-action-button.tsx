@@ -6,9 +6,9 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { PlusIcon } from "@plane/propel/icons";
-// plane imports
-import type { TIssueServiceType } from "@plane/types";
+import { PlusIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import type { TIssueServiceType } from "@workspaces/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 

@@ -7,17 +7,17 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { EUserWorkspaceRoles } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { EUserWorkspaceRoles } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
+// workspaces web imports
 import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 
 export type SidebarWorkspaceMenuItemProps = {

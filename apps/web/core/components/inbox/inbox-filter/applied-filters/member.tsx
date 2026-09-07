@@ -6,12 +6,12 @@
 
 import { observer } from "mobx-react";
 
-// plane types
+// workspaces types
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { CloseIcon } from "@plane/propel/icons";
-import type { TInboxIssueFilterMemberKeys } from "@plane/types";
+import { CloseIcon } from "@workspaces/propel/icons";
+import type { TInboxIssueFilterMemberKeys } from "@workspaces/types";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";

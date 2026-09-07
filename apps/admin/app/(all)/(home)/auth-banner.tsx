@@ -5,8 +5,8 @@
  */
 
 import { Info } from "lucide-react";
-// plane constants
-import type { TAdminAuthErrorInfo } from "@plane/constants";
+// workspaces constants
+import type { TAdminAuthErrorInfo } from "@workspaces/constants";
 // icons
 import { CloseOutline } from "@makeplane/propel/icons";
 

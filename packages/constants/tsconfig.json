@@ -1,5 +1,5 @@
 {
-  "extends": "@plane/typescript-config/node-library.json",
+  "extends": "@workspaces/typescript-config/node-library.json",
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

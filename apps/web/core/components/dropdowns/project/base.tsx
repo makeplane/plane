@@ -9,17 +9,17 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { CheckIcon, SearchIcon, ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
-import { ComboDropDown } from "@plane/ui";
-import { cn, sortBySelectedFirst } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { Logo } from "@workspaces/propel/emoji-icon-picker";
+import { CheckIcon, SearchIcon, ProjectIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import { ComboDropDown } from "@workspaces/ui";
+import { cn, sortBySelectedFirst } from "@workspaces/utils";
 // components
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
-// plane web imports
-import type { TProject } from "@plane/types";
+// workspaces web imports
+import type { TProject } from "@workspaces/types";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -82,7 +82,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {

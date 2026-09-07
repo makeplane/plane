@@ -5,7 +5,7 @@
  */
 
 // editor
-import type { TExtensions } from "@plane/editor";
+import type { TExtensions } from "@workspaces/editor";
 import type { EPageStoreType } from "@/hooks/store";
 
 export type TEditorFlaggingHookReturnType = {

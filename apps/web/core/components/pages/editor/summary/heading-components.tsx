@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { IMarking } from "@plane/editor";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { IMarking } from "@workspaces/editor";
+import { cn } from "@workspaces/utils";
 
 export type THeadingComponentProps = {
   marking: IMarking;

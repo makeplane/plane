@@ -7,7 +7,7 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
-import type { TLink, TLinkIdMap, TLinkMap } from "@plane/types";
+import type { TLink, TLinkIdMap, TLinkMap } from "@workspaces/types";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 

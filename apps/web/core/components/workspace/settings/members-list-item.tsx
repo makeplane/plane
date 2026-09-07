@@ -6,11 +6,11 @@
 
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IWorkspaceMember } from "@plane/types";
-import { Table } from "@plane/ui";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IWorkspaceMember } from "@workspaces/types";
+import { Table } from "@workspaces/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
@@ -20,7 +20,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// workspaces web imports
 import { useMemberColumns } from "@/components/workspace/settings/useMemberColumns";
 
 type Props = {

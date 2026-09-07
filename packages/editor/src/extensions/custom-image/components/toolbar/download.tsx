@@ -5,8 +5,8 @@
  */
 
 import { Download } from "lucide-react";
-// plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+// workspaces imports
+import { Tooltip } from "@workspaces/propel/tooltip";
 
 type Props = {
   src: string;

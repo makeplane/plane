@@ -5,7 +5,7 @@
  */
 
 import Redis from "ioredis";
-import { logger } from "@plane/logger";
+import { logger } from "@workspaces/logger";
 import { env } from "./env";
 
 export class RedisManager {

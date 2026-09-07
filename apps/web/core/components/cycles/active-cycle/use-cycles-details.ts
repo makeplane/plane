@@ -7,11 +7,11 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-// plane imports
-import type { TWorkItemFilterCondition } from "@plane/shared-state";
-import { EIssuesStoreType } from "@plane/types";
+// workspaces imports
+import type { TWorkItemFilterCondition } from "@workspaces/shared-state";
+import { EIssuesStoreType } from "@workspaces/types";
 // constants
-import { CYCLE_ISSUES_WITH_PARAMS } from "@plane/constants";
+import { CYCLE_ISSUES_WITH_PARAMS } from "@workspaces/constants";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";

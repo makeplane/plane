@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useTheme as useNextTheme } from "next-themes";
 // ui
 import { Button } from "@makeplane/propel/components/button";
-import { resolveGeneralTheme } from "@plane/utils";
+import { resolveGeneralTheme } from "@workspaces/utils";
 // hooks
 import TakeoffIconDark from "@/app/assets/logos/takeoff-icon-dark.svg?url";
 import TakeoffIconLight from "@/app/assets/logos/takeoff-icon-light.svg?url";
@@ -29,7 +29,7 @@ export const NewUserPopup = observer(function NewUserPopup() {
         <div className="grow">
           <div className="text-14 font-semibold">Create workspace</div>
           <div className="py-2 text-13 font-medium text-tertiary">
-            Instance setup done! Welcome to Plane instance portal. Start your journey with by creating your first
+            Instance setup done! Welcome to Workspaces instance portal. Start your journey with by creating your first
             workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
@@ -49,7 +49,7 @@ export const NewUserPopup = observer(function NewUserPopup() {
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}
             width={80}
-            alt="Plane icon"
+            alt="Workspaces icon"
           />
         </div>
       </div>

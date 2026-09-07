@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
+// workspaces imports
 import type { IncomingHttpHeaders } from "http";
-import type { TUserDetails } from "@plane/editor";
-import { logger } from "@plane/logger";
+import type { TUserDetails } from "@workspaces/editor";
+import { logger } from "@workspaces/logger";
 import { AppError } from "@/lib/errors";
 // services
 import { UserService } from "@/services/user.service";

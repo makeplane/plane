@@ -7,8 +7,8 @@
 import { useEffect } from "react";
 import type { Control, FieldArrayWithId, FormState, UseFormWatch } from "react-hook-form";
 import { useFieldArray, useForm } from "react-hook-form";
-// plane imports
-import { EUserPermissions } from "@plane/constants";
+// workspaces imports
+import { EUserPermissions } from "@workspaces/constants";
 
 type EmailRole = {
   email: string;

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { EStartOfTheWeek } from "@plane/types";
+// workspaces imports
+import { EStartOfTheWeek } from "@workspaces/types";
 
 export const PROFILE_VIEWER_TAB = [
   {

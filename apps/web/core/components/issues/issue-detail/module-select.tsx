@@ -7,10 +7,10 @@
 import React, { useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 // hooks
 // components
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // ui
 // helpers

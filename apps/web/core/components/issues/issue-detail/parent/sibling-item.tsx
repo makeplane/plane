@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@workspaces/ui";
 // helpers
-import { generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";

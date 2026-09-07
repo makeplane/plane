@@ -5,12 +5,12 @@
  */
 
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-// plane imports
-import type { ADDITIONAL_EXTENSIONS } from "@plane/utils";
-import { CORE_EXTENSIONS } from "@plane/utils";
+// workspaces imports
+import type { ADDITIONAL_EXTENSIONS } from "@workspaces/utils";
+import { CORE_EXTENSIONS } from "@workspaces/utils";
 // extensions
 import { getImageBlockId } from "@/extensions/custom-image/utils";
-// plane editor imports
+// workspaces editor imports
 import { ADDITIONAL_ASSETS_META_DATA_RECORD } from "@/constants/assets";
 // types
 import type { TEditorAsset } from "@/types";

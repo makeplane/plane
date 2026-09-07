@@ -6,7 +6,7 @@
 
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import type { IInstance, IInstanceConfig } from "@plane/types";
+import type { IInstance, IInstanceConfig } from "@workspaces/types";
 // services
 import { InstanceService } from "@/services/instance.service";
 

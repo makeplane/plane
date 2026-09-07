@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { TWorkItemFilterCondition } from "@plane/shared-state";
-import type { TFilterConditionNodeForDisplay, TFilterValue, TWorkItemFilterProperty } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@workspaces/shared-state";
+import type { TFilterConditionNodeForDisplay, TFilterValue, TWorkItemFilterProperty } from "@workspaces/types";
 
 export const PROGRESS_STATS = [
   {

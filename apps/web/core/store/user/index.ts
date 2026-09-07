@@ -6,10 +6,10 @@
 
 import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
-// plane imports
-import { EUserPermissions, API_BASE_URL } from "@plane/constants";
-import type { IUser, TUserPermissions } from "@plane/types";
-// plane web imports
+// workspaces imports
+import { EUserPermissions, API_BASE_URL } from "@workspaces/constants";
+import type { IUser, TUserPermissions } from "@workspaces/types";
+// workspaces web imports
 import type { RootStore } from "@/store/root.store";
 import type { IUserPermissionStore } from "@/store/user/base-permissions.store";
 import { UserPermissionStore } from "@/store/user/base-permissions.store";

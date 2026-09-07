@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { EIssuesStoreType, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+// workspaces imports
+import type { EIssuesStoreType, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@workspaces/types";
 // local imports
 import type { IFilterInstance } from "../rich-filters";
 

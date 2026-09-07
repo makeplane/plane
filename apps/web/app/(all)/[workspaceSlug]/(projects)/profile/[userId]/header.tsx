@@ -8,18 +8,18 @@
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { PanelRight } from "lucide-react";
-import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { YourWorkIcon, ChevronDownIcon } from "@plane/propel/icons";
-import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { YourWorkIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import type { IUserProfileProjectSegregation } from "@workspaces/types";
+import { Breadcrumbs, Header, CustomMenu } from "@workspaces/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { Button } from "@plane/propel/button";
+import { Button } from "@workspaces/propel/button";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;

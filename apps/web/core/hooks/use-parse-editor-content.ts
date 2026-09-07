@@ -5,14 +5,14 @@
  */
 
 import { useCallback } from "react";
-// plane types
-import type { TSearchEntities } from "@plane/types";
+// workspaces types
+import type { TSearchEntities } from "@workspaces/types";
 // helpers
-import { getBase64Image, getEditorAssetSrc } from "@plane/utils";
-import type { TCustomComponentsMetaData } from "@plane/utils";
+import { getBase64Image, getEditorAssetSrc } from "@workspaces/utils";
+import type { TCustomComponentsMetaData } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-// plane web hooks
+// workspaces web hooks
 import { useAdditionalEditorMention } from "@/hooks/use-additional-editor-mention";
 
 type TArgs = {

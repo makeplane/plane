@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Button } from "@plane/propel/button";
+import { Button } from "@workspaces/propel/button";
 
 type Props = React.ComponentProps<"button"> & {
   label: React.ReactNode;

@@ -5,14 +5,14 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { ETabIndices } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TIssue } from "@plane/types";
+import { ETabIndices } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TIssue } from "@workspaces/types";
 
 // helpers
-import { getTabIndex } from "@plane/utils";
+import { getTabIndex } from "@workspaces/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

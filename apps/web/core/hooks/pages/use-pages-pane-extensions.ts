@@ -7,7 +7,7 @@
 import { useCallback, useMemo } from "react";
 import type { RefObject } from "react";
 import { useSearchParams } from "next/navigation";
-import type { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@workspaces/editor";
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,

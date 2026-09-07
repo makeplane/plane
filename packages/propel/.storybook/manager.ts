@@ -9,9 +9,9 @@ import { create } from "storybook/theming";
 
 const planeTheme = create({
   base: "dark",
-  brandTitle: "Plane UI",
+  brandTitle: "Workspaces UI",
   brandUrl: "https://plane.so",
-  brandImage: "plane-lockup-light.svg",
+  brandImage: "workspaces-lockup-light.svg",
   brandTarget: "_self",
 });
 

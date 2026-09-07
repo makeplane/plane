@@ -12,7 +12,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// workspaces web imports
 import { ProjectLevelModals } from "@/components/modals/project-level";
 import { WorkItemLevelModals } from "@/components/modals/work-item-level";
 import { WorkspaceLevelModals } from "@/components/modals/workspace-level";

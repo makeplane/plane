@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { API_BASE_URL } from "@plane/constants";
-import { EIssueServiceType } from "@plane/types";
-import type { TIssueCommentReaction, TIssueReaction, TIssueServiceType } from "@plane/types";
+import { API_BASE_URL } from "@workspaces/constants";
+import { EIssueServiceType } from "@workspaces/types";
+import type { TIssueCommentReaction, TIssueReaction, TIssueServiceType } from "@workspaces/types";
 // services
 import { APIService } from "@/services/api.service";
 // types

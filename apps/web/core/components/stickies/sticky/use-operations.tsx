@@ -5,12 +5,12 @@
  */
 
 import { useMemo } from "react";
-// plane types
-import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { InstructionType, TSticky } from "@plane/types";
-// plane utils
-import { isCommentEmpty } from "@plane/utils";
+// workspaces types
+import { useTranslation } from "@workspaces/i18n";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { InstructionType, TSticky } from "@workspaces/types";
+// workspaces utils
+import { isCommentEmpty } from "@workspaces/utils";
 // components
 import { STICKY_COLORS_LIST } from "@/components/editor/sticky-editor/color-palette";
 // hooks

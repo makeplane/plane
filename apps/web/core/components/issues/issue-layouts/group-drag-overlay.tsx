@@ -6,12 +6,12 @@
 
 import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
-// plane imports
-import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TIssueOrderByOptions } from "@plane/types";
+// workspaces imports
+import { ISSUE_ORDER_BY_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TIssueOrderByOptions } from "@workspaces/types";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 
 type Props = {
   dragColumnOrientation: "justify-start" | "justify-center" | "justify-end";

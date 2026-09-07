@@ -5,7 +5,7 @@
  */
 
 import { Image, BrainCog, Cog, Mail } from "lucide-react";
-// plane imports
+// workspaces imports
 import { LockOutline, WorkspaceOutline } from "@makeplane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
@@ -45,7 +45,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
   },
   image: {
     Icon: Image,
-    name: "Images in Plane",
+    name: "Images in Workspaces",
     description: "Allow third-party image libraries.",
     href: `/image/`,
   },

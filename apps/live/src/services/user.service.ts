@@ -5,17 +5,13 @@
  */
 
 // types
-import { logger } from "@plane/logger";
-import type { IUser } from "@plane/types";
+import { logger } from "@workspaces/logger";
+import type { IUser } from "@workspaces/types";
 // services
 import { AppError } from "@/lib/errors";
 import { APIService } from "@/services/api.service";
 
 export class UserService extends APIService {
-  constructor() {
-    super();
-  }
-
   currentUserConfig() {
     return {
       url: `${this.baseURL}/api/users/me/`,

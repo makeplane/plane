@@ -1,5 +1,5 @@
 import type { Config } from "@react-router/dev/config";
-import { joinUrlPath } from "@plane/utils";
+import { joinUrlPath } from "@workspaces/utils";
 
 const basePath = joinUrlPath(process.env.VITE_SPACE_BASE_PATH ?? "", "/") ?? "/";
 

@@ -8,17 +8,17 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
-// plane helpers
-import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
-import { useOutsideClickDetector } from "@plane/hooks";
+// workspaces helpers
+import { MODULE_VIEW_LAYOUTS } from "@workspaces/constants";
+import { useOutsideClickDetector } from "@workspaces/hooks";
 // types
-import { useTranslation } from "@plane/i18n";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { SearchIcon, CloseIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TModuleFilters } from "@plane/types";
+import type { TModuleFilters } from "@workspaces/types";
 // ui
-import { cn, calculateTotalFilters } from "@plane/utils";
-// plane utils
+import { cn, calculateTotalFilters } from "@workspaces/utils";
+// workspaces utils
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
@@ -29,7 +29,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@workspaces/propel/icon-button";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {

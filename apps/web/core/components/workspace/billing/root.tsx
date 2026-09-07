@@ -6,11 +6,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
-import { EProductSubscriptionEnum } from "@plane/types";
+// workspaces imports
+import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TBillingFrequency, TProductBillingFrequency } from "@workspaces/types";
+import { EProductSubscriptionEnum } from "@workspaces/types";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";

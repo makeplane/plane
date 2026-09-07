@@ -7,13 +7,13 @@
 
 ## 1. Executive summary
 
-The Plane API was audited end-to-end for Django 5.0/5.1/5.2 breaking changes (12 targeted code scans, a full settings audit, a 129-file migration scan, and per-dependency compatibility research). **The application code is already Django 5.2-clean.** Every breaking-change scan came back unaffected.
+The Workspaces API was audited end-to-end for Django 5.0/5.1/5.2 breaking changes (12 targeted code scans, a full settings audit, a 129-file migration scan, and per-dependency compatibility research). **The application code is already Django 5.2-clean.** Every breaking-change scan came back unaffected.
 
-The migration is therefore **almost entirely a coordinated third-party dependency bump plus verification** — not a code rewrite. Risk is **low–medium** and concentrated in the dependency layer, not in Plane's own code.
+The migration is therefore **almost entirely a coordinated third-party dependency bump plus verification** — not a code rewrite. Risk is **low–medium** and concentrated in the dependency layer, not in the Workspaces code.
 
 **No runtime or infrastructure blockers:**
 
-| Prerequisite | Django 5.2 requires | Plane has                       | Status |
+| Prerequisite | Django 5.2 requires | Workspaces has                  | Status |
 | ------------ | ------------------- | ------------------------------- | ------ |
 | Python       | ≥ 3.10              | 3.12.x (Docker + CI)            | ✅     |
 | PostgreSQL   | ≥ 14 (drops PG 13)  | 15.7-alpine (all compose files) | ✅     |
@@ -40,9 +40,9 @@ Executed on branch `chore/django-5.2-upgrade` and verified in the containerized 
 
 **Changes made beyond the dependency pins (each surfaced by verification):**
 
-1. **`plane/urls.py`** — gate the debug-toolbar URL include on `apps.is_installed("debug_toolbar")`. django-debug-toolbar **6.0** ships a real model (`HistoryEntry`); under test settings (`DEBUG=True`, app _not_ installed) the unconditional `include(debug_toolbar.urls)` raised `RuntimeError` during `manage.py check`. The guard makes the include correct in all settings (local: included; test/prod: skipped).
-2. **`plane/db/migrations/0122_alter_draftissue_assignees_alter_issue_assignees_and_more.py`** — a **state-only** `AlterField` for three `ManyToManyField`s (`issue.assignees`, `draftissue.assignees`, `module.members`) that use `through=`/`through_fields=`. Django 5.1 normalized M2M `through_fields` deconstruction. `sqlmigrate` confirms **all three operations are `(no-op)`** — zero DDL, zero database impact. Required only so `makemigrations --check` stays green in CI.
-3. **`plane/tests/contract/app/test_authentication.py`** — added a module-level autouse `cache.clear()` fixture (mirrors the existing per-class `_clear_state` fixtures). This fixes **8 pre-existing test failures** that are unrelated to the upgrade — verified by running the auth test file on the `preview` baseline (Django 4.2.30), which produced the **identical** "8 failed, 18 passed". Root cause: the per-IP `AuthenticationThrottle` (`10/minute`) stores request history in the shared cache, and `TestMagicSignIn`/`TestMagicSignUp` didn't reset it between tests.
+1. **`workspaces/urls.py`** — gate the debug-toolbar URL include on `apps.is_installed("debug_toolbar")`. django-debug-toolbar **6.0** ships a real model (`HistoryEntry`); under test settings (`DEBUG=True`, app _not_ installed) the unconditional `include(debug_toolbar.urls)` raised `RuntimeError` during `manage.py check`. The guard makes the include correct in all settings (local: included; test/prod: skipped).
+2. **`workspaces/db/migrations/0122_alter_draftissue_assignees_alter_issue_assignees_and_more.py`** — a **state-only** `AlterField` for three `ManyToManyField`s (`issue.assignees`, `draftissue.assignees`, `module.members`) that use `through=`/`through_fields=`. Django 5.1 normalized M2M `through_fields` deconstruction. `sqlmigrate` confirms **all three operations are `(no-op)`** — zero DDL, zero database impact. Required only so `makemigrations --check` stays green in CI.
+3. **`workspaces/tests/contract/app/test_authentication.py`** — added a module-level autouse `cache.clear()` fixture (mirrors the existing per-class `_clear_state` fixtures). This fixes **8 pre-existing test failures** that are unrelated to the upgrade — verified by running the auth test file on the `preview` baseline (Django 4.2.30), which produced the **identical** "8 failed, 18 passed". Root cause: the per-IP `AuthenticationThrottle` (`10/minute`) stores request history in the shared cache, and `TestMagicSignIn`/`TestMagicSignUp` didn't reset it between tests.
 
 **Not applied (revised from the original plan):** `FORMS_URLFIELD_ASSUME_HTTPS` — in Django 5.2 this transitional setting emits its **own** `RemovedInDjango60Warning`, and the codebase has no `forms.URLField` to silence, so adding it only adds noise. Reverted.
 
@@ -54,14 +54,14 @@ Executed on branch `chore/django-5.2-upgrade` and verified in the containerized 
 - **Django:** `4.2.30` (final 4.2 LTS line; 4.2 reaches EOL ~April 2026 — this upgrade is time-sensitive).
 - **Dependency files:** `requirements/base.txt`, `requirements/local.txt`, `requirements/production.txt`, `requirements/test.txt` (plain pip pins; **no lockfile** — edits are direct).
 - **Run surfaces:** `bin/docker-entrypoint-{api,worker,beat,migrator}.sh`. All four must be smoke-tested.
-- **Tests:** `pytest` + `pytest-django`, settings module `plane.settings.test`, run with `--reuse-db --nomigrations --strict-markers`.
+- **Tests:** `pytest` + `pytest-django`, settings module `workspaces.settings.test`, run with `--reuse-db --nomigrations --strict-markers`.
 - **CI:** `pull-request-build-lint-api.yml` runs **ruff lint only** — it does **not** run the test suite. The pytest suite must be run manually/locally as the migration gate.
 
 ---
 
 ## 3. Audit results — breaking-change scans (all clear)
 
-Every Django 5.x removal/behavior-change category was scanned across `plane/` and `templates/`. Summary:
+Every Django 5.x removal/behavior-change category was scanned across `workspaces/` and `templates/`. Summary:
 
 | #   | Breaking change (Django ver.)                                                                             | Result                                | Evidence                                                                                                                                                                                                |
 | --- | --------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -88,9 +88,9 @@ Every Django 5.x removal/behavior-change category was scanned across `plane/` an
 
 ### 4.1 Required (done — see "Execution status" above)
 
-- `plane/urls.py` debug-toolbar include guard (django-debug-toolbar 6.0 model requirement).
-- `plane/db/migrations/0122_…` state-only M2M `AlterField` (Django 5.1 `through_fields` normalization; no DDL).
-- `plane/tests/contract/app/test_authentication.py` autouse cache-reset fixture (fixes 8 pre-existing throttle failures; makes the suite green).
+- `workspaces/urls.py` debug-toolbar include guard (django-debug-toolbar 6.0 model requirement).
+- `workspaces/db/migrations/0122_…` state-only M2M `AlterField` (Django 5.1 `through_fields` normalization; no DDL).
+- `workspaces/tests/contract/app/test_authentication.py` autouse cache-reset fixture (fixes 8 pre-existing throttle failures; makes the suite green).
 
 ### 4.2 Optional / not taken
 
@@ -98,11 +98,11 @@ Every Django 5.x removal/behavior-change category was scanned across `plane/` an
 2. **`STORAGES` cosmetic collapse** — `common.py:303-304` defines `STORAGES` across two statements; optionally collapse into one literal (functionally identical):
    ```python
    STORAGES = {
-       "default": {"BACKEND": "plane.settings.storage.S3Storage"},
+       "default": {"BACKEND": "workspaces.settings.storage.S3Storage"},
        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
    }
    ```
-3. **`plane/asgi.py` cleanup (pre-existing latent bug, unrelated to 5.2)** — `django_asgi_app = get_asgi_application()` is assigned but unused, `get_asgi_application()` is called a second time inside `ProtocolTypeRouter`, and `os.environ.setdefault("DJANGO_SETTINGS_MODULE", …)` is placed _after_ the first `get_asgi_application()` call (so it has no effect). Move the `setdefault` to the top and reuse `django_asgi_app`. Optional; do it here or as a separate cleanup.
+3. **`workspaces/asgi.py` cleanup (pre-existing latent bug, unrelated to 5.2)** — `django_asgi_app = get_asgi_application()` is assigned but unused, `get_asgi_application()` is called a second time inside `ProtocolTypeRouter`, and `os.environ.setdefault("DJANGO_SETTINGS_MODULE", …)` is placed _after_ the first `get_asgi_application()` call (so it has no effect). Move the `setdefault` to the top and reuse `django_asgi_app`. Optional; do it here or as a separate cleanup.
 
 ---
 
@@ -116,11 +116,11 @@ Policy: **latest stable**, with **evidence-based safe overrides** where "latest"
 | ---------------------------- | ------- | -------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Django**                   | 4.2.30  | **5.2.x** (latest 5.2 LTS patch) | 5.2.0       | Stay on **5.2 LTS** — do **not** jump to 6.0 (not LTS). Confirm newest 5.2.\* patch at execution time.                                                                                                  |
 | djangorestframework          | 3.15.2  | **3.17.1**                       | 3.16.0      | 3.15 supports Django only ≤5.0. Verify `UniqueTogetherValidator`/conditional-`UniqueConstraint` behavior (3.16 tightened nullable/partial handling).                                                    |
-| channels                     | 4.1.0   | **4.3.2**                        | 4.2.1       | 4.3 raises `asgiref>=3.9` (auto-resolved) and makes Daphne an optional extra — Plane serves ASGI via uvicorn/gunicorn, so no impact.                                                                    |
+| channels                     | 4.1.0   | **4.3.2**                        | 4.2.1       | 4.3 raises `asgiref>=3.9` (auto-resolved) and makes Daphne an optional extra — Workspaces serves ASGI via uvicorn/gunicorn, so no impact.                                                               |
 | django-cors-headers          | 4.3.1   | **4.9.0**                        | 4.7.0       | No consumer-facing breaking changes in range. Verify `CORS_ALLOWED_ORIGINS`/`CORS_ALLOW_ALL_ORIGINS` still load.                                                                                        |
-| django-filter                | 24.2    | **25.2**                         | 25.1        | 25.x removed built-in DRF schema gen (Plane uses drf-spectacular → no impact). 25.2 requires Python ≥3.10 (have 3.12).                                                                                  |
+| django-filter                | 24.2    | **25.2**                         | 25.1        | 25.x removed built-in DRF schema gen (Workspaces uses drf-spectacular → no impact). 25.2 requires Python ≥3.10 (have 3.12).                                                                             |
 | django-storages              | 1.14.2  | **1.14.6**                       | 1.14.6      | `url_protocol` defaults to **HTTPS** when unset (1.14.6); `config`→`client_config` deprecation. Verify S3 settings + generated URL scheme.                                                              |
-| django-redis                 | 5.4.0   | **7.0.0**                        | 6.0.0       | 7.0 renamed zset/hash helper params (not used by Plane) and drops Django 5.0 (irrelevant). **Verify redis-py floor** (`redis==5.0.4`) satisfies 7.0; if not, pin **6.0.0** instead.                     |
+| django-redis                 | 5.4.0   | **7.0.0**                        | 6.0.0       | 7.0 renamed zset/hash helper params (not used by Workspaces) and drops Django 5.0 (irrelevant). **Verify redis-py floor** (`redis==5.0.4`) satisfies 7.0; if not, pin **6.0.0** instead.                |
 | django_celery_beat           | 2.6.0   | **2.9.0**                        | 2.8.1       | **Skip 2.8.0** (shipped a regression, fixed in 2.8.1). 2.9 adds Django 6.0.                                                                                                                             |
 | django-celery-results        | 2.5.1   | **2.6.0**                        | 2.6.0       | Note: `django_celery_results` is **not** in `INSTALLED_APPS` here (packaged result backend only), so its DB migrations don't apply — no `migrate` action needed. Result-expiry timing changed slightly. |
 | drf-spectacular              | 0.28.0  | **0.29.0**                       | 0.29.0      | First version with the Django 5.2 classifier. **Regenerate & commit the OpenAPI schema** after upgrade.                                                                                                 |
@@ -134,7 +134,7 @@ Policy: **latest stable**, with **evidence-based safe overrides** where "latest"
 | ------------------------------------ | ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | psycopg / psycopg-binary / psycopg-c | 3.3.0 (×3) | **3.3.4** (×3)        | Bump all three in lockstep (ABI). Patch-level only.                                                                                                                                                    |
 | whitenoise                           | 6.11.0     | **6.12.0**            | Security fix in autorefresh (dev-only); no breaking changes.                                                                                                                                           |
-| celery                               | 5.4.0      | **5.5.3** (not 5.6.x) | **Override:** 5.6 reverted the SQS→urllib3 change; 5.5.3 is the battle-tested line. Plane uses Redis broker. Pulls `kombu>=5.5`. (Celery itself isn't Django-pinned — already works on 5.2.)           |
+| celery                               | 5.4.0      | **5.5.3** (not 5.6.x) | **Override:** 5.6 reverted the SQS→urllib3 change; 5.5.3 is the battle-tested line. Workspaces uses Redis broker. Pulls `kombu>=5.5`. (Celery itself isn't Django-pinned — already works on 5.2.)      |
 | dj-database-url                      | 2.1.0      | **3.0.1** (cautious)  | **Override:** 3.x is a breaking major (engine-registry validation, raised Python floor). 2.1.0 already works on 5.2 — **holding at 2.1.0 is acceptable**. If bumping, verify all DB URL schemes parse. |
 
 ### 5.3 Hold (already compatible; bumping adds churn with no 5.2 benefit)
@@ -208,7 +208,7 @@ Policy: **latest stable**, with **evidence-based safe overrides** where "latest"
 ## 10. Out of scope / follow-ups (separate PRs)
 
 - **OpenTelemetry lockstep bump** (api/sdk/exporter → ~1.43.x, instrumentation-django → 0.64b0) — self-contained, no 5.2 dependency.
-- **Drop pytz → stdlib `zoneinfo`** — touch points: `plane/utils/timezone_converter.py`, `plane/app/views/cycle/base.py`, `plane/app/views/timezone/base.py`, `plane/api/serializers/cycle.py`, the 4 OAuth providers, and `TIMEZONE_CHOICES` in `plane/db/models/{project,user,workspace,cycle}.py`. Note `pytz.common_timezones` has no exact `zoneinfo` equivalent and `tz.localize(dt)` becomes `dt.replace(tzinfo=ZoneInfo(name))`.
+- **Drop pytz → stdlib `zoneinfo`** — touch points: `workspaces/utils/timezone_converter.py`, `workspaces/app/views/cycle/base.py`, `workspaces/app/views/timezone/base.py`, `workspaces/api/serializers/cycle.py`, the 4 OAuth providers, and `TIMEZONE_CHOICES` in `workspaces/db/models/{project,user,workspace,cycle}.py`. Note `pytz.common_timezones` has no exact `zoneinfo` equivalent and `tz.localize(dt)` becomes `dt.replace(tzinfo=ZoneInfo(name))`.
 - **dj-database-url 3.x** (breaking major) if not taken in this PR.
 - **Add a pytest job to API CI** — currently CI lints only; the migration relies on manual test runs.
 - **Django 6.0 readiness** (after 5.2 lands) — non-LTS, separate evaluation.

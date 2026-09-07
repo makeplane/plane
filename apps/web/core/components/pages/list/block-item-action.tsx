@@ -6,16 +6,16 @@
 
 import { observer } from "mobx-react";
 import { Earth, Info, Minus } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { LockIcon } from "@plane/propel/icons";
+import { LockIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { FavoriteStar } from "@plane/ui";
-import { renderFormattedDate, getFileURL } from "@plane/utils";
+import { FavoriteStar } from "@workspaces/ui";
+import { renderFormattedDate, getFileURL } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { usePageOperations } from "@/hooks/use-page-operations";
-// plane web hooks
+// workspaces web hooks
 import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";

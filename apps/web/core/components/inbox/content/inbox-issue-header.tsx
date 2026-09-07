@@ -7,11 +7,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock, FileStack, MoreHorizontal, MoveRight } from "lucide-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { IconButton, getIconButtonStyling } from "@workspaces/propel/icon-button";
 import {
   LinkIcon,
   CopyIcon,
@@ -21,12 +21,12 @@ import {
   ChevronUpIcon,
   CheckCircleFilledIcon,
   CloseCircleFilledIcon,
-} from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TNameDescriptionLoader } from "@plane/types";
-import { EInboxIssueStatus } from "@plane/types";
-import { ControlLink, CustomMenu, Row } from "@plane/ui";
-import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
+} from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TNameDescriptionLoader } from "@workspaces/types";
+import { EInboxIssueStatus } from "@workspaces/types";
+import { ControlLink, CustomMenu, Row } from "@workspaces/ui";
+import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@workspaces/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";

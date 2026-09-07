@@ -6,8 +6,8 @@
 
 import { pull, concat, update, uniq, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// Plane Imports
-import type { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
+// Workspaces Imports
+import type { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@workspaces/types";
 // services
 import { IssueCommentService } from "@/services/issue";
 // types

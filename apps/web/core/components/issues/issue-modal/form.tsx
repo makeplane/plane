@@ -12,13 +12,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // editor
-import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
-import type { EditorRefApi } from "@plane/editor";
+import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@workspaces/constants";
+import type { EditorRefApi } from "@workspaces/editor";
 // i18n
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TIssue, TWorkspaceDraftIssue } from "@workspaces/types";
 // hooks
 import { Switch } from "@makeplane/propel/components/switch";
 import {
@@ -27,7 +27,7 @@ import {
   cn,
   getChangedIssuefields,
   getTabIndex,
-} from "@plane/utils";
+} from "@workspaces/utils";
 // components
 import {
   IssueDefaultProperties,

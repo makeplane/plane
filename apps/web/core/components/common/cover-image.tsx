@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // helpers
 import { getCoverImageDisplayURL, DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 

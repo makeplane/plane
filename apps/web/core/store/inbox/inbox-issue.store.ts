@@ -12,8 +12,8 @@ import type {
   EInboxIssueSource,
   TIssue,
   TInboxDuplicateIssueDetails,
-} from "@plane/types";
-import { EInboxIssueStatus } from "@plane/types";
+} from "@workspaces/types";
+import { EInboxIssueStatus } from "@workspaces/types";
 // helpers
 // services
 import { InboxIssueService } from "@/services/inbox";

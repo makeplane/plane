@@ -6,8 +6,8 @@
 
 import React from "react";
 import type { LegendProps } from "recharts";
-// plane imports
-import type { TChartLegend } from "@plane/types";
+// workspaces imports
+import type { TChartLegend } from "@workspaces/types";
 import { cn } from "../../utils/classname";
 
 export const getLegendProps = (args: TChartLegend): LegendProps => {

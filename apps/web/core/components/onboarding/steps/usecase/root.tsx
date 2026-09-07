@@ -6,14 +6,14 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// plane imports
-import { USE_CASES } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { CheckIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TUserProfile } from "@plane/types";
-import { EOnboardingSteps } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { USE_CASES } from "@workspaces/constants";
+import { Button } from "@workspaces/propel/button";
+import { CheckIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { TUserProfile } from "@workspaces/types";
+import { EOnboardingSteps } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local imports
@@ -50,10 +50,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
     };
     try {
-      await Promise.all([
-        updateUserProfile(profileUpdatePayload),
-        // totalSteps > 2 && stepChange({ profile_complete: true }),
-      ]);
+      await updateUserProfile(profileUpdatePayload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -86,7 +83,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What brings you to Plane?" description="Tell us your goals and team size." />
+      <CommonOnboardingHeader title="What brings you to Workspaces?" description="Tell us your goals and team size." />
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">

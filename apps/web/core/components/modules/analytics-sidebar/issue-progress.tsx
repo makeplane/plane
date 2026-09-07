@@ -9,23 +9,23 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { EEstimateSystem } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
-import type { TModulePlotType } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
-import { CustomSelect, Spinner } from "@plane/ui";
+import { EEstimateSystem } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { ChevronUpIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import type { TModulePlotType } from "@workspaces/types";
+import { EIssuesStoreType } from "@workspaces/types";
+import { CustomSelect, Spinner } from "@workspaces/ui";
 // components
 // constants
 // helpers
-import { getDate } from "@plane/utils";
+import { getDate } from "@workspaces/utils";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
-// plane web constants
+// workspaces web constants
 type TModuleAnalyticsProgress = {
   workspaceSlug: string;
   projectId: string;
@@ -43,7 +43,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   // router
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule") || undefined;
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // hooks
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();

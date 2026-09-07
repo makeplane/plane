@@ -6,9 +6,9 @@
 
 import type { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { Download } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import type { AnalyticsTableDataMap, TAnalyticsTabsBase } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import type { AnalyticsTableDataMap, TAnalyticsTabsBase } from "@workspaces/types";
 import { DataTable } from "./data-table";
 import { TableLoader } from "./loader";
 interface InsightTableProps<T extends Exclude<TAnalyticsTabsBase, "overview">> {

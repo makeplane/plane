@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-// plane types
-import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
+// workspaces types
+import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
-// plane ui
-import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
+import type { TActivityEntityData, TIssueEntityData } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
+// workspaces ui
+import { calculateTimeAgo, generateWorkItemLink } from "@workspaces/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";

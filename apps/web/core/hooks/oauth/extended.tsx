@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TOAuthConfigs } from "@plane/types";
+// workspaces imports
+import type { TOAuthConfigs } from "@workspaces/types";
 
 export const useExtendedOAuthConfig = (_oauthActionText: string): TOAuthConfigs => {
   return {

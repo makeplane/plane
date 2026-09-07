@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { ENotificationTab } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+// workspaces imports
+import { ENotificationTab } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateCompact } from "@workspaces/propel/empty-state";
 
 type TNotificationEmptyStateProps = {
   currentNotificationTab: ENotificationTab;
@@ -17,7 +17,7 @@ type TNotificationEmptyStateProps = {
 export const NotificationEmptyState = observer(function NotificationEmptyState({
   currentNotificationTab,
 }: TNotificationEmptyStateProps) {
-  // plane imports
+  // workspaces imports
   const { t } = useTranslation();
 
   return (

@@ -19,7 +19,7 @@ The concrete failure was in the proxy. `apps/proxy/Caddyfile.ce` ends with:
 
 ```caddyfile
 {$SITE_ADDRESS} {
-	import plane_proxy
+	import workspaces_proxy
 }
 ```
 
@@ -42,7 +42,7 @@ Three more instances of the same gap, all found while fixing the first:
 - The `live` service received **no** environment at all. `apps/live/src/env.ts` validates its
   environment with zod and calls `process.exit(1)` when `API_BASE_URL` or `LIVE_SERVER_SECRET_KEY`
   is missing, so collaborative editing could never have worked in this deployment path.
-- `plane-db` and `plane-mq` were handed the entire root `.env` via `env_file`, so the database
+- `workspaces-db` and `workspaces-mq` were handed the entire root `.env` via `env_file`, so the database
   container held the MinIO credentials and the ACME settings.
 - Nothing in the repository recorded that production needs two compose files. The guide told the
   operator to define a shell alias.
@@ -56,7 +56,7 @@ Three compose files, one environment file, one command.
 ```text
 docker-compose.yml                      base    what exists, how it builds, what each container gets
   + deployments/production/compose.yml  prod    health checks, ordering, log rotation
-  + deployments/virex/compose.yml         edge    Caddy on loopback, trust the host nginx
+  + deployments/workspaces/compose.yml         edge    Caddy on loopback, trust the host nginx
 ```
 
 Each file answers exactly one question, and the questions are independent:
@@ -65,7 +65,7 @@ Each file answers exactly one question, and the questions are independent:
 | ------------------------------------ | ---------------------------- | ------------------------------------------------------------ |
 | `docker-compose.yml`                 | What is this system made of? | a service is added, or an image changes                      |
 | `deployments/production/compose.yml` | How does it run safely?      | a health check or start-up dependency changes                |
-| `deployments/virex/compose.yml`      | Where does traffic enter?    | the edge changes (a second site, a different TLS terminator) |
+| `deployments/workspaces/compose.yml` | Where does traffic enter?    | the edge changes (a second site, a different TLS terminator) |
 
 The split is by _reason to change_, not by environment. That is why the production overlay carries
 no site-specific detail: a second deployment of this fork on a different edge reuses it unchanged
@@ -77,9 +77,9 @@ and writes only its own edge file.
 operator's shell:
 
 ```dotenv
-COMPOSE_FILE=docker-compose.yml:deployments/production/compose.yml:deployments/virex/compose.yml
+COMPOSE_FILE=docker-compose.yml:deployments/production/compose.yml:deployments/workspaces/compose.yml
 COMPOSE_PATH_SEPARATOR=:
-COMPOSE_PROJECT_NAME=virex
+COMPOSE_PROJECT_NAME=workspaces
 ```
 
 Every documented command is then plain `docker compose …`. This matters more than it looks: the
@@ -118,15 +118,15 @@ from it into containers, chosen per service:
 **The Django roles** (`api`, `worker`, `beat-worker`, `migrator`) get `env_file: .env` — the whole
 file. Django reads roughly ninety settings straight from `os.environ`, most of them optional
 (`EMAIL_*`, `GITHUB_*`, `SENTRY_*`, read replicas, retention windows). Enumerating them in compose
-would be a second, permanently stale copy of `apps/api/plane/settings/common.py`. Passing the file
+would be a second, permanently stale copy of `apps/api/workspaces/settings/common.py`. Passing the file
 means any Django setting can be configured by adding one line to `.env`, with no compose edit.
 
 The cost is that these four containers also see `COMPOSE_FILE`, `LISTEN_HTTP_PORT` and
 `SITE_ADDRESS`, which Django ignores. That is accepted: they are not secrets, and the alternative
 costs far more.
 
-**Everything else** gets an explicit `environment:` allow-list. `plane-db` receives four variables,
-`plane-mq` three, `plane-minio` two, `proxy` seven, `live` four. Nothing else reaches them. This is
+**Everything else** gets an explicit `environment:` allow-list. `workspaces-db` receives four variables,
+`workspaces-mq` three, `workspaces-minio` two, `proxy` seven, `live` four. Nothing else reaches them. This is
 the half that was wrong before, in both directions — infrastructure containers held credentials
 they had no use for, while the proxy and the live server were starved of the ones they required.
 
@@ -139,7 +139,7 @@ works for any domain — the domain is not baked in.
 
 Three layers, deliberately:
 
-- **Wiring defaults** in `docker-compose.yml` — `POSTGRES_HOST: ${POSTGRES_HOST:-plane-db}`. These
+- **Wiring defaults** in `docker-compose.yml` — `POSTGRES_HOST: ${POSTGRES_HOST:-workspaces-db}`. These
   are properties of the topology, not decisions. Overriding one points the stack at an external
   database.
 - **Fail-fast guards** for values with no safe default — `${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}`.
@@ -153,7 +153,7 @@ Three layers, deliberately:
 
 ```caddyfile
 max_size {$FILE_SIZE_LIMIT:5242880}
-reverse_proxy /{$BUCKET_NAME:uploads}/* plane-minio:9000
+reverse_proxy /{$BUCKET_NAME:uploads}/* workspaces-minio:9000
 {$SITE_ADDRESS::80} { … }
 ```
 
@@ -171,7 +171,7 @@ for the empty string. Belt and braces, and the report of an empty value is a Com
 rather than a Caddy parse error.
 
 `TRUSTED_PROXIES` defaults to `0.0.0.0/0` in the base file (Caddy is the edge there and sees real
-client IPs) and is narrowed to `private_ranges` by the Virex overlay (nginx reaches Caddy over the
+client IPs) and is narrowed to `private_ranges` by the Workspaces overlay (nginx reaches Caddy over the
 docker bridge). Behind nginx the wide value would let any client spoof `X-Forwarded-For` and
 forge its own IP in Django's logs and rate limits.
 
@@ -180,17 +180,17 @@ forge its own IP in Django's logs and rate limits.
 `depends_on` in the base file is start-order only: it waits for a container to exist, not for
 Postgres to accept connections. The production overlay replaces that with conditions.
 
-| Service                 | Check                               | Why this one                                                                                                                                                                             |
-| ----------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plane-db`              | `pg_isready`                        | —                                                                                                                                                                                        |
-| `plane-redis`           | `valkey-cli ping`                   | The image ships `valkey-cli`; there is no `redis-cli` to fall back to                                                                                                                    |
-| `plane-mq`              | `rabbitmq-diagnostics -q ping`      | 90 s `start_period`: the slowest service to boot on a small VPS                                                                                                                          |
-| `plane-minio`           | `curl /minio/health/live`           | `curl` is in the image; `mc ready local` needs an alias the entrypoint does not configure                                                                                                |
-| `api`                   | `python urllib` against `:8000/`    | The image has no HTTP client, and `plane.web.urls` answers `{"status": "OK"}` unauthenticated. 120 s `start_period` covers `collectstatic`, `register_instance` and `configure_instance` |
-| `live`                  | `wget /live/health`                 | `wget` is in `node:22-alpine`                                                                                                                                                            |
-| `proxy`                 | `curl` Caddy's admin API on `:2019` | Reports whether Caddy loaded a config, without coupling proxy health to the apps behind it                                                                                               |
-| `web`, `admin`, `space` | in the image already                | Their Dockerfiles carry `HEALTHCHECK`; Compose surfaces it                                                                                                                               |
-| `worker`, `beat-worker` | none                                | They serve no HTTP. A check that cannot pass is worse than none                                                                                                                          |
+| Service                 | Check                               | Why this one                                                                                                                                                                                  |
+| ----------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `workspaces-db`         | `pg_isready`                        | —                                                                                                                                                                                             |
+| `workspaces-redis`      | `valkey-cli ping`                   | The image ships `valkey-cli`; there is no `redis-cli` to fall back to                                                                                                                         |
+| `workspaces-mq`         | `rabbitmq-diagnostics -q ping`      | 90 s `start_period`: the slowest service to boot on a small VPS                                                                                                                               |
+| `workspaces-minio`      | `curl /minio/health/live`           | `curl` is in the image; `mc ready local` needs an alias the entrypoint does not configure                                                                                                     |
+| `api`                   | `python urllib` against `:8000/`    | The image has no HTTP client, and `workspaces.web.urls` answers `{"status": "OK"}` unauthenticated. 120 s `start_period` covers `collectstatic`, `register_instance` and `configure_instance` |
+| `live`                  | `wget /live/health`                 | `wget` is in `node:22-alpine`                                                                                                                                                                 |
+| `proxy`                 | `curl` Caddy's admin API on `:2019` | Reports whether Caddy loaded a config, without coupling proxy health to the apps behind it                                                                                                    |
+| `web`, `admin`, `space` | in the image already                | Their Dockerfiles carry `HEALTHCHECK`; Compose surfaces it                                                                                                                                    |
+| `worker`, `beat-worker` | none                                | They serve no HTTP. A check that cannot pass is worse than none                                                                                                                               |
 
 `api`, `worker` and `beat-worker` additionally wait on `migrator: service_completed_successfully`.
 A failed migration then stops the deploy, instead of leaving a running api on a half-migrated
@@ -215,7 +215,7 @@ three of them do not listen on 8000, so a baked-in check would mark them permane
 ├── deployments/
 │   ├── production/
 │   │   └── compose.yml                 PROD   health checks, ordering, log rotation
-│   └── virex/
+│   └── workspaces/
 │       ├── compose.yml                 EDGE   Caddy on loopback, trust the host nginx
 │       ├── .env.example                       the production configuration template
 │       ├── nginx.conf                         host nginx vhost
@@ -249,14 +249,14 @@ to 8, and all 8 are used by the one deployment this fork performs.
   │                   │            │
   │                   │            └──config──▶ apps/proxy/Caddyfile.ce
   │                   ├─▶ deployments/production/compose.yml
-  │                   └─▶ deployments/virex/compose.yml
+  │                   └─▶ deployments/workspaces/compose.yml
   │
   ├──env_file────────────▶ api · worker · beat-worker · migrator
   └──${...} interpolation─▶ every other service's environment allow-list
 
-deployments/virex/.env.example ──init-env.sh──▶ .env
-deployments/virex/nginx.conf   ──copied by hand──▶ /etc/nginx/sites-available/  (not read from the repo)
-deployments/virex/verify.sh    ──reads──▶ docker compose ps / exec, and the public URL
+deployments/workspaces/.env.example ──init-env.sh──▶ .env
+deployments/workspaces/nginx.conf   ──copied by hand──▶ /etc/nginx/sites-available/  (not read from the repo)
+deployments/workspaces/verify.sh    ──reads──▶ docker compose ps / exec, and the public URL
 ```
 
 ### Runtime
@@ -269,7 +269,7 @@ deployments/virex/verify.sh    ──reads──▶ docker compose ps / exec, an
                             │                     BUCKET_NAME, CERT_*
         ┌──────────┬────────┼────────┬──────────┬─────────────┐
         ▼          ▼        ▼        ▼          ▼             ▼
-      web       admin     space    live       api      plane-minio
+      web       admin     space    live       api      workspaces-minio
        /*     /god-mode  /spaces   /live   /api /auth      /uploads
                                      │      /static
                                      │        │
@@ -277,7 +277,7 @@ deployments/virex/verify.sh    ──reads──▶ docker compose ps / exec, an
                                               ▼
                            ┌──────────────────┼──────────────────┐
                            ▼                  ▼                  ▼
-                      plane-db          plane-redis          plane-mq
+                      workspaces-db          workspaces-redis          workspaces-mq
                            ▲                  ▲                  ▲
                            └──────── worker · beat-worker ───────┘
                                               │
@@ -287,7 +287,7 @@ deployments/virex/verify.sh    ──reads──▶ docker compose ps / exec, an
 Start-up order, enforced by the production overlay:
 
 ```text
-plane-db · plane-redis · plane-mq · plane-minio   →  healthy
+workspaces-db · workspaces-redis · workspaces-mq · workspaces-minio   →  healthy
                      migrator                     →  exits 0
               api · worker · beat-worker          →  api healthy
                     live  →  proxy
@@ -300,41 +300,41 @@ reaches each container rather than what the templates claim.
 
 <!-- Regenerate: docker compose config --format json -->
 
-| Variable                    | Containers that receive it   | Consumed by                          |
-| --------------------------- | ---------------------------- | ------------------------------------ |
-| `ADMIN_BASE_URL`            | _django roles_               | Django settings                      |
-| `API_KEY_RATE_LIMIT`        | _django roles_               | Django settings                      |
-| `APP_BASE_URL`              | _django roles_               | Django settings                      |
-| `APP_DOMAIN`                | _django roles_               | Compose only (builds the URLs below) |
-| `AUTHENTICATION_RATE_LIMIT` | _django roles_               | Django settings                      |
-| `AWS_ACCESS_KEY_ID`         | _django roles_, plane-minio¹ | Django settings                      |
-| `AWS_REGION`                | _django roles_               | Django settings                      |
-| `AWS_S3_BUCKET_NAME`        | _django roles_, proxy¹       | Django settings, Caddyfile           |
-| `AWS_SECRET_ACCESS_KEY`     | _django roles_, plane-minio¹ | Django settings                      |
-| `COMPOSE_FILE`              | _django roles_               | Compose only                         |
-| `COMPOSE_PATH_SEPARATOR`    | _django roles_               | Compose only                         |
-| `COMPOSE_PROJECT_NAME`      | _django roles_               | Compose only                         |
-| `CORS_ALLOWED_ORIGINS`      | _django roles_               | Django settings                      |
-| `DEBUG`                     | _django roles_               | Django settings                      |
-| `FILE_SIZE_LIMIT`           | _django roles_, proxy        | Django settings, Caddyfile           |
-| `GUNICORN_WORKERS`          | _django roles_               | api entrypoint                       |
-| `LISTEN_HTTP_PORT`          | _django roles_               | Compose only (the published port)    |
-| `LIVE_BASE_URL`             | _django roles_               | Django settings                      |
-| `LIVE_SERVER_SECRET_KEY`    | _django roles_, live         | live server                          |
-| `ODOO_API_KEY`              | _django roles_               | Django settings                      |
-| `ODOO_BASE_URL`             | _django roles_               | Django settings                      |
-| `POSTGRES_DB`               | _django roles_, plane-db     | Django settings                      |
-| `POSTGRES_PASSWORD`         | _django roles_, plane-db     | Django settings                      |
-| `POSTGRES_USER`             | _django roles_, plane-db     | Django settings                      |
-| `RABBITMQ_PASSWORD`         | _django roles_, plane-mq¹    | Django settings                      |
-| `RABBITMQ_USER`             | _django roles_, plane-mq¹    | Django settings                      |
-| `RABBITMQ_VHOST`            | _django roles_, plane-mq¹    | Django settings                      |
-| `SECRET_KEY`                | _django roles_               | Django settings                      |
-| `SITE_ADDRESS`              | _django roles_, proxy        | Caddyfile                            |
-| `SPACE_BASE_URL`            | _django roles_               | Django settings                      |
-| `TRUSTED_PROXIES`           | _django roles_, proxy        | Caddyfile                            |
-| `USE_MINIO`                 | _django roles_               | Django settings                      |
-| `WEB_URL`                   | _django roles_               | Django settings                      |
+| Variable                    | Containers that receive it        | Consumed by                          |
+| --------------------------- | --------------------------------- | ------------------------------------ |
+| `ADMIN_BASE_URL`            | _django roles_                    | Django settings                      |
+| `API_KEY_RATE_LIMIT`        | _django roles_                    | Django settings                      |
+| `APP_BASE_URL`              | _django roles_                    | Django settings                      |
+| `APP_DOMAIN`                | _django roles_                    | Compose only (builds the URLs below) |
+| `AUTHENTICATION_RATE_LIMIT` | _django roles_                    | Django settings                      |
+| `AWS_ACCESS_KEY_ID`         | _django roles_, workspaces-minio¹ | Django settings                      |
+| `AWS_REGION`                | _django roles_                    | Django settings                      |
+| `AWS_S3_BUCKET_NAME`        | _django roles_, proxy¹            | Django settings, Caddyfile           |
+| `AWS_SECRET_ACCESS_KEY`     | _django roles_, workspaces-minio¹ | Django settings                      |
+| `COMPOSE_FILE`              | _django roles_                    | Compose only                         |
+| `COMPOSE_PATH_SEPARATOR`    | _django roles_                    | Compose only                         |
+| `COMPOSE_PROJECT_NAME`      | _django roles_                    | Compose only                         |
+| `CORS_ALLOWED_ORIGINS`      | _django roles_                    | Django settings                      |
+| `DEBUG`                     | _django roles_                    | Django settings                      |
+| `FILE_SIZE_LIMIT`           | _django roles_, proxy             | Django settings, Caddyfile           |
+| `GUNICORN_WORKERS`          | _django roles_                    | api entrypoint                       |
+| `LISTEN_HTTP_PORT`          | _django roles_                    | Compose only (the published port)    |
+| `LIVE_BASE_URL`             | _django roles_                    | Django settings                      |
+| `LIVE_SERVER_SECRET_KEY`    | _django roles_, live              | live server                          |
+| `ODOO_API_KEY`              | _django roles_                    | Django settings                      |
+| `ODOO_BASE_URL`             | _django roles_                    | Django settings                      |
+| `POSTGRES_DB`               | _django roles_, workspaces-db     | Django settings                      |
+| `POSTGRES_PASSWORD`         | _django roles_, workspaces-db     | Django settings                      |
+| `POSTGRES_USER`             | _django roles_, workspaces-db     | Django settings                      |
+| `RABBITMQ_PASSWORD`         | _django roles_, workspaces-mq¹    | Django settings                      |
+| `RABBITMQ_USER`             | _django roles_, workspaces-mq¹    | Django settings                      |
+| `RABBITMQ_VHOST`            | _django roles_, workspaces-mq¹    | Django settings                      |
+| `SECRET_KEY`                | _django roles_                    | Django settings                      |
+| `SITE_ADDRESS`              | _django roles_, proxy             | Caddyfile                            |
+| `SPACE_BASE_URL`            | _django roles_                    | Django settings                      |
+| `TRUSTED_PROXIES`           | _django roles_, proxy             | Caddyfile                            |
+| `USE_MINIO`                 | _django roles_                    | Django settings                      |
+| `WEB_URL`                   | _django roles_                    | Django settings                      |
 
 _django roles_ = `api`, `worker`, `beat-worker`, `migrator`.
 
@@ -360,7 +360,7 @@ The pattern is uniform, and it is the single most useful thing to know about thi
 empty value is not the same as an absent one.** Compose closes the gap for all seven.
 
 `FILE_SIZE_LIMIT` has a third consumer that compose cannot reach — `client_max_body_size` in
-`deployments/virex/nginx.conf`, which lives on the host. nginx rejects an oversized body before Caddy
+`deployments/workspaces/nginx.conf`, which lives on the host. nginx rejects an oversized body before Caddy
 or Django see it, so the two must be kept in step by hand. `verify.sh` tests the boundary.
 
 ---
@@ -426,7 +426,7 @@ file is one `git show` away.
 
 ### One command, not a wrapper script
 
-A `deployments/virex/compose.sh` wrapper was considered and rejected in favour of `COMPOSE_FILE` in
+A `deployments/workspaces/compose.sh` wrapper was considered and rejected in favour of `COMPOSE_FILE` in
 `.env`. A wrapper is a second thing to learn, does not help anyone who types `docker compose` out
 of habit, and does not fix `docker compose` invoked by tooling. Putting the chain in `.env` makes
 the _default_ correct instead of adding an alternative to it.
@@ -467,9 +467,9 @@ Nothing here is asserted from reading. Each was run against this repository with
 | The same probe straight at Caddy without the header                                                          | CSRF failure — proves the header is what makes it work                                                                           |
 | Upload of `FILE_SIZE_LIMIT + 1KB`                                                                            | 413 at nginx, and 413 at Caddy when nginx is bypassed                                                                            |
 | WebSocket upgrade on `/live/collaboration`                                                                   | 101                                                                                                                              |
-| Env propagation, per container                                                                               | as tabulated above; `plane-db` holds no unrelated secrets                                                                        |
+| Env propagation, per container                                                                               | as tabulated above; `workspaces-db` holds no unrelated secrets                                                                   |
 | `engineering-ops-*` periodic tasks                                                                           | 4 registered and enabled                                                                                                         |
 | Migration `0123_engineering_operations`                                                                      | applied                                                                                                                          |
 
-`deployments/virex/verify.sh` runs 51 of these on a live deployment and exits with the number of
+`deployments/workspaces/verify.sh` runs 51 of these on a live deployment and exits with the number of
 failures.

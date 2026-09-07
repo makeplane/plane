@@ -6,16 +6,16 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import type {
   SingleOrArray,
   IFilterOption,
   TFilterProperty,
   TMultiSelectFilterFieldConfig,
   TFilterConditionNodeForDisplay,
-} from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
-import { toFilterArray, getFilterValueLength } from "@plane/utils";
+} from "@workspaces/types";
+import { CustomSearchSelect } from "@workspaces/ui";
+import { toFilterArray, getFilterValueLength } from "@workspaces/utils";
 // local imports
 import { SelectedOptionsDisplay } from "./selected-options-display";
 import { getCommonCustomSearchSelectProps, getFormattedOptions, loadOptions } from "./shared";

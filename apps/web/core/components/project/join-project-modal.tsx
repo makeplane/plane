@@ -6,10 +6,10 @@
 
 import { useState } from "react";
 // types
-import { Button } from "@plane/propel/button";
-import type { IProject } from "@plane/types";
+import { Button } from "@workspaces/propel/button";
+import type { IProject } from "@workspaces/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";

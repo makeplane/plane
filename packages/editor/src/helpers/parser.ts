@@ -4,8 +4,13 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse, TEditorAssetType } from "@plane/types";
+// workspaces imports
+import type {
+  TDocumentPayload,
+  TDuplicateAssetData,
+  TDuplicateAssetResponse,
+  TEditorAssetType,
+} from "@workspaces/types";
 // local imports
 import { convertHTMLDocumentToAllFormats } from "./yjs-utils";
 

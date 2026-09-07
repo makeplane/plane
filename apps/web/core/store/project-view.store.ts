@@ -8,10 +8,10 @@ import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { IProjectView, TViewFilters } from "@plane/types";
+import type { IProjectView, TViewFilters } from "@workspaces/types";
 // constants
 // helpers
-import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";
+import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@workspaces/utils";
 // services
 import { ViewService } from "@/services/view.service";
 // store

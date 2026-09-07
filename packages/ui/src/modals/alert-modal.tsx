@@ -8,8 +8,8 @@ import type { LucideIcon } from "lucide-react";
 import { AlertTriangle, Info } from "lucide-react";
 import React from "react";
 // components
-import type { TButtonVariant } from "@plane/propel/button";
-import { Button } from "@plane/propel/button";
+import type { TButtonVariant } from "@workspaces/propel/button";
+import { Button } from "@workspaces/propel/button";
 import { cn } from "../utils";
 import { EModalPosition, EModalWidth } from "./constants";
 import { ModalCore } from "./modal-core";

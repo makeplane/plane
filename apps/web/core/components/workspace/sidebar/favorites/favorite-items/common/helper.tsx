@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { FAVORITE_ITEM_LINKS } from "@plane/constants";
-import type { IFavorite } from "@plane/types";
+import { FAVORITE_ITEM_LINKS } from "@workspaces/constants";
+import type { IFavorite } from "@workspaces/types";
 
 export const generateFavoriteItemLink = (workspaceSlug: string, favorite: IFavorite) => {
   const entityLinkDetails = FAVORITE_ITEM_LINKS[favorite.entity_type];

@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { TChartColorScheme } from "@plane/types";
-import { ChartXAxisProperty } from "@plane/types";
+import type { TChartColorScheme } from "@workspaces/types";
+import { ChartXAxisProperty } from "@workspaces/types";
 
 export const LABEL_CLASSNAME = "uppercase text-tertiary/60 text-13 tracking-wide";
 export const AXIS_LABEL_CLASSNAME = "uppercase text-tertiary/60 text-13 tracking-wide";

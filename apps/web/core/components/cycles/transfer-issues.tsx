@@ -7,8 +7,8 @@
 import React from "react";
 import { AlertCircle } from "lucide-react";
 // ui
-import { Button } from "@plane/propel/button";
-import { TransferIcon } from "@plane/propel/icons";
+import { Button } from "@workspaces/propel/button";
+import { TransferIcon } from "@workspaces/propel/icons";
 
 type Props = {
   handleClick: () => void;

@@ -7,10 +7,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { TNameDescriptionLoader } from "@plane/types";
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import type { TNameDescriptionLoader } from "@workspaces/types";
 // components
-import { ContentWrapper } from "@plane/ui";
+import { ContentWrapper } from "@workspaces/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUser, useUserPermissions } from "@/hooks/store/user";

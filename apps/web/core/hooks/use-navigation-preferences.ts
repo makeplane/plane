@@ -15,13 +15,13 @@ import type {
   TWorkspaceNavigationItemState,
   TAppRailPreferences,
   TAppRailDisplayMode,
-} from "@plane/types";
+} from "@workspaces/types";
 import {
   DEFAULT_PERSONAL_PREFERENCES,
   DEFAULT_PROJECT_PREFERENCES,
   DEFAULT_WORKSPACE_PREFERENCES,
   DEFAULT_APP_RAIL_PREFERENCES,
-} from "@plane/types";
+} from "@workspaces/types";
 import { useWorkspace } from "./store/use-workspace";
 import useLocalStorage from "./use-local-storage";
 

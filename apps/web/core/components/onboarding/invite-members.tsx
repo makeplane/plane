@@ -19,19 +19,19 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
 import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
-// plane imports
+// workspaces imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import type { EUserPermissions } from "@plane/constants";
-import { ROLE, ROLE_DETAILS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import type { EUserPermissions } from "@workspaces/constants";
+import { ROLE, ROLE_DETAILS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 // types
-import { Button } from "@plane/propel/button";
-import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IUser, IWorkspace } from "@plane/types";
+import { Button } from "@workspaces/propel/button";
+import { PlusIcon, CheckIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IUser, IWorkspace } from "@workspaces/types";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@workspaces/ui";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // components
@@ -345,7 +345,7 @@ export function InviteMembers(props: Props) {
           <div className="mx-auto w-4/5 space-y-1 py-4 text-center">
             <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
             <p className="font-medium text-placeholder">
-              Work in plane happens best with your team. Invite them now to use Plane to its potential.
+              Work in Workspaces happens best with your team. Invite them now to use Workspaces to its potential.
             </p>
           </div>
           <form

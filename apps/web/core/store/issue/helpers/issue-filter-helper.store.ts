@@ -5,13 +5,13 @@
  */
 
 import { isEmpty } from "lodash-es";
-// plane constants
-import type { EIssueFilterType } from "@plane/constants";
+// workspaces constants
+import type { EIssueFilterType } from "@workspaces/constants";
 import {
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
   ENABLE_ISSUE_DEPENDENCIES,
-} from "@plane/constants";
+} from "@workspaces/constants";
 import type {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
@@ -24,10 +24,10 @@ import type {
   TIssueParams,
   TStaticViewTypes,
   TWorkItemFilterExpression,
-} from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+} from "@workspaces/types";
+import { EIssueLayoutTypes } from "@workspaces/types";
 // helpers
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@workspaces/utils";
 // lib
 import { storage } from "@/lib/local-storage";
 

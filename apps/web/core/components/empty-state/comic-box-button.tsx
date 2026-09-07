@@ -8,8 +8,8 @@ import type { Ref } from "react";
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
-// plane imports
-import { Button } from "@plane/propel/button";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
 
 type Props = {
   label: string;

@@ -6,16 +6,16 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-// plane hooks
-import { useOutsideClickDetector } from "@plane/hooks";
+// workspaces hooks
+import { useOutsideClickDetector } from "@workspaces/hooks";
 // i18n
-import { useTranslation } from "@plane/i18n";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { SearchIcon, CloseIcon } from "@workspaces/propel/icons";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@workspaces/propel/icon-button";
 
 export const ProjectSearch = observer(function ProjectSearch() {
   // i18n

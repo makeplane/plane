@@ -5,9 +5,9 @@
  */
 
 import { Info } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { CloseIcon } from "@workspaces/propel/icons";
 // helpers
 import type React from "react";
 

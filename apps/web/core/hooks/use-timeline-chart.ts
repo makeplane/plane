@@ -6,7 +6,7 @@
 
 import { useContext } from "react";
 // types
-import { GANTT_TIMELINE_TYPE, type TTimelineTypeCore, type TTimelineType } from "@plane/types";
+import { GANTT_TIMELINE_TYPE, type TTimelineTypeCore, type TTimelineType } from "@workspaces/types";
 // lib
 import { StoreContext } from "@/lib/store-context";
 import type { IBaseTimelineStore } from "@/store/timeline/base-timeline.store";

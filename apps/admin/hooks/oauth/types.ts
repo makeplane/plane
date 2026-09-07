@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@workspaces/types";
 
 export type TGetAuthenticationModeProps = {
   disabled: boolean;

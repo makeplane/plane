@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { CloudOff, Dot } from "lucide-react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Badge } from "@plane/propel/badge";
+import { Badge } from "@workspaces/propel/badge";
 
 type Props = {
   syncStatus: "syncing" | "synced" | "error";

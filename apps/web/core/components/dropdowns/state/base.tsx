@@ -8,19 +8,19 @@ import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { SearchIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
-import type { IState } from "@plane/types";
-import { ComboDropDown, Spinner, useAnchoredPosition } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { SearchIcon, StateGroupIcon, ChevronDownIcon } from "@workspaces/propel/icons";
+import type { IState } from "@workspaces/types";
+import { ComboDropDown, Spinner, useAnchoredPosition } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
 import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
-// plane web imports
+// workspaces web imports
 import { StateOption } from "@/components/workflow";
 
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {

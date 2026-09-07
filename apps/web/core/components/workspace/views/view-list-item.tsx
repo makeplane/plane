@@ -8,10 +8,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// plane imports
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
-import { CustomMenu } from "@plane/ui";
-import { truncateText } from "@plane/utils";
+// workspaces imports
+import { EditIcon, TrashIcon } from "@workspaces/propel/icons";
+import { CustomMenu } from "@workspaces/ui";
+import { truncateText } from "@workspaces/utils";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports

@@ -8,10 +8,10 @@ import { isEmpty, set } from "lodash-es";
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
-// plane imports
-import { SitesFileService, SitesIssueService } from "@plane/services";
-import type { TFileSignedURLResponse, TIssuePublicComment } from "@plane/types";
-import { EFileAssetType } from "@plane/types";
+// workspaces imports
+import { SitesFileService, SitesIssueService } from "@workspaces/services";
+import type { TFileSignedURLResponse, TIssuePublicComment } from "@workspaces/types";
+import { EFileAssetType } from "@workspaces/types";
 // store
 import type { RootStore } from "@/store/root.store";
 // types
@@ -246,7 +246,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       return res;
     } catch (error) {
       console.log("Error in uploading comment asset:", error);
-      throw new Error("Asset upload failed. Please try again later.");
+      throw new Error("Asset upload failed. Please try again later.", { cause: error });
     }
   };
 
@@ -263,7 +263,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       return res;
     } catch (error) {
       console.log("Error in uploading comment asset:", error);
-      throw new Error("Asset upload failed. Please try again later.");
+      throw new Error("Asset upload failed. Please try again later.", { cause: error });
     }
   };
 

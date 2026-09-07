@@ -1,5 +1,5 @@
 {
-  "name": "@plane/decorators",
+  "name": "@workspaces/decorators",
   "version": "0.1.0",
   "private": true,
   "description": "Controller and route decorators for Express.js applications",
@@ -23,10 +23,10 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@plane/typescript-config": "workspace:*",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
     "@types/ws": "catalog:",
+    "@workspaces/typescript-config": "workspace:*",
     "reflect-metadata": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"

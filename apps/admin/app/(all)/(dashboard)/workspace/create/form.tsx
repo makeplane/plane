@@ -8,14 +8,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-// plane imports
-import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+// workspaces imports
+import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@workspaces/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
-import { InstanceWorkspaceService } from "@plane/services";
-import type { IWorkspace } from "@plane/types";
-import { validateSlug, validateWorkspaceName } from "@plane/utils";
+import { InstanceWorkspaceService } from "@workspaces/services";
+import type { IWorkspace } from "@workspaces/types";
+import { validateSlug, validateWorkspaceName } from "@workspaces/utils";
 // components
 import { TOAST_TYPE, setToast } from "@/providers/toast";
 // hooks

@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import type { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@workspaces/types";
 // components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 

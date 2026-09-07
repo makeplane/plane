@@ -13,7 +13,7 @@ import type {
   IssuePaginationOptions,
   TIssuesResponse,
   TBulkOperationsPayload,
-} from "@plane/types";
+} from "@workspaces/types";
 // helpers
 // base class
 import type { IBaseIssuesStore } from "../helpers/base-issues.store";

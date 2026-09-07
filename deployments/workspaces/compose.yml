@@ -1,0 +1,22 @@
+# Workspaces overlay: the edge. The VPS already runs nginx on 80/443 for other sites,
+# so nginx terminates TLS and forwards to the stack's Caddy on loopback; Caddy
+# keeps all the path routing it ships with.
+#
+#   browser --https--> host nginx :443 --> 127.0.0.1:${LISTEN_HTTP_PORT} --> Caddy --> services
+#
+# Never used on its own. Compose merges it over docker-compose.yml and
+# deployments/production/compose.yml (COMPOSE_FILE in .env does that).
+# Needs Compose v2.24 or newer for !override.
+
+services:
+  proxy:
+    # !override discards the base file's port list instead of merging with it;
+    # without it 80:80 and 443:443 survive and collide with nginx.
+    ports: !override
+      - "127.0.0.1:${LISTEN_HTTP_PORT:-8080}:80"
+    environment:
+      # nginx connects from the docker bridge gateway, a private address. Caddy
+      # must trust it so the X-Forwarded-Proto: https that nginx sets reaches
+      # Django (which uses it for request.is_secure()), and must not trust the
+      # whole internet so nobody else can spoof a client IP.
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-private_ranges}

@@ -5,7 +5,7 @@
  */
 
 import { Info } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon } from "@workspaces/propel/icons";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 

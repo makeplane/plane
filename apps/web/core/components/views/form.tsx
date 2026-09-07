@@ -7,24 +7,24 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// plane imports
+// workspaces imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@workspaces/propel/emoji-icon-picker";
+import { ViewsIcon } from "@workspaces/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IProjectView,
   EIssueLayoutTypes,
   IIssueFilters,
-} from "@plane/types";
-import { EViewAccess, EIssuesStoreType } from "@plane/types";
-import { TextArea } from "@plane/ui";
-import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
+} from "@workspaces/types";
+import { EViewAccess, EIssuesStoreType } from "@workspaces/types";
+import { TextArea } from "@workspaces/ui";
+import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@workspaces/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";

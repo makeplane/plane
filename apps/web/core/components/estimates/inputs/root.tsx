@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TEstimateSystemKeys } from "@plane/types";
-import { EEstimateSystem } from "@plane/types";
+// workspaces imports
+import type { TEstimateSystemKeys } from "@workspaces/types";
+import { EEstimateSystem } from "@workspaces/types";
 // local imports
 import { EstimateNumberInput } from "./number-input";
 import { EstimateTextInput } from "./text-input";

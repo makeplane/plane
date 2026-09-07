@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import { DueDatePropertyIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-import { cn } from "@plane/utils";
+import { DueDatePropertyIcon } from "@workspaces/propel/icons";
+import { Tooltip } from "@workspaces/propel/tooltip";
+import { cn } from "@workspaces/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";

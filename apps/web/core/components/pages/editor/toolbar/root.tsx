@@ -6,10 +6,10 @@
 
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // components
 import { PageToolbar } from "@/components/pages/editor/toolbar";
 // hooks

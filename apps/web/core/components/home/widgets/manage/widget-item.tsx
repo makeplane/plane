@@ -18,14 +18,14 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-// plane types
-import { useTranslation } from "@plane/i18n";
-import type { InstructionType } from "@plane/types";
-// plane ui
+// workspaces types
+import { useTranslation } from "@workspaces/i18n";
+import type { InstructionType } from "@workspaces/types";
+// workspaces ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { DropIndicator } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
+import { DropIndicator } from "@workspaces/ui";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { HOME_WIDGETS_LIST } from "../../home-dashboard-widgets";

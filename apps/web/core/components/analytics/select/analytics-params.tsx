@@ -9,13 +9,13 @@ import { observer } from "mobx-react";
 import type { Control, UseFormSetValue } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { SlidersHorizontal } from "lucide-react";
-// plane package imports
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
-import { CalendarLayoutIcon } from "@plane/propel/icons";
-import type { IAnalyticsParams } from "@plane/types";
-import { ChartYAxisMetric } from "@plane/types";
-import { cn } from "@plane/utils";
-// plane web components
+// workspaces package imports
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@workspaces/constants";
+import { CalendarLayoutIcon } from "@workspaces/propel/icons";
+import type { IAnalyticsParams } from "@workspaces/types";
+import { ChartYAxisMetric } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
+// workspaces web components
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
 

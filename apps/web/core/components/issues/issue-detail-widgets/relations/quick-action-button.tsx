@@ -7,17 +7,17 @@
 import React from "react";
 import { observer } from "mobx-react";
 
-import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
-// plane imports
-import type { TIssueServiceType } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { useTranslation } from "@workspaces/i18n";
+import { PlusIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import type { TIssueServiceType } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { useTimeLineRelationOptions } from "@/components/relations";
 // types
-import type { TIssueRelationTypes } from "@plane/types";
+import type { TIssueRelationTypes } from "@workspaces/types";
 
 type Props = {
   issueId: string;

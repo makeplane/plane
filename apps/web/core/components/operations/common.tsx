@@ -14,7 +14,7 @@
 
 import type { ReactNode } from "react";
 import { AlertTriangle, Inbox, LoaderCircle } from "lucide-react";
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 
 // ---------------------------------------------------------------- Formatters
 

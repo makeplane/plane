@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TWorkspaceSettingsItem, TWorkspaceSettingsTabs } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
+// workspaces imports
+import type { TWorkspaceSettingsItem, TWorkspaceSettingsTabs } from "@workspaces/types";
+import { EUserWorkspaceRoles } from "@workspaces/types";
 
 export enum WORKSPACE_SETTINGS_CATEGORY {
   ADMINISTRATION = "administration",

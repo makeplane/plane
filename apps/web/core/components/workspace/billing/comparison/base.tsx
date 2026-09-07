@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp } from "lucide-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { cn } from "@workspaces/utils";
 // constants
 import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
 import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST } from "@/components/workspace/billing/comparison/plans";

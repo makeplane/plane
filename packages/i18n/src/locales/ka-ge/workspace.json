@@ -1,7 +1,7 @@
 {
   "workspace_creation": {
     "heading": "შექმენით თქვენი სამუშაო სივრცე",
-    "subheading": "Plane-ის გამოყენების დასაწყებად, თქვენ უნდა შექმნათ ან შეუერთდეთ სამუშაო სივრცეს.",
+    "subheading": "Workspaces-ის გამოყენების დასაწყებად, თქვენ უნდა შექმნათ ან შეუერთდეთ სამუშაო სივრცეს.",
     "form": {
       "name": {
         "label": "დაარქვით სახელი თქვენს სამუშაო სივრცეს",
@@ -54,11 +54,11 @@
     "empty_state": {
       "general": {
         "title": "თქვენი პროექტების, აქტივობის და მეტრიკების მიმოხილვა",
-        "description": "კეთილი იყოს თქვენი მობრძანება Plane-ში, ჩვენ გვიხარია რომ აქ ხართ. შექმენით თქვენი პირველი პროექტი და თვალყური ადევნეთ თქვენს სამუშაო ელემენტებს, და ეს გვერდი გადაიქცევა სივრცედ, რომელიც დაგეხმარებათ წინსვლაში. ადმინებიც იხილავენ ელემენტებს, რომლებიც ეხმარება მათ გუნდს წინსვლაში.",
+        "description": "კეთილი იყოს თქვენი მობრძანება Workspaces-ში, ჩვენ გვიხარია რომ აქ ხართ. შექმენით თქვენი პირველი პროექტი და თვალყური ადევნეთ თქვენს სამუშაო ელემენტებს, და ეს გვერდი გადაიქცევა სივრცედ, რომელიც დაგეხმარებათ წინსვლაში. ადმინებიც იხილავენ ელემენტებს, რომლებიც ეხმარება მათ გუნდს წინსვლაში.",
         "primary_button": {
           "text": "შექმენით თქვენი პირველი პროექტი",
           "comic": {
-            "title": "ყველაფერი იწყება პროექტით Plane-ში",
+            "title": "ყველაფერი იწყება პროექტით Workspaces-ში",
             "description": "პროექტი შეიძლება იყოს პროდუქტის საგზაო რუკა, მარკეტინგული კამპანია ან ახალი მანქანის გაშვება."
           }
         }
@@ -200,7 +200,7 @@
         "primary_button": {
           "text": "დაიწყეთ თქვენი პირველი პროექტი",
           "comic": {
-            "title": "ყველაფერი იწყება პროექტით Plane-ში",
+            "title": "ყველაფერი იწყება პროექტით Workspaces-ში",
             "description": "პროექტი შეიძლება იყოს პროდუქტის საგზაო რუკა, მარკეტინგული კამპანია ან ახალი მანქანის გაშვება."
           }
         }
@@ -211,7 +211,7 @@
         "primary_button": {
           "text": "დაიწყეთ თქვენი პირველი პროექტი",
           "comic": {
-            "title": "ყველაფერი იწყება პროექტით Plane-ში",
+            "title": "ყველაფერი იწყება პროექტით Workspaces-ში",
             "description": "პროექტი შეიძლება იყოს პროდუქტის საგზაო რუკა, მარკეტინგული კამპანია ან ახალი მანქანის გაშვება."
           }
         }
@@ -230,7 +230,7 @@
     "empty_state": {
       "all-issues": {
         "title": "პროექტში სამუშაო ელემენტები არ არის",
-        "description": "პირველი პროექტი დასრულებულია! ახლა, გაყავით თქვენი სამუშაო თვალყურის დევნებად ნაწილებად სამუშაო ელემენტებით. მეტი ინფორმაცია Plane-ში. დავიწყოთ!",
+        "description": "პირველი პროექტი დასრულებულია! ახლა, გაყავით თქვენი სამუშაო თვალყურის დევნებად ნაწილებად სამუშაო ელემენტებით. მეტი ინფორმაცია Workspaces-ში. დავიწყოთ!",
         "primary_button": {
           "text": "ახალი სამუშაო ელემენტის შექმნა"
         }
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
-        "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+        "title": "Write a note, a doc, or a full knowledge base. Get Galileo, the Workspaces AI assistant, to help you get started",
+        "description": "Pages are thoughts potting space in Workspaces. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, the Workspaces AI, with a shortcut or the click of a button.",
         "primary_button": {
           "text": "Create your first page"
         }

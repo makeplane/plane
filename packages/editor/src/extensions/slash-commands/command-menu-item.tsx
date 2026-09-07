@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // types
 import type { ISlashCommandItem } from "@/types";
 

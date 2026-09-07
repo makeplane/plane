@@ -4,17 +4,17 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
-import type { IPublicIssue, TIssuePublicComment, TPublicIssuesResponse } from "@plane/types";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
+import type { IPublicIssue, TIssuePublicComment, TPublicIssuesResponse } from "@workspaces/types";
 // api service
 import { APIService } from "../api.service";
 
 /**
- * Service class for managing issues within plane sites application
+ * Service class for managing issues within the Workspaces sites application
  * Extends the APIService class to handle HTTP requests to the issue-related endpoints
  * @extends {APIService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for Workspaces sites
  */
 export class SitesIssueService extends APIService {
   constructor(BASE_URL?: string) {

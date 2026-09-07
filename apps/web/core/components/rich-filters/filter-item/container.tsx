@@ -5,11 +5,11 @@
  */
 
 import { useEffect, useRef } from "react";
-// plane imports
+// workspaces imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/propel/utils";
-import type { SingleOrArray, TFilterValue } from "@plane/types";
-import { hasValidValue } from "@plane/utils";
+import { cn } from "@workspaces/propel/utils";
+import type { SingleOrArray, TFilterValue } from "@workspaces/types";
+import { hasValidValue } from "@workspaces/utils";
 
 interface FilterItemContainerProps {
   children: React.ReactNode;

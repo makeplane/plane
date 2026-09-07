@@ -7,9 +7,9 @@
 import { AxiosError } from "axios";
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// plane imports
-import { UserService } from "@plane/services";
-import type { ActorDetail, IUser } from "@plane/types";
+// workspaces imports
+import { UserService } from "@workspaces/services";
+import type { ActorDetail, IUser } from "@workspaces/types";
 // store types
 import type { IProfileStore } from "@/store/profile.store";
 import { ProfileStore } from "@/store/profile.store";

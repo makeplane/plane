@@ -8,11 +8,11 @@ import React from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-// plane imports
-import { ETabIndices } from "@plane/constants";
+// workspaces imports
+import { ETabIndices } from "@workspaces/constants";
 // types
-import type { TIssue } from "@plane/types";
-import { getTabIndex } from "@plane/utils";
+import type { TIssue } from "@workspaces/types";
+import { getTabIndex } from "@workspaces/utils";
 // components
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks

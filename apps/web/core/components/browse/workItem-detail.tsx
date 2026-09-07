@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import type { TIssue } from "@plane/types";
+import type { TIssue } from "@workspaces/types";
 import { IssueDetailRoot } from "@/components/issues/issue-detail/root";
 
 export type TWorkItemDetailRoot = {

@@ -6,13 +6,13 @@
 
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
-// plane imports
-import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
-import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+// workspaces imports
+import { allTimeIn30MinutesInterval12HoursFormat } from "@workspaces/constants";
+import { Button } from "@workspaces/propel/button";
+import { CloseIcon } from "@workspaces/propel/icons";
+import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 // components
-import { getDate, cn } from "@plane/utils";
+import { getDate, cn } from "@workspaces/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 
 type TNotificationSnoozeModal = {

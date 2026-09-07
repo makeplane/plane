@@ -5,7 +5,7 @@
  */
 
 // editor
-import type { TExtensions } from "@plane/editor";
+import type { TExtensions } from "@workspaces/editor";
 
 export type TEditorFlaggingHookReturnType = {
   document: {

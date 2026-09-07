@@ -6,8 +6,8 @@
 
 import { useContext } from "react";
 import { merge } from "lodash-es";
-import type { TIssueMap } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+import type { TIssueMap } from "@workspaces/types";
+import { EIssuesStoreType } from "@workspaces/types";
 import { StoreContext } from "@/lib/store-context";
 import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
 import type { IWorkspaceIssues } from "@/store/issue/workspace/issue.store";

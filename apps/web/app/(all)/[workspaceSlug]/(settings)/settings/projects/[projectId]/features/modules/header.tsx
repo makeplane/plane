@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { PROJECT_SETTINGS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs } from "@plane/ui";
+// workspaces imports
+import { PROJECT_SETTINGS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Breadcrumbs } from "@workspaces/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SettingsPageHeader } from "@/components/settings/page-header";

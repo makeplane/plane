@@ -10,15 +10,15 @@ import { Controller, useForm } from "react-hook-form";
 // constants
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@workspaces/constants";
 // types
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IUser, IWorkspace, TOnboardingSteps } from "@workspaces/types";
 // ui
-import { CustomSelect, Spinner } from "@plane/ui";
-import { validateWorkspaceName, validateSlug } from "@plane/utils";
+import { CustomSelect, Spinner } from "@workspaces/ui";
+import { validateWorkspaceName, validateSlug } from "@workspaces/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
@@ -40,7 +40,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { updateUserProfile } = useUserProfile();

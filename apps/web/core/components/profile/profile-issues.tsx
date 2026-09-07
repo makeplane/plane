@@ -8,9 +8,9 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType } from "@plane/types";
+// workspaces imports
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { EIssuesStoreType } from "@workspaces/types";
 // components
 import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";

@@ -1,5 +1,5 @@
 {
-  "name": "@plane/logger",
+  "name": "@workspaces/logger",
   "version": "1.4.2",
   "private": true,
   "description": "Logger shared across multiple apps internally",
@@ -27,9 +27,9 @@
     "winston": "catalog:"
   },
   "devDependencies": {
-    "@plane/typescript-config": "workspace:*",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
+    "@workspaces/typescript-config": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

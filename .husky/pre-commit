@@ -1,1 +1,13 @@
+# Formats staged files, then lints them report-only.
+#
+# oxlint is NOT run with --deny-warnings: every rule in .oxlintrc.json is configured
+# as "warn", so treating warnings as fatal contradicts the project's own lint policy
+# and blocks commits on a large pre-existing upstream backlog. `pnpm check:lint`
+# enforces the per-package --max-warnings budgets; that is the real gate.
+#
+# --fix is deliberately not used here either: oxlint's react-hooks/exhaustive-deps
+# autofix strips `ref.current` from dependency arrays, which silently breaks effects
+# that early-return on a null ref. Run `pnpm fix:lint` deliberately instead.
+#
+# Errors (parse failures and any rule raised to "error") still block the commit.
 pnpm lint-staged

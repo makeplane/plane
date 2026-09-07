@@ -6,14 +6,14 @@
 
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-// plane types
+// workspaces types
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ILinkDetails, ModuleLink } from "@plane/types";
-// plane ui
-import { ModalCore } from "@plane/ui";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { ILinkDetails, ModuleLink } from "@workspaces/types";
+// workspaces ui
+import { ModalCore } from "@workspaces/ui";
 type Props = {
   createLink: (formData: ModuleLink) => Promise<void>;
   data?: ILinkDetails | null;

@@ -5,13 +5,13 @@
  */
 
 import { get } from "lodash-es";
-// plane imports
-import { DATE_OPERATOR_LABELS_MAP, EMPTY_OPERATOR_LABEL, OPERATOR_LABELS_MAP } from "@plane/constants";
+// workspaces imports
+import { DATE_OPERATOR_LABELS_MAP, EMPTY_OPERATOR_LABEL, OPERATOR_LABELS_MAP } from "@workspaces/constants";
 import type {
   TAllAvailableOperatorsForDisplay,
   TFilterValue,
   TAllAvailableDateFilterOperatorsForDisplay,
-} from "@plane/types";
+} from "@workspaces/types";
 
 // -------- OPERATOR LABEL UTILITIES --------
 

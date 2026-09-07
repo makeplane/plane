@@ -5,8 +5,8 @@
  */
 
 import React, { useMemo } from "react";
-// plane imports
-import { cn } from "@plane/utils";
+// workspaces imports
+import { cn } from "@workspaces/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants

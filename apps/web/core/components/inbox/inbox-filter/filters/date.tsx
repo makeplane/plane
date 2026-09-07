@@ -7,8 +7,8 @@
 import { useState } from "react";
 import { concat, uniq } from "lodash-es";
 import { observer } from "mobx-react";
-import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import type { TInboxIssueFilterDateKeys } from "@plane/types";
+import { PAST_DURATION_FILTER_OPTIONS } from "@workspaces/constants";
+import type { TInboxIssueFilterDateKeys } from "@workspaces/types";
 // components
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";

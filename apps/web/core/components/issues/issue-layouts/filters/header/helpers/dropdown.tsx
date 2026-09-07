@@ -10,7 +10,7 @@ import { usePopper } from "react-popper";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@workspaces/propel/button";
 
 type Props = {
   children: React.ReactNode;

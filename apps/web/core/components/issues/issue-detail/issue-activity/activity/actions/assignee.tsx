@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // icons
-import { MembersPropertyIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon } from "@workspaces/propel/icons";
 // hooks;
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components

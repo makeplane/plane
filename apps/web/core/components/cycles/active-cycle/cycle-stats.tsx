@@ -11,17 +11,17 @@ import { useTheme } from "next-themes";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
-// plane imports
+// workspaces imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { PriorityIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TWorkItemFilterCondition } from "@plane/shared-state";
-import type { ICycle } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@workspaces/shared-state";
+import type { ICycle } from "@workspaces/types";
+import { EIssuesStoreType } from "@workspaces/types";
 // ui
-import { Loader } from "@plane/ui";
-import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+import { Loader } from "@workspaces/ui";
+import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@workspaces/utils";
 // assets
 import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
 import lightAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-light.webp?url";
@@ -62,7 +62,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
   // theme hook
   const { resolvedTheme } = useTheme();
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // derived values
   const priorityResolvedPath = resolvedTheme === "light" ? lightPriorityAsset : darkPriorityAsset;

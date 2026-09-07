@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { cn, getFileURL } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { cn, getFileURL } from "@workspaces/utils";
 
 type Props = {
   logo: string | null | undefined;

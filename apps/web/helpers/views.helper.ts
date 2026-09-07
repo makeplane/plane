@@ -5,11 +5,11 @@
  */
 
 import type { LucideIcon } from "lucide-react";
-import { VIEW_ACCESS_SPECIFIERS as VIEW_ACCESS_SPECIFIERS_CONSTANTS } from "@plane/constants";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import { VIEW_ACCESS_SPECIFIERS as VIEW_ACCESS_SPECIFIERS_CONSTANTS } from "@workspaces/constants";
+import { GlobeIcon, LockIcon } from "@workspaces/propel/icons";
 
-import type { ISvgIcons } from "@plane/propel/icons";
-import { EViewAccess } from "@plane/types";
+import type { ISvgIcons } from "@workspaces/propel/icons";
+import { EViewAccess } from "@workspaces/types";
 
 const VIEW_ACCESS_ICONS = {
   [EViewAccess.PUBLIC]: GlobeIcon,

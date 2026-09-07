@@ -6,10 +6,10 @@
 
 import { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-// plane imports
+// workspaces imports
 import { Button } from "@makeplane/propel/components/button";
 import { Input } from "@makeplane/propel/components/input";
-import { InstanceService } from "@plane/services";
+import { InstanceService } from "@workspaces/services";
 
 type Props = {
   isOpen: boolean;

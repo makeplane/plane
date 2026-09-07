@@ -6,9 +6,9 @@
 
 import { pull, find, concat, set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// Plane Imports
-import type { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap, TIssueServiceType } from "@plane/types";
-import { groupReactions } from "@plane/utils";
+// Workspaces Imports
+import type { TIssueReaction, TIssueReactionMap, TIssueReactionIdMap, TIssueServiceType } from "@workspaces/types";
+import { groupReactions } from "@workspaces/utils";
 // services
 import { IssueReactionService } from "@/services/issue";
 // types

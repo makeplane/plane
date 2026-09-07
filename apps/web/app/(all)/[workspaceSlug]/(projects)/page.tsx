@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // components
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { PageHead } from "@/components/core/page-title";

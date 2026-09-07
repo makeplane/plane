@@ -6,8 +6,8 @@
 
 import { startOfToday, format } from "date-fns";
 import { isEmpty, orderBy, sortBy, uniqBy } from "lodash-es";
-// plane imports
-import type { ICycle, TCycleFilters, TProgressSnapshot } from "@plane/types";
+// workspaces imports
+import type { ICycle, TCycleFilters, TProgressSnapshot } from "@workspaces/types";
 // local imports
 import { findTotalDaysInRange, generateDateArray, getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
@@ -21,7 +21,7 @@ import { satisfiesDateFilter } from "./filter";
 export const orderCycles = (cycles: ICycle[], sortByManual: boolean): ICycle[] => {
   if (cycles.length === 0) return [];
 
-  const acceptedStatuses = ["current", "upcoming", "draft"];
+  const acceptedStatuses = new Set(["current", "upcoming", "draft"]);
   const STATUS_ORDER: {
     [key: string]: number;
   } = {
@@ -30,7 +30,7 @@ export const orderCycles = (cycles: ICycle[], sortByManual: boolean): ICycle[] =
     draft: 3,
   };
 
-  let filteredCycles = cycles.filter((c) => acceptedStatuses.includes(c.status?.toLowerCase() ?? ""));
+  let filteredCycles = cycles.filter((c) => acceptedStatuses.has(c.status?.toLowerCase() ?? ""));
   if (sortByManual) filteredCycles = sortBy(filteredCycles, [(c) => c.sort_order]);
   else
     filteredCycles = sortBy(filteredCycles, [

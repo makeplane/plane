@@ -9,14 +9,14 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { MoreHorizontal, ArchiveIcon, Settings } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useOutsideClickDetector } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { useTranslation } from "@workspaces/i18n";
+import { ChevronRightIcon } from "@workspaces/propel/icons";
+import { EUserWorkspaceRoles } from "@workspaces/types";
+import { CustomMenu } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // store hooks
 import { useUserPermissions } from "@/hooks/store/user";
 

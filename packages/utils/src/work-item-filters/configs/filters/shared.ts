@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { IProject, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
-import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
+// workspaces imports
+import type { IProject, TOperatorConfigMap, TSupportedOperators } from "@workspaces/types";
+import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@workspaces/types";
 // local imports
 import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams } from "../../../rich-filters";
 import {

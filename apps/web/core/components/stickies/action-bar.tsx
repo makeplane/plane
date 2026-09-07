@@ -9,14 +9,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { StickyNote as StickyIcon } from "lucide-react";
-// plane hooks
-import { useOutsideClickDetector } from "@plane/hooks";
-// plane ui
-import { RecentStickyIcon, StickyNoteIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
+// workspaces hooks
+import { useOutsideClickDetector } from "@workspaces/hooks";
+// workspaces ui
+import { RecentStickyIcon, StickyNoteIcon, PlusIcon, CloseIcon } from "@workspaces/propel/icons";
 import { PreviewCard, PreviewCardContent, PreviewCardTrigger } from "@makeplane/propel/components/preview-card";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useSticky } from "@/hooks/use-stickies";

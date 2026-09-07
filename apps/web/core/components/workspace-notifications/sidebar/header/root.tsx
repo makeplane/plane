@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { InboxIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { InboxIcon } from "@workspaces/propel/icons";
+import { Breadcrumbs, Header } from "@workspaces/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // local imports

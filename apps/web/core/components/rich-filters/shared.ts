@@ -10,7 +10,7 @@ import type {
   TFilterProperty,
   TFilterValue,
   TSupportedFilterFieldConfigs,
-} from "@plane/types";
+} from "@workspaces/types";
 
 export const COMMON_FILTER_ITEM_BORDER_CLASSNAME = "border-r border-subtle-1";
 

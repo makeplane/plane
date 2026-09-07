@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import { EStartOfTheWeek } from "@plane/types";
-import { getOrderedDays } from "@plane/utils";
-import { DAYS_LIST } from "@plane/constants";
+import { EStartOfTheWeek } from "@workspaces/types";
+import { getOrderedDays } from "@workspaces/utils";
+import { DAYS_LIST } from "@workspaces/constants";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";

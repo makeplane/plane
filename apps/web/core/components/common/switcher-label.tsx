@@ -5,10 +5,10 @@
  */
 
 import type { FC } from "react";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import type { ISvgIcons } from "@plane/propel/icons";
-import type { TLogoProps } from "@plane/types";
-import { getFileURL, truncateText } from "@plane/utils";
+import { Logo } from "@workspaces/propel/emoji-icon-picker";
+import type { ISvgIcons } from "@workspaces/propel/icons";
+import type { TLogoProps } from "@workspaces/types";
+import { getFileURL, truncateText } from "@workspaces/utils";
 
 type TSwitcherIconProps = {
   logo_props?: TLogoProps;

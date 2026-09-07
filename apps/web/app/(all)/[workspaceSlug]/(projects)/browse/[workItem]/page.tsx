@@ -8,11 +8,11 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import type { TIssue } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
-import { Loader } from "@plane/ui";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import type { TIssue } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
+import { Loader } from "@workspaces/ui";
 // assets
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -26,7 +26,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // layouts
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
-// plane web imports
+// workspaces web imports
 import { useWorkItemProperties } from "@/hooks/use-issue-properties";
 import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
 

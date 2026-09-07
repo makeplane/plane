@@ -1,5 +1,5 @@
 {
-  "name": "@plane/i18n",
+  "name": "@workspaces/i18n",
   "version": "1.4.2",
   "private": true,
   "description": "I18n shared across multiple apps internally",
@@ -33,9 +33,9 @@
     "react-i18next": "catalog:"
   },
   "devDependencies": {
-    "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@workspaces/typescript-config": "workspace:*",
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"

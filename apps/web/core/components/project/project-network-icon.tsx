@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import type { TNetworkChoiceIconKey } from "@plane/constants";
-// plane imports
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
+import type { TNetworkChoiceIconKey } from "@workspaces/constants";
+// workspaces imports
+import { GlobeIcon, LockIcon } from "@workspaces/propel/icons";
+import { cn } from "@workspaces/utils";
 
 type Props = {
   iconKey: TNetworkChoiceIconKey;

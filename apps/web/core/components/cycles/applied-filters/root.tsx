@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
-import type { TCycleFilters } from "@plane/types";
-import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+import { CloseIcon } from "@workspaces/propel/icons";
+import type { TCycleFilters } from "@workspaces/types";
+import { replaceUnderscoreIfSnakeCase } from "@workspaces/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
@@ -25,7 +25,7 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
-const DATE_FILTERS = ["start_date", "end_date"];
+const DATE_FILTERS = new Set(["start_date", "end_date"]);
 
 export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
@@ -63,7 +63,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
                   values={value}
                 />
               )}
-              {DATE_FILTERS.includes(filterKey) && (
+              {DATE_FILTERS.has(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}

@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { I_THEME_OPTION } from "@plane/constants";
-import { THEME_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import type { I_THEME_OPTION } from "@workspaces/constants";
+import { THEME_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 // constants
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@workspaces/ui";
 // ui
 
 type Props = {

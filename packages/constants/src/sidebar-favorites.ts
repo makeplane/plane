@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { IFavorite } from "@plane/types";
+import type { IFavorite } from "@workspaces/types";
 
 export const FAVORITE_ITEM_LINKS: {
   [key: string]: {

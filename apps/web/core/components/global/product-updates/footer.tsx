@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 // ui
-import { getButtonStyling } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
+import { getButtonStyling } from "@workspaces/propel/button";
+import { WorkspacesLogo } from "@workspaces/propel/icons";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 
 export function ProductUpdatesFooter() {
   const { t } = useTranslation();
@@ -67,7 +67,7 @@ export function ProductUpdatesFooter() {
         )}
         rel="noreferrer"
       >
-        <PlaneLogo className="h-4 w-auto text-primary" />
+        <WorkspacesLogo className="h-4 w-auto text-primary" />
         {t("powered_by_plane_pages")}
       </a>
     </div>

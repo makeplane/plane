@@ -7,11 +7,11 @@
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // components
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserProjectRoles } from "@plane/types";
-import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateDetailed } from "@workspaces/propel/empty-state";
+import { EUserProjectRoles } from "@workspaces/types";
+import { ContentWrapper, Row, ERowVariant } from "@workspaces/ui";
 // components
 import { ListLayout } from "@/components/core/list";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
@@ -29,7 +29,7 @@ export const ModulesListView = observer(function ModulesListView() {
   const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();

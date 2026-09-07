@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import type { EIssuesStoreType } from "@plane/types";
+// workspaces imports
+import type { IWorkItemFilterInstance } from "@workspaces/shared-state";
+import type { EIssuesStoreType } from "@workspaces/types";
 // local imports
 import { useWorkItemFilters } from "./use-work-item-filters";
 

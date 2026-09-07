@@ -9,15 +9,15 @@ import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { InfoIcon } from "@plane/propel/icons";
-// plane imports
-import { ETabIndices } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TProject } from "@plane/types";
+import { InfoIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import { ETabIndices } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TProject } from "@workspaces/types";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { TextArea } from "@plane/ui";
-import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
+import { TextArea } from "@workspaces/ui";
+import { cn, projectIdentifierSanitizer, getTabIndex } from "@workspaces/utils";
 
 type Props = {
   setValue: UseFormSetValue<TProject>;

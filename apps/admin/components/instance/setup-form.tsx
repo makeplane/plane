@@ -8,13 +8,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
-// plane internal packages
-import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+// workspaces internal packages
+import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@workspaces/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { AuthService } from "@plane/services";
-import { getPasswordStrength, validatePersonName, validateCompanyName } from "@plane/utils";
+import { AuthService } from "@workspaces/services";
+import { getPasswordStrength, validatePersonName, validateCompanyName } from "@workspaces/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { PasswordStrengthIndicator } from "@/components/common/password-strength-indicator";
@@ -144,8 +144,8 @@ export function InstanceSetupForm() {
       <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
         <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">
           <FormHeader
-            heading="Setup your Plane Instance"
-            subHeading="Post setup you will be able to manage this Plane instance."
+            heading="Setup your Workspaces Instance"
+            subHeading="Post setup you will be able to manage this Workspaces instance."
           />
           {errorData.type &&
             errorData?.message &&
@@ -349,13 +349,13 @@ export function InstanceSetupForm() {
               <div>
                 <Checkbox
                   id="is_telemetry_enabled"
-                  aria-label="Allow Plane to anonymously collect usage events"
+                  aria-label="Allow Workspaces to anonymously collect usage events"
                   onCheckedChange={(checked) => handleFormChange("is_telemetry_enabled", checked)}
                   checked={formData.is_telemetry_enabled}
                 />
               </div>
               <label className="cursor-pointer text-13 font-medium text-tertiary" htmlFor="is_telemetry_enabled">
-                Allow Plane to anonymously collect usage events.{" "}
+                Allow Workspaces to anonymously collect usage events.{" "}
                 <a
                   href="https://developers.plane.so/self-hosting/telemetry"
                   target="_blank"

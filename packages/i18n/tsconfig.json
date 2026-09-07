@@ -1,5 +1,5 @@
 {
-  "extends": "@plane/typescript-config/react-library.json",
+  "extends": "@workspaces/typescript-config/react-library.json",
   "compilerOptions": {
     "noUncheckedIndexedAccess": false,
     "resolveJsonModule": true

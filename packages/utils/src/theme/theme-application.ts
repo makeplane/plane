@@ -6,7 +6,7 @@
 
 /**
  * Theme Application Utilities
- * Applies generated palettes to CSS variables for Plane's theme system
+ * Applies generated palettes to CSS variables for the Workspaces theme system
  */
 
 import { hexToOKLCH, oklchToCSS, getRelativeLuminance, getPerceptualBrightness } from "./color-conversion";

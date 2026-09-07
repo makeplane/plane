@@ -5,16 +5,16 @@
  */
 
 import { forwardRef } from "react";
-// plane imports
-import { RichTextEditorWithRef } from "@plane/editor";
-import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
-import type { MakeOptional } from "@plane/types";
+// workspaces imports
+import { RichTextEditorWithRef } from "@workspaces/editor";
+import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@workspaces/editor";
+import type { MakeOptional } from "@workspaces/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
-// plane web imports
+// workspaces web imports
 import { useEditorFlagging } from "@/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";

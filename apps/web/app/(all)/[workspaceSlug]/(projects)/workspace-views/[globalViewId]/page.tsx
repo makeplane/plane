@@ -6,8 +6,8 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
+// workspaces imports
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@workspaces/constants";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { AllIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/all-issue-layout-root";

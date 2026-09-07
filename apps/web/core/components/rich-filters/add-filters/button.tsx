@@ -7,13 +7,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
-// plane imports
-import type { TButtonSize, TButtonVariant } from "@plane/propel/button";
-import { getButtonStyling } from "@plane/propel/button";
-import type { IFilterInstance } from "@plane/shared-state";
-import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
-import { LOGICAL_OPERATOR } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { TButtonSize, TButtonVariant } from "@workspaces/propel/button";
+import { getButtonStyling } from "@workspaces/propel/button";
+import type { IFilterInstance } from "@workspaces/shared-state";
+import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@workspaces/types";
+import { LOGICAL_OPERATOR } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 // local imports
 import { AddFilterDropdown } from "./dropdown";
 

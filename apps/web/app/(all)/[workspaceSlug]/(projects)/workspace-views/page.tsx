@@ -6,11 +6,11 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { SearchIcon } from "@workspaces/propel/icons";
 
 // components
 import { PageHead } from "@/components/core/page-title";

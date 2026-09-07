@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // helpers
-import { getValidKeysFromObject } from "@plane/utils";
+import { getValidKeysFromObject } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineRelationOptions } from "@/components/relations";

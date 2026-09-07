@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Clock, FileStack, MoreHorizontal, PanelLeft, MoveRight } from "lucide-react";
-import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
+import { IconButton, getIconButtonStyling } from "@workspaces/propel/icon-button";
 import {
   LinkIcon,
   NewTabIcon,
@@ -15,11 +15,11 @@ import {
   ChevronUpIcon,
   CheckCircleFilledIcon,
   CloseCircleFilledIcon,
-} from "@plane/propel/icons";
-import type { TNameDescriptionLoader } from "@plane/types";
+} from "@workspaces/propel/icons";
+import type { TNameDescriptionLoader } from "@workspaces/types";
 
-import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
-import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
+import { Header, CustomMenu, EHeaderVariant } from "@workspaces/ui";
+import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@workspaces/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks

@@ -6,9 +6,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { NETWORK_CHOICES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { NETWORK_CHOICES } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // local imports

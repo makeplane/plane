@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Loader } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 
 type Props = {
   className?: string;

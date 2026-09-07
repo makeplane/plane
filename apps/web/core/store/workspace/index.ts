@@ -13,7 +13,7 @@ import type {
   IWorkspace,
   IWorkspaceSidebarNavigation,
   IWorkspaceUserPropertiesResponse,
-} from "@plane/types";
+} from "@workspaces/types";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // store

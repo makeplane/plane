@@ -7,7 +7,7 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import type { EIssueFilterType } from "@plane/constants";
+import type { EIssueFilterType } from "@workspaces/constants";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -15,7 +15,7 @@ import type {
   ISubWorkItemFilters,
   TGroupedIssues,
   TIssue,
-} from "@plane/types";
+} from "@workspaces/types";
 import { getFilteredWorkItems, getGroupedWorkItemIds, updateSubWorkItemFilters } from "../helpers/base-issues-utils";
 import type { IssueSubIssuesStore } from "./sub_issues.store";
 

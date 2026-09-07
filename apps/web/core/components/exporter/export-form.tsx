@@ -14,14 +14,14 @@ import {
   EUserPermissionsLevel,
   EXPORTERS_LIST,
   // ISSUE_DISPLAY_FILTERS_BY_PAGE,
-} from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+} from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 // import { Tooltip } from "@makeplane/propel/components/tooltip";
-// import { EIssuesStoreType } from "@plane/types";
-import type { TWorkItemFilterExpression } from "@plane/types";
-import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+// import { EIssuesStoreType } from "@workspaces/types";
+import type { TWorkItemFilterExpression } from "@workspaces/types";
+import { CustomSearchSelect, CustomSelect } from "@workspaces/ui";
 // import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useProject } from "@/hooks/store/use-project";

@@ -20,7 +20,7 @@ describe("remove-directives", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -43,7 +43,7 @@ describe("remove-directives", () => {
         return db.query("SELECT * FROM users");
       };
       `,
-      { parser: "ts" },
+      { parser: "ts" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -66,7 +66,7 @@ describe("remove-directives", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -79,9 +79,9 @@ describe("remove-directives", () => {
   });
 
   it("should remove multiple directives", async () => {
-      const result = await applyTransform(
-        transformer,
-        `
+    const result = await applyTransform(
+      transformer,
+      `
         "use client";
         "use strict";
         import React from "react";
@@ -90,10 +90,10 @@ describe("remove-directives", () => {
           return <div>Hello, world!</div>;
         };
         `,
-        { parser: "tsx" },
-      );
+      { parser: "tsx" }
+    );
 
-      expect(result).toMatchInlineSnapshot(`
+    expect(result).toMatchInlineSnapshot(`
         ""use strict";;
                 import React from "react";
 
@@ -101,7 +101,7 @@ describe("remove-directives", () => {
                   return <div>Hello, world!</div>;
                 };"
       `);
-    });
+  });
 
   it("should ignore directives inside functions", async () => {
     const result = await applyTransform(
@@ -114,7 +114,7 @@ describe("remove-directives", () => {
         return <div>Hello, world!</div>;
       };
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -126,9 +126,9 @@ describe("remove-directives", () => {
             };"
     `);
   });
-  
+
   it("should preserve comments", async () => {
-     const result = await applyTransform(
+    const result = await applyTransform(
       transformer,
       `
       // comment before
@@ -137,9 +137,9 @@ describe("remove-directives", () => {
       import React from "react";
       `,
       { parser: "tsx" }
-     );
-     
-     expect(result).toMatchInlineSnapshot(`
+    );
+
+    expect(result).toMatchInlineSnapshot(`
        "// comment before
              // comment after
              import React from "react";"
@@ -153,7 +153,7 @@ describe("remove-directives", () => {
       "use-client";
       import type { FC } from "react";
       // types
-      import type { TDeDupeIssue } from "@plane/types";
+      import type { TDeDupeIssue } from "@workspaces/types";
 
       type TDuplicateModalRootProps = {
         workspaceSlug: string;
@@ -166,13 +166,13 @@ describe("remove-directives", () => {
         return <></>;
       }
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
       "import type { FC } from "react";
             // types
-            import type { TDeDupeIssue } from "@plane/types";
+            import type { TDeDupeIssue } from "@workspaces/types";
 
             type TDuplicateModalRootProps = {
               workspaceSlug: string;
@@ -194,21 +194,21 @@ describe("remove-directives", () => {
       'use-client';
       import type { FC } from "react";
       import { useState } from "react";
-      // plane imports
-      import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+      // workspaces imports
+      import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 
       export function MyComponent() {
         return <div>Hello</div>;
       }
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
       "import type { FC } from "react";
             import { useState } from "react";
-            // plane imports
-            import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+            // workspaces imports
+            import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
 
             export function MyComponent() {
               return <div>Hello</div>;
@@ -227,7 +227,7 @@ describe("remove-directives", () => {
         return db.query("SELECT * FROM users");
       };
       `,
-      { parser: "ts" },
+      { parser: "ts" }
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -247,8 +247,8 @@ describe("remove-directives", () => {
 
       import type { FC } from "react";
       import { useState } from "react";
-      // plane imports
-      import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+      // workspaces imports
+      import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
       // hooks
       import useKeypress from "@/hooks/use-keypress";
       // local imports
@@ -266,14 +266,14 @@ describe("remove-directives", () => {
         return <></>;
       }
       `,
-      { parser: "tsx" },
+      { parser: "tsx" }
     );
 
     expect(result).toMatchInlineSnapshot(`
       "import type { FC } from "react";
             import { useState } from "react";
-            // plane imports
-            import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+            // workspaces imports
+            import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
             // hooks
             import useKeypress from "@/hooks/use-keypress";
             // local imports
@@ -293,4 +293,3 @@ describe("remove-directives", () => {
     `);
   });
 });
-

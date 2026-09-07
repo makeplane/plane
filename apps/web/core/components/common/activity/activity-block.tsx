@@ -8,10 +8,10 @@ import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TWorkspaceBaseActivity } from "@plane/types";
+import type { TWorkspaceBaseActivity } from "@workspaces/types";
 // ui
 // helpers
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@workspaces/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components

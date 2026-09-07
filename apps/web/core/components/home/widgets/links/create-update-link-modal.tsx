@@ -7,14 +7,14 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// plane types
-// plane ui
+// workspaces types
+// workspaces ui
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import type { TLinkEditableFields } from "@plane/types";
-import { ModalCore } from "@plane/ui";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import type { TLinkEditableFields } from "@workspaces/types";
+import { ModalCore } from "@workspaces/ui";
 import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;

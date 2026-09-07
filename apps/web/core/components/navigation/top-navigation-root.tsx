@@ -7,7 +7,7 @@
 // components
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 import { AttendanceCheckInButton } from "@/components/attendance";
 import { TopNavPowerK } from "@/components/navigation";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
@@ -16,7 +16,7 @@ import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
-import { InboxIcon } from "@plane/propel/icons";
+import { InboxIcon } from "@workspaces/propel/icons";
 import useSWR from "swr";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports

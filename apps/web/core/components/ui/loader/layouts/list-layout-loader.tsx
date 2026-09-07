@@ -6,10 +6,10 @@
 
 import { Fragment, forwardRef } from "react";
 import { range } from "lodash-es";
-// plane ui
-import { Row } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces ui
+import { Row } from "@workspaces/ui";
+// workspaces utils
+import { cn } from "@workspaces/utils";
 import { getRandomInt, getRandomLength } from "../utils";
 
 export const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(

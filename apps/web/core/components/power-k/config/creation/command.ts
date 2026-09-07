@@ -5,11 +5,11 @@
  */
 
 import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@workspaces/propel/icons";
 // components
-import { EUserProjectRoles } from "@plane/types";
+import { EUserProjectRoles } from "@workspaces/types";
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";

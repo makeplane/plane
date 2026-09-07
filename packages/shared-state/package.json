@@ -1,5 +1,5 @@
 {
-  "name": "@plane/shared-state",
+  "name": "@workspaces/shared-state",
   "version": "1.4.2",
   "private": true,
   "description": "Shared state shared across multiple apps internally",
@@ -23,9 +23,9 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/constants": "workspace:*",
-    "@plane/types": "workspace:*",
-    "@plane/utils": "workspace:*",
+    "@workspaces/constants": "workspace:*",
+    "@workspaces/types": "workspace:*",
+    "@workspaces/utils": "workspace:*",
     "lodash-es": "catalog:",
     "mobx": "catalog:",
     "mobx-utils": "catalog:",
@@ -33,9 +33,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@plane/typescript-config": "workspace:*",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
+    "@workspaces/typescript-config": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

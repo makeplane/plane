@@ -1,4 +1,4 @@
-# HGN Plane+ Engineering Operations Extension
+# Workspaces - Engineering Operations Extension
 
 Version: 2.0
 
@@ -6,19 +6,19 @@ Version: 2.0
 
 # Vision
 
-Transform Plane into a complete Engineering Operations platform without changing its core philosophy.
+Transform Workspaces into a complete Engineering Operations platform without changing its core philosophy.
 
-Plane should continue to be the single source of truth for engineering work, while this extension provides operational capabilities that engineering teams need every day.
+Workspaces should continue to be the single source of truth for engineering work, while this extension provides operational capabilities that engineering teams need every day.
 
-The goal is **not to build another application inside Plane**, but to extend Plane so developers, QA, project managers, DevOps, and operations teams rarely need to leave it.
+The goal is **not to build another application inside Workspaces**, but to extend Workspaces so developers, QA, project managers, DevOps, and operations teams rarely need to leave it.
 
 ---
 
 # Core Principles
 
-## 1. Do not duplicate Plane
+## 1. Do not duplicate Workspaces
 
-Reuse existing Plane concepts whenever possible.
+Reuse existing Workspaces concepts whenever possible.
 
 - Projects
 - Cycles
@@ -34,7 +34,7 @@ Build around them instead of replacing them.
 
 ## 2. Operations, not Project Management
 
-Plane already manages projects.
+Workspaces already manages projects.
 
 This extension manages everything around project execution.
 
@@ -55,7 +55,7 @@ Examples:
 
 Developers should no longer need to switch between
 
-- Plane
+- Workspaces
 - Odoo
 - Discord
 - WhatsApp
@@ -69,7 +69,7 @@ Everything should exist inside one workspace.
 # Overall Architecture
 
 ```
-Plane
+Workspaces
 
 ├── Projects
 ├── Cycles
@@ -435,7 +435,7 @@ Integrate directly with Odoo.
 
 Odoo remains the source of truth.
 
-Plane becomes the interface.
+Workspaces becomes the interface.
 
 Capabilities
 
@@ -474,7 +474,7 @@ Authentication
 
 Synchronization
 
-Plane
+Workspaces
 
 ↓
 
@@ -488,7 +488,7 @@ Employee
 
 Holiday
 
-Plane should never write directly to Odoo's database.
+Workspaces should never write directly to Odoo's database.
 
 Always communicate through APIs.
 
@@ -511,7 +511,7 @@ Fields
 - Tomorrow's Plan
 - Time Spent
 
-Automatically link Plane Issues.
+Automatically link Workspaces Issues.
 
 Purpose
 
@@ -546,7 +546,7 @@ Approved
 
 ↓
 
-Convert to Plane Issue
+Convert to Workspaces Issue
 
 ↓
 
@@ -555,7 +555,7 @@ Closed
 
 Conversion should automatically
 
-- Create Plane Issue
+- Create Workspaces Issue
 - Copy Description
 - Copy Attachments
 - Copy Priority
@@ -712,7 +712,7 @@ Metrics
 
 # Records Module
 
-Not everything belongs as a Plane Issue.
+Not everything belongs as a Workspaces Issue.
 
 Support structured records.
 
@@ -842,7 +842,7 @@ Daily Work Logs
 Operations Tickets
 
 - Ticket Lifecycle
-- Conversion to Plane Issues
+- Conversion to Workspaces Issues
 - Audit Trail
 
 ---
@@ -885,10 +885,10 @@ Reports
 
 The extension is successful if:
 
-- Developers rarely leave Plane during daily work.
+- Developers rarely leave Workspaces during daily work.
 - Project Managers can understand team health from a single dashboard.
 - Attendance is managed without opening Odoo.
 - Feature requests become traceable from request to deployment.
 - Daily work outside issue tracking is captured.
 - Engineering metrics are generated automatically from existing data.
-- Plane remains the primary engineering platform, with operational capabilities layered on top rather than replacing its core workflows.
+- Workspaces remains the primary engineering platform, with operational capabilities layered on top rather than replacing its core workflows.

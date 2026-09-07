@@ -7,16 +7,16 @@
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle, Clock, MoreVertical } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-// plane imports
-import { ArchiveIcon, CheckIcon } from "@plane/propel/icons";
-import type { TNotificationFilter } from "@plane/types";
-import { PopoverMenu } from "@plane/ui";
+import { useTranslation } from "@workspaces/i18n";
+// workspaces imports
+import { ArchiveIcon, CheckIcon } from "@workspaces/propel/icons";
+import type { TNotificationFilter } from "@workspaces/types";
+import { PopoverMenu } from "@workspaces/ui";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
 import { NotificationMenuOptionItem } from "./menu-item";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@workspaces/propel/icon-button";
 
 export type TPopoverMenuOptions = {
   key: string;

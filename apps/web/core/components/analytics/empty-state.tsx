@@ -5,8 +5,8 @@
  */
 
 import { useTheme } from "next-themes";
-// plane package imports
-import { cn } from "@plane/utils";
+// workspaces package imports
+import { cn } from "@workspaces/utils";
 // assets
 import darkBackgroundAsset from "@/app/assets/empty-state/analytics/empty-grid-background-dark.webp?url";
 import lightBackgroundAsset from "@/app/assets/empty-state/analytics/empty-grid-background-light.webp?url";

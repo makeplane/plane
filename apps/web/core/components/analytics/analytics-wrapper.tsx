@@ -5,9 +5,9 @@
  */
 
 import React from "react";
-// plane package imports
-import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
+// workspaces package imports
+import { useTranslation } from "@workspaces/i18n";
+import { cn } from "@workspaces/utils";
 
 type Props = {
   i18nTitle: string;

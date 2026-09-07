@@ -7,15 +7,15 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
-// plane imports
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { LinkIcon, GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
-import type { TIssueComment, TCommentsOperations } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { EIssueCommentAccessSpecifier } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { IconButton } from "@workspaces/propel/icon-button";
+import { LinkIcon, GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@workspaces/propel/icons";
+import type { TIssueComment, TCommentsOperations } from "@workspaces/types";
+import type { TContextMenuItem } from "@workspaces/ui";
+import { CustomMenu } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";
 

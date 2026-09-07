@@ -6,11 +6,11 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
-import { Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { StateGroupIcon } from "@workspaces/propel/icons";
+import { Loader } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 

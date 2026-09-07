@@ -7,10 +7,10 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { LinkIcon } from "@plane/propel/icons";
-import { CustomMenu } from "@plane/ui";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { LinkIcon } from "@workspaces/propel/icons";
+import { CustomMenu } from "@workspaces/ui";
 
 type Props = {
   workspaceSlug: string;

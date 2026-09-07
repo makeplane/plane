@@ -6,7 +6,7 @@
 
 // local imports
 import { EditorUserMention } from "./user";
-import type { TCallbackMentionComponentProps } from "@plane/editor";
+import type { TCallbackMentionComponentProps } from "@workspaces/editor";
 
 export function EditorMentionsRoot(props: TCallbackMentionComponentProps) {
   const { entity_identifier, entity_name } = props;

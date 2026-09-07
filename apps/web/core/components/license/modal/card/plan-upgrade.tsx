@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { TALK_TO_SALES_URL } from "@plane/constants";
-import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { calculateYearlyDiscount, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
+// workspaces imports
+import { TALK_TO_SALES_URL } from "@workspaces/constants";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@workspaces/types";
+import { calculateYearlyDiscount, getSubscriptionName, getSubscriptionPriceDetails } from "@workspaces/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
 // local components

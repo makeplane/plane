@@ -5,7 +5,7 @@
  */
 
 import type { Connection, Extension, Hocuspocus, onConfigurePayload } from "@hocuspocus/server";
-import { logger } from "@plane/logger";
+import { logger } from "@workspaces/logger";
 import { Redis } from "@/extensions/redis";
 import { AdminCommand, CloseCode, getForceCloseMessage, isForceCloseCommand } from "@/types/admin-commands";
 import type { ForceCloseReason, ClientForceCloseMessage, ForceCloseCommandData } from "@/types/admin-commands";

@@ -6,10 +6,10 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-// plane imports
-import type { TIssue, TIssueServiceType } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
-import type { TIssueRelationTypes } from "@plane/types";
+// workspaces imports
+import type { TIssue, TIssueServiceType } from "@workspaces/types";
+import { EIssueServiceType } from "@workspaces/types";
+import type { TIssueRelationTypes } from "@workspaces/types";
 // local imports
 import { RelationIssueListItem } from "./issue-list-item";
 

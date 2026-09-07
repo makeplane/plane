@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { RANDOM_EMOJI_CODES } from "@plane/constants";
+// workspaces imports
+import { RANDOM_EMOJI_CODES } from "@workspaces/constants";
 
 /**
  * Converts a hyphen-separated hexadecimal emoji code to its decimal representation

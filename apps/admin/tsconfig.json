@@ -1,5 +1,5 @@
 {
-  "extends": "@plane/typescript-config/react-router.json",
+  "extends": "@workspaces/typescript-config/react-router.json",
   "compilerOptions": {
     "noImplicitOverride": false,
     "exactOptionalPropertyTypes": false,

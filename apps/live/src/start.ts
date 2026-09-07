@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { logger } from "@plane/logger";
+import { logger } from "@workspaces/logger";
 import { AppError } from "@/lib/errors";
 import { Server } from "./server";
 

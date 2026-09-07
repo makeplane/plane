@@ -5,7 +5,7 @@
  */
 
 import { createContext } from "react";
-// plane admin store
+// workspaces admin store
 import { RootStore } from "../store/root.store";
 
 export const rootStore = new RootStore();

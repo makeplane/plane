@@ -9,7 +9,7 @@ import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@workspaces/constants";
 // components
 import { FiltersDropdown } from "@/components/issues/filters/helpers/dropdown";
 import { FilterSelection } from "@/components/issues/filters/selection";

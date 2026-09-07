@@ -6,17 +6,17 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import type { TDisplayConfig } from "@plane/editor";
-import type { JSONContent, TPageVersion } from "@plane/types";
-import { Loader } from "@plane/ui";
-import { isJSONContentEmpty } from "@plane/utils";
+// workspaces imports
+import type { TDisplayConfig } from "@workspaces/editor";
+import type { JSONContent, TPageVersion } from "@workspaces/types";
+import { Loader } from "@workspaces/ui";
+import { isJSONContentEmpty } from "@workspaces/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web hooks
+// workspaces web hooks
 import type { EPageStoreType } from "@/hooks/store";
 
 export type TVersionEditorProps = {

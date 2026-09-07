@@ -5,8 +5,8 @@
  */
 
 import React from "react";
-// plane imports
-import { CheckIcon } from "@plane/propel/icons";
+// workspaces imports
+import { CheckIcon } from "@workspaces/propel/icons";
 
 type Props = {
   icon?: React.ReactNode;

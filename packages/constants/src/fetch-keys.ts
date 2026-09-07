@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { EUserPermissions, IJiraMetadata } from "@plane/types";
+import type { EUserPermissions, IJiraMetadata } from "@workspaces/types";
 
 const paramsToKey = (params: any) => {
   const {

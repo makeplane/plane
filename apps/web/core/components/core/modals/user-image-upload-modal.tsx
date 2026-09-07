@@ -7,14 +7,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-// plane imports
-import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { UserCirclePropertyIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EFileAssetType } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
+// workspaces imports
+import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@workspaces/constants";
+import { Button } from "@workspaces/propel/button";
+import { UserCirclePropertyIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import { EFileAssetType } from "@workspaces/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@workspaces/ui";
+import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@workspaces/utils";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -69,7 +69,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
         title: "Error!",
         message: error?.toString() ?? "Something went wrong. Please try again.",
       });
-      throw new Error("Error in uploading file.");
+      throw new Error("Error in uploading file.", { cause: error });
     } finally {
       setIsImageUploading(false);
     }

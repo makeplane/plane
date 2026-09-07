@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { IFavorite } from "@plane/types";
+// workspaces imports
+import type { IFavorite } from "@workspaces/types";
 // components
 import { FavoriteItemIcon } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 

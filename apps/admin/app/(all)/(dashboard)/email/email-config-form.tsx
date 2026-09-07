@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 // types
 import { Button } from "@makeplane/propel/components/button";
 import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
-import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
+import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@workspaces/types";
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";

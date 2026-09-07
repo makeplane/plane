@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes } from "@workspaces/types";
 import { WorkspaceSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadsheet/roots/workspace-root";
 
 export type TWorkspaceLayoutProps = {

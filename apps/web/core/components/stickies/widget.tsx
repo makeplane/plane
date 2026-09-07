@@ -7,9 +7,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { PlusIcon } from "@workspaces/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // local imports

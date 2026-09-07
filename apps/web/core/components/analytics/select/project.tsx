@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-// plane package imports
-import { getButtonStyling } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon, ProjectIcon } from "@plane/propel/icons";
-import { CustomSearchSelect } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces package imports
+import { getButtonStyling } from "@workspaces/propel/button";
+import { Logo } from "@workspaces/propel/emoji-icon-picker";
+import { ChevronDownIcon, ProjectIcon } from "@workspaces/propel/icons";
+import { CustomSearchSelect } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 

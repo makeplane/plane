@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { PROFILE_SETTINGS_TABS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import type { TProfileSettingsTabs } from "@plane/types";
+// workspaces imports
+import { PROFILE_SETTINGS_TABS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import type { TProfileSettingsTabs } from "@workspaces/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";

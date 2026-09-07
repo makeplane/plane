@@ -5,10 +5,10 @@
  */
 
 import { useState } from "react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { IWorkspaceMember, TProjectMembership } from "@plane/types";
-import { renderFormattedDate } from "@plane/utils";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import type { IWorkspaceMember, TProjectMembership } from "@workspaces/types";
+import { renderFormattedDate } from "@workspaces/utils";
 // components
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";

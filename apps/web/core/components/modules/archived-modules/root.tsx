@@ -8,12 +8,12 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import type { TModuleFilters } from "@plane/types";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { EmptyStateDetailed } from "@workspaces/propel/empty-state";
+import type { TModuleFilters } from "@workspaces/types";
 // components
-import { calculateTotalFilters } from "@plane/utils";
+import { calculateTotalFilters } from "@workspaces/utils";
 import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modules";
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // helpers
@@ -24,7 +24,7 @@ import { useModuleFilter } from "@/hooks/store/use-module-filter";
 export const ArchivedModuleLayoutRoot = observer(function ArchivedModuleLayoutRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // hooks
   const { fetchArchivedModules, projectArchivedModuleIds, loader } = useModule();

@@ -10,14 +10,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Eye, EyeOff, RefreshCw } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { CopyIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { CopyIcon } from "@workspaces/propel/icons";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IWebhook } from "@plane/types";
+import type { IWebhook } from "@workspaces/types";
 // ui
-import { csvDownload, copyTextToClipboard } from "@plane/utils";
+import { csvDownload, copyTextToClipboard } from "@workspaces/utils";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";

@@ -5,10 +5,10 @@
  */
 
 import { useState, useEffect } from "react";
-// plane imports
-// import { useTranslation } from "@plane/i18n";
-import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
-// import { generateWorkItemLink } from "@plane/utils";
+// workspaces imports
+// import { useTranslation } from "@workspaces/i18n";
+import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@workspaces/types";
+// import { generateWorkItemLink } from "@workspaces/utils";
 // components
 // import { CommandPaletteEntityList } from "@/components/command-palette";
 // import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
@@ -16,7 +16,7 @@ import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from
 // import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // import { usePowerK } from "@/hooks/store/use-power-k";
 // import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// workspaces web imports
 // import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { WorkspaceService } from "@/services/workspace.service";
 
@@ -37,7 +37,7 @@ export function WorkItemSelectionPage(props: Props) {
   const { workspaceSlug, projectId, debouncedSearchTerm, isWorkspaceLevel = false } = props;
   // router
   // const router = useAppRouter();
-  // plane hooks
+  // workspaces hooks
   // const { t } = useTranslation();
   // store hooks
   // const { togglePowerKModal } = usePowerK();

@@ -6,7 +6,7 @@
 
 import React from "react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@workspaces/propel/button";
 // assets
 import EmptyWebhook from "@/app/assets/empty-state/web-hook.svg?url";
 

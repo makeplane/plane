@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { SingleOrArray, TFilterValue } from "@plane/types";
+import type { SingleOrArray, TFilterValue } from "@workspaces/types";
 
 /**
  * Converts any value to a non-null array for UI components that expect arrays

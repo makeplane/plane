@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
-import type { IUser, TUserProfile } from "@plane/types";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
+import type { IUser, TUserProfile } from "@workspaces/types";
 // api service
 import { APIService } from "../api.service";
 

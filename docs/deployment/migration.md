@@ -1,7 +1,11 @@
 # Migrating to the restructured deployment
 
-Two migrations live here:
+Three migrations live here:
 
+- [**From the pre-rename deployment**](#from-the-pre-rename-deployment) — the stack is already
+  this fork, but under the old names: `plane-db`/`plane-redis`/`plane-mq`/`plane-minio` services,
+  a `plane` database owned by a `plane` role, and `deployments/virex/`. **Read this first if you
+  are pulling the rename commit onto a running server.**
 - [**From the previous layout of this repository**](#from-the-previous-layout) — you already run
   this fork with `docker compose -f docker-compose.yml -f deployments/hgn/docker-compose.prod.yml`.
 - [**From a stock Plane install**](#from-a-stock-plane-install) — the box runs upstream Plane from
@@ -9,6 +13,153 @@ Two migrations live here:
 
 Then: [what changed and why](#what-changed), and
 [how to merge upstream afterwards](#merging-upstream-after-this-change).
+
+---
+
+## From the pre-rename deployment
+
+The rename touches four things the running stack cares about: the **compose service names**, the
+**Postgres role and database**, the **RabbitMQ vhost**, and the **compose project name** that
+prefixes every volume. Nothing about the data changes — but the names the containers look for do,
+so this has to be done in one sitting rather than discovered at `up` time.
+
+Budget 15 minutes plus a rebuild. Do it with the stack down.
+
+### 1. Back up, then stop
+
+```bash
+cd /opt/workspaces
+deployments/workspaces/backup.sh ~/pre-rename        # or your usual backup path
+docker compose down                                  # NOT down -v
+```
+
+### 2. Check the volume prefix before anything else
+
+`COMPOSE_PROJECT_NAME` is what prefixes the volumes, and the template now pins it to
+`workspaces`. Look at what is actually on disk:
+
+```bash
+docker volume ls --format '{{.Name}}' | grep -E 'pgdata|uploads'
+```
+
+- **`workspaces_pgdata`** — nothing to do. The template's value already matches. (This is the
+  common case: the prefix came from the `/opt/workspaces` checkout directory.)
+- **`virex_pgdata`** — either keep `COMPOSE_PROJECT_NAME=virex` in `.env` (simplest, and the
+  service names still rename cleanly), or move the data to the new prefix:
+
+  ```bash
+  for v in pgdata uploads redisdata rabbitmq_data proxy_data proxy_config; do
+    docker volume create "workspaces_$v"
+    docker run --rm -v "virex_$v":/from -v "workspaces_$v":/to \
+      alpine:3.20 sh -c 'cd /from && cp -a . /to'
+  done
+  ```
+
+  Only remove the old volumes once the stack is up and verified.
+
+### 3. Rename the Postgres role and database
+
+The compose defaults are now `workspaces`/`workspaces`; the volume still holds `plane`/`plane`.
+Both renames are metadata-only — no dump, no restore, no downtime beyond the stack being down.
+
+Bring up just the database on its **old** credentials, then rename:
+
+```bash
+POSTGRES_USER=plane POSTGRES_DB=plane docker compose up -d workspaces-db
+sleep 5
+
+docker compose exec -T workspaces-db psql -U plane -d postgres <<'SQL'
+ALTER DATABASE plane RENAME TO workspaces;
+ALTER ROLE plane RENAME TO workspaces;
+SQL
+```
+
+> [!IMPORTANT]
+> `ALTER ROLE … RENAME TO` **clears the password if it was stored as MD5** (Postgres includes the
+> role name in an MD5 hash). It prints `NOTICE: MD5 password cleared because of role rename` when
+> it does. Set it again immediately, to the same `POSTGRES_PASSWORD` already in `.env`, so nothing
+> else has to change:
+>
+> ```bash
+> docker compose exec -T workspaces-db \
+>   psql -U workspaces -d postgres -c "ALTER ROLE workspaces WITH PASSWORD 'THE_EXISTING_POSTGRES_PASSWORD';"
+> ```
+
+Then stop it again: `docker compose down`.
+
+If you would rather not rename the database at all, that is supported — keep `POSTGRES_USER=plane`
+and `POSTGRES_DB=plane` in `.env` and skip this step. The service is still called `workspaces-db`;
+only the credentials inside the volume stay as they were.
+
+### 4. The RabbitMQ vhost
+
+`RABBITMQ_DEFAULT_VHOST` only creates the vhost on a **first** boot, so pointing the broker at a
+`workspaces` vhost that does not exist makes every Celery connection fail. Celery queues hold
+nothing that needs preserving, so the simplest fix is to discard the broker volume:
+
+```bash
+docker volume rm ${COMPOSE_PROJECT_NAME:-workspaces}_rabbitmq_data
+```
+
+Or, to keep it, create the vhost by hand instead:
+
+```bash
+docker compose up -d workspaces-mq && sleep 20
+docker compose exec workspaces-mq rabbitmqctl add_vhost workspaces
+docker compose exec workspaces-mq rabbitmqctl set_permissions -p workspaces workspaces '.*' '.*' '.*'
+```
+
+As with the database, keeping `RABBITMQ_VHOST=plane` in `.env` is also a valid answer.
+
+### 5. Update `.env`
+
+`COMPOSE_FILE` is the one line that is broken outright — `deployments/virex/` no longer exists.
+
+| Variable                                                                       | Old                               | New                                    |
+| ------------------------------------------------------------------------------ | --------------------------------- | -------------------------------------- |
+| `COMPOSE_FILE`                                                                 | `…:deployments/virex/compose.yml` | `…:deployments/workspaces/compose.yml` |
+| `COMPOSE_PROJECT_NAME`                                                         | `virex`                           | `workspaces` (see step 2)              |
+| `APP_DOMAIN`                                                                   | `virex.hgsoftware.com.np`         | `workspaces.hgsoftware.com.np`         |
+| `WEB_URL`, `APP_BASE_URL`, `ADMIN_BASE_URL`, `SPACE_BASE_URL`, `LIVE_BASE_URL` | `https://virex.…`                 | `https://workspaces.…`                 |
+| `CORS_ALLOWED_ORIGINS`                                                         | `https://virex.…`                 | `https://workspaces.…`                 |
+| `POSTGRES_USER`, `POSTGRES_DB`                                                 | `plane`                           | `workspaces` (only if you did step 3)  |
+| `RABBITMQ_USER`, `RABBITMQ_VHOST`                                              | `plane`                           | `workspaces` (only if you did step 4)  |
+
+Leave every secret exactly as it is. `SECRET_KEY` in particular still decrypts the instance
+configuration rows.
+
+### 6. Host nginx and DNS
+
+`deployments/workspaces/nginx.conf` now carries `workspaces.hgsoftware.com.np` and the
+`$workspaces_connection_upgrade` map. Point DNS at the box, issue the certificate, install the
+file, reload:
+
+```bash
+dig +short workspaces.hgsoftware.com.np
+sudo certbot --nginx -d workspaces.hgsoftware.com.np
+sudo cp deployments/workspaces/nginx.conf /etc/nginx/sites-available/workspaces.conf
+sudo ln -sf /etc/nginx/sites-available/workspaces.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Keep the old server block serving a redirect for as long as anyone still has the old URL.
+
+### 7. Bring it up and verify
+
+```bash
+docker compose up -d --build
+deployments/workspaces/verify.sh https://workspaces.hgsoftware.com.np
+```
+
+### 8. Re-point anything outside the stack
+
+- **Outgoing webhooks** now send `X-Workspaces-Delivery`, `X-Workspaces-Event` and
+  `X-Workspaces-Signature` instead of the `X-Plane-*` names. Any receiver that reads those headers
+  — signature verification especially — must be updated, or it will silently reject every
+  delivery. Check `Settings → Webhooks` for configured endpoints before you cut over.
+- **Bookmarks, integrations and OAuth redirect URIs** that hard-code the old host.
+- Application log files are now `workspaces-error.log` / `workspaces-debug.log`; update any log
+  shipper that globs on the old names.
 
 ---
 
@@ -31,25 +182,26 @@ docker run --rm -v <old-prefix>_uploads:/data -v ~:/backup \
 
 ### 2. Record the project name, before anything else
 
-**This is the step that loses data if skipped, and this release changes the value.** The volume
-prefix is the compose project name. It previously came from the checkout directory; the new
-template pins it to `virex`. If your volumes are named `workspaces_pgdata` and you start with the
-template unedited, Compose looks for `virex_pgdata`, finds nothing, creates it empty, and the
-stack comes up as a brand-new install with every project and user apparently gone. The data is
-still there, under the old prefix, but nothing is reading it.
+**This is the step that loses data if skipped.** The volume prefix is the compose project name. It
+used to come from the checkout directory; the template now pins it to `workspaces`. On a box whose
+checkout already lived in `/opt/workspaces` the prefix was _already_ `workspaces`, so the pinned
+value matches and nothing moves — but do not assume it. If the prefix on disk is anything else and
+you start with the template unedited, Compose looks for `workspaces_pgdata`, finds nothing, creates
+it empty, and the stack comes up as a brand-new install with every project and user apparently
+gone. The data is still there, under the old prefix, but nothing is reading it.
 
 So look first:
 
 ```bash
 docker volume ls --format '{{.Name}}' | grep -E 'pgdata|uploads'
 # workspaces_pgdata
-# workspaces_uploads      ← the prefix is "workspaces", not "virex"
+# workspaces_uploads      ← prefix is "workspaces": matches the template, nothing to do
 ```
 
 Whatever that prefix is, `COMPOSE_PROJECT_NAME` in the new `.env` must equal it. Set it before the
 first `up`, not after. Renaming volumes afterwards is possible but means a dump and restore.
 
-Only a genuinely fresh install should keep the template's `virex`.
+Only a genuinely fresh install should assume the template's `workspaces` without checking.
 
 ### 3. Keep the old secrets
 
@@ -77,7 +229,7 @@ git pull
 ### 5. Write the new `.env`
 
 ```bash
-deployments/virex/init-env.sh your.real.domain
+deployments/workspaces/init-env.sh your.real.domain
 ```
 
 Then carry the old values across, editing `.env`:
@@ -109,13 +261,13 @@ production stack does not look at it.
 
 ```bash
 docker compose up -d --build
-deployments/virex/verify.sh https://your.real.domain
+deployments/workspaces/verify.sh https://your.real.domain
 ```
 
 Note there are no `-f` flags: `COMPOSE_FILE` in `.env` supplies them.
 
 `verify.sh` should report 0 failures. If it reports that the proxy is not on loopback, or that
-`plane-db` holds unrelated secrets, `COMPOSE_FILE` is not being picked up — check you are in the
+`workspaces-db` holds unrelated secrets, `COMPOSE_FILE` is not being picked up — check you are in the
 repository root and that `.env` has all three files listed.
 
 ### 7. Update the host nginx
@@ -124,8 +276,8 @@ The vhost template was renamed and gained gzip and a hardened upgrade map. Your 
 still works, so this is optional, but the new one is what the guide describes:
 
 ```bash
-sudo cp deployments/virex/nginx.conf /etc/nginx/sites-available/virex.conf
-sudo ln -sf /etc/nginx/sites-available/virex.conf /etc/nginx/sites-enabled/
+sudo cp deployments/workspaces/nginx.conf /etc/nginx/sites-available/workspaces.conf
+sudo ln -sf /etc/nginx/sites-available/workspaces.conf /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/workspaces.conf   # the old symlink, if you had one
 sudo nginx -t && sudo systemctl reload nginx
 ```
@@ -162,8 +314,8 @@ you want this fork instead, keeping the data.
 ### 1. Survey what is there
 
 ```bash
-deployments/virex/inspect-existing.sh          # assumes /opt/plane
-OLD_DIR=/var/plane deployments/virex/inspect-existing.sh
+deployments/workspaces/inspect-existing.sh          # assumes /opt/plane
+OLD_DIR=/var/plane deployments/workspaces/inspect-existing.sh
 ```
 
 Read-only: it changes nothing. Three things in its output decide whether this is possible:
@@ -204,13 +356,13 @@ cannot collide.
 ### 5. Load the data, then start the rest
 
 ```bash
-docker compose up -d plane-db plane-minio
-gunzip -c ~/stock-plane.sql.gz | docker compose exec -T plane-db psql -U plane -d plane
+docker compose up -d workspaces-db workspaces-minio
+gunzip -c ~/stock-plane.sql.gz | docker compose exec -T workspaces-db psql -U workspaces -d workspaces
 docker run --rm -v ${COMPOSE_PROJECT_NAME}_uploads:/data -v ~:/backup \
   alpine:3.20 tar xzf /backup/stock-uploads.tar.gz -C /data
 
 docker compose up -d --build       # migrator brings the schema up to 0123
-deployments/virex/verify.sh https://your.real.domain
+deployments/workspaces/verify.sh https://your.real.domain
 ```
 
 ### 6. Apply the Engineering Operations workflow
@@ -240,7 +392,7 @@ images and the fork publishes none of its own, so none of these could deploy it.
 | `deployments/cli/community/restore-airgapped.sh`   | Restore for Plane's commercial air-gapped edition                                                                                                      | A product this fork does not ship, and broken as shipped: line 2 is `+set -euo pipefail`, and its quoted glob makes the loop iterate the literal string `*.tar.gz`                                                                                                                   |
 | `deployments/cli/community/migration-0.13-0.14.sh` | One-time v0.13.2 → v0.14 volume migration                                                                                                              | The fork is at 1.4.2                                                                                                                                                                                                                                                                 |
 
-Replacement for the two useful ones: `deployments/virex/backup.sh`, and the restore procedure in
+Replacement for the two useful ones: `deployments/workspaces/backup.sh`, and the restore procedure in
 [`DEPLOYMENT.md` §9](../../DEPLOYMENT.md#restoring-a-backup) — both keyed on
 `COMPOSE_PROJECT_NAME` rather than a hard-coded prefix.
 
@@ -259,9 +411,9 @@ one `git show` away.
 
 | File                                      | Replaced by                                                                                                                                                                                                                                                                                                 |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `deployments/hgn/` (the whole directory)  | `deployments/virex/` — the project is Virex, and the edge overlay is named for the site it serves rather than the organisation                                                                                                                                                                              |
-| `deployments/hgn/docker-compose.prod.yml` | `deployments/production/compose.yml` (how it runs safely) + `deployments/virex/compose.yml` (where traffic enters)                                                                                                                                                                                          |
-| `deployments/hgn/nginx-workspaces.conf`   | `deployments/virex/nginx.conf` — renamed, plus gzip, HSTS and a vhost-scoped upgrade map                                                                                                                                                                                                                    |
+| `deployments/hgn/` (the whole directory)  | `deployments/workspaces/` — the project is Workspaces, and the edge overlay is named for the site it serves rather than the organisation                                                                                                                                                                    |
+| `deployments/hgn/docker-compose.prod.yml` | `deployments/production/compose.yml` (how it runs safely) + `deployments/workspaces/compose.yml` (where traffic enters)                                                                                                                                                                                     |
+| `deployments/hgn/nginx-workspaces.conf`   | `deployments/workspaces/nginx.conf` — renamed, plus gzip, HSTS and a vhost-scoped upgrade map                                                                                                                                                                                                               |
 | `deployments/hgn/DEPLOYMENT.md`           | Folded into `DEPLOYMENT.md`. About half of it duplicated the root guide verbatim, its own preamble declared two sections out of date, it described the overlay as only a port change when it also carried the health checks, and it linked `../../deployment.md`, which 404s on a case-sensitive filesystem |
 | `Deployment.md`                           | `DEPLOYMENT.md` — a case rename, matching `README.md`, `CONTRIBUTING.md`, `AGENTS.md`. **On a case-insensitive checkout (macOS, Windows) this arrives as a rename git may not apply cleanly** — if `git pull` leaves both or neither, `git checkout -- DEPLOYMENT.md`                                       |
 
@@ -275,28 +427,28 @@ one `git show` away.
 
 ### Modified
 
-| File                                    | Change                                                                                                                                                                                                                                                                                                                                     | Why                                                                                                                                                                                            |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docker-compose.yml`                    | Rewritten: one anchor for the four Django roles instead of four copies; explicit environment for `live`, `proxy`, `plane-db`, `plane-mq`, `plane-minio`; all seven Caddy variables; fail-fast `${VAR:?}` on the six secrets; MinIO pinned to `RELEASE.2025-09-07T16-13-09Z`; `proxy_data`/`proxy_config` volumes; `container_name` dropped | The base file both duplicated blocks and starved three containers of their configuration. Detail in [architecture.md](architecture.md#rewriting-the-root-compose-file-rather-than-patching-it) |
-| `apps/proxy/Caddyfile.ce`               | Inline defaults on `FILE_SIZE_LIMIT`, `BUCKET_NAME` and `SITE_ADDRESS`; `caddy fmt`                                                                                                                                                                                                                                                        | Without the `SITE_ADDRESS` default the config is rejected outright — the outage that started this. `caddy fmt` silences a warning Caddy logs on every boot                                     |
-| `.env.example`                          | One line: `LIVE_SERVER_SECRET_KEY`                                                                                                                                                                                                                                                                                                         | The base compose file now requires it; the live server exits without it                                                                                                                        |
-| `apps/api/.env.example`                 | Comment text only                                                                                                                                                                                                                                                                                                                          | It asserted that Compose never expands `${…}` inside an `env_file`. That is false on Compose 2.24+. The advice it justified is still correct, for a different reason                           |
-| `deployments/virex/inspect-existing.sh` | Derives the fork's latest migration instead of hard-coding `0122`; header points at this guide                                                                                                                                                                                                                                             | It was stale by one migration on the day it was written, and no document told anyone when to run it                                                                                            |
+| File                                         | Change                                                                                                                                                                                                                                                                                                                                                    | Why                                                                                                                                                                                            |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docker-compose.yml`                         | Rewritten: one anchor for the four Django roles instead of four copies; explicit environment for `live`, `proxy`, `workspaces-db`, `workspaces-mq`, `workspaces-minio`; all seven Caddy variables; fail-fast `${VAR:?}` on the six secrets; MinIO pinned to `RELEASE.2025-09-07T16-13-09Z`; `proxy_data`/`proxy_config` volumes; `container_name` dropped | The base file both duplicated blocks and starved three containers of their configuration. Detail in [architecture.md](architecture.md#rewriting-the-root-compose-file-rather-than-patching-it) |
+| `apps/proxy/Caddyfile.ce`                    | Inline defaults on `FILE_SIZE_LIMIT`, `BUCKET_NAME` and `SITE_ADDRESS`; `caddy fmt`                                                                                                                                                                                                                                                                       | Without the `SITE_ADDRESS` default the config is rejected outright — the outage that started this. `caddy fmt` silences a warning Caddy logs on every boot                                     |
+| `.env.example`                               | One line: `LIVE_SERVER_SECRET_KEY`                                                                                                                                                                                                                                                                                                                        | The base compose file now requires it; the live server exits without it                                                                                                                        |
+| `apps/api/.env.example`                      | Comment text only                                                                                                                                                                                                                                                                                                                                         | It asserted that Compose never expands `${…}` inside an `env_file`. That is false on Compose 2.24+. The advice it justified is still correct, for a different reason                           |
+| `deployments/workspaces/inspect-existing.sh` | Derives the fork's latest migration instead of hard-coding `0122`; header points at this guide                                                                                                                                                                                                                                                            | It was stale by one migration on the day it was written, and no document told anyone when to run it                                                                                            |
 
 ### Added
 
-| File                                 | Purpose                                                                                                                  |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `deployments/production/compose.yml` | Health checks, start-up ordering, log rotation                                                                           |
-| `deployments/virex/compose.yml`      | Caddy on loopback, `TRUSTED_PROXIES=private_ranges`                                                                      |
-| `deployments/virex/.env.example`     | The production configuration template — the single source of truth                                                       |
-| `deployments/virex/init-env.sh`      | Generates `.env`: fills the domain, generates six secrets, `chmod 600`, checks the Compose version, validates the result |
-| `deployments/virex/verify.sh`        | The regression checklist, executable. 51 checks; exit code is the failure count                                          |
-| `deployments/virex/backup.sh`        | Postgres dump + uploads tar, checksummed and rotated                                                                     |
-| `deployments/virex/nginx.conf`       | Host nginx vhost, validated against nginx 1.24 and 1.28                                                                  |
-| `DEPLOYMENT.md`                      | The one deployment guide                                                                                                 |
-| `docs/deployment/architecture.md`    | Why the files look like this                                                                                             |
-| `docs/deployment/migration.md`       | This document                                                                                                            |
+| File                                  | Purpose                                                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `deployments/production/compose.yml`  | Health checks, start-up ordering, log rotation                                                                           |
+| `deployments/workspaces/compose.yml`  | Caddy on loopback, `TRUSTED_PROXIES=private_ranges`                                                                      |
+| `deployments/workspaces/.env.example` | The production configuration template — the single source of truth                                                       |
+| `deployments/workspaces/init-env.sh`  | Generates `.env`: fills the domain, generates six secrets, `chmod 600`, checks the Compose version, validates the result |
+| `deployments/workspaces/verify.sh`    | The regression checklist, executable. 51 checks; exit code is the failure count                                          |
+| `deployments/workspaces/backup.sh`    | Postgres dump + uploads tar, checksummed and rotated                                                                     |
+| `deployments/workspaces/nginx.conf`   | Host nginx vhost, validated against nginx 1.24 and 1.28                                                                  |
+| `DEPLOYMENT.md`                       | The one deployment guide                                                                                                 |
+| `docs/deployment/architecture.md`     | Why the files look like this                                                                                             |
+| `docs/deployment/migration.md`        | This document                                                                                                            |
 
 ---
 
@@ -337,7 +489,7 @@ docker compose -f docker-compose-local.yml config --quiet        # dev
 docker compose -f docker-compose-test.yml config --quiet         # test
 docker run --rm -v "$PWD/apps/proxy/Caddyfile.ce:/c:ro" caddy:2.11-alpine \
   caddy validate --config /c --adapter caddyfile                 # with no environment at all
-docker compose up -d --build && deployments/virex/verify.sh https://your.domain
+docker compose up -d --build && deployments/workspaces/verify.sh https://your.domain
 ```
 
 The Caddy check with an empty environment is the one that would have caught the original outage.

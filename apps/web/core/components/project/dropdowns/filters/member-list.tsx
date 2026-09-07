@@ -6,12 +6,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-// plane ui
-import { CustomMenu } from "@plane/ui";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { ChevronDownIcon } from "@workspaces/propel/icons";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@workspaces/types";
+// workspaces ui
+import { CustomMenu } from "@workspaces/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 

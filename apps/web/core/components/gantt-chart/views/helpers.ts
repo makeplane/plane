@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { ChartDataType, IGanttBlock } from "@plane/types";
-import { addDaysToDate, findTotalDaysInRange, getDate } from "@plane/utils";
+import type { ChartDataType, IGanttBlock } from "@workspaces/types";
+import { addDaysToDate, findTotalDaysInRange, getDate } from "@workspaces/utils";
 import { DEFAULT_BLOCK_WIDTH } from "../constants";
 
 /**

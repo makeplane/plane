@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@workspaces/propel/button";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 

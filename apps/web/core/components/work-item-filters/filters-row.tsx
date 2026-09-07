@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import type { TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+// workspaces imports
+import type { IWorkItemFilterInstance } from "@workspaces/shared-state";
+import type { TWorkItemFilterExpression, TWorkItemFilterProperty } from "@workspaces/types";
 // components
 import type { TFiltersRowProps } from "@/components/rich-filters/filters-row";
 import { FiltersRow } from "@/components/rich-filters/filters-row";

@@ -8,12 +8,12 @@ import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
-import type { TIssue } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { ARCHIVABLE_STATE_GROUPS } from "@workspaces/constants";
+import type { TIssue } from "@workspaces/types";
+import { EIssuesStoreType } from "@workspaces/types";
+import { ContextMenu, CustomMenu } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";

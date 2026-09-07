@@ -46,7 +46,7 @@ export const TICKET_STATUS_CLASS: Record<TOperationsTicketStatus, string> = {
 
 /**
  * The lifecycle graph, mirrored from `ALLOWED_TRANSITIONS` in
- * `plane/app/views/operations/ticket.py`.
+ * `workspaces/app/views/operations/ticket.py`.
  *
  * Used only to decide which buttons to draw. The API is still the authority --
  * it refuses an illegal move whatever this table says, which is what keeps a

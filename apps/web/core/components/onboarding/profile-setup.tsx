@@ -10,16 +10,16 @@ import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@workspaces/constants";
 // types
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IUser, TUserProfile, TOnboardingSteps } from "@workspaces/types";
 // ui
-import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { PasswordStrengthIndicator, Spinner } from "@workspaces/ui";
 // components
-import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@workspaces/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -88,7 +88,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     password: false,
     retypePassword: false,
   });
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { updateCurrentUser } = useUser();

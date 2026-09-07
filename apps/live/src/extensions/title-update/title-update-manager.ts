@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { logger } from "@plane/logger";
+import { logger } from "@workspaces/logger";
 import { AppError } from "@/lib/errors";
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext } from "@/types";

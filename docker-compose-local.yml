@@ -1,5 +1,5 @@
 services:
-  plane-redis:
+  workspaces-redis:
     image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
     networks:
@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
 
-  plane-mq:
+  workspaces-mq:
     image: rabbitmq:3.13.6-management-alpine
     restart: unless-stopped
     networks:
@@ -23,7 +23,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
 
-  plane-minio:
+  workspaces-minio:
     image: minio/minio
     restart: unless-stopped
     networks:
@@ -48,7 +48,7 @@ services:
       - "9000:9000"
       - "9090:9090"
 
-  plane-db:
+  workspaces-db:
     image: postgres:15.7-alpine
     restart: unless-stopped
     networks:
@@ -78,9 +78,9 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
-      - plane-redis
-      - plane-mq
+      - workspaces-db
+      - workspaces-redis
+      - workspaces-mq
     ports:
       - "8000:8000"
 
@@ -100,8 +100,8 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - plane-db
-      - plane-redis
+      - workspaces-db
+      - workspaces-redis
 
   beat-worker:
     build:
@@ -119,8 +119,8 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - plane-db
-      - plane-redis
+      - workspaces-db
+      - workspaces-redis
 
   migrator:
     build:
@@ -133,12 +133,12 @@ services:
       - dev_env
     volumes:
       - ./apps/api:/code
-    command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
+    command: ./bin/docker-entrypoint-migrator.sh --settings=workspaces.settings.local
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
-      - plane-redis
+      - workspaces-db
+      - workspaces-redis
 
 volumes:
   redisdata:

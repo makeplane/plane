@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
+// workspaces imports
 import { isRouteErrorResponse } from "react-router";
-import { Banner } from "@plane/propel/banner";
-import { Button } from "@plane/propel/button";
-import { Card, ECardVariant } from "@plane/propel/card";
-import { InfoFillIcon } from "@plane/propel/icons";
+import { Banner } from "@workspaces/propel/banner";
+import { Button } from "@workspaces/propel/button";
+import { Card, ECardVariant } from "@workspaces/propel/card";
+import { InfoFillIcon } from "@workspaces/propel/icons";
 
 interface ErrorActionsProps {
   onGoHome: () => void;

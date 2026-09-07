@@ -1,5 +1,5 @@
-@import "@plane/tailwind-config/index.css";
-/* Design tokens already arrive via @plane/tailwind-config. The @makeplane/propel styles barrel
+@import "@workspaces/tailwind-config/index.css";
+/* Design tokens already arrive via @workspaces/tailwind-config. The @makeplane/propel styles barrel
    re-imports the same token files (identical content) and, crucially, registers propel's dist as a
    Tailwind @source so the utility classes used by its components are emitted, plus the animation
    tokens (animate-spinner-reveal, animate-progress-indeterminate) its components rely on. */

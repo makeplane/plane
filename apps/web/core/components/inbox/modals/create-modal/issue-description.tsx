@@ -6,14 +6,14 @@
 
 import type { RefObject } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { ETabIndices } from "@plane/constants";
-import type { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
-import type { TIssue } from "@plane/types";
-import { EFileAssetType } from "@plane/types";
-import { Loader } from "@plane/ui";
-import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
+// workspaces imports
+import { ETabIndices } from "@workspaces/constants";
+import type { EditorRefApi } from "@workspaces/editor";
+import { useTranslation } from "@workspaces/i18n";
+import type { TIssue } from "@workspaces/types";
+import { EFileAssetType } from "@workspaces/types";
+import { Loader } from "@workspaces/ui";
+import { getDescriptionPlaceholderI18n, getTabIndex } from "@workspaces/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text/editor";
 // hooks
@@ -103,7 +103,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
           return asset_id;
         } catch (error) {
           console.log("Error in uploading work item asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
+          throw new Error("Asset upload failed. Please try again later.", { cause: error });
         }
       }}
       duplicateFile={async (assetId: string) => {

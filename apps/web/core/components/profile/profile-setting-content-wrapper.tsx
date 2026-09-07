@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 type Props = {

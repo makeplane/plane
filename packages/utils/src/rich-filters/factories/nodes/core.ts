@@ -5,7 +5,7 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
-// plane imports
+// workspaces imports
 import type {
   TFilterAndGroupNode,
   TFilterConditionNode,
@@ -13,8 +13,8 @@ import type {
   TFilterExpression,
   TFilterProperty,
   TFilterValue,
-} from "@plane/types";
-import { FILTER_NODE_TYPE, LOGICAL_OPERATOR } from "@plane/types";
+} from "@workspaces/types";
+import { FILTER_NODE_TYPE, LOGICAL_OPERATOR } from "@workspaces/types";
 
 /**
  * Creates a condition node with a unique ID.

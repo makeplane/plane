@@ -9,11 +9,11 @@ import { observer } from "mobx-react";
 import { useTheme as useNextTheme } from "next-themes";
 import { LogOut, UserCog2, Palette } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-// plane internal packages
-import { API_BASE_URL } from "@plane/constants";
+// workspaces internal packages
+import { API_BASE_URL } from "@workspaces/constants";
 import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
-import { AuthService } from "@plane/services";
-import { getFileURL, cn } from "@plane/utils";
+import { AuthService } from "@workspaces/services";
+import { getFileURL, cn } from "@workspaces/utils";
 // hooks
 import { useTheme, useUser } from "@/hooks/store";
 

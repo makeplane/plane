@@ -44,7 +44,7 @@ RUN apk add --no-cache --virtual .build-deps \
 
 # Add in Django deps and generate Django's static files
 COPY manage.py manage.py
-COPY plane plane/
+COPY workspaces workspaces/
 COPY templates templates/
 COPY package.json package.json
 
@@ -55,11 +55,11 @@ COPY ./bin ./bin/
 # that `collectstatic` fills in at container start. A recursive chmod over /code
 # rewrites the mode of every file, which makes the layer a second copy of the
 # entire tree -- and grants write access to the source for no reason.
-# Both live under BASE_DIR, which settings/common.py resolves to /code/plane
+# Both live under BASE_DIR, which settings/common.py resolves to /code/workspaces
 # (the directory holding the settings package, not the repo root).
-RUN mkdir -p /code/plane/logs /code/plane/static-assets/collected-static \
+RUN mkdir -p /code/workspaces/logs /code/workspaces/static-assets/collected-static \
     && chmod +x ./bin/* \
-    && chmod -R 777 /code/plane/logs /code/plane/static-assets
+    && chmod -R 777 /code/workspaces/logs /code/workspaces/static-assets
 
 # Expose container port and run entry point script
 EXPOSE 8000

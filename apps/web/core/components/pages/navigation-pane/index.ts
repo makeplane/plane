@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-// plane web imports
+// workspaces web imports
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/components/pages/navigation-pane/tab-panels";
 
 export * from "./root";

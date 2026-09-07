@@ -12,7 +12,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageNavigationPaneAssetsTabPanel } from "./assets";
 import { PageNavigationPaneInfoTabPanel } from "./info/root";
 import { PageNavigationPaneOutlineTabPanel } from "./outline";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs } from "@workspaces/propel/tabs";
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from ".";
 
 type Props = {

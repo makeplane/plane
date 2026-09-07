@@ -7,16 +7,16 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
-// plane imports
-import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
+// workspaces imports
+import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@workspaces/types";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@workspaces/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-// plane web imports
-import type { TProject } from "@plane/types";
+// workspaces web imports
+import type { TProject } from "@workspaces/types";
 // local imports
 import { WorkItemsModal } from "../analytics/work-items/modal";
 import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";

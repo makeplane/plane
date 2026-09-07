@@ -7,9 +7,9 @@
 import { Download, Minus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
-// plane imports
-import { cn } from "@plane/utils";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
+import { cn } from "@workspaces/utils";
 
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2;
@@ -82,7 +82,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
         targetZoom = ZOOM_STEPS.find((step) => step > prev) ?? MAX_ZOOM;
       } else {
         // Reverse the array to find the next lower step
-        targetZoom = [...ZOOM_STEPS].reverse().find((step) => step < prev) ?? MIN_ZOOM;
+        targetZoom = [...ZOOM_STEPS].toReversed().find((step) => step < prev) ?? MIN_ZOOM;
       }
 
       // Reset position when zoom matches initial magnification

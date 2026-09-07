@@ -5,14 +5,14 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Table } from "@plane/ui";
+// workspaces imports
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import { Table } from "@workspaces/ui";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// workspaces web imports
 import { useProjectColumns } from "@/components/projects/settings/useProjectColumns";
 // store
 import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";

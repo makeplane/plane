@@ -38,9 +38,9 @@ import {
   PriorityPropertyIcon,
   StartDatePropertyIcon,
   StatePropertyIcon,
-} from "@plane/propel/icons";
+} from "@workspaces/propel/icons";
 import { store } from "@/lib/store-context";
-import type { TProjectActivity } from "@plane/types";
+import type { TProjectActivity } from "@workspaces/types";
 
 type ActivityIconMap = {
   [key: string]: FC<{ className?: string }>;
@@ -104,7 +104,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
     case "archived_at":
       return {
         message: newValue === "restore" ? "restored the project" : "archived the project",
-        customUserName: newValue === "archive" ? "Plane" : undefined,
+        customUserName: newValue === "archive" ? "Workspaces" : undefined,
       };
     case "name":
       return {

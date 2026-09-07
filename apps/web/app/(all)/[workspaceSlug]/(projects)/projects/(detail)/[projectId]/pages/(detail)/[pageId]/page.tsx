@@ -8,13 +8,13 @@ import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-// plane types
-import { getButtonStyling } from "@plane/propel/button";
-import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
-import { EFileAssetType } from "@plane/types";
-// plane ui
-// plane utils
-import { cn } from "@plane/utils";
+// workspaces types
+import { getButtonStyling } from "@workspaces/propel/button";
+import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@workspaces/types";
+import { EFileAssetType } from "@workspaces/types";
+// workspaces ui
+// workspaces utils
+import { cn } from "@workspaces/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
@@ -26,9 +26,9 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web hooks
+// workspaces web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
-// plane web services
+// workspaces web services
 import { WorkspaceService } from "@/services/workspace.service";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";

@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TLogoProps } from "@plane/types";
-import { sanitizeHTML } from "@plane/utils";
+// workspaces imports
+import type { TLogoProps } from "@workspaces/types";
+import { sanitizeHTML } from "@workspaces/utils";
 // types
 import type { TCalloutBlockAttributes, TCalloutBlockEmojiAttributes, TCalloutBlockIconAttributes } from "./types";
 import { ECalloutAttributeNames } from "./types";

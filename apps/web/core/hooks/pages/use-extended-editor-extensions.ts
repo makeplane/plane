@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { IEditorPropsExtended } from "@plane/editor";
-import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import type { IEditorPropsExtended } from "@workspaces/editor";
+import type { TSearchEntityRequestPayload, TSearchResponse } from "@workspaces/types";
 import type { TPageInstance } from "@/store/pages/base-page";
 import type { EPageStoreType } from "@/hooks/store";
 

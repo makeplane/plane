@@ -7,14 +7,14 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
-// plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// workspaces imports
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
-// plane web imports
+// workspaces web imports
 import type { TPageNavigationPaneTab } from "@/components/pages/navigation-pane/tab-panels";
 import type { EPageStoreType } from "@/hooks/store";
 // store

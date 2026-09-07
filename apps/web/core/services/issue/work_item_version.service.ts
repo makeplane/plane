@@ -4,10 +4,14 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
-import { EIssueServiceType } from "@plane/types";
-import type { TDescriptionVersionsListResponse, TDescriptionVersionDetails, TIssueServiceType } from "@plane/types";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
+import { EIssueServiceType } from "@workspaces/types";
+import type {
+  TDescriptionVersionsListResponse,
+  TDescriptionVersionDetails,
+  TIssueServiceType,
+} from "@workspaces/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

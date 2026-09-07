@@ -5,10 +5,10 @@
  */
 
 import Link from "next/link";
-import { ChevronRightIcon } from "@plane/propel/icons";
-import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
+import { ChevronRightIcon } from "@workspaces/propel/icons";
+import { EPillVariant, Pill, EPillSize } from "@workspaces/propel/pill";
 import { Switch } from "@makeplane/propel/components/switch";
-import { joinUrlPath } from "@plane/utils";
+import { joinUrlPath } from "@workspaces/utils";
 
 type Props = {
   workspaceSlug: string;

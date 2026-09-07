@@ -7,9 +7,9 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-// plane imports
-import { Breadcrumbs, Header } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Breadcrumbs, Header } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { OPERATIONS_TABS } from "@/components/operations";

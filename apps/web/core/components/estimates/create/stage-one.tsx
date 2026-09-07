@@ -5,14 +5,14 @@
  */
 
 import { Info } from "lucide-react";
-// plane imports
-import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TEstimateSystemKeys } from "@plane/types";
+import type { TEstimateSystemKeys } from "@workspaces/types";
 // helpers
 import { isEstimateSystemEnabled } from "./helper";
-import { convertMinutesToHoursMinutesString } from "@plane/utils";
+import { convertMinutesToHoursMinutesString } from "@workspaces/utils";
 // components
 import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 import { RadioInput } from "../radio-select";

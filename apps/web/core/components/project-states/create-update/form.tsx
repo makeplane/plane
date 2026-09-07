@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 import { TwitterPicker } from "react-color";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
-import type { IState } from "@plane/types";
-import { Popover, TextArea } from "@plane/ui";
+import { Button } from "@workspaces/propel/button";
+import type { IState } from "@workspaces/types";
+import { Popover, TextArea } from "@workspaces/ui";
 type TStateForm = {
   data: Partial<IState>;
   onSubmit: (formData: Partial<IState>) => Promise<{ status: string }>;

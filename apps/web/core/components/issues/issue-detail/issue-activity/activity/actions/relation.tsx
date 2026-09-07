@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // types
-import type { TIssueRelationTypes } from "@plane/types";
+import type { TIssueRelationTypes } from "@workspaces/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components

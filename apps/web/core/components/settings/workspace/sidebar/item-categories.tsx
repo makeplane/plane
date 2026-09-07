@@ -7,15 +7,15 @@
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useParams } from "react-router";
-// plane imports
+// workspaces imports
 import {
   EUserPermissionsLevel,
   GROUPED_WORKSPACE_SETTINGS,
   WORKSPACE_SETTINGS_CATEGORIES,
   WORKSPACE_SETTINGS_CATEGORY_LABELS,
-} from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { joinUrlPath } from "@plane/utils";
+} from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { joinUrlPath } from "@workspaces/utils";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // hooks

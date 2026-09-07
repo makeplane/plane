@@ -7,9 +7,9 @@
 import { createContext } from "react";
 // ce imports
 import type { UseFormReset, UseFormWatch } from "react-hook-form";
-// plane imports
-import type { EditorRefApi } from "@plane/editor";
-import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@plane/types";
+// workspaces imports
+import type { EditorRefApi } from "@workspaces/editor";
+import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@workspaces/types";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;

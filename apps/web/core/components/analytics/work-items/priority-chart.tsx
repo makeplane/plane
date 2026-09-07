@@ -10,16 +10,21 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// plane package imports
+// workspaces package imports
 import { Download } from "lucide-react";
-import type { ChartXAxisDateGrouping } from "@plane/constants";
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { BarChart } from "@plane/propel/charts/bar-chart";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
-import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
-// plane web components
+import type { ChartXAxisDateGrouping } from "@workspaces/constants";
+import {
+  ANALYTICS_X_AXIS_VALUES,
+  ANALYTICS_Y_AXIS_VALUES,
+  CHART_COLOR_PALETTES,
+  EChartModels,
+} from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { BarChart } from "@workspaces/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@workspaces/propel/empty-state";
+import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@workspaces/types";
+// workspaces web components
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";

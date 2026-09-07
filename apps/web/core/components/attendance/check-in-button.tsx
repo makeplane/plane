@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { LoaderCircle, LogIn, LogOut, TriangleAlert } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";

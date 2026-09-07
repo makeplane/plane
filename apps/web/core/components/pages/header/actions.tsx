@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-// plane web hooks
+// workspaces web hooks
 import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";

@@ -8,13 +8,13 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { Tabs } from "@plane/propel/tabs";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { Tabs } from "@workspaces/propel/tabs";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
-// plane web components
+// workspaces web components
 import type { TPageNavigationPaneTab } from "@/components/pages/navigation-pane/tab-panels";
 // store
 import type { EPageStoreType } from "@/hooks/store";

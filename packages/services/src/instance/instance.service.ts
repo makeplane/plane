@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
 import type {
   IFormattedInstanceConfiguration,
   IInstance,
@@ -13,7 +13,7 @@ import type {
   IInstanceConfiguration,
   IInstanceInfo,
   TPage,
-} from "@plane/types";
+} from "@workspaces/types";
 // api service
 import { APIService } from "../api.service";
 

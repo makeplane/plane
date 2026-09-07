@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-// plane types
+// workspaces types
 import type { TPaginationInfo } from "./common";
 import type { TIssuePriorities } from "./issues";
 import type { TIssue } from "./issues/issue";

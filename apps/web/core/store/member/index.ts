@@ -6,9 +6,9 @@
 
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
-// plane imports
-import type { IUserLite } from "@plane/types";
-// plane web imports
+// workspaces imports
+import type { IUserLite } from "@workspaces/types";
+// workspaces web imports
 import type { IProjectMemberStore } from "@/store/member/project/base-project-member.store";
 import { ProjectMemberStore } from "@/store/member/project/base-project-member.store";
 import type { RootStore } from "@/store/root.store";

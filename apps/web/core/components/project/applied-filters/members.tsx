@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon } from "@workspaces/propel/icons";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL } from "@workspaces/utils";
 // types
 import { useMember } from "@/hooks/store/use-member";
 

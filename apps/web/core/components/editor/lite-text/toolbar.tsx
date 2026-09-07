@@ -7,20 +7,20 @@
 import React, { useEffect, useState, useCallback } from "react";
 import type { LucideIcon } from "lucide-react";
 
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
+import { EIssueCommentAccessSpecifier } from "@workspaces/constants";
 // editor
-import type { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@workspaces/editor";
 // i18n
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 // ui
-import { Button } from "@plane/propel/button";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
+import { Button } from "@workspaces/propel/button";
+import { GlobeIcon, LockIcon } from "@workspaces/propel/icons";
+import type { ISvgIcons } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // constants
-import { cn } from "@plane/utils";
-import type { ToolbarMenuItem } from "@plane/editor";
-import { TOOLBAR_ITEMS } from "@plane/editor";
+import { cn } from "@workspaces/utils";
+import type { ToolbarMenuItem } from "@workspaces/editor";
+import { TOOLBAR_ITEMS } from "@workspaces/editor";
 // helpers
 
 type Props = {

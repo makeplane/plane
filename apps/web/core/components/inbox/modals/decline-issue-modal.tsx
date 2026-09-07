@@ -6,10 +6,10 @@
 
 import React, { useState } from "react";
 // types
-import { useTranslation } from "@plane/i18n";
-import type { TIssue } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import type { TIssue } from "@workspaces/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@workspaces/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 

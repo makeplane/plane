@@ -7,7 +7,7 @@
 import type { ParsedUrlQuery } from "node:querystring";
 import { action, makeObservable, observable, computed, runInAction } from "mobx";
 
-import type { TProfileViews } from "@plane/types";
+import type { TProfileViews } from "@workspaces/types";
 export interface IRouterStore {
   // observables
   query: ParsedUrlQuery;

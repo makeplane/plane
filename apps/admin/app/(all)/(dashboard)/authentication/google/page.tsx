@@ -69,7 +69,7 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
       customHeader={
         <AuthenticationMethodCard
           name="Google"
-          description="Allow members to login or sign up to plane with their Google
+          description="Allow members to login or sign up to Workspaces with their Google
             accounts."
           icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
           config={

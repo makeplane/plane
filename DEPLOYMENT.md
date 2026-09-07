@@ -1,4 +1,4 @@
-# Deploying Virex
+# Deploying Workspaces
 
 End-to-end guide for building this Plane fork from source and running it on a VPS, including the
 Engineering Operations extension (`PROJECT.md`) and the Odoo attendance bridge.
@@ -47,7 +47,7 @@ rest of the product works and the notifications simply never arrive.
 | ------------------------------------ | -------------------------------------------------------------------- |
 | `docker-compose.yml`                 | Which services exist, how images build, what each container receives |
 | `deployments/production/compose.yml` | Health checks, start-up ordering, log rotation                       |
-| `deployments/virex/compose.yml`      | The edge: Caddy on loopback, trust the host nginx                    |
+| `deployments/workspaces/compose.yml` | The edge: Caddy on loopback, trust the host nginx                    |
 
 You never type those paths. `COMPOSE_FILE` in `.env` chains them, so plain `docker compose …`
 is always the right command. [`docs/deployment/architecture.md`](docs/deployment/architecture.md)
@@ -70,10 +70,10 @@ git push origin preview
 ### Point the DNS
 
 ```bash
-dig +short virex.hgsoftware.com.np   # should print the VPS IP
+dig +short workspaces.hgsoftware.com.np   # should print the VPS IP
 ```
 
-Replace `virex.hgsoftware.com.np` consistently everywhere below.
+Replace `workspaces.hgsoftware.com.np` consistently everywhere below.
 
 > [!WARNING]
 > **HTTPS is a prerequisite of attendance, not a hardening step.** Browser geolocation only works
@@ -121,7 +121,7 @@ cd /opt/workspaces
 > [!NOTE]
 > **`setup.sh` is the development bootstrap, not this one.** It ends with `corepack enable` and
 > `pnpm install`, which need a Node toolchain the server does not have and the Docker build does
-> not use. The server uses `deployments/virex/init-env.sh` instead.
+> not use. The server uses `deployments/workspaces/init-env.sh` instead.
 
 ---
 
@@ -132,17 +132,17 @@ containers load all of it, and every other container receives exactly the values
 `docker-compose.yml` forwards to it. Nothing else needs editing.
 
 ```bash
-deployments/virex/init-env.sh virex.hgsoftware.com.np
+deployments/workspaces/init-env.sh workspaces.hgsoftware.com.np
 ```
 
-That copies `deployments/virex/.env.example`, fills in the domain, generates all six secrets with
+That copies `deployments/workspaces/.env.example`, fills in the domain, generates all six secrets with
 `openssl rand -hex 32`, `chmod 600`s the result, and refuses to overwrite an existing `.env`. It
 finishes by running `docker compose config` so you find out immediately if anything is wrong.
 
 Then read the file. Two things it cannot decide for you:
 
 - **`ODOO_BASE_URL` / `ODOO_API_KEY`** — leave blank unless you are doing [§8](#8-switch-attendance-on).
-- **`COMPOSE_PROJECT_NAME`** — it fixes the volume prefix (`virex_pgdata`, …). If a stack
+- **`COMPOSE_PROJECT_NAME`** — it fixes the volume prefix (`workspaces_pgdata`, …). If a stack
   already runs on this host, it must match that stack's prefix or your first `up` starts with
   empty volumes. Check with `docker volume ls`.
 
@@ -169,15 +169,15 @@ yet, and nginx refuses to load a file pointing at a missing certificate.
 **Pass one.** A bare port-80 site, just so certbot has something to work with:
 
 ```bash
-sudo tee /etc/nginx/sites-available/virex.conf >/dev/null <<'EOF'
+sudo tee /etc/nginx/sites-available/workspaces.conf >/dev/null <<'EOF'
 server {
     listen 80;
     listen [::]:80;
-    server_name virex.hgsoftware.com.np;
+    server_name workspaces.hgsoftware.com.np;
     root /var/www/html;
 }
 EOF
-sudo ln -sf /etc/nginx/sites-available/virex.conf /etc/nginx/sites-enabled/
+sudo ln -sf /etc/nginx/sites-available/workspaces.conf /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
@@ -186,7 +186,7 @@ from the internet:
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d virex.hgsoftware.com.np
+sudo certbot --nginx -d workspaces.hgsoftware.com.np
 ```
 
 Besides the certificate, that also writes `/etc/letsencrypt/options-ssl-nginx.conf` and
@@ -196,11 +196,11 @@ Besides the certificate, that also writes `/etc/letsencrypt/options-ssl-nginx.co
 the certificate it obtained stays on disk:
 
 ```bash
-sudo cp deployments/virex/nginx.conf /etc/nginx/sites-available/virex.conf
+sudo cp deployments/workspaces/nginx.conf /etc/nginx/sites-available/workspaces.conf
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-No `sed` step: the template already carries `virex.hgsoftware.com.np` and port 8080. If `nginx -t`
+No `sed` step: the template already carries `workspaces.hgsoftware.com.np` and port 8080. If `nginx -t`
 reports `ssl-dhparams.pem` missing, generate it and test again:
 
 ```bash
@@ -232,7 +232,7 @@ docker compose up -d --build     # first build: 20-35 min
 ```
 
 There is nothing to remember and no alias to define: `COMPOSE_FILE` in `.env` already selects the
-base file plus the production and Virex overlays. If you ever need to see what that resolves to:
+base file plus the production and Workspaces overlays. If you ever need to see what that resolves to:
 
 ```bash
 docker compose config --format json | python3 -c 'import json,sys; print(json.load(sys.stdin)["services"]["proxy"]["ports"])'
@@ -246,7 +246,7 @@ Start-up order is enforced, so this takes a minute longer than an unordered stac
 point:
 
 ```text
-plane-db, plane-redis, plane-mq, plane-minio   → healthy
+workspaces-db, workspaces-redis, workspaces-mq, workspaces-minio   → healthy
 migrator                                       → runs the migrations, exits 0
 api, worker, beat-worker                       → start only after the migrator succeeded
 live, proxy                                    → last
@@ -260,7 +260,7 @@ docker compose ps -a
 # beat-worker  Up              ← no health check; they serve no HTTP
 ```
 
-Then open `https://virex.hgsoftware.com.np/god-mode` and create the instance administrator. That account
+Then open `https://workspaces.hgsoftware.com.np/god-mode` and create the instance administrator. That account
 configures the instance; ordinary members sign up on the main app afterwards.
 
 ---
@@ -268,7 +268,7 @@ configures the instance; ordinary members sign up on the main app afterwards.
 ## 6. Verify
 
 ```bash
-deployments/virex/verify.sh https://virex.hgsoftware.com.np
+deployments/workspaces/verify.sh https://workspaces.hgsoftware.com.np
 ```
 
 That is the regression checklist as an executable. It checks every container's health, that the
@@ -346,7 +346,7 @@ hand outside those hours correctly queues nothing:
 
 ```bash
 docker compose exec api python manage.py shell -c "
-from plane.bgtasks.operations_reminder_task import remind_blocked_and_overdue
+from workspaces.bgtasks.operations_reminder_task import remind_blocked_and_overdue
 print(remind_blocked_and_overdue(), 'notifications queued')
 "
 ```
@@ -392,12 +392,12 @@ curl -s -H "X-Atlas-Key: $KEY" "$ODOO/api/v1/health"             # 200 — names
 
 ```bash
 # 2 · through Plane, signed in as yourself
-curl -s -b <cookie jar> https://virex.hgsoftware.com.np/api/attendance/me/
+curl -s -b <cookie jar> https://workspaces.hgsoftware.com.np/api/attendance/me/
 
 # the test that proves the enforcement is real —
 # the bridge would happily accept this, Plane must not
 curl -s -X POST -b <cookie jar> -H 'Content-Type: application/json' \
-  -d '{}' https://virex.hgsoftware.com.np/api/attendance/check-in/
+  -d '{}' https://workspaces.hgsoftware.com.np/api/attendance/check-in/
 # expect 400 location_required
 ```
 
@@ -415,7 +415,7 @@ Then in the browser:
 - [ ] Break `ODOO_API_KEY` on purpose — the control disappears and the rest of the workspace is
       unaffected.
 
-**One thing to pass on:** bridge punches are labelled _Atlas_ in Odoo, so a Virex punch and an
+**One thing to pass on:** bridge punches are labelled _Atlas_ in Odoo, so a Workspaces punch and an
 Atlas punch look identical there. Separating them would need a new value in the addon, which is a
 module upgrade on VM01 and out of scope.
 
@@ -441,19 +441,19 @@ module ships they start returning data with no change on this side and no redepl
 
 ### Prove the email mapping before the team notices
 
-Every Virex account is supposed to match an Odoo employee by email. Intent drifts — a married
+Every Workspaces account is supposed to match an Odoo employee by email. Intent drifts — a married
 name, a `@hgn` vs `@hgsoftware` address, one contractor added in a hurry. Check once; it turns a
 fortnight of one-off complaints into a list.
 
 ```bash
 docker compose exec -T api python manage.py shell -c \
-  "from plane.db.models import User; print('\n'.join(User.objects.filter(is_active=True).values_list('email', flat=True)))" \
-  | tr 'A-Z' 'a-z' | sort > /tmp/plane-users.txt
+  "from workspaces.db.models import User; print('\n'.join(User.objects.filter(is_active=True).values_list('email', flat=True)))" \
+  | tr 'A-Z' 'a-z' | sort > /tmp/workspaces-users.txt
 
 curl -s -H "X-Atlas-Key: $KEY" "$ODOO/api/v1/employees" \
   | jq -r '.employees[].work_email // empty' | tr 'A-Z' 'a-z' | sort > /tmp/odoo-emails.txt
 
-comm -23 /tmp/plane-users.txt /tmp/odoo-emails.txt   # accounts with no employee
+comm -23 /tmp/workspaces-users.txt /tmp/odoo-emails.txt   # accounts with no employee
 ```
 
 ---
@@ -464,16 +464,16 @@ comm -23 /tmp/plane-users.txt /tmp/odoo-emails.txt   # accounts with no employee
 
 ```bash
 cd /opt/workspaces
-deployments/virex/backup.sh                  # always, first
+deployments/workspaces/backup.sh                  # always, first
 
 # tag the current images so you can roll back to them
 for s in api web admin space live proxy; do
-  docker tag virex-$s:latest virex-$s:previous
+  docker tag workspaces-$s:latest workspaces-$s:previous
 done
 
 git pull
 docker compose up -d --build
-deployments/virex/verify.sh https://virex.hgsoftware.com.np
+deployments/workspaces/verify.sh https://workspaces.hgsoftware.com.np
 ```
 
 The migrator runs automatically and the api, worker and beat wait for it to exit 0 before starting
@@ -484,7 +484,7 @@ schema. Watch it with `docker compose logs -f migrator`, then `docker compose lo
 
 ```bash
 for s in api web admin space live proxy; do
-  docker tag virex-$s:previous virex-$s:latest
+  docker tag workspaces-$s:previous workspaces-$s:latest
 done
 docker compose up -d --no-build
 ```
@@ -495,15 +495,15 @@ restore the database too.
 ### Backups
 
 ```bash
-deployments/virex/backup.sh                  # ./backups/<timestamp>/
-deployments/virex/backup.sh /mnt/backups     # somewhere with more room
+deployments/workspaces/backup.sh                  # ./backups/<timestamp>/
+deployments/workspaces/backup.sh /mnt/backups     # somewhere with more room
 ```
 
 Dumps Postgres and tars the uploads volume, writes `SHA256SUMS`, and keeps the newest seven sets
 (`BACKUP_KEEP` to change that). A nightly cron entry:
 
 ```cron
-15 2 * * *  cd /opt/workspaces && deployments/virex/backup.sh /mnt/backups >> /var/log/workspaces-backup.log 2>&1
+15 2 * * *  cd /opt/workspaces && deployments/workspaces/backup.sh /mnt/backups >> /var/log/workspaces-backup.log 2>&1
 ```
 
 `.env` is deliberately **not** in the backup and deliberately **not** in git. Keep it somewhere
@@ -514,11 +514,11 @@ dump without the matching key is only most of a backup.
 
 ```bash
 docker compose down
-docker volume rm virex_pgdata virex_uploads
+docker volume rm workspaces_pgdata workspaces_uploads
 
-docker compose up -d plane-db plane-minio        # recreates empty volumes
-gunzip -c backups/<stamp>/postgres.sql.gz | docker compose exec -T plane-db psql -U plane -d plane
-docker run --rm -v virex_uploads:/data -v "$PWD/backups/<stamp>":/backup \
+docker compose up -d workspaces-db workspaces-minio        # recreates empty volumes
+gunzip -c backups/<stamp>/postgres.sql.gz | docker compose exec -T workspaces-db psql -U workspaces -d workspaces
+docker run --rm -v workspaces_uploads:/data -v "$PWD/backups/<stamp>":/backup \
   alpine:3.20 tar xzf /backup/uploads.tar.gz -C /data
 
 docker compose up -d
@@ -544,33 +544,33 @@ service cannot fill the disk.
 
 Each of these presents as something other than its cause.
 
-| What you see                                                | What it actually is                                                                                                    |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `proxy` restarting, log says _server block without any key_ | `SITE_ADDRESS` is not reaching the proxy container. `docker compose exec proxy printenv SITE_ADDRESS`                  |
-| `proxy` log: _wrong argument count … after max_size_        | `FILE_SIZE_LIMIT` is set but empty. Caddy's inline defaults only fire when a variable is **absent**                    |
-| Uploads 404 through the proxy but work in MinIO             | `AWS_S3_BUCKET_NAME` empty ⇒ the bucket routes collapsed to `/`. Same empty-vs-absent rule                             |
-| Stack won't start, port in use                              | The overlays weren't applied, so Caddy tried to take 80/443. Check `COMPOSE_FILE` in `.env` and Compose ≥ 2.24         |
-| Users logged out at random                                  | `SECRET_KEY` blank, so each container generated its own                                                                |
-| Login submits, returns to sign-in                           | `CORS_ALLOWED_ORIGINS` contains an `http:` origin, or nginx isn't sending `X-Forwarded-Proto`                          |
-| `could not translate host name "${POSTGRES_HOST}"`          | A `DATABASE_URL` with `${…}` placeholders reached Django unexpanded — comment it out or write it in full               |
-| `api` never leaves `health: starting`                       | `docker compose logs api`. Usually the database URL or a missing `SECRET_KEY`                                          |
-| `live` exits immediately                                    | `API_BASE_URL` or `LIVE_SERVER_SECRET_KEY` missing. The container prints which                                         |
-| `worker`/`beat-worker` restarting                           | RabbitMQ wasn't ready. The production overlay fixes the ordering — check you passed all three compose files            |
-| First `up` starts with an empty database                    | `COMPOSE_PROJECT_NAME` doesn't match the existing volume prefix. `docker volume ls`                                    |
-| Operations sidebar entry missing                            | You are on a stale web image. `docker compose up -d --build web`                                                       |
-| Operations pages load, every number is zero                 | Either a genuinely new workspace, or the state mapping doesn't match your states — §7a                                 |
-| Deep link 404s on refresh, works when clicked               | Caddy's SPA fallback isn't serving `index.html` — you are not on the stack's own web image                             |
-| Reminders never arrive                                      | The beat worker is down, or `engineering-ops-*` is missing from `PeriodicTask` — §7b                                   |
-| Work log won't submit                                       | Correct. An empty log is refused so the "missing logs" count can't be zeroed by clicking the button                    |
-| Ticket won't convert                                        | It must be **Approved** first, you must be a member of the target project, and it converts exactly once                |
-| Check-in button absent                                      | Expected when `ODOO_BASE_URL` is unset. Otherwise the bridge is unreachable — look for `plane.external` in the api log |
-| 403 from the bridge                                         | The VPS IP isn't in the Odoo allow-list (§1)                                                                           |
-| "Location is unavailable"                                   | The page isn't on HTTPS, or the certificate isn't trusted                                                              |
-| One person can't check in                                   | Their Virex email doesn't match an Odoo `work_email`. The message names the fix; the server logs it at warning level   |
-| Attendance history says "not available yet"                 | Expected. That bridge endpoint doesn't exist — §8                                                                      |
-| Images upload but don't render                              | `WEB_URL` is `http://`, so file URLs are mixed content                                                                 |
-| Pages load but never sync                                   | The websocket upgrade headers are missing from the nginx location block                                                |
-| Large uploads fail with a generic browser error             | `client_max_body_size` in nginx is below `FILE_SIZE_LIMIT`; nginx rejects the body before Caddy or Django see it       |
+| What you see                                                | What it actually is                                                                                                         |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `proxy` restarting, log says _server block without any key_ | `SITE_ADDRESS` is not reaching the proxy container. `docker compose exec proxy printenv SITE_ADDRESS`                       |
+| `proxy` log: _wrong argument count … after max_size_        | `FILE_SIZE_LIMIT` is set but empty. Caddy's inline defaults only fire when a variable is **absent**                         |
+| Uploads 404 through the proxy but work in MinIO             | `AWS_S3_BUCKET_NAME` empty ⇒ the bucket routes collapsed to `/`. Same empty-vs-absent rule                                  |
+| Stack won't start, port in use                              | The overlays weren't applied, so Caddy tried to take 80/443. Check `COMPOSE_FILE` in `.env` and Compose ≥ 2.24              |
+| Users logged out at random                                  | `SECRET_KEY` blank, so each container generated its own                                                                     |
+| Login submits, returns to sign-in                           | `CORS_ALLOWED_ORIGINS` contains an `http:` origin, or nginx isn't sending `X-Forwarded-Proto`                               |
+| `could not translate host name "${POSTGRES_HOST}"`          | A `DATABASE_URL` with `${…}` placeholders reached Django unexpanded — comment it out or write it in full                    |
+| `api` never leaves `health: starting`                       | `docker compose logs api`. Usually the database URL or a missing `SECRET_KEY`                                               |
+| `live` exits immediately                                    | `API_BASE_URL` or `LIVE_SERVER_SECRET_KEY` missing. The container prints which                                              |
+| `worker`/`beat-worker` restarting                           | RabbitMQ wasn't ready. The production overlay fixes the ordering — check you passed all three compose files                 |
+| First `up` starts with an empty database                    | `COMPOSE_PROJECT_NAME` doesn't match the existing volume prefix. `docker volume ls`                                         |
+| Operations sidebar entry missing                            | You are on a stale web image. `docker compose up -d --build web`                                                            |
+| Operations pages load, every number is zero                 | Either a genuinely new workspace, or the state mapping doesn't match your states — §7a                                      |
+| Deep link 404s on refresh, works when clicked               | Caddy's SPA fallback isn't serving `index.html` — you are not on the stack's own web image                                  |
+| Reminders never arrive                                      | The beat worker is down, or `engineering-ops-*` is missing from `PeriodicTask` — §7b                                        |
+| Work log won't submit                                       | Correct. An empty log is refused so the "missing logs" count can't be zeroed by clicking the button                         |
+| Ticket won't convert                                        | It must be **Approved** first, you must be a member of the target project, and it converts exactly once                     |
+| Check-in button absent                                      | Expected when `ODOO_BASE_URL` is unset. Otherwise the bridge is unreachable — look for `workspaces.external` in the api log |
+| 403 from the bridge                                         | The VPS IP isn't in the Odoo allow-list (§1)                                                                                |
+| "Location is unavailable"                                   | The page isn't on HTTPS, or the certificate isn't trusted                                                                   |
+| One person can't check in                                   | Their Workspaces email doesn't match an Odoo `work_email`. The message names the fix; the server logs it at warning level   |
+| Attendance history says "not available yet"                 | Expected. That bridge endpoint doesn't exist — §8                                                                           |
+| Images upload but don't render                              | `WEB_URL` is `http://`, so file URLs are mixed content                                                                      |
+| Pages load but never sync                                   | The websocket upgrade headers are missing from the nginx location block                                                     |
+| Large uploads fail with a generic browser error             | `client_max_body_size` in nginx is below `FILE_SIZE_LIMIT`; nginx rejects the body before Caddy or Django see it            |
 
 ---
 

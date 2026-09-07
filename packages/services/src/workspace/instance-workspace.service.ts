@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { API_BASE_URL } from "@plane/constants";
-import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
+import { API_BASE_URL } from "@workspaces/constants";
+import type { IWorkspace, TWorkspacePaginationInfo } from "@workspaces/types";
 import { APIService } from "../api.service";
 
 /**

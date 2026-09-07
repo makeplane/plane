@@ -16,10 +16,10 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Copy } from "lucide-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
+import { cn } from "@workspaces/utils";
 // services
 import { operationsService, type TOperationsReport, type TReportType } from "@/services/operations";
 // local imports

@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL } from "@workspaces/constants";
 import type {
   TUnreadNotificationsCount,
   TNotificationPaginatedInfo,
   TNotification,
   TNotificationPaginatedInfoQueryParams,
-} from "@plane/types";
+} from "@workspaces/types";
 // services
 import { APIService } from "../api.service";
 

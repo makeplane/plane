@@ -10,7 +10,7 @@ import type {
   TCoreInstanceAuthenticationModeKeys,
   TGetBaseAuthenticationModeProps,
   TInstanceAuthenticationModes,
-} from "@plane/types";
+} from "@workspaces/types";
 // assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
@@ -37,7 +37,7 @@ export const getCoreAuthenticationModesMap: (
     key: "unique-codes",
     name: "Unique codes",
     description:
-      "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
+      "Log in or sign up for Workspaces using codes sent via email. You need to have set up SMTP to use this method.",
     icon: <Mails className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "ENABLE_MAGIC_LINK_LOGIN",
@@ -53,7 +53,7 @@ export const getCoreAuthenticationModesMap: (
   google: {
     key: "google",
     name: "Google",
-    description: "Allow members to log in or sign up for Plane with their Google accounts.",
+    description: "Allow members to log in or sign up for Workspaces with their Google accounts.",
     icon: <img src={googleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GOOGLE_ENABLED",
@@ -61,7 +61,7 @@ export const getCoreAuthenticationModesMap: (
   github: {
     key: "github",
     name: "GitHub",
-    description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
+    description: "Allow members to log in or sign up for Workspaces with their GitHub accounts.",
     icon: (
       <img
         src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
@@ -76,7 +76,7 @@ export const getCoreAuthenticationModesMap: (
   gitlab: {
     key: "gitlab",
     name: "GitLab",
-    description: "Allow members to log in or sign up to plane with their GitLab accounts.",
+    description: "Allow members to log in or sign up to Workspaces with their GitLab accounts.",
     icon: <img src={gitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITLAB_ENABLED",
@@ -84,7 +84,7 @@ export const getCoreAuthenticationModesMap: (
   gitea: {
     key: "gitea",
     name: "Gitea",
-    description: "Allow members to log in or sign up to plane with their Gitea accounts.",
+    description: "Allow members to log in or sign up to Workspaces with their Gitea accounts.",
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITEA_ENABLED",

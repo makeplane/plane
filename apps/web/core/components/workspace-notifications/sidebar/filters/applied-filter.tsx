@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { CloseIcon } from "@workspaces/propel/icons";
+import { Header, EHeaderVariant } from "@workspaces/ui";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 

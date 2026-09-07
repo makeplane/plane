@@ -8,16 +8,16 @@ import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-import { ISSUE_PRIORITIES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { ISSUE_PRIORITIES } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 // types
-import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
+import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@workspaces/types";
 // ui
-import { ComboDropDown, useAnchoredPosition } from "@plane/ui";
+import { ComboDropDown, useAnchoredPosition } from "@workspaces/ui";
 // helpers
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";

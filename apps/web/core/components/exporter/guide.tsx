@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { mutate } from "swr";
 // constants
-import { EXPORT_SERVICES_LIST } from "@plane/constants";
+import { EXPORT_SERVICES_LIST } from "@workspaces/constants";
 // local imports
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";

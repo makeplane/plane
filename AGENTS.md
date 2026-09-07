@@ -9,7 +9,7 @@
 - `pnpm check:types` - TypeScript type checking
 - `pnpm fix` - Auto-fix format and lint issues
 - `pnpm turbo run <command> --filter=<package>` - Target specific package/app
-- `pnpm --filter=@plane/ui storybook` - Start Storybook on port 6006
+- `pnpm --filter=@workspaces/ui storybook` - Start Storybook on port 6006
 
 ## Code Style
 
@@ -21,7 +21,7 @@
 - **Error Handling**: Use try-catch with proper error types, log errors appropriately
 - **State Management**: MobX stores in `packages/shared-state`, reactive patterns
 - **Testing**: All features require unit tests, use existing test framework per package
-- **Components**: Build in `@plane/ui` with Storybook for isolated development
+- **Components**: Build in `@workspaces/ui` with Storybook for isolated development
 
 ## Backend tests (Docker)
 
@@ -33,7 +33,7 @@ Prereq (once): `./setup.sh` — generates `apps/api/.env` from `.env.example`.
 - Subset: `docker compose -f docker-compose-test.yml run --rm api-tests pytest -m unit`
 - Teardown: `docker compose -f docker-compose-test.yml down -v`
 
-See `apps/api/tests/RUNNING_TESTS.md` for the full walkthrough and troubleshooting; see `apps/api/plane/tests/TESTING_GUIDE.md` for test conventions and fixtures.
+See `apps/api/tests/RUNNING_TESTS.md` for the full walkthrough and troubleshooting; see `apps/api/workspaces/tests/TESTING_GUIDE.md` for test conventions and fixtures.
 
 ## Deployment
 
@@ -44,7 +44,7 @@ is always the correct command — never add `-f` flags for production.
 - Deploy, operate, troubleshoot: [`DEPLOYMENT.md`](DEPLOYMENT.md)
 - Why the files look like this, and the merge gate to run after pulling upstream:
   [`docs/deployment/architecture.md`](docs/deployment/architecture.md)
-- Verify a deployment: `deployments/virex/verify.sh https://<domain>`
+- Verify a deployment: `deployments/workspaces/verify.sh https://<domain>`
 
 Do not reintroduce the upstream CLI, AIO, Swarm or Helm deployment paths: they install
 `makeplane/*` images, which do not contain this fork's code. See

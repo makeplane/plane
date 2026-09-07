@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { substringMatch } from "@plane/utils";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { substringMatch } from "@workspaces/utils";
 // components
 import type { TPowerKCommandConfig, TPowerKCommandGroup } from "@/components/power-k/core/types";
 import { KeySequenceBadge, ShortcutBadge } from "@/components/power-k/ui/modal/command-item-shortcut-badge";

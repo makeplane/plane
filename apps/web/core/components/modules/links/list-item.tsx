@@ -6,13 +6,13 @@
 
 import { observer } from "mobx-react";
 
-import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
-// plane types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { CopyIcon, EditIcon, TrashIcon } from "@workspaces/propel/icons";
+// workspaces types
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { ILinkDetails } from "@plane/types";
-// plane ui
-import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
+import type { ILinkDetails } from "@workspaces/types";
+// workspaces ui
+import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@workspaces/utils";
 // helpers
 //
 // hooks

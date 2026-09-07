@@ -6,7 +6,7 @@
 
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@workspaces/types";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks

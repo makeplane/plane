@@ -5,8 +5,8 @@
  */
 
 // types
-import { API_BASE_URL } from "@plane/constants";
-import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@plane/types";
+import { API_BASE_URL } from "@workspaces/constants";
+import type { IModule, ILinkDetails, ModuleLink, TIssuesResponse } from "@workspaces/types";
 // services
 import { APIService } from "@/services/api.service";
 

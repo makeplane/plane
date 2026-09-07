@@ -4,14 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
-import { CloseIcon } from "@plane/propel/icons";
-// plane imports
+import { CloseIcon } from "@workspaces/propel/icons";
+// workspaces imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
-import { EHeaderVariant, Header } from "@plane/ui";
-import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@workspaces/types";
+import { EHeaderVariant, Header } from "@workspaces/ui";
+import { replaceUnderscoreIfSnakeCase } from "@workspaces/utils";
 // local imports
 import { AppliedAccessFilters } from "./access";
 import { AppliedDateFilters } from "./date";
@@ -29,7 +29,7 @@ type Props = {
   totalProjects: number;
 };
 
-const MEMBERS_FILTERS = ["lead", "members"];
+const MEMBERS_FILTERS = new Set(["lead", "members"]);
 const DATE_FILTERS = ["created_at"];
 
 export function ProjectAppliedFiltersList(props: Props) {
@@ -80,7 +80,7 @@ export function ProjectAppliedFiltersList(props: Props) {
                   values={value}
                 />
               )}
-              {MEMBERS_FILTERS.includes(filterKey) && (
+              {MEMBERS_FILTERS.has(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}

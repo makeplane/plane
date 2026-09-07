@@ -7,11 +7,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// Plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IState } from "@plane/types";
+// Workspaces imports
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IState } from "@workspaces/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@workspaces/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 

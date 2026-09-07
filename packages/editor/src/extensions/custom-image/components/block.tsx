@@ -6,8 +6,8 @@
 
 import { NodeSelection } from "@tiptap/pm/state";
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
-// plane imports
-import { cn } from "@plane/utils";
+// workspaces imports
+import { cn } from "@workspaces/utils";
 // local imports
 import { ECustomImageAttributeNames } from "../types";
 import type { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";

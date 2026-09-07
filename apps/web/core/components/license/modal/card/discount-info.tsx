@@ -5,10 +5,10 @@
  */
 
 import { useTheme } from "next-themes";
-// plane imports
-import type { TBillingFrequency } from "@plane/types";
-import { EProductSubscriptionEnum } from "@plane/types";
-import { cn } from "@plane/utils";
+// workspaces imports
+import type { TBillingFrequency } from "@workspaces/types";
+import { EProductSubscriptionEnum } from "@workspaces/types";
+import { cn } from "@workspaces/utils";
 
 import ScribbleBlack from "@/app/assets/scribble/scribble-black.svg?url";
 import ScribbleWhite from "@/app/assets/scribble/scribble-white.svg?url";
@@ -21,7 +21,7 @@ type TDiscountInfoProps = {
   subscriptionType: EProductSubscriptionEnum;
 };
 
-const PLANS_WITH_DISCOUNT = [EProductSubscriptionEnum.PRO];
+const PLANS_WITH_DISCOUNT = new Set([EProductSubscriptionEnum.PRO]);
 
 const getActualPrice = (frequency: TBillingFrequency, subscriptionType: EProductSubscriptionEnum): number | null => {
   switch (subscriptionType) {
@@ -37,7 +37,7 @@ export function DiscountInfo({ className, currency, frequency, price, subscripti
   // derived values
   const actualPrice = getActualPrice(frequency, subscriptionType);
 
-  if (!PLANS_WITH_DISCOUNT.includes(subscriptionType)) {
+  if (!PLANS_WITH_DISCOUNT.has(subscriptionType)) {
     return (
       <>
         {currency}

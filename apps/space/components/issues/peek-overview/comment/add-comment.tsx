@@ -7,11 +7,11 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
-// plane imports
-import type { EditorRefApi } from "@plane/editor";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { SitesFileService } from "@plane/services";
-import type { TIssuePublicComment } from "@plane/types";
+// workspaces imports
+import type { EditorRefApi } from "@workspaces/editor";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import { SitesFileService } from "@workspaces/services";
+import type { TIssuePublicComment } from "@workspaces/types";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks

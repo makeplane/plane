@@ -7,9 +7,9 @@
 import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-// plane imports
-import { THEME_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+// workspaces imports
+import { THEME_OPTIONS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
 // local imports
 import { PowerKModalCommandItem } from "../../modal/command-item";
 

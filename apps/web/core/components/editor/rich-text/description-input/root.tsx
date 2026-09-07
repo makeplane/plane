@@ -8,17 +8,17 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// plane imports
-import type { EditorRefApi, TExtensions } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
-import type { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
-import { getDescriptionPlaceholderI18n } from "@plane/utils";
+// workspaces imports
+import type { EditorRefApi, TExtensions } from "@workspaces/editor";
+import { useTranslation } from "@workspaces/i18n";
+import type { EFileAssetType, TNameDescriptionLoader } from "@workspaces/types";
+import { getDescriptionPlaceholderI18n } from "@workspaces/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web services
+// workspaces web services
 import { WorkspaceService } from "@/services/workspace.service";
 // local imports
 import { DescriptionInputLoader } from "./loader";
@@ -274,7 +274,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
               return asset_id;
             } catch (error) {
               console.log("Error in uploading asset:", error);
-              throw new Error("Asset upload failed. Please try again later.");
+              throw new Error("Asset upload failed. Please try again later.", { cause: error });
             }
           }}
           duplicateFile={async (assetId: string) => {

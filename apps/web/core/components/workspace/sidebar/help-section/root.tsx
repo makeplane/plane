@@ -7,14 +7,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, User } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
-import { PageIcon } from "@plane/propel/icons";
+import { useTranslation } from "@workspaces/i18n";
+import { PageIcon } from "@workspaces/propel/icons";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@workspaces/ui";
 // components
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
-import { PlaneVersionNumber } from "@/components/global/version-number";
+import { WorkspacesVersionNumber } from "@/components/global/version-number";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 
@@ -84,7 +84,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           </div>
         </CustomMenu.MenuItem>
         <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">
-          <PlaneVersionNumber />
+          <WorkspacesVersionNumber />
         </div>
       </CustomMenu>
     </>

@@ -7,7 +7,7 @@
 /**
  * Every user-facing string in the attendance control, in one place.
  *
- * Deliberately not routed through `@plane/i18n`: the navbar this mounts into
+ * Deliberately not routed through `@workspaces/i18n`: the navbar this mounts into
  * hardcodes its own labels, and adding a locale key here would mean a JSON file
  * in all twenty locale directories to keep the i18n sync check green.
  */

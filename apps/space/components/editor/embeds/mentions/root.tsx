@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TCallbackMentionComponentProps } from "@plane/editor";
+import type { TCallbackMentionComponentProps } from "@workspaces/editor";
 // local components
 import { EditorUserMention } from "./user";
 

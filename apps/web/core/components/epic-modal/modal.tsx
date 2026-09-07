@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import type { TIssue } from "@plane/types";
+import type { TIssue } from "@workspaces/types";
 
 export interface EpicModalProps {
   data?: Partial<TIssue>;

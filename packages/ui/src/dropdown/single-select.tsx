@@ -8,8 +8,8 @@ import { Combobox } from "@headlessui/react";
 import { sortBy } from "lodash-es";
 import React, { useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-// plane imports
-import { useOutsideClickDetector } from "@plane/hooks";
+// workspaces imports
+import { useOutsideClickDetector } from "@workspaces/hooks";
 // local imports
 import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
 import { cn } from "../utils";

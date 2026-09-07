@@ -6,7 +6,7 @@
 
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
-// plane internal packages
+// workspaces internal packages
 import { Switch } from "@makeplane/propel/components/switch";
 
 type Props<T extends FieldValues = FieldValues> = {

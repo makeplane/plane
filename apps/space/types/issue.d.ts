@@ -1,4 +1,4 @@
-import type { ActorDetail, TIssue, TIssuePriorities, TStateGroups, TIssuePublicComment } from "@plane/types";
+import type { ActorDetail, TIssue, TIssuePriorities, TStateGroups, TIssuePublicComment } from "@workspaces/types";
 
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 export type TIssueLayoutOptions = {

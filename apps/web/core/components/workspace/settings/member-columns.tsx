@@ -9,16 +9,16 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 
 import { Disclosure } from "@headlessui/react";
-// plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { TrashIcon, SuspendedUserIcon } from "@plane/propel/icons";
-import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IUser, IWorkspaceMember } from "@plane/types";
-// plane ui
-import { CustomSelect, PopoverMenu } from "@plane/ui";
+// workspaces imports
+import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { TrashIcon, SuspendedUserIcon } from "@workspaces/propel/icons";
+import { Pill, EPillVariant, EPillSize } from "@workspaces/propel/pill";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IUser, IWorkspaceMember } from "@workspaces/types";
+// workspaces ui
+import { CustomSelect, PopoverMenu } from "@workspaces/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL } from "@workspaces/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";

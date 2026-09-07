@@ -17,10 +17,10 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Check } from "lucide-react";
-// plane imports
-import { Button } from "@plane/propel/button";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // services
@@ -245,7 +245,7 @@ export const OperationsSettings = observer(function OperationsSettings({ workspa
             </p>
             <p className="text-13 text-secondary">{data.workflow.module_suggestions.join(" · ")}</p>
             <p className="mt-1 text-11 text-placeholder">
-              Modules are created per project in Plane's own module screen — they carry the business domain that
+              Modules are created per project in the Workspaces module screen — they carry the business domain that
               module-based reporting groups by.
             </p>
           </div>

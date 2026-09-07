@@ -6,7 +6,7 @@
 
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -18,11 +18,11 @@ import type {
   TIssueKanbanFilters,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-} from "@plane/types";
-import { Row } from "@plane/ui";
+} from "@workspaces/types";
+import { Row } from "@workspaces/ui";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-// plane web imports
+// workspaces web imports
 import { useWorkFlowFDragNDrop } from "@/components/workflow";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";

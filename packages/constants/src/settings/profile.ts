@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TProfileSettingsTabs } from "@plane/types";
+// workspaces imports
+import type { TProfileSettingsTabs } from "@workspaces/types";
 
 export enum PROFILE_SETTINGS_CATEGORY {
   YOUR_PROFILE = "your profile",

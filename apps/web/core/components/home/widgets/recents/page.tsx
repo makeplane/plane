@@ -6,11 +6,11 @@
 
 import { useRouter } from "next/navigation";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { PageIcon } from "@plane/propel/icons";
-// plane import
-import type { TActivityEntityData, TPageEntityData } from "@plane/types";
-import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
+import { Logo } from "@workspaces/propel/emoji-icon-picker";
+import { PageIcon } from "@workspaces/propel/icons";
+// workspaces import
+import type { TActivityEntityData, TPageEntityData } from "@workspaces/types";
+import { calculateTimeAgo, getFileURL, getPageName } from "@workspaces/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

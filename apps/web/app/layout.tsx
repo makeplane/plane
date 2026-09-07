@@ -5,8 +5,8 @@
  */
 
 import { Outlet } from "react-router";
-// plane imports
-import { cn } from "@plane/utils";
+// workspaces imports
+import { cn } from "@workspaces/utils";
 // local
 import { AppProvider } from "./provider";
 

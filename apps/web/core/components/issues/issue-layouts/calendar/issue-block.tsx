@@ -8,12 +8,12 @@ import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
-// plane imports
-import { useOutsideClickDetector } from "@plane/hooks";
-import { Popover } from "@plane/propel/popover";
-import type { TIssue } from "@plane/types";
-import { ControlLink } from "@plane/ui";
-import { cn, generateWorkItemLink } from "@plane/utils";
+// workspaces imports
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { Popover } from "@workspaces/propel/popover";
+import type { TIssue } from "@workspaces/types";
+import { ControlLink } from "@workspaces/ui";
+import { cn, generateWorkItemLink } from "@workspaces/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";

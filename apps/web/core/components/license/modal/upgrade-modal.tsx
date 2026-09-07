@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import {
   BUSINESS_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
@@ -14,10 +14,10 @@ import {
   SUBSCRIPTION_REDIRECTION_URLS,
   SUBSCRIPTION_WEBPAGE_URLS,
   TALK_TO_SALES_URL,
-} from "@plane/constants";
-import { EProductSubscriptionEnum } from "@plane/types";
-import { EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+} from "@workspaces/constants";
+import { EProductSubscriptionEnum } from "@workspaces/types";
+import { EModalWidth, ModalCore } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
 import type { TCheckoutParams } from "@/components/license/modal/card/checkout-button";

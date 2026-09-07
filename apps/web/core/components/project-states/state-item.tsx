@@ -9,11 +9,11 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
-// Plane
-import type { TDraggableData } from "@plane/constants";
-import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { DropIndicator } from "@plane/ui";
-import { cn, getCurrentStateSequence } from "@plane/utils";
+// Workspaces
+import type { TDraggableData } from "@workspaces/constants";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@workspaces/types";
+import { DropIndicator } from "@workspaces/ui";
+import { cn, getCurrentStateSequence } from "@workspaces/utils";
 // components
 import { StateItemTitle, StateUpdate } from "@/components/project-states";
 // helpers

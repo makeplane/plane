@@ -8,10 +8,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import type { TIssue } from "@plane/types";
+import type { TIssue } from "@workspaces/types";
 // helpers
-import { Row } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Row } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 

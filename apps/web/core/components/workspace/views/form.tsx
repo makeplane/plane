@@ -6,20 +6,25 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// plane imports
+// workspaces imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IWorkspaceView, IIssueFilters } from "@plane/types";
-import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
-import { TextArea } from "@plane/ui";
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import type {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IWorkspaceView,
+  IIssueFilters,
+} from "@workspaces/types";
+import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@workspaces/types";
+import { TextArea } from "@workspaces/ui";
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@workspaces/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-// plane web imports
+// workspaces web imports
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 
 type Props = {

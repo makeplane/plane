@@ -6,8 +6,8 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// workspaces imports
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports

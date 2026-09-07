@@ -6,9 +6,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
-import { isInDateFormat } from "@plane/utils";
+// workspaces imports
+import { DATE_AFTER_FILTER_OPTIONS } from "@workspaces/constants";
+import { isInDateFormat } from "@workspaces/utils";
 // components
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";

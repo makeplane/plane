@@ -9,8 +9,8 @@ import type {
   ILayoutDisplayFiltersOptions,
   TIssueActivityComment,
   TWorkItemFilterProperty,
-} from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+} from "@workspaces/types";
+import { EIssuesStoreType } from "@workspaces/types";
 import type { TIssueFilterPriorityObject } from "./common";
 import { ISSUE_DISPLAY_PROPERTIES_KEYS, SUB_ISSUES_DISPLAY_PROPERTIES_KEYS } from "./common";
 

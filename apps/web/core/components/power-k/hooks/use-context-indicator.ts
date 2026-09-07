@@ -5,8 +5,8 @@
  */
 
 import { useParams } from "next/navigation";
-// plane imports
-import { getPageName } from "@plane/utils";
+// workspaces imports
+import { getPageName } from "@workspaces/utils";
 // hooks
 import { EPageStoreType, usePageStore } from "@/hooks/store";
 import { useCycle } from "@/hooks/store/use-cycle";

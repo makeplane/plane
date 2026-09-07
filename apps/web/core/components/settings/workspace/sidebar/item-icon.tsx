@@ -6,9 +6,9 @@
 
 import type { LucideIcon } from "lucide-react";
 import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
-// plane imports
-import type { ISvgIcons } from "@plane/propel/icons";
-import type { TWorkspaceSettingsTabs } from "@plane/types";
+// workspaces imports
+import type { ISvgIcons } from "@workspaces/propel/icons";
+import type { TWorkspaceSettingsTabs } from "@workspaces/types";
 
 export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
   general: Building,

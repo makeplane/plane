@@ -7,16 +7,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Palette } from "lucide-react";
 // editor
-import type { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@workspaces/editor";
 // ui
-import { useOutsideClickDetector } from "@plane/hooks";
-import { TrashIcon } from "@plane/propel/icons";
+import { useOutsideClickDetector } from "@workspaces/hooks";
+import { TrashIcon } from "@workspaces/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { TSticky } from "@plane/types";
+import type { TSticky } from "@workspaces/types";
 // constants
-import { cn } from "@plane/utils";
-import type { ToolbarMenuItem } from "@plane/editor";
-import { TOOLBAR_ITEMS } from "@plane/editor";
+import { cn } from "@workspaces/utils";
+import type { ToolbarMenuItem } from "@workspaces/editor";
+import { TOOLBAR_ITEMS } from "@workspaces/editor";
 // helpers
 import { ColorPalette } from "./color-palette";
 

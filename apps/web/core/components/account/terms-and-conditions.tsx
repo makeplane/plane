@@ -6,7 +6,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { EAuthModes } from "@plane/constants";
+import { EAuthModes } from "@workspaces/constants";
 
 interface TermsAndConditionsProps {
   authType?: EAuthModes;

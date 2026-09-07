@@ -4,6 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { TExtendedLoginMediums } from "@plane/types";
+import type { TExtendedLoginMediums } from "@workspaces/types";
 
 export const EXTENDED_LOGIN_MEDIUM_LABELS: Record<TExtendedLoginMediums, string> = {};

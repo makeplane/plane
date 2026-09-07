@@ -244,7 +244,7 @@
   "full_changelog": "სრული ცვლილებების ჟურნალი",
   "support": "მხარდაჭერა",
   "forum": "Forum",
-  "powered_by_plane_pages": "Plane Pages-ის მხარდაჭერით",
+  "powered_by_plane_pages": "Workspaces Pages-ის მხარდაჭერით",
   "please_select_at_least_one_invitation": "გთხოვთ, აირჩიოთ მინიმუმ ერთი მოწვევა.",
   "please_select_at_least_one_invitation_description": "გთხოვთ, აირჩიოთ მინიმუმ ერთი მოწვევა სამუშაო სივრცეში შესაერთებლად.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "ჩვენ ვხედავთ, რომ ვიღაცამ მოგიწვიათ სამუშაო სივრცეში შესაერთებლად",
@@ -820,7 +820,7 @@
     "edited_by": "დარედაქტირებულია"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane არ გაუშვია. ეს შეიძლება იყოს იმის გამო, რომ ერთი ან მეტი Plane სერვისი ვერ გაუშვეს.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Workspaces არ გაუშვია. ეს შეიძლება იყოს იმის გამო, რომ ერთი ან მეტი Workspaces სერვისი ვერ გაუშვეს.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "აირჩიეთ ლოგების ნახვა setup.sh-დან და Docker ლოგებიდან დასარწმუნებლად."
   },
   "customize_navigation": "Customize navigation",
@@ -832,7 +832,7 @@
   "pin": "Pin",
   "unpin": "Unpin",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "Plane AI",
+  "pi_chat": "Workspaces AI",
   "in_app": "In-app",
   "forms": "Forms",
   "milestones": "Milestones",

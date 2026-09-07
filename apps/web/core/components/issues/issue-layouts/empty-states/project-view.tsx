@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EIssuesStoreType } from "@plane/types";
+import { EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import { EmptyStateDetailed } from "@workspaces/propel/empty-state";
+import { EIssuesStoreType } from "@workspaces/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";

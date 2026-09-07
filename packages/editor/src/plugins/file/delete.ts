@@ -9,7 +9,7 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorState, Transaction } from "@tiptap/pm/state";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
-// plane editor imports
+// workspaces editor imports
 import { NODE_FILE_MAP } from "@/constants/utility";
 // types
 import type { TFileHandler } from "@/types";

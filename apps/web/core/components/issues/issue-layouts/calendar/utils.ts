@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssue } from "@plane/types";
+import type { TIssue } from "@workspaces/types";
 
 export const handleDragDrop = async (
   issueId: string,

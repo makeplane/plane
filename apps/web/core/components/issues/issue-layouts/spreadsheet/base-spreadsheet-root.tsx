@@ -8,10 +8,10 @@ import type { FC } from "react";
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { EIssuesStoreType, IIssueDisplayFilterOptions } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+// workspaces imports
+import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@workspaces/constants";
+import type { EIssuesStoreType, IIssueDisplayFilterOptions } from "@workspaces/types";
+import { EIssueLayoutTypes } from "@workspaces/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";

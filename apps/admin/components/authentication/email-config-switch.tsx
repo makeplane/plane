@@ -8,7 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // hooks
 import { Switch } from "@makeplane/propel/components/switch";
-import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@workspaces/types";
 import { useInstance } from "@/hooks/store";
 // ui
 // types

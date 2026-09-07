@@ -6,10 +6,10 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { EXTENDED_SIDEBAR_WIDTH, SIDEBAR_WIDTH } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { EXTENDED_SIDEBAR_WIDTH, SIDEBAR_WIDTH } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
+import { cn } from "@workspaces/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // hooks

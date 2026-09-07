@@ -6,11 +6,11 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-// plane imports
-import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Header, EHeaderVariant } from "@plane/ui";
-import { cn } from "@plane/utils";
+// workspaces imports
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Header, EHeaderVariant } from "@workspaces/ui";
+import { cn } from "@workspaces/utils";
 
 type Props = {
   isAuthorized: boolean;

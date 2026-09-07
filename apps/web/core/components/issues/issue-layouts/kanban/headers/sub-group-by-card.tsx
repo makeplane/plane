@@ -7,9 +7,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Circle } from "lucide-react";
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
-// Plane
-import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
+import { ChevronDownIcon, ChevronUpIcon } from "@workspaces/propel/icons";
+// Workspaces
+import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@workspaces/types";
 
 interface IHeaderSubGroupByCard {
   icon?: React.ReactNode;

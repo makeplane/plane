@@ -8,16 +8,16 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR, { mutate } from "swr";
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
-// plane imports
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
-import type { IExportData } from "@plane/types";
-import { Table } from "@plane/ui";
+// workspaces imports
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { EmptyStateCompact } from "@workspaces/propel/empty-state";
+import type { IExportData } from "@workspaces/types";
+import { Table } from "@workspaces/ui";
 // components
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
-import { EXPORT_SERVICES_LIST } from "@plane/constants";
+import { EXPORT_SERVICES_LIST } from "@workspaces/constants";
 // services
 import { IntegrationService } from "@/services/integrations";
 // local imports

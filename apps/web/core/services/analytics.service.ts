@@ -4,14 +4,14 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
 import type {
   IAnalyticsResponse,
   TAnalyticsTabsBase,
   TAnalyticsGraphsBase,
   TAnalyticsFilterParams,
-} from "@plane/types";
+} from "@workspaces/types";
 // services
 import { APIService } from "./api.service";
 

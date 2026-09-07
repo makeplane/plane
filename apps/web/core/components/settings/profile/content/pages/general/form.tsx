@@ -8,16 +8,16 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { CircleUserRound } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import { EFileAssetType } from "@plane/types";
-import type { IUser, TUserProfile } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@workspaces/propel/toast";
+import { EFileAssetType } from "@workspaces/types";
+import type { IUser, TUserProfile } from "@workspaces/types";
 
-import { getFileURL } from "@plane/utils";
+import { getFileURL } from "@workspaces/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -31,7 +31,7 @@ import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // utils
-import { validatePersonName, validateDisplayName } from "@plane/utils";
+import { validatePersonName, validateDisplayName } from "@workspaces/utils";
 
 type TUserProfileForm = {
   avatar_url: string;

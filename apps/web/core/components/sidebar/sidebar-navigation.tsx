@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { cn } from "@plane/utils";
+import { cn } from "@workspaces/utils";
 
 type TSidebarNavItem = {
   className?: string;

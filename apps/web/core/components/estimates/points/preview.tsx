@@ -7,12 +7,12 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
-// plane imports
-import { EEstimateSystem, estimateCount } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
-import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { convertMinutesToHoursMinutesString } from "@plane/utils";
+// workspaces imports
+import { EEstimateSystem, estimateCount } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { EditIcon, TrashIcon } from "@workspaces/propel/icons";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@workspaces/types";
+import { convertMinutesToHoursMinutesString } from "@workspaces/utils";
 // local imports
 import { EstimatePointUpdate } from "./update";
 

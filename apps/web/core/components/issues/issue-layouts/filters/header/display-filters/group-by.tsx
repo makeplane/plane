@@ -6,8 +6,8 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@workspaces/types";
 // helpers
 import { useGroupByOptions } from "../../../utils";
 // components

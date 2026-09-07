@@ -21,17 +21,17 @@
 # external database, broker or object store); left alone they point at the
 # services defined below.
 x-api-env: &api-env
-  POSTGRES_HOST: ${POSTGRES_HOST:-plane-db}
+  POSTGRES_HOST: ${POSTGRES_HOST:-workspaces-db}
   POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-  POSTGRES_USER: ${POSTGRES_USER:-plane}
-  POSTGRES_DB: ${POSTGRES_DB:-plane}
-  REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
-  RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
+  POSTGRES_USER: ${POSTGRES_USER:-workspaces}
+  POSTGRES_DB: ${POSTGRES_DB:-workspaces}
+  REDIS_URL: ${REDIS_URL:-redis://workspaces-redis:6379/}
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-workspaces-mq}
   RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
-  RABBITMQ_USER: ${RABBITMQ_USER:-plane}
-  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_USER: ${RABBITMQ_USER:-workspaces}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-workspaces}
   USE_MINIO: ${USE_MINIO:-1}
-  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://workspaces-minio:9000}
   AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
   # docker-entrypoint-api.sh passes this straight to gunicorn -w, with no default.
@@ -50,9 +50,9 @@ x-api: &api
   environment:
     <<: *api-env
   depends_on:
-    - plane-db
-    - plane-redis
-    - plane-mq
+    - workspaces-db
+    - workspaces-redis
+    - workspaces-mq
 
 services:
   web:
@@ -115,42 +115,42 @@ services:
     # LIVE_SERVER_SECRET_KEY, so both are mandatory here.
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://api:8000}
-      REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
+      REDIS_URL: ${REDIS_URL:-redis://workspaces-redis:6379/}
       LIVE_BASE_PATH: ${LIVE_BASE_PATH:-/live}
       LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:?set LIVE_SERVER_SECRET_KEY in .env}
     depends_on:
       - api
-      - plane-redis
+      - workspaces-redis
 
-  plane-db:
+  workspaces-db:
     image: postgres:15.7-alpine
     restart: always
     command: postgres -c 'max_connections=1000'
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-plane}
-      POSTGRES_DB: ${POSTGRES_DB:-plane}
+      POSTGRES_USER: ${POSTGRES_USER:-workspaces}
+      POSTGRES_DB: ${POSTGRES_DB:-workspaces}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
       PGDATA: /var/lib/postgresql/data
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  plane-redis:
+  workspaces-redis:
     image: valkey/valkey:7.2.11-alpine
     restart: always
     volumes:
       - redisdata:/data
 
-  plane-mq:
+  workspaces-mq:
     image: rabbitmq:3.13.6-management-alpine
     restart: always
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-workspaces}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD in .env}
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-workspaces}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  plane-minio:
+  workspaces-minio:
     # Pinned to the release that :latest resolved to when this was written.
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     restart: always
@@ -163,7 +163,7 @@ services:
 
   # Comment this out if you already have a reverse proxy that routes to the
   # individual services. If you only have a TLS terminator in front, keep it
-  # and use deployments/virex/compose.yml instead.
+  # and use deployments/workspaces/compose.yml instead.
   proxy:
     build:
       context: ./apps/proxy

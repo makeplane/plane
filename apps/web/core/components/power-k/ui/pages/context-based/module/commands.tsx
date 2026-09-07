@@ -7,14 +7,14 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Star, StarOff, Users } from "lucide-react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ModuleStatusIcon } from "@plane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { IModule, TModuleStatus } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
-import { copyTextToClipboard } from "@plane/utils";
+// workspaces imports
+import { EUserPermissionsLevel } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { LinkIcon, ModuleStatusIcon } from "@workspaces/propel/icons";
+import { setToast, TOAST_TYPE } from "@workspaces/propel/toast";
+import type { IModule, TModuleStatus } from "@workspaces/types";
+import { EUserPermissions } from "@workspaces/types";
+import { copyTextToClipboard } from "@workspaces/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks

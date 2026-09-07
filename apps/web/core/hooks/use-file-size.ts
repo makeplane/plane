@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { MAX_FILE_SIZE } from "@plane/constants";
+// workspaces imports
+import { MAX_FILE_SIZE } from "@workspaces/constants";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 

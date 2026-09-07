@@ -4,10 +4,15 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import type { IWorkItemFilterInstance } from "@plane/shared-state";
-import type { EIssuesStoreType, IIssueFilters, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+// workspaces imports
+import type { TSaveViewOptions, TUpdateViewOptions } from "@workspaces/constants";
+import type { IWorkItemFilterInstance } from "@workspaces/shared-state";
+import type {
+  EIssuesStoreType,
+  IIssueFilters,
+  TWorkItemFilterExpression,
+  TWorkItemFilterProperty,
+} from "@workspaces/types";
 
 export type TSharedWorkItemFiltersProps = {
   entityType: EIssuesStoreType; // entity type (project, cycle, workspace, teamspace, etc)

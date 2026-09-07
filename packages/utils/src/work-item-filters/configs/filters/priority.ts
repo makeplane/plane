@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import type { TIssuePriorities } from "@plane/constants";
-import { ISSUE_PRIORITIES } from "@plane/constants";
-import type { TFilterProperty, TSupportedOperators } from "@plane/types";
-import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
+// workspaces imports
+import type { TIssuePriorities } from "@workspaces/constants";
+import { ISSUE_PRIORITIES } from "@workspaces/constants";
+import type { TFilterProperty, TSupportedOperators } from "@workspaces/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@workspaces/types";
 // local imports
 import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
 import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";

@@ -5,8 +5,8 @@
  */
 
 // types
-import { useTranslation } from "@plane/i18n";
-import type { TWebhookEventTypes } from "@plane/types";
+import { useTranslation } from "@workspaces/i18n";
+import type { TWebhookEventTypes } from "@workspaces/types";
 
 type Props = {
   value: string;

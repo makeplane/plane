@@ -8,14 +8,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { CircleCheck } from "lucide-react";
-// plane imports
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IUser, IWorkspace } from "@plane/types";
-import { Spinner } from "@plane/ui";
-import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
+// workspaces imports
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { Button } from "@workspaces/propel/button";
+import { TOAST_TYPE, setToast } from "@workspaces/propel/toast";
+import type { IUser, IWorkspace } from "@workspaces/types";
+import { Spinner } from "@workspaces/ui";
+import { cn, validateWorkspaceName, validateSlug } from "@workspaces/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -43,7 +43,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-  // plane hooks
+  // workspaces hooks
   const { t } = useTranslation();
   // store hooks
   const { config } = useInstance();

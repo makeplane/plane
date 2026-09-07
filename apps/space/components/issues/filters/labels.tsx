@@ -5,8 +5,8 @@
  */
 
 import React, { useState } from "react";
-// plane imports
-import { Loader } from "@plane/ui";
+// workspaces imports
+import { Loader } from "@workspaces/ui";
 // types
 import type { IIssueLabel } from "@/types/issue";
 // local imports

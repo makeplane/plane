@@ -6,8 +6,8 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+// workspaces imports
+import type { ISearchIssueResponse, TIssue } from "@workspaces/types";
 // components
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks

@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 // ui
-import { CycleIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { CycleIcon } from "@workspaces/propel/icons";
+import { Breadcrumbs, Header } from "@workspaces/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-// plane web components
+// workspaces web components
 import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 
 export const WorkspaceActiveCycleHeader = observer(function WorkspaceActiveCycleHeader() {

@@ -5,8 +5,8 @@
  */
 
 // services
-import { API_BASE_URL } from "@plane/constants";
-import type { IIntakeState, IState } from "@plane/types";
+import { API_BASE_URL } from "@workspaces/constants";
+import type { IIntakeState, IState } from "@workspaces/types";
 import { APIService } from "@/services/api.service";
 // helpers
 // types

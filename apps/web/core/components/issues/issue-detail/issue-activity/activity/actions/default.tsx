@@ -5,11 +5,11 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { WorkItemsIcon } from "@plane/propel/icons";
-import { EInboxIssueSource } from "@plane/types";
+// workspaces imports
+import { WorkItemsIcon } from "@workspaces/propel/icons";
+import { EInboxIssueSource } from "@workspaces/types";
 // hooks
-import { capitalizeFirstLetter } from "@plane/utils";
+import { capitalizeFirstLetter } from "@workspaces/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueActivityBlockComponent } from "./";

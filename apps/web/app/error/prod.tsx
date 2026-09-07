@@ -5,8 +5,8 @@
  */
 
 import { useTheme } from "next-themes";
-// plane imports
-import { Button } from "@plane/propel/button";
+// workspaces imports
+import { Button } from "@workspaces/propel/button";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
 import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";

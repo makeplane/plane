@@ -5,8 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import type { TLoader } from "@plane/types";
+// workspaces imports
+import type { TLoader } from "@workspaces/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 

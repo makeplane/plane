@@ -12,7 +12,7 @@ import type {
   IIssueDisplayProperties,
   ILayoutDisplayFiltersOptions,
   TIssueGroupByOptions,
-} from "@plane/types";
+} from "@workspaces/types";
 // components
 import {
   FilterDisplayProperties,

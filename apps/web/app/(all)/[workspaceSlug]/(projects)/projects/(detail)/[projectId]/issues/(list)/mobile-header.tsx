@@ -7,12 +7,12 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+// workspaces imports
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@workspaces/constants";
+import { useTranslation } from "@workspaces/i18n";
+import { ChevronDownIcon } from "@workspaces/propel/icons";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@workspaces/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@workspaces/types";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import {

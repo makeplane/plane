@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@workspaces/propel/icon-button";
 
 export const AppSidebarToggleButton = observer(function AppSidebarToggleButton() {
   // store hooks

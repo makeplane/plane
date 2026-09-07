@@ -7,11 +7,11 @@
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
-// plane imports
+// workspaces imports
 import { Button } from "@makeplane/propel/components/button";
 import { Input } from "@makeplane/propel/components/input";
 import { Switch } from "@makeplane/propel/components/switch";
-import type { IInstance, IInstanceAdmin } from "@plane/types";
+import type { IInstance, IInstanceAdmin } from "@workspaces/types";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 import { TOAST_TYPE, setToast } from "@/providers/toast";
@@ -105,10 +105,12 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               </div>
             </div>
             <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
+              <div className="text-13 leading-5 font-medium text-primary">
+                Let Workspaces collect anonymous usage data
+              </div>
               <div className="text-11 leading-5 font-regular text-tertiary">
-                No PII is collected.This anonymized data is used to understand how you use Plane and build new features
-                in line with{" "}
+                No PII is collected.This anonymized data is used to understand how you use Workspaces and build new
+                features in line with{" "}
                 <a
                   href="https://developers.plane.so/self-hosting/telemetry"
                   target="_blank"

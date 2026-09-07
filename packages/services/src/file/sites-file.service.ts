@@ -4,20 +4,20 @@
  * See the LICENSE file for details.
  */
 
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
 // local services
-import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { TFileEntityInfo, TFileSignedURLResponse } from "@workspaces/types";
 import { FileUploadService } from "./file-upload.service";
 // helpers
 import { FileService } from "./file.service";
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "./helper";
 
 /**
- * Service class for managing file operations within plane sites application.
+ * Service class for managing file operations within the Workspaces sites application.
  * Extends FileService to manage file-related operations.
  * @extends {FileService}
- * @remarks This service is only available for plane sites
+ * @remarks This service is only available for Workspaces sites
  */
 export class SitesFileService extends FileService {
   private cancelSource: any;

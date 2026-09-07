@@ -5,10 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-// plane types
-// plane ui
-import { useTranslation } from "@plane/i18n";
-import { EModalWidth, ModalCore } from "@plane/ui";
+// workspaces types
+// workspaces ui
+import { useTranslation } from "@workspaces/i18n";
+import { EModalWidth, ModalCore } from "@workspaces/ui";
 import { WidgetList } from "./widget-list";
 
 export type TProps = {

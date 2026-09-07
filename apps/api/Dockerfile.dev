@@ -34,7 +34,7 @@ RUN pip install -r requirements/local.txt --compile --no-cache-dir
 
 COPY . .
 
-RUN mkdir -p /code/plane/logs
+RUN mkdir -p /code/workspaces/logs
 RUN chmod -R +x /code/bin
 RUN chmod -R 777 /code
 

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { sanitizeHTML } from "@plane/utils";
+import { sanitizeHTML } from "@workspaces/utils";
 
 /**
  * Utility function to extract text from HTML content

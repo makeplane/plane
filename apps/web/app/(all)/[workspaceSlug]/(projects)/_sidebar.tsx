@@ -6,10 +6,10 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// workspaces imports
 import { useParams, usePathname } from "next/navigation";
-import { SIDEBAR_WIDTH } from "@plane/constants";
-import { useLocalStorage } from "@plane/hooks";
+import { SIDEBAR_WIDTH } from "@workspaces/constants";
+import { useLocalStorage } from "@workspaces/hooks";
 // components
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 // hooks

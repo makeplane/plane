@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import type { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@workspaces/types";
 // components
 import { LinkList } from "../../issue-detail/links";
 // helper

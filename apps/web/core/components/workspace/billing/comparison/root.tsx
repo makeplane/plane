@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import type { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
+// workspaces imports
+import type { EProductSubscriptionEnum, TBillingFrequency } from "@workspaces/types";
 // components
 import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/billing/comparison/base";
 import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
 import { PLANE_PLANS } from "@/components/workspace/billing/comparison/plans";
-// plane web imports
+// workspaces web imports
 import { PlanDetail } from "./plan-detail";
 
 type TPlansComparisonProps = {

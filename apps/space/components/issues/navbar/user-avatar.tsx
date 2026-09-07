@@ -11,12 +11,12 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { AuthService } from "@plane/services";
-import { Avatar } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+// workspaces imports
+import { API_BASE_URL } from "@workspaces/constants";
+import { Button } from "@workspaces/propel/button";
+import { AuthService } from "@workspaces/services";
+import { Avatar } from "@workspaces/ui";
+import { getFileURL } from "@workspaces/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks

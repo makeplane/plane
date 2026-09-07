@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { EIconSize } from "@plane/constants";
-import type { TIntakeStateGroups } from "@plane/types";
+import { EIconSize } from "@workspaces/constants";
+import type { TIntakeStateGroups } from "@workspaces/types";
 
 export interface IStateGroupIcon {
   className?: string;

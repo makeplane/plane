@@ -7,13 +7,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { useTranslation } from "@plane/i18n";
+import { useTranslation } from "@workspaces/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";
 // local components
-import { Button } from "@plane/propel/button";
+import { Button } from "@workspaces/propel/button";
 import { PaidPlanUpgradeModal } from "@/components/license/modal/upgrade-modal";
 
 export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {

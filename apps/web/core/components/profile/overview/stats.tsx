@@ -8,10 +8,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // ui
-import { useTranslation } from "@plane/i18n";
-import { UserCirclePropertyIcon, CreateIcon, LayerStackIcon } from "@plane/propel/icons";
-import type { IUserProfileData } from "@plane/types";
-import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
+import { useTranslation } from "@workspaces/i18n";
+import { UserCirclePropertyIcon, CreateIcon, LayerStackIcon } from "@workspaces/propel/icons";
+import type { IUserProfileData } from "@workspaces/types";
+import { Loader, Card, ECardSpacing, ECardDirection } from "@workspaces/ui";
 // types
 
 type Props = {
