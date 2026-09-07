@@ -3,6 +3,8 @@
 # See the LICENSE file for details.
 
 # Python imports
+import base64
+import mimetypes
 from email.utils import parseaddr
 
 # Third party imports
@@ -31,6 +33,38 @@ def _address_only(value):
     return parseaddr(value)[1]
 
 
+def _build_graph_attachment(attachment):
+    """Serialize a Django EmailMessage attachment into a Graph fileAttachment.
+
+    Django's `EmailMessage.attach()` appends (filename, content, mimetype)
+    tuples to `message.attachments`; MIMEBase attachments aren't produced by
+    any call site in this codebase, so we reject them explicitly rather than
+    silently dropping their content.
+    """
+    if not isinstance(attachment, tuple):
+        raise ValueError(f"Cannot serialize attachment of type {type(attachment)!r} for Microsoft Graph")
+
+    filename, content, mimetype = (list(attachment) + [None, None, None])[:3]
+
+    if isinstance(content, str):
+        content_bytes = content.encode("utf-8")
+    elif isinstance(content, (bytes, bytearray)):
+        content_bytes = bytes(content)
+    else:
+        raise ValueError(
+            f"Cannot serialize attachment '{filename}' for Microsoft Graph: unsupported content type {type(content)!r}"
+        )
+
+    resolved_mimetype = mimetype or mimetypes.guess_type(filename or "")[0] or "application/octet-stream"
+
+    return {
+        "@odata.type": "#microsoft.graph.fileAttachment",
+        "name": filename or "attachment",
+        "contentType": resolved_mimetype,
+        "contentBytes": base64.b64encode(content_bytes).decode("ascii"),
+    }
+
+
 def build_graph_message(message):
     html_body = next(
         (content for content, mimetype in getattr(message, "alternatives", []) if mimetype == "text/html"),
@@ -46,8 +80,9 @@ def build_graph_message(message):
             "toRecipients": [{"emailAddress": {"address": _address_only(addr)}} for addr in message.to],
             "ccRecipients": [{"emailAddress": {"address": _address_only(addr)}} for addr in message.cc],
             "bccRecipients": [{"emailAddress": {"address": _address_only(addr)}} for addr in message.bcc],
+            "attachments": [_build_graph_attachment(a) for a in getattr(message, "attachments", [])],
         },
-        "saveToSentItems": "false",
+        "saveToSentItems": False,
     }
 
 

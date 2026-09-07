@@ -7,10 +7,12 @@ Unit tests for the Microsoft Graph email helper.
 
 Covers:
 - OAuth2 client-credentials token acquisition
-- building a Graph sendMail payload from a Django EmailMessage
+- building a Graph sendMail payload from a Django EmailMessage, including
+  attachments (e.g. the analytics CSV export)
 - the end-to-end send call wiring the token into the request
 """
 
+import base64
 from unittest.mock import Mock, patch
 
 import pytest
@@ -72,7 +74,8 @@ class TestBuildGraphMessage:
         assert payload["message"]["toRecipients"] == [{"emailAddress": {"address": "receiver@example.com"}}]
         assert payload["message"]["ccRecipients"] == [{"emailAddress": {"address": "cc@example.com"}}]
         assert payload["message"]["bccRecipients"] == [{"emailAddress": {"address": "bcc@example.com"}}]
-        assert payload["saveToSentItems"] == "false"
+        assert payload["message"]["attachments"] == []
+        assert payload["saveToSentItems"] is False
 
     def test_prefers_html_alternative_when_present(self):
         message = EmailMultiAlternatives(
@@ -89,6 +92,49 @@ class TestBuildGraphMessage:
             "contentType": "HTML",
             "content": "<p>Rich body</p>",
         }
+
+    def test_serializes_attachment_as_base64_file_attachment(self):
+        message = EmailMultiAlternatives(
+            subject="Analytics export",
+            body="See attached CSV",
+            from_email="sender@example.com",
+            to=["receiver@example.com"],
+        )
+        message.attach("plane-analytics.csv", "col1,col2\n1,2\n", "text/csv")
+
+        payload = build_graph_message(message)
+
+        [attachment] = payload["message"]["attachments"]
+        assert attachment["@odata.type"] == "#microsoft.graph.fileAttachment"
+        assert attachment["name"] == "plane-analytics.csv"
+        assert attachment["contentType"] == "text/csv"
+        assert base64.b64decode(attachment["contentBytes"]) == b"col1,col2\n1,2\n"
+
+    def test_guesses_mimetype_when_not_provided(self):
+        message = EmailMultiAlternatives(
+            subject="Hi",
+            body="body",
+            from_email="sender@example.com",
+            to=["receiver@example.com"],
+        )
+        message.attach("notes.txt", "hello")
+
+        payload = build_graph_message(message)
+
+        [attachment] = payload["message"]["attachments"]
+        assert attachment["contentType"] == "text/plain"
+
+    def test_rejects_unsupported_attachment_content(self):
+        message = EmailMultiAlternatives(
+            subject="Hi",
+            body="body",
+            from_email="sender@example.com",
+            to=["receiver@example.com"],
+        )
+        message.attachments.append(("bad.bin", object(), "application/octet-stream"))
+
+        with pytest.raises(ValueError):
+            build_graph_message(message)
 
 
 @pytest.mark.unit

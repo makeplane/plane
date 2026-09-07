@@ -9,11 +9,14 @@ Covers:
 - falling back to Django's SMTP backend when EMAIL_PROVIDER is not MICROSOFT_GRAPH
 - routing through Microsoft Graph when EMAIL_PROVIDER is MICROSOFT_GRAPH
 - fail_silently swallowing Graph send errors instead of raising
+- raising a clear configuration error (or returning 0 when fail_silently) when
+  MICROSOFT_GRAPH is selected but tenant/client/secret/sender is incomplete
 """
 
 from unittest.mock import Mock, patch
 
 import pytest
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 
 from plane.license.utils.email_backend import PlaneEmailBackend
@@ -26,6 +29,8 @@ GRAPH_CONFIG = (
     "client-secret",
     "noreply@example.com",
 )
+
+INCOMPLETE_GRAPH_CONFIG = ("MICROSOFT_GRAPH", "tenant-id", "", "", "noreply@example.com")
 
 SMTP_CONFIG = ("SMTP", "", "", "", "noreply@example.com")
 
@@ -100,3 +105,29 @@ class TestPlaneEmailBackend:
         ), patch("plane.license.utils.email_backend.send_graph_email", side_effect=Exception("boom")):
             with pytest.raises(Exception):
                 backend.send_messages([message])
+
+    def test_incomplete_graph_config_raises_improperly_configured(self):
+        backend = PlaneEmailBackend(fail_silently=False)
+        message = _make_message()
+
+        with patch(
+            "plane.license.utils.email_backend.get_graph_email_configuration",
+            return_value=INCOMPLETE_GRAPH_CONFIG,
+        ), patch("plane.license.utils.email_backend.send_graph_email") as mock_send:
+            with pytest.raises(ImproperlyConfigured):
+                backend.send_messages([message])
+
+        mock_send.assert_not_called()
+
+    def test_incomplete_graph_config_returns_zero_when_fail_silently(self):
+        backend = PlaneEmailBackend(fail_silently=True)
+        message = _make_message()
+
+        with patch(
+            "plane.license.utils.email_backend.get_graph_email_configuration",
+            return_value=INCOMPLETE_GRAPH_CONFIG,
+        ), patch("plane.license.utils.email_backend.send_graph_email") as mock_send:
+            sent = backend.send_messages([message])
+
+        assert sent == 0
+        mock_send.assert_not_called()
