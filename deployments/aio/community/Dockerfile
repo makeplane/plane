@@ -16,20 +16,47 @@ FROM makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
 # **************************************************
 #  STAGE 1: Runner
 # **************************************************
-FROM python:3.12.10-alpine AS runner
+FROM python:3.12.12-alpine AS runner
 
 WORKDIR /app
 
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
+
+# All apk work must happen BEFORE the `COPY --from=node /usr/lib` below: that
+# copy overwrites /usr/lib/libapk.so.* with node:22-alpine's copy, which is a
+# different Alpine release, leaving /sbin/apk linked against a libapk that no
+# longer exports the symbols it needs. Every later apk call then dies with
+# "Error relocating /sbin/apk: ... symbol not found" (exit 127), and apk cannot
+# repair itself because apk is the broken binary. So the runtime tools that used
+# to be installed further down are folded in here.
 RUN apk add --no-cache \
     "libpq" \
     "libxslt" \
-    "xmlsec"
+    "xmlsec" \
+    "nss-tools" \
+    "bash" \
+    "curl" \
+    "uuidgen" \
+    "ncdu" \
+    "vim"
 
 
 COPY --from=node /usr/lib /usr/lib
 COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
+
+# The copy above re-introduces node:22-alpine's npm, whose bundled dependencies
+# carry known vulnerabilities (pacote, ip-address, brace-expansion, tar,
+# sigstore) -- the per-service images strip npm, so without this the AIO is the
+# only place they come back. npm is not needed at runtime: the space program in
+# supervisor.conf execs its react-router-serve bin shim directly rather than
+# going through npx.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 
 COPY --from=web-img /usr/share/caddy/html /app/web
 COPY --from=space-img /app /app/space
@@ -44,8 +71,6 @@ COPY dist/Caddyfile /app/proxy/Caddyfile
 COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=backend-img /usr/local/bin/ /usr/local/bin/
-
-RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim
 
 RUN pip install supervisor
 RUN mkdir -p /etc/supervisor/conf.d
