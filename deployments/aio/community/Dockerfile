@@ -16,9 +16,15 @@ FROM makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
 # **************************************************
 #  STAGE 1: Runner
 # **************************************************
-FROM python:3.12.10-alpine AS runner
+FROM python:3.12.12-alpine AS runner
 
 WORKDIR /app
+
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
 
 RUN apk add --no-cache \
     "libpq" \

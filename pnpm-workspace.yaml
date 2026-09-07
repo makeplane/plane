@@ -250,7 +250,12 @@ overrides:
   axios: "catalog:"
   follow-redirects: 1.16.0
   uuid: "catalog:"
-  "fast-uri@<3.1.5": "3.1.5"
+  # SSRF / host-confusion in the URI parser (percent-decoding, IDN
+  # canonicalization and IPv6 normalization): CVE-2026-75899, -75931, -75975 and
+  # -76172, all fixed in 3.1.6. The previous floor pinned 3.1.5, which is the
+  # affected version. fast-uri reaches us only through ajv, so stay on the
+  # patched 3.x rather than 4.x, which is outside ajv's ^3.0.1 range.
+  fast-uri: 3.1.6
   "js-yaml@4": 4.3.1
   linkify-it: 5.0.2
   body-parser: 1.20.6
@@ -262,6 +267,17 @@ overrides:
   "@opentelemetry/resources": 2.8.0
   "@opentelemetry/sdk-trace-base": 2.8.0
   morgan: 1.11.0
+  # Prototype pollution and unbounded query-cache growth, both reachable as DoS
+  # (CVE-2026-73088 / CVE-2026-73089). browserslist is build tooling only
+  # (babel/postcss/vite), but the runtime images copy node_modules wholesale, so
+  # it lands in the scanned surface.
+  browserslist: ">=4.28.7"
+  # CVE-2026-63376 (prototype-pollution -> arbitrary code execution in the TOML
+  # parser, fixed 4.1.2) and CVE-2026-77465 (DoS via uncontrolled recursion,
+  # fixed 4.2.0). toml reaches us only transitively and its parent's range
+  # already allows the fix -- the lockfile simply predates both. Hold below
+  # 5.0.0, which is outside that range.
+  toml: ">=4.2.0 <5"
 
 allowBuilds:
   "@parcel/watcher": true

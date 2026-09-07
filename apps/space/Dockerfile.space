@@ -80,12 +80,21 @@ FROM base AS runner
 
 ENV NODE_ENV=production
 
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
+
 # Remove go from Alpine APK database; not needed at runtime and carries stdlib CVEs
 RUN apk del go 2>/dev/null || true
 
-# Remove vulnerable picomatch bundled inside npm (CVE-2026-33671)
-# npx only needs picomatch when installing packages, not when running a locally-installed binary
-RUN rm -rf /usr/local/lib/node_modules/npm/node_modules/picomatch
+# npm is not used at runtime (the CMD execs the react-router-serve bin shim
+# directly rather than going through npx); its bundled dependencies carry known
+# vulnerabilities (tar, brace-expansion, pacote, sigstore, ip-address, fast-uri,
+# browserslist), so remove the whole CLI rather than picking off one package at
+# a time.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 
 COPY --from=installer /app/apps/space/build ./apps/space/build
 COPY --from=installer /app/apps/space/node_modules ./apps/space/node_modules
@@ -102,4 +111,4 @@ RUN apk add --no-cache curl
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -fsS http://127.0.0.1:3000/spaces/ >/dev/null || exit 1
 
-CMD ["npx", "react-router-serve", "./build/server/index.js"]
+CMD ["./node_modules/.bin/react-router-serve", "./build/server/index.js"]
