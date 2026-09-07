@@ -111,5 +111,8 @@
       "success_message": "Sayfa koleksiyondan kaldırıldı.",
       "error_message": "Sayfa koleksiyondan kaldırılamadı. Lütfen tekrar deneyin."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "İçerik sınırına ulaşıldı ve canlı senkronizasyon kapalı. Senkronizasyona devam etmek için yeni bir sayfa oluşturun veya iç içe sayfalar kullanın."
   }
 }

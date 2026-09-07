@@ -111,5 +111,8 @@
       "success_message": "Page removed from collection.",
       "error_message": "Page could not be removed from the collection. Please try again."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "კონტენტის ლიმიტი ამოწურულია და რეალურ დროში სინქრონიზაცია გამორთულია. შექმენით ახალი გვერდი ან გამოიყენეთ ჩალაგებული გვერდები სინქრონიზაციის გასაგრძელებლად."
   }
 }

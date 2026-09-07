@@ -111,5 +111,8 @@
       "success_message": "Stránka byla odebrána z kolekce.",
       "error_message": "Stránku se nepodařilo odebrat z kolekce. Zkuste to prosím znovu."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Byl dosažen limit obsahu a živá synchronizace je vypnutá. Vytvořte novou stránku nebo použijte vnořené stránky a pokračujte v synchronizaci."
   }
 }

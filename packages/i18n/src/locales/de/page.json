@@ -111,5 +111,8 @@
       "success_message": "Seite aus Sammlung entfernt.",
       "error_message": "Die Seite konnte nicht aus der Sammlung entfernt werden. Bitte versuchen Sie es erneut."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Inhaltslimit erreicht, Live-Synchronisierung ist deaktiviert. Neue Seite erstellen oder verschachtelte Seiten verwenden, um die Synchronisierung fortzusetzen."
   }
 }

@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Archivácia pracovnej položky zlyhala. Skúste to prosím znova."
-      }
+      },
+      "banner_message": "Táto pracovná položka bola archivovaná. Prejdite do sekcie Archívy a obnovte ju.",
+      "go_to_archives": "Prejsť do archívov"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Nemožno aktualizovať pracovné položky",
         "message": "Zmena stavu nie je povolená pre niektoré pracovné položky. Uistite sa, že zmena stavu je povolená."
       }
+    },
+    "upgrade_banner": {
+      "message": "Menite stav, prioritu a ďalšie vlastnosti viacerých pracovných položiek naraz. V priemere ušetríte tri minúty na operáciu.",
+      "cta": "Upgradovať na One"
     }
   },
   "recurring_work_items": {

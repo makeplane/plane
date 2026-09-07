@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "No se pudo archivar el elemento de trabajo. Por favor, inténtalo de nuevo."
-      }
+      },
+      "banner_message": "Este elemento de trabajo ha sido archivado. Visite la sección Archivos para restaurarlo.",
+      "go_to_archives": "Ir a archivos"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "No se pueden actualizar elementos de trabajo",
         "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
       }
+    },
+    "upgrade_banner": {
+      "message": "Cambie el estado, la prioridad y más para varios elementos de trabajo a la vez. Ahorre en promedio tres minutos por operación.",
+      "cta": "Actualizar a One"
     }
   },
   "recurring_work_items": {

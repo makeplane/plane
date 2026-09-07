@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
+import { Banner } from "@makeplane/propel/components/banner";
 import { OAuthOptions } from "@plane/ui";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
@@ -23,7 +24,6 @@ import { useOAuthConfig } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
-import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
 
@@ -116,7 +116,13 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   return (
     <AuthContainer>
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+        <Banner
+          placement="inline"
+          variant="accent"
+          role="alert"
+          description={errorInfo.message}
+          onDismiss={() => setErrorInfo(undefined)}
+        />
       )}
       <AuthHeader
         workspaceSlug={workspaceSlug?.toString() || undefined}

@@ -8,8 +8,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { CloseCircleOutline, CloseOutline, HideOutline, InfoOutline, ShowOutline } from "@makeplane/propel/icons";
+import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -127,21 +128,12 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   return (
     <>
       {isBannerMessage && mode === EAuthModes.SIGN_UP && (
-        <div className="relative flex items-center gap-2 rounded-md border border-danger-strong/50 bg-danger-subtle p-2">
-          <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
-            <InfoOutline width={16} height={16} className="text-danger-primary" />
-          </div>
-          <div className="w-full text-13 font-medium text-danger-primary">
-            {t("auth.sign_up.errors.password.strength")}
-          </div>
-          <button
-            type="button"
-            className="relative ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-xs text-accent-primary/80 transition-all hover:bg-danger-subtle-hover"
-            onClick={() => setBannerMessage(false)}
-          >
-            <CloseOutline className="h-4 w-4 shrink-0 text-danger-primary" />
-          </button>
-        </div>
+        <Banner
+          placement="inline"
+          variant="danger"
+          description={t("auth.sign_up.errors.password.strength")}
+          onDismiss={() => setBannerMessage(false)}
+        />
       )}
       <form
         ref={formRef}
