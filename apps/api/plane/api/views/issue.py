@@ -1120,7 +1120,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
     def get_scoped_issue(self):
         return (
-            Issue.objects.select_related("project__workspace")
+            Issue.issue_objects.select_related("project__workspace")
             .filter(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),

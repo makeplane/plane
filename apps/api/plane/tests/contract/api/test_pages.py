@@ -495,6 +495,30 @@ class TestProjectPageWorkItemLinks:
         assert IssueLink.objects.filter(pk=link.id).exists()
 
     @pytest.mark.django_db
+    def test_archived_issue_rejects_link_list_and_create(self, api_key_client, workspace, project, create_user):
+        issue = _create_issue(workspace, project, create_user)
+        url = _issue_links_url(workspace, project, issue)
+        initial_response = api_key_client.post(
+            url,
+            {"title": "Existing link", "url": "https://plane.example.test/page/existing"},
+            format="json",
+        )
+        assert initial_response.status_code == status.HTTP_201_CREATED
+
+        Issue.objects.filter(pk=issue.id).update(archived_at=timezone.now().date())
+
+        list_response = api_key_client.get(url)
+        create_response = api_key_client.post(
+            url,
+            {"title": "Archived link", "url": "https://plane.example.test/page/archived"},
+            format="json",
+        )
+
+        assert list_response.status_code == status.HTTP_404_NOT_FOUND
+        assert create_response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueLink.objects.filter(issue=issue).count() == 1
+
+    @pytest.mark.django_db
     def test_create_rejects_issue_from_another_project(self, api_key_client, workspace, project, create_user):
         other_project = Project.objects.create(
             name="Other Project",
