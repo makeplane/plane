@@ -418,6 +418,9 @@ LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
 
 LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 
+# Internal API key for server-to-server calls to the live server
+LIVE_INTERNAL_API_KEY = os.environ.get("LIVE_INTERNAL_API_KEY", "")
+
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
 
