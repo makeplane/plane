@@ -13,17 +13,12 @@ export const useOutsideClickDetector = (
   useCapture = false
 ) => {
   const handleClick = (event: MouseEvent) => {
-    if (ref.current && event.composedPath().includes(ref.current)) return;
+    const path = event.composedPath();
+    if (ref.current && path.includes(ref.current)) return;
     if (ref.current && !ref.current.contains(event.target as any)) {
-      // check for the closest element with attribute name data-prevent-outside-click
-      const preventOutsideClickElement = (event.target as unknown as HTMLElement | undefined)?.closest(
-        "[data-prevent-outside-click]"
-      );
-      // if the closest element with attribute name data-prevent-outside-click is found, return
-      if (preventOutsideClickElement) {
+      if (path.some((node) => node instanceof Element && node.hasAttribute("data-prevent-outside-click"))) {
         return;
       }
-      // else call the callback
       callback();
     }
   };
