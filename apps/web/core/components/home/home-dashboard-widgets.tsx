@@ -23,7 +23,7 @@ import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
-// Questimus fork change (Phase 3): home dashboard sections — My Issues / Now / Today
+// Questimus fork change (Phase 3): home dashboard widgets — My Issues / Now / Today
 import { AssignedIssuesWidget } from "./widgets/assigned-issues";
 import { NowWidget } from "./widgets/now";
 import { TodayWidget } from "./widgets/today";
@@ -59,6 +59,22 @@ export const HOME_WIDGETS_LIST: {
     component: null,
     fullWidth: false,
     title: "home.quick_tutorial.title",
+  },
+  // Questimus fork change (Phase 3): My Issues / Now / Today as reorderable widgets
+  my_issues: {
+    component: AssignedIssuesWidget,
+    fullWidth: false,
+    title: "home.my_issues.title",
+  },
+  now: {
+    component: NowWidget,
+    fullWidth: false,
+    title: "home.now.title",
+  },
+  today: {
+    component: TodayWidget,
+    fullWidth: false,
+    title: "home.today.title",
   },
 };
 
@@ -114,15 +130,6 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
           />
         </div>
       )}
-
-      {/* Questimus fork change (Phase 3): fixed home sections — My Issues,
-          "Now" (urgent/high or due ≤ 7 days) and "Today" (due today/overdue),
-          assigned to me, computed per request (§5.7). */}
-      <div className="mt-4 flex flex-col gap-7">
-        <AssignedIssuesWidget workspaceSlug={workspaceSlug.toString()} />
-        <NowWidget workspaceSlug={workspaceSlug.toString()} />
-        <TodayWidget workspaceSlug={workspaceSlug.toString()} />
-      </div>
     </div>
   );
 });

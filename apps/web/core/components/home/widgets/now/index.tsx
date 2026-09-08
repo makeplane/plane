@@ -31,9 +31,9 @@ export const NowWidget = observer(function NowWidget({ workspaceSlug }: { worksp
     .slice(0, MAX_ROWS);
 
   return (
-    <section className="rounded-md border border-custom-border-200 bg-custom-background-100 p-4">
+    <section>
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 className="text-body-lg font-semibold text-primary">Now</h3>
+        <h3 className="text-14 font-semibold text-tertiary">Now</h3>
         <span className="text-body-xs text-secondary">urgent/high or due ≤ 7 days</span>
       </div>
       {isLoading ? (

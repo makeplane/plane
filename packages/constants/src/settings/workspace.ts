@@ -65,7 +65,7 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
   // Questimus fork change (§7.12): central issue-type management
   "issue-types": {
     key: "issue-types",
-    i18n_label: "work_item_type.label",
+    i18n_label: "workflows.work_item_type.label",
     href: `/settings/issue-types`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/issue-types/`,
