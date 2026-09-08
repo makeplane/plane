@@ -5,6 +5,7 @@
  */
 
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
+import * as Y from "yjs";
 // plane imports
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
@@ -23,7 +24,13 @@ import { broadcastError } from "@/utils/broadcast-error";
 // force close utility
 import { forceCloseDocumentAcrossServers } from "./force-close-handler";
 
+const ISSUE_EVENTS_DOCUMENT_PREFIX = "issue-events:";
+
 const fetchDocument = async ({ context, documentName: pageId, instance }: FetchPayloadWithContext) => {
+  // issue-events documents are ephemeral broadcast channels without any persisted content
+  if (pageId.startsWith(ISSUE_EVENTS_DOCUMENT_PREFIX)) {
+    return Y.encodeStateAsUpdate(new Y.Doc());
+  }
   try {
     const service = getPageService(context.documentType, context);
     // fetch details
@@ -75,6 +82,10 @@ const storeDocument = async ({
   documentName: pageId,
   instance,
 }: StorePayloadWithContext) => {
+  // issue-events documents are ephemeral broadcast channels without any persisted content
+  if (pageId.startsWith(ISSUE_EVENTS_DOCUMENT_PREFIX)) {
+    return;
+  }
   try {
     const service = getPageService(context.documentType, context);
     // convert binary data to all formats
