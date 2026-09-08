@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Đã tạo tài khoản",
+          "rotated_title": "Đã xoay vòng token",
           "copy_warning": "Hãy sao chép và lưu token này ngay. Bạn sẽ không thể xem lại sau khi đóng hộp thoại này.",
           "copied": "Đã sao chép token vào clipboard.",
           "not_copied": "Không thể sao chép token. Vui lòng thử lại."
@@ -175,7 +176,8 @@
           "created_on": "Được tạo vào",
           "edit": "Chỉnh sửa",
           "delete": "Xóa",
-          "manage_scopes": "Quản lý phạm vi"
+          "manage_scopes": "Quản lý phạm vi",
+          "rotate_token": "Xoay vòng token"
         },
         "avatar": {
           "label": "Ảnh đại diện",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Lỗi!",
             "message": "Không thể xóa tài khoản AI"
+          }
+        },
+        "rotate": {
+          "title": "Xoay vòng token",
+          "description": "Token hiện tại sẽ bị thu hồi ngay lập tức và các tích hợp đang dùng nó sẽ ngừng hoạt động. Token mới chỉ được hiển thị một lần.",
+          "confirm": "Xoay vòng token",
+          "rotating": "Đang xoay vòng",
+          "success": {
+            "title": "Đã xoay vòng token",
+            "message": "Token của tài khoản AI đã được xoay vòng. Token trước đó không còn hợp lệ."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xoay vòng token"
           }
         },
         "scopes": {

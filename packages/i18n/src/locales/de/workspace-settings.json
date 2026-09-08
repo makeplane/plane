@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Konto erstellt",
+          "rotated_title": "Token rotiert",
           "copy_warning": "Kopieren und speichern Sie dieses Token jetzt. Nach dem Schließen dieses Dialogs können Sie es nicht mehr anzeigen.",
           "copied": "Token in die Zwischenablage kopiert.",
           "not_copied": "Token konnte nicht kopiert werden. Bitte versuchen Sie es erneut."
@@ -175,7 +176,8 @@
           "created_on": "Erstellt am",
           "edit": "Bearbeiten",
           "delete": "Löschen",
-          "manage_scopes": "Bereiche verwalten"
+          "manage_scopes": "Bereiche verwalten",
+          "rotate_token": "Token rotieren"
         },
         "avatar": {
           "label": "Profilbild",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Fehler!",
             "message": "Das AI-Konto konnte nicht gelöscht werden"
+          }
+        },
+        "rotate": {
+          "title": "Token rotieren",
+          "description": "Das aktuelle Token wird sofort widerrufen und Integrationen, die es verwenden, funktionieren nicht mehr. Das neue Token wird nur einmal angezeigt.",
+          "confirm": "Token rotieren",
+          "rotating": "Wird rotiert",
+          "success": {
+            "title": "Token rotiert",
+            "message": "Das AI-Konto-Token wurde rotiert. Das vorherige Token ist nicht mehr gültig."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Das Token konnte nicht rotiert werden"
           }
         },
         "scopes": {

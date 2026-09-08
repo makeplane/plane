@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Účet vytvorený",
+          "rotated_title": "Token rotovaný",
           "copy_warning": "Skopírujte a uložte si tento token teraz. Po zatvorení tohto dialógu ho už nebudete môcť zobraziť.",
           "copied": "Token skopírovaný do schránky.",
           "not_copied": "Token sa nepodarilo skopírovať. Skúste to znova."
@@ -175,7 +176,8 @@
           "created_on": "Vytvorené dňa",
           "edit": "Upraviť",
           "delete": "Zmazať",
-          "manage_scopes": "Spravovať rozsahy"
+          "manage_scopes": "Spravovať rozsahy",
+          "rotate_token": "Rotovať token"
         },
         "avatar": {
           "label": "Profilový obrázok",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Chyba!",
             "message": "AI účet sa nepodarilo zmazať"
+          }
+        },
+        "rotate": {
+          "title": "Rotovať token",
+          "description": "Aktuálny token bude okamžite zneplatnený a integrácie, ktoré ho používajú, prestanú fungovať. Nový token sa zobrazí iba raz.",
+          "confirm": "Rotovať token",
+          "rotating": "Rotovanie",
+          "success": {
+            "title": "Token rotovaný",
+            "message": "Token AI účtu bol rotovaný. Predchádzajúci token už nie je platný."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Token sa nepodarilo rotovať"
           }
         },
         "scopes": {

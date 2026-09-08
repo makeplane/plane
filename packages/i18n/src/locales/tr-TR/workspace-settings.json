@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Hesap oluşturuldu",
+          "rotated_title": "Belirteç döndürüldü",
           "copy_warning": "Bu belirteci şimdi kopyalayıp kaydedin. Bu iletişim kutusunu kapattıktan sonra bir daha göremeyeceksiniz.",
           "copied": "Belirteç panoya kopyalandı.",
           "not_copied": "Belirteç kopyalanamadı. Lütfen tekrar deneyin."
@@ -175,7 +176,8 @@
           "created_on": "Oluşturulma tarihi",
           "edit": "Düzenle",
           "delete": "Sil",
-          "manage_scopes": "Kapsamları yönet"
+          "manage_scopes": "Kapsamları yönet",
+          "rotate_token": "Belirteci döndür"
         },
         "avatar": {
           "label": "Profil resmi",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Hata!",
             "message": "AI hesabı silinemedi"
+          }
+        },
+        "rotate": {
+          "title": "Belirteci döndür",
+          "description": "Mevcut belirteç anında iptal edilecek ve onu kullanan entegrasyonlar çalışmayı durduracaktır. Yeni belirteç yalnızca bir kez gösterilir.",
+          "confirm": "Belirteci döndür",
+          "rotating": "Döndürülüyor",
+          "success": {
+            "title": "Belirteç döndürüldü",
+            "message": "AI hesabı belirteci döndürüldü. Önceki belirteç artık geçerli değil."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Belirteç döndürülemedi"
           }
         },
         "scopes": {

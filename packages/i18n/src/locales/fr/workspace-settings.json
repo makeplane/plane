@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Compte créé",
+          "rotated_title": "Jeton renouvelé",
           "copy_warning": "Copiez et enregistrez ce jeton maintenant. Vous ne pourrez plus le voir après avoir fermé cette boîte de dialogue.",
           "copied": "Jeton copié dans le presse-papiers.",
           "not_copied": "Le jeton n'a pas pu être copié. Veuillez réessayer."
@@ -175,7 +176,8 @@
           "created_on": "Créé le",
           "edit": "Modifier",
           "delete": "Supprimer",
-          "manage_scopes": "Gérer les portées"
+          "manage_scopes": "Gérer les portées",
+          "rotate_token": "Renouveler le jeton"
         },
         "avatar": {
           "label": "Avatar",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Erreur !",
             "message": "Le compte AI n'a pas pu être supprimé"
+          }
+        },
+        "rotate": {
+          "title": "Renouveler le jeton",
+          "description": "Le jeton actuel sera révoqué immédiatement et les intégrations qui l'utilisent cesseront de fonctionner. Le nouveau jeton n'est affiché qu'une seule fois.",
+          "confirm": "Renouveler le jeton",
+          "rotating": "Renouvellement",
+          "success": {
+            "title": "Jeton renouvelé",
+            "message": "Le jeton du compte AI a été renouvelé. Le jeton précédent n'est plus valide."
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "Le jeton n'a pas pu être renouvelé"
           }
         },
         "scopes": {

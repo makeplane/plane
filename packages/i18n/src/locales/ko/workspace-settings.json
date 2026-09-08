@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "계정이 생성되었습니다",
+          "rotated_title": "토큰이 교체되었습니다",
           "copy_warning": "지금 이 토큰을 복사하여 저장하세요. 이 대화 상자를 닫으면 다시 볼 수 없습니다.",
           "copied": "토큰이 클립보드에 복사되었습니다.",
           "not_copied": "토큰을 복사할 수 없습니다. 다시 시도하세요."
@@ -175,7 +176,8 @@
           "created_on": "생성일",
           "edit": "편집",
           "delete": "삭제",
-          "manage_scopes": "범위 관리"
+          "manage_scopes": "범위 관리",
+          "rotate_token": "토큰 교체"
         },
         "avatar": {
           "label": "아바타",
@@ -192,6 +194,20 @@
           "error": {
             "title": "오류!",
             "message": "AI 계정을 삭제할 수 없습니다"
+          }
+        },
+        "rotate": {
+          "title": "토큰 교체",
+          "description": "현재 토큰은 즉시 폐기되며 이를 사용하는 통합은 더 이상 작동하지 않습니다. 새 토큰은 한 번만 표시됩니다.",
+          "confirm": "토큰 교체",
+          "rotating": "교체 중",
+          "success": {
+            "title": "토큰 교체됨",
+            "message": "AI 계정 토큰이 교체되었습니다. 이전 토큰은 더 이상 유효하지 않습니다."
+          },
+          "error": {
+            "title": "오류!",
+            "message": "토큰을 교체할 수 없습니다"
           }
         },
         "scopes": {

@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Cont creat",
+          "rotated_title": "Token rotit",
           "copy_warning": "Copiază și salvează acest token acum. Nu îl vei mai putea vedea după ce închizi această fereastră.",
           "copied": "Token copiat în clipboard.",
           "not_copied": "Tokenul nu a putut fi copiat. Încearcă din nou."
@@ -175,7 +176,8 @@
           "created_on": "Creată la",
           "edit": "Editează",
           "delete": "Șterge",
-          "manage_scopes": "Gestionează domeniile"
+          "manage_scopes": "Gestionează domeniile",
+          "rotate_token": "Rotește tokenul"
         },
         "avatar": {
           "label": "Imagine de profil",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Eroare!",
             "message": "Contul AI nu a putut fi șters"
+          }
+        },
+        "rotate": {
+          "title": "Rotește tokenul",
+          "description": "Tokenul curent va fi revocat imediat, iar integrările care îl folosesc vor înceta să funcționeze. Noul token este afișat o singură dată.",
+          "confirm": "Rotește tokenul",
+          "rotating": "Se rotește",
+          "success": {
+            "title": "Token rotit",
+            "message": "Tokenul contului AI a fost rotit. Tokenul anterior nu mai este valid."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Tokenul nu a putut fi rotit"
           }
         },
         "scopes": {

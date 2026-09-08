@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Account creato",
+          "rotated_title": "Token ruotato",
           "copy_warning": "Copia e salva subito questo token. Non potrai più visualizzarlo dopo aver chiuso questa finestra.",
           "copied": "Token copiato negli appunti.",
           "not_copied": "Impossibile copiare il token. Riprova."
@@ -175,7 +176,8 @@
           "created_on": "Creato il",
           "edit": "Modifica",
           "delete": "Elimina",
-          "manage_scopes": "Gestisci ambiti"
+          "manage_scopes": "Gestisci ambiti",
+          "rotate_token": "Ruota token"
         },
         "avatar": {
           "label": "Avatar",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Errore!",
             "message": "Impossibile eliminare l'account AI"
+          }
+        },
+        "rotate": {
+          "title": "Ruota token",
+          "description": "Il token attuale verrà revocato immediatamente e le integrazioni che lo utilizzano smetteranno di funzionare. Il nuovo token viene mostrato una sola volta.",
+          "confirm": "Ruota token",
+          "rotating": "Rotazione in corso",
+          "success": {
+            "title": "Token ruotato",
+            "message": "Il token dell'account AI è stato ruotato. Il token precedente non è più valido."
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile ruotare il token"
           }
         },
         "scopes": {

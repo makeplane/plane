@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "帳戶已建立",
+          "rotated_title": "權杖已輪換",
           "copy_warning": "請立即複製並儲存此權杖。關閉此對話框後，您將無法再次查看它。",
           "copied": "權杖已複製到剪貼簿。",
           "not_copied": "權杖複製失敗，請重試。"
@@ -175,7 +176,8 @@
           "created_on": "建立於",
           "edit": "編輯",
           "delete": "刪除",
-          "manage_scopes": "管理範圍"
+          "manage_scopes": "管理範圍",
+          "rotate_token": "輪換權杖"
         },
         "avatar": {
           "label": "大頭貼",
@@ -192,6 +194,20 @@
           "error": {
             "title": "錯誤！",
             "message": "無法刪除 AI 帳戶"
+          }
+        },
+        "rotate": {
+          "title": "輪換權杖",
+          "description": "目前權杖將立即被吊銷，使用它的整合將停止運作。新權杖僅會顯示一次。",
+          "confirm": "輪換權杖",
+          "rotating": "輪換中",
+          "success": {
+            "title": "權杖已輪換",
+            "message": "AI 帳戶權杖已輪換。舊權杖不再有效。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法輪換權杖"
           }
         },
         "scopes": {

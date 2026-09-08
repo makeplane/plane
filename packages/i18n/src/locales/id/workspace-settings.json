@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Akun dibuat",
+          "rotated_title": "Token dirotasi",
           "copy_warning": "Salin dan simpan token ini sekarang. Anda tidak akan dapat melihatnya lagi setelah menutup dialog ini.",
           "copied": "Token disalin ke clipboard.",
           "not_copied": "Token tidak dapat disalin. Silakan coba lagi."
@@ -175,7 +176,8 @@
           "created_on": "Dibuat pada",
           "edit": "Sunting",
           "delete": "Hapus",
-          "manage_scopes": "Kelola cakupan"
+          "manage_scopes": "Kelola cakupan",
+          "rotate_token": "Rotasi token"
         },
         "avatar": {
           "label": "Avatar",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Kesalahan!",
             "message": "Akun AI tidak dapat dihapus"
+          }
+        },
+        "rotate": {
+          "title": "Rotasi token",
+          "description": "Token saat ini akan segera dicabut dan integrasi yang menggunakannya akan berhenti berfungsi. Token baru hanya ditampilkan satu kali.",
+          "confirm": "Rotasi token",
+          "rotating": "Merotasi",
+          "success": {
+            "title": "Token dirotasi",
+            "message": "Token akun AI telah dirotasi. Token sebelumnya tidak lagi valid."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Token tidak dapat dirotasi"
           }
         },
         "scopes": {

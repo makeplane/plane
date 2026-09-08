@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "Konto utworzone",
+          "rotated_title": "Token rotowany",
           "copy_warning": "Skopiuj i zapisz ten token teraz. Po zamknięciu tego okna nie będzie można go ponownie wyświetlić.",
           "copied": "Token skopiowany do schowka.",
           "not_copied": "Nie udało się skopiować tokenu. Spróbuj ponownie."
@@ -175,7 +176,8 @@
           "created_on": "Utworzono dnia",
           "edit": "Edytuj",
           "delete": "Usuń",
-          "manage_scopes": "Zarządzaj zakresami"
+          "manage_scopes": "Zarządzaj zakresami",
+          "rotate_token": "Rotuj token"
         },
         "avatar": {
           "label": "Zdjęcie profilowe",
@@ -192,6 +194,20 @@
           "error": {
             "title": "Błąd!",
             "message": "Nie można usunąć konta AI"
+          }
+        },
+        "rotate": {
+          "title": "Rotuj token",
+          "description": "Bieżący token zostanie natychmiast unieważniony, a integracje, które go używają, przestaną działać. Nowy token zostanie wyświetlony tylko raz.",
+          "confirm": "Rotuj token",
+          "rotating": "Rotowanie",
+          "success": {
+            "title": "Token rotowany",
+            "message": "Token konta AI został rotowany. Poprzedni token nie jest już ważny."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie można rotować tokenu"
           }
         },
         "scopes": {
