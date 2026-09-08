@@ -224,6 +224,8 @@ API tokens are user-level, so **scoping = membership** (verified in the permissi
    - `…-agent` token → used by LLM harnesses (skills)
    Personal-project bots get the `-agent` token only (no app backend exists).
 
+**Execution finding (Phase 2, 2026-09-08):** `User.username` is `unique=True` with no default — the first bot created with an empty username (`""`) makes every further bot creation fail with `user_username_key` violation. The command now sets `username = email` (collision-free) and backfills pre-fix bots; the token file `migration-tools/state/tokens.json` is written UTF-8 **without BOM** (a BOM breaks JSON.parse in Node).
+
 Result: the token can read/write **only its project** (project list and all project endpoints are gated by `ProjectMember` rows). The bot can see workspace-level metadata (name, its own membership) but nothing of other projects. If hard isolation is ever needed (bot must not know other projects exist), that requires a separate workspace — not needed now.
 
 ### 6.3 Collaborators (humans)

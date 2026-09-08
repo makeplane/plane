@@ -50,6 +50,11 @@ class Command(BaseCommand):
         user, created = User.objects.get_or_create(
             email=email,
             defaults={
+                # The User.username field is unique with no default — the normal
+                # signup flow sets it elsewhere. Bots must get an explicit,
+                # collision-free username (the email itself) or the second
+                # bot creation fails with user_username_key = "".
+                "username": email,
                 "password": secrets.token_urlsafe(24),
                 "is_email_verified": True,
                 "is_active": True,
@@ -58,6 +63,10 @@ class Command(BaseCommand):
         )
         if not created:
             self.stdout.write(self.style.WARNING(f"User {email} already exists — reusing it"))
+        if not user.username:
+            # Backfill pre-fix bot users created with username=""
+            user.username = email
+            user.save(update_fields=["username"])
 
         WorkspaceMember.objects.get_or_create(
             workspace=workspace, member=user, defaults={"role": options["workspace_role"]}
