@@ -6,7 +6,12 @@
 
 import { describe, expect, it } from "vitest";
 // local imports
-import { isValidInlineMathContent, MATH_INLINE_INPUT_REGEX, serializeMathInlineToMarkdown } from "../math-inline";
+import {
+  isValidInlineMathContent,
+  findInlineMathMatch,
+  MATH_INLINE_INPUT_REGEX,
+  serializeMathInlineToMarkdown,
+} from "../math-inline";
 
 describe("isValidInlineMathContent", () => {
   it("accepts regular formulas", () => {
@@ -59,6 +64,40 @@ describe("MATH_INLINE_INPUT_REGEX", () => {
     const match = "$$x$$".match(MATH_INLINE_INPUT_REGEX);
     expect(match?.[0]).toBe("$x$");
     expect(match?.index).toBe(1);
+  });
+});
+
+describe("findInlineMathMatch", () => {
+  it("finds a valid span and reports its offsets", () => {
+    expect(findInlineMathMatch("a $x+1$ b")).toEqual({ from: 2, to: 7, latex: "x+1" });
+  });
+
+  it("supports the $$-then-fill-the-middle typing flow", () => {
+    expect(findInlineMathMatch("$x+1$")).toEqual({ from: 0, to: 5, latex: "x+1" });
+  });
+
+  it("returns null for empty $$ delimiters", () => {
+    expect(findInlineMathMatch("$$")).toBeNull();
+    expect(findInlineMathMatch("a $$ b")).toBeNull();
+  });
+
+  it("skips spans preceded by $ so $$ blocks win", () => {
+    expect(findInlineMathMatch("$$x$$")).toBeNull();
+    expect(findInlineMathMatch("$$x$ and $y$")).toEqual({ from: 9, to: 12, latex: "y" });
+  });
+
+  it("skips currency-like spans", () => {
+    expect(findInlineMathMatch("$100$")).toBeNull();
+    expect(findInlineMathMatch("pay $100$ or $x$")).toEqual({ from: 13, to: 16, latex: "x" });
+  });
+
+  it("skips spans crossing an inline atom placeholder", () => {
+    expect(findInlineMathMatch("$x￼$")).toBeNull();
+    expect(findInlineMathMatch("$x￼$ then $y$")).toEqual({ from: 10, to: 13, latex: "y" });
+  });
+
+  it("returns the first valid span only", () => {
+    expect(findInlineMathMatch("$a$ and $b$")).toEqual({ from: 0, to: 3, latex: "a" });
   });
 });
 
