@@ -425,6 +425,20 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_issue_type(params, issue_filter, method, prefix=""):
+    # Questimus fork change (migration-karol.md §7.5): filter by issue type
+    # (Plan/Subplan/Task/Subtask/Ticket) — powers the "Planning"/"Tickets" views.
+    if method == "GET":
+        issue_types = [item for item in params.get("issue_type").split(",") if item != "null"]
+        issue_types = filter_valid_uuids(issue_types)
+        if len(issue_types) and "" not in issue_types:
+            issue_filter[f"{prefix}type__in"] = issue_types
+    else:
+        if params.get("issue_type", None) and len(params.get("issue_type")) and params.get("issue_type") != "null":
+            issue_filter[f"{prefix}type__in"] = params.get("issue_type")
+    return issue_filter
+
+
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 
@@ -446,6 +460,7 @@ def issue_filters(query_params, method, prefix=""):
         "target_date": filter_target_date,
         "completed_at": filter_completed_at,
         "type": filter_issue_state_type,
+        "issue_type": filter_issue_type,
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,

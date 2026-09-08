@@ -150,6 +150,12 @@ class IssueFilterSet(BaseFilterSet):
     label_id = filters.UUIDFilter(method="filter_label_id")
     label_id__in = UUIDInFilter(method="filter_label_id_in", lookup_expr="in")
 
+    # Questimus fork change (migration-karol.md §7.5): filter by issue type
+    # (Plan/Subplan/Task/Subtask/Ticket) — powers the "Planning"/"Tickets" views
+    # and the UI's issue-type filter.
+    issue_type = filters.UUIDFilter(field_name="type_id")
+    issue_type__in = UUIDInFilter(field_name="type_id", lookup_expr="in")
+
     # Direct field lookups remain the same
     created_by_id = filters.UUIDFilter(field_name="created_by_id")
     created_by_id__in = UUIDInFilter(field_name="created_by_id", lookup_expr="in")
