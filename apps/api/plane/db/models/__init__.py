@@ -34,6 +34,7 @@ from .issue import (
     IssueActivity,
     IssueAssignee,
     IssueBlocker,
+    IssueChecklistItem,
     IssueComment,
     IssueLabel,
     IssueLink,
