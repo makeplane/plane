@@ -21,6 +21,7 @@ from plane.db.models import (
     User,
     Issue,
     IssueActivity,
+    IssueChecklistItem,
     IssueComment,
     ProjectUserProperty,
     IssueAssignee,
@@ -596,6 +597,44 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
+
+
+class IssueChecklistItemSerializer(BaseSerializer):
+    class Meta:
+        model = IssueChecklistItem
+        fields = [
+            "id",
+            "name",
+            "status",
+            "sort_order",
+            "completed_at",
+            "completed_by",
+            "issue",
+            "project",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "completed_at",
+            "completed_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def validate_name(self, value):
+        value = (value or "").strip()
+        if not value:
+            raise serializers.ValidationError("Name cannot be empty.")
+        return value
 
 
 class IssueLinkLiteSerializer(BaseSerializer):

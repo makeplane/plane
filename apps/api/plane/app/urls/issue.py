@@ -9,6 +9,7 @@ from plane.app.views import (
     BulkDeleteIssuesEndpoint,
     SubIssuesEndpoint,
     IssueLinkViewSet,
+    IssueChecklistItemViewSet,
     IssueAttachmentEndpoint,
     CommentReactionViewSet,
     IssueActivityEndpoint,
@@ -122,6 +123,22 @@ urlpatterns = [
             }
         ),
         name="project-issue-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/checklist-items/",
+        IssueChecklistItemViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-issue-checklist-items",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/checklist-items/<uuid:pk>/",
+        IssueChecklistItemViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-checklist-items",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
