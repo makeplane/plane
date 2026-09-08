@@ -7,6 +7,7 @@
 import type { Handle } from "hast-util-to-mdast";
 // plane utils
 import { serializeMathBlockToMarkdown } from "../math-block";
+import { serializeMathInlineToMarkdown } from "../math-inline";
 // local imports
 import { createTextNode } from "./common";
 import type { TCustomComponentsMetaData } from "./types";
@@ -33,6 +34,12 @@ export const parseCustomComponents = (args: TArgs): Record<string, Handle> => {
       const latex = String(properties["data-latex"] ?? "");
       if (!latex) return createTextNode("");
       return createTextNode(`${serializeMathBlockToMarkdown(latex)}\n`);
+    },
+    "math-inline": (_state, node) => {
+      const properties = node.properties || {};
+      const latex = String(properties["data-latex"] ?? "");
+      if (!latex) return createTextNode("");
+      return createTextNode(serializeMathInlineToMarkdown(latex));
     },
     img: (_state, node) => {
       const properties = node.properties || {};

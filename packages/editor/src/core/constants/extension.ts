@@ -42,6 +42,7 @@ export enum CORE_EXTENSIONS {
   TASK_ITEM = "taskItem",
   TASK_LIST = "taskList",
   MATH_BLOCK = "mathBlock",
+  MATH_INLINE = "mathInline",
   TEXT_ALIGN = "textAlign",
   TEXT_STYLE = "textStyle",
   TYPOGRAPHY = "typography",

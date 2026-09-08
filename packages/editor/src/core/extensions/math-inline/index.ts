@@ -4,7 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export * from "./common";
-export * from "./markdown-parser";
-export * from "./math-block";
-export * from "./math-inline";
+export * from "./extension";

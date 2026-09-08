@@ -43,3 +43,23 @@ class TestMathBlockSanitization:
         assert "onclick" not in clean_html
         assert "<script" not in clean_html
         assert 'data-latex="x"' in clean_html
+
+
+@pytest.mark.unit
+class TestMathInlineSanitization:
+    """Editor inline math (`<math-inline>`) must survive HTML sanitization."""
+
+    def test_math_inline_tag_is_preserved(self):
+        html = "<p>the equation <math-inline data-latex=\"x+1\"></math-inline> holds</p>"
+        is_valid, error, clean_html = validate_html_content(html)
+        assert is_valid is True
+        assert error is None
+        assert '<math-inline data-latex="x+1">' in clean_html
+
+    def test_math_inline_strips_script_attributes(self):
+        html = '<math-inline data-latex="x" onmouseover="alert(1)"></math-inline>'
+        is_valid, error, clean_html = validate_html_content(html)
+        assert is_valid is True
+        assert error is None
+        assert "onmouseover" not in clean_html
+        assert 'data-latex="x"' in clean_html

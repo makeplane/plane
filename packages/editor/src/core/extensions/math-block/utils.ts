@@ -16,11 +16,11 @@ export const MATH_BLOCK_LATEX_ATTRIBUTE = "data-latex";
  * on demand. Throws when the source is invalid — callers are expected to
  * catch and fall back to showing the raw source.
  */
-export const renderLatexToHtml = async (latex: string): Promise<string> => {
+export const renderLatexToHtml = async (latex: string, displayMode = true): Promise<string> => {
   const katexModule = await import("katex");
   const katex = katexModule.default;
   return katex.renderToString(latex, {
-    displayMode: true,
+    displayMode,
     strict: true,
     trust: false,
     throwOnError: true,

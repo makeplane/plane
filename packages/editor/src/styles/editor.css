@@ -572,3 +572,65 @@ span[data-name][data-type="emoji"] img {
   color: var(--editor-colors-red-text, #dc2626);
 }
 /* end math block styles */
+
+/* inline math styles */
+.math-inline {
+  display: inline-block;
+}
+
+.math-inline-trigger {
+  display: inline-block;
+  padding: 0 0.125rem;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  vertical-align: baseline;
+}
+
+.math-inline-trigger:hover {
+  background-color: var(--background-color-secondary, #fafafa);
+}
+
+.math-inline .katex {
+  font-size: 1.05em;
+}
+
+.math-inline-placeholder {
+  color: var(--text-color-tertiary, #a3a3a3);
+}
+
+.math-inline-source {
+  display: inline-block;
+  width: 12rem;
+  max-width: 40vw;
+  resize: none;
+  padding: 0.125rem 0.25rem;
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.8125rem;
+  color: var(--text-color-primary, #171717);
+  background-color: var(--background-color-secondary, #fafafa);
+  border: 1px solid var(--border-color-subtle, #e5e5e5);
+  border-radius: 0.25rem;
+  outline: none;
+  vertical-align: middle;
+}
+
+.math-inline-source:focus {
+  border-color: var(--border-color-strong, #a3a3a3);
+}
+
+.math-inline-error .math-inline-trigger:hover {
+  background-color: var(--editor-colors-red-background, #fef2f2);
+}
+
+.math-inline-error-source {
+  padding: 0 0.125rem;
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.8125rem;
+  color: var(--editor-colors-red-text, #dc2626);
+}
+
+/* end inline math styles */

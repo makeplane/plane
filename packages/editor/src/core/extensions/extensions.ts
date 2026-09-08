@@ -28,6 +28,7 @@ import {
   ImageExtension,
   ListKeymap,
   MathBlockExtension,
+  MathInlineExtension,
   Table,
   TableCell,
   TableHeader,
@@ -123,6 +124,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     MathBlockExtension,
+    MathInlineExtension,
     UtilityExtension({
       disabledExtensions,
       flaggedExtensions,

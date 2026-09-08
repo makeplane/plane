@@ -11,6 +11,7 @@ export * from "./custom-link";
 export * from "./custom-list-keymap";
 export * from "./image";
 export * from "./math-block";
+export * from "./math-inline";
 export * from "./mentions";
 export * from "./slash-commands";
 export * from "./table";

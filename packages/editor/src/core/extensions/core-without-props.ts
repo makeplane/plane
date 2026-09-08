@@ -22,6 +22,7 @@ import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionConfig } from "./image";
 import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { MathBlockExtensionConfig } from "./math-block/extension-config";
+import { MathInlineExtensionConfig } from "./math-inline/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { CustomStarterKitExtension } from "./starter-kit";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
@@ -61,6 +62,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   MathBlockExtensionConfig,
+  MathInlineExtensionConfig,
   CustomColorExtension,
   ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
