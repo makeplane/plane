@@ -14,7 +14,7 @@ const useExtendedSidebarOutsideClickDetector = (
 ) => {
   const handleClick = useCallback(
     (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) return;
+      if (!(event.target instanceof Node)) return;
       // Headless UI v2 selects on mousedown and unmounts the list in the same event.
       // After unmount, target is detached so contains()/closest() miss — use the event path.
       const path = event.composedPath();
