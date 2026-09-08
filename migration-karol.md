@@ -186,9 +186,10 @@ Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are t
 
 ### 5.6 Views (saved filters, per project)
 
-- Per project (created in Phase 2 via `setup-workspace.js` — `config/setup.json` `views` section; "All" is the default view, no creation needed): "In Progress", "Done", "User reports" (label `user-report`), "Blocked" (state filter), **"Planning"** (types Plan/Subplan/Task/Subtask), **"Tickets"** (type Ticket) — the type views need the §7.5 fork change
+- Per project (created in Phase 1 via `setup-workspace.js` — `config/setup.json` `views` section; "All" is the default view, no creation needed): "In Progress", "Done", "User reports" (label `user-report`), "Blocked" (state filter), **"Planning"** (types Plan/Subplan/Task/Subtask), **"Tickets"** (type Ticket) — the type views need the §7.5 fork change
 - Personal extras: "Inbox" (state Backlog), "Ideas" (label `idea`), "Someday" (label `someday`)
 - Workspace: **"Next"** (assigned to me, medium/low). "Now" and "Today" are **home dashboard widgets (Phase 3)** — saved views are AND-only and store fixed dates, so the combined/due-today logic can't be a saved view (Karol 2026-09-08)
+- **The web UI reads `rich_filters`, not `filters`** (execution finding 2026-09-08): the view stores hydrate from `viewDetails.rich_filters` (TWorkItemFilterExpression — `"<field>__in": "a,b"`, `and` groups) and ignore the legacy `filters` field. Views created with only `filters` were born invisible/filter-less. `setup-workspace.js` now converts resolved filters → `rich_filters` (its own converter — the backend's `LegacyToRichFiltersConverter` doesn't know the fork's `issue_type` key; key names must match `IssueFilterSet` fields: `state_id__in`/`label_id__in`/`assignee_id__in`/`priority__in`/`issue_type__in`) and writes both fields. Existing views are **converged** on every run (PATCH when stored filters/rich_filters differ — canonical compare) — this repaired all 64 views (24 had been created with empty filters because newly-created states/labels were missing from the lookup maps; the maps are now updated on create).
 
 ### 5.8 Feature toggles (per project; Karol 2026-09-08, applied to all 10)
 

@@ -34,6 +34,44 @@ const DEFAULT_FEATURES = {
   intake_view: false,
 };
 
+// Rich-filter conversion (migration-karol.md §5.6): the web UI reads a view's
+// `rich_filters` (TWorkItemFilterExpression — "<field>__in": "a,b" with an
+// "and" group for multiple conditions), NOT the legacy `filters` field. The
+// backend's own LegacyToRichFiltersConverter lacks our fork's `issue_type`
+// key, so we convert here. Key names must match IssueFilterSet fields
+// (state_id__in, label_id__in, assignee_id__in, priority__in, issue_type__in).
+const RICH_FIELD_MAP = {
+  state: "state_id",
+  labels: "label_id",
+  assignees: "assignee_id",
+  priority: "priority",
+  state_group: "state_group",
+  issue_type: "issue_type",
+};
+
+function toRichFilters(filters) {
+  const flat = {};
+  for (const [k, v] of Object.entries(filters || {})) {
+    if (v === null || v === undefined || (Array.isArray(v) && v.length === 0)) continue;
+    const field = RICH_FIELD_MAP[k];
+    if (!field) continue;
+    flat[`${field}__in`] = Array.isArray(v) ? v.join(",") : String(v);
+  }
+  const entries = Object.entries(flat);
+  if (entries.length === 0) return {};
+  if (entries.length === 1) return { [entries[0][0]]: entries[0][1] };
+  return { and: entries.map(([k, v]) => ({ [k]: v })) };
+}
+
+// Canonical JSON stringify (key-order-insensitive) — used to compare stored
+// view filters against the desired ones without false "changed" due to order.
+function canon(v) {
+  if (Array.isArray(v)) return `[${v.map(canon).join(",")}]`;
+  if (v && typeof v === "object")
+    return `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canon(v[k])}`).join(",")}}`;
+  return JSON.stringify(v);
+}
+
 // Resolve filter placeholders: {{karolUserId}}, {{state:Name}}, {{label:Name}}, {{type:Name}}
 function resolveFilterValue(value, ctx) {
   if (typeof value !== "string") return value;
@@ -95,7 +133,7 @@ async function main() {
     console.warn("  ! state/types.json not found — {{type:...}} view placeholders will be empty");
   }
 
-  const report = { projects: 0, states: 0, labels: 0, modules: 0, views: 0, features: 0 };
+  const report = { projects: 0, states: 0, labels: 0, modules: 0, views: 0, viewUpdates: 0, features: 0 };
 
   // Projects to ensure: from config.setup.projects, or just the config's project
   const projects = cfg.setup?.projects?.length
@@ -177,7 +215,8 @@ async function main() {
     for (const s of wantedList) {
       if (byName.has(s.name)) continue;
       if (args.dryRun) { console.log(`  [dry-run] would create state "${s.name}"`); report.states++; continue; }
-      await client.createState(cfg.workspaceSlug, projectId, s);
+      const created = await client.createState(cfg.workspaceSlug, projectId, s);
+      byName.set(created.name, created); // views resolve filters against byName
       report.states++;
       console.log(`  created state "${s.name}"`);
     }
@@ -202,27 +241,48 @@ async function main() {
     for (const name of p.labels || []) {
       if (labelNames.has(name)) continue;
       if (args.dryRun) { console.log(`  [dry-run] would create label "${name}"`); report.labels++; continue; }
-      await client.createLabel(cfg.workspaceSlug, projectId, { name });
+      const created = await client.createLabel(cfg.workspaceSlug, projectId, { name });
+      labels.push(created); // views resolve filters against labels
+      labelNames.add(created.name);
       report.labels++;
       console.log(`  created label "${name}"`);
     }
 
     // Views (per project) — main API (token works after the fork change §7.4).
     // Every project gets the `defaults` views + any project-specific extras.
+    // The UI reads `rich_filters` (converted here), the legacy `filters` field
+    // is written too for compatibility. Existing views are CONVERGED (PATCHed
+    // when their stored filters/rich_filters differ) so repairs happen on re-run.
     const projectViews = [
       ...(cfg.setup?.views?.defaults || []),
       ...(cfg.setup?.views?.projects?.[p.name] || []),
     ];
     if (projectViews.length) {
       const existingViews = args.dryRun ? [] : await listAll(client, () => client.listProjectViews(cfg.workspaceSlug, projectId));
-      const viewNames = new Set(existingViews.map((v) => v.name));
       const labelByName = new Map(labels.map((l) => [l.name, l]));
       const ctx = { karolUserId: cfg.setup?.karolUserId, states: byName, labels: labelByName, types };
       for (const v of projectViews) {
-        if (viewNames.has(v.name)) continue;
         const filters = resolveFilters(v.filters, ctx);
+        const payload = { name: v.name, filters, rich_filters: toRichFilters(filters) };
+        if (!args.dryRun) {
+          const existing = existingViews.find((x) => x.name === v.name);
+          if (existing) {
+            const same =
+              canon(existing.filters ?? {}) === canon(filters) &&
+              canon(existing.rich_filters ?? {}) === canon(payload.rich_filters);
+            if (!same) {
+              await client.updateProjectView(cfg.workspaceSlug, projectId, existing.id, {
+                filters,
+                rich_filters: payload.rich_filters,
+              });
+              report.viewUpdates++;
+              console.log(`  updated view "${v.name}" (${p.name})`);
+            }
+            continue;
+          }
+        }
         if (args.dryRun) { console.log(`  [dry-run] would create view "${v.name}" (${p.name})`); report.views++; continue; }
-        await client.createProjectView(cfg.workspaceSlug, projectId, { name: v.name, filters });
+        await client.createProjectView(cfg.workspaceSlug, projectId, payload);
         report.views++;
         console.log(`  created view "${v.name}" (${p.name})`);
       }
@@ -237,24 +297,40 @@ async function main() {
     }
   }
 
-  // Workspace views (e.g. "Next") — main API
+  // Workspace views (e.g. "Next") — main API; converged like project views.
   const wsViews = cfg.setup?.views?.workspace || [];
   if (wsViews.length) {
     const existingWs = args.dryRun ? [] : await listAll(client, () => client.listWorkspaceViews(cfg.workspaceSlug));
-    const wsNames = new Set(existingWs.map((v) => v.name));
     const ctx = { karolUserId: cfg.setup?.karolUserId, states: new Map(), labels: new Map(), types };
     for (const v of wsViews) {
-      if (wsNames.has(v.name)) continue;
       const filters = resolveFilters(v.filters, ctx);
+      const payload = { name: v.name, filters, rich_filters: toRichFilters(filters) };
+      if (!args.dryRun) {
+        const existing = existingWs.find((x) => x.name === v.name);
+        if (existing) {
+          const same =
+            canon(existing.filters ?? {}) === canon(filters) &&
+            canon(existing.rich_filters ?? {}) === canon(payload.rich_filters);
+          if (!same) {
+            await client.updateWorkspaceView(cfg.workspaceSlug, existing.id, {
+              filters,
+              rich_filters: payload.rich_filters,
+            });
+            report.viewUpdates++;
+            console.log(`  updated workspace view "${v.name}"`);
+          }
+          continue;
+        }
+      }
       if (args.dryRun) { console.log(`  [dry-run] would create workspace view "${v.name}"`); report.views++; continue; }
-      await client.createWorkspaceView(cfg.workspaceSlug, { name: v.name, filters });
+      await client.createWorkspaceView(cfg.workspaceSlug, payload);
       report.views++;
       console.log(`  created workspace view "${v.name}"`);
     }
   }
 
   console.log(`\nSetup report (${cfg.name}):`);
-  console.log(`  projects: ${report.projects} · states: ${report.states} · labels: ${report.labels} · modules: ${report.modules} · views: ${report.views} · features: ${report.features}`);
+  console.log(`  projects: ${report.projects} · states: ${report.states} · labels: ${report.labels} · modules: ${report.modules} · views: ${report.views} · viewUpdates: ${report.viewUpdates} · features: ${report.features}`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

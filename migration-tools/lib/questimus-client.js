@@ -163,12 +163,20 @@ export class QuestimusClient {
     return this.request("POST", `${MAIN}/workspaces/${slug}/views/`, { body: data });
   }
 
+  updateWorkspaceView(slug, viewId, data) {
+    return this.request("PATCH", `${MAIN}/workspaces/${slug}/views/${viewId}/`, { body: data });
+  }
+
   listProjectViews(slug, projectId) {
     return this.request("GET", `${MAIN}/workspaces/${slug}/projects/${projectId}/views/`);
   }
 
   createProjectView(slug, projectId, data) {
     return this.request("POST", `${MAIN}/workspaces/${slug}/projects/${projectId}/views/`, { body: data });
+  }
+
+  updateProjectView(slug, projectId, viewId, data) {
+    return this.request("PATCH", `${MAIN}/workspaces/${slug}/projects/${projectId}/views/${viewId}/`, { body: data });
   }
 
   // ---- estimates (v1 API) ----
