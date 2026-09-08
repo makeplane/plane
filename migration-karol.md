@@ -173,7 +173,7 @@ Per project, from the markdown sources:
 | `Ideas.md` | Personal issues, label `idea` (§9.3) |
 | `Now.md` | **Routed per entry** to its project via `import-now.js` (§9.3) — no "Now" page |
 | `hosting-publishing.md` | Personal: "Hosting & publishing" (O7) |
-| research notes | Personal: "Research" section |
+| research notes | Personal: "Research" section — **flat pages with a `Research - ` name prefix** (Phase 4 finding, 2026-09-08: this Plane version has **no child-page UI** — the pages list filters `parent__isnull=True` and the page detail shows no children, so a parent "Research" page was invisible/empty; the two research notes were unparented, renamed `Research - Own server vs VPS` / `Research - Claudian plugin research`, and the empty parent deleted. The importer's `parentPage` option stays for future UI support) |
 
 Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are the Plan/Subplan work items (§5.4).
 
@@ -352,7 +352,7 @@ Karol: the hierarchy stages (SP/T/ST) are carried by the item prefixes, so the t
 
 ### 7.13 Ninth fork change — page create with parent (applied 2026-09-08, Phase 4)
 
-Upstream bug: `PageViewSet.create` re-fetches the created page from the list queryset, which filters `parent__isnull=True` — creating a page **with a parent** (e.g. a "Research" section) returns 404 *after* the page was created (the importer then can't record it → duplicate risk on re-run). Fix: re-fetch by pk (`Page.objects.get(pk=...)`) in `app/views/page/base.py`. Needed by the page importer's `parentPage` support (Personal "Research" section; future "Design decisions"/"v2 replan input" sections in Legaliosa).
+Upstream bug: `PageViewSet.create` re-fetches the created page from the list queryset, which filters `parent__isnull=True` — creating a page **with a parent** (e.g. a "Research" section) returns 404 *after* the page was created (the importer then can't record it → duplicate risk on re-run). Fix: re-fetch by pk (`Page.objects.get(pk=...)`) in `app/views/page/base.py`. Note (Phase 4, 2026-09-08): the UI has no child-page display, so sections are flat pages with a name prefix (§5.5) — the fix stays (correct API behavior) and the importer's `parentPage` option is kept for future UI support.
 
 ---
 
