@@ -6,12 +6,15 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import useSWR from "swr";
 
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { DeactivatedUserOutline, DeleteOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspaceMember } from "@plane/types";
@@ -19,9 +22,14 @@ import type { IUser, IWorkspaceMember } from "@plane/types";
 import { CustomSelect, PopoverMenu } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
+// components
+import { AI_ACCOUNTS_LIST } from "@/components/ai-accounts/constants";
+import { RotateAIAccountTokenModal } from "@/components/ai-accounts/rotate-token-modal";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+// services
+import { aiAccountService } from "@/services/ai-account.service";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -44,9 +52,25 @@ type AccountTypeProps = {
 
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  // states
+  const [showRotateTokenModal, setShowRotateTokenModal] = useState(false);
+  // hooks
+  const { t } = useTranslation();
   // derived values
   const { avatar_url, display_name, email, first_name, id, is_bot, last_name } = rowData.member;
   const isSuspended = rowData.is_active === false;
+  // Same data source as the AI badge below: only AI agent bots get the rotate entry
+  const isAIAgentBot = is_bot && rowData.member.bot_type === "AI_AGENT";
+  // The rotate endpoint works on the AIAccount, not the bot user — resolve the
+  // account backing this member row (admin-only settings page, SWR dedupes per row)
+  const { data: aiAccounts } = useSWR(
+    isAIAgentBot && isAdmin && workspaceSlug ? AI_ACCOUNTS_LIST(workspaceSlug.toString()) : null,
+    isAIAgentBot && isAdmin && workspaceSlug
+      ? () => aiAccountService.fetchAIAccountsList(workspaceSlug.toString())
+      : null
+  );
+  const aiAccount = aiAccounts?.find((account) => account.bot_user.id === id);
+  const showRotateTokenMenuItem = isAdmin && !!aiAccount;
 
   return (
     <Disclosure>
@@ -85,26 +109,38 @@ export function NameColumn(props: NameProps) {
 
             {!isSuspended && (isAdmin || id === currentUser?.id) && (
               <PopoverMenu
-                data={[""]}
+                data={showRotateTokenMenuItem ? ["rotate-token", "remove"] : ["remove"]}
                 keyExtractor={(item) => item}
                 popoverClassName="justify-end"
                 buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
-                render={() => (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className="flex cursor-pointer items-center gap-x-3"
-                    onClick={() => setRemoveMemberModal(rowData)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setRemoveMemberModal(rowData);
-                      }
-                    }}
-                  >
-                    <DeleteOutline className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
-                  </div>
-                )}
+                render={(item) =>
+                  item === "rotate-token" ? (
+                    <button
+                      type="button"
+                      className="flex cursor-pointer items-center gap-x-3"
+                      onClick={() => setShowRotateTokenModal(true)}
+                    >
+                      {t("workspace_settings.settings.ai_accounts.list.rotate_token")}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="flex cursor-pointer items-center gap-x-3"
+                      onClick={() => setRemoveMemberModal(rowData)}
+                    >
+                      <DeleteOutline className="size-3.5 align-middle" />{" "}
+                      {id === currentUser?.id ? "Leave " : "Remove "}
+                    </button>
+                  )
+                }
+              />
+            )}
+            {aiAccount && (
+              <RotateAIAccountTokenModal
+                account={aiAccount}
+                isOpen={showRotateTokenModal}
+                onClose={() => setShowRotateTokenModal(false)}
+                workspaceSlug={workspaceSlug.toString()}
               />
             )}
           </div>
@@ -155,11 +191,11 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
           render={({ field: { value } }) => (
             <CustomSelect
               value={value as EUserPermissions}
-              onChange={async (value: EUserPermissions) => {
+              onChange={async (newRole: EUserPermissions) => {
                 if (!workspaceSlug) return;
                 try {
                   await updateMember(workspaceSlug.toString(), rowData.member.id, {
-                    role: value as unknown as EUserPermissions,
+                    role: newRole as unknown as EUserPermissions,
                   });
                 } catch (err: unknown) {
                   const error = err as { error?: string | string[] };
