@@ -155,7 +155,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+export type TWorkItemWidgets = "checklist" | "sub-work-items" | "relations" | "links" | "attachments";
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
