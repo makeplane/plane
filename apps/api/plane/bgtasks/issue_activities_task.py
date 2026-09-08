@@ -1014,6 +1014,116 @@ def delete_link_activity(
     )
 
 
+def create_checklist_item_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    actor_id,
+    workspace_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="added a checklist item",
+            verb="created",
+            actor_id=actor_id,
+            field="checklist_item",
+            new_value=requested_data.get("name", ""),
+            new_identifier=requested_data.get("id", None),
+            epoch=epoch,
+        )
+    )
+
+
+def update_checklist_item_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+
+    # A drag-reorder PATCH only ever carries sort_order and must stay silent
+    # (spec FR-025); each of the two conditions below only fires when the
+    # field it checks is present AND actually different from before.
+    if "status" in requested_data and requested_data.get("status") != current_instance.get("status"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated a checklist item",
+                verb="updated",
+                actor_id=actor_id,
+                field="checklist_item_status",
+                old_value=current_instance.get("status", ""),
+                new_value=requested_data.get("status", ""),
+                old_identifier=current_instance.get("id"),
+                new_identifier=current_instance.get("id"),
+                epoch=epoch,
+            )
+        )
+
+    if "name" in requested_data and requested_data.get("name") != current_instance.get("name"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="renamed a checklist item",
+                verb="updated",
+                actor_id=actor_id,
+                field="checklist_item",
+                old_value=current_instance.get("name", ""),
+                new_value=requested_data.get("name", ""),
+                old_identifier=current_instance.get("id"),
+                new_identifier=current_instance.get("id"),
+                epoch=epoch,
+            )
+        )
+
+
+def delete_checklist_item_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="removed a checklist item",
+            verb="deleted",
+            actor_id=actor_id,
+            field="checklist_item",
+            old_value=current_instance.get("name", ""),
+            new_value="",
+            epoch=epoch,
+        )
+    )
+
+
 def create_attachment_activity(
     requested_data,
     current_instance,
@@ -1551,6 +1661,9 @@ def issue_activity(
             "link.activity.created": create_link_activity,
             "link.activity.updated": update_link_activity,
             "link.activity.deleted": delete_link_activity,
+            "checklist_item.activity.created": create_checklist_item_activity,
+            "checklist_item.activity.updated": update_checklist_item_activity,
+            "checklist_item.activity.deleted": delete_checklist_item_activity,
             "attachment.activity.created": create_attachment_activity,
             "attachment.activity.deleted": delete_attachment_activity,
             "issue_relation.activity.created": create_issue_relation_activity,
