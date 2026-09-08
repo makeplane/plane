@@ -10,6 +10,7 @@ import ICU from "i18next-icu";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { SUPPORTED_LANGUAGES, FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "../constants/language";
 import { NAMESPACES, DEFAULT_NAMESPACE } from "../constants/namespaces";
+import { GENERATED_RESOURCES } from "../locales/resources.generated";
 
 import type { i18n as I18nInstance } from "i18next";
 
@@ -18,7 +19,17 @@ export const i18nInstance: I18nInstance = i18n.createInstance();
 i18nInstance
   .use(ICU)
   .use(initReactI18next)
-  .use(resourcesToBackend((language: string, namespace: string) => import(`../locales/${language}/${namespace}.json`)));
+  // Locale JSONs are bundled statically as GENERATED_RESOURCES (see
+  // scripts/generate-resources.mjs). A template-literal dynamic import such as
+  // import(`../locales/${lng}/${ns}.json`) cannot be statically analyzed by
+  // Vite/Rollup builds (used by this repo's react-router apps), so the import
+  // 404s at runtime and every translation key renders raw. Resolving from the
+  // bundled map works with any bundler and requires no runtime network access.
+  .use(
+    resourcesToBackend((language: string, namespace: string) =>
+      Promise.resolve(GENERATED_RESOURCES[language]?.[namespace] ?? {})
+    )
+  );
 
 const initialLng =
   typeof window !== "undefined" ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || FALLBACK_LANGUAGE : FALLBACK_LANGUAGE;
