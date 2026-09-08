@@ -213,6 +213,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
                 <Listbox.Options
                   as="div"
+                  className="z-30"
                   modal={false}
                   ref={setPopperElement}
                   style={styles.popper}

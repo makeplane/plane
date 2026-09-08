@@ -99,6 +99,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             >
               <Listbox.Options
                 as="ul"
+                modal={false}
                 className="shadow-lg absolute left-0 z-10 mt-1 min-w-[12rem] origin-top-left overflow-y-auto rounded-md border border-strong bg-surface-2 text-11 whitespace-nowrap focus:outline-none"
               >
                 <div className="space-y-1 p-2">

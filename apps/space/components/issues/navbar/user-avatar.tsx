@@ -93,6 +93,7 @@ export const UserAvatar = observer(function UserAvatar() {
               leaveTo="opacity-0 translate-y-1"
             >
               <Popover.Panel
+                className="z-30"
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
