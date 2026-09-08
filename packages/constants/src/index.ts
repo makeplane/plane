@@ -9,6 +9,7 @@ export * from "./analytics";
 export * from "./auth";
 export * from "./calendar";
 export * from "./chart";
+export * from "./checklist";
 export * from "./cycle";
 export * from "./dashboard";
 export * from "./emoji";
