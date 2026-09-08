@@ -867,5 +867,14 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
-  }
+  },
+  "reactions": {
+    "toasts": {
+      "created": "Reaction created successfully",
+      "creation_failed": "Reaction creation failed",
+      "removed": "Reaction removed successfully",
+      "remove_failed": "Reaction remove failed"
+    }
+  },
+  "please_select_at_least_one_work_item": "Please select at least one work item."
 }

@@ -503,6 +503,12 @@
         "title": "尚無匯入",
         "description": "在這裡找到所有您先前的匯入並下載它們。"
       }
+    },
+    "toasts": {
+      "updated": "Workspace updated successfully",
+      "picture_removed": "Workspace picture removed successfully.",
+      "picture_remove_failed": "There was some error in deleting your profile picture. Please try again.",
+      "url_copied": "Workspace URL copied to the clipboard."
     }
   }
 }
