@@ -93,12 +93,12 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
         </div>
 
         {/* create */}
-        <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 p-3">
+        <div className="flex items-center gap-2 rounded-sm border-[0.5px] border-subtle bg-surface-1 p-3">
           <input
             type="color"
             value={newColor}
             onChange={(e) => setNewColor(e.target.value)}
-            className="size-6 cursor-pointer rounded border border-custom-border-200 bg-transparent"
+            className="size-6 cursor-pointer rounded border-[0.5px] border-subtle bg-transparent"
             aria-label="Color"
           />
           <input
@@ -107,7 +107,7 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             placeholder="New type name"
-            className="flex-grow rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1.5 text-sm text-primary placeholder:text-placeholder focus:outline-none"
+            className="flex-grow rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2 py-1.5 text-sm text-primary placeholder:text-placeholder focus:outline-none"
           />
           <Button variant="primary" size="sm" onClick={handleCreate} disabled={!newName.trim()}>
             Add type
@@ -121,7 +121,7 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
             return (
               <div
                 key={type.id}
-                className="flex items-center gap-3 rounded-md border border-custom-border-200 bg-custom-background-100 p-3"
+                className="flex items-center gap-3 rounded-sm border-[0.5px] border-subtle bg-surface-1 p-3"
               >
                 <span className="size-3 shrink-0 rounded-full" style={{ backgroundColor: type.color }} />
                 {draft ? (
@@ -130,21 +130,21 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
                       type="color"
                       value={draft.color}
                       onChange={(e) => setEditing({ ...editing, [type.id]: { ...draft, color: e.target.value } })}
-                      className="size-6 cursor-pointer rounded border border-custom-border-200 bg-transparent"
+                      className="size-6 cursor-pointer rounded border-[0.5px] border-subtle bg-transparent"
                       aria-label="Color"
                     />
                     <input
                       type="text"
                       value={draft.name}
                       onChange={(e) => setEditing({ ...editing, [type.id]: { ...draft, name: e.target.value } })}
-                      className="w-48 rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm text-primary focus:outline-none"
+                      className="w-48 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2 py-1 text-sm text-primary focus:outline-none"
                     />
                     <input
                       type="text"
                       value={draft.description}
                       onChange={(e) => setEditing({ ...editing, [type.id]: { ...draft, description: e.target.value } })}
                       placeholder="Description"
-                      className="flex-grow rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm text-primary placeholder:text-placeholder focus:outline-none"
+                      className="flex-grow rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2 py-1 text-sm text-primary placeholder:text-placeholder focus:outline-none"
                     />
                     <Button variant="primary" size="sm" onClick={() => handleSave(type)}>
                       Save

@@ -8,7 +8,7 @@ import type { TLogoProps } from "./common";
 import type { TIssuePriorities } from "./issues";
 
 export type TRecentActivityFilterKeys = "all item" | "issue" | "page" | "project" | "workspace_page";
-// Questimus fork change (Phase 3): my_issues / now / today home widgets
+// Questimus fork change (Phase 3): my_issues / now home widgets
 export type THomeWidgetKeys =
   | "quick_links"
   | "recents"
@@ -16,8 +16,7 @@ export type THomeWidgetKeys =
   | "quick_tutorial"
   | "new_at_plane"
   | "my_issues"
-  | "now"
-  | "today";
+  | "now";
 
 export type THomeWidgetProps = {
   workspaceSlug: string;

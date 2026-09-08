@@ -383,7 +383,6 @@ class WorkspaceHomePreference(BaseModel):
         # Questimus fork change (Phase 3): home dashboard sections as widgets
         MY_ISSUES = "my_issues", "My Issues"
         NOW = "now", "Now"
-        TODAY = "today", "Today"
 
     workspace = models.ForeignKey(
         "db.Workspace",

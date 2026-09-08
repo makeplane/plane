@@ -6,6 +6,9 @@
     "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
     "token_copied": "Token copied to clipboard.",
     "settings": {
+      "issue_types": {
+        "title": "Issue types"
+      },
       "general": {
         "title": "General",
         "upload_logo": "Upload logo",
@@ -318,7 +321,7 @@
         "app_name_title": "App Name",
         "app_description_title": {
           "label": "Long Description",
-          "placeholder": "Write a long description for marketplace. Press ‘/’ for commands."
+          "placeholder": "Write a long description for marketplace. Press â€˜/â€™ for commands."
         },
         "authorization_grant_type": {
           "title": "Connection Type",

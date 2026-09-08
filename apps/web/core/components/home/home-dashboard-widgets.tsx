@@ -23,10 +23,9 @@ import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
-// Questimus fork change (Phase 3): home dashboard widgets — My Issues / Now / Today
+// Questimus fork change (Phase 3): home dashboard widgets — My Issues / Now
 import { AssignedIssuesWidget } from "./widgets/assigned-issues";
 import { NowWidget } from "./widgets/now";
-import { TodayWidget } from "./widgets/today";
 
 export const HOME_WIDGETS_LIST: {
   [key in THomeWidgetKeys]: {
@@ -60,7 +59,7 @@ export const HOME_WIDGETS_LIST: {
     fullWidth: false,
     title: "home.quick_tutorial.title",
   },
-  // Questimus fork change (Phase 3): My Issues / Now / Today as reorderable widgets
+  // Questimus fork change (Phase 3): My Issues / Now as reorderable widgets
   my_issues: {
     component: AssignedIssuesWidget,
     fullWidth: false,
@@ -70,11 +69,6 @@ export const HOME_WIDGETS_LIST: {
     component: NowWidget,
     fullWidth: false,
     title: "home.now.title",
-  },
-  today: {
-    component: TodayWidget,
-    fullWidth: false,
-    title: "home.today.title",
   },
 };
 

@@ -1,7 +1,9 @@
 /**
- * Questimus fork change (Phase 3): "Now" home section — issues assigned to me,
+ * Questimus fork change (Phase 3): "Now" home widget — issues assigned to me,
  * state open, with priority urgent/high OR due within the next 7 days
- * (includes overdue). Computed per request (migration-karol.md §5.7).
+ * (overdue included). Computed per request (migration-karol.md §5.7).
+ * "Today" was merged into this widget (2026-09-08): due-today/overdue is a
+ * subset of the due-≤-7-days window.
  */
 
 import { observer } from "mobx-react";
@@ -26,7 +28,7 @@ export const NowWidget = observer(function NowWidget({ workspaceSlug }: { worksp
     .filter((issue) => {
       const urgentOrHigh = issue.priority === "urgent" || issue.priority === "high";
       const due = issueDueDate(issue);
-      return urgentOrHigh || (due !== null && due >= today && due <= inSevenDays);
+      return urgentOrHigh || (due !== null && due <= inSevenDays);
     })
     .slice(0, MAX_ROWS);
 
