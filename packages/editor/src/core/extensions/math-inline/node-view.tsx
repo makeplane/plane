@@ -21,10 +21,12 @@ export function MathInlineNodeView(props: NodeViewProps) {
   const attrs = node.attrs as TMathInlineAttributes;
   const latex = attrs[EMathInlineAttributeNames.LATEX];
   // states
-  const [isEditing, setIsEditing] = useState(false);
+  // a freshly created (empty) node starts in editing mode right away
+  const [isEditing, setIsEditing] = useState(() => editor.isEditable && !latex);
   const [renderedHtml, setRenderedHtml] = useState<string | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
   // refs
+  const wrapperRef = useRef<HTMLSpanElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // i18n
   const { t } = useTranslation("editor");
@@ -62,7 +64,9 @@ export function MathInlineNodeView(props: NodeViewProps) {
     setIsEditing(true);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+    // stay in editing mode if focus moved to another element inside this node view
+    if (event.relatedTarget instanceof Node && wrapperRef.current?.contains(event.relatedTarget)) return;
     setIsEditing(false);
   };
 
@@ -74,10 +78,11 @@ export function MathInlineNodeView(props: NodeViewProps) {
     }
   };
 
-  // editing state — edit the raw source in an inline textarea
-  if (isEditing) {
+  // editing state — edit the raw source in an inline textarea; an empty node
+  // always shows the source input while the editor is editable
+  if (isEditing || (editor.isEditable && !latex)) {
     return (
-      <NodeViewWrapper as="span" className="math-inline" data-node-type="math-inline">
+      <NodeViewWrapper ref={wrapperRef} as="span" className="math-inline" data-node-type="math-inline">
         <textarea
           ref={textareaRef}
           className="math-inline-source"

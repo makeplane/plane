@@ -74,6 +74,12 @@ export const MathBlockExtension = MathBlockExtensionConfig.extend({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(MathBlockNodeView);
+    return ReactNodeViewRenderer(MathBlockNodeView, {
+      // ProseMirror turns a click on a selectable node into a node selection
+      // (and, for this draggable block, a drag gesture on slight pointer
+      // movement), which interferes with click-to-edit; the node view handles
+      // its own events, only drag & drop stay with ProseMirror
+      stopEvent: ({ event }) => !event.type.startsWith("drag") && event.type !== "drop",
+    });
   },
 });

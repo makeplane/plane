@@ -21,10 +21,12 @@ export function MathBlockNodeView(props: NodeViewProps) {
   const attrs = node.attrs as TMathBlockAttributes;
   const latex = attrs[EMathBlockAttributeNames.LATEX];
   // states
-  const [isEditing, setIsEditing] = useState(false);
+  // a freshly created (empty) block starts in editing mode right away
+  const [isEditing, setIsEditing] = useState(() => editor.isEditable && !latex);
   const [renderedHtml, setRenderedHtml] = useState<string | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
   // refs
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // i18n
   const { t } = useTranslation("editor");
@@ -62,7 +64,9 @@ export function MathBlockNodeView(props: NodeViewProps) {
     setIsEditing(true);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+    // stay in editing mode if focus moved to another element inside this node view
+    if (event.relatedTarget instanceof Node && wrapperRef.current?.contains(event.relatedTarget)) return;
     setIsEditing(false);
   };
 
@@ -85,10 +89,11 @@ export function MathBlockNodeView(props: NodeViewProps) {
     }
   };
 
-  // editing state — show the raw source
-  if (isEditing) {
+  // editing state — show the raw source; an empty block always shows the
+  // source input (never a bare placeholder) while the editor is editable
+  if (isEditing || (editor.isEditable && !latex)) {
     return (
-      <NodeViewWrapper className="math-block" data-node-type="math-block">
+      <NodeViewWrapper ref={wrapperRef} className="math-block" data-node-type="math-block">
         <textarea
           ref={textareaRef}
           className="math-block-source"
