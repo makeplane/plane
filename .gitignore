@@ -119,3 +119,9 @@ packages/i18n/src/types/keys.generated.ts
 /security/
 # local backup log
 backup.log
+
+# graphify knowledge graph (local, regenerated on demand)
+graphify-out/
+
+# Arsenal hook-merge backups
+*.bak

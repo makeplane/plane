@@ -1,0 +1,58 @@
+{
+    "hooks":  {
+                  "PreToolUse":  [
+                                     {
+                                         "matcher":  "read|edit|str_replace_editor|write",
+                                         "hooks":  [
+                                                       {
+                                                           "type":  "command",
+                                                           "command":  "powershell -ExecutionPolicy Bypass -File .dsh/hooks/secrets-guard/secrets-guard.ps1"
+                                                       }
+                                                   ]
+                                     },
+                                     {
+                                         "matcher":  "bash|read|glob|grep",
+                                         "hooks":  [
+                                                       {
+                                                           "type":  "command",
+                                                           "command":  "node .dsh/hooks/graphify-nudge/graphify-nudge.js",
+                                                           "timeout":  5
+                                                       }
+                                                   ]
+                                     }
+                                 ],
+                  "SessionStart":  [
+                                       {
+                                           "hooks":  [
+                                                         {
+                                                             "type":  "command",
+                                                             "command":  "node .dsh/hooks/ponytail-mode-hooks/ponytail-mode-hooks/ponytail-activate.js",
+                                                             "timeout":  5
+                                                         }
+                                                     ]
+                                       }
+                                   ],
+                  "UserPromptSubmit":  [
+                                           {
+                                               "hooks":  [
+                                                             {
+                                                                 "type":  "command",
+                                                                 "command":  "node .dsh/hooks/ponytail-mode-hooks/ponytail-mode-hooks/ponytail-mode-tracker.js",
+                                                                 "timeout":  5
+                                                             }
+                                                         ]
+                                           }
+                                       ],
+                  "SubagentStart":  [
+                                        {
+                                            "hooks":  [
+                                                          {
+                                                              "type":  "command",
+                                                              "command":  "node .dsh/hooks/ponytail-mode-hooks/ponytail-mode-hooks/ponytail-subagent.js",
+                                                              "timeout":  5
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+              }
+}

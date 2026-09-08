@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "read|edit|write",
+        "run": "secrets-guard.ps1"
+      }
+    ]
+  },
+  "claude-code": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|NotebookEdit",
+        "run": "secrets-guard.ps1"
+      }
+    ]
+  }
+}

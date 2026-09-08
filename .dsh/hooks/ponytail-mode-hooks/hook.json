@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "run": "ponytail-mode-hooks/ponytail-activate.js",
+        "interpreter": "node",
+        "timeout": 5
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "run": "ponytail-mode-hooks/ponytail-mode-tracker.js",
+        "interpreter": "node",
+        "timeout": 5
+      }
+    ],
+    "SubagentStart": [
+      {
+        "run": "ponytail-mode-hooks/ponytail-subagent.js",
+        "interpreter": "node",
+        "timeout": 5
+      }
+    ]
+  },
+  "claude-code": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "run": "ponytail-mode-hooks/ponytail-activate.js",
+        "interpreter": "node",
+        "timeout": 5
+      }
+    ]
+  }
+}

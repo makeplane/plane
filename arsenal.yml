@@ -1,0 +1,346 @@
+# arsenal.yml — managed by project-deploy.ps1 / project-sync.ps1 (Arsenal).
+# Hand-editing: you may add or remove items (name + type suffice) and set
+# customized: true to protect local edits. Other fields are machine-managed.
+project: Questimus
+created: 2026-09-08
+harnesses:
+  - claude-code
+  - dsh
+items:
+  - name: python
+    type: skill
+    deployed_version: "1.2.0"
+    deployed_hash: "e917c5c12b2cc3b8"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "e917c5c12b2cc3b8"
+      dsh: "e917c5c12b2cc3b8"
+  - name: postgres-best-practices
+    type: skill
+    deployed_version: "1.2.0"
+    deployed_hash: "5f3014057975d584"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "5f3014057975d584"
+      dsh: "5f3014057975d584"
+  - name: docker-expert
+    type: skill
+    deployed_version: "1.0.0"
+    deployed_hash: "43a6097e834ba9b4"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "43a6097e834ba9b4"
+      dsh: "43a6097e834ba9b4"
+  - name: nextjs-best-practices
+    type: skill
+    deployed_version: "1.2.1"
+    deployed_hash: "5a68c90cc9bbcb20"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "5a68c90cc9bbcb20"
+      dsh: "5a68c90cc9bbcb20"
+  - name: typescript-expert
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "5523ffa07f1dc0e1"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "5523ffa07f1dc0e1"
+      dsh: "5523ffa07f1dc0e1"
+  - name: react-patterns
+    type: skill
+    deployed_version: "1.1.1"
+    deployed_hash: "2c803e24aa26a1ab"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "2c803e24aa26a1ab"
+      dsh: "2c803e24aa26a1ab"
+  - name: tailwind-patterns
+    type: skill
+    deployed_version: "1.1.1"
+    deployed_hash: "dc080dd3ef673d6f"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "dc080dd3ef673d6f"
+      dsh: "dc080dd3ef673d6f"
+  - name: monorepo-architect
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "4a2eacd0e7c54bdf"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "4a2eacd0e7c54bdf"
+      dsh: "4a2eacd0e7c54bdf"
+  - name: tdd
+    type: skill
+    deployed_version: "1.3.0"
+    deployed_hash: "96c14dc8406ed834"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "96c14dc8406ed834"
+      dsh: "96c14dc8406ed834"
+  - name: e2e-testing
+    type: skill
+    deployed_version: "1.1.1"
+    deployed_hash: "e0a9358dfc0e73f7"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "e0a9358dfc0e73f7"
+      dsh: "e0a9358dfc0e73f7"
+  - name: github-actions
+    type: skill
+    deployed_version: "1.2.2"
+    deployed_hash: "7a0317e32f3cba23"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "7a0317e32f3cba23"
+      dsh: "7a0317e32f3cba23"
+  - name: resolving-merge-conflicts
+    type: skill
+    deployed_version: "1.0.0"
+    deployed_hash: "af75d506da67e285"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "af75d506da67e285"
+      dsh: "af75d506da67e285"
+  - name: api-design
+    type: skill
+    deployed_version: "1.4.0"
+    deployed_hash: "7dc2766020c29b4c"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "7dc2766020c29b4c"
+      dsh: "7dc2766020c29b4c"
+  - name: database-design
+    type: skill
+    deployed_version: "1.1.1"
+    deployed_hash: "cb68308197c57537"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "cb68308197c57537"
+      dsh: "cb68308197c57537"
+  - name: security-auditor
+    type: skill
+    deployed_version: "1.1.1"
+    deployed_hash: "b2c9abb0f9ef46b1"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "b2c9abb0f9ef46b1"
+      dsh: "b2c9abb0f9ef46b1"
+  - name: dep-update
+    type: skill
+    deployed_version: "1.0.2"
+    deployed_hash: "173f43cc4d221911"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "173f43cc4d221911"
+      dsh: "173f43cc4d221911"
+  - name: performance
+    type: skill
+    deployed_version: "1.2.1"
+    deployed_hash: "771f3a5383bf86aa"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "771f3a5383bf86aa"
+      dsh: "771f3a5383bf86aa"
+  - name: clean-code
+    type: skill
+    deployed_version: "1.0.2"
+    deployed_hash: "2480840dfbc78b4d"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "2480840dfbc78b4d"
+      dsh: "2480840dfbc78b4d"
+  - name: secrets-guard
+    type: hook
+    deployed_version: "1.0.0"
+    deployed_hash: "2d01f5b4d3d873da"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "2d01f5b4d3d873da"
+      dsh: "2d01f5b4d3d873da"
+  - name: code-reviewer
+    type: agent
+    deployed_version: "1.5.1"
+    deployed_hash: "faac746f5e4a42c9"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "faac746f5e4a42c9"
+      dsh: "012499037e852268"
+  - name: graphify
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "b7f7929dd600e80c"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "b7f7929dd600e80c"
+      dsh: "b7f7929dd600e80c"
+  - name: graphify-nudge
+    type: hook
+    deployed_version: "1.0.1"
+    deployed_hash: "cec12af1905ae72d"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "cec12af1905ae72d"
+      dsh: "cec12af1905ae72d"
+  - name: ponytail
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "0101a715a0127dc6"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "0101a715a0127dc6"
+      dsh: "0101a715a0127dc6"
+  - name: ponytail-review
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "a8061fc84d5ebf1d"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "a8061fc84d5ebf1d"
+      dsh: "a8061fc84d5ebf1d"
+  - name: ponytail-audit
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "aba6cfab6cd82faa"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "aba6cfab6cd82faa"
+      dsh: "aba6cfab6cd82faa"
+  - name: ponytail-debt
+    type: skill
+    deployed_version: "1.0.1"
+    deployed_hash: "65cb1c26d53f2a88"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "65cb1c26d53f2a88"
+      dsh: "65cb1c26d53f2a88"
+  - name: ponytail-mode-hooks
+    type: hook
+    deployed_version: "1.0.1"
+    deployed_hash: "4792bfdb6b1d896e"
+    deployed_date: "2026-09-08"
+    customized: false
+    deployed_hashes:
+      claude-code: "4792bfdb6b1d896e"
+      dsh: "4792bfdb6b1d896e"
+preferences:
+  - page: code-style-minimalism/frontend-browser-state.md
+    applied_hash: "935b22020964e1af"
+    applied_date: "2026-09-08"
+  - page: design/_index.md
+    applied_hash: "42563d8b609fd40a"
+    applied_date: "2026-09-08"
+  - page: design/consistent-icon-system.md
+    applied_hash: "71fafaeb5b7ad9a6"
+    applied_date: "2026-09-08"
+  - page: design/live-app-authoritative-over-mockups.md
+    applied_hash: "1a7ddd9fc119603e"
+    applied_date: "2026-09-08"
+  - page: design/modern-saas-table-conventions.md
+    applied_hash: "e96b6dae4abb285d"
+    applied_date: "2026-09-08"
+  - page: design/selection-highlight-uses-palette.md
+    applied_hash: "4a64a7959ce7900f"
+    applied_date: "2026-09-08"
+  - page: design/shared-stylesheet-is-source-of-truth.md
+    applied_hash: "d3a665bcddb3d600"
+    applied_date: "2026-09-08"
+  - page: design/theme-build-sequence.md
+    applied_hash: "4a550e734fca88dc"
+    applied_date: "2026-09-08"
+  - page: design/top-nav-layout-convention.md
+    applied_hash: "09bbcf6c0b58cd11"
+    applied_date: "2026-09-08"
+  - page: design/verify-rendered-output-after-css-rewrites.md
+    applied_hash: "350ca66152f7140f"
+    applied_date: "2026-09-08"
+  - page: development-workflow/phase-1-75-design-before-implementation.md
+    applied_hash: "8ff8297548d9838c"
+    applied_date: "2026-09-08"
+  - page: tooling-package-managers/reserved-port-blocks.md
+    applied_hash: "453eb63d9a6323ab"
+    applied_date: "2026-09-08"
+  - page: web-performance/_index.md
+    applied_hash: "a3cd8ae2d2721b0a"
+    applied_date: "2026-09-08"
+  - page: web-performance/resource-hints.md
+    applied_hash: "4d29f24d5b1efad1"
+    applied_date: "2026-09-08"
+  - page: ai-product-observability/_index.md
+    applied_hash: "b160458e3185870a"
+    applied_date: "2026-09-08"
+  - page: ai-product-observability/logging.md
+    applied_hash: "08302ee0f7472b3b"
+    applied_date: "2026-09-08"
+  - page: ai-product-observability/metrics.md
+    applied_hash: "00a7b7e91372ec0b"
+    applied_date: "2026-09-08"
+  - page: ai-product-observability/tracing.md
+    applied_hash: "117187b3e989af71"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/_index.md
+    applied_hash: "11222c3fb72ffae3"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/anti-patterns.md
+    applied_hash: "a724c16deb7b3a66"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/benchmarks.md
+    applied_hash: "3a3f1972a32bf176"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/feedback-loop.md
+    applied_hash: "f0012a822bf12b03"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/foundations.md
+    applied_hash: "79b5af5153759dd3"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/judge-calibration.md
+    applied_hash: "e277e6b7e429b9d2"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/mindset.md
+    applied_hash: "0605c4e6212361e1"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/mvp-starting-point.md
+    applied_hash: "750c6c63ddbae7ec"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/offline-online-evaluation.md
+    applied_hash: "4c9655d043ae6ae7"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/rag-evaluation.md
+    applied_hash: "2c883e5f9fe940bf"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/reproducibility.md
+    applied_hash: "7edd009555113b28"
+    applied_date: "2026-09-08"
+  - page: llm-evaluation-ai-qa/scoring-methods.md
+    applied_hash: "7bfe966c021646ce"
+    applied_date: "2026-09-08"
+  - page: project-structure/design-folder-naming.md
+    applied_hash: "211eb8d97cd97ac9"
+    applied_date: "2026-09-08"
