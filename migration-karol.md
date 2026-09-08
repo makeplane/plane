@@ -180,7 +180,7 @@ Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are t
 **Native, no payment gate** (verified in the code: no premium/license-key gating in the self-hosted fork — the pricing page's "Pro" features are Plane Cloud tiers only; dashboards, time tracking, issue types all exist in the repo):
 
 - **Correction (verified 2026-09-08): there is NO Home dashboard and NO "My Issues" page wired in this version** — the home-dashboard components exist in the codebase but are not routed (dead code); the `(home)` route is the login page. **Karol 2026-09-08: the home dashboard (Phase 3) is the "Now"/"Today" view** — it implements the combined logic (assigned to me, urgent/high **OR** due ≤ 7 days — saved views are AND-only, verified) and due today/overdue, computed per request. Until Phase 3, prioritization comes from the workspace **"Next"** view (assigned to me, medium/low — created in Phase 2) + per-project views + in-app notifications.
-- **Phase 3 (2026-09-08): implemented.** The workspace home (`/{workspaceSlug}`) shows three widgets — **My Issues** (assigned to me across projects; Pending/Upcoming/Overdue/Marked-completed tabs), **"Now"** (open + assigned + urgent/high **or** due ≤ 7 days) and **"Today"** (open + assigned + due today/overdue) — computed per request from the workspace issues endpoint (`assignee_id__in` rich filter). They are **real widgets** (backend `HomeWidgetKeys` + registry): toggleable and **reorderable via "Manage widgets"**; labels hardcoded EN (i18n keys `home.my_issues.title`/`home.now.title`/`home.today.title` added to the EN resource). Note: the workspace home was already routed (`WorkspaceHomeView` at the workspace index — the "dead code" claim was stale); what was missing was the My Issues/Now/Today content.
+- **Phase 3 (2026-09-08): implemented.** The workspace home (`/{workspaceSlug}`) shows two widgets — **My Issues** (assigned to me across projects; Pending/Upcoming/Overdue/Marked-completed tabs) and **"Now"** (open + assigned + urgent/high **or** due ≤ 7 days, **overdue included** — the separate "Today" card was merged into Now on 2026-09-08: due-today/overdue is a subset of the due-≤-7-days window) — computed per request from the workspace issues endpoint (`assignee_id__in` rich filter). They are **real widgets** (backend `HomeWidgetKeys` + registry): toggleable and **reorderable via "Manage widgets"**; titles via i18n keys `home.my_issues.title`/`home.now.title` (added to the EN source locale file). Note: the workspace home was already routed (`WorkspaceHomeView` at the workspace index — the "dead code" claim was stale); what was missing was the My Issues/Now content.
 - **Priority** (urgent/high/medium/low) and **due dates** on every issue — the prioritization mechanism.
 - **In-app notifications are native** (bell + notifications page + per-user preferences). **No email** (Karol 2026-09-08): SMTP stays unconfigured; email toggles off. **User-reports get assigned to Karol by default** → native in-app ping when an app reports an issue.
 - **Cycles** (Karol 2026-09-08): test weekly cycles in Personal ("This week" cycle) — time-boxed planning.
@@ -190,7 +190,7 @@ Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are t
 
 - Per project (created in Phase 1 via `setup-workspace.js` — `config/setup.json` `views` section; "All" is the default view, no creation needed): "In Progress", "Done", "User reports" (label `user-report`), "Blocked" (state filter), **"Planning"** (type Plan), **"Tickets"** (type Ticket) — the type views need the §7.5 fork change
 - Personal extras: "Inbox" (state Backlog), "Ideas" (label `idea`), "Someday" (label `someday`)
-- Workspace: **"Next"** (assigned to me, medium/low). "Now" and "Today" are **home dashboard widgets (Phase 3)** — saved views are AND-only and store fixed dates, so the combined/due-today logic can't be a saved view (Karol 2026-09-08)
+- Workspace: **"Next"** (assigned to me, medium/low). "Now" is a **home dashboard widget (Phase 3)** — saved views are AND-only and store fixed dates, so the combined/due logic can't be a saved view (Karol 2026-09-08)
 - **The web UI reads `rich_filters`, not `filters`** (execution finding 2026-09-08): the view stores hydrate from `viewDetails.rich_filters` (TWorkItemFilterExpression — `"<field>__in": "a,b"`, `and` groups) and ignore the legacy `filters` field. Views created with only `filters` were born invisible/filter-less. `setup-workspace.js` now converts resolved filters → `rich_filters` (its own converter — the backend's `LegacyToRichFiltersConverter` doesn't know the fork's `issue_type` key; key names must match `IssueFilterSet` fields: `state_id__in`/`label_id__in`/`assignee_id__in`/`priority__in`/`issue_type__in`) and writes both fields. Existing views are **converged** on every run (PATCH when stored filters/rich_filters differ — canonical compare) — this repaired all 64 views (24 had been created with empty filters because newly-created states/labels were missing from the lookup maps; the maps are now updated on create).
 
 ### 5.8 Feature toggles (per project; Karol 2026-09-08, applied to all 10)
@@ -334,7 +334,7 @@ Phase 3 implemented the "Issue type UI" ticket (§5.4 types now visible everywhe
 - **Type badge** — new `IssueTypeBadge` (`apps/web/core/components/issues/issue-type-badge.tsx`, dot in the type's own `color`, name from the §7.6 endpoint via `useProjectIssueTypes` SWR hook + shared cache `helpers/issue-types.helper.ts`); rendered by **`IssueIdentifier`** next to every issue key (list/kanban/spreadsheet/calendar rows, relations, preview cards, sub-issues, detail/peek headers — the upstream `issueTypeId` prop that was dead is now honored).
 - **Modal type selector** — `dropdowns/type.tsx` (searchable single-select) as the first property in `issue-modal/components/default-properties.tsx`; new issues default to the project's **default type (Ticket)** when the project changes (form effect: sync from the module cache, else async load) — the create/update payloads already carried `type_id`.
 - **Change type on existing items** — the detail/peek header badge (`IssueTypeSwitcher`) is now a picker: click the badge → choose a type → PATCHes `type_id` (display-only when not editable). **Execution fix (2026-09-08): the main API's `IssueCreateSerializer` silently dropped `type_id`** (the model FK is named `type`) — added the explicit `type_id` field; the switcher now persists.
-- **Home dashboard** — see §5.7 (My Issues / Now / Today sections, fixed, not widgets).
+- **Home dashboard** — see §5.7 (My Issues / Now widgets, reorderable via Manage widgets).
 - Both dev tickets marked **Done** in Questimus; the 8 Questimus content tickets are now **assigned to Karol** (the home sections only show assigned issues; user-reports auto-assign per §8.1 anyway).
 
 ### 7.12 Eighth fork change — 3-type model + colors + central management (applied 2026-09-08)
@@ -400,9 +400,9 @@ Legaliosa first (most mature), then Don Saldo, Jobernaut, Media Consumerus, othe
 | `id: 0119` | `external_source: "legaliosa-v2"`, `external_id: "0119"` (idempotency + traceability; **derived from the filename prefix** — YAML parses leading-zero ids as octal, e.g. `0130` → `88`, so the filename is authoritative) |
 | `tickets/done/*` | State **Done** |
 | `T-XX-XX-*.md` (root task units) | Issue type **Task**, parent = its SP issue, `depends-on` → `blocked_by` relations |
-| `SP-XX-*.md` | Issue type **Subplan**, parent = the Plan issue |
+| `SP-XX-*.md` | Issue type **Plan**, parent = the Plan issue |
 | `plan.md` / `PLAN.md` | Issue type **Plan** (root of the hierarchy) |
-| `ST-*.md` (future) | Issue type **Subtask**, parent = its T issue |
+| `ST-*.md` (future) | Issue type **Plan**, parent = its T issue |
 | `sub_plan: SP05` (tickets) | Label `SP-05` (grouping; tickets stay outside the hierarchy) |
 
 ### 9.2 Import tooling
@@ -436,7 +436,7 @@ Node.js scripts in `C:\Users\Karol\Projects\Questimus\migration-tools\` (new fol
 
 | Source | Action |
 |---|---|
-| `Legaliosa-test-ox-alpha\planning` | 211 tickets → issues; 11 SP → Subplan issues; 38 T → Task issues; plan.md → Plan issue; HANDOFF/pilot-findings/design reviews/design-system-delta/v2-replan-input → pages; design HTML → "Design" index page (repo links, created in UI); archive/v1 stays in repo |
+| `Legaliosa-test-ox-alpha\planning` | 211 tickets → issues; 11 SP → Plan issues; 38 T → Plan issues; plan.md → Plan issue; HANDOFF/pilot-findings/design reviews/design-system-delta/v2-replan-input → pages; design HTML → "Design" index page (repo links, created in UI); archive/v1 stays in repo |
 | `Jobernaut2\planning` | Same pattern: 69 tickets, 7 SP (SP-13..19), 22 T, PLAN.md → Plan issue; `archive/v1` subplans excluded from import (O2) |
 | `Don-Saldo\planning` | 2 tickets → issues; bank-import note → page |
 | `Media Consumerus\planning` | BACKLOG.md rows → issues (priority/effort → priority/estimate); TODOS.md → issues with resolution log in description |
@@ -498,7 +498,7 @@ After each project is verified: **no pointers, folders stay untouched** (Karol 2
 | **0. Decisions** | All decision blocks A–F complete (2026-09-08) | This doc approved |
 | **1. Questimus foundation** | **Backup first** (restore point) → rebuild api (fork change §7.4) + **re-copy management commands** (rebuild wipes `docker compose cp` files) → **Karol's token** (needed by smoke test + all imports) → **hierarchy smoke test** (`smoke-test.js` in the leftover test project) → Karol sign-off → **delete test project** (v1 DELETE — permanent) **+ test bot user** → create 10 projects via `config/setup.json` (identifiers, states, labels) → **issue types (`setup_issue_types` per project — 10×)** → verify (idempotent re-run, UI) | Smoke test PASS, setup idempotent (re-run creates 0), UI looks right (10 projects, states, labels), backup snapshot exists, test project + bot user gone |
 | **2. Access & views** | Bot users + tokens (§6.2 — incl. personal-project bots; tokens saved to a gitignored local file for Phase 8/9 wiring); **views already created in Phase 1** (64 total: workspace "Next" + per-project In Progress/Done/User reports/Blocked/Planning/Tickets + Personal Inbox/Ideas/Someday — verify by re-run, 0 created); Questimus project content via `create-questimus-content.js` (this plan → page + the 8 tickets) | Tokens work, views in place, Questimus content live |
-| **3. Questimus dev** | Implement the two dev tickets created in Phase 2: **issue type UI** (selector + badge) and **home dashboard + My Issues widget** — **done 2026-09-08** (see §5.7 + §7.11: type badge everywhere + modal selector with default type; My Issues/Now/Today home sections; both tickets marked Done) | Type selector/badge in UI; Home shows My Issues — **done** |
+| **3. Questimus dev** | Implement the two dev tickets created in Phase 2: **issue type UI** (selector + badge) and **home dashboard + My Issues widget** — **done 2026-09-08** (see §5.7 + §7.11: type badge everywhere + modal selector with default type; My Issues/Now home widgets; both tickets marked Done) | Type selector/badge in UI; Home shows My Issues — **done** |
 | **4. Personal** (first batch) | Ideas.md → issues; **Google Sheets wishlist** (Karol exports the sheet to CSV — File → Download → CSV — then the format is inspected and imported); research notes + hosting-publishing → pages; Now.md routed via import-now.js; cycles test ("This week" cycle in Personal — created in the UI); **backup restore drill** (restore latest snapshot into a throwaway stack per the backup repo README, verify, tear down) | Personal live, Now.md retired |
 | **5. Media Consumerus** | BACKLOG table + TODOS sections → issues (estimates, labels), pages | Counts verified |
 | **6. Kleinanzeigen → POP → Arsenal → Empirium** | Vault planning (**tooling built in this phase**: `import-issues.js` gains a `planFiles` list (multiple plan files → Plan issues, incl. `.txt` — the walk only picks `.md`) + `donePlanDirs`/`archivePlanDirs` (each `.md` → Plan issue, state Done); new configs `arsenal-planning.json` + `empirium-planning.json`): active plans + HANDOFF → Plan issues; done/ + archive/ → Plan issues, state Done (O4); artifacts stay in vaults | Counts verified |
@@ -593,9 +593,9 @@ Tokens:    POST /api/users/api-tokens/   (label, description, expired_at — cre
 
 | Source | Target |
 |---|---|
-| `T-XX-*.md` (task units) | Issue type Task, parent = its SP issue, relations from `depends-on` |
+| `T-XX-*.md` (task units) | Issue type Plan, parent = its SP issue, relations from `depends-on` |
 | `tickets/done/*.md` | Issue, state Done |
-| `SP-XX-*.md` | Issue type Subplan, parent = the Plan issue |
+| `SP-XX-*.md` | Issue type Plan, parent = the Plan issue |
 | `plan.md` / `PLAN.md` | Issue type Plan (root of the hierarchy) |
 | `HANDOFF.md`, `pilot-findings.md` | Pages |
 | `design/reviews/*.md`, `design-system-delta.md` | Pages "Design decisions" |
