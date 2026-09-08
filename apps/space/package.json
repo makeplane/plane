@@ -37,6 +37,7 @@
     "clsx": "catalog:",
     "date-fns": "catalog:",
     "isbot": "catalog:",
+    "katex": "catalog:",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "mobx": "catalog:",

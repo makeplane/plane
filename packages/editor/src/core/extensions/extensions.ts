@@ -27,6 +27,7 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
+  MathBlockExtension,
   Table,
   TableCell,
   TableHeader,
@@ -121,6 +122,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomColorExtension,
     CustomTextAlignExtension,
     CustomCalloutExtension,
+    MathBlockExtension,
     UtilityExtension({
       disabledExtensions,
       flaggedExtensions,

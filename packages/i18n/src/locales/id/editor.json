@@ -61,5 +61,16 @@
       "use_this": "Gunakan ini",
       "refine": "Perbaiki"
     }
+  },
+  "mathBlock": {
+    "slash_command": {
+      "title": "Math",
+      "description": "Insert a LaTeX math equation."
+    },
+    "node_view": {
+      "placeholder": "Enter LaTeX, e.g. E = mc^2",
+      "edit_aria": "Edit LaTeX source",
+      "invalid_latex": "Invalid LaTeX"
+    }
   }
 }

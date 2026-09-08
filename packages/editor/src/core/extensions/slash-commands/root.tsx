@@ -9,6 +9,7 @@ import type { Editor } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion from "@tiptap/suggestion";
 import type { SuggestionOptions } from "@tiptap/suggestion";
+import { useTranslation } from "react-i18next";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -128,9 +129,13 @@ export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flagged
 };
 
 export function SlashCommands(props: TExtensionProps) {
+  const { t } = useTranslation();
   return Command.configure({
     suggestion: {
-      items: getSlashCommandFilteredSections(props),
+      items: getSlashCommandFilteredSections({
+        ...props,
+        translate: (key, options) => t(key, options),
+      }),
     },
   });
 }

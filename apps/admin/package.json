@@ -32,6 +32,7 @@
     "@plane/utils": "workspace:*",
     "@react-router/node": "catalog:",
     "isbot": "catalog:",
+    "katex": "catalog:",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "mobx": "catalog:",

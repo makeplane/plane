@@ -63,6 +63,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "math-block"
   | "attachment"
   | "emoji"
   | "external-embed"

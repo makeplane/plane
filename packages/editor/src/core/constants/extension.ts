@@ -41,6 +41,7 @@ export enum CORE_EXTENSIONS {
   TABLE_ROW = "tableRow",
   TASK_ITEM = "taskItem",
   TASK_LIST = "taskList",
+  MATH_BLOCK = "mathBlock",
   TEXT_ALIGN = "textAlign",
   TEXT_STYLE = "textStyle",
   TYPOGRAPHY = "typography",
@@ -74,4 +75,5 @@ export const BLOCK_NODE_TYPES = [
   CORE_EXTENSIONS.CUSTOM_IMAGE,
   CORE_EXTENSIONS.CALLOUT,
   CORE_EXTENSIONS.WORK_ITEM_EMBED,
+  CORE_EXTENSIONS.MATH_BLOCK,
 ];

@@ -20,6 +20,7 @@ import {
   ListTodo,
   MessageSquareText,
   MinusSquare,
+  Sigma,
   Smile,
   Table,
   TextQuote,
@@ -38,6 +39,7 @@ import {
   toggleBackgroundColor,
   insertImage,
   insertCallout,
+  insertMathBlock,
   setText,
   openEmojiPicker,
 } from "@/helpers/editor-commands";
@@ -54,10 +56,13 @@ export type TSlashCommandSection = {
   items: ISlashCommandItem[];
 };
 
+export type TSlashCommandTranslateFn = (key: string, options?: Record<string, unknown>) => string;
+
 export const getSlashCommandFilteredSections =
-  (args: TExtensionProps) =>
+  (args: TExtensionProps & { translate?: TSlashCommandTranslateFn }) =>
   ({ query }: { query: string }): TSlashCommandSection[] => {
-    const { additionalOptions: externalAdditionalOptions, disabledExtensions, flaggedExtensions } = args;
+    const { additionalOptions: externalAdditionalOptions, disabledExtensions, flaggedExtensions, translate } = args;
+    const t: TSlashCommandTranslateFn = translate ?? ((key) => key);
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
         key: "general",
@@ -179,6 +184,17 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["codeblock"],
             icon: <Code2 className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+          },
+          {
+            commandKey: "math-block",
+            key: "math-block",
+            title: t("mathBlock.slash_command.title", { defaultValue: "Math" }),
+            description: t("mathBlock.slash_command.description", {
+              defaultValue: "Insert a LaTeX math equation.",
+            }),
+            searchTerms: ["math", "latex", "equation", "formula", "katex", "公式"],
+            icon: <Sigma className="size-3.5" />,
+            command: ({ editor, range }: CommandProps) => insertMathBlock(editor, range),
           },
           {
             commandKey: "callout",
