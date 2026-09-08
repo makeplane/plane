@@ -5,9 +5,18 @@
  */
 
 import { InputRule } from "@tiptap/core";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import type { EditorState } from "@tiptap/pm/state";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // plane utils
-import { isValidInlineMathContent, MATH_INLINE_INPUT_REGEX } from "@plane/utils";
+import {
+  findInlineMathMatch,
+  INLINE_MATH_SCAN_ATOM_PLACEHOLDER,
+  isValidInlineMathContent,
+  MATH_INLINE_INPUT_REGEX,
+} from "@plane/utils";
 // types
 import { EMathInlineAttributeNames } from "./types";
 import { MathInlineExtensionConfig } from "./extension-config";
@@ -52,7 +61,71 @@ export const MathInlineExtension = MathInlineExtensionConfig.extend({
     ];
   },
 
+  addProseMirrorPlugins() {
+    const mathInlineType = this.type;
+    // convert a `$...$` text span in the edited text block even when the
+    // closing `$` was typed before the content (e.g. typing `$$` first and
+    // filling the middle afterwards) — the input rule above only fires when
+    // the closing `$` is typed last
+    const scanTextBlockForInlineMath = (state: EditorState, pos: number) => {
+      const $pos = state.doc.resolve(pos);
+      if (!$pos.parent.inlineContent || $pos.parent.type.name === CORE_EXTENSIONS.CODE_BLOCK) return null;
+      // mask inline atoms (e.g. already-converted math nodes) so their text
+      // representation can never match
+      const text = $pos.parent.textBetween(0, $pos.parent.content.size, null, INLINE_MATH_SCAN_ATOM_PLACEHOLDER);
+      const match = findInlineMathMatch(text);
+      if (!match) return null;
+      const matchFrom = $pos.start() + match.from;
+      const matchTo = $pos.start() + match.to;
+      // don't convert while the cursor is inside the span — the user is
+      // still typing the content
+      const { empty, from, to } = state.selection;
+      if (!empty && from < matchTo && to > matchFrom) return null;
+      if (from > matchFrom && from < matchTo) return null;
+      // never convert text carrying a code mark
+      let hasCodeMark = false;
+      state.doc.nodesBetween(matchFrom, matchTo, (node) => {
+        if (node.marks.some((mark) => mark.type.name === CORE_EXTENSIONS.CODE_INLINE)) hasCodeMark = true;
+        return !hasCodeMark;
+      });
+      if (hasCodeMark) return null;
+      const node = mathInlineType.create({
+        [EMathInlineAttributeNames.LATEX]: match.latex,
+      });
+      return state.tr.replaceWith(matchFrom, matchTo, node);
+    };
+    return [
+      new Plugin({
+        key: new PluginKey("mathInlineTextConversion"),
+        appendTransaction: (transactions, oldState, newState) => {
+          try {
+            // scan the block around the new selection, plus the block the
+            // selection just left (mapped into the new state) so clicking or
+            // arrowing out of a `$...$` span converts it
+            const mappedOldPos = transactions.reduce((pos, tr) => tr.mapping.map(pos), oldState.selection.from);
+            const positions = [newState.selection.from];
+            if (mappedOldPos !== newState.selection.from) positions.push(mappedOldPos);
+            for (const pos of positions) {
+              const tr = scanTextBlockForInlineMath(newState, pos);
+              if (tr) return tr;
+            }
+            return null;
+          } catch (error) {
+            console.error("Error converting inline math text:", error);
+            return null;
+          }
+        },
+      }),
+    ];
+  },
+
   addNodeView() {
-    return ReactNodeViewRenderer(MathInlineNodeView, { as: "span" });
+    return ReactNodeViewRenderer(MathInlineNodeView, {
+      as: "span",
+      // ProseMirror turns a click on a selectable node into a node selection,
+      // which interferes with click-to-edit; the node view handles its own
+      // events, only drag & drop stay with ProseMirror
+      stopEvent: ({ event }) => !event.type.startsWith("drag") && event.type !== "drop",
+    });
   },
 });
