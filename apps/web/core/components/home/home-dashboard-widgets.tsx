@@ -23,6 +23,10 @@ import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
+// Questimus fork change (Phase 3): home dashboard sections — My Issues / Now / Today
+import { AssignedIssuesWidget } from "./widgets/assigned-issues";
+import { NowWidget } from "./widgets/now";
+import { TodayWidget } from "./widgets/today";
 
 export const HOME_WIDGETS_LIST: {
   [key in THomeWidgetKeys]: {
@@ -110,6 +114,15 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
           />
         </div>
       )}
+
+      {/* Questimus fork change (Phase 3): fixed home sections — My Issues,
+          "Now" (urgent/high or due ≤ 7 days) and "Today" (due today/overdue),
+          assigned to me, computed per request (§5.7). */}
+      <div className="mt-4 flex flex-col gap-7">
+        <AssignedIssuesWidget workspaceSlug={workspaceSlug.toString()} />
+        <NowWidget workspaceSlug={workspaceSlug.toString()} />
+        <TodayWidget workspaceSlug={workspaceSlug.toString()} />
+      </div>
     </div>
   );
 });

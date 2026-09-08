@@ -24,6 +24,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { TypeDropdown } from "@/components/dropdowns/type";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
@@ -32,6 +33,7 @@ import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProjectIssueTypes } from "@/hooks/use-project-issue-types";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -72,6 +74,10 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   // derived values
   const projectDetails = getProjectById(projectId);
 
+  // Questimus fork change (Phase 3): the project's issue types for the Type
+  // field (the §7.6 endpoint feeds the §5.4 planning hierarchy).
+  const issueTypes = useProjectIssueTypes(workspaceSlug, projectId ?? undefined);
+
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
   const canCreateLabel =
@@ -85,6 +91,25 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {/* Questimus fork change (Phase 3): issue type — first property, drives
+          the §5.4 planning hierarchy (Plan/Subplan/Task/Subtask/Ticket). */}
+      <Controller
+        control={control}
+        name="type_id"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <TypeDropdown
+              value={value}
+              onChange={(typeId) => {
+                onChange(typeId);
+                handleFormChange();
+              }}
+              types={issueTypes}
+              tabIndex={getIndex("type_id")}
+            />
+          </div>
+        )}
+      />
       <Controller
         control={control}
         name="state_id"

@@ -37,6 +37,7 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 // helpers
+import { loadProjectIssueTypes } from "@/helpers/issue-types.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -190,9 +191,21 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     // if issue type id is present or project not available, return
     if (issueTypeId || !projectId) return;
 
-    // get issue type id on project change
+    // get issue type id on project change (from the module cache if loaded)
     const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
-    if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
+    if (issueTypeIdOnProjectChange) {
+      setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
+      return;
+    }
+
+    // Questimus fork change (Phase 3): cache miss → load the project's types
+    // (§7.6 endpoint) and default to the project's default type (Ticket).
+    void loadProjectIssueTypes(workspaceSlug?.toString() ?? "", projectId).then((types) => {
+      const defaultType = types.find((t) => t.is_default) ?? types[0];
+      if (defaultType && !getValues("type_id")) {
+        setValue("type_id", defaultType.id, { shouldValidate: true });
+      }
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);

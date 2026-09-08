@@ -77,6 +77,27 @@ export class IssueService extends APIService {
       });
   }
 
+  // Questimus fork change (migration-karol.md §7.6/Phase 3): list a project's
+  // issue types (Plan/Subplan/Task/Subtask/Ticket/Design) for the type badge,
+  // the modal selector and the default-type-on-project-change logic.
+  async getProjectIssueTypes(workspaceSlug: string, projectId: string): Promise<any[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Questimus fork change (Phase 3): workspace-level issues for the home
+  // dashboard sections (My Issues / Now / Today) — assigned to the user.
+  async getWorkspaceIssues(workspaceSlug: string, queries: Record<string, string> = {}): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, { params: queries })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssues(
     workspaceSlug: string,
     projectId: string,

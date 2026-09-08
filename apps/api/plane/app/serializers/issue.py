@@ -794,6 +794,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "start_date",
             "target_date",
             "sequence_id",
+            "type_id",
             "project_id",
             "parent_id",
             "cycle_id",
