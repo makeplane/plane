@@ -23,7 +23,8 @@
       "dependency": "Adaugă dependență",
       "relation": "Adaugă relație",
       "link": "Adaugă link",
-      "existing": "Adaugă activitate existentă"
+      "existing": "Adaugă activitate existentă",
+      "checklist_item": "Adăugați element din lista de verificare"
     },
     "remove": {
       "label": "Elimină activitatea",

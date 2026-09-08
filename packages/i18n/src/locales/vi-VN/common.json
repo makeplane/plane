@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Danh sách kiểm tra"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Đã thêm mục trong danh sách kiểm tra",
+        "message": "Mục trong danh sách kiểm tra đã được thêm"
+      },
+      "not_created": {
+        "title": "Không thể thêm mục trong danh sách kiểm tra",
+        "message": "Không thể thêm mục trong danh sách kiểm tra"
+      },
+      "updated": {
+        "title": "Đã cập nhật mục trong danh sách kiểm tra",
+        "message": "Mục trong danh sách kiểm tra đã được cập nhật"
+      },
+      "not_updated": {
+        "title": "Không thể cập nhật mục trong danh sách kiểm tra",
+        "message": "Không thể cập nhật mục trong danh sách kiểm tra"
+      },
+      "removed": {
+        "title": "Đã xóa mục trong danh sách kiểm tra",
+        "message": "Mục trong danh sách kiểm tra đã được xóa"
+      },
+      "not_removed": {
+        "title": "Không thể xóa mục trong danh sách kiểm tra",
+        "message": "Không thể xóa mục trong danh sách kiểm tra"
+      }
+    },
+    "all_skipped": "Tất cả đã bỏ qua",
+    "skipped_suffix": "đã bỏ qua",
+    "placeholder": "Thêm một mục…",
+    "status": {
+      "to_do": "Cần làm",
+      "in_progress": "Đang thực hiện",
+      "skipped": "Đã bỏ qua",
+      "done": "Hoàn thành"
     }
   }
 }

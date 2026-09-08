@@ -402,6 +402,43 @@
       }
     }
   },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Checklist item added",
+        "message": "The checklist item has been added"
+      },
+      "not_created": {
+        "title": "Checklist item not added",
+        "message": "The checklist item could not be added"
+      },
+      "updated": {
+        "title": "Checklist item updated",
+        "message": "The checklist item has been updated"
+      },
+      "not_updated": {
+        "title": "Checklist item not updated",
+        "message": "The checklist item could not be updated"
+      },
+      "removed": {
+        "title": "Checklist item removed",
+        "message": "The checklist item has been removed"
+      },
+      "not_removed": {
+        "title": "Checklist item not removed",
+        "message": "The checklist item could not be removed"
+      }
+    },
+    "all_skipped": "All skipped",
+    "skipped_suffix": "skipped",
+    "placeholder": "Add an item…",
+    "status": {
+      "to_do": "To Do",
+      "in_progress": "In Progress",
+      "skipped": "Skipped",
+      "done": "Done"
+    }
+  },
   "link": {
     "modal": {
       "url": {
@@ -508,6 +545,7 @@
     },
     "done": "Done",
     "sub_work_items": "Sub-work items",
+    "checklist": "Checklist",
     "comment": "Comment",
     "workspace_level": "Workspace level",
     "order_by": {

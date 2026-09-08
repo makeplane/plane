@@ -23,7 +23,8 @@
       "dependency": "종속성 추가",
       "relation": "관계 추가",
       "link": "링크 추가",
-      "existing": "기존 작업 항목 추가"
+      "existing": "기존 작업 항목 추가",
+      "checklist_item": "체크리스트 항목 추가"
     },
     "remove": {
       "label": "작업 항목 제거",

@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "체크리스트"
   },
   "chart": {
     "x_axis": "X축",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "체크리스트 항목이 추가되었습니다",
+        "message": "체크리스트 항목이 추가되었습니다"
+      },
+      "not_created": {
+        "title": "체크리스트 항목을 추가하지 못했습니다",
+        "message": "체크리스트 항목을 추가할 수 없습니다"
+      },
+      "updated": {
+        "title": "체크리스트 항목이 업데이트되었습니다",
+        "message": "체크리스트 항목이 업데이트되었습니다"
+      },
+      "not_updated": {
+        "title": "체크리스트 항목을 업데이트하지 못했습니다",
+        "message": "체크리스트 항목을 업데이트할 수 없습니다"
+      },
+      "removed": {
+        "title": "체크리스트 항목이 삭제되었습니다",
+        "message": "체크리스트 항목이 삭제되었습니다"
+      },
+      "not_removed": {
+        "title": "체크리스트 항목을 삭제하지 못했습니다",
+        "message": "체크리스트 항목을 삭제할 수 없습니다"
+      }
+    },
+    "all_skipped": "모두 건너뜀",
+    "skipped_suffix": "건너뜀",
+    "placeholder": "항목 추가…",
+    "status": {
+      "to_do": "할 일",
+      "in_progress": "진행 중",
+      "skipped": "건너뜀",
+      "done": "완료"
     }
   }
 }

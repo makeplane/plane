@@ -23,7 +23,8 @@
       "dependency": "Bağımlılık ekle",
       "relation": "İlişki ekle",
       "link": "Bağlantı ekle",
-      "existing": "Varolan iş öğesi ekle"
+      "existing": "Varolan iş öğesi ekle",
+      "checklist_item": "Kontrol listesi öğesi ekle"
     },
     "remove": {
       "label": "İş öğesini kaldır",

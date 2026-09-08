@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Lista kontrolna"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Dodano element listy kontrolnej",
+        "message": "Element listy kontrolnej został dodany"
+      },
+      "not_created": {
+        "title": "Nie dodano elementu listy kontrolnej",
+        "message": "Nie udało się dodać elementu listy kontrolnej"
+      },
+      "updated": {
+        "title": "Zaktualizowano element listy kontrolnej",
+        "message": "Element listy kontrolnej został zaktualizowany"
+      },
+      "not_updated": {
+        "title": "Nie zaktualizowano elementu listy kontrolnej",
+        "message": "Nie udało się zaktualizować elementu listy kontrolnej"
+      },
+      "removed": {
+        "title": "Usunięto element listy kontrolnej",
+        "message": "Element listy kontrolnej został usunięty"
+      },
+      "not_removed": {
+        "title": "Nie usunięto elementu listy kontrolnej",
+        "message": "Nie udało się usunąć elementu listy kontrolnej"
+      }
+    },
+    "all_skipped": "Wszystko pominięte",
+    "skipped_suffix": "pominiętych",
+    "placeholder": "Dodaj element…",
+    "status": {
+      "to_do": "Do zrobienia",
+      "in_progress": "W trakcie",
+      "skipped": "Pominięte",
+      "done": "Zrobione"
     }
   }
 }

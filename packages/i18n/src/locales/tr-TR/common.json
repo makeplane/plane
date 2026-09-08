@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Kontrol listesi"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Kontrol listesi öğesi eklendi",
+        "message": "Kontrol listesi öğesi başarıyla eklendi"
+      },
+      "not_created": {
+        "title": "Kontrol listesi öğesi eklenemedi",
+        "message": "Kontrol listesi öğesi eklenirken bir sorun oluştu"
+      },
+      "updated": {
+        "title": "Kontrol listesi öğesi güncellendi",
+        "message": "Kontrol listesi öğesi başarıyla güncellendi"
+      },
+      "not_updated": {
+        "title": "Kontrol listesi öğesi güncellenemedi",
+        "message": "Kontrol listesi öğesi güncellenirken bir sorun oluştu"
+      },
+      "removed": {
+        "title": "Kontrol listesi öğesi kaldırıldı",
+        "message": "Kontrol listesi öğesi başarıyla kaldırıldı"
+      },
+      "not_removed": {
+        "title": "Kontrol listesi öğesi kaldırılamadı",
+        "message": "Kontrol listesi öğesi kaldırılırken bir sorun oluştu"
+      }
+    },
+    "all_skipped": "Tümü atlandı",
+    "skipped_suffix": "atlandı",
+    "placeholder": "Bir öğe ekleyin…",
+    "status": {
+      "to_do": "Yapılacak",
+      "in_progress": "Devam ediyor",
+      "skipped": "Atlandı",
+      "done": "Tamamlandı"
     }
   }
 }

@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "საკონტროლო სია"
   },
   "chart": {
     "x_axis": "X-ღერძი",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "ექსპორტირეთ სამუშაო ელემენტები JSON ფაილში.",
       "short_description": "ექსპორტი json-ად"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "საკონტროლო სიის პუნქტი დაემატა",
+        "message": "საკონტროლო სიის პუნქტი დაემატა"
+      },
+      "not_created": {
+        "title": "საკონტროლო სიის პუნქტი ვერ დაემატა",
+        "message": "საკონტროლო სიის პუნქტის დამატება ვერ მოხერხდა"
+      },
+      "updated": {
+        "title": "საკონტროლო სიის პუნქტი განახლდა",
+        "message": "საკონტროლო სიის პუნქტი განახლდა"
+      },
+      "not_updated": {
+        "title": "საკონტროლო სიის პუნქტი ვერ განახლდა",
+        "message": "საკონტროლო სიის პუნქტის განახლება ვერ მოხერხდა"
+      },
+      "removed": {
+        "title": "საკონტროლო სიის პუნქტი წაიშალა",
+        "message": "საკონტროლო სიის პუნქტი წაიშალა"
+      },
+      "not_removed": {
+        "title": "საკონტროლო სიის პუნქტი ვერ წაიშალა",
+        "message": "საკონტროლო სიის პუნქტის წაშლა ვერ მოხერხდა"
+      }
+    },
+    "all_skipped": "ყველა გამოტოვებულია",
+    "skipped_suffix": "გამოტოვებული",
+    "placeholder": "დაამატეთ პუნქტი…",
+    "status": {
+      "to_do": "შესასრულებელი",
+      "in_progress": "მიმდინარე",
+      "skipped": "გამოტოვებული",
+      "done": "დასრულებული"
     }
   }
 }

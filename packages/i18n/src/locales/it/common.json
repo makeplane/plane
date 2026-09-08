@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Checklist"
   },
   "chart": {
     "x_axis": "Asse X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Esporta elementi di lavoro in un file JSON.",
       "short_description": "Esporta come JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Elemento della checklist aggiunto",
+        "message": "L'elemento della checklist è stato aggiunto"
+      },
+      "not_created": {
+        "title": "Elemento della checklist non aggiunto",
+        "message": "Impossibile aggiungere l'elemento della checklist"
+      },
+      "updated": {
+        "title": "Elemento della checklist aggiornato",
+        "message": "L'elemento della checklist è stato aggiornato"
+      },
+      "not_updated": {
+        "title": "Elemento della checklist non aggiornato",
+        "message": "Impossibile aggiornare l'elemento della checklist"
+      },
+      "removed": {
+        "title": "Elemento della checklist rimosso",
+        "message": "L'elemento della checklist è stato rimosso"
+      },
+      "not_removed": {
+        "title": "Elemento della checklist non rimosso",
+        "message": "Impossibile rimuovere l'elemento della checklist"
+      }
+    },
+    "all_skipped": "Tutto saltato",
+    "skipped_suffix": "saltati",
+    "placeholder": "Aggiungi un elemento…",
+    "status": {
+      "to_do": "Da fare",
+      "in_progress": "In corso",
+      "skipped": "Saltato",
+      "done": "Fatto"
     }
   }
 }

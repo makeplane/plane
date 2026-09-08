@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Kontrolní seznam"
   },
   "chart": {
     "x_axis": "Osa X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovat jako JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Položka kontrolního seznamu přidána",
+        "message": "Položka kontrolního seznamu byla přidána"
+      },
+      "not_created": {
+        "title": "Položka kontrolního seznamu nebyla přidána",
+        "message": "Položku kontrolního seznamu se nepodařilo přidat"
+      },
+      "updated": {
+        "title": "Položka kontrolního seznamu aktualizována",
+        "message": "Položka kontrolního seznamu byla aktualizována"
+      },
+      "not_updated": {
+        "title": "Položka kontrolního seznamu nebyla aktualizována",
+        "message": "Položku kontrolního seznamu se nepodařilo aktualizovat"
+      },
+      "removed": {
+        "title": "Položka kontrolního seznamu odstraněna",
+        "message": "Položka kontrolního seznamu byla odstraněna"
+      },
+      "not_removed": {
+        "title": "Položka kontrolního seznamu nebyla odstraněna",
+        "message": "Položku kontrolního seznamu se nepodařilo odstranit"
+      }
+    },
+    "all_skipped": "Vše přeskočeno",
+    "skipped_suffix": "přeskočeno",
+    "placeholder": "Přidat položku…",
+    "status": {
+      "to_do": "K vyřízení",
+      "in_progress": "Probíhá",
+      "skipped": "Přeskočeno",
+      "done": "Hotovo"
     }
   }
 }

@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Чек-лист"
   },
   "chart": {
     "x_axis": "Вісь X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Пункт чек-листа додано",
+        "message": "Пункт чек-листа було додано"
+      },
+      "not_created": {
+        "title": "Пункт чек-листа не додано",
+        "message": "Не вдалося додати пункт чек-листа"
+      },
+      "updated": {
+        "title": "Пункт чек-листа оновлено",
+        "message": "Пункт чек-листа було оновлено"
+      },
+      "not_updated": {
+        "title": "Пункт чек-листа не оновлено",
+        "message": "Не вдалося оновити пункт чек-листа"
+      },
+      "removed": {
+        "title": "Пункт чек-листа видалено",
+        "message": "Пункт чек-листа було видалено"
+      },
+      "not_removed": {
+        "title": "Пункт чек-листа не видалено",
+        "message": "Не вдалося видалити пункт чек-листа"
+      }
+    },
+    "all_skipped": "Усі пропущено",
+    "skipped_suffix": "пропущено",
+    "placeholder": "Додати пункт…",
+    "status": {
+      "to_do": "До виконання",
+      "in_progress": "У процесі",
+      "skipped": "Пропущено",
+      "done": "Готово"
     }
   }
 }

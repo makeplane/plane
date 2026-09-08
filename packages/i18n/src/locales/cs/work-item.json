@@ -23,7 +23,8 @@
       "dependency": "Přidat závislost",
       "relation": "Přidat vztah",
       "link": "Přidat odkaz",
-      "existing": "Přidat existující pracovní položku"
+      "existing": "Přidat existující pracovní položku",
+      "checklist_item": "Přidat položku kontrolního seznamu"
     },
     "remove": {
       "label": "Odebrat pracovní položku",
