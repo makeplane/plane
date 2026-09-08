@@ -100,6 +100,10 @@ export class QuestimusClient {
     return this.request("GET", `${V1}/workspaces/${slug}/projects/${projectId}/work-items/${workItemId}/`);
   }
 
+  deleteWorkItem(slug, projectId, workItemId) {
+    return this.request("DELETE", `${V1}/workspaces/${slug}/projects/${projectId}/work-items/${workItemId}/`);
+  }
+
   updateWorkItem(slug, projectId, workItemId, data) {
     return this.request("PATCH", `${V1}/workspaces/${slug}/projects/${projectId}/work-items/${workItemId}/`, { body: data });
   }
