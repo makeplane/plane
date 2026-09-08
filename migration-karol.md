@@ -265,6 +265,8 @@ Skill list: `questimus-legaliosa`, `questimus-jobernaut`, `questimus-don-saldo`,
 
 Effect: `X-Api-Key` works on the **main API** too → LLM agents can read/write **pages** (plans, design decisions), webhooks, exports. The class is already implemented and tested (contract tests exist). Without this, agents can only reach issues via v1 and plan docs stay repo-only.
 
+**Execution finding (Phase 1, 2026-09-08): the settings change alone is NOT sufficient.** `BaseAPIView` and `BaseViewSet` (`plane/app/views/base.py`) hardcode `authentication_classes = [BaseSessionAuthentication]`, which overrides the DRF default for every main-API view → token calls 401'd despite the settings entry. Fixed by adding `APIKeyAuthentication` to both base classes (same file, plus the import). Keep the settings change (it covers any view that doesn't override).
+
 ### 7.5 Second fork change — issue-type filter (applied 2026-09-08)
 
 The "Planning"/"Tickets" views filter by issue type, but this Plane version has **no issue-type filter in the backend** (the UI's filter state has `issue_type`, but the backend ignores it — the "Planning"/"Tickets" views would show every issue). Applied:
@@ -282,6 +284,18 @@ The "Issue type UI" ticket (Phase 3) needs the project's issue types in the web 
 - Registered in `plane/app/views/__init__.py` + `plane/app/urls/issue.py`.
 
 Effect: the web app can list a project's types → the type selector (modal) + type badge (list/detail) become implementable in Phase 3. Takes effect on the next api rebuild (Phase 1).
+
+### 7.7 Fourth fork change — v1 estimate routes registered (applied 2026-09-08, Phase 1)
+
+Stock bug caught by the Phase 1 smoke test: `plane/api/urls/estimate.py` exists (the v1 estimate views are fully implemented — single-object GET/409-on-create, bulk points) but was **never included in the v1 urlconf** → `POST/GET /api/v1/workspaces/{slug}/projects/{id}/estimates/` 404'd. Fixed: added the `estimate_patterns` import + include to `plane/api/urls/__init__.py`. No other v1 module was missing (comments/relations/search live inside `work_item.py`).
+
+### 7.8 Fifth fork change — created_at preservation (applied 2026-09-08, Phase 1)
+
+The plan assumed v1 create preserves `created_at`, but the model field is `auto_now_add` → the serializer treats it as auto read-only and the server's timestamp wins. Fixed in `plane/api/serializers/issue.py`: explicit writable `created_at = DateTimeField(required=False)` + pop from `validated_data` in `create()` + `Issue.objects.filter(pk=...).update(created_at=...)` (bypasses `auto_now_add`'s pre_save). Verified by the smoke test (`2026-01-01T00:00:00Z` preserved).
+
+### 7.9 Operational note — v1 API rate limit (Phase 1, 2026-09-08)
+
+The v1 API throttles per API key (`ApiKeyRateThrottle`, `settings.API_KEY_RATE_LIMIT`, default **60/minute**) — the setup script and the importers (559 issues + relations + pages) blow through that instantly (HTTP 429 `RATE_LIMIT_EXCEEDED`). Raised locally via `API_KEY_RATE_LIMIT=1000/minute` in `apps/api/.env` (gitignored — no repo change; **re-apply after any fresh clone/setup**). Note: `docker compose restart` does NOT re-read `env_file` — use `docker compose up -d api` to apply.
 
 ---
 
