@@ -1,0 +1,55 @@
+{
+  "name": "jobernaut-v2",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Jobernaut",
+  "projectIdentifier": "JOBERNAUT",
+  "sourceDir": "C:/Users/Karol/Projects/Jobernaut2/planning",
+  "externalSource": "jobernaut-v2",
+  "stateFile": "state/jobernaut-v2.json",
+  "excludeDirs": ["archive"],
+  "ticketsDir": "tickets",
+  "doneDir": "tickets/done",
+  "planFile": "PLAN.md",
+  "spPattern": "SP-*.md",
+  "taskDir": ".",
+  "taskPattern": "T-*.md",
+  "dependsOnField": "depends-on",
+  "typesFile": "state/types.json",
+  "ticketSpLabels": true,
+  "stateMapping": {
+    "done": "Done",
+    "in-progress": "In Progress",
+    "blocked": "Blocked",
+    "open": "Open",
+    "backlog": "Open",
+    "deferred": "Open",
+    "cancelled": "Cancelled"
+  },
+  "priorityField": "priority",
+  "priorityMapping": {
+    "critical": "urgent",
+    "high": "high",
+    "medium": "medium",
+    "low": "low"
+  },
+  "labels": {
+    "verified": "verified"
+  },
+  "subPlanField": "sub_plan",
+  "blockedByField": "blocked_by",
+  "idField": "id",
+  "titleField": "title",
+  "verifiedField": "verified",
+  "createdField": "created",
+  "estimateName": "Effort",
+  "estimatePoints": [ { "key": 1, "value": "1" }, { "key": 2, "value": "3" }, { "key": 3, "value": "5" } ],
+  "effortMapping": { "S": "1", "M": "3", "L": "5" },  "effortFromBody": true,
+  "sourceLine": true,
+  "pageGroups": [
+    { "pattern": "HANDOFF.md", "name": "HANDOFF" },
+    { "pattern": "PHASE-08.md", "name": "Phase 08" },
+    { "pattern": "pilot-findings.md", "name": "Pilot findings" },
+    { "pattern": "design/reviews/*.md", "namePrefix": "Design decision — " }
+  ]
+}

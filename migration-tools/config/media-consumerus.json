@@ -1,0 +1,47 @@
+{
+  "name": "media-consumerus",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Media Consumerus",
+  "projectIdentifier": "CONSUMERUS",
+  "sourceDir": "C:/Users/Karol/Projects/Media Consumerus/planning",
+  "externalSource": "media-consumerus",
+  "stateFile": "state/media-consumerus.json",
+  "ticketsDir": null,
+  "stateMapping": {
+    "dropped": "Cancelled",
+    "done": "Done",
+    "open": "Open"
+  },
+  "estimateName": "Effort",
+  "estimatePoints": [ { "key": 1, "value": "1" }, { "key": 2, "value": "3" }, { "key": 3, "value": "5" } ],
+  "effortMapping": { "S": "1", "M": "3", "L": "5" },  "sourceLine": true,
+  "tableSources": [
+    {
+      "file": "BACKLOG.md",
+      "columns": {
+        "id": "ID",
+        "name": "Enhancement",
+        "priority": "Priority",
+        "effort": "Effort",
+        "mergeRisk": "Merge-risk",
+        "source": "Source"
+      },
+      "priorityMap": { "P0": "urgent", "P1": "high", "P2": "medium" },
+      "label": "backlog"
+    }
+  ],
+  "sectionSources": [
+    {
+      "file": "TODOS.md",
+      "label": "deferred"
+    }
+  ],
+  "pageGroups": [
+    { "pattern": "BACKLOG.md", "name": "Backlog" },
+    { "pattern": "TODOS.md", "name": "TODOS" },
+    { "pattern": "E*.md", "nameFrom": "heading" },
+    { "pattern": "SP*.md", "nameFrom": "heading" },
+    { "pattern": "design/*.md", "namePrefix": "Design — " }
+  ]
+}

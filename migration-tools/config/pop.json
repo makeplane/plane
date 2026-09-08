@@ -1,0 +1,14 @@
+{
+  "name": "pop",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "POP",
+  "projectIdentifier": "POP",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Personal Operating Profile",
+  "externalSource": "empirium-pm-pop",
+  "stateFile": "state/pop.json",
+  "ticketsDir": null,
+  "pageGroups": [
+    { "pattern": "Personal Operating Profile.md", "name": "Personal Operating Profile" }
+  ]
+}

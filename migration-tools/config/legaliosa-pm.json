@@ -1,0 +1,19 @@
+{
+  "name": "legaliosa-pm",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Legaliosa",
+  "projectIdentifier": "LEGALIOSA",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Legaliosa",
+  "externalSource": "empirium-pm-legaliosa",
+  "stateFile": "state/legaliosa-pm.json",
+  "ticketsDir": null,
+  "sourceLine": true,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Open"
+  },
+  "checkboxSources": [
+    { "file": "issues.md", "label": "todo" }
+  ]
+}

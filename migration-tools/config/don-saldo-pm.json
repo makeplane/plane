@@ -1,0 +1,22 @@
+{
+  "name": "don-saldo-pm",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Don Saldo",
+  "projectIdentifier": "DONSALDO",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Don Saldo",
+  "externalSource": "empirium-pm-don-saldo",
+  "stateFile": "state/don-saldo-pm.json",
+  "ticketsDir": null,
+  "sourceLine": true,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Open"
+  },
+  "checkboxSources": [
+    { "file": "_Tasks Overview.md", "label": "todo" }
+  ],
+  "pageGroups": [
+    { "pattern": "Change to use Docker.md", "name": "Change to use Docker" }
+  ]
+}

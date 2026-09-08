@@ -1,0 +1,21 @@
+{
+  "name": "jobernaut-pm",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Jobernaut",
+  "projectIdentifier": "JOBERNAUT",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Jobernaut",
+  "externalSource": "empirium-pm-jobernaut",
+  "stateFile": "state/jobernaut-pm.json",
+  "ticketsDir": null,
+  "sourceLine": true,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Open"
+  },
+  "checkboxSources": [
+    { "file": "issues.md", "label": "todo" },
+    { "file": "monetizing.md", "label": "idea" },
+    { "file": "ui-ux.md", "label": "todo" }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "name": "setup",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "setup": {
+    "karolUserId": "a8f10b92-1ff5-4916-9ffa-6f96e40aeafb",
+    "projects": [
+      {
+        "name": "Personal",
+        "identifier": "PERSONAL",
+        "description": "Karol's personal project: ideas, todos, research, errands.",
+        "labels": ["verified", "user-report", "idea", "todo", "someday", "research"]
+      },
+      {
+        "name": "Questimus",
+        "identifier": "QUESTIMUS",
+        "description": "The Questimus (Plane fork) project itself: planning, tickets, ideas.",
+        "labels": ["verified", "user-report", "idea"]
+      },
+      {
+        "name": "Legaliosa",
+        "identifier": "LEGALIOSA",
+        "description": "Legaliosa v2 (Legaliosa-test-ox-alpha) — active development.",
+        "labels": ["verified", "user-report"]
+      },
+      {
+        "name": "Jobernaut",
+        "identifier": "JOBERNAUT",
+        "description": "Jobernaut v2 (Jobernaut2) — active development.",
+        "labels": ["verified", "user-report"]
+      },
+      {
+        "name": "Don Saldo",
+        "identifier": "DONSALDO",
+        "description": "Don Saldo app.",
+        "labels": ["verified", "user-report"]
+      },
+      {
+        "name": "Media Consumerus",
+        "identifier": "CONSUMERUS",
+        "description": "Media Consumerus app — MVP done, low priority.",
+        "labels": ["verified", "user-report", "backlog", "deferred"]
+      },
+      {
+        "name": "Kleinanzeigen",
+        "identifier": "KLEINANZEIGE",
+        "description": "Kleinanzeigen.de selling — parked.",
+        "labels": ["verified", "user-report", "parked"]
+      },
+      {
+        "name": "POP",
+        "identifier": "POP",
+        "description": "Personal Operating Profile.",
+        "labels": ["verified", "user-report"]
+      },
+      {
+        "name": "Arsenal",
+        "identifier": "ARSENAL",
+        "description": "Arsenal vault planning (skills source of truth).",
+        "labels": ["verified", "user-report"]
+      },
+      {
+        "name": "Empirium",
+        "identifier": "EMPIRIUM",
+        "description": "Empirium vault planning.",
+        "labels": ["verified", "user-report"]
+      }
+    ],
+    "views": {
+      "workspace": [
+        { "name": "Next", "filters": { "assignees": ["{{karolUserId}}"], "priority": ["medium", "low"] } }
+      ],
+      "defaults": [
+        { "name": "In Progress", "filters": { "state": ["{{state:In Progress}}"] } },
+        { "name": "Done", "filters": { "state": ["{{state:Done}}"] } },
+        { "name": "User reports", "filters": { "labels": ["{{label:user-report}}"] } },
+        { "name": "Blocked", "filters": { "state": ["{{state:Blocked}}"] } },
+        { "name": "Planning", "filters": { "issue_type": ["{{type:Plan}}", "{{type:Subplan}}", "{{type:Task}}", "{{type:Subtask}}"] } },
+        { "name": "Tickets", "filters": { "issue_type": ["{{type:Ticket}}"] } }
+      ],
+      "projects": {
+        "Personal": [
+          { "name": "Inbox", "filters": { "state": ["{{state:Open}}"] } },
+          { "name": "Ideas", "filters": { "labels": ["{{label:idea}}"] } },
+          { "name": "Someday", "filters": { "labels": ["{{label:someday}}"] } }
+        ]
+      }
+    }
+  }
+}

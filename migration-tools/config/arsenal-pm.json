@@ -1,0 +1,25 @@
+{
+  "name": "arsenal-pm",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Arsenal",
+  "projectIdentifier": "ARSENAL",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Arsenal",
+  "externalSource": "empirium-pm-arsenal",
+  "stateFile": "state/arsenal-pm.json",
+  "ticketsDir": null,
+  "sourceLine": true,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Open"
+  },
+  "checkboxSources": [
+    {
+      "file": "Arsenal.md",
+      "label": "todo"
+    }
+  ],
+  "pageGroups": [
+    { "pattern": "improve-subagent-config.md", "name": "Improve subagent config" }
+  ]
+}

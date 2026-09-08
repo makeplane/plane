@@ -1,0 +1,22 @@
+{
+  "name": "kleinanzeigen",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Kleinanzeigen",
+  "projectIdentifier": "KLEINANZEIGE",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Kleinanzeigen",
+  "externalSource": "empirium-pm-kleinanzeigen",
+  "stateFile": "state/kleinanzeigen.json",
+  "ticketsDir": null,
+  "sourceLine": true,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Open"
+  },
+  "checkboxSources": [
+    { "file": "Kleinanzeigen.md", "label": "parked" }
+  ],
+  "pageGroups": [
+    { "pattern": "Kleinanzeigen.md", "name": "Kleinanzeigen (parked)" }
+  ]
+}
