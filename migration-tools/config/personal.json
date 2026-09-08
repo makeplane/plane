@@ -7,6 +7,8 @@
   "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm",
   "externalSource": "empirium-pm",
   "stateFile": "state/personal.json",
+  "pagesStateFile": "state/personal-pages.json",
+  "typesFile": "state/types.json",
   "ticketsDir": null,
   "sourceLine": true,
   "stateMapping": {
@@ -16,12 +18,21 @@
   "checkboxSources": [
     {
       "file": "Ideas.md",
-      "label": "idea"
+      "label": "idea",
+      "doneMatch": ["create my own project management tool"]
+    }
+  ],
+  "manualIssues": [
+    {
+      "id": "ideal-business-model",
+      "name": "Ideal Business Model — ongoing task",
+      "body": "**Source:** `C:\\Users\\Karol\\Projects\\Ideal Business Model\\Conversation History.md` (stays in repo — not migrated)\n\nOngoing task: continue the business model conversation (was in claude.ai/chat, finalligence account). The direction taken feels too complicated now; feels like missing out on easy money via digital products and simple tools.",
+      "label": "todo"
     }
   ],
   "pageGroups": [
     { "pattern": "hosting-publishing.md", "name": "Hosting & publishing" },
-    { "pattern": "own-server-vs-vps-etc.md", "name": "Own server vs VPS" },
-    { "pattern": "how-does-claudian-obsidian-plugin-use-claude-flatrate-subscription.md", "name": "Claudian plugin research" }
+    { "pattern": "own-server-vs-vps-etc.md", "name": "Own server vs VPS", "parentPage": "Research" },
+    { "pattern": "how-does-claudian-obsidian-plugin-use-claude-flatrate-subscription.md", "name": "Claudian plugin research", "parentPage": "Research" }
   ]
 }

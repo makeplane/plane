@@ -58,7 +58,7 @@ async function main() {
     process.exit(1);
   }
   const client = new QuestimusClient({ baseUrl, apiKey });
-  const stateFile = path.resolve(__dirname, cfg.stateFile || "state/import-state.json");
+  const stateFile = path.resolve(__dirname, cfg.pagesStateFile || cfg.stateFile || "state/import-state.json");
   const state = await loadState(stateFile);
 
   // Resolve project by name (skipped in dry-run — no API calls)
@@ -74,6 +74,27 @@ async function main() {
   }
 
   const report = { created: 0, skipped: 0, failed: [] };
+
+  // Parent pages (e.g. a "Research" section): created once, cached by name.
+  const parentCache = new Map();
+  async function ensureParentPage(name) {
+    if (parentCache.has(name)) return parentCache.get(name);
+    if (args.dryRun) {
+      console.log(`  [dry-run] would create parent page "${name}"`);
+      parentCache.set(name, `parent:${name}`);
+      return `parent:${name}`;
+    }
+    const pages = await client.listPages(cfg.workspaceSlug, projectId);
+    const existing = (pages.results ?? pages).find((p) => p.name === name);
+    if (existing) { parentCache.set(name, existing.id); return existing.id; }
+    const created = await client.createPage(cfg.workspaceSlug, projectId, {
+      name,
+      description_html: "",
+      access: 0,
+    });
+    parentCache.set(name, created.id);
+    return created.id;
+  }
 
   for (const group of cfg.pageGroups || []) {
     const pattern = path.posix.join(cfg.sourceDir.replace(/\\/g, "/"), group.pattern);
@@ -97,11 +118,13 @@ async function main() {
       }
 
       try {
-        const created = await client.createPage(cfg.workspaceSlug, projectId, {
+        const payload = {
           name,
           description_html: mdToHtml(body),
           access: 0, // public within the project
-        });
+        };
+        if (group.parentPage) payload.parent = await ensureParentPage(group.parentPage);
+        const created = await client.createPage(cfg.workspaceSlug, projectId, payload);
         state.pages[rel] = created.id;
         report.created++;
       } catch (err) {

@@ -20,7 +20,7 @@
     { "match": "hausmeister", "project": "Personal", "label": "todo" },
     { "match": "video-transcription", "project": "Empirium", "label": "todo" },
     { "match": "media consumerus", "project": "Media Consumerus", "label": "todo" },
-    { "match": "pop", "project": "POP", "label": "todo" },
+    { "match": "pop", "project": "Personal Operating Profile", "label": "todo" },
     { "match": "claudian", "project": "Personal", "label": "research" },
     { "match": "questimus", "project": "Questimus", "label": "idea" }
   ]

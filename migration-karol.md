@@ -131,6 +131,8 @@ Not migrated: Legaliosa v1, Jobernaut v1 (O1–O2), Input Splitter (O5), Obsidia
 | Cancelled | cancelled | `status: cancelled/abandoned/dropped` |
 | Done | completed | `status: done` (incl. `tickets/done/*`, checked items) |
 
+Note (Phase 4, 2026-09-08): Plane creates a leftover **Triage** state (group `triage`) with every project. The default `State.objects` manager **excludes group=triage**, so the API-based convergence (`setup-workspace.js`) can never see or delete it — `setup_issue_types.py` now soft-deletes it per project (idempotent; verified: all 10 projects have exactly the 6 states above).
+
 ### 5.3 Labels
 
 - **Per project:** `verified`, `user-report` (app-reported issues)
@@ -347,6 +349,10 @@ Karol: the hierarchy stages (SP/T/ST) are carried by the item prefixes, so the t
 - **Central UI**: **Workspace settings → Issue types** (`settings/(workspace)/issue-types/` — sidebar entry under Features, icon Layers, label from the existing `work_item_type.label` i18n key): list with color swatches, inline rename/recolor/description, add, delete (in-use guard surfaces the error).
 - **Badge + switcher use the type's color**; the importers map Subplan/Task/Subtask → Plan (`import-issues.js`), the Questimus content script uses Plan for the former Task tickets, the smoke test hierarchy is all-Plan, and the "Planning" view filters `{{type:Plan}}` only.
 - **Tickets created for later** (workspace-level inheritance idea — Karol 2026-09-08): workspace-level **states**, **labels** and **priority options** with per-project override (the same "defaults + override" logic issue types now have).
+
+### 7.13 Ninth fork change — page create with parent (applied 2026-09-08, Phase 4)
+
+Upstream bug: `PageViewSet.create` re-fetches the created page from the list queryset, which filters `parent__isnull=True` — creating a page **with a parent** (e.g. a "Research" section) returns 404 *after* the page was created (the importer then can't record it → duplicate risk on re-run). Fix: re-fetch by pk (`Page.objects.get(pk=...)`) in `app/views/page/base.py`. Needed by the page importer's `parentPage` support (Personal "Research" section; future "Design decisions"/"v2 replan input" sections in Legaliosa).
 
 ---
 

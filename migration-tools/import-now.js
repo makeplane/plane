@@ -140,12 +140,20 @@ async function main() {
     const rel = `${path.basename(cfg.sourceFile)}#cb${i + 1}`;
     if (state.issues[rel]) { report.skipped++; continue; }
 
-    // Route: first matching route wins; children inherit the parent's route
+    // Route: first matching route wins; children inherit the parent's route.
+    // The match must start within the first `matchWindow` chars (default 80) —
+    // a project pointer ("Jobernaut", "[Arsenal](Arsenal.md)") starts with its
+    // match, while a long item that merely mentions a project ("…Jobernaut
+    // needs refactoring…") must not be routed to it.
     let route = null;
     if (item.parent && item.parent.route) {
       route = item.parent.route;
     } else {
-      route = (cfg.routes || []).find((r) => item.text.toLowerCase().includes(r.match.toLowerCase())) || null;
+      const matchWindow = cfg.matchWindow ?? 80;
+      route = (cfg.routes || []).find((r) => {
+        const idx = item.text.toLowerCase().indexOf(r.match.toLowerCase());
+        return idx >= 0 && idx <= matchWindow;
+      }) || null;
     }
     item.route = route; // children inherit this
     const projectName = route?.project || cfg.defaultProject || "Personal";

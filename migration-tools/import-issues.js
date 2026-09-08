@@ -396,13 +396,16 @@ async function main() {
       idx++;
       const checked = cb[1].toLowerCase() === "x";
       const text = cb[2].trim();
+      // doneMatch: items whose text matches are treated as done even when
+      // unchecked (e.g. the "build my own PM tool" idea — Questimus exists now)
+      const forcedDone = (cs.doneMatch || []).some((m) => text.toLowerCase().includes(m.toLowerCase()));
       const priority = cs.priorityFromText
         ? Object.entries(cs.priorityFromText).find(([marker]) => text.includes(marker))?.[1]
         : undefined;
       items.push({
         file, rel: `${cs.file}#cb${idx}`, body: `**Category:** ${category}\n\n${text}`,
         name: text.length > 200 ? `${text.slice(0, 200)}…` : text,
-        data: { status: checked ? "done" : "open", severity: priority },
+        data: { status: checked || forcedDone ? "done" : "open", severity: priority },
         isDone: false,
         externalId: `${cs.file.replace(/\.md$/, "")}-${idx}`, type: "Ticket", depth: 0, parentExternalId: null,
         effort: null,
@@ -410,6 +413,21 @@ async function main() {
         labelNames: [cs.label || "todo"],
       });
     }
+  }
+
+  // Manual issues (config-driven, e.g. "Dropped — one ongoing task" replacements):
+  // idempotent via a stable external id (`manual-<id>`).
+  for (const mi of cfg.manualIssues || []) {
+    items.push({
+      file: "(manual)", rel: `manual:${mi.id}`, body: mi.body || "",
+      name: mi.name,
+      data: { status: mi.state === "Done" ? "done" : "open" },
+      isDone: false,
+      externalId: `manual-${mi.id}`, type: mi.type || "Ticket", depth: 0, parentExternalId: null,
+      effort: null,
+      relations: [],
+      labelNames: mi.label ? [mi.label] : [],
+    });
   }
 
   // ---- Pass 1: create work-items ----

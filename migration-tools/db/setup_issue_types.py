@@ -7,9 +7,10 @@ from typing import Any
 import json
 
 from django.core.management import BaseCommand, CommandError
+from django.utils import timezone
 
 # Module imports
-from plane.db.models import Workspace, Project, Issue, IssueType
+from plane.db.models import Workspace, Project, Issue, IssueType, State
 from plane.db.models.issue_type import ProjectIssueType
 
 # The planning model (migration-karol.md §5.4, revised 2026-09-08): the
@@ -73,6 +74,16 @@ class Command(BaseCommand):
         # Ticket is the default type for new issues (e.g. app-reported ones)
         ticket = IssueType.objects.get(workspace=workspace, name="Ticket")
         ProjectIssueType.objects.filter(project=project, issue_type=ticket).update(is_default=True)
+
+        # Soft-delete leftover triage states (migration-karol.md §5.2): the
+        # default State.objects manager excludes group=triage, so the API-based
+        # convergence (setup-workspace.js) can never see or delete them.
+        triage_states = State.all_state_objects.filter(
+            project=project, group="triage", deleted_at__isnull=True
+        )
+        if triage_states.exists():
+            count = triage_states.update(deleted_at=timezone.now())
+            self.stdout.write(f"  soft-deleted {count} leftover triage state(s)")
 
         project.is_issue_type_enabled = True
         project.save(update_fields=["is_issue_type_enabled"])
