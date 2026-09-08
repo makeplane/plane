@@ -4,7 +4,7 @@
  * created/edited work item's `type_id` drives the §5.4 planning hierarchy.
  */
 
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
@@ -26,10 +26,12 @@ type Props = {
   disabled?: boolean;
   placeholder?: string;
   tabIndex?: number;
+  /** Custom trigger content (e.g. a badge-styled button) */
+  button?: ReactNode;
 };
 
 export function TypeDropdown(props: Props) {
-  const { value, onChange, types, disabled = false, placeholder, tabIndex } = props;
+  const { value, onChange, types, disabled = false, placeholder, tabIndex, button } = props;
   const { t } = useTranslation();
   // states
   const [query, setQuery] = useState("");
@@ -73,22 +75,38 @@ export function TypeDropdown(props: Props) {
       disabled={disabled}
       onKeyDown={handleKeyDown}
       button={
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn("clickable flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5", {
-            "cursor-not-allowed text-secondary": disabled,
-            "cursor-pointer": !disabled,
-          })}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          <span className="flex-grow truncate text-body-xs-medium text-secondary">
-            {selectedType ? selectedType.name : (placeholder ?? t("issue_type"))}
-          </span>
-          {!disabled && <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
-        </button>
+        button ? (
+          <button
+            ref={setReferenceElement}
+            type="button"
+            className={cn("clickable block h-full w-full outline-none", {
+              "cursor-not-allowed": disabled,
+              "cursor-pointer": !disabled,
+            })}
+            onClick={handleOnClick}
+            disabled={disabled}
+            tabIndex={tabIndex}
+          >
+            {button}
+          </button>
+        ) : (
+          <button
+            ref={setReferenceElement}
+            type="button"
+            className={cn("clickable flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5", {
+              "cursor-not-allowed text-secondary": disabled,
+              "cursor-pointer": !disabled,
+            })}
+            onClick={handleOnClick}
+            disabled={disabled}
+            tabIndex={tabIndex}
+          >
+            <span className="flex-grow truncate text-body-xs-medium text-secondary">
+              {selectedType ? selectedType.name : (placeholder ?? t("issue_type"))}
+            </span>
+            {!disabled && <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
+          </button>
+        )
       }
     >
       {isOpen && (

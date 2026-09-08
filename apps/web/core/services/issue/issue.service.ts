@@ -98,6 +98,43 @@ export class IssueService extends APIService {
       });
   }
 
+  // Questimus fork change (§7.12): central issue-type management (workspace level)
+  async getWorkspaceIssueTypes(workspaceSlug: string): Promise<any[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issue-types/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createWorkspaceIssueType(workspaceSlug: string, data: { name: string; color: string; description?: string }): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/issue-types/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateWorkspaceIssueType(
+    workspaceSlug: string,
+    typeId: string,
+    data: { name?: string; color?: string; description?: string }
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/issue-types/${typeId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteWorkspaceIssueType(workspaceSlug: string, typeId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/issue-types/${typeId}/`)
+      .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssues(
     workspaceSlug: string,
     projectId: string,

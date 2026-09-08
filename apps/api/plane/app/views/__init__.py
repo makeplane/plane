@@ -154,7 +154,7 @@ from .issue.subscriber import IssueSubscriberViewSet
 
 from .issue.version import IssueVersionEndpoint, WorkItemDescriptionVersionEndpoint
 
-from .issue_type import IssueTypeListEndpoint
+from .issue_type import IssueTypeListEndpoint, WorkspaceIssueTypeEndpoint, WorkspaceIssueTypeDetailEndpoint
 
 from .module.base import (
     ModuleViewSet,

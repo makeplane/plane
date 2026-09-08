@@ -15,6 +15,9 @@ class IssueType(BaseModel):
     workspace = models.ForeignKey("db.Workspace", related_name="issue_types", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    # Questimus fork change (Phase 3): type color for the badge + the central
+    # issue-types settings page (migration-karol.md §7.12).
+    color = models.CharField(max_length=255, default="#3f76ff")
     logo_props = models.JSONField(default=dict)
     is_epic = models.BooleanField(default=False)
     is_default = models.BooleanField(default=False)

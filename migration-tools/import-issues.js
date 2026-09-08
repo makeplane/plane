@@ -458,7 +458,11 @@ async function main() {
     if (item.effort && cfg.effortMapping?.[item.effort]) {
       payload.estimate_point = await ensureEstimatePoint(cfg.effortMapping[item.effort]);
     }
-    if (item.type && types[item.type]) payload.type_id = types[item.type];
+    // Issue type (migration-karol.md §5.4, revised 2026-09-08): the hierarchy
+    // stages (SP/T/ST) are carried by the item prefixes — Subplan/Task/Subtask
+    // all map to the single "Plan" type; tickets stay "Ticket".
+    const typeName = item.type === "Subplan" || item.type === "Task" || item.type === "Subtask" ? "Plan" : item.type;
+    if (typeName && types[typeName]) payload.type_id = types[typeName];
     if (item.parentExternalId) {
       const parentId = byExternalId.get(item.parentExternalId);
       if (parentId && !parentId.startsWith("dry:")) payload.parent = parentId;

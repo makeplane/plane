@@ -138,21 +138,22 @@ Not migrated: Legaliosa v1, Jobernaut v1 (O1–O2), Input Splitter (O5), Obsidia
 - **Import markers:** `parked` (Kleinanzeigen), `backlog` + `deferred` (Media Consumerus)
 - (Karol confirmed 2026-09-08: no `errand`, no `pm` labels)
 
-### 5.4 Planning model — nested work items + types (Karol, 2026-09-08)
+### 5.4 Planning model — nested work items + types (Karol, 2026-09-08; revised same day: 3 types)
 
 Plans are **work items, not pages** — the hierarchy nests via sub-issues, and each level has its own state (mark tasks Done → then the subplan → then the plan):
 
 ```
 PLAN (type "Plan")              ← plan.md / PLAN.md
-└─ SP-01 (type "Subplan")       ← SP-01-*.md
-   └─ T-01-01 (type "Task")     ← T-01-01-*.md
-      └─ ST-01 (type "Subtask") ← ST-*.md (future convention)
+└─ SP-01 (type "Plan")          ← SP-01-*.md (prefix carries the stage)
+   └─ T-01-01 (type "Plan")     ← T-01-01-*.md
+      └─ ST-01 (type "Plan")    ← ST-*.md (future convention)
 ```
 
+- **Issue types (revised 2026-09-08): exactly three — `Plan`, `Ticket`, `Design`.** The hierarchy stages (SP/T/ST) are carried by the item prefixes, so Subplan/Task/Subtask were **removed** (existing items reassigned to Plan, types deleted). `Ticket` is the project default type (app-reported issues); `Design` is reserved for future design-task issues, not used by the migration.
 - **Tickets are separate** (type "Ticket", no parent) — not mixed into the hierarchy. Tickets keep an `SP-XX` label from their `sub_plan` frontmatter for grouping.
-- **Issue types** (Plan/Subplan/Task/Subtask/Ticket) are workspace-level, DB-only in this Plane version → created by `db/setup_issue_types.py` (ids land in `migration-tools/state/types.json`). `Ticket` is the project default type (app-reported issues). A `Design` type also exists (created with the others) — reserved for future design-task issues, not used by the migration. **Phase 1 runs the command once per project (10×)** — the types are currently joined only to the leftover test project.
+- **Types are workspace-level** (created by `db/setup_issue_types.py`; ids land in `migration-tools/state/types.json`) and **apply to every project** — managed centrally at **Workspace settings → Issue types** (§7.12: name, color, description; add/delete with an in-use guard).
 - **Modules are dropped** — the nesting replaces them.
-- **Two sidebar views per project** (one click each): "Planning" (types Plan/Subplan/Task/Subtask) and "Tickets" (type Ticket) — the `issue_type` view filter works after the §7.5 fork change.
+- **Two sidebar views per project** (one click each): "Planning" (type Plan) and "Tickets" (type Ticket) — the `issue_type` view filter works after the §7.5 fork change.
 - ClickUp-style multiple lists per project do **not** exist in Plane — candidate future Questimus feature, not migration scope.
 
 ### 5.5 Pages (docs)
@@ -187,7 +188,7 @@ Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are t
 
 ### 5.6 Views (saved filters, per project)
 
-- Per project (created in Phase 1 via `setup-workspace.js` — `config/setup.json` `views` section; "All" is the default view, no creation needed): "In Progress", "Done", "User reports" (label `user-report`), "Blocked" (state filter), **"Planning"** (types Plan/Subplan/Task/Subtask), **"Tickets"** (type Ticket) — the type views need the §7.5 fork change
+- Per project (created in Phase 1 via `setup-workspace.js` — `config/setup.json` `views` section; "All" is the default view, no creation needed): "In Progress", "Done", "User reports" (label `user-report`), "Blocked" (state filter), **"Planning"** (type Plan), **"Tickets"** (type Ticket) — the type views need the §7.5 fork change
 - Personal extras: "Inbox" (state Backlog), "Ideas" (label `idea`), "Someday" (label `someday`)
 - Workspace: **"Next"** (assigned to me, medium/low). "Now" and "Today" are **home dashboard widgets (Phase 3)** — saved views are AND-only and store fixed dates, so the combined/due-today logic can't be a saved view (Karol 2026-09-08)
 - **The web UI reads `rich_filters`, not `filters`** (execution finding 2026-09-08): the view stores hydrate from `viewDetails.rich_filters` (TWorkItemFilterExpression — `"<field>__in": "a,b"`, `and` groups) and ignore the legacy `filters` field. Views created with only `filters` were born invisible/filter-less. `setup-workspace.js` now converts resolved filters → `rich_filters` (its own converter — the backend's `LegacyToRichFiltersConverter` doesn't know the fork's `issue_type` key; key names must match `IssueFilterSet` fields: `state_id__in`/`label_id__in`/`assignee_id__in`/`priority__in`/`issue_type__in`) and writes both fields. Existing views are **converged** on every run (PATCH when stored filters/rich_filters differ — canonical compare) — this repaired all 64 views (24 had been created with empty filters because newly-created states/labels were missing from the lookup maps; the maps are now updated on create).
@@ -330,10 +331,22 @@ Karol: issue keys should read `QUESTIMUS-001` (minimum 3 digits) instead of `QUE
 Phase 3 implemented the "Issue type UI" ticket (§5.4 types now visible everywhere):
 
 - **Backend — `type_id` in main-API issue payloads** (the web UI composes the badge from it): `IssueSerializer.Meta.fields` (`app/serializers/issue.py` — also covers `IssueDetailSerializer`), the `.values()` fast path (`app/views/issue/base.py` list) and `issue_on_results` required fields (`utils/grouper.py` — the web list path).
-- **Type badge** — new `IssueTypeBadge` (`apps/web/core/components/issues/issue-type-badge.tsx`, colored dot per type `level`, name from the §7.6 endpoint via `useProjectIssueTypes` SWR hook + shared cache `helpers/issue-types.helper.ts`); rendered by **`IssueIdentifier`** next to every issue key (list/kanban/spreadsheet/calendar rows, relations, preview cards, sub-issues, detail/peek headers — the upstream `issueTypeId` prop that was dead is now honored).
+- **Type badge** — new `IssueTypeBadge` (`apps/web/core/components/issues/issue-type-badge.tsx`, dot in the type's own `color`, name from the §7.6 endpoint via `useProjectIssueTypes` SWR hook + shared cache `helpers/issue-types.helper.ts`); rendered by **`IssueIdentifier`** next to every issue key (list/kanban/spreadsheet/calendar rows, relations, preview cards, sub-issues, detail/peek headers — the upstream `issueTypeId` prop that was dead is now honored).
 - **Modal type selector** — `dropdowns/type.tsx` (searchable single-select) as the first property in `issue-modal/components/default-properties.tsx`; new issues default to the project's **default type (Ticket)** when the project changes (form effect: sync from the module cache, else async load) — the create/update payloads already carried `type_id`.
+- **Change type on existing items** — the detail/peek header badge (`IssueTypeSwitcher`) is now a picker: click the badge → choose a type → PATCHes `type_id` (display-only when not editable).
 - **Home dashboard** — see §5.7 (My Issues / Now / Today sections, fixed, not widgets).
 - Both dev tickets marked **Done** in Questimus; the 8 Questimus content tickets are now **assigned to Karol** (the home sections only show assigned issues; user-reports auto-assign per §8.1 anyway).
+
+### 7.12 Eighth fork change — 3-type model + colors + central management (applied 2026-09-08)
+
+Karol: the hierarchy stages (SP/T/ST) are carried by the item prefixes, so the type set is exactly **Plan / Ticket / Design**; types need **colors** and a **central management place** (workspace level, applying to every project).
+
+- **Model change**: `IssueType.color` (CharField, default `#3f76ff`; migration `db.0123_issuetype_color`). `setup_issue_types.py` reworked: creates the 3 types with colors, **reassigns issues of the removed Subplan/Task/Subtask types → Plan and deletes them** (idempotent), joins to the project, Ticket stays the per-project default. Existing data migrated (2 Task issues → Plan; removed types gone).
+- **Per-project endpoint (§7.6) now returns ALL workspace types** (with `color` + the project's `is_default`) — types apply to every project; the join rows only carry the default flag.
+- **Workspace-level CRUD** (`app/views/issue_type.py` + `urls/workspace.py`): `GET/POST /api/workspaces/{slug}/issue-types/` (create joins the new type to every project) + `PATCH/DELETE .../{id}/` (delete blocked with a 400 while issues reference the type).
+- **Central UI**: **Workspace settings → Issue types** (`settings/(workspace)/issue-types/` — sidebar entry under Features, icon Layers, label from the existing `work_item_type.label` i18n key): list with color swatches, inline rename/recolor/description, add, delete (in-use guard surfaces the error).
+- **Badge + switcher use the type's color**; the importers map Subplan/Task/Subtask → Plan (`import-issues.js`), the Questimus content script uses Plan for the former Task tickets, the smoke test hierarchy is all-Plan, and the "Planning" view filters `{{type:Plan}}` only.
+- **Tickets created for later** (workspace-level inheritance idea — Karol 2026-09-08): workspace-level **states**, **labels** and **priority options** with per-project override (the same "defaults + override" logic issue types now have).
 
 ---
 
@@ -474,11 +487,11 @@ After each project is verified: **no pointers, folders stay untouched** (Karol 2
 - **Questimus Migration Plan** (type Plan): the migration itself — marked Done in Phase 12
 - **HTML renderer** (type Ticket): native rendering of HTML mockups/design files in Questimus, with per-file comments — prerequisite for migrating the design folders later
 - **Design-folder migration** (type Plan, future epic): migrate `planning/design/` into Questimus once the renderer exists — **future, out of scope for this migration** (D3: mockups stay in repos for now)
-- **Manual cleanup** (type Task): verify + delete old folders after all batches
+- **Manual cleanup** (type Plan): verify + delete old folders after all batches
 - **Issue type UI** (type Ticket): this Plane version has **no type selector/badge in the GUI** (verified — the "issue_type" list column shows the issue key, not the type; the "type switcher" renders the identifier; types are API/DB-only). Add a type selector to the issue modal + a type badge in list/detail — the types come from the §7.6 endpoint. **Implemented in Phase 3 (Karol 2026-09-08).**
 - **Home dashboard + My Issues widget** (type Ticket): the home-dashboard components exist but are not routed (dead code) — wire them up so the Home page shows: **My Issues** across projects, the **"Now"** list (assigned to me, urgent/high **OR** due ≤ 7 days) and **"Today"** (due today/overdue) — computed per request (Karol 2026-09-08: the home dashboard replaces the "Now"/"Today" saved views — saved views are AND-only and store fixed dates). **Implemented in Phase 3 (Karol 2026-09-08).**
 - **Monetization research** (type Ticket): AGPL-3.0 **allows selling** the fork (that's how Plane itself monetizes Plane Cloud); obligations: fork stays AGPL, source offer to hosted users, no Plane trademarks. Scope (Karol 2026-09-08): audit Plane's paid tiers (**One / Pro / Enterprise** — cloud tiers) feature-by-feature against the self-hosted code — what exists, what would need activation, what's genuinely missing — plus hosting/monetization options for Questimus. (Note: exact tier feature lists from marketing pages need fetching during the research; web fetch was unavailable in this session.)
-- **Cycles test** (type Task): try weekly cycles in Personal (Karol 2026-09-08)
+- **Cycles test** (type Plan): try weekly cycles in Personal (Karol 2026-09-08)
 
 | Phase | What | Done when |
 |---|---|---|

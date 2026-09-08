@@ -76,7 +76,7 @@
         { "name": "Done", "filters": { "state": ["{{state:Done}}"] } },
         { "name": "User reports", "filters": { "labels": ["{{label:user-report}}"] } },
         { "name": "Blocked", "filters": { "state": ["{{state:Blocked}}"] } },
-        { "name": "Planning", "filters": { "issue_type": ["{{type:Plan}}", "{{type:Subplan}}", "{{type:Task}}", "{{type:Subtask}}"] } },
+        { "name": "Planning", "filters": { "issue_type": ["{{type:Plan}}"] } },
         { "name": "Tickets", "filters": { "issue_type": ["{{type:Ticket}}"] } }
       ],
       "projects": {

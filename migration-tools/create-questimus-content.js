@@ -49,7 +49,7 @@ const TICKETS = [
   },
   {
     name: "Manual cleanup",
-    type: "Task",
+    type: "Plan",
     description:
       "After all batches: verify everything migrated correctly, then delete the old files/folders yourself (no pointers, folders stay untouched until then).",
   },
@@ -73,7 +73,7 @@ const TICKETS = [
   },
   {
     name: "Cycles test",
-    type: "Task",
+    type: "Plan",
     description: "Try weekly cycles in Personal (\"This week\" cycle) — time-boxed planning.",
   },
 ];

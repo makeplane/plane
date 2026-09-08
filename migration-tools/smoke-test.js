@@ -122,7 +122,8 @@ async function main() {
   let point1 = points.find((p) => p.value === "1");
   if (!point1) point1 = (await client.createEstimatePoint("main", pid, estimate.id, { key: 1, value: "1" }))[0];
 
-  // 5. Create the hierarchy: Plan → SP → T, plus a Ticket (reused on re-runs)
+  // 5. Create the hierarchy: Plan → child Plan → child Plan (the SP/T/ST
+  //    stages are carried by prefixes — §5.4 revised 2026-09-08), plus a Ticket
   const created_at = "2026-01-01T00:00:00Z";
   const plan = await createOrReuse(client, pid, {
     name: "SMOKE Plan",
@@ -139,24 +140,24 @@ async function main() {
     name: "SMOKE Subplan",
     description_html: "<p>Smoke test subplan</p>",
     state: stateId("Backlog"),
-    type_id: TYPES.Subplan,
+    type_id: TYPES.Plan,
     parent: plan.id,
     external_source: "smoke-test",
     external_id: "sp-1",
   });
-  check("create Subplan (type Subplan, parent=Plan)", sp.type_id === TYPES.Subplan && sp.parent === plan.id);
+  check("create child Plan (parent=Plan)", sp.type_id === TYPES.Plan && sp.parent === plan.id);
 
   const task = await createOrReuse(client, pid, {
     name: "SMOKE Task",
     description_html: "<p>Smoke test task</p>",
     state: stateId("In Progress"),
-    type_id: TYPES.Task,
+    type_id: TYPES.Plan,
     parent: sp.id,
     estimate_point: point1.id,
     external_source: "smoke-test",
     external_id: "t-1",
   });
-  check("create Task (type Task, parent=Subplan, estimate)", task.type_id === TYPES.Task && task.parent === sp.id);
+  check("create nested Plan (parent=child, estimate)", task.type_id === TYPES.Plan && task.parent === sp.id);
 
   const ticket = await createOrReuse(client, pid, {
     name: "SMOKE Ticket",
