@@ -8,4 +8,5 @@ export * from "./ai-accounts-list";
 export * from "./create-account-modal";
 export * from "./delete-account-modal";
 export * from "./edit-account-modal";
+export * from "./rotate-token-modal";
 export * from "./scopes-modal";

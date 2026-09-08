@@ -212,6 +212,37 @@ class AIAccountDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class AIAccountRotateTokenAPIEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    def post(self, request, slug, pk):
+        """Revoke every existing service token and issue a fresh one."""
+        account = AIAccount.objects.select_related("bot_user", "owner").get(
+            pk=pk, workspace__slug=slug
+        )
+        if not account.is_active:
+            return Response(
+                {"error": "Cannot rotate the token of an inactive AI account"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            APIToken.objects.filter(
+                user=account.bot_user, is_service=True, is_active=True
+            ).update(is_active=False)
+            token = APIToken.objects.create(
+                user=account.bot_user,
+                label=f"ai:{account.name}",
+                user_type=1,
+                is_service=True,
+                workspace=account.workspace,
+            )
+
+        data = AIAccountSerializer(account).data
+        # The new token secret is returned exactly once, in this response
+        data["token"] = token.token
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class AIScopePolicyAPIEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, pk):

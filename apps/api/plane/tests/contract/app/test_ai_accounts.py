@@ -10,7 +10,7 @@ import pytest
 from rest_framework import status
 
 from plane.ai_accounts.constants import BOT_TYPE_AI_AGENT
-from plane.ai_accounts.models import AIAccount
+from plane.ai_accounts.models import AIAccount, AIScopePolicy
 from plane.db.models import APIToken, FileAsset, Project, ProjectMember, User, WorkspaceMember
 
 
@@ -356,6 +356,78 @@ class TestAIAccountManagement:
             format="json",
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.contract
+class TestAIAccountRotateToken:
+    def rotate_url(self, slug, account_id):
+        return f"{accounts_url(slug)}{account_id}/rotate-token/"
+
+    def test_rotate_returns_new_token_and_revokes_old(
+        self, session_client, workspace
+    ):
+        from rest_framework.test import APIClient
+
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-rotate", "role": 15}, format="json"
+        )
+        account = AIAccount.objects.get(pk=create.data["id"])
+        old_token = create.data["token"]
+
+        response = session_client.post(self.rotate_url(workspace.slug, account.id))
+        assert response.status_code == status.HTTP_200_OK
+        new_token = response.data["token"]
+        assert new_token.startswith("plane_api_")
+        assert new_token != old_token
+
+        # Old token revoked, exactly one active service token remains
+        tokens = APIToken.objects.filter(user=account.bot_user, is_service=True)
+        assert tokens.filter(token=old_token, is_active=False).exists()
+        assert tokens.filter(is_active=True).count() == 1
+
+        # A fresh client: session_client/api_client share one instance, and its
+        # force_authenticate would bypass token auth entirely
+        v1_client = APIClient()
+
+        # The old token is rejected by the v1 API immediately. APIKeyAuthentication
+        # does not set a WWW-Authenticate header, so DRF surfaces the
+        # AuthenticationFailed as 403 Forbidden rather than 401.
+        v1_client.credentials(HTTP_X_API_KEY=old_token)
+        assert v1_client.get("/api/v1/users/me/").status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        # The new token authenticates (scope policy grants /users/me/)
+        AIScopePolicy.objects.create(
+            ai_account=account, project=None, resource_type="user", action="read"
+        )
+        v1_client.credentials(HTTP_X_API_KEY=new_token)
+        assert v1_client.get("/api/v1/users/me/").status_code == status.HTTP_200_OK
+
+    def test_rotate_rejected_for_inactive_account(self, session_client, workspace):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-inactive", "role": 15}, format="json"
+        )
+        account_id = create.data["id"]
+        session_client.patch(
+            f"{accounts_url(workspace.slug)}{account_id}/",
+            {"is_active": False},
+            format="json",
+        )
+        response = session_client.post(self.rotate_url(workspace.slug, account_id))
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_rotate_forbidden_for_non_admin(self, session_client, api_client, workspace, member_user):
+        create = session_client.post(
+            accounts_url(workspace.slug), {"name": "bot-member", "role": 15}, format="json"
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=member_user, role=15, is_active=True
+        )
+        api_client.force_authenticate(user=member_user)
+        response = api_client.post(self.rotate_url(workspace.slug, create.data["id"]))
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.contract

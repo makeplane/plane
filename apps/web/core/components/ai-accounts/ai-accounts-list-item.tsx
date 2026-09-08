@@ -21,6 +21,7 @@ import { aiAccountService } from "@/services/ai-account.service";
 import { AI_ACCOUNTS_LIST } from "./constants";
 import { DeleteAIAccountModal } from "./delete-account-modal";
 import { EditAIAccountModal } from "./edit-account-modal";
+import { RotateAIAccountTokenModal } from "./rotate-token-modal";
 import { AIScopesModal } from "./scopes-modal";
 
 type Props = {
@@ -34,6 +35,7 @@ export function AIAccountsListItem(props: Props) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showScopesModal, setShowScopesModal] = useState(false);
+  const [showRotateTokenModal, setShowRotateTokenModal] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   // hooks
   const { t } = useTranslation();
@@ -75,6 +77,12 @@ export function AIAccountsListItem(props: Props) {
         onClose={() => setShowScopesModal(false)}
         workspaceSlug={workspaceSlug}
       />
+      <RotateAIAccountTokenModal
+        account={account}
+        isOpen={showRotateTokenModal}
+        onClose={() => setShowRotateTokenModal(false)}
+        workspaceSlug={workspaceSlug}
+      />
       <div className="flex items-center justify-between gap-4 rounded-lg border border-subtle bg-layer-2 px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar
@@ -101,6 +109,11 @@ export function AIAccountsListItem(props: Props) {
             <EditIcon className="size-3" />
             {t("workspace_settings.settings.ai_accounts.list.edit")}
           </Button>
+          {account.is_active && (
+            <Button variant="secondary" size="sm" onClick={() => setShowRotateTokenModal(true)}>
+              {t("workspace_settings.settings.ai_accounts.list.rotate_token")}
+            </Button>
+          )}
           <Button variant="error-outline" size="sm" onClick={() => setShowDeleteModal(true)}>
             <TrashIcon className="size-3" />
             {t("workspace_settings.settings.ai_accounts.list.delete")}

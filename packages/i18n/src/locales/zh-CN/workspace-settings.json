@@ -167,6 +167,7 @@
         },
         "token": {
           "title": "账户已创建",
+          "rotated_title": "令牌已轮换",
           "copy_warning": "请立即复制并保存此令牌。关闭此对话框后，您将无法再次查看它。",
           "copied": "令牌已复制到剪贴板。",
           "not_copied": "令牌复制失败，请重试。"
@@ -175,7 +176,8 @@
           "created_on": "创建于",
           "edit": "编辑",
           "delete": "删除",
-          "manage_scopes": "管理权限范围"
+          "manage_scopes": "管理权限范围",
+          "rotate_token": "轮换令牌"
         },
         "avatar": {
           "label": "头像",
@@ -192,6 +194,20 @@
           "error": {
             "title": "错误!",
             "message": "无法删除 AI 账户"
+          }
+        },
+        "rotate": {
+          "title": "轮换令牌",
+          "description": "当前令牌将立即被吊销，使用它的集成将停止工作。新令牌仅会显示一次。",
+          "confirm": "轮换令牌",
+          "rotating": "轮换中",
+          "success": {
+            "title": "令牌已轮换",
+            "message": "AI 账户令牌已轮换。旧令牌不再有效。"
+          },
+          "error": {
+            "title": "错误!",
+            "message": "无法轮换令牌"
           }
         },
         "scopes": {

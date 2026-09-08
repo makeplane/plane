@@ -7,6 +7,7 @@ from django.urls import path
 from .views import (
     AIAccountDetailAPIEndpoint,
     AIAccountListCreateAPIEndpoint,
+    AIAccountRotateTokenAPIEndpoint,
     AIScopePolicyAPIEndpoint,
 )
 
@@ -20,6 +21,11 @@ urlpatterns = [
         "workspaces/<str:slug>/ai-accounts/<uuid:pk>/",
         AIAccountDetailAPIEndpoint.as_view(),
         name="ai-accounts-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/ai-accounts/<uuid:pk>/rotate-token/",
+        AIAccountRotateTokenAPIEndpoint.as_view(),
+        name="ai-accounts-rotate-token",
     ),
     path(
         "workspaces/<str:slug>/ai-accounts/<uuid:pk>/scopes/",

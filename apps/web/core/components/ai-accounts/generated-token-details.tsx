@@ -20,10 +20,11 @@ type TCreatedAIAccount = TAIAccount & { token: string };
 type Props = {
   account: TCreatedAIAccount;
   handleClose: () => void;
+  title?: string;
 };
 
 export function GeneratedTokenDetails(props: Props) {
-  const { account, handleClose } = props;
+  const { account, handleClose, title } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
 
@@ -51,7 +52,7 @@ export function GeneratedTokenDetails(props: Props) {
     <div className="w-full p-5">
       <div className="w-full space-y-3 text-wrap">
         <h3 className="text-16 leading-6 font-medium text-primary">
-          {t("workspace_settings.settings.ai_accounts.token.title")}
+          {title ?? t("workspace_settings.settings.ai_accounts.token.title")}
         </h3>
         <p className="text-13 text-placeholder">{t("workspace_settings.settings.ai_accounts.token.copy_warning")}</p>
       </div>

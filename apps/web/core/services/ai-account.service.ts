@@ -52,6 +52,14 @@ export class AIAccountService extends APIService {
       });
   }
 
+  async rotateAIAccountToken(workspaceSlug: string, accountId: string): Promise<TAIAccount & { token: string }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/ai-accounts/${accountId}/rotate-token/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async fetchAIScopes(workspaceSlug: string, accountId: string): Promise<TAIScopePolicy[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/ai-accounts/${accountId}/scopes/`)
       .then((response) => response?.data)
