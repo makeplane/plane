@@ -19,6 +19,7 @@ export * from "./cycle";
 export * from "./module";
 export * from "./label";
 export * from "./link";
+export * from "./checklist-item";
 export * from "./attachment";
 export * from "./archived-at";
 export * from "./inbox";
