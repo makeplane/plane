@@ -67,6 +67,11 @@ class IssueSerializer(BaseSerializer):
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
 
+    # Questimus fork change (migration-karol.md §7.7): allow created_at preservation
+    # on create — the model field is auto_now_add (auto read-only), but the migration
+    # importers need to keep the source timestamps.
+    created_at = serializers.DateTimeField(required=False)
+
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "completed_at"]
@@ -152,6 +157,10 @@ class IssueSerializer(BaseSerializer):
         assignees = validated_data.pop("assignees", None)
         labels = validated_data.pop("labels", None)
 
+        # Questimus fork change (§7.7): preserve the provided created_at (bypasses
+        # the model's auto_now_add, which would otherwise overwrite it on save).
+        created_at = validated_data.pop("created_at", None)
+
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
@@ -164,6 +173,9 @@ class IssueSerializer(BaseSerializer):
             issue_type = issue_type
 
         issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
+
+        if created_at is not None:
+            Issue.objects.filter(pk=issue.pk).update(created_at=created_at)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id

@@ -8,8 +8,8 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
-from plane.db.models import ProjectIssueType
-from .. import BaseAPIView
+from plane.db.models.issue_type import ProjectIssueType
+from .base import BaseAPIView
 
 
 class IssueTypeListEndpoint(BaseAPIView):

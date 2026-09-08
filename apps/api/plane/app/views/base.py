@@ -26,6 +26,7 @@ from rest_framework.viewsets import ModelViewSet
 
 # Module imports
 from plane.authentication.session import BaseSessionAuthentication
+from plane.app.middleware.api_authentication import APIKeyAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
@@ -52,7 +53,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
 
     filter_backends = (DjangoFilterBackend, SearchFilter)
 
-    authentication_classes = [BaseSessionAuthentication]
+    authentication_classes = [BaseSessionAuthentication, APIKeyAuthentication]
 
     filterset_fields = []
 
@@ -151,7 +152,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
 
     filter_backends = (DjangoFilterBackend, SearchFilter)
 
-    authentication_classes = [BaseSessionAuthentication]
+    authentication_classes = [BaseSessionAuthentication, APIKeyAuthentication]
 
     filterset_fields = []
 
