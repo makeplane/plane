@@ -1,12 +1,14 @@
 /**
- * Questimus fork change (Phase 3, rewritten 2026-09-09): single-select
+ * Questimus fork change (Phase 3; rewritten 2026-09-09): single-select
  * dropdown for the issue type. Used in the issue modal and as the clickable
  * type badge in the detail/peek headers.
  *
- * Rewritten without headlessui's Combobox: the combobox interaction (button
- * onClick composition through `as={Fragment}` + preventDefault) swallowed the
- * option click — the selection never fired onChange, so type changes silently
- * did nothing (no PATCH, no activity). Plain React state + buttons instead.
+ * Rewritten without headlessui's Combobox: plain React state + buttons (own
+ * outside-click/Escape handling, absolute menu). NOTE: the actual "type
+ * change does nothing" bug (2026-09-09) was NOT here — it was the switcher
+ * calling issueOperations.update on an undefined store property (see
+ * issue-type-switcher.tsx). The dropdown was simplified while debugging and
+ * kept; the headlessui version worked via its own local state.
  */
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -104,7 +106,6 @@ export function TypeDropdown(props: Props) {
             <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
             <input
               ref={inputRef}
-              autoFocus
               className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

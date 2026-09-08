@@ -18,20 +18,27 @@ import { useProjectIssueTypes } from "@/hooks/use-project-issue-types";
 import { TypeDropdown } from "@/components/dropdowns/type";
 import { IssueTypeBadge } from "@/components/issues/issue-type-badge";
 import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
+// types
+import type { TIssueOperations } from "@/components/issues/issue-detail/root";
 
 export type TIssueTypeSwitcherProps = {
   issueId: string;
   disabled: boolean;
+  /** Update operations from the parent (detail root / peek overview) — the
+   * issue-details store does NOT expose issueOperations (execution fix
+   * 2026-09-09: the switcher used to pull it from useIssueDetail() where it
+   * does not exist, so changeType threw on undefined.update and the type
+   * change never reached the API). */
+  issueOperations: TIssueOperations;
 };
 
 export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
-  const { issueId, disabled } = props;
+  const { issueId, disabled, issueOperations } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
   const {
     issue: { getIssueById },
-    issueOperations,
   } = useIssueDetail();
   const { getProjectIdentifierById } = useProject();
   // derived values
