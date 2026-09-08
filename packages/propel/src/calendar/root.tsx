@@ -60,8 +60,12 @@ function CalendarCaptionDropdown(dropdownProps: DropdownProps) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setIsOpen(false);
     };
-    // the menu is anchored to viewport coordinates: any viewport change closes it
-    const handleViewportChange = () => setIsOpen(false);
+    // the menu is anchored to viewport coordinates: any viewport change closes it,
+    // except scrolls inside the menu itself (wheel-scrolling the option list)
+    const handleViewportChange = (event: Event) => {
+      if (event.target instanceof Node && menuRef.current?.contains(event.target)) return;
+      setIsOpen(false);
+    };
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
     window.addEventListener("resize", handleViewportChange);
@@ -79,6 +83,12 @@ function CalendarCaptionDropdown(dropdownProps: DropdownProps) {
     onChange?.({ target: { value: String(optionValue) } } as React.ChangeEvent<HTMLSelectElement>);
     setIsOpen(false);
   };
+
+  // bring the selected option into view when the menu opens (e.g. the current year)
+  React.useEffect(() => {
+    if (!isOpen) return;
+    menuRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: "center" });
+  }, [isOpen]);
 
   return (
     <span data-disabled={disabled === true} className={classNames[UI.DropdownRoot]} style={style}>
