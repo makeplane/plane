@@ -12,6 +12,7 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 import { PowerKModalCommandItem } from "./command-item";
 import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 
@@ -47,7 +48,7 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
               }
 
               if ("sequence_id" in item) {
-                value = `${value}-${item.sequence_id}`;
+                value = getIssueKey(value, item.sequence_id);
               }
 
               return (

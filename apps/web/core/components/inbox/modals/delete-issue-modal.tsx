@@ -14,6 +14,8 @@ import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // constants
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -79,7 +81,7 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
         <>
           Are you sure you want to delete work item{" "}
           <span className="font-medium break-words text-primary">
-            {projectDetails?.identifier}-{data?.sequence_id}
+            {getIssueKey(projectDetails?.identifier, data?.sequence_id)}
           </span>
           {""}? The work item will only be deleted from the intake and this action cannot be undone.
         </>

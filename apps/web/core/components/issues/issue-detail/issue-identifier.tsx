@@ -7,6 +7,8 @@
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueIdentifierProps } from "@plane/types";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -32,7 +34,7 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
   return (
     <div className="flex shrink-0 items-center space-x-2">
       <IdentifierText
-        identifier={`${projectIdentifier}-${issueSequenceId}`}
+        identifier={getIssueKey(projectIdentifier, issueSequenceId)}
         enableClickToCopyIdentifier={enableClickToCopyIdentifier}
         variant={variant}
         size={size}

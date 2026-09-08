@@ -10,6 +10,8 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -52,7 +54,7 @@ export function DeclineIssueModal(props: Props) {
         <>
           Are you sure you want to decline work item{" "}
           <span className="font-medium break-words text-primary">
-            {projectDetails?.identifier}-{data?.sequence_id}
+            {getIssueKey(projectDetails?.identifier, data?.sequence_id)}
           </span>
           {""}? This action cannot be undone.
         </>

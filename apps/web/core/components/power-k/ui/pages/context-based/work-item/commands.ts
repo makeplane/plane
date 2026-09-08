@@ -28,6 +28,8 @@ import { EIssueServiceType, EUserPermissions } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -143,7 +145,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
   }, [toggleDeleteIssueModal]);
 
   const copyWorkItemIdToClipboard = useCallback(() => {
-    const id = `${projectDetails?.identifier}-${entityDetails?.sequence_id}`;
+    const id = getIssueKey(projectDetails?.identifier, entityDetails?.sequence_id);
     copyTextToClipboard(id)
       .then(() => {
         setToast({

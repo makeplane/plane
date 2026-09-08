@@ -16,6 +16,8 @@ import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // constants
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -41,7 +43,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   // derived values
   const issue = getIssueById(archivedIssueId);
   const project = issue ? getProjectById(issue?.project_id ?? "") : undefined;
-  const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+  const pageTitle = project && issue ? `${getIssueKey(project?.identifier, issue?.sequence_id)} ${issue?.name}` : undefined;
 
   if (!issue) return <></>;
 

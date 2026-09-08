@@ -60,7 +60,7 @@ One home for all project management across Karol's apps and personal life:
 
 ## 3. Questimus capabilities — what we build on
 
-Questimus is a **stock Plane v1.4.2 fork** (Django API + Next.js web/admin/space apps, Docker, running locally at `http://localhost:7000`, daily backup pipeline in place). No code-level rebranding; the only local commit is deployment plumbing (7000-block ports, i18n build fix, backup script).
+Questimus is a **stock Plane v1.4.2 fork** (Django API + Vite/React-Router web app + admin/space apps — corrected 2026-09-08: the web app is **not** Next.js, `vite.config.ts` + `react-router.config.ts`; Docker, running locally at `http://localhost:7000`, daily backup pipeline in place). No code-level rebranding; the only local commit is deployment plumbing (7000-block ports, i18n build fix, backup script, fork changes §7).
 
 **Available features (all confirmed in the code):**
 - Workspaces, projects, issues (sub-issues, relations, priorities, estimates, labels, attachments, comments, activity feed, versions)
@@ -314,6 +314,15 @@ The plan assumed v1 create preserves `created_at`, but the model field is `auto_
 ### 7.9 Operational note — v1 API rate limit (Phase 1, 2026-09-08)
 
 The v1 API throttles per API key (`ApiKeyRateThrottle`, `settings.API_KEY_RATE_LIMIT`, default **60/minute**) — the setup script and the importers (559 issues + relations + pages) blow through that instantly (HTTP 429 `RATE_LIMIT_EXCEEDED`). Raised locally via `API_KEY_RATE_LIMIT=1000/minute` in `apps/api/.env` (gitignored — no repo change; **re-apply after any fresh clone/setup**). Note: `docker compose restart` does NOT re-read `env_file` — use `docker compose up -d api` to apply.
+
+### 7.10 Sixth fork change — zero-padded issue keys (applied 2026-09-08)
+
+Karol: issue keys should read `QUESTIMUS-001` (minimum 3 digits) instead of `QUESTIMUS-1`. **Display-only.**
+
+- `apps/web/helpers/issue-key.helper.ts` (new) — `padIssueSequence()` + `getIssueKey()`. The web UI composes keys client-side from the project `identifier` + `sequence_id` (the web app is Vite + React Router — see §1).
+- `IssueIdentifier` (the central key component behind all list layouts, modals, relation lists, preview cards, ⌘K) now pads; ~21 other inline composition sites swept (detail header/page titles, activities, notifications, inbox, delete/archive modals, power-k).
+- Internal lookup keys (`issuesIdentifierMap`) and the API request path (`retrieveWithIdentifier`) deliberately stay raw — routing and the API contract are unchanged; pad is cosmetic.
+- **The web app must be rebuilt** (`docker compose up -d --build web`). Type-check caveat: `react-router build` (esbuild) does not type-check — verify via oxlint and the served bundle (`grep 'padStart(3' html/assets/`).
 
 ---
 

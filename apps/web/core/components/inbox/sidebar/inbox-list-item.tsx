@@ -15,6 +15,8 @@ import { Row, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -70,7 +72,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
           <div className="space-y-1">
             <div className="relative flex items-center justify-between gap-2">
               <div className="flex-shrink-0 text-11 font-medium text-tertiary">
-                {projectIdentifier}-{issue.sequence_id}
+                {getIssueKey(projectIdentifier, issue.sequence_id)}
               </div>
               <div className="flex items-center gap-2">
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}

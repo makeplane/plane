@@ -16,6 +16,8 @@ import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -133,7 +135,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                         className="text-caption-sm-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}
+                        {getIssueKey(projectDetails?.identifier, currentIssue?.sequence_id)}
                       </Link>
                     </Tooltip>
                     {!disabled && (
