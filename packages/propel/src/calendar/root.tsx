@@ -119,6 +119,11 @@ function CalendarCaptionDropdown(dropdownProps: DropdownProps) {
               maxHeight: "16rem",
               ...(menuPosition.openUpwards ? { transform: "translateY(-100%)" } : {}),
             }}
+            // the menu is portaled to body, i.e. outside the surrounding popover's DOM:
+            // stop pointer/mouse events from reaching Headless UI's outside-click dismissal,
+            // otherwise clicking an option closes the whole date picker before the selection lands
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             {options?.map((option) => (
               <button
