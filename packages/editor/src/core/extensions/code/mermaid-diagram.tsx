@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 // plane utils
-import { formatMermaidError, getMermaidTheme } from "@plane/utils";
+import { formatMermaidError, getMermaidTheme, cn } from "@plane/utils";
 
 type Props = {
   source: string;
@@ -72,7 +72,10 @@ export function MermaidDiagram({ source }: Props) {
           }
 
           const container = containerRef.current;
-          if (!container) return;
+          if (!container) {
+            setIsLoading(false);
+            return;
+          }
 
           const { svg } = await mermaid.render(`mermaid-diagram-${++renderIdCounter}`, source);
           if (cancelled) return;
@@ -94,21 +97,21 @@ export function MermaidDiagram({ source }: Props) {
     };
   }, [source, themeAttribute]);
 
-  if (error) {
-    return (
-      <div className="mermaid-diagram mermaid-diagram-error" data-mermaid-state="error">
-        <p className="mermaid-diagram-error-message">{error}</p>
-        <pre className="mermaid-diagram-source">
-          <code>{source}</code>
-        </pre>
-      </div>
-    );
-  }
-
+  // keep the canvas mounted in every state — unmounting it on error would leave
+  // containerRef null on the next render pass, so the diagram could never recover
+  const state = error ? "error" : isLoading ? "loading" : "rendered";
   return (
-    <div className="mermaid-diagram" data-mermaid-state={isLoading ? "loading" : "rendered"}>
-      {isLoading && <div className="mermaid-diagram-loading">Rendering diagram…</div>}
-      <div ref={containerRef} className="mermaid-diagram-canvas" />
+    <div className={cn("mermaid-diagram", { "mermaid-diagram-error": error })} data-mermaid-state={state}>
+      {error && (
+        <>
+          <p className="mermaid-diagram-error-message">{error}</p>
+          <pre className="mermaid-diagram-source">
+            <code>{source}</code>
+          </pre>
+        </>
+      )}
+      {!error && isLoading && <div className="mermaid-diagram-loading">Rendering diagram…</div>}
+      <div ref={containerRef} className="mermaid-diagram-canvas" hidden={!!error} />
     </div>
   );
 }
