@@ -61,5 +61,11 @@
       "use_this": "使用此項",
       "refine": "精煉"
     }
+  },
+  "slash_commands": {
+    "diagram": {
+      "title": "Diagram",
+      "description": "Create a Mermaid diagram."
+    }
   }
 }

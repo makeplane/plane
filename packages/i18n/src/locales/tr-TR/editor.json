@@ -61,5 +61,11 @@
       "use_this": "Bunu kullan",
       "refine": "İyileştir"
     }
+  },
+  "slash_commands": {
+    "diagram": {
+      "title": "Diagram",
+      "description": "Create a Mermaid diagram."
+    }
   }
 }

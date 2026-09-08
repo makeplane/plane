@@ -23,6 +23,7 @@ import {
   Smile,
   Table,
   TextQuote,
+  Workflow,
 } from "lucide-react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -179,6 +180,16 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["codeblock"],
             icon: <Code2 className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+          },
+          {
+            commandKey: "diagram",
+            key: "diagram",
+            title: "Diagram",
+            description: "Create a Mermaid diagram.",
+            searchTerms: ["diagram", "mermaid", "chart", "flowchart", "graph"],
+            icon: <Workflow className="size-3.5" />,
+            command: ({ editor, range }) =>
+              editor.chain().focus().deleteRange(range).toggleCodeBlock({ language: "mermaid" }).run(),
           },
           {
             commandKey: "callout",

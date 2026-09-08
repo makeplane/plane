@@ -61,5 +61,11 @@
       "use_this": "使用此",
       "refine": "优化"
     }
+  },
+  "slash_commands": {
+    "diagram": {
+      "title": "图表",
+      "description": "创建 Mermaid 图表。"
+    }
   }
 }

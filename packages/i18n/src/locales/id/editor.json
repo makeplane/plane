@@ -61,5 +61,11 @@
       "use_this": "Gunakan ini",
       "refine": "Perbaiki"
     }
+  },
+  "slash_commands": {
+    "diagram": {
+      "title": "Diagram",
+      "description": "Create a Mermaid diagram."
+    }
   }
 }

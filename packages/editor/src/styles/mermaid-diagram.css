@@ -1,0 +1,52 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+.mermaid-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--background-color-layer-3, transparent);
+  overflow-x: auto;
+}
+
+.mermaid-diagram-canvas {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.mermaid-diagram-canvas svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-diagram-loading {
+  padding: 8px 0;
+  font-size: 0.75rem;
+  color: var(--text-color-tertiary, #888);
+}
+
+.mermaid-diagram-error {
+  align-items: stretch;
+  gap: 8px;
+  border: 1px solid var(--border-color-danger-strong, var(--border-color-subtle, #e5e5e5));
+}
+
+.mermaid-diagram-error-message {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-color-danger-primary, #d92d20);
+}
+
+.mermaid-diagram-source {
+  margin: 0;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  color: var(--text-color-tertiary, #888);
+}
