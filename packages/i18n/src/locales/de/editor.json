@@ -61,5 +61,11 @@
       "use_this": "Übernehmen",
       "refine": "Verfeinern"
     }
+  },
+  "slash_commands": {
+    "diagram": {
+      "title": "Diagram",
+      "description": "Create a Mermaid diagram."
+    }
   }
 }

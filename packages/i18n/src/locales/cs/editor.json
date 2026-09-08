@@ -61,5 +61,11 @@
       "use_this": "Použít toto",
       "refine": "Upřesnit"
     }
+  },
+  "slash_commands": {
+    "diagram": {
+      "title": "Diagram",
+      "description": "Create a Mermaid diagram."
+    }
   }
 }

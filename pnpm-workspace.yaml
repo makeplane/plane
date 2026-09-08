@@ -131,6 +131,7 @@ catalog:
   "lowlight": "^3.0.0"
   "lucide-react": "0.469.0"
   "mdast": "^3.0.0"
+  "mermaid": "11.17.2"
   "mobx": "6.12.0"
   "mobx-react": "9.1.1"
   "mobx-utils": "6.0.8"
