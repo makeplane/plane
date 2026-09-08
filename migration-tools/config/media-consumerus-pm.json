@@ -11,7 +11,7 @@
   "sourceLine": true,
   "stateMapping": {
     "done": "Done",
-    "open": "Open"
+    "open": "Backlog"
   },
   "checkboxSources": [
     { "file": "Media Consumerus.md", "label": "todo" }

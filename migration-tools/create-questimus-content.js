@@ -142,14 +142,14 @@ async function main() {
       external_id: t.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     };
     if (!args.dryRun) {
-      // Resolve the Open state (created by setup-workspace.js)
+      // Resolve the Backlog state (created by setup-workspace.js)
       const states = (await client.listStates("main", projectId)).results ?? [];
-      const open = states.find((s) => s.name === "Open");
-      if (!open) {
-        report.failed.push({ file: rel, error: 'state "Open" not found' });
+      const backlog = states.find((s) => s.name === "Backlog");
+      if (!backlog) {
+        report.failed.push({ file: rel, error: 'state "Backlog" not found' });
         continue;
       }
-      payload.state = open.id;
+      payload.state = backlog.id;
     }
     if (args.dryRun) {
       console.log(`  [dry-run] would create ticket "${t.name}" [${t.type}]`);

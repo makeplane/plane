@@ -2,7 +2,7 @@
   "name": "pop",
   "baseUrl": "http://localhost:7000",
   "workspaceSlug": "main",
-  "projectName": "POP",
+  "projectName": "Personal Operating Profile",
   "projectIdentifier": "POP",
   "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Personal Operating Profile",
   "externalSource": "empirium-pm-pop",

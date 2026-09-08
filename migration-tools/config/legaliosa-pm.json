@@ -11,7 +11,7 @@
   "sourceLine": true,
   "stateMapping": {
     "done": "Done",
-    "open": "Open"
+    "open": "Backlog"
   },
   "checkboxSources": [
     { "file": "issues.md", "label": "todo" }

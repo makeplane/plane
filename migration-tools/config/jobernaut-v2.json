@@ -21,9 +21,9 @@
     "done": "Done",
     "in-progress": "In Progress",
     "blocked": "Blocked",
-    "open": "Open",
-    "backlog": "Open",
-    "deferred": "Open",
+    "open": "Backlog",
+    "backlog": "Backlog",
+    "deferred": "Backlog",
     "cancelled": "Cancelled"
   },
   "priorityField": "priority",

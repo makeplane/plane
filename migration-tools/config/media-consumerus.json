@@ -11,7 +11,7 @@
   "stateMapping": {
     "dropped": "Cancelled",
     "done": "Done",
-    "open": "Open"
+    "open": "Backlog"
   },
   "estimateName": "Effort",
   "estimatePoints": [ { "key": 1, "value": "1" }, { "key": 2, "value": "3" }, { "key": 3, "value": "5" } ],

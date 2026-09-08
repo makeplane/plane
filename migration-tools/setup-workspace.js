@@ -15,7 +15,8 @@ import { QuestimusClient } from "./lib/questimus-client.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const DEFAULT_STATES = [
-  { name: "Open", group: "backlog", color: "#94a3b8" },
+  { name: "Backlog", group: "backlog", color: "#94a3b8" },
+  { name: "ToDo", group: "unstarted", color: "#3f76ff" },
   { name: "In Progress", group: "started", color: "#f59e0b" },
   { name: "Blocked", group: "started", color: "#ef4444" },
   { name: "Cancelled", group: "cancelled", color: "#6b7280" },
@@ -120,30 +121,32 @@ async function main() {
     // States
     const states = args.dryRun ? [] : ((await client.listStates(cfg.workspaceSlug, projectId)).results ?? []);
     const byName = new Map(states.map((s) => [s.name, s]));
-    const wanted = new Set((p.states || DEFAULT_STATES).map((s) => s.name));
+    const wantedList = p.states || DEFAULT_STATES;
+    const wanted = new Set(wantedList.map((s) => s.name));
 
-    // Normalize Plane's auto-created defaults to Karol's set (§5.2): the default
-    // "Backlog" state cannot be deleted, so rename it to "Open" (keeps the
-    // default flag + backlog group); non-default leftovers (e.g. "Todo") are
-    // deleted. Result: exactly Open/In Progress/Blocked/Cancelled/Done.
+    // Normalize Plane's auto-created defaults to the config's state set (§5.2):
+    // the project's default state cannot be deleted — if its name isn't in the
+    // wanted set, rename it to the wanted backlog state (keeps the default flag
+    // + backlog group; Phase 1 ran Backlog→"Open", the 2026-09-08 model change
+    // runs "Open"→Backlog). Other non-default leftovers (e.g. "Todo") are deleted.
     let renamedId = null;
-    const backlog = byName.get("Backlog");
-    if (backlog && !byName.has("Open")) {
-      const openCfg = (p.states || DEFAULT_STATES).find((s) => s.name === "Open");
+    const defaultState = states.find((s) => s.default);
+    const backlogTarget = wantedList.find((s) => s.group === "backlog");
+    if (defaultState && backlogTarget && !byName.has(backlogTarget.name) && defaultState.name !== backlogTarget.name) {
       if (args.dryRun) {
-        console.log('  [dry-run] would rename state "Backlog" → "Open" (keeps default flag)');
+        console.log(`  [dry-run] would rename state "${defaultState.name}" → "${backlogTarget.name}" (keeps default flag)`);
       } else {
-        const updated = await client.updateState(cfg.workspaceSlug, projectId, backlog.id, {
-          name: "Open",
-          color: openCfg?.color,
+        const updated = await client.updateState(cfg.workspaceSlug, projectId, defaultState.id, {
+          name: backlogTarget.name,
+          color: backlogTarget.color,
         });
-        byName.set("Open", updated);
-        renamedId = backlog.id;
-        console.log('  renamed state "Backlog" → "Open"');
+        byName.set(backlogTarget.name, updated);
+        renamedId = defaultState.id;
+        console.log(`  renamed state "${defaultState.name}" → "${backlogTarget.name}"`);
       }
     }
 
-    for (const s of p.states || DEFAULT_STATES) {
+    for (const s of wantedList) {
       if (byName.has(s.name)) continue;
       if (args.dryRun) { console.log(`  [dry-run] would create state "${s.name}"`); report.states++; continue; }
       await client.createState(cfg.workspaceSlug, projectId, s);

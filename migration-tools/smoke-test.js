@@ -91,7 +91,8 @@ async function main() {
   const states = (await client.listStates("main", pid)).results ?? [];
   const byName = new Map(states.map((s) => [s.name, s]));
   const wantStates = [
-    { name: "Open", group: "backlog" },
+    { name: "Backlog", group: "backlog" },
+    { name: "ToDo", group: "unstarted" },
     { name: "In Progress", group: "started" },
     { name: "Blocked", group: "started" },
     { name: "Cancelled", group: "cancelled" },
@@ -126,7 +127,7 @@ async function main() {
   const plan = await createOrReuse(client, pid, {
     name: "SMOKE Plan",
     description_html: "<p>Smoke test plan</p>",
-    state: stateId("Open"),
+    state: stateId("Backlog"),
     type_id: TYPES.Plan,
     external_source: "smoke-test",
     external_id: "plan-1",
@@ -137,7 +138,7 @@ async function main() {
   const sp = await createOrReuse(client, pid, {
     name: "SMOKE Subplan",
     description_html: "<p>Smoke test subplan</p>",
-    state: stateId("Open"),
+    state: stateId("Backlog"),
     type_id: TYPES.Subplan,
     parent: plan.id,
     external_source: "smoke-test",
@@ -160,7 +161,7 @@ async function main() {
   const ticket = await createOrReuse(client, pid, {
     name: "SMOKE Ticket",
     description_html: "<p>Smoke test ticket</p>",
-    state: stateId("Open"),
+    state: stateId("Backlog"),
     type_id: TYPES.Ticket,
     labels: [smokeLabel.id],
     external_source: "smoke-test",
@@ -182,7 +183,7 @@ async function main() {
     await client.createWorkItem("main", pid, {
       name: "SMOKE Plan (dup)",
       description_html: "<p>dup</p>",
-      state: stateId("Open"),
+      state: stateId("Backlog"),
       type_id: TYPES.Plan,
       external_source: "smoke-test",
       external_id: "plan-1",

@@ -159,7 +159,7 @@ async function main() {
       continue;
     }
 
-    const stateName = item.checked ? "Done" : "Open";
+    const stateName = item.checked ? "Done" : "Backlog";
     const stateId = await ensureState(project, stateName);
     const labelId = await ensureLabel(project, labelName);
     const priority = item.text.includes("🔴") ? "urgent" : item.text.includes("📅") ? "high" : "medium";

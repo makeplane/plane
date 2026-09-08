@@ -48,7 +48,7 @@
         "labels": ["verified", "user-report", "parked"]
       },
       {
-        "name": "POP",
+        "name": "Personal Operating Profile",
         "identifier": "POP",
         "description": "Personal Operating Profile.",
         "labels": ["verified", "user-report"]
@@ -80,7 +80,7 @@
       ],
       "projects": {
         "Personal": [
-          { "name": "Inbox", "filters": { "state": ["{{state:Open}}"] } },
+          { "name": "Inbox", "filters": { "state": ["{{state:Backlog}}"] } },
           { "name": "Ideas", "filters": { "labels": ["{{label:idea}}"] } },
           { "name": "Someday", "filters": { "labels": ["{{label:someday}}"] } }
         ]

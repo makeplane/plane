@@ -433,7 +433,7 @@ async function main() {
     if (state.issues[item.rel]) { report.skipped++; continue; }
 
     const name = item.name || item.data[cfg.titleField || "title"] || firstHeading(item.body) || path.basename(item.file, ".md");
-    const stateName = item.isDone ? "Done" : (cfg.stateMapping?.[item.data.status] ?? "Open");
+    const stateName = item.isDone ? "Done" : (cfg.stateMapping?.[item.data.status] ?? "Backlog");
     const stateId = await ensureState(stateName);
     const labels = [];
     for (const ln of item.labelNames || []) labels.push(await ensureLabel(ln));

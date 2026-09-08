@@ -120,11 +120,12 @@ Questimus is a **stock Plane v1.4.2 fork** (Django API + Next.js web/admin/space
 
 Not migrated: Legaliosa v1, Jobernaut v1 (O1–O2), Input Splitter (O5), Obsidian Plugins, Ideal Business Model (→ one ongoing task in Personal).
 
-### 5.2 States (per project — Karol's set, 2026-09-08)
+### 5.2 States (per project — Karol's set, 2026-09-08; revised same day: `Open` → `Backlog` + new `ToDo`)
 
 | State | Group | Source mapping |
 |---|---|---|
-| Open | backlog | `status: open/backlog/deferred` |
+| Backlog | backlog | `status: open/backlog/deferred` (default state — new issues land here) |
+| ToDo | unstarted | (no source mapping — new/manual work picked up from the backlog) |
 | In Progress | started | `status: in-progress` |
 | Blocked | started | `status: blocked` (a real state now — no label; sits in the Started column) |
 | Cancelled | cancelled | `status: cancelled/abandoned/dropped` |
@@ -186,7 +187,7 @@ Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are t
 ### 5.6 Views (saved filters, per project)
 
 - Per project (created in Phase 2 via `setup-workspace.js` — `config/setup.json` `views` section; "All" is the default view, no creation needed): "In Progress", "Done", "User reports" (label `user-report`), "Blocked" (state filter), **"Planning"** (types Plan/Subplan/Task/Subtask), **"Tickets"** (type Ticket) — the type views need the §7.5 fork change
-- Personal extras: "Inbox" (state Open), "Ideas" (label `idea`), "Someday" (label `someday`)
+- Personal extras: "Inbox" (state Backlog), "Ideas" (label `idea`), "Someday" (label `someday`)
 - Workspace: **"Next"** (assigned to me, medium/low). "Now" and "Today" are **home dashboard widgets (Phase 3)** — saved views are AND-only and store fixed dates, so the combined/due-today logic can't be a saved view (Karol 2026-09-08)
 
 ---
@@ -310,7 +311,7 @@ User clicks "Report issue" in the app
       POST /api/v1/workspaces/main/projects/{project_id}/work-items/
         title: "[Report] <summary>"
         description: structured (what happened / expected / steps / app version / user email)
-        state: Open (backlog group) · label: user-report · priority: from severity
+        state: Backlog (backlog group) · label: user-report · priority: from severity
       screenshot → POST .../work-items/{id}/attachments/ (multipart)
   → response: issue identifier (e.g. LEG-123)
   → app shows confirmation: "Thanks! Your report is LEG-123."
@@ -320,7 +321,7 @@ User clicks "Report issue" in the app
 `QUESTIMUS_URL`, `QUESTIMUS_TOKEN` (the `-app` bot token), `QUESTIMUS_PROJECT_ID`.
 
 ### 8.3 Workflow
-- New reports land in Open (backlog group) with label `user-report` → Karol (or the LLM agent via skill) triages: reproduce, dedupe (search endpoint), prioritize, assign.
+- New reports land in Backlog (backlog group) with label `user-report` → Karol (or the LLM agent via skill) triages: reproduce, dedupe (search endpoint), prioritize, assign.
 - Apps can also **fetch their own issues** (same token) and **resolve them** (e.g., auto-close on release).
 - Optional later: Plane **Intake** (triage inbox) if reports need a formal accept/reject step; **public deploy board** per app for a public tracker.
 
@@ -340,7 +341,7 @@ Legaliosa first (most mature), then Don Saldo, Jobernaut, Media Consumerus, othe
 | `status: done` | State **Done** |
 | `status: in-progress` | State **In Progress** |
 | `status: blocked` | State **Blocked** |
-| `status: open/backlog/deferred` | State **Open** |
+| `status: open/backlog/deferred` | State **Backlog** |
 | `severity: major/minor/…` | Priority (major→high, minor→medium, …) |
 | `sub_plan: SP05` | Label `SP-05` (grouping; tickets stay outside the hierarchy) |
 | `blocked_by: "0129"` | Issue relation `blocked_by` (two-pass) |
@@ -467,9 +468,9 @@ After each project is verified: **no pointers, folders stay untouched** (Karol 2
 4. **Karol's token:** `docker compose exec api python manage.py shell -c "from plane.db.models import User, Workspace, APIToken; u = User.objects.get(email='finalligence@gmail.com'); w = Workspace.objects.get(slug='main'); t = APIToken.objects.create(user=u, workspace=w, label='karol-migration'); print(t.token)"` (token auto-generates with the `plane_api_` prefix; shown once) — or create via UI (Settings → API tokens). Store as `QUESTIMUS_TOKEN` (used by the smoke test, setup, and every import).
 5. **Smoke test:** `node smoke-test.js` (needs `QUESTIMUS_TOKEN`) → all checks PASS → Karol sign-off → `node smoke-test.js --delete-project` (hard-deletes the test project).
 6. **Delete the test bot user:** `docker compose exec api python manage.py shell -c "from plane.db.models import User; User.objects.filter(email='bot_user_0f6c3a6b-0daf-4794-8d95-b09ff15a4e0f@localhost').delete()"` (it is a **workspace Admin** — leftover from the test setup).
-7. **Create the 10 projects:** `node setup-workspace.js --config config/setup.json` (identifiers, states, labels; `network: 0` = secret; short descriptions per project — Karol confirmed). The script **normalizes the auto-created default states** to Karol's set (confirmed): renames the default `Backlog` → `Open` (keeps the default flag — new issues default to Open) and deletes leftovers like `Todo` — each project ends with exactly Open/In Progress/Blocked/Cancelled/Done.
+7. **Create the 10 projects:** `node setup-workspace.js --config config/setup.json` (identifiers, states, labels; `network: 0` = secret; short descriptions per project — Karol confirmed). The script **normalizes the auto-created default states** to Karol's set (revised 2026-09-08: `Backlog` + `ToDo`): the project's default state cannot be deleted, so if its name isn't in the wanted set it is renamed to the config's backlog state (Phase 1 ran default Backlog → `Open`; the model change runs `Open` → `Backlog` — the default flag stays, so new issues default to Backlog) — each project ends with exactly Backlog/ToDo/In Progress/Blocked/Cancelled/Done.
 8. **Issue types per project:** collect the 10 project ids from the step-7 output ("created project … (id)"), then for each: `docker compose exec api python manage.py setup_issue_types --workspace-slug main --project-id <id>` (idempotent; the workspace-level type UUIDs in `state/types.json` stay valid).
-9. **Verify:** re-run step 7 (0 created = idempotent); UI check — 10 projects with the right identifiers, **5 states each**, labels; smoke-test artifacts gone with the test project; backup snapshot exists. Then run `scripts\backup-data.ps1` again — a **post-setup snapshot** (the state we would restore from).
+9. **Verify:** re-run step 7 (0 created = idempotent); UI check — 10 projects with the right identifiers, **6 states each**, labels; smoke-test artifacts gone with the test project; backup snapshot exists. Then run `scripts\backup-data.ps1` again — a **post-setup snapshot** (the state we would restore from).
 
 **Phase 2 — execution sequence (in order; commands run from `C:\Users\Karol\Projects\Questimus`):**
 
