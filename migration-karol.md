@@ -190,6 +190,20 @@ Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are t
 - Personal extras: "Inbox" (state Backlog), "Ideas" (label `idea`), "Someday" (label `someday`)
 - Workspace: **"Next"** (assigned to me, medium/low). "Now" and "Today" are **home dashboard widgets (Phase 3)** — saved views are AND-only and store fixed dates, so the combined/due-today logic can't be a saved view (Karol 2026-09-08)
 
+### 5.8 Feature toggles (per project; Karol 2026-09-08, applied to all 10)
+
+Plane's per-project feature flags (model defaults: pages on, everything else off; the plan **must** override views — the views are the plan's navigation and were created in Phase 1 but were invisible until activated):
+
+| Toggle | Model field | Setting | Why |
+|---|---|---|---|
+| Views | `issue_views_view` | **on** (all projects) | the plan's navigation — 64 saved views (workspace "Next", per-project 6, Personal 3) |
+| Pages | `page_view` | **on** (all projects) | the plan creates 32 pages (design reviews O8, research notes, POP doc, Questimus plan page, …) |
+| Cycles | `cycle_view` | **on in Personal only** | the Phase 4 "This week" cycle test; off elsewhere |
+| Modules | `module_view` | off (all) | modules dropped (§5.4) |
+| Intake | `intake_view` | off (all) | app reports come in directly as work items with label `user-report` (§8.1) |
+
+`setup-workspace.js` enforces this: `DEFAULT_FEATURES` + per-project `features` override in `config/setup.json` (Personal sets `cycle_view`); new projects are created with the flags, existing ones are PATCHed on every run (convergent, reports `features: N`).
+
 ---
 
 ## 6. Access & security model

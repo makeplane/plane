@@ -23,6 +23,17 @@ const DEFAULT_STATES = [
   { name: "Done", group: "completed", color: "#16a34a" },
 ];
 
+// Feature toggles per project (migration-karol.md §5.8): views + pages on
+// everywhere (views = the plan's navigation, pages = the 32 planned pages);
+// cycles on only in Personal (Phase 4 cycles test); modules + intake off.
+const DEFAULT_FEATURES = {
+  cycle_view: false,
+  module_view: false,
+  issue_views_view: true,
+  page_view: true,
+  intake_view: false,
+};
+
 // Resolve filter placeholders: {{karolUserId}}, {{state:Name}}, {{label:Name}}, {{type:Name}}
 function resolveFilterValue(value, ctx) {
   if (typeof value !== "string") return value;
@@ -84,7 +95,7 @@ async function main() {
     console.warn("  ! state/types.json not found — {{type:...}} view placeholders will be empty");
   }
 
-  const report = { projects: 0, states: 0, labels: 0, modules: 0, views: 0 };
+  const report = { projects: 0, states: 0, labels: 0, modules: 0, views: 0, features: 0 };
 
   // Projects to ensure: from config.setup.projects, or just the config's project
   const projects = cfg.setup?.projects?.length
@@ -92,6 +103,10 @@ async function main() {
     : [{ name: cfg.projectName, identifier: cfg.projectIdentifier || "TASK" }];
 
   for (const p of projects) {
+    // Feature toggles (§5.8): target model — views + pages on, modules + intake
+    // off; cycles on only where the project config says so (Personal).
+    const features = { ...DEFAULT_FEATURES, ...(p.features || {}) };
+
     let project = null;
     if (!args.dryRun) {
       const existing = (await client.listProjects(cfg.workspaceSlug)).results ?? [];
@@ -109,6 +124,7 @@ async function main() {
           identifier: p.identifier || "TASK",
           description: p.description || "",
           network: 0, // secret (only members see it)
+          ...features, // born with the target feature toggles (§5.8)
         });
         report.projects++;
         console.log(`  created project "${p.name}" (${project.id})`);
@@ -116,6 +132,18 @@ async function main() {
       }
     } else {
       projectId = project.id;
+    }
+
+    // Converge feature toggles on existing projects (create returns them already set)
+    if (!args.dryRun && project) {
+      const diffs = Object.entries(features).filter(([k, v]) => project[k] !== v);
+      if (diffs.length) {
+        await client.updateProject(cfg.workspaceSlug, projectId, Object.fromEntries(diffs));
+        for (const [k, v] of diffs) {
+          console.log(`  set feature "${k}" → ${v} (${p.name})`);
+          report.features++;
+        }
+      }
     }
 
     // States
@@ -226,7 +254,7 @@ async function main() {
   }
 
   console.log(`\nSetup report (${cfg.name}):`);
-  console.log(`  projects: ${report.projects} · states: ${report.states} · labels: ${report.labels} · modules: ${report.modules} · views: ${report.views}`);
+  console.log(`  projects: ${report.projects} · states: ${report.states} · labels: ${report.labels} · modules: ${report.modules} · views: ${report.views} · features: ${report.features}`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

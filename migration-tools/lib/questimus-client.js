@@ -131,6 +131,10 @@ export class QuestimusClient {
     return this.request("POST", `${MAIN}/workspaces/${slug}/projects/`, { body: data });
   }
 
+  updateProject(slug, projectId, data) {
+    return this.request("PATCH", `${MAIN}/workspaces/${slug}/projects/${projectId}/`, { body: data });
+  }
+
   createModule(slug, projectId, data) {
     return this.request("POST", `${MAIN}/workspaces/${slug}/projects/${projectId}/modules/`, { body: data });
   }
