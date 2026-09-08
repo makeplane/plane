@@ -38,7 +38,7 @@ export const UserAvatar = observer(function UserAvatar() {
   // states
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     if (csrfToken === undefined)
@@ -46,6 +46,7 @@ export const UserAvatar = observer(function UserAvatar() {
   }, [csrfToken]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    strategy: "fixed",
     placement: "bottom-end",
     modifiers: [
       {
@@ -91,13 +92,12 @@ export const UserAvatar = observer(function UserAvatar() {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel>
-                <div
-                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
-                  ref={setPopperElement}
-                  style={styles.popper}
-                  {...attributes.popper}
-                >
+              <Popover.Panel
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
+              >
+                <div className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200">
                   {csrfToken && (
                     <form method="POST" action={`${API_BASE_URL}/auth/spaces/sign-out/`} onSubmit={signOut}>
                       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />

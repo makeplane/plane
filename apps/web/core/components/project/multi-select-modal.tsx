@@ -126,6 +126,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
         <Combobox.Options
           as="ul"
           static
+          modal={false}
           className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto py-2 transition-[height] duration-200 ease-in-out"
         >
           {filteredProjectIds.length === 0 ? (

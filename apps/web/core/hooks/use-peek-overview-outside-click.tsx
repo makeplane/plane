@@ -16,6 +16,9 @@ const usePeekOverviewOutsideClickDetector = (
   const handleClick = useCallback(
     (event: MouseEvent) => {
       if (!(event.target instanceof HTMLElement)) return;
+      // Headless UI v2 selects on mousedown and unmounts the list in the same event.
+      // After unmount, target is detached so contains() is false — use the event path.
+      if (ref.current && event.composedPath().includes(ref.current)) return;
       if (ref.current && !ref.current.contains(event.target)) {
         // check for the closest element with attribute name data-prevent-outside-click
         const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");

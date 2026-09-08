@@ -29,10 +29,11 @@ export function InputColorPicker(props: InputColorPickerProps) {
   const { value, hasError, onChange, name, className, style, placeholder } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = React.useState<HTMLElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "auto",
+    strategy: "fixed",
   });
 
   const handleColorChange = (newColor: ColorResult) => {
@@ -92,13 +93,12 @@ export function InputColorPicker(props: InputColorPickerProps) {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel>
-                <div
-                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200"
-                  ref={setPopperElement}
-                  style={styles.popper}
-                  {...attributes.popper}
-                >
+              <Popover.Panel
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
+              >
+                <div className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200">
                   <ColorPicker.SketchPicker color={value} onChange={handleColorChange} />
                 </div>
               </Popover.Panel>

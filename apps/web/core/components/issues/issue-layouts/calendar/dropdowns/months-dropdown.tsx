@@ -32,9 +32,10 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    strategy: "fixed",
     placement: "auto",
     modifiers: [
       {
@@ -102,13 +103,13 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Popover.Panel className="fixed z-50">
-          <div
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-            className="w-56 divide-y divide-subtle-1 rounded-sm border border-subtle bg-surface-1 p-3 shadow-raised-200"
-          >
+        <Popover.Panel
+          className="fixed z-50"
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="w-56 divide-y divide-subtle-1 rounded-sm border border-subtle bg-surface-1 p-3 shadow-raised-200">
             <div className="flex items-center justify-between gap-2 pb-3">
               <button
                 type="button"

@@ -14,9 +14,10 @@ import { CloseOutline } from "@makeplane/propel/icons";
 export function ForgotPasswordPopover() {
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    strategy: "fixed",
     placement: "right-start",
     modifiers: [
       {
@@ -41,14 +42,14 @@ export function ForgotPasswordPopover() {
           {t("auth.common.forgot_password")}
         </button>
       </Popover.Button>
-      <Popover.Panel className="fixed z-10">
+      <Popover.Panel
+        className="fixed z-10"
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+      >
         {({ close }) => (
-          <div
-            className="z-10 ml-3 flex w-64 items-start gap-3 rounded-sm border border-strong bg-surface-1 px-2 py-1 text-left break-words"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
+          <div className="z-10 ml-3 flex w-64 items-start gap-3 rounded-sm border border-strong bg-surface-1 px-2 py-1 text-left break-words">
             <span className="flex-shrink-0">🤥</span>
             <p className="text-11">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
             <button

@@ -39,7 +39,7 @@ export function LabelCreate(props: ILabelCreate) {
   const [isCreateToggle, setIsCreateToggle] = useState(false);
   const handleIsCreateToggle = () => setIsCreateToggle(!isCreateToggle);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   // react hook form
   const {
     handleSubmit,
@@ -52,6 +52,7 @@ export function LabelCreate(props: ILabelCreate) {
   });
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    strategy: "fixed",
     placement: "bottom-start",
     modifiers: [
       {
@@ -113,13 +114,13 @@ export function LabelCreate(props: ILabelCreate) {
                         )}
                       </button>
                     </Popover.Button>
-                    <Popover.Panel className="fixed z-10">
-                      <div
-                        className="max-w-xs p-2 sm:px-0"
-                        ref={setPopperElement}
-                        style={styles.popper}
-                        {...attributes.popper}
-                      >
+                    <Popover.Panel
+                      className="fixed z-10"
+                      ref={setPopperElement}
+                      style={styles.popper}
+                      {...attributes.popper}
+                    >
+                      <div className="max-w-xs p-2 sm:px-0">
                         <TwitterPicker triangle={"hide"} color={value} onChange={(value) => onChange(value.hex)} />
                       </div>
                     </Popover.Panel>

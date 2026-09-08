@@ -13,6 +13,7 @@ export const useOutsideClickDetector = (
   useCapture = false
 ) => {
   const handleClick = (event: MouseEvent) => {
+    if (ref.current && event.composedPath().includes(ref.current)) return;
     if (ref.current && !ref.current.contains(event.target as any)) {
       // check for the closest element with attribute name data-prevent-outside-click
       const preventOutsideClickElement = (event.target as unknown as HTMLElement | undefined)?.closest(
