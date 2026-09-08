@@ -173,7 +173,7 @@ Per project, from the markdown sources:
 | `Ideas.md` | Personal issues, label `idea` (§9.3) |
 | `Now.md` | **Routed per entry** to its project via `import-now.js` (§9.3) — no "Now" page |
 | `hosting-publishing.md` | Personal: "Hosting & publishing" (O7) |
-| research notes | Personal: "Research" section — **flat pages with a `Research - ` name prefix** (Phase 4 finding, 2026-09-08: this Plane version has **no child-page UI** — the pages list filters `parent__isnull=True` and the page detail shows no children, so a parent "Research" page was invisible/empty; the two research notes were unparented, renamed `Research - Own server vs VPS` / `Research - Claudian plugin research`, and the empty parent deleted. The importer's `parentPage` option stays for future UI support) |
+| research notes | Personal: "Research" section — **flat pages with a `Research - ` name prefix** (Phase 4 finding, 2026-09-08: this Plane version has **no child-page UI** — the pages list filters `parent__isnull=True` and the page detail shows no children, so a parent "Research" page was invisible/empty; the two research notes were unparented, renamed `Research - Own server vs VPS` / `Research - Claudian plugin research`, and the empty parent deleted. Real page trees = **Questimus idea ticket "Child pages in UI (page tree)"**; the importer's `parentPage` option stays for when the UI supports it) |
 
 Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are the Plan/Subplan work items (§5.4).
 
