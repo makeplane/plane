@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Conturi AI",
+        "description": "Creează și gestionează conturi de bot care permit agenților AI să acceseze workspace-ul tău cu permisiuni cu domeniu limitat.",
+        "add_account": "Adaugă cont AI",
+        "modal": {
+          "create_title": "Creează cont AI",
+          "edit_title": "Editează contul AI",
+          "name": "Nume",
+          "name_required": "Numele este obligatoriu",
+          "description": "Descriere",
+          "create": "Creează cont",
+          "update": "Actualizează contul",
+          "creating": "Se creează",
+          "updating": "Se actualizează"
+        },
+        "token": {
+          "title": "Cont creat",
+          "copy_warning": "Copiază și salvează acest token acum. Nu îl vei mai putea vedea după ce închizi această fereastră.",
+          "copied": "Token copiat în clipboard.",
+          "not_copied": "Tokenul nu a putut fi copiat. Încearcă din nou."
+        },
+        "list": {
+          "created_on": "Creată la",
+          "edit": "Editează",
+          "delete": "Șterge",
+          "manage_scopes": "Gestionează domeniile"
+        },
+        "avatar": {
+          "label": "Imagine de profil",
+          "upload": "Încarcă",
+          "remove": "Elimină"
+        },
+        "delete": {
+          "title": "Șterge contul AI",
+          "description": "Orice integrare care folosește acest cont nu va mai putea accesa workspace-ul tău. Această acțiune nu poate fi anulată.",
+          "success": {
+            "title": "Succes!",
+            "message": "Contul AI a fost șters cu succes"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Contul AI nu a putut fi șters"
+          }
+        },
+        "scopes": {
+          "title": "Gestionează domeniile",
+          "description": "Domeniile definesc ce poate accesa acest cont. Salvarea înlocuiește toate domeniile existente.",
+          "project": "Proiect",
+          "all_projects": "Toate proiectele",
+          "resource_type": "Resursă",
+          "action": "Acțiune",
+          "resources": {
+            "all": "Toate",
+            "project": "Proiect",
+            "member": "Membru",
+            "user": "Utilizator",
+            "asset": "Fișier",
+            "estimate": "Estimare",
+            "cycle": "Ciclu",
+            "module": "Modul",
+            "sticky": "Sticky",
+            "label": "Etichetă",
+            "intake": "Intake",
+            "work_item": "Activitate",
+            "comment": "Comentariu",
+            "state": "Stare",
+            "page": "Pagină",
+            "invite": "Invitație"
+          },
+          "actions": {
+            "all": "Toate",
+            "read": "Citire",
+            "create": "Creează",
+            "update": "Actualizează",
+            "delete": "Șterge"
+          },
+          "add_scope": "Adaugă domeniu",
+          "save": "Salvează domeniile",
+          "saving": "Se salvează",
+          "success": {
+            "title": "Succes!",
+            "message": "Domeniile au fost actualizate cu succes"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Domeniile nu au putut fi actualizate"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Cont AI creat",
+            "message": "Contul AI a fost creat cu succes"
+          },
+          "not_created": {
+            "title": "Cont AI necreat",
+            "message": "Contul AI nu a putut fi creat"
+          },
+          "updated": {
+            "title": "Cont AI actualizat",
+            "message": "Contul AI a fost actualizat cu succes"
+          },
+          "not_updated": {
+            "title": "Cont AI neactualizat",
+            "message": "Contul AI nu a putut fi actualizat"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Chei secrete API",
         "description": "Generează chei secrete API sigure pentru a integra datele tale cu sisteme și aplicații externe.",

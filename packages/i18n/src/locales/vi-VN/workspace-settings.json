@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Tài khoản AI",
+        "description": "Tạo và quản lý tài khoản bot cho phép tác tử AI truy cập workspace của bạn với quyền theo phạm vi.",
+        "add_account": "Thêm tài khoản AI",
+        "modal": {
+          "create_title": "Tạo tài khoản AI",
+          "edit_title": "Chỉnh sửa tài khoản AI",
+          "name": "Tên",
+          "name_required": "Tên là bắt buộc",
+          "description": "Mô tả",
+          "create": "Tạo tài khoản",
+          "update": "Cập nhật tài khoản",
+          "creating": "Đang tạo",
+          "updating": "Đang cập nhật"
+        },
+        "token": {
+          "title": "Đã tạo tài khoản",
+          "copy_warning": "Hãy sao chép và lưu token này ngay. Bạn sẽ không thể xem lại sau khi đóng hộp thoại này.",
+          "copied": "Đã sao chép token vào clipboard.",
+          "not_copied": "Không thể sao chép token. Vui lòng thử lại."
+        },
+        "list": {
+          "created_on": "Được tạo vào",
+          "edit": "Chỉnh sửa",
+          "delete": "Xóa",
+          "manage_scopes": "Quản lý phạm vi"
+        },
+        "avatar": {
+          "label": "Ảnh đại diện",
+          "upload": "Tải lên",
+          "remove": "Xóa"
+        },
+        "delete": {
+          "title": "Xóa tài khoản AI",
+          "description": "Bất kỳ tích hợp nào sử dụng tài khoản này sẽ không còn truy cập được workspace của bạn. Hành động này không thể hoàn tác.",
+          "success": {
+            "title": "Thành công!",
+            "message": "Tài khoản AI đã được xóa thành công"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xóa tài khoản AI"
+          }
+        },
+        "scopes": {
+          "title": "Quản lý phạm vi",
+          "description": "Phạm vi xác định những gì tài khoản này có thể truy cập. Lưu sẽ thay thế tất cả phạm vi hiện có.",
+          "project": "Dự án",
+          "all_projects": "Tất cả dự án",
+          "resource_type": "Tài nguyên",
+          "action": "Hành động",
+          "resources": {
+            "all": "Tất cả",
+            "project": "Dự án",
+            "member": "Thành viên",
+            "user": "Người dùng",
+            "asset": "Tệp",
+            "estimate": "Ước tính",
+            "cycle": "Chu kỳ",
+            "module": "Mô-đun",
+            "sticky": "Sticky",
+            "label": "Nhãn",
+            "intake": "Intake",
+            "work_item": "Mục công việc",
+            "comment": "Bình luận",
+            "state": "Trạng thái",
+            "page": "Trang",
+            "invite": "Lời mời"
+          },
+          "actions": {
+            "all": "Tất cả",
+            "read": "Đọc",
+            "create": "Tạo",
+            "update": "Cập nhật",
+            "delete": "Xóa"
+          },
+          "add_scope": "Thêm phạm vi",
+          "save": "Lưu phạm vi",
+          "saving": "Đang lưu",
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã cập nhật phạm vi thành công"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể cập nhật phạm vi"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Đã tạo tài khoản AI",
+            "message": "Tài khoản AI đã được tạo thành công"
+          },
+          "not_created": {
+            "title": "Chưa tạo tài khoản AI",
+            "message": "Không thể tạo tài khoản AI"
+          },
+          "updated": {
+            "title": "Đã cập nhật tài khoản AI",
+            "message": "Tài khoản AI đã được cập nhật thành công"
+          },
+          "not_updated": {
+            "title": "Chưa cập nhật tài khoản AI",
+            "message": "Không thể cập nhật tài khoản AI"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Token API",
         "description": "Tạo token API bảo mật để tích hợp dữ liệu của bạn với các hệ thống và ứng dụng bên ngoài.",

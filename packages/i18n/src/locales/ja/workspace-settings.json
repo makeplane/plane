@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AIアカウント",
+        "description": "スコープ化された権限でAIエージェントがワークスペースにアクセスできるボットアカウントを作成および管理します。",
+        "add_account": "AIアカウントを追加",
+        "modal": {
+          "create_title": "AIアカウントを作成",
+          "edit_title": "AIアカウントを編集",
+          "name": "名前",
+          "name_required": "名前は必須です",
+          "description": "説明",
+          "create": "アカウントを作成",
+          "update": "アカウントを更新",
+          "creating": "作成中",
+          "updating": "更新中"
+        },
+        "token": {
+          "title": "アカウントを作成しました",
+          "copy_warning": "このトークンを今すぐコピーして保存してください。このダイアログを閉じると、再度表示できなくなります。",
+          "copied": "トークンをクリップボードにコピーしました。",
+          "not_copied": "トークンをコピーできませんでした。もう一度お試しください。"
+        },
+        "list": {
+          "created_on": "作成日",
+          "edit": "編集",
+          "delete": "削除",
+          "manage_scopes": "スコープを管理"
+        },
+        "avatar": {
+          "label": "アバター",
+          "upload": "アップロード",
+          "remove": "削除"
+        },
+        "delete": {
+          "title": "AIアカウントを削除",
+          "description": "このアカウントを使用しているインテグレーションは、ワークスペースにアクセスできなくなります。この操作は元に戻せません。",
+          "success": {
+            "title": "成功！",
+            "message": "AIアカウントが正常に削除されました"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "AIアカウントを削除できませんでした"
+          }
+        },
+        "scopes": {
+          "title": "スコープを管理",
+          "description": "スコープはこのアカウントがアクセスできる範囲を定義します。保存すると既存のスコープがすべて置き換えられます。",
+          "project": "プロジェクト",
+          "all_projects": "すべてのプロジェクト",
+          "resource_type": "リソース",
+          "action": "アクション",
+          "resources": {
+            "all": "すべて",
+            "project": "プロジェクト",
+            "member": "メンバー",
+            "user": "ユーザー",
+            "asset": "アセット",
+            "estimate": "見積もり",
+            "cycle": "サイクル",
+            "module": "モジュール",
+            "sticky": "Sticky",
+            "label": "ラベル",
+            "intake": "Intake",
+            "work_item": "作業項目",
+            "comment": "コメント",
+            "state": "状態",
+            "page": "ページ",
+            "invite": "招待"
+          },
+          "actions": {
+            "all": "すべて",
+            "read": "読み取り",
+            "create": "作成",
+            "update": "更新",
+            "delete": "削除"
+          },
+          "add_scope": "スコープを追加",
+          "save": "スコープを保存",
+          "saving": "保存中",
+          "success": {
+            "title": "成功！",
+            "message": "スコープが正常に更新されました"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "スコープを更新できませんでした"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AIアカウントを作成しました",
+            "message": "AIアカウントが正常に作成されました"
+          },
+          "not_created": {
+            "title": "AIアカウントが作成されませんでした",
+            "message": "AIアカウントを作成できませんでした"
+          },
+          "updated": {
+            "title": "AIアカウントを更新しました",
+            "message": "AIアカウントが正常に更新されました"
+          },
+          "not_updated": {
+            "title": "AIアカウントが更新されませんでした",
+            "message": "AIアカウントを更新できませんでした"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "APIトークン",
         "description": "セキュアなAPIトークンを生成して、データを外部システムやアプリケーションと統合します。",

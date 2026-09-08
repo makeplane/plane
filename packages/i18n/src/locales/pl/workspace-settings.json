@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Konta AI",
+        "description": "Twórz i zarządzaj kontami botów, które umożliwiają agentom AI dostęp do Twojego workspace z uprawnieniami o ograniczonym zakresie.",
+        "add_account": "Dodaj konto AI",
+        "modal": {
+          "create_title": "Utwórz konto AI",
+          "edit_title": "Edytuj konto AI",
+          "name": "Nazwa",
+          "name_required": "Nazwa jest wymagana",
+          "description": "Opis",
+          "create": "Utwórz konto",
+          "update": "Aktualizuj konto",
+          "creating": "Tworzenie",
+          "updating": "Aktualizowanie"
+        },
+        "token": {
+          "title": "Konto utworzone",
+          "copy_warning": "Skopiuj i zapisz ten token teraz. Po zamknięciu tego okna nie będzie można go ponownie wyświetlić.",
+          "copied": "Token skopiowany do schowka.",
+          "not_copied": "Nie udało się skopiować tokenu. Spróbuj ponownie."
+        },
+        "list": {
+          "created_on": "Utworzono dnia",
+          "edit": "Edytuj",
+          "delete": "Usuń",
+          "manage_scopes": "Zarządzaj zakresami"
+        },
+        "avatar": {
+          "label": "Zdjęcie profilowe",
+          "upload": "Prześlij",
+          "remove": "Usuń"
+        },
+        "delete": {
+          "title": "Usuń konto AI",
+          "description": "Żadna integracja korzystająca z tego konta nie będzie już mieć dostępu do Twojego workspace. Tej akcji nie można cofnąć.",
+          "success": {
+            "title": "Sukces!",
+            "message": "Konto AI zostało pomyślnie usunięte"
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie można usunąć konta AI"
+          }
+        },
+        "scopes": {
+          "title": "Zarządzaj zakresami",
+          "description": "Zakresy określają, do czego to konto ma dostęp. Zapisanie zastępuje wszystkie istniejące zakresy.",
+          "project": "Projekt",
+          "all_projects": "Wszystkie projekty",
+          "resource_type": "Zasób",
+          "action": "Akcja",
+          "resources": {
+            "all": "Wszystko",
+            "project": "Projekt",
+            "member": "Członek",
+            "user": "Użytkownik",
+            "asset": "Plik",
+            "estimate": "Szacowanie",
+            "cycle": "Cykl",
+            "module": "Moduł",
+            "sticky": "Sticky",
+            "label": "Etykieta",
+            "intake": "Intake",
+            "work_item": "Element pracy",
+            "comment": "Komentarz",
+            "state": "Stan",
+            "page": "Strona",
+            "invite": "Zaproszenie"
+          },
+          "actions": {
+            "all": "Wszystko",
+            "read": "Odczyt",
+            "create": "Utwórz",
+            "update": "Aktualizuj",
+            "delete": "Usuń"
+          },
+          "add_scope": "Dodaj zakres",
+          "save": "Zapisz zakresy",
+          "saving": "Zapisywanie",
+          "success": {
+            "title": "Sukces!",
+            "message": "Zakresy zaktualizowane pomyślnie"
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie można zaktualizować zakresów"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Konto AI utworzone",
+            "message": "Konto AI zostało pomyślnie utworzone"
+          },
+          "not_created": {
+            "title": "Konto AI nie utworzone",
+            "message": "Nie można utworzyć konta AI"
+          },
+          "updated": {
+            "title": "Konto AI zaktualizowane",
+            "message": "Konto AI zostało pomyślnie zaktualizowane"
+          },
+          "not_updated": {
+            "title": "Konto AI nie zaktualizowane",
+            "message": "Nie można zaktualizować konta AI"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Tokeny API",
         "description": "Generuj bezpieczne tokeny API, aby integrować swoje dane z zewnętrznymi systemami i aplikacjami.",

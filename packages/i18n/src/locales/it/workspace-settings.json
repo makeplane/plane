@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Account AI",
+        "description": "Crea e gestisci account bot che consentono agli agenti AI di accedere al tuo spazio di lavoro con autorizzazioni limitate nell'ambito.",
+        "add_account": "Aggiungi account AI",
+        "modal": {
+          "create_title": "Crea account AI",
+          "edit_title": "Modifica account AI",
+          "name": "Nome",
+          "name_required": "Il nome è obbligatorio",
+          "description": "Descrizione",
+          "create": "Crea account",
+          "update": "Aggiorna account",
+          "creating": "Creazione in corso",
+          "updating": "Aggiornamento in corso"
+        },
+        "token": {
+          "title": "Account creato",
+          "copy_warning": "Copia e salva subito questo token. Non potrai più visualizzarlo dopo aver chiuso questa finestra.",
+          "copied": "Token copiato negli appunti.",
+          "not_copied": "Impossibile copiare il token. Riprova."
+        },
+        "list": {
+          "created_on": "Creato il",
+          "edit": "Modifica",
+          "delete": "Elimina",
+          "manage_scopes": "Gestisci ambiti"
+        },
+        "avatar": {
+          "label": "Avatar",
+          "upload": "Carica",
+          "remove": "Rimuovi"
+        },
+        "delete": {
+          "title": "Elimina account AI",
+          "description": "Qualsiasi integrazione che utilizza questo account non potrà più accedere al tuo spazio di lavoro. Questa azione non può essere annullata.",
+          "success": {
+            "title": "Successo!",
+            "message": "L'account AI è stato eliminato con successo"
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile eliminare l'account AI"
+          }
+        },
+        "scopes": {
+          "title": "Gestisci ambiti",
+          "description": "Gli ambiti definiscono a cosa può accedere questo account. Il salvataggio sostituisce tutti gli ambiti esistenti.",
+          "project": "Progetto",
+          "all_projects": "Tutti i progetti",
+          "resource_type": "Risorsa",
+          "action": "Azione",
+          "resources": {
+            "all": "Tutti",
+            "project": "Progetto",
+            "member": "Membro",
+            "user": "Utente",
+            "asset": "File",
+            "estimate": "Stima",
+            "cycle": "Ciclo",
+            "module": "Modulo",
+            "sticky": "Sticky",
+            "label": "Etichetta",
+            "intake": "Intake",
+            "work_item": "Elemento di lavoro",
+            "comment": "Commento",
+            "state": "Stato",
+            "page": "Pagina",
+            "invite": "Invito"
+          },
+          "actions": {
+            "all": "Tutti",
+            "read": "Lettura",
+            "create": "Crea",
+            "update": "Aggiorna",
+            "delete": "Elimina"
+          },
+          "add_scope": "Aggiungi ambito",
+          "save": "Salva ambiti",
+          "saving": "Salvataggio in corso",
+          "success": {
+            "title": "Successo!",
+            "message": "Ambiti aggiornati con successo"
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile aggiornare gli ambiti"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Account AI creato",
+            "message": "L'account AI è stato creato con successo"
+          },
+          "not_created": {
+            "title": "Account AI non creato",
+            "message": "Impossibile creare l'account AI"
+          },
+          "updated": {
+            "title": "Account AI aggiornato",
+            "message": "L'account AI è stato aggiornato con successo"
+          },
+          "not_updated": {
+            "title": "Account AI non aggiornato",
+            "message": "Impossibile aggiornare l'account AI"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Token API",
         "description": "Genera token API sicuri per integrare i tuoi dati con sistemi e applicazioni esterne.",

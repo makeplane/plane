@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI účty",
+        "description": "Vytvářejte a spravujte účty botů, které umožňují AI agentům přistupovat k vašemu workspace s oprávněními s omezeným rozsahem.",
+        "add_account": "Přidat AI účet",
+        "modal": {
+          "create_title": "Vytvořit AI účet",
+          "edit_title": "Upravit AI účet",
+          "name": "Název",
+          "name_required": "Název je povinný",
+          "description": "Popis",
+          "create": "Vytvořit účet",
+          "update": "Aktualizovat účet",
+          "creating": "Vytváření",
+          "updating": "Aktualizace"
+        },
+        "token": {
+          "title": "Účet vytvořen",
+          "copy_warning": "Zkopírujte a uložte si tento token nyní. Po zavření tohoto dialogu jej již nebudete moci zobrazit.",
+          "copied": "Token zkopírován do schránky.",
+          "not_copied": "Token se nepodařilo zkopírovat. Zkuste to znovu."
+        },
+        "list": {
+          "created_on": "Vytvořeno dne",
+          "edit": "Upravit",
+          "delete": "Smazat",
+          "manage_scopes": "Spravovat rozsahy"
+        },
+        "avatar": {
+          "label": "Profilový obrázek",
+          "upload": "Nahrát",
+          "remove": "Odebrat"
+        },
+        "delete": {
+          "title": "Smazat AI účet",
+          "description": "Žádná integrace používající tento účet již nebude mít přístup k vašemu workspace. Tuto akci nelze vrátit zpět.",
+          "success": {
+            "title": "Úspěch!",
+            "message": "AI účet byl úspěšně smazán"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "AI účet se nepodařilo smazat"
+          }
+        },
+        "scopes": {
+          "title": "Spravovat rozsahy",
+          "description": "Rozsahy určují, k čemu má tento účet přístup. Uložením nahradíte všechny stávající rozsahy.",
+          "project": "Projekt",
+          "all_projects": "Všechny projekty",
+          "resource_type": "Prostředek",
+          "action": "Akce",
+          "resources": {
+            "all": "Vše",
+            "project": "Projekt",
+            "member": "Člen",
+            "user": "Uživatel",
+            "asset": "Soubor",
+            "estimate": "Odhad",
+            "cycle": "Cyklus",
+            "module": "Modul",
+            "sticky": "Sticky",
+            "label": "Štítek",
+            "intake": "Intake",
+            "work_item": "Pracovní položka",
+            "comment": "Komentář",
+            "state": "Stav",
+            "page": "Stránka",
+            "invite": "Pozvánka"
+          },
+          "actions": {
+            "all": "Vše",
+            "read": "Čtení",
+            "create": "Vytvořit",
+            "update": "Aktualizovat",
+            "delete": "Smazat"
+          },
+          "add_scope": "Přidat rozsah",
+          "save": "Uložit rozsahy",
+          "saving": "Ukládání",
+          "success": {
+            "title": "Úspěch!",
+            "message": "Rozsahy byly úspěšně aktualizovány"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Rozsahy se nepodařilo aktualizovat"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI účet vytvořen",
+            "message": "AI účet byl úspěšně vytvořen"
+          },
+          "not_created": {
+            "title": "AI účet nevytvořen",
+            "message": "AI účet se nepodařilo vytvořit"
+          },
+          "updated": {
+            "title": "AI účet aktualizován",
+            "message": "AI účet byl úspěšně aktualizován"
+          },
+          "not_updated": {
+            "title": "AI účet neaktualizován",
+            "message": "AI účet se nepodařilo aktualizovat"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API Tokeny",
         "description": "Generujte bezpečné API tokeny pro integraci vašich dat s externími systémy a aplikacemi.",

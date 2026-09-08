@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Comptes AI",
+        "description": "Créez et gérez des comptes de bot qui permettent aux agents AI d'accéder à votre workspace avec des autorisations à portée limitée.",
+        "add_account": "Ajouter un compte AI",
+        "modal": {
+          "create_title": "Créer un compte AI",
+          "edit_title": "Modifier le compte AI",
+          "name": "Nom",
+          "name_required": "Le nom est requis",
+          "description": "Description",
+          "create": "Créer un compte",
+          "update": "Mettre à jour le compte",
+          "creating": "Création",
+          "updating": "Mise à jour"
+        },
+        "token": {
+          "title": "Compte créé",
+          "copy_warning": "Copiez et enregistrez ce jeton maintenant. Vous ne pourrez plus le voir après avoir fermé cette boîte de dialogue.",
+          "copied": "Jeton copié dans le presse-papiers.",
+          "not_copied": "Le jeton n'a pas pu être copié. Veuillez réessayer."
+        },
+        "list": {
+          "created_on": "Créé le",
+          "edit": "Modifier",
+          "delete": "Supprimer",
+          "manage_scopes": "Gérer les portées"
+        },
+        "avatar": {
+          "label": "Avatar",
+          "upload": "Téléverser",
+          "remove": "Supprimer"
+        },
+        "delete": {
+          "title": "Supprimer le compte AI",
+          "description": "Toute intégration utilisant ce compte ne pourra plus accéder à votre workspace. Cette action est irréversible.",
+          "success": {
+            "title": "Succès !",
+            "message": "Le compte AI a été supprimé avec succès"
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "Le compte AI n'a pas pu être supprimé"
+          }
+        },
+        "scopes": {
+          "title": "Gérer les portées",
+          "description": "Les portées définissent ce à quoi ce compte peut accéder. L'enregistrement remplace toutes les portées existantes.",
+          "project": "Projet",
+          "all_projects": "Tous les projets",
+          "resource_type": "Ressource",
+          "action": "Action",
+          "resources": {
+            "all": "Tout",
+            "project": "Projet",
+            "member": "Membre",
+            "user": "Utilisateur",
+            "asset": "Fichier",
+            "estimate": "Estimation",
+            "cycle": "Cycle",
+            "module": "Module",
+            "sticky": "Sticky",
+            "label": "Étiquette",
+            "intake": "Intake",
+            "work_item": "Élément de travail",
+            "comment": "Commentaire",
+            "state": "État",
+            "page": "Page",
+            "invite": "Invitation"
+          },
+          "actions": {
+            "all": "Tout",
+            "read": "Lecture",
+            "create": "Créer",
+            "update": "Mettre à jour",
+            "delete": "Supprimer"
+          },
+          "add_scope": "Ajouter une portée",
+          "save": "Enregistrer les portées",
+          "saving": "Enregistrement",
+          "success": {
+            "title": "Succès !",
+            "message": "Portées mises à jour avec succès"
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "Les portées n'ont pas pu être mises à jour"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Compte AI créé",
+            "message": "Le compte AI a été créé avec succès"
+          },
+          "not_created": {
+            "title": "Compte AI non créé",
+            "message": "Le compte AI n'a pas pu être créé"
+          },
+          "updated": {
+            "title": "Compte AI mis à jour",
+            "message": "Le compte AI a été mis à jour avec succès"
+          },
+          "not_updated": {
+            "title": "Compte AI non mis à jour",
+            "message": "Le compte AI n'a pas pu être mis à jour"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Jetons API",
         "description": "Générez des jetons API sécurisés pour intégrer vos données avec des systèmes et applications externes.",

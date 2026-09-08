@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Contas de AI",
+        "description": "Crie e gerencie contas de bot que permitem que agentes de AI acessem seu workspace com permissões de escopo limitado.",
+        "add_account": "Adicionar conta de AI",
+        "modal": {
+          "create_title": "Criar conta de AI",
+          "edit_title": "Editar conta de AI",
+          "name": "Nome",
+          "name_required": "O nome é obrigatório",
+          "description": "Descrição",
+          "create": "Criar conta",
+          "update": "Atualizar conta",
+          "creating": "Criando",
+          "updating": "Atualizando"
+        },
+        "token": {
+          "title": "Conta criada",
+          "copy_warning": "Copie e salve este token agora. Você não poderá vê-lo novamente depois de fechar esta caixa de diálogo.",
+          "copied": "Token copiado para a área de transferência.",
+          "not_copied": "Não foi possível copiar o token. Tente novamente."
+        },
+        "list": {
+          "created_on": "Criado em",
+          "edit": "Editar",
+          "delete": "Excluir",
+          "manage_scopes": "Gerenciar escopos"
+        },
+        "avatar": {
+          "label": "Avatar",
+          "upload": "Enviar",
+          "remove": "Remover"
+        },
+        "delete": {
+          "title": "Excluir conta de AI",
+          "description": "Qualquer integração que use esta conta não poderá mais acessar seu workspace. Esta ação não pode ser desfeita.",
+          "success": {
+            "title": "Sucesso!",
+            "message": "A conta de AI foi excluída com sucesso"
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Não foi possível excluir a conta de AI"
+          }
+        },
+        "scopes": {
+          "title": "Gerenciar escopos",
+          "description": "Os escopos definem o que esta conta pode acessar. Salvar substitui todos os escopos existentes.",
+          "project": "Projeto",
+          "all_projects": "Todos os projetos",
+          "resource_type": "Recurso",
+          "action": "Ação",
+          "resources": {
+            "all": "Todos",
+            "project": "Projeto",
+            "member": "Membro",
+            "user": "Usuário",
+            "asset": "Arquivo",
+            "estimate": "Estimativa",
+            "cycle": "Ciclo",
+            "module": "Módulo",
+            "sticky": "Sticky",
+            "label": "Etiqueta",
+            "intake": "Intake",
+            "work_item": "Item de trabalho",
+            "comment": "Comentário",
+            "state": "Estado",
+            "page": "Página",
+            "invite": "Convite"
+          },
+          "actions": {
+            "all": "Todos",
+            "read": "Leitura",
+            "create": "Criar",
+            "update": "Atualizar",
+            "delete": "Excluir"
+          },
+          "add_scope": "Adicionar escopo",
+          "save": "Salvar escopos",
+          "saving": "Salvando",
+          "success": {
+            "title": "Sucesso!",
+            "message": "Escopos atualizados com sucesso"
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Não foi possível atualizar os escopos"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Conta de AI criada",
+            "message": "A conta de AI foi criada com sucesso"
+          },
+          "not_created": {
+            "title": "Conta de AI não criada",
+            "message": "Não foi possível criar a conta de AI"
+          },
+          "updated": {
+            "title": "Conta de AI atualizada",
+            "message": "A conta de AI foi atualizada com sucesso"
+          },
+          "not_updated": {
+            "title": "Conta de AI não atualizada",
+            "message": "Não foi possível atualizar a conta de AI"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Tokens de API",
         "description": "Gere tokens de API seguros para integrar seus dados com sistemas e aplicativos externos.",

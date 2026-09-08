@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI účty",
+        "description": "Vytvárajte a spravujte účty botov, ktoré umožňujú AI agentom pristupovať k vášmu workspace s oprávneniami s obmedzeným rozsahom.",
+        "add_account": "Pridať AI účet",
+        "modal": {
+          "create_title": "Vytvoriť AI účet",
+          "edit_title": "Upraviť AI účet",
+          "name": "Názov",
+          "name_required": "Názov je povinný",
+          "description": "Popis",
+          "create": "Vytvoriť účet",
+          "update": "Aktualizovať účet",
+          "creating": "Vytváranie",
+          "updating": "Aktualizácia"
+        },
+        "token": {
+          "title": "Účet vytvorený",
+          "copy_warning": "Skopírujte a uložte si tento token teraz. Po zatvorení tohto dialógu ho už nebudete môcť zobraziť.",
+          "copied": "Token skopírovaný do schránky.",
+          "not_copied": "Token sa nepodarilo skopírovať. Skúste to znova."
+        },
+        "list": {
+          "created_on": "Vytvorené dňa",
+          "edit": "Upraviť",
+          "delete": "Zmazať",
+          "manage_scopes": "Spravovať rozsahy"
+        },
+        "avatar": {
+          "label": "Profilový obrázok",
+          "upload": "Nahrať",
+          "remove": "Odstrániť"
+        },
+        "delete": {
+          "title": "Zmazať AI účet",
+          "description": "Žiadna integrácia používajúca tento účet už nebude mať prístup k vášmu workspace. Túto akciu nemožno vrátiť späť.",
+          "success": {
+            "title": "Úspech!",
+            "message": "AI účet bol úspešne zmazaný"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "AI účet sa nepodarilo zmazať"
+          }
+        },
+        "scopes": {
+          "title": "Spravovať rozsahy",
+          "description": "Rozsahy určujú, k čomu má tento účet prístup. Uložením nahradíte všetky existujúce rozsahy.",
+          "project": "Projekt",
+          "all_projects": "Všetky projekty",
+          "resource_type": "Prostriedok",
+          "action": "Akcia",
+          "resources": {
+            "all": "Všetko",
+            "project": "Projekt",
+            "member": "Člen",
+            "user": "Používateľ",
+            "asset": "Súbor",
+            "estimate": "Odhad",
+            "cycle": "Cyklus",
+            "module": "Modul",
+            "sticky": "Sticky",
+            "label": "Štítok",
+            "intake": "Intake",
+            "work_item": "Pracovná položka",
+            "comment": "Komentár",
+            "state": "Stav",
+            "page": "Stránka",
+            "invite": "Pozvánka"
+          },
+          "actions": {
+            "all": "Všetko",
+            "read": "Čítanie",
+            "create": "Vytvoriť",
+            "update": "Aktualizovať",
+            "delete": "Zmazať"
+          },
+          "add_scope": "Pridať rozsah",
+          "save": "Uložiť rozsahy",
+          "saving": "Ukladanie",
+          "success": {
+            "title": "Úspech!",
+            "message": "Rozsahy boli úspešne aktualizované"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Rozsahy sa nepodarilo aktualizovať"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI účet vytvorený",
+            "message": "AI účet bol úspešne vytvorený"
+          },
+          "not_created": {
+            "title": "AI účet nevytvorený",
+            "message": "AI účet sa nepodarilo vytvoriť"
+          },
+          "updated": {
+            "title": "AI účet aktualizovaný",
+            "message": "AI účet bol úspešne aktualizovaný"
+          },
+          "not_updated": {
+            "title": "AI účet neaktualizovaný",
+            "message": "AI účet sa nepodarilo aktualizovať"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API Tokeny",
         "description": "Generujte bezpečné API tokeny na integráciu vašich dát s externými systémami a aplikáciami.",

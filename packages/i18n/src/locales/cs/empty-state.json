@@ -226,6 +226,11 @@
       "description": "Automatizujte oznámení externím službám při výskytu událostí projektu.",
       "cta_primary": "Přidat webhook"
     },
+    "ai_accounts": {
+      "title": "Zatím žádné AI účty",
+      "description": "Vytvořte AI účty, aby AI agenti mohli přistupovat k vašemu workspace s oprávněními s omezeným rozsahem.",
+      "cta_primary": "Přidat AI účet"
+    },
     "work_item_types": {
       "title": "Vytvářejte a přizpůsobujte typy pracovních položek",
       "description": "Definujte jedinečné typy pracovních položek pro váš projekt. Každý typ může mít své vlastní vlastnosti, pracovní postupy a pole - přizpůsobené potřebám vašeho projektu a týmu.",

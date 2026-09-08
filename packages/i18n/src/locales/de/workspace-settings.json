@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI-Konten",
+        "description": "Erstellen und verwalten Sie Bot-Konten, mit denen AI-Agenten mit bereichsbezogenen Berechtigungen auf Ihren Workspace zugreifen können.",
+        "add_account": "AI-Konto hinzufügen",
+        "modal": {
+          "create_title": "AI-Konto erstellen",
+          "edit_title": "AI-Konto bearbeiten",
+          "name": "Name",
+          "name_required": "Name ist erforderlich",
+          "description": "Beschreibung",
+          "create": "Konto erstellen",
+          "update": "Konto aktualisieren",
+          "creating": "Wird erstellt",
+          "updating": "Wird aktualisiert"
+        },
+        "token": {
+          "title": "Konto erstellt",
+          "copy_warning": "Kopieren und speichern Sie dieses Token jetzt. Nach dem Schließen dieses Dialogs können Sie es nicht mehr anzeigen.",
+          "copied": "Token in die Zwischenablage kopiert.",
+          "not_copied": "Token konnte nicht kopiert werden. Bitte versuchen Sie es erneut."
+        },
+        "list": {
+          "created_on": "Erstellt am",
+          "edit": "Bearbeiten",
+          "delete": "Löschen",
+          "manage_scopes": "Bereiche verwalten"
+        },
+        "avatar": {
+          "label": "Profilbild",
+          "upload": "Hochladen",
+          "remove": "Entfernen"
+        },
+        "delete": {
+          "title": "AI-Konto löschen",
+          "description": "Integrationen, die dieses Konto verwenden, können nicht mehr auf Ihren Workspace zugreifen. Diese Aktion kann nicht rückgängig gemacht werden.",
+          "success": {
+            "title": "Erfolg!",
+            "message": "Das AI-Konto wurde erfolgreich gelöscht"
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Das AI-Konto konnte nicht gelöscht werden"
+          }
+        },
+        "scopes": {
+          "title": "Bereiche verwalten",
+          "description": "Bereiche legen fest, worauf dieses Konto zugreifen kann. Beim Speichern werden alle vorhandenen Bereiche ersetzt.",
+          "project": "Projekt",
+          "all_projects": "Alle Projekte",
+          "resource_type": "Ressource",
+          "action": "Aktion",
+          "resources": {
+            "all": "Alle",
+            "project": "Projekt",
+            "member": "Mitglied",
+            "user": "Benutzer",
+            "asset": "Datei",
+            "estimate": "Schätzung",
+            "cycle": "Zyklus",
+            "module": "Modul",
+            "sticky": "Sticky",
+            "label": "Label",
+            "intake": "Intake",
+            "work_item": "Arbeitselement",
+            "comment": "Kommentar",
+            "state": "Status",
+            "page": "Seite",
+            "invite": "Einladung"
+          },
+          "actions": {
+            "all": "Alle",
+            "read": "Lesen",
+            "create": "Erstellen",
+            "update": "Aktualisieren",
+            "delete": "Löschen"
+          },
+          "add_scope": "Bereich hinzufügen",
+          "save": "Bereiche speichern",
+          "saving": "Wird gespeichert",
+          "success": {
+            "title": "Erfolg!",
+            "message": "Bereiche wurden erfolgreich aktualisiert"
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Bereiche konnten nicht aktualisiert werden"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI-Konto erstellt",
+            "message": "Das AI-Konto wurde erfolgreich erstellt"
+          },
+          "not_created": {
+            "title": "AI-Konto nicht erstellt",
+            "message": "Das AI-Konto konnte nicht erstellt werden"
+          },
+          "updated": {
+            "title": "AI-Konto aktualisiert",
+            "message": "Das AI-Konto wurde erfolgreich aktualisiert"
+          },
+          "not_updated": {
+            "title": "AI-Konto nicht aktualisiert",
+            "message": "Das AI-Konto konnte nicht aktualisiert werden"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API-Tokens",
         "description": "Generieren Sie sichere API-Tokens, um Ihre Daten mit externen Systemen und Anwendungen zu integrieren.",

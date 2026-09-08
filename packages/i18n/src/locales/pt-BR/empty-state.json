@@ -226,6 +226,11 @@
       "description": "Automatize notificações para serviços externos quando ocorrerem eventos do projeto.",
       "cta_primary": "Adicionar webhook"
     },
+    "ai_accounts": {
+      "title": "Ainda não há contas de AI",
+      "description": "Crie contas de AI para permitir que agentes de AI acessem seu workspace com permissões de escopo limitado.",
+      "cta_primary": "Adicionar conta de AI"
+    },
     "work_item_types": {
       "title": "Crie e personalize tipos de itens de trabalho",
       "description": "Defina tipos de itens de trabalho exclusivos para seu projeto. Cada tipo pode ter suas próprias propriedades, fluxos de trabalho e campos - adaptados às necessidades do seu projeto e equipe.",

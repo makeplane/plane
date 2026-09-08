@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "Akun AI",
+        "description": "Buat dan kelola akun bot yang memungkinkan agen AI mengakses workspace Anda dengan izin tercakup.",
+        "add_account": "Tambah akun AI",
+        "modal": {
+          "create_title": "Buat akun AI",
+          "edit_title": "Sunting akun AI",
+          "name": "Nama",
+          "name_required": "Nama wajib diisi",
+          "description": "Deskripsi",
+          "create": "Buat akun",
+          "update": "Perbarui akun",
+          "creating": "Membuat",
+          "updating": "Memperbarui"
+        },
+        "token": {
+          "title": "Akun dibuat",
+          "copy_warning": "Salin dan simpan token ini sekarang. Anda tidak akan dapat melihatnya lagi setelah menutup dialog ini.",
+          "copied": "Token disalin ke clipboard.",
+          "not_copied": "Token tidak dapat disalin. Silakan coba lagi."
+        },
+        "list": {
+          "created_on": "Dibuat pada",
+          "edit": "Sunting",
+          "delete": "Hapus",
+          "manage_scopes": "Kelola cakupan"
+        },
+        "avatar": {
+          "label": "Avatar",
+          "upload": "Unggah",
+          "remove": "Hapus"
+        },
+        "delete": {
+          "title": "Hapus akun AI",
+          "description": "Integrasi apa pun yang menggunakan akun ini tidak akan lagi dapat mengakses workspace Anda. Tindakan ini tidak dapat dibatalkan.",
+          "success": {
+            "title": "Sukses!",
+            "message": "Akun AI berhasil dihapus"
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Akun AI tidak dapat dihapus"
+          }
+        },
+        "scopes": {
+          "title": "Kelola cakupan",
+          "description": "Cakupan menentukan apa yang dapat diakses akun ini. Menyimpan akan mengganti semua cakupan yang ada.",
+          "project": "Proyek",
+          "all_projects": "Semua proyek",
+          "resource_type": "Sumber daya",
+          "action": "Tindakan",
+          "resources": {
+            "all": "Semua",
+            "project": "Proyek",
+            "member": "Anggota",
+            "user": "Pengguna",
+            "asset": "Aset",
+            "estimate": "Perkiraan",
+            "cycle": "Siklus",
+            "module": "Modul",
+            "sticky": "Sticky",
+            "label": "Label",
+            "intake": "Intake",
+            "work_item": "Item kerja",
+            "comment": "Komentar",
+            "state": "Status",
+            "page": "Halaman",
+            "invite": "Undangan"
+          },
+          "actions": {
+            "all": "Semua",
+            "read": "Baca",
+            "create": "Buat",
+            "update": "Perbarui",
+            "delete": "Hapus"
+          },
+          "add_scope": "Tambah cakupan",
+          "save": "Simpan cakupan",
+          "saving": "Menyimpan",
+          "success": {
+            "title": "Sukses!",
+            "message": "Cakupan berhasil diperbarui"
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Cakupan tidak dapat diperbarui"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "Akun AI dibuat",
+            "message": "Akun AI berhasil dibuat"
+          },
+          "not_created": {
+            "title": "Akun AI tidak dibuat",
+            "message": "Akun AI tidak dapat dibuat"
+          },
+          "updated": {
+            "title": "Akun AI diperbarui",
+            "message": "Akun AI berhasil diperbarui"
+          },
+          "not_updated": {
+            "title": "Akun AI tidak diperbarui",
+            "message": "Akun AI tidak dapat diperbarui"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "Token API",
         "description": "Buat token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal.",

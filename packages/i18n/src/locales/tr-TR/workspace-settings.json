@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI hesapları",
+        "description": "AI ajanlarının kapsamlı izinlerle çalışma alanınıza erişmesini sağlayan bot hesapları oluşturun ve yönetin.",
+        "add_account": "AI hesabı ekle",
+        "modal": {
+          "create_title": "AI hesabı oluştur",
+          "edit_title": "AI hesabını düzenle",
+          "name": "Ad",
+          "name_required": "Ad gerekli",
+          "description": "Açıklama",
+          "create": "Hesap oluştur",
+          "update": "Hesabı güncelle",
+          "creating": "Oluşturuluyor",
+          "updating": "Güncelleniyor"
+        },
+        "token": {
+          "title": "Hesap oluşturuldu",
+          "copy_warning": "Bu belirteci şimdi kopyalayıp kaydedin. Bu iletişim kutusunu kapattıktan sonra bir daha göremeyeceksiniz.",
+          "copied": "Belirteç panoya kopyalandı.",
+          "not_copied": "Belirteç kopyalanamadı. Lütfen tekrar deneyin."
+        },
+        "list": {
+          "created_on": "Oluşturulma tarihi",
+          "edit": "Düzenle",
+          "delete": "Sil",
+          "manage_scopes": "Kapsamları yönet"
+        },
+        "avatar": {
+          "label": "Profil resmi",
+          "upload": "Yükle",
+          "remove": "Kaldır"
+        },
+        "delete": {
+          "title": "AI hesabını sil",
+          "description": "Bu hesabı kullanan hiçbir entegrasyon artık çalışma alanınıza erişemeyecek. Bu işlem geri alınamaz.",
+          "success": {
+            "title": "Başarılı!",
+            "message": "AI hesabı başarıyla silindi"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "AI hesabı silinemedi"
+          }
+        },
+        "scopes": {
+          "title": "Kapsamları yönet",
+          "description": "Kapsamlar bu hesabın nelere erişebileceğini tanımlar. Kaydetmek mevcut tüm kapsamları değiştirir.",
+          "project": "Proje",
+          "all_projects": "Tüm projeler",
+          "resource_type": "Kaynak",
+          "action": "Eylem",
+          "resources": {
+            "all": "Tümü",
+            "project": "Proje",
+            "member": "Üye",
+            "user": "Kullanıcı",
+            "asset": "Dosya",
+            "estimate": "Tahmin",
+            "cycle": "Döngü",
+            "module": "Modül",
+            "sticky": "Sticky",
+            "label": "Etiket",
+            "intake": "Intake",
+            "work_item": "İş öğesi",
+            "comment": "Yorum",
+            "state": "Durum",
+            "page": "Sayfa",
+            "invite": "Davet"
+          },
+          "actions": {
+            "all": "Tümü",
+            "read": "Okuma",
+            "create": "Oluştur",
+            "update": "Güncelle",
+            "delete": "Sil"
+          },
+          "add_scope": "Kapsam ekle",
+          "save": "Kapsamları kaydet",
+          "saving": "Kaydediliyor",
+          "success": {
+            "title": "Başarılı!",
+            "message": "Kapsamlar başarıyla güncellendi"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Kapsamlar güncellenemedi"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI hesabı oluşturuldu",
+            "message": "AI hesabı başarıyla oluşturuldu"
+          },
+          "not_created": {
+            "title": "AI hesabı oluşturulmadı",
+            "message": "AI hesabı oluşturulamadı"
+          },
+          "updated": {
+            "title": "AI hesabı güncellendi",
+            "message": "AI hesabı başarıyla güncellendi"
+          },
+          "not_updated": {
+            "title": "AI hesabı güncellenmedi",
+            "message": "AI hesabı güncellenemedi"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API Token'ları",
         "description": "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API token'ları oluşturun.",

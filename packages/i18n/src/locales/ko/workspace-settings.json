@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI 계정",
+        "description": "범위가 지정된 권한으로 AI 에이전트가 워크스페이스에 액세스할 수 있도록 하는 봇 계정을 만들고 관리합니다.",
+        "add_account": "AI 계정 추가",
+        "modal": {
+          "create_title": "AI 계정 생성",
+          "edit_title": "AI 계정 편집",
+          "name": "이름",
+          "name_required": "이름은 필수입니다",
+          "description": "설명",
+          "create": "계정 생성",
+          "update": "계정 업데이트",
+          "creating": "생성 중",
+          "updating": "업데이트 중"
+        },
+        "token": {
+          "title": "계정이 생성되었습니다",
+          "copy_warning": "지금 이 토큰을 복사하여 저장하세요. 이 대화 상자를 닫으면 다시 볼 수 없습니다.",
+          "copied": "토큰이 클립보드에 복사되었습니다.",
+          "not_copied": "토큰을 복사할 수 없습니다. 다시 시도하세요."
+        },
+        "list": {
+          "created_on": "생성일",
+          "edit": "편집",
+          "delete": "삭제",
+          "manage_scopes": "범위 관리"
+        },
+        "avatar": {
+          "label": "아바타",
+          "upload": "업로드",
+          "remove": "제거"
+        },
+        "delete": {
+          "title": "AI 계정 삭제",
+          "description": "이 계정을 사용하는 모든 통합은 더 이상 워크스페이스에 액세스할 수 없습니다. 이 작업은 취소할 수 없습니다.",
+          "success": {
+            "title": "성공!",
+            "message": "AI 계정이 성공적으로 삭제되었습니다"
+          },
+          "error": {
+            "title": "오류!",
+            "message": "AI 계정을 삭제할 수 없습니다"
+          }
+        },
+        "scopes": {
+          "title": "범위 관리",
+          "description": "범위는 이 계정이 액세스할 수 있는 항목을 정의합니다. 저장하면 기존 범위가 모두 대체됩니다.",
+          "project": "프로젝트",
+          "all_projects": "모든 프로젝트",
+          "resource_type": "리소스",
+          "action": "작업",
+          "resources": {
+            "all": "모두",
+            "project": "프로젝트",
+            "member": "멤버",
+            "user": "사용자",
+            "asset": "에셋",
+            "estimate": "추정",
+            "cycle": "사이클",
+            "module": "모듈",
+            "sticky": "Sticky",
+            "label": "레이블",
+            "intake": "Intake",
+            "work_item": "작업 항목",
+            "comment": "댓글",
+            "state": "상태",
+            "page": "페이지",
+            "invite": "초대"
+          },
+          "actions": {
+            "all": "모두",
+            "read": "읽기",
+            "create": "생성",
+            "update": "업데이트",
+            "delete": "삭제"
+          },
+          "add_scope": "범위 추가",
+          "save": "범위 저장",
+          "saving": "저장 중",
+          "success": {
+            "title": "성공!",
+            "message": "범위가 성공적으로 업데이트되었습니다"
+          },
+          "error": {
+            "title": "오류!",
+            "message": "범위를 업데이트할 수 없습니다"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI 계정 생성됨",
+            "message": "AI 계정이 성공적으로 생성되었습니다"
+          },
+          "not_created": {
+            "title": "AI 계정이 생성되지 않았습니다",
+            "message": "AI 계정을 생성할 수 없습니다"
+          },
+          "updated": {
+            "title": "AI 계정 업데이트됨",
+            "message": "AI 계정이 성공적으로 업데이트되었습니다"
+          },
+          "not_updated": {
+            "title": "AI 계정이 업데이트되지 않았습니다",
+            "message": "AI 계정을 업데이트할 수 없습니다"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API 토큰",
         "description": "보안 API 토큰을 생성하여 데이터를 외부 시스템 및 애플리케이션과 통합합니다.",

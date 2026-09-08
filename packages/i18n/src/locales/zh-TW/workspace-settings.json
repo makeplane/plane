@@ -150,6 +150,113 @@
           }
         }
       },
+      "ai_accounts": {
+        "title": "AI 帳戶",
+        "description": "建立和管理機器人帳戶，讓 AI 代理以限定範圍的權限存取您的工作區。",
+        "add_account": "新增 AI 帳戶",
+        "modal": {
+          "create_title": "建立 AI 帳戶",
+          "edit_title": "編輯 AI 帳戶",
+          "name": "名稱",
+          "name_required": "名稱為必填項",
+          "description": "描述",
+          "create": "建立帳戶",
+          "update": "更新帳戶",
+          "creating": "建立中",
+          "updating": "更新中"
+        },
+        "token": {
+          "title": "帳戶已建立",
+          "copy_warning": "請立即複製並儲存此權杖。關閉此對話框後，您將無法再次查看它。",
+          "copied": "權杖已複製到剪貼簿。",
+          "not_copied": "權杖複製失敗，請重試。"
+        },
+        "list": {
+          "created_on": "建立於",
+          "edit": "編輯",
+          "delete": "刪除",
+          "manage_scopes": "管理範圍"
+        },
+        "avatar": {
+          "label": "大頭貼",
+          "upload": "上傳",
+          "remove": "移除"
+        },
+        "delete": {
+          "title": "刪除 AI 帳戶",
+          "description": "使用此帳戶的任何整合都將無法再存取您的工作區。此操作無法復原。",
+          "success": {
+            "title": "成功！",
+            "message": "AI 帳戶已成功刪除"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法刪除 AI 帳戶"
+          }
+        },
+        "scopes": {
+          "title": "管理範圍",
+          "description": "範圍定義此帳戶可以存取的內容。儲存將取代所有現有範圍。",
+          "project": "專案",
+          "all_projects": "所有專案",
+          "resource_type": "資源",
+          "action": "操作",
+          "resources": {
+            "all": "全部",
+            "project": "專案",
+            "member": "成員",
+            "user": "使用者",
+            "asset": "附件",
+            "estimate": "評估",
+            "cycle": "週期",
+            "module": "模組",
+            "sticky": "Sticky",
+            "label": "標籤",
+            "intake": "Intake",
+            "work_item": "工作事項",
+            "comment": "留言",
+            "state": "狀態",
+            "page": "頁面",
+            "invite": "邀請"
+          },
+          "actions": {
+            "all": "全部",
+            "read": "讀取",
+            "create": "建立",
+            "update": "更新",
+            "delete": "刪除"
+          },
+          "add_scope": "新增範圍",
+          "save": "儲存範圍",
+          "saving": "儲存中",
+          "success": {
+            "title": "成功！",
+            "message": "範圍已成功更新"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法更新範圍"
+          }
+        },
+        "toasts": {
+          "created": {
+            "title": "AI 帳戶已建立",
+            "message": "AI 帳戶已成功建立"
+          },
+          "not_created": {
+            "title": "AI 帳戶未建立",
+            "message": "無法建立 AI 帳戶"
+          },
+          "updated": {
+            "title": "AI 帳戶已更新",
+            "message": "AI 帳戶已成功更新"
+          },
+          "not_updated": {
+            "title": "AI 帳戶未更新",
+            "message": "無法更新 AI 帳戶"
+          }
+        }
+      },
       "api_tokens": {
         "heading": "API 權杖",
         "description": "產生安全的 API 權杖，將您的資料與外部系統和應用程式整合。",
