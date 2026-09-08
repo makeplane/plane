@@ -30,10 +30,5 @@
       "body": "**Source:** `C:\\Users\\Karol\\Projects\\Ideal Business Model\\Conversation History.md` (stays in repo — not migrated)\n\nOngoing task: continue the business model conversation (was in claude.ai/chat, finalligence account). The direction taken feels too complicated now; feels like missing out on easy money via digital products and simple tools.",
       "label": "todo"
     }
-  ],
-  "pageGroups": [
-    { "pattern": "hosting-publishing.md", "name": "Hosting & publishing" },
-    { "pattern": "own-server-vs-vps-etc.md", "name": "Own server vs VPS", "parentPage": "Research" },
-    { "pattern": "how-does-claudian-obsidian-plugin-use-claude-flatrate-subscription.md", "name": "Claudian plugin research", "parentPage": "Research" }
   ]
 }

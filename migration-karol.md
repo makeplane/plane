@@ -105,7 +105,7 @@ Questimus is a **stock Plane v1.4.2 fork** (Django API + Vite/React-Router web a
 
 | Project (identifier) | Source | Initial content |
 |---|---|---|
-| **Personal** (PERSONAL) | `Empirium\pm` (Ideas.md, research notes) | Ideas (label `idea`), research pages, **Ideal Business Model → ongoing task**; Now.md entries routed per project (§9.3) |
+| **Personal** (PERSONAL) | `Empirium\pm` (Ideas.md, research notes) | Ideas (label `idea`), research content in ticket bodies (§5.5), **Ideal Business Model → ongoing task**; Now.md entries routed per project (§9.3) |
 | **Questimus** (QUESTIMUS) | (new) | This migration plan (page + Plan issue in Phase 2; Plan issue marked Done in Phase 12), future Questimus planning/tickets |
 | **Legaliosa** (LEGALIOSA) | `Legaliosa-test-ox-alpha\planning` (v2, active) | 211 tickets, 11 SP + 38 T + Plan issues, design decisions |
 | **Jobernaut** (JOBERNAUT) | `Jobernaut2\planning` (active — j2mainlink removed by Karol 2026-09-08) | 99 issues (1 Plan + 7 SP + 22 T + 69 tickets) |
@@ -172,8 +172,8 @@ Per project, from the markdown sources:
 | — | "Design" index page: **links to repo paths** of the HTML mockups (e.g. `planning/design/v2/admin.html`) — mockups themselves stay in the repo (D3); **created manually in the UI during the Legaliosa batch** (not in the page importer) |
 | `Ideas.md` | Personal issues, label `idea` (§9.3) |
 | `Now.md` | **Routed per entry** to its project via `import-now.js` (§9.3) — no "Now" page |
-| `hosting-publishing.md` | Personal: "Hosting & publishing" (O7) |
-| research notes | Personal: "Research" section — **flat pages with a `Research - ` name prefix** (Phase 4 finding, 2026-09-08: this Plane version has **no child-page UI** — the pages list filters `parent__isnull=True` and the page detail shows no children, so a parent "Research" page was invisible/empty; the two research notes were unparented, renamed `Research - Own server vs VPS` / `Research - Claudian plugin research`, and the empty parent deleted. Real page trees = **Questimus idea ticket "Child pages in UI (page tree)"**; the importer's `parentPage` option stays for when the UI supports it) |
+| `hosting-publishing.md` | **Personal ticket "Hosting & Publishing Plan" (PERSONAL-52)** — Karol 2026-09-08: pages deleted, content moved into ticket bodies ("didnt make sense for me to have pretty much empty tickets and to link to documents when the same markdown formatting works inside the ticket body") |
+| research notes | **Ticket bodies** (Karol 2026-09-08, supersedes the pages approach): `own-server-vs-vps-etc.md` → **PERSONAL-12**, `how-does-claudian…flatrate-subscription.md` → **PERSONAL-29**; all 4 pages deleted. General rule for the remaining phases: a standalone doc with a sibling issue → merge the content into the issue description; only docs **without** a sibling become pages |
 
 Note: `plan.md`/`PLAN.md` and `SP-*.md` are **not** pages anymore — they are the Plan/Subplan work items (§5.4).
 
@@ -202,7 +202,7 @@ Plane's per-project feature flags (model defaults: pages on, everything else off
 | Toggle | Model field | Setting | Why |
 |---|---|---|---|
 | Views | `issue_views_view` | **on** (all projects) | the plan's navigation — 64 saved views (workspace "Next", per-project 6, Personal 3) |
-| Pages | `page_view` | **on** (all projects) | the plan creates 32 pages (design reviews O8, research notes, POP doc, Questimus plan page, …) |
+| Pages | `page_view` | **on** (all projects) | the plan creates 29 pages (design reviews O8, POP doc, Questimus plan page, …; Personal research/hosting docs merged into ticket bodies instead — Karol 2026-09-08, §5.5) |
 | Cycles | `cycle_view` | off (all) | tested in Personal (Phase 4) — **not adopted per project** (no cross-project overview; the "Now" home widget is the weekly view, §5.7) |
 | Modules | `module_view` | off (all) | modules dropped (§5.4) |
 | Intake | `intake_view` | off (all) | app reports come in directly as work items with label `user-report` (§8.1) |
@@ -352,7 +352,7 @@ Karol: the hierarchy stages (SP/T/ST) are carried by the item prefixes, so the t
 
 ### 7.13 Ninth fork change — page create with parent (applied 2026-09-08, Phase 4)
 
-Upstream bug: `PageViewSet.create` re-fetches the created page from the list queryset, which filters `parent__isnull=True` — creating a page **with a parent** (e.g. a "Research" section) returns 404 *after* the page was created (the importer then can't record it → duplicate risk on re-run). Fix: re-fetch by pk (`Page.objects.get(pk=...)`) in `app/views/page/base.py`. Note (Phase 4, 2026-09-08): the UI has no child-page display, so sections are flat pages with a name prefix (§5.5) — the fix stays (correct API behavior) and the importer's `parentPage` option is kept for future UI support.
+Upstream bug: `PageViewSet.create` re-fetches the created page from the list queryset, which filters `parent__isnull=True` — creating a page **with a parent** (e.g. a "Research" section) returns 404 *after* the page was created (the importer then can't record it → duplicate risk on re-run). Fix: re-fetch by pk (`Page.objects.get(pk=...)`) in `app/views/page/base.py`. Note (Phase 4, 2026-09-08): the UI has no child-page display and Karol ultimately dropped pages for standalone docs (content → ticket bodies, §5.5) — the fix stays (correct API behavior) and the importer's `parentPage` option stays for future UI support (QUESTIMUS-26).
 
 ---
 
@@ -421,12 +421,12 @@ Legaliosa first (most mature), then Don Saldo, Jobernaut, Media Consumerus, othe
 | jobernaut-v2 | 99 (1 Plan + 7 SP + 22 T + 69 tickets; `archive/` excluded; live source — drifts) | 10 | 34 |
 | don-saldo | 2 | 1 | 0 |
 | media-consumerus | 12 (10 backlog + 2 todos; +4 deduped section ids) | 3 | 0 |
-| personal (Ideas only — Now.md moved to now-routing) | 23 | 3 | 0 |
+| personal (Ideas only — Now.md moved to now-routing) | 23 | 0 | 0 |
 | jobernaut-pm / don-saldo-pm / legaliosa-pm / media-consumerus-pm | 48 / 29 / 4 / 4 | 0 | 0 |
 | arsenal-pm (Arsenal.md task list) | 23 | 1 | 0 |
 | kleinanzeigen / pop | 0 (notes → pages) | 1 / 1 | 0 |
 | now-routing (Now.md — live file, count drifts) | 54 | 0 | 0 |
-| **Total** | **559** | **32** | **120** |
+| **Total** | **559** | **29** | **120** |
 
 Node.js scripts in `C:\Users\Karol\Projects\Questimus\migration-tools\` (new folder, not part of the app build):
 
@@ -449,7 +449,7 @@ Node.js scripts in `C:\Users\Karol\Projects\Questimus\migration-tools\` (new fol
 | `Empirium\pm\Ideas.md` | Each checkbox item → Personal issue, label `idea` (category → section label or description heading); the "build my own PM tool" idea → **Completed** (Questimus exists) |
 | `Empirium\pm\Now.md` | **Routed per entry** via `import-now.js` + `config/now-routing.json` (Karol 2026-09-08): each entry goes to its project (Questimus ideas → Questimus [idea], Jobernaut → Jobernaut, transcription batch → Empirium, …); nesting preserved as sub-issues; no "Now" page/project — the dashboard replaces the overview function. **Also discovered: a Google Sheets personal wishlist** (linked in Now.md) that still needs migrating into Personal |
 | `Empirium\pm\<app> folders` | Task lists → issues in the respective app projects (or Personal if no project exists) |
-| `hosting-publishing.md`, research notes | Pages in Personal (hosting-publishing per O7; research notes → "Research" section) |
+| `hosting-publishing.md`, research notes | Ticket bodies (Karol 2026-09-08 — pages deleted; §5.5: PERSONAL-52 / PERSONAL-12 / PERSONAL-29) |
 | `Ideal Business Model\Conversation History.md` | **Dropped** — one ongoing task in Personal (label `todo`); doc stays in repo |
 | `Obsidian Plugins\…\PLAN.md` + handoff | **Dropped** (Karol 2026-09-08) — stays in repo |
 | `Kleinanzeigen` (pm folder) | Parked note → issue/page in Kleinanzeigen project |
@@ -505,7 +505,7 @@ After each project is verified: **no pointers, folders stay untouched** (Karol 2
 | **1. Questimus foundation** | **Backup first** (restore point) → rebuild api (fork change §7.4) + **re-copy management commands** (rebuild wipes `docker compose cp` files) → **Karol's token** (needed by smoke test + all imports) → **hierarchy smoke test** (`smoke-test.js` in the leftover test project) → Karol sign-off → **delete test project** (v1 DELETE — permanent) **+ test bot user** → create 10 projects via `config/setup.json` (identifiers, states, labels) → **issue types (`setup_issue_types` per project — 10×)** → verify (idempotent re-run, UI) | Smoke test PASS, setup idempotent (re-run creates 0), UI looks right (10 projects, states, labels), backup snapshot exists, test project + bot user gone |
 | **2. Access & views** | Bot users + tokens (§6.2 — incl. personal-project bots; tokens saved to a gitignored local file for Phase 8/9 wiring); **views already created in Phase 1** (64 total: workspace "Next" + per-project In Progress/Done/User reports/Blocked/Planning/Tickets + Personal Inbox/Ideas/Someday — verify by re-run, 0 created); Questimus project content via `create-questimus-content.js` (this plan → page + the 8 tickets) | Tokens work, views in place, Questimus content live |
 | **3. Questimus dev** | Implement the two dev tickets created in Phase 2: **issue type UI** (selector + badge) and **home dashboard + My Issues widget** — **done 2026-09-08** (see §5.7 + §7.11: type badge everywhere + modal selector with default type; My Issues/Now home widgets; both tickets marked Done) | Type selector/badge in UI; Home shows My Issues — **done** |
-| **4. Personal** (first batch) | Ideas.md → issues; **Google Sheets wishlist** (Karol exports the sheet to CSV — File → Download → CSV — then the format is inspected and imported); research notes + hosting-publishing → pages; Now.md routed via import-now.js; cycles test ("This week" cycle in Personal — created in the UI — **done 2026-09-08: not adopted per project**, §5.7); **backup restore drill** (restore latest snapshot into a throwaway stack per the backup repo README, verify, tear down — **done**) | Personal live, Now.md retired |
+| **4. Personal** (first batch) | Ideas.md → issues; **Google Sheets wishlist** (Karol exports the sheet to CSV — File → Download → CSV — then the format is inspected and imported); research notes + hosting-publishing → **ticket bodies** (PERSONAL-12/29/52 — pages created then deleted by Karol 2026-09-08, §5.5); Now.md routed via import-now.js; cycles test ("This week" cycle in Personal — created in the UI — **done 2026-09-08: not adopted per project**, §5.7); **backup restore drill** (restore latest snapshot into a throwaway stack per the backup repo README, verify, tear down — **done**) | Personal live, Now.md retired |
 | **5. Media Consumerus** | BACKLOG table + TODOS sections → issues (estimates, labels), pages | Counts verified |
 | **6. Kleinanzeigen → POP → Arsenal → Empirium** | Vault planning (**tooling built in this phase**: `import-issues.js` gains a `planFiles` list (multiple plan files → Plan issues, incl. `.txt` — the walk only picks `.md`) + `donePlanDirs`/`archivePlanDirs` (each `.md` → Plan issue, state Done); new configs `arsenal-planning.json` + `empirium-planning.json`): active plans + HANDOFF → Plan issues; done/ + archive/ → Plan issues, state Done (O4); artifacts stay in vaults | Counts verified |
 | **7. Don Saldo** | 2 tickets + bank-import note (move to last batch if it becomes active) | Counts verified |
@@ -547,7 +547,7 @@ After each project is verified: **no pointers, folders stay untouched** (Karol 2
 | O4 | Arsenal/Empirium **vault planning**? | **All planning files → Plan-type work items** (Karol 2026-09-08 — no pages for plans, consistent with §5.4): active plans keep their status; done/ + archive/ → state Done; Empirium plans → Plan issues (state per status) |
 | O5 | **Input Splitter** (done)? | **Dropped by Karol** (deleted) |
 | O6 | **Personal Operating Profile**? | **Own project** (identifier POP) — Karol 2026-09-08 |
-| O7 | `hosting-publishing.md` home? | **Personal page** (Karol 2026-09-08) |
+| O7 | `hosting-publishing.md` home? | **Superseded 2026-09-08: content → ticket body** (Personal ticket "Hosting & Publishing Plan" — PERSONAL-52); pages dropped as a home for standalone docs with sibling issues (§5.5) |
 | O8 | **Design reviews → pages**? | **Yes** — they're decisions; pages + comments are the right home (mockups stay in repo) |
 | O9 | **Done tickets migrated**? | **Yes, all** (D7) — small volume, keeps history |
 | O10 | **Fork change** (API tokens on main API)? | **Approved + applied 2026-09-08** (common.py; takes effect on the next api container rebuild) |
