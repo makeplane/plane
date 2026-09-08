@@ -12,11 +12,11 @@ import { CHECKLIST_ITEM_STATUSES, CHECKLIST_ITEM_STATUS_MAP, STATE_GROUPS } from
 import { useTranslation } from "@plane/i18n";
 import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
-import type { TChecklistItemStatus } from "@plane/types";
+import type { EChecklistItemStatus } from "@plane/types";
 
 type Props = {
-  value: TChecklistItemStatus;
-  onChange: (value: TChecklistItemStatus) => void;
+  value: EChecklistItemStatus;
+  onChange: (value: EChecklistItemStatus) => void;
   disabled?: boolean;
 };
 

@@ -4,11 +4,16 @@
  * See the LICENSE file for details.
  */
 
-export type TChecklistItemStatus = "to_do" | "in_progress" | "skipped" | "done";
+export enum EChecklistItemStatus {
+  TO_DO = "to_do",
+  IN_PROGRESS = "in_progress",
+  SKIPPED = "skipped",
+  DONE = "done",
+}
 
 export type TIssueChecklistItemEditableFields = {
   name: string;
-  status: TChecklistItemStatus;
+  status: EChecklistItemStatus;
   sort_order: number;
 };
 

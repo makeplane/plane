@@ -9,6 +9,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { CHECKLIST_DENOMINATOR_EXCLUDED_STATUSES } from "@plane/constants";
+import { EChecklistItemStatus } from "@plane/types";
 import type {
   TIssueChecklistItem,
   TIssueChecklistItemMap,
@@ -120,7 +121,7 @@ export class IssueChecklistStore implements IIssueChecklistStore {
     ids.forEach((id) => {
       const item = this.checklistItemMap[id];
       if (!item) return;
-      if (item.status === "done") done += 1;
+      if (item.status === EChecklistItemStatus.DONE) done += 1;
       if (CHECKLIST_DENOMINATOR_EXCLUDED_STATUSES.includes(item.status)) skipped += 1;
     });
     const total = ids.length;

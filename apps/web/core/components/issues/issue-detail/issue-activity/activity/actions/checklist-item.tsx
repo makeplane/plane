@@ -10,7 +10,7 @@ import { CheckSquareOutline } from "@makeplane/propel/icons";
 // plane imports
 import { CHECKLIST_ITEM_STATUS_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { TChecklistItemStatus } from "@plane/types";
+import type { EChecklistItemStatus } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -35,7 +35,7 @@ export const IssueChecklistItemActivity = observer(function IssueChecklistItemAc
   if (!activity) return <></>;
 
   const statusLabel = (status: string) => {
-    const entry = CHECKLIST_ITEM_STATUS_MAP[status as TChecklistItemStatus];
+    const entry = CHECKLIST_ITEM_STATUS_MAP[status as EChecklistItemStatus];
     return entry ? t(entry.i18n_label) : status;
   };
 

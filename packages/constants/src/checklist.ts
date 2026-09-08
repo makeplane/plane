@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { TChecklistItemStatus, TStateGroups } from "@plane/types";
+import { EChecklistItemStatus } from "@plane/types";
+import type { TStateGroups } from "@plane/types";
 
 /**
  * Presentation-only mapping from a checklist item's status to a state group,
@@ -14,37 +15,37 @@ import type { TChecklistItemStatus, TStateGroups } from "@plane/types";
  * it) would constrain any future fifth status value.
  */
 export const CHECKLIST_ITEM_STATUSES: {
-  key: TChecklistItemStatus;
+  key: EChecklistItemStatus;
   i18n_label: string;
   stateGroup: TStateGroups;
 }[] = [
   {
-    key: "to_do",
+    key: EChecklistItemStatus.TO_DO,
     i18n_label: "checklist.status.to_do",
     stateGroup: "unstarted",
   },
   {
-    key: "in_progress",
+    key: EChecklistItemStatus.IN_PROGRESS,
     i18n_label: "checklist.status.in_progress",
     stateGroup: "started",
   },
   {
-    key: "skipped",
+    key: EChecklistItemStatus.SKIPPED,
     i18n_label: "checklist.status.skipped",
     stateGroup: "cancelled",
   },
   {
-    key: "done",
+    key: EChecklistItemStatus.DONE,
     i18n_label: "checklist.status.done",
     stateGroup: "completed",
   },
 ];
 
-export const CHECKLIST_ITEM_STATUS_MAP: Record<TChecklistItemStatus, (typeof CHECKLIST_ITEM_STATUSES)[number]> =
+export const CHECKLIST_ITEM_STATUS_MAP: Record<EChecklistItemStatus, (typeof CHECKLIST_ITEM_STATUSES)[number]> =
   Object.fromEntries(CHECKLIST_ITEM_STATUSES.map((status) => [status.key, status])) as Record<
-    TChecklistItemStatus,
+    EChecklistItemStatus,
     (typeof CHECKLIST_ITEM_STATUSES)[number]
   >;
 
 /** Statuses excluded from the progress denominator. Currently just "skipped". */
-export const CHECKLIST_DENOMINATOR_EXCLUDED_STATUSES: TChecklistItemStatus[] = ["skipped"];
+export const CHECKLIST_DENOMINATOR_EXCLUDED_STATUSES: EChecklistItemStatus[] = [EChecklistItemStatus.SKIPPED];

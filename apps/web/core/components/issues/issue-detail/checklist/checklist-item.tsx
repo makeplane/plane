@@ -13,7 +13,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { DeleteOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import type { TChecklistItemStatus, TIssueServiceType } from "@plane/types";
+import { EChecklistItemStatus } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -108,7 +109,7 @@ export const ChecklistItem = observer(function ChecklistItem(props: Props) {
 
   if (!item) return null;
 
-  const isTerminal = item.status === "done" || item.status === "skipped";
+  const isTerminal = item.status === EChecklistItemStatus.DONE || item.status === EChecklistItemStatus.SKIPPED;
 
   const commitName = () => {
     const trimmed = name.trim();
@@ -129,7 +130,7 @@ export const ChecklistItem = observer(function ChecklistItem(props: Props) {
     }
   };
 
-  const handleStatusChange = (status: TChecklistItemStatus) => {
+  const handleStatusChange = (status: EChecklistItemStatus) => {
     if (status !== item.status) checklistOperations.setStatus(checklistItemId, status);
   };
 
@@ -163,7 +164,7 @@ export const ChecklistItem = observer(function ChecklistItem(props: Props) {
           className={cn(
             "w-0 flex-1 rounded-sm border border-transparent bg-transparent px-2 py-1 text-13 outline-none focus:border-subtle focus:bg-surface-1",
             isTerminal ? "text-tertiary line-through" : "text-primary",
-            item.status === "skipped" && "opacity-60"
+            item.status === EChecklistItemStatus.SKIPPED && "opacity-60"
           )}
         />
         <ChecklistStatusDropdown value={item.status} onChange={handleStatusChange} disabled={disabled} />
