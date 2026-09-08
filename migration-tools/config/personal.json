@@ -9,6 +9,7 @@
   "stateFile": "state/personal.json",
   "pagesStateFile": "state/personal-pages.json",
   "typesFile": "state/types.json",
+  "assigneeId": "a8f10b92-1ff5-4916-9ffa-6f96e40aeafb",
   "ticketsDir": null,
   "sourceLine": true,
   "stateMapping": {

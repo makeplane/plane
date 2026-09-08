@@ -37,12 +37,22 @@ export const useHomeIssues = (workspaceSlug: string | undefined, userId: string 
     workspaceSlug && userId ? `HOME_ASSIGNED_ISSUES_${workspaceSlug}` : null,
     async () => {
       const filters = JSON.stringify({ assignee_id__in: userId });
-      const res = await service.getWorkspaceIssues(workspaceSlug!, {
-        filters,
-        per_page: "100",
-        order_by: "-created_at",
-      });
-      return (Array.isArray(res) ? res : (res?.results ?? [])) as THomeIssue[];
+      // Fetch all pages (cursor pagination) — the widgets filter client-side,
+      // so a single 100-row page would silently drop older Now-worthy issues.
+      const all: THomeIssue[] = [];
+      let cursor: string | undefined;
+      do {
+        const res = await service.getWorkspaceIssues(workspaceSlug!, {
+          filters,
+          per_page: "100",
+          order_by: "-created_at",
+          ...(cursor ? { cursor } : {}),
+        });
+        const page = (Array.isArray(res) ? res : (res?.results ?? [])) as THomeIssue[];
+        all.push(...page);
+        cursor = res?.next_page_results ? res.next_cursor : undefined;
+      } while (cursor);
+      return all;
     }
   );
   return { issues: data ?? [], isLoading };

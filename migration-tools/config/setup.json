@@ -9,8 +9,7 @@
         "name": "Personal",
         "identifier": "PERSONAL",
         "description": "Karol's personal project: ideas, todos, research, errands.",
-        "labels": ["verified", "user-report", "idea", "todo", "someday", "research"],
-        "features": { "cycle_view": true }
+        "labels": ["verified", "user-report", "idea", "todo", "someday", "research"]
       },
       {
         "name": "Questimus",

@@ -466,6 +466,7 @@ async function main() {
       external_source: cfg.externalSource,
       external_id: item.externalId,
     };
+    if (cfg.assigneeId) payload.assignees = [cfg.assigneeId];
     if (labels.length) payload.labels = labels;
     if (item.data[cfg.createdField || "created"]) {
       // Normalize to ISO: gray-matter yields a Date object; the lenient fallback

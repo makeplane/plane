@@ -181,6 +181,7 @@ async function main() {
       external_source: cfg.externalSource || "empirium-now",
       external_id: `now-${i + 1}`,
     };
+    if (cfg.assigneeId) payload.assignees = [cfg.assigneeId];
     if (types.Ticket) payload.type_id = types.Ticket;
 
     // Parent link: only when the parent routed to the same project
