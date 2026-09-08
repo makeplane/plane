@@ -867,5 +867,14 @@
       "description": "Экспорт рабочих элементов в JSON-файл.",
       "short_description": "Экспорт в json"
     }
-  }
+  },
+  "reactions": {
+    "toasts": {
+      "created": "Reaction created successfully",
+      "creation_failed": "Reaction creation failed",
+      "removed": "Reaction removed successfully",
+      "remove_failed": "Reaction remove failed"
+    }
+  },
+  "please_select_at_least_one_work_item": "Please select at least one work item."
 }

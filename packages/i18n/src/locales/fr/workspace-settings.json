@@ -503,6 +503,12 @@
         "title": "Aucune importation pour le moment",
         "description": "Trouvez toutes vos importations précédentes ici et téléchargez-les."
       }
+    },
+    "toasts": {
+      "updated": "Workspace updated successfully",
+      "picture_removed": "Workspace picture removed successfully.",
+      "picture_remove_failed": "There was some error in deleting your profile picture. Please try again.",
+      "url_copied": "Workspace URL copied to the clipboard."
     }
   }
 }

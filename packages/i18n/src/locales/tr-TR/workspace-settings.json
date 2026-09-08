@@ -503,6 +503,12 @@
         "title": "Henüz içe aktarma yok",
         "description": "Tüm önceki içe aktarmalarınızı burada bulabilir ve indirebilirsiniz."
       }
+    },
+    "toasts": {
+      "updated": "Workspace updated successfully",
+      "picture_removed": "Workspace picture removed successfully.",
+      "picture_remove_failed": "There was some error in deleting your profile picture. Please try again.",
+      "url_copied": "Workspace URL copied to the clipboard."
     }
   }
 }

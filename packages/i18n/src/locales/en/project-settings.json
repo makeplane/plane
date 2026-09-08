@@ -1,5 +1,11 @@
 {
   "project_settings": {
+    "label": "Project settings",
+    "feature_toasts": {
+      "updating": "Updating project feature...",
+      "updated": "Project feature updated successfully.",
+      "update_failed": "Something went wrong while updating project feature. Please try again."
+    },
     "general": {
       "enter_project_id": "Enter project ID",
       "please_select_a_timezone": "Please select a timezone",
