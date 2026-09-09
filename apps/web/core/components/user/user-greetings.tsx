@@ -4,40 +4,49 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 // hooks
 import type { IUser } from "@plane/types";
 import { useCurrentTime } from "@/hooks/use-current-time";
+import { useDisplayTimezone } from "@/hooks/use-display-timezone";
 // types
 
 export interface IUserGreetingsView {
   user: IUser;
 }
 
-export function UserGreetingsView(props: IUserGreetingsView) {
+export const UserGreetingsView = observer(function UserGreetingsView(props: IUserGreetingsView) {
   const { user } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
   // store hooks
   const { t } = useTranslation();
+  // resolved display timezone: user preference (UTC treated as unset) -> workspace timezone -> browser local
+  const timeZone = useDisplayTimezone(user?.user_timezone);
 
+  // all fields below must use the same timezone, otherwise the greeting and
+  // the displayed time can belong to different timezones
   const hour = new Intl.DateTimeFormat("en-US", {
+    timeZone,
     hour12: false,
     hour: "numeric",
   }).format(currentTime);
 
   const date = new Intl.DateTimeFormat("en-US", {
+    timeZone,
     month: "short",
     day: "numeric",
   }).format(currentTime);
 
   const weekDay = new Intl.DateTimeFormat("en-US", {
+    timeZone,
     weekday: "long",
   }).format(currentTime);
 
   const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
+    timeZone,
     hour12: false, // Use 24-hour format
     hour: "2-digit",
     minute: "2-digit",
@@ -58,4 +67,4 @@ export function UserGreetingsView(props: IUserGreetingsView) {
       </h5>
     </div>
   );
-}
+});
