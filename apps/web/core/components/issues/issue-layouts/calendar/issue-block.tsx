@@ -24,6 +24,7 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 // local components
 import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
@@ -132,13 +133,18 @@ export const CalendarIssueBlock = observer(
                       }}
                     />
                     {issue.project_id && (
-                      <IssueIdentifier
-                        issueId={issue.id}
-                        projectId={issue.project_id}
-                        size="xs"
-                        variant="tertiary"
-                        displayProperties={issuesFilter?.issueFilters?.displayProperties}
-                      />
+                      <WithDisplayPropertiesHOC
+                        displayProperties={issuesFilter?.issueFilters?.displayProperties || {}}
+                        displayPropertyKey="key"
+                      >
+                        <IssueIdentifier
+                          issueId={issue.id}
+                          projectId={issue.project_id}
+                          size="xs"
+                          variant="tertiary"
+                          displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                        />
+                      </WithDisplayPropertiesHOC>
                     )}
                     <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
                   </div>

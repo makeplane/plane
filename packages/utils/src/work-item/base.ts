@@ -312,6 +312,15 @@ export const getComputedDisplayProperties = (
   issue_type: displayProperties?.issue_type ?? true,
 });
 
+/**
+ * @description Hide work item IDs when Display → IDs is off. Callers that omit
+ * `displayProperties` (detail views, pickers, search) always show the identifier.
+ */
+export const shouldDisplayWorkItemId = (displayProperties?: IIssueDisplayProperties): boolean => {
+  if (!displayProperties) return true;
+  return !!displayProperties.key;
+};
+
 export const generateWorkItemLink = ({
   workspaceSlug,
   projectId,
