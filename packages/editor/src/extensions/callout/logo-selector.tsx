@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
 import { cn } from "@plane/utils";
 // types

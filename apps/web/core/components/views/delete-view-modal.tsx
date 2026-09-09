@@ -9,10 +9,10 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IProjectView } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/blocks/modals";
 // hooks
 import { useProjectView } from "@/hooks/store/use-project-view";
 

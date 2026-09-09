@@ -6,7 +6,7 @@
 
 import { DownloadOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 
 type Props = {
   src: string;
@@ -16,7 +16,7 @@ export function ImageDownloadAction(props: Props) {
   const { src } = props;
 
   return (
-    <Tooltip tooltipContent="Download">
+    <Tooltip label="Download">
       <button
         type="button"
         onClick={() => window.open(src, "_blank")}

@@ -10,7 +10,7 @@ import { EEstimateSystem } from "@plane/constants";
 import { ProjectsOutline } from "@makeplane/propel/icons";
 import type { ChartYAxisMetric } from "@plane/types";
 // plane package imports
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web constants

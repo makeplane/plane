@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 import { DeleteOutline, EditOutline, LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { LinkItemBlock } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { LinkItemBlock } from "@plane/blocks/link";
 // plane utils
 import { copyTextToClipboard } from "@plane/utils";
 // hooks

@@ -11,12 +11,13 @@ import type { ENotificationFilterType } from "@plane/constants";
 import { FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { PopoverMenu } from "@plane/ui";
+import { PopoverMenu } from "@plane/blocks/popovers";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
@@ -33,7 +34,12 @@ export const NotificationFilter = observer(function NotificationFilter() {
       data={translatedFilterTypeOptions}
       button={
         <Tooltip label={t("notification.options.filters")} side="bottom" disabled={isMobile}>
-          <IconButton size="base" variant="ghost" icon={FilterOutline} />
+          <IconButton
+            size="sm"
+            variant="ghost"
+            icon={<Icon icon={FilterOutline} />}
+            aria-label={t("notification.options.filters")}
+          />
         </Tooltip>
       }
       keyExtractor={(item: { label: string; value: ENotificationFilterType }) => item.value}

@@ -13,9 +13,9 @@ import { LogOutOutline } from "@makeplane/propel/icons";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { AuthService } from "@plane/services";
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@plane/blocks/avatar";
 import { getFileURL } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -119,7 +119,7 @@ export const UserAvatar = observer(function UserAvatar() {
       ) : (
         <div className="flex-shrink-0">
           <Link to={`/?next_path=${pathName}?${queryParam}`}>
-            <Button variant="secondary">Sign in</Button>
+            <Button variant="secondary" size="sm" stretch="auto" label="Sign in" />
           </Link>
         </div>
       )}

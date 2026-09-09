@@ -11,13 +11,15 @@ import { Controller, useForm } from "react-hook-form";
 
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { GlobeOutline, NewTabOutline, TickOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Loader } from "@plane/blocks/loader";
+import { ModalCore, EModalWidth } from "@plane/blocks/modals";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -184,13 +186,13 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           <h5 className="text-18 font-medium text-secondary">Publish project</h5>
           {isProjectPublished && (
             <Button
-              variant="error-fill"
-              size="lg"
+              variant="danger"
+              size="md"
+              stretch="auto"
+              label={isUnPublishing ? "Unpublishing" : "Unpublish"}
               onClick={() => handleUnPublishProject(watch("id") ?? "")}
               loading={isUnPublishing}
-            >
-              {isUnPublishing ? "Unpublishing" : "Unpublish"}
-            </Button>
+            />
           )}
         </div>
 
@@ -320,19 +322,27 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">
-              <Button variant="secondary" size="lg" onClick={handleClose}>
-                Cancel
-              </Button>
+              <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
               {isProjectPublished ? (
                 isDirty && (
-                  <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-                    {isSubmitting ? "Updating" : "Update settings"}
-                  </Button>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    stretch="auto"
+                    type="submit"
+                    label={isSubmitting ? "Updating" : "Update settings"}
+                    loading={isSubmitting}
+                  />
                 )
               ) : (
-                <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-                  {isSubmitting ? "Publishing" : "Publish"}
-                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  stretch="auto"
+                  type="submit"
+                  label={isSubmitting ? "Publishing" : "Publish"}
+                  loading={isSubmitting}
+                />
               )}
             </div>
           )}

@@ -5,7 +5,7 @@
  */
 
 import { range } from "lodash-es";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 
 export function PageLoader() {
   return (

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane package imports
 import type { ICycle, IModule, IProject } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@plane/blocks/spinner";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // plane web components

@@ -5,10 +5,10 @@
  */
 
 import { Controller, useForm } from "react-hook-form";
-import { Button } from "@plane/propel/button";
-import { Calendar } from "@plane/propel/calendar";
+import { Button } from "@makeplane/propel/components/button";
+import { Calendar } from "@makeplane/propel/components/calendar";
 import { CloseOutline } from "@makeplane/propel/icons";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
 import { DateFilterSelect } from "./date-filter-select";
 type Props = {
@@ -72,8 +72,6 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
               const date2Value = getDate(watch("date2"));
               return (
                 <Calendar
-                  className="rounded-md border border-subtle p-3"
-                  captionLayout="dropdown"
                   selected={dateValue}
                   defaultMonth={dateValue}
                   onSelect={(date: Date | undefined) => {
@@ -81,6 +79,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                     onChange(date);
                   }}
                   mode="single"
+                  showOutsideDays
                   disabled={date2Value ? [{ after: date2Value }] : undefined}
                 />
               );
@@ -95,8 +94,6 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                 const date1Value = getDate(watch("date1"));
                 return (
                   <Calendar
-                    className="rounded-md border border-subtle p-3"
-                    captionLayout="dropdown"
                     selected={dateValue}
                     defaultMonth={dateValue}
                     onSelect={(date: Date | undefined) => {
@@ -104,6 +101,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                       onChange(date);
                     }}
                     mode="single"
+                    showOutsideDays
                     disabled={date1Value ? [{ before: date1Value }] : undefined}
                   />
                 );
@@ -120,18 +118,16 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
           </h6>
         )}
         <div className="flex justify-end gap-4">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
             type="button"
+            label="Apply"
             onClick={handleSubmit(handleFormSubmit)}
             disabled={isInvalid}
-          >
-            Apply
-          </Button>
+          />
         </div>
       </form>
     </ModalCore>

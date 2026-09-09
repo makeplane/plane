@@ -9,7 +9,7 @@ import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type Props = {
   label: string;
@@ -49,7 +49,14 @@ export function ComicBoxButton(props: Props) {
   return (
     <Popover as="div" className="relative">
       <Popover.Button as={Fragment}>
-        <Button variant="primary" size="lg" ref={setReferenceElement} onClick={onClick} disabled={disabled}>
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          ref={setReferenceElement}
+          onClick={onClick}
+          disabled={disabled}
+        >
           {icon}
           <span className="leading-4">{label}</span>
           <span className="relative h-2 w-2">

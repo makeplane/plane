@@ -11,7 +11,7 @@ import { Ban } from "lucide-react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { EUserProjectRoles } from "@plane/types";
 // plane ui
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

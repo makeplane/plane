@@ -10,10 +10,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { Button } from "@makeplane/propel/components/button";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IIssueLabel } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import type { TLabelOperationsCallbacks } from "@/components/labels";
 import {
   CreateUpdateLabelInline,
@@ -85,9 +85,7 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
         description={t("project_settings.labels.description")}
         control={
           isEditable && (
-            <Button variant="primary" size="lg" onClick={newLabel}>
-              {t("common.add_label")}
-            </Button>
+            <Button variant="primary" size="md" stretch="auto" onClick={newLabel} label={t("common.add_label")} />
           )
         }
       />

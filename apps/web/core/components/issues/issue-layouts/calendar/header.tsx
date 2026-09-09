@@ -11,7 +11,7 @@ import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronLeftOutline, ChevronRightOutline } from "@makeplane/propel/icons";
 import type { TSupportedFilterForUpdate } from "@plane/types";
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 // icons
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";

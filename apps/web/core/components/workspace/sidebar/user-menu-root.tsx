@@ -12,8 +12,8 @@ import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { CustomMenu } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";

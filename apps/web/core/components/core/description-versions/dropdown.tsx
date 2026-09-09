@@ -9,7 +9,7 @@ import { HistoryOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TDescriptionVersion } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { calculateTimeAgo } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

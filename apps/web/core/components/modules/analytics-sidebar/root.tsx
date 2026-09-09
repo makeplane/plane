@@ -22,11 +22,12 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import { Loader, CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Loader } from "@plane/blocks/loader";
 import { TextArea } from "@makeplane/propel/components/text-area";
 // components
 // helpers

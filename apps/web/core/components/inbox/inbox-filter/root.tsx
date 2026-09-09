@@ -5,9 +5,8 @@
  */
 
 import { ChevronDownOutline, FilterOutline } from "@makeplane/propel/icons";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 // plane imports
-import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
@@ -19,11 +18,11 @@ import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 const smallButton = <FilterOutline className="size-3" />;
 
 const largeButton = (
-  <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
+  <Button variant="secondary" size="sm" stretch="auto" render={<div className="px-2 text-tertiary" />}>
     <FilterOutline className="size-3" />
     <span>Filters</span>
     <ChevronDownOutline className="size-3" />
-  </div>
+  </Button>
 );
 export function FiltersRoot() {
   const windowSize = useSize();

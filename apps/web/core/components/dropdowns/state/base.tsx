@@ -11,10 +11,11 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import { ChevronDownOutline, SearchOutline } from "@makeplane/propel/icons";
 import type { IState } from "@plane/types";
-import { ComboDropDown, Spinner } from "@plane/ui";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
+import { Spinner } from "@plane/blocks/spinner";
 import { cn } from "@plane/utils";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";

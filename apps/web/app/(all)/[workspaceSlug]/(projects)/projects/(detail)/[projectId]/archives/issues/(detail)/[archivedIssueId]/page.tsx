@@ -11,8 +11,8 @@ import useSWR from "swr";
 import { Banner } from "@makeplane/propel/components/banner";
 import { ArchiveOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Loader } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Loader } from "@plane/blocks/loader";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
@@ -77,10 +77,11 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             actions={
               <Button
                 variant="secondary"
+                size="sm"
+                stretch="auto"
+                label={t("issue.archive.go_to_archives")}
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
-              >
-                {t("issue.archive.go_to_archives")}
-              </Button>
+              />
             }
           />
           <div className="flex h-full overflow-hidden">

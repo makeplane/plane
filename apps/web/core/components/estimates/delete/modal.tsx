@@ -7,9 +7,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
@@ -76,12 +76,22 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
         </div>
 
         <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
-          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
-            Cancel
-          </Button>
-          <Button variant="error-fill" size="lg" onClick={handleDeleteEstimate} disabled={buttonLoader}>
-            {buttonLoader ? "Deleting" : "Delete Estimate"}
-          </Button>
+          <Button
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            onClick={handleClose}
+            disabled={buttonLoader}
+            label="Cancel"
+          />
+          <Button
+            variant="danger"
+            size="md"
+            stretch="auto"
+            onClick={handleDeleteEstimate}
+            disabled={buttonLoader}
+            label={buttonLoader ? "Deleting" : "Delete Estimate"}
+          />
         </div>
       </div>
     </ModalCore>

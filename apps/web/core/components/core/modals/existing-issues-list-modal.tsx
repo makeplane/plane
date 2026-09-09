@@ -10,13 +10,14 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -313,26 +314,27 @@ export function ExistingIssuesListModal(props: Props) {
       </Combobox>
       <div className="flex items-center justify-between p-3">
         <Button
-          variant="link"
+          variant="ghost"
+          size="sm"
+          stretch="auto"
+          label={
+            selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")
+          }
+          render={<button className={`px-0 text-link-primary underline ${filteredIssues.length === 0 ? "p-0" : ""}`} />}
           onClick={handleSelectIssues}
           disabled={filteredIssues.length === 0}
-          className={filteredIssues.length === 0 ? "p-0" : ""}
-        >
-          {selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")}
-        </Button>
+        />
         <div className="flex items-center justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            {t("common.cancel")}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label={t("common.cancel")} onClick={handleClose} />
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
+            label={isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
             onClick={onSubmit}
             loading={isSubmitting}
             disabled={isSubmitting || selectedIssues.length === 0}
-          >
-            {isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
-          </Button>
+          />
         </div>
       </div>
     </ModalCore>

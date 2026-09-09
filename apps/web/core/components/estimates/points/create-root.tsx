@@ -9,10 +9,11 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { estimateCount } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { AddOutline } from "@makeplane/propel/icons";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
-import { Sortable } from "@plane/ui";
+import { Sortable } from "@plane/blocks/sortable";
 // local imports
 import { EstimatePointCreate } from "./create";
 import { EstimatePointItemPreview } from "./preview";
@@ -171,9 +172,16 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
           />
         ))}
       {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
-        <Button variant="link" prependIcon={<AddOutline />} onClick={handleCreate}>
-          Add {estimateType}
-        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          stretch="auto"
+          label={`Add ${estimateType}`}
+          icon={<Icon icon={AddOutline} />}
+          iconPosition="start"
+          onClick={handleCreate}
+          render={<button className="px-0 text-link-primary underline" />}
+        />
       )}
     </div>
   );

@@ -10,9 +10,9 @@ import { useParams } from "next/navigation";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Popover } from "@plane/propel/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import type { TIssue } from "@plane/types";
-import { ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -96,9 +96,10 @@ export const CalendarIssueBlock = observer(
     });
 
     return (
-      <Popover delay={100} openOnHover>
-        <Popover.Button
-          className="w-full"
+      <Popover>
+        <PopoverTrigger
+          openOnHover
+          delay={100}
           render={
             <ControlLink
               id={`issue-${issue.id}`}
@@ -167,19 +168,17 @@ export const CalendarIssueBlock = observer(
             </ControlLink>
           }
         />
-        <Popover.Panel side="bottom" align="start">
-          <>
-            {issue.project_id && (
-              <WorkItemPreviewCard
-                projectId={issue.project_id}
-                stateDetails={{
-                  id: issue.state_id ?? undefined,
-                }}
-                workItem={issue}
-              />
-            )}
-          </>
-        </Popover.Panel>
+        <PopoverContent side="bottom" align="start" sideOffset={8}>
+          {issue.project_id && (
+            <WorkItemPreviewCard
+              projectId={issue.project_id}
+              stateDetails={{
+                id: issue.state_id ?? undefined,
+              }}
+              workItem={issue}
+            />
+          )}
+        </PopoverContent>
       </Popover>
     );
   })

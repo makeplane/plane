@@ -11,7 +11,7 @@ import { observer } from "mobx-react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // components
 import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";

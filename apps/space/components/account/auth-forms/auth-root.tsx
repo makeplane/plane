@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import { SitesAuthService } from "@plane/services";
 import type { IEmailCheckData } from "@plane/types";
-import { OAuthOptions } from "@plane/ui";
+import { OAuthOptions } from "@plane/blocks/oauth";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/helpers/authentication.helper";

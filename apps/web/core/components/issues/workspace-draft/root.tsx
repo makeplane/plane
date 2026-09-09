@@ -10,7 +10,7 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EDraftIssuePaginationType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";

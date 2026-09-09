@@ -5,13 +5,14 @@
  */
 
 import { observer } from "mobx-react";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type Props = {
   workspaceSlug: string;
@@ -55,7 +56,14 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
         closeOnSelect
         maxHeight="lg"
         className="flex size-[26px] flex-shrink-0 items-center justify-center rounded"
-        customButton={<IconButton size="lg" variant="tertiary" icon={MoreHorizontalOutline} />}
+        customButton={
+          <IconButton
+            size="md"
+            variant="tertiary"
+            icon={<Icon icon={MoreHorizontalOutline} />}
+            aria-label="Quick actions"
+          />
+        }
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;

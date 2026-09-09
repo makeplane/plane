@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { DragDropOutline, EditOutline } from "@makeplane/propel/icons";
 import { EIconSize } from "@plane/constants";
 // plane imports
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 // local imports
 import { useProjectState } from "@/hooks/store/use-project-state";

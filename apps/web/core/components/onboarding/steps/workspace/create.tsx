@@ -11,10 +11,11 @@ import { TickCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@plane/blocks/spinner";
 import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
@@ -290,13 +291,17 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
+        <ButtonElement variant="primary" type="submit" size="lg" stretch="full" disabled={isButtonDisabled}>
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
-        </Button>
+        </ButtonElement>
         {hasInvitations && (
-          <Button variant="ghost" size="xl" className="w-full" onClick={handleCurrentViewChange}>
-            Join existing workspace
-          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            stretch="full"
+            onClick={handleCurrentViewChange}
+            label="Join existing workspace"
+          />
         )}
       </div>
     </form>

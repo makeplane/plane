@@ -24,10 +24,11 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { EOnboardingSteps } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@plane/blocks/spinner";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -382,18 +383,16 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         </button>
       </div>
       <div className="mx-auto flex w-full flex-col items-center justify-center gap-4 px-8 sm:px-2">
-        <Button
+        <ButtonElement
           variant="primary"
           type="submit"
-          size="xl"
-          className="w-full"
+          size="lg"
+          stretch="full"
           disabled={isInvitationDisabled || !isValid || isSubmitting}
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-        </Button>
-        <Button variant="ghost" size="xl" className="w-full" onClick={nextStep}>
-          I’ll do it later
-        </Button>
+        </ButtonElement>
+        <Button variant="ghost" size="lg" stretch="full" onClick={nextStep} label="I’ll do it later" />
       </div>
     </form>
   );

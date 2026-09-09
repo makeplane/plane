@@ -11,9 +11,9 @@ import { useParams } from "next/navigation";
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline, DeleteOutline, LinkOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomSelect, CustomMenu } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { CustomSelect, CustomMenu } from "@plane/blocks/dropdowns";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";

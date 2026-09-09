@@ -9,10 +9,11 @@ import { useParams } from "next/navigation";
 
 // ui
 import { useTranslation } from "@plane/i18n";
-import { LayerStackIcon } from "@plane/propel/icons";
+import { LayerStackIcon } from "@plane/blocks/icons";
 import { AddOutline, UserOutline } from "@makeplane/propel/icons";
 import type { IUserProfileData } from "@plane/types";
-import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
+import { Card, ECardSpacing, ECardDirection } from "@plane/blocks/card";
+import { Loader } from "@plane/blocks/loader";
 // types
 
 type Props = {

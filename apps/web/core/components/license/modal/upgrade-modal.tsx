@@ -16,7 +16,7 @@ import {
   TALK_TO_SALES_URL,
 } from "@plane/constants";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { EModalWidth, ModalCore } from "@plane/ui";
+import { EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { cn } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";

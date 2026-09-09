@@ -7,9 +7,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ViewsOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ViewListHeader } from "@/components/views/view-list-header";
@@ -47,9 +48,13 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
         <Header.RightItem>
           <ViewListHeader />
           <div>
-            <Button variant="primary" size="lg" onClick={() => toggleCreateViewModal(true)}>
-              Add view
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label="Add view"
+              onClick={() => toggleCreateViewModal(true)}
+            />
           </div>
         </Header.RightItem>
       </Header>

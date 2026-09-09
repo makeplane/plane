@@ -30,10 +30,11 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { FavoriteFolderIcon } from "@plane/propel/icons";
+import { FavoriteFolderIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
+import { DropIndicator, DragHandle } from "@plane/blocks/sortable";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

@@ -11,10 +11,11 @@ import { AutoCloseOutline, StateOutline } from "@makeplane/propel/icons";
 // plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import type { IProject } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, CustomSearchSelect, Loader } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect } from "@plane/blocks/dropdowns";
+import { Loader } from "@plane/blocks/loader";
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks

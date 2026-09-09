@@ -22,13 +22,14 @@ import {
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Button } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, FavoriteStar } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { ContextMenu } from "@plane/blocks/dropdowns";
+import { FavoriteStar } from "@plane/blocks/favorite-star";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 // hooks
@@ -366,16 +367,17 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
-                      variant="link"
-                      className="!p-0 font-semibold"
+                      variant="ghost"
+                      size="sm"
+                      stretch="auto"
+                      label="Join"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setJoinProjectModal(true);
                       }}
-                    >
-                      Join
-                    </Button>
+                      render={<button className="!p-0 font-semibold text-link-primary underline" />}
+                    />
                   </div>
                 )}
               </>

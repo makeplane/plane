@@ -7,11 +7,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // plane ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
@@ -101,7 +101,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
     <CustomMenu
       customButton={
         <div className="relative">
-          <Button variant="secondary" size="lg" className="flex items-center gap-2">
+          <Button variant="secondary" size="md" stretch="auto" render={<button className="flex items-center gap-2" />}>
             <span>Filters</span>
             <ChevronDownOutline className="h-3 w-3" />
           </Button>

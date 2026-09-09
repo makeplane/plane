@@ -6,11 +6,11 @@
 
 import React from "react";
 // types
-import { CycleGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon } from "@plane/blocks/icons";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // icons
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 // helpers
 import { cn } from "@plane/utils";
 

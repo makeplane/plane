@@ -13,9 +13,9 @@ import { ChevronDownOutline, LogOutOutline, MailOutline, PlusCircleOutline } fro
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";

@@ -9,7 +9,7 @@ import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants

@@ -6,7 +6,7 @@
 
 import React from "react";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import { InboxSidebarLoader } from "./inbox-sidebar-loader";
 
 export function InboxLayoutLoader() {

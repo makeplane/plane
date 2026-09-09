@@ -24,8 +24,8 @@ import {
 import { EPageAccess } from "@plane/constants";
 // plane editor
 // plane ui
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";

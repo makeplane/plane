@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { CloseOutline } from "@makeplane/propel/icons";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

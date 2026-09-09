@@ -23,10 +23,11 @@ import {
 } from "@tanstack/react-table";
 
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 // plane package imports
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
+import { Table, TableBody, TableHeader, TableRow } from "@makeplane/propel/components/table";
+import { TableCell, TableHead } from "@makeplane/propel/elements/table";
 import { cn } from "@plane/utils";
 // plane web components
 
@@ -130,12 +131,18 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
       </div>
 
       <div className="rounded-md">
-        <Table>
+        <Table variant="table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} colSpan={header.colSpan} className="whitespace-nowrap">
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    variant="table"
+                    pinned="none"
+                    render={<th className="whitespace-nowrap" />}
+                  >
                     {header.isPlaceholder
                       ? null
                       : (flexRender(header.column.columnDef.header, header.getContext()) as any)}
@@ -149,7 +156,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} variant="table" pinned="none" padding="cell">
                       {flexRender(cell.column.columnDef.cell, cell.getContext()) as any}
                     </TableCell>
                   ))}
@@ -157,7 +164,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="p-0">
+                <TableCell colSpan={columns.length} variant="table" pinned="none" padding="trigger">
                   <EmptyStateCompact
                     assetKey="unknown"
                     assetClassName="size-20"

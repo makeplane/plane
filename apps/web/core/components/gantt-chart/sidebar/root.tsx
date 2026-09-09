@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
 import type { IBlockUpdateData } from "@plane/types";
-import { Row, ERowVariant } from "@plane/ui";
+import { Row, ERowVariant } from "@plane/blocks/row";
 import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // helpers

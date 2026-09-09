@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { CloseOutline, LabelsFilled } from "@makeplane/propel/icons";
 // types
 import { useLabel } from "@/hooks/store/use-label";
@@ -37,7 +37,15 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
 
   if (!label) return <></>;
   return (
-    <Button variant="tertiary" size="sm" key={labelId} onClick={handleLabel} disabled={disabled}>
+    <Button
+      variant="tertiary"
+      size="xs"
+      stretch="auto"
+      type="button"
+      key={labelId}
+      onClick={handleLabel}
+      disabled={disabled}
+    >
       <LabelsFilled className="size-3" color={label.color ?? "#000000"} />
       <span className="text-body-xs-regular">{label.name}</span>
       {!disabled && <CloseOutline className="h-2.5 w-2.5 transition-all group-hover:text-danger-primary" />}

@@ -283,8 +283,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
     if (this.options.enableEmoticons) {
       // get the list of supported emoticons
       const emoticons = this.options.emojis
-        .map((item) => item.emoticons)
-        .flat()
+        .flatMap((item) => item.emoticons)
         .filter((item) => item) as string[];
 
       const emoticonRegex = new RegExp(`(?:^|\\s)(${emoticons.map((item) => escapeForRegEx(item)).join("|")}) $`);

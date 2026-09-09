@@ -14,7 +14,7 @@ import { useTranslation } from "@plane/i18n";
 import { StateOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 // types
 // common
 // constants

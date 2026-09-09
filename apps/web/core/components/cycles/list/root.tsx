@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper, ERowVariant } from "@plane/ui";
+import { ContentWrapper } from "@plane/blocks/content-wrapper";
+import { ERowVariant } from "@plane/blocks/row";
 import { ListLayout } from "@/components/core/list";
 // local imports
 import { CyclePeekOverview } from "../cycle-peek-overview";

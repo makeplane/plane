@@ -6,8 +6,8 @@
 
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
-import { Loader } from "@plane/ui";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@makeplane/propel/components/table";
+import { Loader } from "@plane/blocks/loader";
 
 interface TableSkeletonProps {
   columns: ColumnDef<any>[];
@@ -16,13 +16,15 @@ interface TableSkeletonProps {
 
 export function TableLoader({ columns, rows }: TableSkeletonProps) {
   return (
-    <Table>
+    <Table variant="table">
       <TableHeader>
         <TableRow>
           {columns.map((column, index) => (
-            <TableHead key={column.header?.toString() ?? index}>
-              {typeof column.header === "string" ? column.header : ""}
-            </TableHead>
+            <TableHead
+              key={column.header?.toString() ?? index}
+              pinned="none"
+              label={typeof column.header === "string" ? column.header : ""}
+            />
           ))}
         </TableRow>
       </TableHeader>
@@ -30,7 +32,7 @@ export function TableLoader({ columns, rows }: TableSkeletonProps) {
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <TableRow key={rowIndex}>
             {columns.map((_, colIndex) => (
-              <TableCell key={colIndex}>
+              <TableCell key={colIndex} pinned="none" padding="cell">
                 <Loader.Item height="20px" width="100%" />
               </TableCell>
             ))}

@@ -8,7 +8,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PlaneNewIcon } from "@plane/propel/icons";
+import { PlaneNewIcon } from "@plane/blocks/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
 

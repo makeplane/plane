@@ -12,7 +12,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IWorkspaceView, IIssueFilters } from "@plane/types";
 import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
@@ -195,18 +195,23 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" onClick={handleClose}>
-          {t("common.cancel")}
-        </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? t("common.updating")
-              : t("view.update.label")
-            : isSubmitting
-              ? t("common.creating")
-              : t("view.create.label")}
-        </Button>
+        <Button variant="secondary" size="sm" stretch="auto" label={t("common.cancel")} onClick={handleClose} />
+        <Button
+          variant="primary"
+          size="sm"
+          stretch="auto"
+          type="submit"
+          label={
+            data
+              ? isSubmitting
+                ? t("common.updating")
+                : t("view.update.label")
+              : isSubmitting
+                ? t("common.creating")
+                : t("view.create.label")
+          }
+          loading={isSubmitting}
+        />
       </div>
     </form>
   );

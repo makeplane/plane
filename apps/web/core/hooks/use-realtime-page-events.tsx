@@ -7,7 +7,7 @@
 import { useCallback, useMemo } from "react";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
 // types
 import type { IUserLite } from "@plane/types";
 // components

@@ -9,7 +9,7 @@ import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import type { IIssueLabel } from "@plane/types";
 // components
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 // ui

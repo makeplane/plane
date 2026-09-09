@@ -7,12 +7,10 @@
 import { ChevronDownOutline, SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import type { TModuleOrderByOptions } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // types
 // constants
 
@@ -34,11 +32,11 @@ export function ModuleOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("secondary", "lg"), "px-2 text-tertiary")}>
+        <Button variant="secondary" size="md" stretch="auto" render={<div className="px-2 text-tertiary" />}>
           {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDownOutline className="size-3" />
-        </div>
+        </Button>
       }
       placement="bottom-end"
       maxHeight="lg"

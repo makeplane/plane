@@ -16,12 +16,12 @@ import {
   // ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 // import { Tooltip } from "@makeplane/propel/components/tooltip";
 // import { EIssuesStoreType } from "@plane/types";
 import type { TWorkItemFilterExpression } from "@plane/types";
-import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { CustomSearchSelect, CustomSelect } from "@plane/blocks/dropdowns";
 // import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useProject } from "@/hooks/store/use-project";
@@ -208,9 +208,14 @@ export const ExportForm = observer(function ExportForm(props: Props) {
           }
         />
         <div className="px-4 py-3">
-          <Button variant="primary" size="lg" type="submit" loading={exportLoading}>
-            {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            type="submit"
+            loading={exportLoading}
+            label={exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
+          />
         </div>
       </div>
       {/* Rich Filters */}

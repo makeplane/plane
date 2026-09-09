@@ -10,7 +10,7 @@ import Link from "next/link";
 
 import { CloseOutline, EditOutline } from "@makeplane/propel/icons";
 // Plane
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";

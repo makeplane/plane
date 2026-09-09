@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
 import { ParentOutline } from "@makeplane/propel/icons";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";

@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane ui
 import { CyclesOutline } from "@makeplane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 //hooks
@@ -24,7 +24,7 @@ export const IssueBlockCycle = observer(function IssueBlockCycle({ cycleId, shou
   const cycle = getCycleById(cycleId);
 
   return (
-    <Tooltip tooltipHeading="Cycle" tooltipContent={cycle?.name ?? "No Cycle"}>
+    <Tooltip label={`Cycle: ${cycle?.name ?? "No Cycle"}`}>
       <div
         className={cn(
           "flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11 duration-300 focus:outline-none",

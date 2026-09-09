@@ -9,9 +9,11 @@ import { observer } from "mobx-react";
 import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { AuthService } from "@plane/services";
-import { Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
+import { Input, PasswordStrengthIndicator } from "@plane/blocks/form-fields";
+import { Spinner } from "@plane/blocks/spinner";
 import { getPasswordStrength } from "@plane/utils";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
@@ -236,7 +238,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <div className="space-y-2.5">
         {mode === EAuthModes.SIGN_IN ? (
           <>
-            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
+            <ButtonElement type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
               {isSubmitting ? (
                 <Spinner height="20px" width="20px" />
               ) : isSMTPConfigured ? (
@@ -244,23 +246,22 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               ) : (
                 "Go to workspace"
               )}
-            </Button>
+            </ButtonElement>
             {isSMTPConfigured && (
               <Button
                 type="button"
-                onClick={redirectToUniqueCodeSignIn}
                 variant="secondary"
-                className="w-full"
-                size="xl"
-              >
-                Sign in with unique code
-              </Button>
+                size="lg"
+                stretch="full"
+                label="Sign in with unique code"
+                onClick={redirectToUniqueCodeSignIn}
+              />
             )}
           </>
         ) : (
-          <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
+          <ButtonElement type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-          </Button>
+          </ButtonElement>
         )}
       </div>
     </form>

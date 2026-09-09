@@ -8,8 +8,8 @@
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@makeplane/propel/components/banner";
 import { InfoFilled } from "@makeplane/propel/icons";
-import { Button } from "@plane/propel/button";
-import { Card, ECardVariant } from "@plane/propel/card";
+import { Button } from "@makeplane/propel/components/button";
+import { Card, ECardVariant } from "@plane/blocks/card";
 
 interface ErrorActionsProps {
   onGoHome: () => void;
@@ -19,14 +19,8 @@ interface ErrorActionsProps {
 function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
   return (
     <div className="flex gap-3 pt-2">
-      <Button variant="primary" size="lg" onClick={onGoHome}>
-        Go to home
-      </Button>
-      {onReload && (
-        <Button variant="secondary" size="lg" onClick={onReload}>
-          Reload page
-        </Button>
-      )}
+      <Button variant="primary" size="md" stretch="auto" label="Go to home" onClick={onGoHome} />
+      {onReload && <Button variant="secondary" size="md" stretch="auto" label="Reload page" onClick={onReload} />}
     </div>
   );
 }

@@ -12,10 +12,11 @@ import { SubscribeOutline, UnsubscribeOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/elements/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { EIssueServiceType } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -82,13 +83,14 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
   return (
     <div>
       <Button
-        prependIcon={isSubscribed ? <UnsubscribeOutline /> : <SubscribeOutline className="h-3 w-3" />}
         variant="secondary"
-        className="hover:!bg-accent-primary/20"
+        size="md"
+        stretch="auto"
+        render={<button type="button" className="hover:!bg-accent-primary/20" />}
         onClick={handleSubscription}
         disabled={!isEditable || loading}
-        size="lg"
       >
+        <Icon icon={isSubscribed ? UnsubscribeOutline : SubscribeOutline} />
         {loading ? (
           <span>
             <span className="hidden sm:block">{t("common.loading")}</span>

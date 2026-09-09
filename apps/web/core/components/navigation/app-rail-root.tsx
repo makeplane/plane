@@ -8,7 +8,13 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { SettingsOutline, TickOutline } from "@makeplane/propel/icons";
-import { ContextMenu } from "@plane/propel/context-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@makeplane/propel/components/context-menu";
 import { cn } from "@plane/utils";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
@@ -39,7 +45,7 @@ export const AppRailRoot = observer(() => {
       }}
     >
       <ContextMenu>
-        <ContextMenu.Trigger className="h-full">
+        <ContextMenuTrigger render={<div className="h-full" />}>
           <div className="flex h-full flex-col justify-between gap-4 px-2 py-3">
             <div
               className={cn("flex flex-col", {
@@ -60,27 +66,21 @@ export const AppRailRoot = observer(() => {
               />
             </div>
           </div>
-        </ContextMenu.Trigger>
-        <ContextMenu.Portal>
-          <ContextMenu.Content positionerClassName="z-30" className="outline-none">
-            <ContextMenu.Item onClick={() => updateDisplayMode("icon_only")}>
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-11">Icon only</span>
-                {preferences.displayMode === "icon_only" && <TickOutline className="size-3.5" />}
-              </div>
-            </ContextMenu.Item>
-            <ContextMenu.Item onClick={() => updateDisplayMode("icon_with_label")}>
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="text-11">Icon with name</span>
-                {preferences.displayMode === "icon_with_label" && <TickOutline className="size-3.5" />}
-              </div>
-            </ContextMenu.Item>
-            <ContextMenu.Separator />
-            <ContextMenu.Item onClick={toggleAppRail}>
-              <span className="text-11">{isCollapsed ? "Dock App Rail" : "Undock App Rail"}</span>
-            </ContextMenu.Item>
-          </ContextMenu.Content>
-        </ContextMenu.Portal>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem
+            onClick={() => updateDisplayMode("icon_only")}
+            label="Icon only"
+            trailing={preferences.displayMode === "icon_only" ? <TickOutline className="size-3.5" /> : undefined}
+          />
+          <ContextMenuItem
+            onClick={() => updateDisplayMode("icon_with_label")}
+            label="Icon with name"
+            trailing={preferences.displayMode === "icon_with_label" ? <TickOutline className="size-3.5" /> : undefined}
+          />
+          <ContextMenuSeparator />
+          <ContextMenuItem onClick={toggleAppRail} label={isCollapsed ? "Dock App Rail" : "Undock App Rail"} />
+        </ContextMenuContent>
       </ContextMenu>
     </div>
   );

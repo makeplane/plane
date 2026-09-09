@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 
 // icons
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TStateGroups } from "@plane/types";
 

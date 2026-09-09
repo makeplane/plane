@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { ISvgIcons } from "@plane/propel/icons";
-import type { TContextMenuItem } from "@plane/ui";
+import type { ISvgIcons } from "@plane/blocks/icons";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 
 export interface CopyMenuHelperProps {
   baseItem: {

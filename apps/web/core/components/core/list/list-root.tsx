@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { Row, ERowVariant } from "@plane/ui";
+import { Row, ERowVariant } from "@plane/blocks/row";
 
 interface IListContainer {
   children: React.ReactNode;

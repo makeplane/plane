@@ -14,9 +14,9 @@ import { TickCircleOutline } from "@makeplane/propel/icons";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { PlaneLogo } from "@plane/blocks/icons";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { truncateText } from "@plane/utils";
 // assets
@@ -163,18 +163,16 @@ function UserInvitationsPage() {
                   <Button
                     variant="primary"
                     type="submit"
-                    size="lg"
+                    size="md"
+                    stretch="auto"
+                    label={t("accept_and_join")}
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                  >
-                    {t("accept_and_join")}
-                  </Button>
+                  />
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
-                      <Button variant="secondary" size="lg">
-                        {t("go_home")}
-                      </Button>
+                      <Button variant="secondary" size="md" stretch="auto" label={t("go_home")} />
                     </span>
                   </Link>
                 </div>

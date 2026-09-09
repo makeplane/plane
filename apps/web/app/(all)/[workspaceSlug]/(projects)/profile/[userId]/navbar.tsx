@@ -9,7 +9,7 @@ import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/header";
 import { cn } from "@plane/utils";
 
 type Props = {

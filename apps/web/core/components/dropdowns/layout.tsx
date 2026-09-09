@@ -11,8 +11,8 @@ import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TickOutline } from "@makeplane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
-import { getButtonStyling } from "@plane/propel/button";
-import { Dropdown } from "@plane/ui";
+import { Button } from "@makeplane/propel/elements/button";
+import { Dropdown } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 // components
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
@@ -45,10 +45,12 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
   const buttonContent = useCallback((isOpen: boolean, buttonValue: string | string[] | undefined) => {
     const dropdownValue = ISSUE_LAYOUT_MAP[buttonValue as EIssueLayoutTypes];
     return (
-      <div className="flex items-center gap-2 text-secondary">
-        <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-secondary`} />
-        <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
-      </div>
+      <Button variant="secondary" size="md" stretch="auto" render={<div />}>
+        <div className="flex items-center gap-2 text-secondary">
+          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-secondary`} />
+          <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
+        </div>
+      </Button>
     );
   }, []);
 
@@ -74,7 +76,6 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       value={value?.toString()}
       keyExtractor={keyExtractor}
       options={options}
-      buttonContainerClassName={cn(getButtonStyling("secondary", "lg"))}
       buttonContent={buttonContent}
       renderItem={itemContent}
       disableSearch

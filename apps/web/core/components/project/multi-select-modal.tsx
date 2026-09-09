@@ -11,11 +11,11 @@ import { useTheme } from "next-themes";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Button } from "@makeplane/propel/components/button";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { cn } from "@plane/utils";
 // assets
 import darkProjectAsset from "@/app/assets/empty-state/search/project-dark.webp?url";
@@ -179,19 +179,17 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-end gap-2 border-t border-subtle p-3">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          {t("cancel")}
-        </Button>
+        <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
         <Button
           ref={moveButtonRef}
           variant="primary"
-          size="lg"
+          size="md"
+          stretch="auto"
+          label={isSubmitting ? t("confirming") : t("confirm")}
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={!areSelectedProjectsChanged}
-        >
-          {isSubmitting ? t("confirming") : t("confirm")}
-        </Button>
+        />
       </div>
     </ModalCore>
   );

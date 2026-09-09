@@ -9,8 +9,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { IconButton } from "@plane/propel/icon-button";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -44,8 +45,9 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
       <div className="flex items-center gap-1 py-3 pr-5 pl-4 text-body-md-medium">
         <IconButton
           variant="ghost"
-          size="base"
-          icon={ArrowNarrowLeftOutline}
+          size="sm"
+          icon={<Icon icon={ArrowNarrowLeftOutline} />}
+          aria-label="Back to project"
           onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
         />
         <p>Project settings</p>

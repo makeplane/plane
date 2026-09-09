@@ -10,7 +10,7 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { CloseOutline } from "@makeplane/propel/icons";
 
-// Keep the call-site API the workspace @plane/propel toast exposed, backed by
+// Keep the call-site API the legacy workspace toast exposed, backed by
 // @makeplane/propel's toast manager, so consumers only change their import path.
 export enum TOAST_TYPE {
   SUCCESS = "success",

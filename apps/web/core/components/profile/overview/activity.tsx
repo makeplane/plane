@@ -9,9 +9,10 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Avatar } from "@plane/propel/avatar";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { Loader, Card } from "@plane/ui";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
+import { Card } from "@plane/blocks/card";
+import { Loader } from "@plane/blocks/loader";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core/activity";
@@ -58,10 +59,10 @@ export const ProfileActivity = observer(function ProfileActivity() {
             {userProfileActivity.results.map((activity) => (
               <div key={activity.id} className="flex gap-3">
                 <Avatar
-                  name={activity.actor_detail?.display_name}
+                  alt={activity.actor_detail?.display_name}
+                  tooltip={activity.actor_detail?.display_name}
                   src={getFileURL(activity.actor_detail?.avatar_url)}
-                  size="base"
-                  shape="square"
+                  size="sm"
                 />
                 <div className="-mt-1 w-4/5 break-words">
                   <p className="inline text-13 text-secondary">

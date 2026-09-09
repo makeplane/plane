@@ -14,7 +14,7 @@ import highlight from "highlight.js/lib/core";
 
 function parseNodes(nodes: any[], className: string[] = []): { text: string; classes: string[] }[] {
   return nodes
-    .map((node) => {
+    .flatMap((node) => {
       const classes = [...className, ...(node.properties ? node.properties.className : [])];
 
       if (node.children) {
@@ -25,8 +25,7 @@ function parseNodes(nodes: any[], className: string[] = []): { text: string; cla
         text: node.value,
         classes,
       };
-    })
-    .flat();
+    });
 }
 
 function getHighlightNodes(result: any) {

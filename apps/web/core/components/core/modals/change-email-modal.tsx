@@ -11,9 +11,9 @@ import { Controller, useForm } from "react-hook-form";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
@@ -205,16 +205,28 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
           </div>
         )}
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
-          <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
-            {changeEmailT("actions.cancel")}
-          </Button>
-          <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
-            {isSubmitting
-              ? changeEmailT("states.sending")
-              : secondStep
-                ? changeEmailT("actions.confirm")
-                : changeEmailT("actions.continue")}
-          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label={changeEmailT("actions.cancel")}
+            onClick={handleClose}
+          />
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={
+              isSubmitting
+                ? changeEmailT("states.sending")
+                : secondStep
+                  ? changeEmailT("actions.confirm")
+                  : changeEmailT("actions.continue")
+            }
+            disabled={isSubmitting}
+          />
         </div>
       </form>
     </ModalCore>

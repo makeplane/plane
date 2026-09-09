@@ -12,10 +12,10 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // constants
 import { PROJECT_DETAILS } from "@plane/constants";
 // hooks

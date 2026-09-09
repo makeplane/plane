@@ -16,11 +16,12 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 import { cn } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
@@ -46,7 +47,8 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // refs
@@ -225,7 +227,13 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
 
           {canUserCreateIssue ? (
             <>
-              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+              <Button
+                variant="secondary"
+                size="md"
+                stretch="auto"
+                render={<button className="hidden md:block" />}
+                onClick={() => setAnalyticsModal(true)}
+              >
                 <span className="hidden @4xl:flex">Analytics</span>
                 <span className="@4xl:hidden">
                   <BarOutline className="size-3.5" />
@@ -233,8 +241,9 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
               </Button>
               <Button
                 variant="primary"
-                size="lg"
-                className="hidden sm:flex"
+                size="md"
+                stretch="auto"
+                render={<button className="hidden sm:flex" />}
                 onClick={() => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
@@ -247,12 +256,17 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           )}
           <IconButton
             variant="tertiary"
-            size="lg"
-            icon={RightSidePaneOutline}
+            size="md"
+            icon={<Icon icon={RightSidePaneOutline} />}
+            aria-label="Toggle sidebar"
             onClick={toggleSidebar}
-            className={cn({
-              "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
-            })}
+            render={
+              <button
+                className={cn({
+                  "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
+                })}
+              />
+            }
           />
           {moduleId && (
             <ModuleQuickActions

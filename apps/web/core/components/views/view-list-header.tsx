@@ -18,7 +18,8 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const ViewListHeader = observer(function ViewListHeader() {
   // states
@@ -58,13 +59,14 @@ export const ViewListHeader = observer(function ViewListHeader() {
         {!isSearchOpen && (
           <IconButton
             variant="ghost"
-            size="lg"
-            className="-mr-1"
+            size="md"
+            render={<button className="-mr-1" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={SearchOutline}
+            icon={<Icon icon={SearchOutline} />}
+            aria-label="Search"
           />
         )}
         <div

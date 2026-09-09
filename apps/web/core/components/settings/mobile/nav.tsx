@@ -11,7 +11,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { useUserSettings } from "@/hooks/store/user";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type Props = {
   hamburgerContent: React.ComponentType<{ className?: string; isMobile?: boolean }>;
@@ -38,7 +39,14 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
             <HamburgerContent className="max-h-100 rounded-lg border border-subtle pb-3" />
           </div>
         )}
-        <IconButton variant="secondary" className="group z-50 shrink-0" icon={Menu} onClick={() => toggleSidebar()} />
+        <IconButton
+          variant="secondary"
+          size="sm"
+          render={<button className="group z-50 shrink-0" />}
+          icon={<Icon icon={Menu} />}
+          aria-label="Toggle settings menu"
+          onClick={() => toggleSidebar()}
+        />
       </div>
       {/* path */}
       <div className="flex items-center gap-2">

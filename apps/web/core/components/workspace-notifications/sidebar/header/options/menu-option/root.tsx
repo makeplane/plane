@@ -16,12 +16,13 @@ import {
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TNotificationFilter } from "@plane/types";
-import { PopoverMenu } from "@plane/ui";
+import { PopoverMenu } from "@plane/blocks/popovers";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
 import { NotificationMenuOptionItem } from "./menu-item";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export type TPopoverMenuOptions = {
   key: string;
@@ -84,7 +85,14 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
   return (
     <PopoverMenu
       data={popoverMenuOptions}
-      button={<IconButton size="base" variant="ghost" icon={MoreVerticalOutline} />}
+      button={
+        <IconButton
+          size="sm"
+          variant="ghost"
+          icon={<Icon icon={MoreVerticalOutline} />}
+          aria-label="Notification options"
+        />
+      }
       keyExtractor={(item: TPopoverMenuOptions) => item.key}
       panelClassName="p-0 py-2 rounded-md border border-subtle bg-surface-1 space-y-1"
       render={(item: TPopoverMenuOptions) => <NotificationMenuOptionItem {...item} />}

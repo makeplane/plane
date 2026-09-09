@@ -28,10 +28,13 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { IconButton } from "@plane/propel/icon-button";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
+import { CustomMenu } from "@plane/blocks/dropdowns";
+import { DropIndicator, DragHandle } from "@plane/blocks/sortable";
 import { cn } from "@plane/utils";
 // components
 import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigation-utils";
@@ -362,10 +365,11 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     <IconButton
                       ref={actionSectionRef}
                       variant="ghost"
-                      size="sm"
-                      icon={MoreHorizontalOutline}
+                      size="xs"
+                      icon={<Icon icon={MoreHorizontalOutline} />}
                       onClick={() => setIsMenuActive(!isMenuActive)}
-                      className="text-placeholder"
+                      aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
+                      render={<button className="text-placeholder" />}
                     />
                   }
                   className={cn(
@@ -449,15 +453,22 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 {isAccordionMode && (
                   <IconButton
                     variant="ghost"
-                    size="sm"
-                    icon={ChevronRightOutline}
+                    size="xs"
+                    icon={
+                      <ChevronRightOutline
+                        className={cn("size-3.5 transition-transform", {
+                          "rotate-90": isProjectListOpen,
+                        })}
+                      />
+                    }
                     onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                    className={cn("hidden text-placeholder group-hover/project-item:inline-flex", {
-                      "inline-flex": isMenuActive,
-                    })}
-                    iconClassName={cn("transition-transform", {
-                      "rotate-90": isProjectListOpen,
-                    })}
+                    render={
+                      <button
+                        className={cn("hidden text-placeholder group-hover/project-item:inline-flex", {
+                          "inline-flex": isMenuActive,
+                        })}
+                      />
+                    }
                     aria-label={t(
                       isProjectListOpen
                         ? "aria_labels.projects_sidebar.close_project_menu"

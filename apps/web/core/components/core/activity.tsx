@@ -27,7 +27,7 @@ import {
   RelatesToOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
-import { BlockedIcon, BlockerIcon } from "@plane/propel/icons";
+import { BlockedIcon, BlockerIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueActivity } from "@plane/types";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";

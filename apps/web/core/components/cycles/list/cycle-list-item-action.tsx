@@ -21,10 +21,10 @@ import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { setPromiseToast } from "@plane/propel/toast";
+import { setPromiseToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/blocks/favorite-star";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
 import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";

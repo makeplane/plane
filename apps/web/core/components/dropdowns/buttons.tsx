@@ -6,7 +6,7 @@
 
 import React from "react";
 // helpers
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // types
@@ -78,14 +78,20 @@ function BorderButton(props: ButtonProps) {
     >
       <Button
         variant="ghost"
-        size="sm"
-        className={cn(
-          "flex h-full w-full items-center justify-start gap-1.5 border-[0.5px] border-strong",
-          {
-            "bg-layer-transparent-active": isActive,
-          },
-          className
-        )}
+        size="xs"
+        stretch="full"
+        render={
+          <button
+            type="button"
+            className={cn(
+              "flex h-full items-center justify-start gap-1.5 border-[0.5px] border-strong",
+              {
+                "bg-layer-transparent-active": isActive,
+              },
+              className
+            )}
+          />
+        }
       >
         {children}
       </Button>
@@ -104,11 +110,17 @@ function BackgroundButton(props: ButtonProps) {
     >
       <Button
         variant="ghost"
-        size="sm"
-        className={cn(
-          "flex h-full w-full items-center justify-between gap-1.5 bg-layer-3 hover:bg-layer-1-hover",
-          className
-        )}
+        size="xs"
+        stretch="full"
+        render={
+          <button
+            type="button"
+            className={cn(
+              "flex h-full items-center justify-between gap-1.5 bg-layer-3 hover:bg-layer-1-hover",
+              className
+            )}
+          />
+        }
       >
         {children}
       </Button>
@@ -127,14 +139,20 @@ function TransparentButton(props: ButtonProps) {
     >
       <Button
         variant="ghost"
-        size="sm"
-        className={cn(
-          "flex h-full w-full items-center justify-between gap-1.5",
-          {
-            "bg-layer-transparent-active": isActive,
-          },
-          className
-        )}
+        size="xs"
+        stretch="full"
+        render={
+          <button
+            type="button"
+            className={cn(
+              "flex h-full items-center justify-between gap-1.5",
+              {
+                "bg-layer-transparent-active": isActive,
+              },
+              className
+            )}
+          />
+        }
       >
         {children}
       </Button>

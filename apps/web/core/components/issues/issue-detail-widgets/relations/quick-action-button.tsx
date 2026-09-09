@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components

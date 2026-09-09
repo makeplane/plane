@@ -1,4 +1,4 @@
-import type { TPlacement } from "@plane/propel/utils/placement";
+import type { TPlacement } from "@plane/blocks/utils/placement";
 import type { TIssue } from "@plane/types";
 
 export interface IQuickActionProps {

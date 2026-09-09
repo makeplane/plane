@@ -19,7 +19,8 @@ import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
-import { CustomMenu, Row } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Row } from "@plane/blocks/row";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { SpreadSheetPropertyIcon } from "../../utils";
 

@@ -16,8 +16,8 @@ import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Switch } from "@makeplane/propel/components/switch";
@@ -467,7 +467,8 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     <div tabIndex={getIndex("discard_button")}>
                       <Button
                         variant="secondary"
-                        size="lg"
+                        size="md"
+                        stretch="auto"
                         onClick={() => {
                           if (editorRef.current?.isEditorReadyToDiscard()) {
                             onClose();
@@ -479,21 +480,20 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                             });
                           }
                         }}
-                      >
-                        {t("discard")}
-                      </Button>
+                        label={t("discard")}
+                      />
                     </div>
                     <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
                       <Button
                         variant={moveToIssue ? "secondary" : "primary"}
-                        size="lg"
+                        size="md"
+                        stretch="auto"
                         type="submit"
                         ref={submitBtnRef}
                         loading={isSubmitting}
                         disabled={isDisabled}
-                      >
-                        {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-                      </Button>
+                        label={isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                      />
                     </div>
 
                     {moveToIssue && (
@@ -503,10 +503,10 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                         loading={isMoving}
                         onClick={handleMoveToProjects}
                         disabled={isMoving}
-                        size="lg"
-                      >
-                        {t("add_to_project")}
-                      </Button>
+                        size="md"
+                        stretch="auto"
+                        label={t("add_to_project")}
+                      />
                     )}
                   </div>
                 </div>

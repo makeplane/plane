@@ -13,7 +13,7 @@ import type {
   TSingleSelectFilterFieldConfig,
   TFilterConditionNodeForDisplay,
 } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 // local imports
 import { SelectedOptionsDisplay } from "./selected-options-display";
 import { getCommonCustomSearchSelectProps, getFormattedOptions, loadOptions } from "./shared";

@@ -11,8 +11,9 @@ import { useParams } from "next/navigation";
 // icons
 import { CopyOutline, HideOutline, RefreshOutline, ShowOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IWebhook } from "@plane/types";
 // ui
@@ -133,14 +134,15 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
             {data && (
               <div>
                 <Button
-                  onClick={handleRegenerateSecretKey}
                   variant="secondary"
-                  size="lg"
+                  size="md"
+                  stretch="auto"
+                  label={isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
+                  onClick={handleRegenerateSecretKey}
                   loading={isRegenerating}
-                  prependIcon={<RefreshOutline />}
-                >
-                  {isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
-                </Button>
+                  icon={<Icon icon={RefreshOutline} />}
+                  iconPosition="start"
+                />
               </div>
             )}
           </div>

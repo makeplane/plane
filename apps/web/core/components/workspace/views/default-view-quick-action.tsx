@@ -9,11 +9,11 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 type Props = {

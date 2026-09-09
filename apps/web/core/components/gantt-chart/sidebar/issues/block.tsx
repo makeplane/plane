@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import type { IGanttBlock } from "@plane/types";
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 import { cn } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";

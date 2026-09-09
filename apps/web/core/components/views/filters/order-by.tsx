@@ -8,9 +8,9 @@ import { SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makep
 // plane imports
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 
 type Props = {
   onChange: (value: { key?: TViewFiltersSortKey; order?: TViewFiltersSortBy }) => void;
@@ -26,20 +26,27 @@ export function ViewOrderByDropdown(props: Props) {
   const orderByDetails = VIEW_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
   const isDescending = sortBy === "desc";
 
-  const buttonClassName = isMobile
-    ? "flex items-center text-13 text-secondary gap-2 w-full"
-    : getButtonStyling("secondary", "lg");
-
   const icon = (
     <>{!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}</>
   );
+
+  const buttonContent = (
+    <>
+      {!isMobile && icon}
+      <span className="shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
+    </>
+  );
+
   return (
     <CustomMenu
       customButton={
-        <span className={buttonClassName}>
-          {!isMobile && icon}
-          <span className="shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
-        </span>
+        isMobile ? (
+          <span className="flex w-full items-center gap-2 text-13 text-secondary">{buttonContent}</span>
+        ) : (
+          <Button variant="secondary" size="md" stretch="auto" render={<span />}>
+            {buttonContent}
+          </Button>
+        )
       }
       placement="bottom-end"
       className="flex w-full justify-center"

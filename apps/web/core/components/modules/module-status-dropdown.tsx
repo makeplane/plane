@@ -8,10 +8,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { TModuleStatus } from "@plane/propel/icons";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import type { TModuleStatus } from "@plane/blocks/icons";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
 import type { IModule } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 
 type Props = {
   isDisabled: boolean;

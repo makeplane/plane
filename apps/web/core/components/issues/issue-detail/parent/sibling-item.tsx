@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks

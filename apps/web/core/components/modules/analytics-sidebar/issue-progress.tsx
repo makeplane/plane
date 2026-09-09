@@ -13,7 +13,8 @@ import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TModulePlotType } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { CustomSelect, Spinner } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Spinner } from "@plane/blocks/spinner";
 // components
 // constants
 // helpers

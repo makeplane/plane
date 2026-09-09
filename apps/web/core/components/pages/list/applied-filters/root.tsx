@@ -21,7 +21,7 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
-const MEMBERS_FILTERS = ["created_by"];
+const MEMBERS_FILTERS = new Set(["created_by"]);
 const DATE_FILTERS = ["created_at"];
 
 export function PageAppliedFiltersList(props: Props) {
@@ -55,7 +55,7 @@ export function PageAppliedFiltersList(props: Props) {
                   values={Array.isArray(value) ? value : []}
                 />
               )}
-              {MEMBERS_FILTERS.includes(filterKey) && (
+              {MEMBERS_FILTERS.has(filterKey) && (
                 <AppliedMembersFilters
                   editable={isEditingAllowed}
                   handleRemove={(val) => handleRemoveFilter(filterKey, val)}

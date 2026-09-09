@@ -11,12 +11,13 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { IconButton } from "@plane/propel/icon-button";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { ChevronDownOutline, EditOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
@@ -99,7 +100,9 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               <div className="absolute top-3.5 right-3.5">
                 <IconButton
                   variant="secondary"
-                  icon={EditOutline}
+                  size="sm"
+                  icon={<Icon icon={EditOutline} />}
+                  aria-label="Edit profile"
                   onClick={() =>
                     toggleProfileSettingsModal({
                       activeTab: "general",

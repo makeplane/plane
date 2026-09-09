@@ -15,7 +15,8 @@ import { useTranslation } from "@plane/i18n";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const StickySearch = observer(function StickySearch() {
   // router
@@ -57,9 +58,10 @@ export const StickySearch = observer(function StickySearch() {
       {!isSearchOpen && (
         <IconButton
           variant="ghost"
-          size="lg"
-          className="-mr-2"
-          icon={SearchOutline}
+          size="md"
+          render={<button className="-mr-2" />}
+          icon={<Icon icon={SearchOutline} />}
+          aria-label={t("stickies.search_placeholder")}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();

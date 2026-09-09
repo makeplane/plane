@@ -10,19 +10,21 @@ import { observer } from "mobx-react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ChevronLeftOutline, ChevronRightOutline, CopyOutline } from "@makeplane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
-import { EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type Props = {
   activeVersionDescription: string | undefined;
@@ -159,23 +161,35 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         {/* Footer */}
         <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle pt-4">
           <Tooltip label={t("common.actions.copy_markdown")}>
-            <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyOutline} />
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleCopyMarkdown}
+              icon={<Icon icon={CopyOutline} />}
+              aria-label={t("common.actions.copy_markdown")}
+            />
           </Tooltip>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={1}>
-              {t("common.cancel")}
-            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              label={t("common.cancel")}
+              onClick={handleClose}
+              tabIndex={1}
+            />
             {!isRestoreDisabled && (
               <Button
                 variant="primary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                label={t("common.actions.restore")}
                 onClick={() => {
                   handleRestore(activeVersionDescription ?? "<p></p>");
                   handleClose();
                 }}
-              >
-                {t("common.actions.restore")}
-              </Button>
+              />
             )}
           </div>
         </div>

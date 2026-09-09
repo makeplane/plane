@@ -6,9 +6,9 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // local imports
 import { DiscountInfo } from "./discount-info";
 
@@ -75,8 +75,9 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
         <div className="flex w-full flex-col items-center justify-center space-y-4">
           <Button
             variant="primary"
-            size="lg"
-            className="w-56"
+            size="md"
+            stretch="auto"
+            render={<button className="w-56" />}
             onClick={() => {
               if (product && price.id) {
                 handleCheckout({
@@ -87,9 +88,10 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
               }
             }}
             disabled={!!upgradeLoaderType}
-          >
-            {upgradeLoaderType === planVariant ? "Redirecting to Stripe" : (upgradeCTA ?? `Upgrade to ${planeName}`)}
-          </Button>
+            label={
+              upgradeLoaderType === planVariant ? "Redirecting to Stripe" : (upgradeCTA ?? `Upgrade to ${planeName}`)
+            }
+          />
           {isTrialAllowed && !isSelfHosted && (
             <div className="mt-1 h-3">
               {renderTrialButton &&

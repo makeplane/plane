@@ -10,7 +10,7 @@ import { Link } from "react-router";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { ROLE } from "@plane/constants";
-import { Popover } from "@plane/propel/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -54,11 +54,9 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
         }
       )}
     >
-      <Popover delay={100} openOnHover>
-        <Popover.Button>
-          <Link to={profileLink}>@{userDetails?.display_name}</Link>
-        </Popover.Button>
-        <Popover.Panel side="bottom" align="start">
+      <Popover>
+        <PopoverTrigger openOnHover delay={100} render={<Link to={profileLink}>@{userDetails?.display_name}</Link>} />
+        <PopoverContent side="bottom" align="start" sideOffset={8}>
           <div className="w-60 rounded-lg border-[0.5px] border-strong bg-surface-1 p-3 shadow-raised-200">
             <div className="flex items-center gap-3">
               <div className="grid size-10 flex-shrink-0 place-items-center">
@@ -77,7 +75,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
               </div>
             </div>
           </div>
-        </Popover.Panel>
+        </PopoverContent>
       </Popover>
     </div>
   );

@@ -28,7 +28,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {
@@ -103,13 +104,14 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
         {!isSearchOpen && (
           <IconButton
             variant="ghost"
-            size="lg"
-            className="p- -mr-1"
+            size="md"
+            render={<button className="p- -mr-1" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={SearchOutline}
+            icon={<Icon icon={SearchOutline} />}
+            aria-label="Search"
           />
         )}
         <div
