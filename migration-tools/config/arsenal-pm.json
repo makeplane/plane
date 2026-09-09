@@ -7,6 +7,7 @@
   "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Arsenal",
   "externalSource": "empirium-pm-arsenal",
   "stateFile": "state/arsenal-pm.json",
+  "typesFile": "state/types.json",
   "ticketsDir": null,
   "sourceLine": true,
   "stateMapping": {

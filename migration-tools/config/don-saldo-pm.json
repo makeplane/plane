@@ -7,6 +7,7 @@
   "sourceDir": "C:/Users/Karol/Wisdomous/Empirium/pm/Don Saldo",
   "externalSource": "empirium-pm-don-saldo",
   "stateFile": "state/don-saldo-pm.json",
+  "typesFile": "state/types.json",
   "ticketsDir": null,
   "sourceLine": true,
   "stateMapping": {
@@ -16,7 +17,7 @@
   "checkboxSources": [
     { "file": "_Tasks Overview.md", "label": "todo" }
   ],
-  "pageGroups": [
-    { "pattern": "Change to use Docker.md", "name": "Change to use Docker" }
+  "docSources": [
+    { "file": "Change to use Docker.md", "name": "Change to use Docker" }
   ]
 }
