@@ -83,6 +83,11 @@ function toList(value) {
   return String(value).split(/[,;\s]+/).filter(Boolean);
 }
 
+// Strip markdown emphasis (**P0**, `S`) from table cells before mapping lookups
+function stripMarkdownEmphasis(v) {
+  return String(v ?? "").replace(/\*\*|__|`/g, "").trim();
+}
+
 // Ground-truth id from the filename prefix: "0119-foo.md" → "0119",
 // "T-01-01-foo.md" → "T-01-01", "SP-01-foo.md" → "SP-01".
 // (Frontmatter ids with leading zeros are corrupted by YAML octal parsing,
@@ -333,9 +338,9 @@ async function main() {
       const id = col(row, ts.columns.id);
       const name = col(row, ts.columns.name);
       if (!name) continue;
-      const priority = col(row, ts.columns.priority);
+      const priority = stripMarkdownEmphasis(col(row, ts.columns.priority));
       const dropped = /dropped/i.test(name + " " + priority);
-      const effort = ts.columns.effort ? (col(row, ts.columns.effort).match(/^(S|M|L)$/)?.[1] ?? null) : null;
+      const effort = ts.columns.effort ? (stripMarkdownEmphasis(col(row, ts.columns.effort)).match(/^(S|M|L)$/)?.[1] ?? null) : null;
       const detail = [
         ts.columns.priority && `**Priority:** ${priority}`,
         ts.columns.effort && `**Effort:** ${col(row, ts.columns.effort)}`,
@@ -372,7 +377,10 @@ async function main() {
         name: titleM ? titleM[1].trim() : head,
         data: { status: resolved ? "done" : "open" },
         isDone: false,
-        externalId: idM[1], type: "Ticket", depth: 0, parentExternalId: null,
+        // File-derived prefix keeps section ids unique across sources within one
+        // config (TODOS.md#E2 must not collide with a BACKLOG.md table row "E2" —
+        // the v1 409-dedup matched them in Phase 5).
+        externalId: `${path.basename(ss.file, ".md").replace(/[^\w-]+/g, "-")}-${idM[1]}`, type: "Ticket", depth: 0, parentExternalId: null,
         effort: null,
         relations: [],
         labelNames: resolved ? [] : (ss.label ? [ss.label] : []),

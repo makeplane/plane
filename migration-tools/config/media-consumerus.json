@@ -7,11 +7,20 @@
   "sourceDir": "C:/Users/Karol/Projects/Media Consumerus/planning",
   "externalSource": "media-consumerus",
   "stateFile": "state/media-consumerus.json",
+  "pagesStateFile": "state/media-consumerus-pages.json",
+  "typesFile": "state/types.json",
+  "assigneeId": "a8f10b92-1ff5-4916-9ffa-6f96e40aeafb",
   "ticketsDir": null,
   "stateMapping": {
     "dropped": "Cancelled",
     "done": "Done",
     "open": "Backlog"
+  },
+  "priorityMapping": {
+    "urgent": "urgent",
+    "high": "high",
+    "medium": "medium",
+    "low": "low"
   },
   "estimateName": "Effort",
   "estimatePoints": [ { "key": 1, "value": "1" }, { "key": 2, "value": "3" }, { "key": 3, "value": "5" } ],
