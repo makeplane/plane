@@ -125,3 +125,6 @@ graphify-out/
 
 # Arsenal hook-merge backups
 *.bak
+
+# Questimus per-skill agent tokens (deployed by project-sync)
+.claude/skills/questimus*/.token
