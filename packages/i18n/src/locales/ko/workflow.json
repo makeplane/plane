@@ -17,7 +17,8 @@
           "tooltip": "리뷰어는 워크 아이템을 한 스테이트에서 다른 스테이트로 이동할 수 있는 권한이 있는 사람입니다.",
           "add": "리뷰어 추가"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "이 워크 아이템을 여기로 이동할 수 없습니다."

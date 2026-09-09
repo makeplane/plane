@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import {
   StatePropertyIcon,
   MembersPropertyIcon,
@@ -42,6 +43,8 @@ type Props = {
 export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
   const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails, isIntakeAccepted } =
     props;
+  // translation
+  const { t } = useTranslation();
 
   const router = useAppRouter();
   // store hooks
@@ -100,7 +103,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 }
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
-                placeholder="Add assignees"
+                placeholder={t("inbox_issue.properties.add_assignees")}
                 multiple
                 buttonVariant={
                   (issue?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "transparent-with-text"
@@ -144,7 +147,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 <span>Due date</span>
               </div>
               <DateDropdown
-                placeholder="Add due date"
+                placeholder={t("inbox_issue.properties.add_due_date")}
                 value={issue.target_date || null}
                 onChange={(val) =>
                   issue?.id &&

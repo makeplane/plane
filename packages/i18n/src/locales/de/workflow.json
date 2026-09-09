@@ -17,7 +17,8 @@
           "tooltip": "Prüfer sind Personen, die berechtigt sind, Arbeitsaufgaben von einem Status in einen anderen zu verschieben.",
           "add": "Prüfer hinzufügen"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Sie können diese Arbeitsaufgabe nicht hierher verschieben."

@@ -82,6 +82,10 @@
       "detail": {
         "title": "작업 항목의 세부 정보를 보려면 선택하세요."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

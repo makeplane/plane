@@ -111,5 +111,8 @@
       "success_message": "Strona została usunięta z kolekcji.",
       "error_message": "Nie udało się usunąć strony z kolekcji. Spróbuj ponownie."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

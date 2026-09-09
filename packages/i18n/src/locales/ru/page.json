@@ -111,5 +111,8 @@
       "success_message": "Страница удалена из коллекции.",
       "error_message": "Не удалось удалить страницу из коллекции. Повторите попытку."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

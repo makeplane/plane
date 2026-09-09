@@ -82,6 +82,10 @@
       "detail": {
         "title": "選擇工作事項以檢視其詳細資訊。"
       }
+    },
+    "properties": {
+      "add_assignees": "新增指派對象",
+      "add_due_date": "新增截止日期"
     }
   }
 }

@@ -413,6 +413,29 @@
           "message": "出了些问题。"
         }
       }
+    },
+    "modals": {
+      "name_instruction": "输入项目名称 {name} 以继续：",
+      "delete_project": {
+        "title": "删除项目",
+        "description": "确定要删除项目 {name} 吗？与该项目相关的所有数据都将被永久删除，此操作无法撤销",
+        "confirm_instruction": "请在下方输入 {value} 以确认：",
+        "confirm_placeholder": "输入 'delete my project'",
+        "deleting": "删除中",
+        "button": "删除项目"
+      },
+      "leave_project": {
+        "title": "离开项目",
+        "description": "确定要离开项目 -{name} 吗？所有与你关联的工作项都将无法访问。",
+        "confirm_instruction": "请在下方输入 {value} 以确认：",
+        "name_placeholder": "输入项目名称",
+        "confirm_placeholder": "输入 'leave project'",
+        "leaving": "离开中…",
+        "button": "离开项目",
+        "toast_confirm_mismatch": "请输入 'Leave Project' 以确认离开项目。",
+        "toast_name_mismatch": "请输入描述中所示的项目名称。",
+        "toast_fill_all": "请填写所有字段。"
+      }
     }
   }
 }

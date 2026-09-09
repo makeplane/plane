@@ -17,7 +17,8 @@
           "tooltip": "Revisores são pessoas que têm permissão para mover itens de trabalho de um estado para outro.",
           "add": "Adicionar revisores"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Você não pode mover este item de trabalho para cá."

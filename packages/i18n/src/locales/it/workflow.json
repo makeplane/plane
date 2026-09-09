@@ -17,7 +17,8 @@
           "tooltip": "Revisori sono persone che sono consentite per spostare elementi di lavoro da uno stato all'altro.",
           "add": "Aggiungi revisori"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Non puoi spostare questo elemento di lavoro qui."

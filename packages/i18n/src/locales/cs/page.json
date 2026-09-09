@@ -111,5 +111,8 @@
       "success_message": "Stránka byla odebrána z kolekce.",
       "error_message": "Stránku se nepodařilo odebrat z kolekce. Zkuste to prosím znovu."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

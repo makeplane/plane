@@ -17,7 +17,8 @@
           "tooltip": "İnceleyiciler, iş öğelerini bir durumdan diğerine taşıma izni olan kişilerdir.",
           "add": "İnceleyici ekle"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Bu iş öğesini buraya taşıyamazsınız."

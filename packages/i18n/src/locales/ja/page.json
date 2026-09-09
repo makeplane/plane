@@ -111,5 +111,8 @@
       "success_message": "ページをコレクションから削除しました。",
       "error_message": "ページをコレクションから削除できませんでした。もう一度お試しください。"
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

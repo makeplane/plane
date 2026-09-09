@@ -82,6 +82,10 @@
       "detail": {
         "title": "选择一个工作项以查看其详细信息。"
       }
+    },
+    "properties": {
+      "add_assignees": "添加负责人",
+      "add_due_date": "添加截止日期"
     }
   }
 }

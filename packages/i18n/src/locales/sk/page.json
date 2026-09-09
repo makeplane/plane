@@ -111,5 +111,8 @@
       "success_message": "Stránka bola odstránená z kolekcie.",
       "error_message": "Stránku sa nepodarilo odstrániť z kolekcie. Skúste to prosím znova."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

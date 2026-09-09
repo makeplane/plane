@@ -111,5 +111,8 @@
       "success_message": "Pagina rimossa dalla raccolta.",
       "error_message": "Non è stato possibile rimuovere la pagina dalla raccolta. Riprova."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

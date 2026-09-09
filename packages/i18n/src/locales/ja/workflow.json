@@ -17,7 +17,8 @@
           "tooltip": "レビューアは、作業項目を一つの状態から別の状態に移動することを許可されている人々です。",
           "add": "レビューアを追加"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "この作業項目をここに移動できません。"

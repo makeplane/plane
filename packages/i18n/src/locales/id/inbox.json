@@ -82,6 +82,10 @@
       "detail": {
         "title": "Pilih item kerja untuk melihat detailnya."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

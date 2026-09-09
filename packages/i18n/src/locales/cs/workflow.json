@@ -17,7 +17,8 @@
           "tooltip": "Recenzenti jsou lidé, kteří mají povolení přesunout pracovní položky z jednoho stavu do druhého.",
           "add": "Přidat recenzenty"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Nemůžete přesunout tuto pracovní položku sem."

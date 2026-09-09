@@ -17,7 +17,8 @@
           "tooltip": "Người xem xét là những người được phép di chuyển mục công việc từ một trạng thái sang trạng thái khác.",
           "add": "Thêm người xem xét"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Bạn không thể di chuyển mục công việc này đến đây."

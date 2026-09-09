@@ -82,6 +82,10 @@
       "detail": {
         "title": "詳細を表示する作業項目を選択してください。"
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

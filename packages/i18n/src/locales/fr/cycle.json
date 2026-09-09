@@ -20,7 +20,15 @@
   },
   "cycle": {
     "label": "{count, plural, one {Cycle} other {Cycles}}",
-    "no_cycle": "Pas de cycle"
+    "no_cycle": "Pas de cycle",
+    "transfer_issues_modal": {
+      "title": "Transfer work items",
+      "search_placeholder": "Search for a cycle...",
+      "no_cycles": "You don’t have any current cycle. Please create one to transfer the work items.",
+      "transfer_success": "Work items have been transferred successfully",
+      "transfer_error": "Unable to transfer work items. Please try again.",
+      "fetch_details_error": "Unable to fetch cycle details"
+    }
   },
   "active_cycle_analytics": {
     "empty_state": {

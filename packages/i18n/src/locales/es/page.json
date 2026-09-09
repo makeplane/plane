@@ -111,5 +111,8 @@
       "success_message": "Página quitada de la colección.",
       "error_message": "No se pudo quitar la página de la colección. Inténtalo de nuevo."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

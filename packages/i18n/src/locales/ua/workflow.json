@@ -17,7 +17,8 @@
           "tooltip": "Рев'юери - це люди, яким дозволено переміщувати робочі елементи з одного стану в інший.",
           "add": "Додати рев'юерів"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Ви не можете перемістити цей робочий елемент сюди."
