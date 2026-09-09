@@ -413,6 +413,29 @@
           "message": "發生錯誤。"
         }
       }
+    },
+    "modals": {
+      "name_instruction": "輸入專案名稱 {name} 以繼續：",
+      "delete_project": {
+        "title": "刪除專案",
+        "description": "確定要刪除專案 {name} 嗎？與該專案相關的所有資料都將被永久刪除，此操作無法復原",
+        "confirm_instruction": "請在下方輸入 {value} 以確認：",
+        "confirm_placeholder": "輸入 'delete my project'",
+        "deleting": "刪除中",
+        "button": "刪除專案"
+      },
+      "leave_project": {
+        "title": "離開專案",
+        "description": "確定要離開專案 -{name} 嗎？所有與你關聯的工作項目都將無法存取。",
+        "confirm_instruction": "請在下方輸入 {value} 以確認：",
+        "name_placeholder": "輸入專案名稱",
+        "confirm_placeholder": "輸入 'leave project'",
+        "leaving": "離開中…",
+        "button": "離開專案",
+        "toast_confirm_mismatch": "請輸入 'Leave Project' 以確認離開專案。",
+        "toast_name_mismatch": "請輸入描述中所示的專案名稱。",
+        "toast_fill_all": "請填寫所有欄位。"
+      }
     }
   }
 }

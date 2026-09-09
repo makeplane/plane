@@ -17,7 +17,8 @@
           "tooltip": "Les réviseurs sont des personnes qui sont autorisées à changer l'état des éléments de travail d'un état à un autre.",
           "add": "Ajouter des réviseurs"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Vous ne pouvez pas déplacer cet élément de travail ici."

@@ -82,6 +82,10 @@
       "detail": {
         "title": "Выберите рабочий элемент для просмотра деталей."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

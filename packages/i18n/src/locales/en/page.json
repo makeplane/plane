@@ -111,5 +111,8 @@
       "success_message": "Page removed from collection.",
       "error_message": "Page could not be removed from the collection. Please try again."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

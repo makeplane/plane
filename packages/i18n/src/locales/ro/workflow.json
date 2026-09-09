@@ -17,7 +17,8 @@
           "tooltip": "Evaluatorii sunt persoane care au permisiunea de a muta elemente de lucru dintr-o stare în alta.",
           "add": "Adaugă evaluatori"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Nu poți muta acest element de lucru aici."

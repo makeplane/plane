@@ -6,6 +6,7 @@
 
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -28,6 +29,8 @@ const defaultValues: ModuleLink = {
 
 export function CreateUpdateModuleLinkModal(props: Props) {
   const { isOpen, handleClose, createLink, updateLink, data } = props;
+  // translation
+  const { t } = useTranslation();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -54,23 +57,23 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         await createLink(payload);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link created successfully.",
+          title: t("common.success"),
+          message: t("entity.add.success", { entity: t("common.link") }),
         });
       } else {
         await updateLink(payload, data.id);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link updated successfully.",
+          title: t("common.success"),
+          message: t("entity.update.success", { entity: t("common.link") }),
         });
       }
       onClose();
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: error?.data?.error ?? "Some error occurred. Please try again.",
+        title: t("common.error.label"),
+        message: error?.data?.error ?? t("common.error.message"),
       });
     }
   };
@@ -86,11 +89,13 @@ export function CreateUpdateModuleLinkModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-18 font-medium text-secondary">{data ? "Update" : "Add"} link</h3>
+          <h3 className="text-18 font-medium text-secondary">
+            {data ? t("common.update_link") : t("common.add_link")}
+          </h3>
           <div className="mt-2 space-y-3">
             <div>
               <label htmlFor="url" className="mb-2 text-secondary">
-                URL
+                {t("common.url")}
               </label>
               <Controller
                 control={control}
@@ -106,7 +111,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    placeholder="Type or paste a URL"
+                    placeholder={t("common.type_or_paste_a_url")}
                     className="w-full"
                   />
                 )}
@@ -114,8 +119,8 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">
-                Display title
-                <span className="block text-10">Optional</span>
+                {t("common.display_title")}
+                <span className="block text-10">{t("common.optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -128,7 +133,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.title)}
-                    placeholder="What you'd like to see this link as"
+                    placeholder={t("common.link_title_placeholder")}
                     className="w-full"
                   />
                 )}
@@ -138,10 +143,18 @@ export function CreateUpdateModuleLinkModal(props: Props) {
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-            {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
+            {`${
+              data
+                ? isSubmitting
+                  ? t("common.updating")
+                  : t("common.update")
+                : isSubmitting
+                  ? t("common.adding")
+                  : t("common.add")
+            } ${t("common.link")}`}
           </Button>
         </div>
       </form>

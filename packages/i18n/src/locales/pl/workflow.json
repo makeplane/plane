@@ -17,7 +17,8 @@
           "tooltip": "Recenzenci to osoby, które mają pozwolenie na przenoszenie elementów pracy z jednego stanu do drugiego.",
           "add": "Dodaj recenzentów"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Nie możesz przenieść tego elementu pracy tutaj."

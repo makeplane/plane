@@ -82,6 +82,10 @@
       "detail": {
         "title": "Виберіть робочу одиницю для перегляду деталей."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

@@ -111,5 +111,8 @@
       "success_message": "Sayfa koleksiyondan kaldırıldı.",
       "error_message": "Sayfa koleksiyondan kaldırılamadı. Lütfen tekrar deneyin."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

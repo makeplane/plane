@@ -111,5 +111,8 @@
       "success_message": "Seite aus Sammlung entfernt.",
       "error_message": "Die Seite konnte nicht aus der Sammlung entfernt werden. Bitte versuchen Sie es erneut."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

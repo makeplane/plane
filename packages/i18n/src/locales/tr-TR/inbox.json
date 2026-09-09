@@ -82,6 +82,10 @@
       "detail": {
         "title": "Detaylarını görüntülemek için bir iş öğesi seçin."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

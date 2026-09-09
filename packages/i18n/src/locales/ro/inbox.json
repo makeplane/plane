@@ -82,6 +82,10 @@
       "detail": {
         "title": "Selectează o cerere pentru a-i vedea detaliile."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

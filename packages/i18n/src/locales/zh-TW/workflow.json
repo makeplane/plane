@@ -17,7 +17,8 @@
           "tooltip": "審核者是被允許將工作項目從一個狀態移動到另一個狀態的人。",
           "add": "添加審核者"
         }
-      }
+      },
+      "description_placeholder": "向成員描述此狀態。"
     },
     "workflow_disabled": {
       "title": "您不能將此工作項目移動到這裡。"

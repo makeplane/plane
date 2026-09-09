@@ -17,7 +17,8 @@
           "tooltip": "Reviewers are people who are permitted to move work items from one state to another.",
           "add": "Add reviewers"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "You can't move this work item here."

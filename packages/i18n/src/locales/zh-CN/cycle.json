@@ -20,7 +20,15 @@
   },
   "cycle": {
     "label": "{count, plural, one {周期} other {周期}}",
-    "no_cycle": "无周期"
+    "no_cycle": "无周期",
+    "transfer_issues_modal": {
+      "title": "转移工作项",
+      "search_placeholder": "搜索周期…",
+      "no_cycles": "你当前没有任何周期。请先创建一个周期以转移工作项。",
+      "transfer_success": "工作项已成功转移",
+      "transfer_error": "无法转移工作项，请重试。",
+      "fetch_details_error": "无法获取周期详情"
+    }
   },
   "active_cycle_analytics": {
     "empty_state": {

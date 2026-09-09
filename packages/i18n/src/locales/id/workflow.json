@@ -17,7 +17,8 @@
           "tooltip": "Reviewer adalah orang yang diizinkan untuk memindahkan item kerja dari satu status ke status lain.",
           "add": "Tambah reviewer"
         }
-      }
+      },
+      "description_placeholder": "Describe this state for your members."
     },
     "workflow_disabled": {
       "title": "Anda tidak dapat memindahkan item kerja ini ke sini."

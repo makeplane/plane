@@ -177,7 +177,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             <input
               type="text"
               className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
-              placeholder="Search..."
+              placeholder={t("common.search.label")}
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>

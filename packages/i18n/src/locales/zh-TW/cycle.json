@@ -20,7 +20,15 @@
   },
   "cycle": {
     "label": "{count, plural, one {週期} other {週期}}",
-    "no_cycle": "無週期"
+    "no_cycle": "無週期",
+    "transfer_issues_modal": {
+      "title": "轉移工作項目",
+      "search_placeholder": "搜尋週期…",
+      "no_cycles": "你目前沒有任何週期。請先建立一個週期以轉移工作項目。",
+      "transfer_success": "工作項目已成功轉移",
+      "transfer_error": "無法轉移工作項目，請重試。",
+      "fetch_details_error": "無法取得週期詳情"
+    }
   },
   "active_cycle_analytics": {
     "empty_state": {

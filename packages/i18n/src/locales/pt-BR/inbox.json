@@ -82,6 +82,10 @@
       "detail": {
         "title": "Selecione um item de trabalho para visualizar seus detalhes."
       }
+    },
+    "properties": {
+      "add_assignees": "Add assignees",
+      "add_due_date": "Add due date"
     }
   }
 }

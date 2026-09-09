@@ -111,5 +111,8 @@
       "success_message": "Halaman dihapus dari koleksi.",
       "error_message": "Halaman tidak dapat dihapus dari koleksi. Silakan coba lagi."
     }
+  },
+  "page_list": {
+    "search_placeholder": "Search pages"
   }
 }

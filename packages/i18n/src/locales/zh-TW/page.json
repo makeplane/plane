@@ -111,5 +111,8 @@
       "success_message": "頁面已從集合中移除。",
       "error_message": "無法將頁面從集合中移除。請再試一次。"
     }
+  },
+  "page_list": {
+    "search_placeholder": "搜尋頁面"
   }
 }
