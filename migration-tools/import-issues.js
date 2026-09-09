@@ -438,6 +438,25 @@ async function main() {
     });
   }
 
+  // Doc sources (full-document tickets replacing pages — Karol 2026-09-09):
+  // one ticket per file with the complete markdown content in the description.
+  // Idempotent via a stable external id (`doc-<basename>`).
+  for (const ds of cfg.docSources || []) {
+    const file = path.resolve(cfg.sourceDir, ds.file);
+    const raw = await readFile(file, "utf8");
+    const { data, body } = parseFrontmatter(raw);
+    items.push({
+      file, rel: `doc:${ds.file}`, body,
+      name: ds.name || firstHeading(body) || path.basename(file, ".md"),
+      data: { status: "open" },
+      isDone: false,
+      externalId: `doc-${path.basename(ds.file, ".md").replace(/[^\w-]+/g, "-")}`, type: "Ticket", depth: 0, parentExternalId: null,
+      effort: null,
+      relations: [],
+      labelNames: ds.label ? [ds.label] : [],
+    });
+  }
+
   // ---- Pass 1: create work-items ----
   // Issue types (created DB-side by db/setup_issue_types.py; ids in typesFile)
   let types = {};

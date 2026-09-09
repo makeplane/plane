@@ -46,11 +46,9 @@
       "label": "deferred"
     }
   ],
-  "pageGroups": [
-    { "pattern": "BACKLOG.md", "name": "Backlog" },
-    { "pattern": "TODOS.md", "name": "TODOS" },
-    { "pattern": "E*.md", "nameFrom": "heading" },
-    { "pattern": "SP*.md", "nameFrom": "heading" },
-    { "pattern": "design/*.md", "namePrefix": "Design — " }
+  "docSources": [
+    { "file": "BACKLOG.md", "name": "Backlog" },
+    { "file": "TODOS.md", "name": "TODOS" },
+    { "file": "design/DESIGN.md", "name": "Design — DESIGN" }
   ]
 }
