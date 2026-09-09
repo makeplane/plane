@@ -13,4 +13,5 @@ export const CORE_LOGIN_MEDIUM_LABELS: Record<TCoreLoginMediums, string> = {
   gitlab: "GitLab",
   google: "Google",
   gitea: "Gitea",
+  oidc: "SSO",
 };

@@ -228,6 +228,18 @@ const errorCodeMessages: {
     title: `GitLab OAuth provider error`,
     message: () => `GitLab OAuth provider error. Please try again.`,
   },
+  [EAuthErrorCodes.OIDC_NOT_CONFIGURED]: {
+    title: `SSO not configured`,
+    message: () => `SSO is not configured. Please contact your administrator.`,
+  },
+  [EAuthErrorCodes.OIDC_OAUTH_PROVIDER_ERROR]: {
+    title: `SSO provider error`,
+    message: () => `SSO provider error. Please try again.`,
+  },
+  [EAuthErrorCodes.OAUTH_PROVIDER_UNVERIFIED_EMAIL]: {
+    title: `Unverified email`,
+    message: () => `Your identity provider has not verified your email address. Please verify it and try again.`,
+  },
   // Reset Password
   [EAuthErrorCodes.INVALID_PASSWORD_TOKEN]: {
     title: `Invalid password token`,
@@ -340,6 +352,9 @@ export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TA
     EAuthErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
     EAuthErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
     EAuthErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
+    EAuthErrorCodes.OIDC_NOT_CONFIGURED,
+    EAuthErrorCodes.OIDC_OAUTH_PROVIDER_ERROR,
+    EAuthErrorCodes.OAUTH_PROVIDER_UNVERIFIED_EMAIL,
     EAuthErrorCodes.INVALID_PASSWORD_TOKEN,
     EAuthErrorCodes.EXPIRED_PASSWORD_TOKEN,
     EAuthErrorCodes.INCORRECT_OLD_PASSWORD,

@@ -17,12 +17,14 @@ import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
 import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
+import oidcLogo from "@/app/assets/logos/oidc-logo.svg?url";
 // components
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
 import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
+import { OIDCConfiguration } from "@/components/authentication/oidc-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 
 // Authentication methods
@@ -88,5 +90,13 @@ export const getCoreAuthenticationModesMap: (
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITEA_ENABLED",
+  },
+  oidc: {
+    key: "oidc",
+    name: "OpenID Connect (SSO)",
+    description: "Allow members to log in or sign up to Plane through any OpenID Connect provider such as Keycloak.",
+    icon: <img src={oidcLogo} height={20} width={20} alt="OpenID Connect Logo" />,
+    config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_OIDC_ENABLED",
   },
 });

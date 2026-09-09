@@ -51,6 +51,8 @@ export interface IInstanceConfig {
   is_github_enabled: boolean;
   is_gitlab_enabled: boolean;
   is_gitea_enabled: boolean;
+  is_oidc_enabled: boolean;
+  oidc_display_name: string | undefined;
   is_magic_login_enabled: boolean;
   is_email_password_enabled: boolean;
   github_app_name: string | undefined;
