@@ -17,6 +17,6 @@
   "checkboxSources": [
     { "file": "issues.md", "label": "todo" },
     { "file": "monetizing.md", "label": "idea" },
-    { "file": "ui-ux.md", "label": "todo" }
+    { "file": "ui-ux.md", "label": "todo", "type": "Design", "openState": "ToDo" }
   ]
 }
