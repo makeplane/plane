@@ -19,7 +19,7 @@
       "label": "todo"
     }
   ],
-  "pageGroups": [
-    { "pattern": "improve-subagent-config.md", "name": "Improve subagent config" }
+  "docSources": [
+    { "file": "improve-subagent-config.md", "name": "Improve subagent config" }
   ]
 }

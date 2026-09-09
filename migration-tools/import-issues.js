@@ -328,12 +328,15 @@ async function main() {
 
   // 6. Archived/done plan dirs (e.g. archive/v1, done/) → type Plan, state Done
   //    (O4: done/ + archive/ → Plan issues, state Done; only .md files — code
-  //    artifacts stay in the repo; excludeDirs skips e.g. e10-import/)
+  //    artifacts stay in the repo; excludeDirs skips e.g. e10-import/;
+  //    excludeFiles skips specific relative paths, e.g. a folder README)
+  const excludeFileSet = new Set((cfg.excludeFiles || []).map((f) => f.replace(/\\/g, "/")));
   for (const dir of cfg.donePlanDirs || []) {
     const absDir = path.resolve(cfg.sourceDir, dir);
     for (const file of await walk(absDir, [], excludeDirs)) {
       if (items.some((i) => i.file === file)) continue;
       const rel = path.relative(cfg.sourceDir, file).replace(/\\/g, "/");
+      if (excludeFileSet.has(rel)) continue;
       const raw = await readFile(file, "utf8");
       const { data, body } = parseFrontmatter(raw);
       items.push({
@@ -342,6 +345,22 @@ async function main() {
         effort: null, relations: [], labelNames: [],
       });
     }
+  }
+
+  // 7. Explicit plan files (planFiles list) → type Plan, state per entry
+  //    (supports .txt — the recursive walk only picks .md; e.g. plan-20-audit-*.txt)
+  for (const pf of cfg.planFiles || []) {
+    const file = path.resolve(cfg.sourceDir, pf.file);
+    const raw = await readFile(file, "utf8");
+    const { data, body } = parseFrontmatter(raw);
+    items.push({
+      file, rel: pf.file, body, data,
+      name: pf.name || null,
+      isDone: false,
+      stateName: pf.state || "Backlog",
+      externalId: idFromFilename(file), type: "Plan", depth: 0, parentExternalId: null,
+      effort: null, relations: [], labelNames: [],
+    });
   }
 
   // Table sources (e.g. BACKLOG.md summary tables) — one issue per data row
@@ -496,7 +515,7 @@ async function main() {
     if (state.issues[item.rel]) { report.skipped++; continue; }
 
     const name = item.name || item.data[cfg.titleField || "title"] || firstHeading(item.body) || path.basename(item.file, ".md");
-    const stateName = item.isDone ? "Done" : (cfg.stateMapping?.[item.data.status] ?? "Backlog");
+    const stateName = item.stateName || (item.isDone ? "Done" : (cfg.stateMapping?.[item.data.status] ?? "Backlog"));
     const stateId = await ensureState(stateName);
     const labels = [];
     for (const ln of item.labelNames || []) labels.push(await ensureLabel(ln));

@@ -1,0 +1,37 @@
+{
+  "name": "arsenal-planning",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Arsenal",
+  "projectIdentifier": "ARSENAL",
+  "sourceDir": "C:/Users/Karol/Wisdomous/Arsenal/planning",
+  "externalSource": "arsenal-planning",
+  "stateFile": "state/arsenal-planning.json",
+  "pagesStateFile": "state/arsenal-planning-pages.json",
+  "typesFile": "state/types.json",
+  "assigneeId": "a8f10b92-1ff5-4916-9ffa-6f96e40aeafb",
+  "ticketsDir": null,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Backlog"
+  },
+  "sourceLine": true,
+  "planFiles": [
+    { "file": "plan-18-phase08-redesign-draft.md", "state": "In Progress" },
+    { "file": "plan-18-project-execute-skill.md", "state": "In Progress" },
+    { "file": "plan-19-track1-gemini-openai-keys.md", "state": "Backlog" },
+    { "file": "plan-20-git-baseline.md", "state": "In Progress" },
+    { "file": "plan-20-library-wide-content-audit.md", "state": "In Progress" },
+    { "file": "plan-20-manual-checklist.md", "state": "In Progress" },
+    { "file": "plan-20-pilot-runbook.md", "state": "In Progress" },
+    { "file": "plan-20-audit-agents.txt", "state": "In Progress", "name": "Plan 20 — audit: agents" },
+    { "file": "plan-20-audit-all.txt", "state": "In Progress", "name": "Plan 20 — audit: all" },
+    { "file": "plan-20-audit-setup-harness.txt", "state": "In Progress", "name": "Plan 20 — audit: setup-harness" }
+  ],
+  "donePlanDirs": ["done", "archive"],
+  "excludeDirs": ["plan-12-superseded-skills", "plan-16-design-consolidation"],
+  "excludeFiles": ["done/plan-10-11-skill-audit/README.md"],
+  "pageGroups": [
+    { "pattern": "HANDOFF.md", "name": "HANDOFF" }
+  ]
+}
