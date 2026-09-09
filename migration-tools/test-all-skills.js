@@ -75,8 +75,9 @@ for (const s of SKILLS) {
     r = run(p, ["list"]);
     firstLine = r.out.split("\n").find((l) => l.trim() && !l.startsWith("("));
   }
+  let seq = null;
   if (firstLine) {
-    const seq = firstLine.trim().split("\t")[0];
+    seq = firstLine.trim().split("\t")[0];
     const gr = run(p, ["get", `${s.prefix}-${seq}`]);
     check("get by identifier", gr.ok && gr.out.includes(`"identifier": "${s.prefix}-${seq}"`), gr.err || "identifier mismatch");
   } else {
@@ -93,16 +94,25 @@ for (const s of SKILLS) {
   r = run(p, ["search", "test"]);
   check("search", r.ok, r.err || "failed");
 
-  // write round-trip
+  // write round-trip (uses --desc-file to cover the shell-quoting-safe path)
   const name = `TEST: ${s.name} round-trip`;
-  r = run(p, ["create", "--name", name, "--desc-md", "**What:** temporary test ticket.", "--state", "Backlog", "--priority", "low", "--type", "Ticket"]);
+  const descFile = `C:/Users/Karol/Projects/Questimus/migration-tools/state/test-desc-${s.name}.md`;
+  await import("node:fs/promises").then((fs) => fs.writeFile(descFile, `**What:** temporary test ticket with "quotes" and \`code\`.\n\n- bullet one\n- bullet two`));
+  r = run(p, ["create", "--name", name, "--desc-file", descFile, "--state", "Backlog", "--priority", "low", "--type", "Ticket"]);
   const id = r.out.match(/created ([0-9a-f-]+)/)?.[1];
-  check("create", r.ok && !!id, r.err || "no id");
+  check("create (--desc-file)", r.ok && !!id, r.err || "no id");
   if (id) {
     r = run(p, ["comment", id, "Test comment."]);
     check("comment", r.ok, r.err || "failed");
-    r = run(p, ["update", id, "--state", "ToDo", "--priority", "high"]);
-    check("update", r.ok, r.err || "failed");
+    // update by the TEST ticket's own identifier (get its seq first)
+    const g = run(p, ["get", id]);
+    const testSeq = g.out.match(/"identifier": "[A-Z]+-(\d+)"/)?.[1];
+    if (testSeq) {
+      r = run(p, ["update", `${s.prefix}-${testSeq}`, "--state", "ToDo", "--priority", "high"]);
+      check("update by identifier", r.ok, r.err || "failed");
+    } else {
+      check("update by identifier", false, "could not resolve test ticket seq");
+    }
     r = run(p, ["get", id]);
     // state UUIDs are project-specific — verify priority (universal) + state changed from Backlog
     const backlogState = r.out.match(/"state": "([0-9a-f-]+)"/)?.[1];
@@ -112,6 +122,7 @@ for (const s of SKILLS) {
     r = run(p, ["get", id]);
     check("delete verified", !r.ok, "still exists");
   }
+  await import("node:fs/promises").then((fs) => fs.rm(descFile, { force: true }));
 }
 
 console.log(`\n===== ${passed}/${total} passed =====`);

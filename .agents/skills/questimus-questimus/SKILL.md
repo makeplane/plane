@@ -45,36 +45,31 @@ This skill is the interface to the **Questimus** project in Questimus. It is dep
 - **Labels:** `todo`, `idea`, `user-report`, `verified` — UUIDs in route-meta.
 - **Priorities:** `urgent | high | medium | low`.
 - **Identifiers:** zero-padded keys (`QUESTIMUS-001`) in the UI; the API accepts the raw sequence (`QUESTIMUS-7`).
-- **Descriptions are HTML** — the CLI converts markdown for you (`--desc-md`); raw API calls must send `description_html`.
+- **Descriptions are HTML** — the CLI converts markdown for you (`--desc-md` or `--desc-file`); raw API calls must send `description_html`.
 
 ## Workflows
 
 ### Start a session
-
 1. Read the **HANDOFF page** (`node scripts/questimus.js handoff`) (if one exists) — the single working record of open work.
 2. Read the plan structure (`node scripts/questimus.js plan`) to see what's next.
 
 ### Triage a user report
-
 1. List `user-report`-labeled issues: `node scripts/questimus.js list --label user-report`.
 2. Reproduce/assess; dedupe via `search`; set priority; move to **ToDo** (triage does NOT start work).
 3. Comment with the triage result.
 
 ### Work on a ticket
-
 1. Read the ticket (`get`) and its context (related tickets via `search`).
 2. Move to **In Progress** (`update --state In Progress`), do the work, comment progress.
 3. Verify against the ticket's DoD; move to **Done** and add label `verified`.
 
 ### Resolve a user report
-
 1. Confirm the fix; comment with the resolution; move to **Done**.
 2. Not reproducible: comment and move to **Blocked** or **Cancelled**.
 
 ### Create a ticket (new work / ideas)
-
 1. `search` first (dedupe).
-2. `create --name … --desc-md … --state Backlog --priority … --type Ticket [--label …]`.
+2. `create --name … --desc-md … --state Backlog --priority … --type Ticket [--label …]` — use `--desc-file <path>` when the description contains quotes or special characters (shell quoting mangles `--desc-md`).
 
 ## Rules
 

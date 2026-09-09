@@ -18,9 +18,8 @@ node scripts/questimus.js search <query>       # name / sequence / identifier
 ```
 node scripts/questimus.js create --name "Title" --desc-md "**What:** …" --state Backlog --priority medium --type Ticket [--label …]
 ```
-
 - **Search first** (dedupe) before creating.
-- `--desc-md` converts markdown; `--desc-html` passes HTML through.
+- `--desc-md` converts markdown; `--desc-html` passes HTML through; **`--desc-file <path>` reads markdown from a file** (use it when the description contains quotes or special characters — shell quoting mangles `--desc-md`).
 - `--ext-source`/`--ext-id` are optional (idempotency for app reports).
 
 ## Update (partial — only send what changes)
@@ -42,7 +41,6 @@ node scripts/questimus.js comment <id> "Triage: reproduced, root cause …, movi
 ```
 node scripts/questimus.js delete <id> --yes
 ```
-
 Deletion is permanent and only allowed for the item creator or an admin. Prefer `Cancelled` state over delete unless the item is truly wrong.
 
 ## Relations
