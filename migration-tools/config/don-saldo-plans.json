@@ -1,0 +1,33 @@
+{
+  "name": "don-saldo-plans",
+  "baseUrl": "http://localhost:7000",
+  "workspaceSlug": "main",
+  "projectName": "Don Saldo",
+  "projectIdentifier": "DONSALDO",
+  "sourceDir": "C:/Users/Karol/Projects/Don-Saldo/docs/plans",
+  "externalSource": "don-saldo-plans",
+  "stateFile": "state/don-saldo-plans.json",
+  "typesFile": "state/types.json",
+  "assigneeId": "a8f10b92-1ff5-4916-9ffa-6f96e40aeafb",
+  "ticketsDir": null,
+  "stateMapping": {
+    "done": "Done",
+    "open": "Backlog"
+  },
+  "sourceLine": true,
+  "planFiles": [
+    { "file": "mypy-cleanup-progress.md", "state": "In Progress" },
+    { "file": "mypy-strict-cleanup.md", "state": "In Progress" },
+    { "file": "plan-app-stress-test-all-laws-that-apply.md", "state": "In Progress" },
+    { "file": "plan-gl-accounts-balance-sheet.md", "state": "In Progress" },
+    { "file": "plan-gl-accounts-balance-sheet-v2.md", "state": "In Progress" },
+    { "file": "plan-migration-excel.md", "state": "In Progress" },
+    { "file": "plan-pnl-balance-sheet-review-fix.md", "state": "In Progress" },
+    { "file": "plan-settings-journal-import-export.md", "state": "In Progress" },
+    { "file": "plan-v1.md", "state": "In Progress" },
+    { "file": "plan-v2.md", "state": "In Progress" },
+    { "file": "plan-zugferd-schematron-saxonche.md", "state": "In Progress" },
+    { "file": "roadmap.md", "state": "In Progress" },
+    { "file": "roadmap-competitive-analysis-2026-06.md", "state": "In Progress" }
+  ]
+}
