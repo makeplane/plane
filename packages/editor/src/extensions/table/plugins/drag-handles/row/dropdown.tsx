@@ -16,7 +16,7 @@ import {
 } from "@makeplane/propel/icons";
 import type { LucideIcon } from "lucide-react";
 // extensions
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 import { findTable, getSelectedRows } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateRows } from "../actions";

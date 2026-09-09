@@ -10,11 +10,11 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/header";
 import { calculateTotalFilters } from "@plane/utils";
 // assets
 import darkEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-dark.webp?url";

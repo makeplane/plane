@@ -12,11 +12,11 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { EditOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
@@ -293,14 +293,14 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           <div className="flex items-center justify-between py-2">
             <Button
               variant="primary"
-              size="lg"
+              size="md"
+              stretch="auto"
+              label={isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
               onClick={(e) => {
                 void handleSubmit(onSubmit)(e);
               }}
               loading={isLoading}
-            >
-              {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
-            </Button>
+            />
           </div>
         )}
       </div>

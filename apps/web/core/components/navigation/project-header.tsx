@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ProjectsOutline } from "@makeplane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";

@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 // types
 import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "@plane/constants";
 // hooks

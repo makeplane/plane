@@ -13,13 +13,13 @@ import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area"
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -452,9 +452,15 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
-              {isLoading ? t("updating") : t("common.update_project")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              label={isLoading ? t("updating") : t("common.update_project")}
+              loading={isLoading}
+              disabled={!isAdmin}
+            />
             <span className="text-13 text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>

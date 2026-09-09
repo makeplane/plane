@@ -6,7 +6,7 @@
 
 import React from "react";
 // helpers
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type Props = {
   icon: React.ReactNode;
@@ -17,7 +17,7 @@ type Props = {
 export function IssueDetailWidgetButton(props: Props) {
   const { icon, title, disabled = false } = props;
   return (
-    <Button variant={"secondary"} disabled={disabled} size="lg">
+    <Button variant="secondary" disabled={disabled} size="md" stretch="auto" type="button">
       {icon && icon}
       <span className="text-body-xs-medium">{title}</span>
     </Button>

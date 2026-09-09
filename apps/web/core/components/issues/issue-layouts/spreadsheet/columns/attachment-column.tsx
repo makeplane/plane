@@ -8,7 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 
 type Props = {
   issue: TIssue;

@@ -14,10 +14,11 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
@@ -189,25 +190,28 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                   <Tooltip label={t("create_project")}>
                     <IconButton
                       variant="ghost"
-                      size="sm"
-                      icon={AddOutline}
+                      size="xs"
+                      icon={<Icon icon={AddOutline} />}
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
-                      className="hidden text-placeholder group-hover:inline-flex"
+                      render={<button className="hidden text-placeholder group-hover:inline-flex" />}
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                     />
                   </Tooltip>
                 )}
                 <IconButton
                   variant="ghost"
-                  size="sm"
-                  icon={ChevronRightOutline}
+                  size="xs"
+                  icon={
+                    <ChevronRightOutline
+                      className={cn("size-3.5 transition-transform", {
+                        "rotate-90": isAllProjectsListOpen,
+                      })}
+                    />
+                  }
                   onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
-                  className="text-placeholder"
-                  iconClassName={cn("transition-transform", {
-                    "rotate-90": isAllProjectsListOpen,
-                  })}
+                  render={<button className="text-placeholder" />}
                   aria-label={t(
                     isAllProjectsListOpen
                       ? "aria_labels.projects_sidebar.close_projects_menu"

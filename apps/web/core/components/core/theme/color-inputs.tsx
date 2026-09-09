@@ -9,7 +9,7 @@ import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // plane imports
 import type { IUserTheme } from "@plane/types";
-import { InputColorPicker } from "@plane/ui";
+import { InputColorPicker } from "@plane/blocks/form-fields";
 
 type Props = {
   control: Control<IUserTheme>;

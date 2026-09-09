@@ -9,10 +9,12 @@ import { observer } from "mobx-react";
 import { AddFilterOutline } from "@makeplane/propel/icons";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
-import { cn, EHeaderVariant, Header, Loader } from "@plane/ui";
+import { EHeaderVariant, Header } from "@plane/blocks/header";
+import { Loader } from "@plane/blocks/loader";
+import { cn } from "@plane/blocks/utils";
 // local imports
 import type { TAddFilterButtonProps } from "./add-filters/button";
 import { AddFilterButton } from "./add-filters/button";
@@ -64,7 +66,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
         buttonConfig={{
           label: null,
           ...(variant === "modal" ? modalButtonConfig : headerButtonConfig),
-          size: "lg",
+          size: "md",
           iconConfig: {
             shouldShowIcon: true,
             iconComponent: AddFilterOutline,
@@ -79,25 +81,36 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   const rightContent = !disabledAllOperations && (
     <>
       <ElementTransition show={filter.canClearFilters}>
-        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.clearFilters}>
-          {filter.clearFilterOptions?.label ?? "Clear all"}
-        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          stretch="auto"
+          label={filter.clearFilterOptions?.label ?? "Clear all"}
+          onClick={filter.clearFilters}
+          render={<button className={COMMON_OPERATION_BUTTON_CLASSNAME} />}
+        />
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
-        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.saveView}>
-          {filter.saveViewOptions?.label ?? "Save view"}
-        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          stretch="auto"
+          label={filter.saveViewOptions?.label ?? "Save view"}
+          onClick={filter.saveView}
+          render={<button className={COMMON_OPERATION_BUTTON_CLASSNAME} />}
+        />
       </ElementTransition>
       <ElementTransition show={filter.canUpdateView}>
         <Button
           variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
+          size="sm"
+          stretch="auto"
+          label={isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
           onClick={handleUpdate}
           loading={isUpdating}
           disabled={isUpdating}
-        >
-          {isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
-        </Button>
+          render={<button className={COMMON_OPERATION_BUTTON_CLASSNAME} />}
+        />
       </ElementTransition>
     </>
   );

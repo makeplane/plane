@@ -16,7 +16,7 @@ import type {
   TFilterConditionNodeForDisplay,
   TAllAvailableOperatorsForDisplay,
 } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 import { cn, getOperatorForPayload } from "@plane/utils";
 // local imports
 import { FilterValueInput } from "../filter-value-input/root";

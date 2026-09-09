@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/blocks/modals";
 // helper
 import { getFileName } from "@plane/utils";
 // hooks

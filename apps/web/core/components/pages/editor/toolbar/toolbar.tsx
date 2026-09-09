@@ -9,7 +9,7 @@ import type { EditorRefApi } from "@plane/editor";
 // plane imports
 import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 // constants
 import type { ToolbarMenuItem } from "@plane/editor";

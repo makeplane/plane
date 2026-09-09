@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { TChartData } from "@plane/types";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -21,7 +21,7 @@ import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { ProjectInsightsLoader } from "../loaders";
 
 const RadarChart = lazy(function RadarChart() {
-  return import("@plane/propel/charts/radar-chart").then((mod) => ({
+  return import("@plane/blocks/charts/radar-chart").then((mod) => ({
     default: mod.RadarChart,
   }));
 });

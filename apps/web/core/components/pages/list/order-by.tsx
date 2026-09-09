@@ -6,10 +6,10 @@
 
 import { SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 // types
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;
@@ -35,10 +35,10 @@ export function PageOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={getButtonStyling("secondary", "lg")}>
+        <Button variant="secondary" size="md" stretch="auto" render={<div />}>
           {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
           {orderByDetails?.label}
-        </div>
+        </Button>
       }
       placement="bottom-end"
       maxHeight="lg"

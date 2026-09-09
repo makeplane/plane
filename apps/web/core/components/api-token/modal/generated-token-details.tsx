@@ -5,9 +5,9 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CopyOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IApiToken } from "@plane/types";
 // ui
@@ -58,9 +58,7 @@ export function GeneratedTokenDetails(props: Props) {
             ? `Expires ${renderFormattedDate(tokenDetails.expired_at)} at ${renderFormattedTime(tokenDetails.expired_at)}`
             : "Never expires"}
         </p>
-        <Button variant="secondary" onClick={handleClose}>
-          {t("close")}
-        </Button>
+        <Button variant="secondary" size="sm" stretch="auto" label={t("close")} onClick={handleClose} />
       </div>
     </div>
   );

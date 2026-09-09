@@ -6,7 +6,7 @@
 
 import type { TPartialProject } from "@plane/types";
 // plane propel imports
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 

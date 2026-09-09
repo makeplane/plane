@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // store hooks
 import { usePublish } from "@/hooks/store/publish";
 // types

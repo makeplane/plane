@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
 // plane web components

@@ -14,8 +14,10 @@ import { Banner } from "@makeplane/propel/components/banner";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
+import { Spinner } from "@plane/blocks/spinner";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
@@ -271,7 +273,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <div className="space-y-2.5">
           {mode === EAuthModes.SIGN_IN ? (
             <>
-              <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
+              <ButtonElement type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
                 {isSubmitting ? (
                   <Spinner height="20px" width="20px" />
                 ) : isSMTPConfigured ? (
@@ -279,23 +281,22 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 ) : (
                   t("common.go_to_workspace")
                 )}
-              </Button>
+              </ButtonElement>
               {isSMTPConfigured && (
                 <Button
                   type="button"
                   onClick={redirectToUniqueCodeSignIn}
                   variant="secondary"
-                  className="w-full"
-                  size="xl"
-                >
-                  {t("auth.common.sign_in_with_unique_code")}
-                </Button>
+                  size="lg"
+                  stretch="full"
+                  label={t("auth.common.sign_in_with_unique_code")}
+                />
               )}
             </>
           ) : (
-            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
+            <ButtonElement type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
               {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-            </Button>
+            </ButtonElement>
           )}
         </div>
       </form>

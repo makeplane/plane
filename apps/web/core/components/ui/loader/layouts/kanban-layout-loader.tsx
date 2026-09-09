@@ -7,7 +7,7 @@
 import { forwardRef } from "react";
 import { range } from "lodash-es";
 // plane ui
-import { ContentWrapper } from "@plane/ui";
+import { ContentWrapper } from "@plane/blocks/content-wrapper";
 // plane utils
 import { cn } from "@plane/utils";
 

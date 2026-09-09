@@ -10,10 +10,10 @@ import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IModule } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/blocks/modals";
 // constants
 // hooks
 import { useModule } from "@/hooks/store/use-module";

@@ -19,10 +19,12 @@ import {
   NewTabOutline,
   TickCircleFilled,
 } from "@makeplane/propel/icons";
-import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import type { TNameDescriptionLoader } from "@plane/types";
 
-import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Header, EHeaderVariant } from "@plane/blocks/header";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
@@ -118,15 +120,15 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
         <div className="flex items-center gap-x-2">
           <IconButton
             variant="secondary"
-            size="lg"
-            icon={ChevronUpOutline}
+            size="md"
+            icon={<Icon icon={ChevronUpOutline} />}
             aria-label="Previous work item"
             onClick={() => handleInboxIssueNavigation("prev")}
           />
           <IconButton
             variant="secondary"
-            size="lg"
-            icon={ChevronDownOutline}
+            size="md"
+            icon={<Icon icon={ChevronDownOutline} />}
             aria-label="Next work item"
             onClick={() => handleInboxIssueNavigation("next")}
           />
@@ -139,8 +141,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
         </div>
         <div className="ml-auto">
           <CustomMenu
-            customButton={<MoreHorizontalOutline className="size-4" />}
-            customButtonClassName={getIconButtonStyling("secondary", "lg")}
+            customButton={
+              <IconButton
+                variant="secondary"
+                size="md"
+                icon={<Icon icon={MoreHorizontalOutline} />}
+                aria-label="Work item actions"
+              />
+            }
             placement="bottom-start"
           >
             {isAcceptedOrDeclined && (

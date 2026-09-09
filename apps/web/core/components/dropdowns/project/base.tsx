@@ -11,9 +11,9 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ChevronDownOutline, ProjectsOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 import { cn, sortBySelectedFirst } from "@plane/utils";
 // components
 // hooks

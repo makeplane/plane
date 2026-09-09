@@ -9,7 +9,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 import { getTabIndex } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";

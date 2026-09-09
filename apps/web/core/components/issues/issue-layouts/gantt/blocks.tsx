@@ -7,9 +7,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Popover } from "@plane/propel/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
 import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
@@ -58,9 +58,10 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
   const duration = findTotalDaysInRange(issueDetails?.start_date, issueDetails?.target_date) || 0;
 
   return (
-    <Popover delay={100} openOnHover>
-      <Popover.Button
-        className="w-full"
+    <Popover>
+      <PopoverTrigger
+        openOnHover
+        delay={100}
         render={
           // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
           <div
@@ -79,19 +80,17 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
           </div>
         }
       />
-      <Popover.Panel side="bottom" align="start">
-        <>
-          {issueDetails && issueDetails?.project_id && (
-            <WorkItemPreviewCard
-              projectId={issueDetails.project_id}
-              stateDetails={{
-                id: issueDetails.state_id ?? undefined,
-              }}
-              workItem={issueDetails}
-            />
-          )}
-        </>
-      </Popover.Panel>
+      <PopoverContent side="bottom" align="start" sideOffset={8}>
+        {issueDetails && issueDetails?.project_id && (
+          <WorkItemPreviewCard
+            projectId={issueDetails.project_id}
+            stateDetails={{
+              id: issueDetails.state_id ?? undefined,
+            }}
+            workItem={issueDetails}
+          />
+        )}
+      </PopoverContent>
     </Popover>
   );
 });

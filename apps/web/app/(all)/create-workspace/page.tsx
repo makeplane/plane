@@ -9,8 +9,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { PlaneLogo } from "@plane/blocks/icons";
 import type { IWorkspace } from "@plane/types";
 // assets
 import WorkspaceCreationDisabled from "@/app/assets/workspace/workspace-creation-disabled.png?url";
@@ -86,12 +87,16 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
                 {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="mt-6 flex gap-4">
-                <Button variant="primary" onClick={() => router.back()}>
-                  {t("common.go_back")}
-                </Button>
-                <a href={getMailtoHref()} className={getButtonStyling("secondary", "base")}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  stretch="auto"
+                  label={t("common.go_back")}
+                  onClick={() => router.back()}
+                />
+                <ButtonElement variant="secondary" size="sm" stretch="auto" render={<a href={getMailtoHref()} />}>
                   {t("workspace_creation.errors.creation_disabled.request_button")}
-                </a>
+                </ButtonElement>
               </div>
             </div>
           ) : (

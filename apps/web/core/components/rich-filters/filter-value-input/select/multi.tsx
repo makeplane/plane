@@ -14,7 +14,7 @@ import type {
   TMultiSelectFilterFieldConfig,
   TFilterConditionNodeForDisplay,
 } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 import { toFilterArray, getFilterValueLength } from "@plane/utils";
 // local imports
 import { SelectedOptionsDisplay } from "./selected-options-display";

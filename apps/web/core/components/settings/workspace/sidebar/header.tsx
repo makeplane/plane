@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
@@ -37,8 +38,9 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
       <div className="flex items-center gap-1 py-3 pr-5 pl-4 text-body-md-medium">
         <IconButton
           variant="ghost"
-          size="base"
-          icon={ArrowNarrowLeftOutline}
+          size="sm"
+          icon={<Icon icon={ArrowNarrowLeftOutline} />}
+          aria-label="Back to workspace"
           onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
         />
         <p>Workspace settings</p>

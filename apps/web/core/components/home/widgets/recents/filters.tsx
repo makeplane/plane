@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { TRecentActivityFilterKeys } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 
 export type TFiltersDropdown = {

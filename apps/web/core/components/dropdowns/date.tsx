@@ -11,9 +11,8 @@ import { usePopper } from "react-popper";
 import { CalendarOutline, CloseOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // ui
-import type { Matcher } from "@plane/propel/calendar";
-import { Calendar } from "@plane/propel/calendar";
-import { ComboDropDown } from "@plane/ui";
+import { Calendar } from "@makeplane/propel/components/calendar";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
 // hooks
@@ -25,6 +24,9 @@ import { DropdownButton } from "./buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 // types
 import type { TDropdownProps } from "./types";
+
+// react-day-picker matcher subset used to disable days outside the min/max range
+type Matcher = { before: Date } | { after: Date };
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
@@ -191,15 +193,13 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
               {...attributes.popper}
             >
               <Calendar
-                className="rounded-md border border-subtle p-3"
-                captionLayout="dropdown"
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
                 onSelect={(date: Date | undefined) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays
-                initialFocus
+                autoFocus
                 disabled={disabledDays}
                 mode="single"
                 fixedWeeks

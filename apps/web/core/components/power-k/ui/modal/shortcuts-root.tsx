@@ -9,7 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
-import { ScrollArea } from "@plane/propel/scrollarea";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -88,9 +88,11 @@ export function ShortcutsModal(props: Props) {
                     </InputGroup>
                   </div>
 
-                  <ScrollArea size="sm" rootClassName="overflow-y-scroll px-5">
-                    <ShortcutRenderer searchQuery={query} commands={allCommandsWithShortcuts} />
-                  </ScrollArea>
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-5">
+                    <ScrollArea orientation="vertical">
+                      <ShortcutRenderer searchQuery={query} commands={allCommandsWithShortcuts} />
+                    </ScrollArea>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

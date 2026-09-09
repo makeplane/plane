@@ -12,7 +12,8 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -130,10 +131,11 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
             ref={setReferenceElement}
             type="button"
             variant="tertiary"
-            size="sm"
-            prependIcon={<AddOutline />}
+            size="xs"
+            stretch="auto"
             onClick={() => !projectLabels && fetchLabels()}
           >
+            <Icon icon={AddOutline} />
             {label}
           </Button>
         </Combobox.Button>

@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";

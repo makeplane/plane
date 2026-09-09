@@ -8,10 +8,10 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // helpers
 import { csvDownload } from "@plane/utils";
 // hooks

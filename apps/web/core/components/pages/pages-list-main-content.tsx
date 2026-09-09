@@ -10,8 +10,8 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components

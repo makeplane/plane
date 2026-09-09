@@ -17,10 +17,11 @@ import {
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";
@@ -92,7 +93,17 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   if (MENU_ITEMS.length === 0) return null;
 
   return (
-    <CustomMenu customButton={<IconButton icon={MoreHorizontalOutline} variant="ghost" size="sm" />} closeOnSelect>
+    <CustomMenu
+      customButton={
+        <IconButton
+          icon={<Icon icon={MoreHorizontalOutline} />}
+          aria-label="Comment actions"
+          variant="ghost"
+          size="xs"
+        />
+      }
+      closeOnSelect
+    >
       {MENU_ITEMS.map((item) => (
         <CustomMenu.MenuItem
           key={item.key}

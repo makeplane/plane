@@ -14,9 +14,8 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
-import type { DateRange, Matcher } from "@plane/propel/calendar";
-import { Calendar } from "@plane/propel/calendar";
-import { ComboDropDown } from "@plane/ui";
+import { Calendar } from "@makeplane/propel/components/calendar";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
@@ -27,6 +26,10 @@ import { DropdownButton } from "./buttons";
 import { MergedDateDisplay } from "./merged-date";
 // types
 import type { TButtonVariants } from "./types";
+
+// react-day-picker types used by this dropdown (not re-exported by @makeplane/propel)
+type DateRange = { from: Date | undefined; to?: Date | undefined };
+type Matcher = { before: Date } | { after: Date };
 
 type Props = {
   applyButtonText?: string;
@@ -263,8 +266,6 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
         {...attributes.popper}
       >
         <Calendar
-          className="rounded-md border border-subtle p-3 text-12"
-          captionLayout="dropdown"
           selected={dateRange}
           onSelect={(val: DateRange | undefined) => {
             onSelect?.(val);
@@ -274,7 +275,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
           showOutsideDays
           fixedWeeks
           weekStartsOn={startOfWeek}
-          initialFocus
+          autoFocus
         />
       </div>
     </Combobox.Options>

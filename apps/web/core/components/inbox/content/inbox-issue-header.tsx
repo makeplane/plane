@@ -23,12 +23,16 @@ import {
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
-import { ControlLink, CustomMenu, Row } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
+import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Row } from "@plane/blocks/row";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -312,15 +316,15 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             <div className="flex items-center gap-x-2">
               <IconButton
                 variant="secondary"
-                size="lg"
-                icon={ChevronUpOutline}
+                size="md"
+                icon={<Icon icon={ChevronUpOutline} />}
                 aria-label="Previous work item"
                 onClick={() => handleInboxIssueNavigation("prev")}
               />
               <IconButton
                 variant="secondary"
-                size="lg"
-                icon={ChevronDownOutline}
+                size="md"
+                icon={<Icon icon={ChevronDownOutline} />}
                 aria-label="Next work item"
                 onClick={() => handleInboxIssueNavigation("next")}
               />
@@ -329,9 +333,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
           <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
-              <Button
+              <ButtonElement
                 variant="secondary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                type="button"
                 onClick={() =>
                   handleActionWithPermission(
                     isProjectAdmin,
@@ -342,13 +348,15 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
               >
                 <TickCircleFilled className="size-4 shrink-0 text-success-secondary" />
                 {t("inbox_issue.actions.accept")}
-              </Button>
+              </ButtonElement>
             )}
 
             {canMarkAsDeclined && (
-              <Button
+              <ButtonElement
                 variant="secondary"
-                size="lg"
+                size="md"
+                stretch="auto"
+                type="button"
                 onClick={() =>
                   handleActionWithPermission(
                     isProjectAdmin,
@@ -359,31 +367,43 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
               >
                 <CloseCircleFilled className="size-4 shrink-0 text-danger-secondary" />
                 {t("inbox_issue.actions.decline")}
-              </Button>
+              </ButtonElement>
             )}
 
             {isAcceptedOrDeclined ? (
               <div className="flex items-center gap-2">
                 <Button
                   variant="secondary"
-                  size="lg"
-                  prependIcon={<LinkOutline className="h-2.5 w-2.5" />}
+                  size="md"
+                  stretch="auto"
+                  icon={<Icon icon={LinkOutline} />}
+                  iconPosition="start"
                   onClick={() => handleCopyIssueLink(workItemLink)}
-                >
-                  {t("inbox_issue.actions.copy")}
-                </Button>
+                  label={t("inbox_issue.actions.copy")}
+                />
                 <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button variant="secondary" size="lg" prependIcon={<NewTabOutline className="h-2.5 w-2.5" />}>
-                    {t("inbox_issue.actions.open")}
-                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    icon={<Icon icon={NewTabOutline} />}
+                    iconPosition="start"
+                    label={t("inbox_issue.actions.open")}
+                  />
                 </ControlLink>
               </div>
             ) : (
               <>
                 {isAllowed && (
                   <CustomMenu
-                    customButton={<MoreHorizontalOutline className="size-4" />}
-                    customButtonClassName={getIconButtonStyling("secondary", "lg")}
+                    customButton={
+                      <IconButton
+                        variant="secondary"
+                        size="md"
+                        icon={<Icon icon={MoreHorizontalOutline} />}
+                        aria-label="Work item actions"
+                      />
+                    }
                     placement="bottom-start"
                   >
                     {canMarkAsAccepted && (

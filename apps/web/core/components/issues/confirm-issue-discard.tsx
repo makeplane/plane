@@ -6,8 +6,8 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@plane/propel/button";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 
 type Props = {
   isOpen: boolean;
@@ -48,17 +48,18 @@ export function ConfirmIssueDiscard(props: Props) {
       </div>
       <div className="flex justify-between gap-2 p-4 sm:px-6">
         <div>
-          <Button variant="secondary" onClick={onDiscard}>
-            Discard
-          </Button>
+          <Button variant="secondary" size="sm" stretch="auto" onClick={onDiscard} label="Discard" />
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleDeletion} loading={isLoading}>
-            {isLoading ? "Saving" : "Save to Drafts"}
-          </Button>
+          <Button variant="secondary" size="sm" stretch="auto" onClick={onClose} label="Cancel" />
+          <Button
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            onClick={handleDeletion}
+            loading={isLoading}
+            label={isLoading ? "Saving" : "Save to Drafts"}
+          />
         </div>
       </div>
     </ModalCore>

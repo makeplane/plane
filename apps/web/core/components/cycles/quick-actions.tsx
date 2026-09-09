@@ -10,10 +10,11 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // hooks
 import { useCycleMenuItems } from "@/components/common/quick-actions-helper";
@@ -140,7 +141,14 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
-        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontalOutline} />}
+        customButton={
+          <IconButton
+            variant="tertiary"
+            size="md"
+            icon={<Icon icon={MoreHorizontalOutline} />}
+            aria-label="Quick actions"
+          />
+        }
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"

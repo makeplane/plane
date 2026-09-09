@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // Plane
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 // components
 import { cn } from "@plane/utils";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";

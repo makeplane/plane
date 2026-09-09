@@ -15,7 +15,7 @@ import {
 } from "@makeplane/propel/icons";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks

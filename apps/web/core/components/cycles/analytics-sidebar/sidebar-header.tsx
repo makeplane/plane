@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components

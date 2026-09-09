@@ -10,7 +10,7 @@ import { usePopper } from "react-popper";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type Props = {
   children: React.ReactNode;
@@ -59,11 +59,12 @@ export function FiltersDropdown(props: Props) {
                   <Button
                     disabled={disabled}
                     variant="secondary"
-                    prependIcon={icon}
+                    size="md"
+                    stretch="auto"
                     tabIndex={tabIndex}
-                    className="relative"
-                    size="lg"
+                    render={<button type="button" className="relative" />}
                   >
+                    {icon}
                     <>
                       <div className={`${open ? "text-primary" : "text-secondary"}`}>
                         <span>{title}</span>
@@ -79,8 +80,10 @@ export function FiltersDropdown(props: Props) {
                     disabled={disabled}
                     ref={setReferenceElement}
                     variant="secondary"
+                    size="md"
+                    stretch="auto"
+                    type="button"
                     tabIndex={tabIndex}
-                    size="lg"
                   >
                     {miniIcon || title}
                   </Button>

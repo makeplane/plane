@@ -20,7 +20,7 @@ import { createRoot } from "react-dom/client";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import type { IFavorite, InstructionType } from "@plane/types";
-import { DropIndicator } from "@plane/ui";
+import { DropIndicator } from "@plane/blocks/sortable";
 // hooks
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
 // local imports

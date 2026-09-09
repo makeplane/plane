@@ -8,8 +8,9 @@ import { observer } from "mobx-react";
 import { HomeOutline, WidgetOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/elements/button";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -38,11 +39,12 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
         <Header.RightItem>
           <Button
             variant="secondary"
-            size="lg"
+            size="md"
+            stretch="auto"
             onClick={() => toggleWidgetSettings(true)}
-            className="my-auto mb-0"
-            prependIcon={<WidgetOutline />}
+            render={<button className="my-auto mb-0" />}
           >
+            <WidgetOutline />
             <div className="hidden sm:hidden md:block">{t("home.manage_widgets")}</div>
           </Button>
         </Header.RightItem>

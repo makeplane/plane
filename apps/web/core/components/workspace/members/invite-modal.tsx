@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
-import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
+import { EModalWidth, EModalPosition, ModalCore } from "@plane/blocks/modals";
 // components
 import { InvitationModalActions } from "@/components/workspace/invite-modal/actions";
 import { InvitationFields } from "@/components/workspace/invite-modal/fields";

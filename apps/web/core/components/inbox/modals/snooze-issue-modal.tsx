@@ -7,9 +7,9 @@
 import { useState } from "react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Calendar } from "@plane/propel/calendar";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Calendar } from "@makeplane/propel/components/calendar";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 
 export type InboxIssueSnoozeModalProps = {
   isOpen: boolean;
@@ -35,8 +35,6 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
     >
       <div className="flex h-full w-full flex-col gap-y-1 px-5 py-8 sm:p-6">
         <Calendar
-          className="rounded-md border border-subtle p-3"
-          captionLayout="dropdown"
           selected={date ? new Date(date) : undefined}
           defaultMonth={date ? new Date(date) : undefined}
           onSelect={(date: Date | undefined) => {
@@ -44,6 +42,7 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
             setDate(date);
           }}
           mode="single"
+          showOutsideDays
           disabled={[
             {
               before: new Date(),
@@ -52,13 +51,14 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
         />
         <Button
           variant="primary"
+          size="sm"
+          stretch="auto"
           onClick={() => {
             handleClose();
             onConfirm(date);
           }}
-        >
-          {t("inbox_issue.actions.snooze")}
-        </Button>
+          label={t("inbox_issue.actions.snooze")}
+        />
       </div>
     </ModalCore>
   );

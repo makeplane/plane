@@ -9,11 +9,11 @@ import { Controller, useForm } from "react-hook-form";
 // plane types
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // plane ui
-import { ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/blocks/modals";
 type Props = {
   createLink: (formData: ModuleLink) => Promise<void>;
   data?: ILinkDetails | null;
@@ -144,12 +144,15 @@ export function CreateUpdateModuleLinkModal(props: Props) {
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-            {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label="Cancel" />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            type="submit"
+            loading={isSubmitting}
+            label={data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
+          />
         </div>
       </form>
     </ModalCore>

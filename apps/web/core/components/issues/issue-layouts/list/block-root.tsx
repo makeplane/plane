@@ -16,7 +16,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import type { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // components
-import { DropIndicator } from "@plane/ui";
+import { DropIndicator } from "@plane/blocks/sortable";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks

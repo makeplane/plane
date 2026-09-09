@@ -7,7 +7,7 @@
 import { Fragment, forwardRef } from "react";
 import { range } from "lodash-es";
 // plane ui
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 // plane utils
 import { cn } from "@plane/utils";
 import { getRandomInt, getRandomLength } from "../utils";

@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IUserLite } from "@plane/types";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

@@ -12,10 +12,10 @@ import { UserAltOutline } from "@makeplane/propel/icons";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/blocks/favorite-star";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

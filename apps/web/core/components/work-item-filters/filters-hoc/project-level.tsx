@@ -9,7 +9,7 @@ import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
 // components

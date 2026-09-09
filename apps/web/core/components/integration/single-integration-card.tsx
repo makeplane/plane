@@ -10,12 +10,12 @@ import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { TickCircleOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 // assets
 import GithubLogo from "@/app/assets/services/github.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
@@ -145,17 +145,18 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
             disabled={isUserAdmin || isMobile}
           >
             <Button
-              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
-              variant="error-fill"
+              render={<button className={!isUserAdmin ? "hover:cursor-not-allowed" : ""} />}
+              variant="danger"
+              size="sm"
+              stretch="auto"
               onClick={() => {
                 if (!isUserAdmin) return;
                 handleRemoveIntegration();
               }}
               disabled={!isUserAdmin}
               loading={deletingIntegration}
-            >
-              {deletingIntegration ? "Uninstalling..." : "Uninstall"}
-            </Button>
+              label={deletingIntegration ? "Uninstalling..." : "Uninstall"}
+            />
           </Tooltip>
         ) : (
           <Tooltip
@@ -164,16 +165,17 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
             disabled={isUserAdmin || isMobile}
           >
             <Button
-              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
+              render={<button className={!isUserAdmin ? "hover:cursor-not-allowed" : ""} />}
               variant="primary"
+              size="sm"
+              stretch="auto"
               onClick={() => {
                 if (!isUserAdmin) return;
                 startAuth();
               }}
               loading={isInstalling}
-            >
-              {isInstalling ? "Installing..." : "Install"}
-            </Button>
+              label={isInstalling ? "Installing..." : "Install"}
+            />
           </Tooltip>
         )
       ) : (

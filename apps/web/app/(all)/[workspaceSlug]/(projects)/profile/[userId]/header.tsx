@@ -11,14 +11,16 @@ import { ChevronDownOutline, RightSidePaneOutline, YourWorkOutline } from "@make
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Header } from "@plane/blocks/header";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -97,14 +99,14 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
           <div className="shrink-0 md:hidden">
             <Button
               variant="ghost"
-              size="lg"
+              size="md"
+              stretch="auto"
               onClick={() => {
                 toggleProfileSidebar();
               }}
-              appendIcon={
-                <RightSidePaneOutline className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />
-              }
-            ></Button>
+            >
+              <RightSidePaneOutline className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />
+            </Button>
           </div>
         </div>
       </Header.RightItem>

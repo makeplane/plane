@@ -11,7 +11,7 @@ import type {
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { useHome } from "@/hooks/store/use-home";
 import { WidgetItem } from "./widget-item";
 import type { TargetData } from "./widget.helpers";

@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { PROJECT_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SettingsPageHeader } from "@/components/settings/page-header";

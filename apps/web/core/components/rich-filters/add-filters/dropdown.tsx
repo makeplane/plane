@@ -7,10 +7,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 import { getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExternalFilter> = {

@@ -8,11 +8,11 @@ import { useState } from "react";
 import { mutate } from "swr";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/blocks/modals";
 // fetch-keys
 import { API_TOKENS_LIST } from "@plane/constants";
 

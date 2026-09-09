@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane ui
 import { WorkItemsOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";

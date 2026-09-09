@@ -15,7 +15,7 @@ import { Combobox } from "@headlessui/react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import { DeactivatedUserOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
-import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
+import { Badge } from "@makeplane/propel/components/badge";
 import type { IUserLite } from "@plane/types";
 import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
@@ -183,9 +183,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                           {isUserSuspended(option.value, workspaceSlug?.toString()) && (
-                            <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
-                              Suspended
-                            </Pill>
+                            <Badge variant="neutral" size="xs" label="Suspended" />
                           )}
                         </>
                       )}

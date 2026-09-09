@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type Props = React.ComponentProps<"button"> & {
   label: React.ReactNode;
@@ -15,11 +15,12 @@ export function SidebarAddButton(props: Props) {
   const { label, onClick, disabled, ...rest } = props;
   return (
     <Button
-      variant={"secondary"}
-      size={"xl"}
-      className="w-full justify-start"
+      variant="secondary"
+      size="lg"
+      stretch="full"
       onClick={onClick}
       disabled={disabled}
+      render={<button className="justify-start" />}
       {...rest}
     >
       {label}

@@ -14,8 +14,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers
 // plane ui
-import { FavoriteFolderIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { FavoriteFolderIcon } from "@plane/blocks/icons";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";

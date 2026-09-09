@@ -14,7 +14,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 // store hooks
 import { useUserPermissions } from "@/hooks/store/user";

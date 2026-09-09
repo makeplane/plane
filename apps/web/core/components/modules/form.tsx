@@ -12,7 +12,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IModule } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
@@ -243,18 +243,31 @@ export function ModuleForm(props: Props) {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          {t("cancel")}
-        </Button>
-        <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
-          {status
-            ? isSubmitting
-              ? t("updating")
-              : t("project_module.update_module")
-            : isSubmitting
-              ? t("creating")
-              : t("project_module.create_module")}
-        </Button>
+        <Button
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          onClick={handleClose}
+          tabIndex={getIndex("cancel")}
+          label={t("cancel")}
+        />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          type="submit"
+          loading={isSubmitting}
+          tabIndex={getIndex("submit")}
+          label={
+            status
+              ? isSubmitting
+                ? t("updating")
+                : t("project_module.update_module")
+              : isSubmitting
+                ? t("creating")
+                : t("project_module.create_module")
+          }
+        />
       </div>
     </form>
   );

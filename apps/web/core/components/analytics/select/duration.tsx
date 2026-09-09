@@ -11,7 +11,7 @@ import { CalendarOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
 // types
 import type { TDropdownProps } from "@/components/dropdowns/types";
 

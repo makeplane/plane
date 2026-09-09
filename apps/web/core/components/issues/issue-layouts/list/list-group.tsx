@@ -12,7 +12,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type {
   IGroupByColumn,
   TIssueMap,
@@ -23,7 +23,7 @@ import type {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";

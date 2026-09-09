@@ -13,7 +13,7 @@ import {
   RestoreOutline,
 } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import type { TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 
 /**
  * Unified factory for creating menu items across all entities (cycles, modules, views, epics)

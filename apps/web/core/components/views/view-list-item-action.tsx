@@ -14,7 +14,7 @@ import { useLocalStorage } from "@plane/hooks";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProjectView } from "@plane/types";
 import { EViewAccess } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/blocks/favorite-star";
 import { getPublishViewLink } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

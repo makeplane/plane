@@ -11,7 +11,7 @@ import { common, createLowlight } from "lowlight";
 import { CopyOutline, TickOutline } from "@makeplane/propel/icons";
 import { useState } from "react";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // types
@@ -45,7 +45,7 @@ export function CodeBlockComponent({ node }: Props) {
 
   return (
     <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block group/code relative">
-      <Tooltip tooltipContent="Copy code">
+      <Tooltip label="Copy code">
         <button
           type="button"
           className={cn(

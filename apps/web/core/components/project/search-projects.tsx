@@ -15,7 +15,8 @@ import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 // hooks
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const ProjectSearch = observer(function ProjectSearch() {
   // i18n
@@ -43,13 +44,14 @@ export const ProjectSearch = observer(function ProjectSearch() {
       {!isSearchOpen && (
         <IconButton
           variant="ghost"
-          size="lg"
-          className="-mr-1"
+          size="md"
+          render={<button className="-mr-1" />}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-          icon={SearchOutline}
+          icon={<Icon icon={SearchOutline} />}
+          aria-label={t("common.search.label")}
         />
       )}
       <div

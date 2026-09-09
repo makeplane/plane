@@ -6,7 +6,7 @@
 
 import { useTheme } from "next-themes";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
 import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";
@@ -80,9 +80,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
           </div>
 
           <div className="flex items-center justify-start gap-6">
-            <Button variant="primary" size="lg" onClick={onGoHome}>
-              Go to home
-            </Button>
+            <Button variant="primary" size="md" stretch="auto" label="Go to home" onClick={onGoHome} />
           </div>
         </div>
       </div>

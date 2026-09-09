@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { FilterOutline, SelectedFilterOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 import type { IFilterInstance } from "@plane/shared-state";
@@ -77,14 +77,16 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
     );
   }
 
+  const FilterIcon = showFilterRowChangesPill ? SelectedFilterOutline : FilterOutline;
+
   return (
     <IconButton
-      size="lg"
+      size="md"
       variant="secondary"
-      icon={showFilterRowChangesPill ? SelectedFilterOutline : FilterOutline}
+      icon={<FilterIcon className={cn("size-4", iconClassName)} />}
       onClick={handleToggleFilter}
-      className={buttonClassName}
-      iconClassName={iconClassName}
+      aria-label="Toggle filters"
+      render={<button className={buttonClassName} />}
     />
   );
 });

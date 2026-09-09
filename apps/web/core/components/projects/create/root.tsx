@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
 // components
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";

@@ -11,8 +11,9 @@ import { IntakeOutline, RefreshOutline } from "@makeplane/propel/icons";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
@@ -77,9 +78,13 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
               modalState={createIssueModal}
               handleModalClose={() => setCreateIssueModal(false)}
             />
-            <Button variant="primary" size="lg" onClick={() => setCreateIssueModal(true)}>
-              {t("add_work_item")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={t("add_work_item")}
+              onClick={() => setCreateIssueModal(true)}
+            />
           </div>
         ) : (
           <></>

@@ -18,12 +18,15 @@ import {
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { IconButton } from "@plane/propel/icon-button";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
+import { Breadcrumbs, BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 import { cn } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
@@ -230,33 +233,38 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+                <ButtonElement variant="secondary" size="md" stretch="auto" onClick={() => setAnalyticsModal(true)}>
                   <span className="hidden @4xl:flex">Analytics</span>
                   <span className="@4xl:hidden">
                     <BarOutline className="size-3.5" />
                   </span>
-                </Button>
+                </ButtonElement>
                 {!isCompletedCycle && (
                   <Button
                     variant="primary"
-                    size="lg"
+                    size="md"
+                    stretch="auto"
+                    label={t("issue.add.label")}
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
-                  >
-                    {t("issue.add.label")}
-                  </Button>
+                  />
                 )}
               </>
             )}
             <IconButton
               variant="tertiary"
-              size="lg"
-              icon={RightSidePaneOutline}
+              size="md"
+              icon={<Icon icon={RightSidePaneOutline} />}
+              aria-label="Toggle sidebar"
               onClick={toggleSidebar}
-              className={cn({
-                "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
-              })}
+              render={
+                <button
+                  className={cn({
+                    "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,
+                  })}
+                />
+              }
             />
             <CycleQuickActions
               parentRef={parentRef}

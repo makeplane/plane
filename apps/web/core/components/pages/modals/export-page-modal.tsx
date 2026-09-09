@@ -12,9 +12,10 @@ import { useParams } from "react-router";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // components
 import { PDFDocument } from "@/components/editor/pdf";
 // hooks
@@ -156,7 +157,7 @@ export function ExportPageModal(props: Props) {
       const blob = await pdf(<PDFDocument content={parsedPageContent} pageFormat={selectedPageFormat} />).toBlob();
       initiateDownload(blob, `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`);
     } catch (error) {
-      throw new Error(`Error in exporting as a PDF: ${error}`);
+      throw new Error(`Error in exporting as a PDF: ${error}`, { cause: error });
     }
   };
   // handle export as markdown
@@ -171,7 +172,7 @@ export function ExportPageModal(props: Props) {
       const blob = new Blob([parsedMarkdownContent], { type: "text/markdown" });
       initiateDownload(blob, `${fileName}.md`);
     } catch (error) {
-      throw new Error(`Error in exporting as markdown: ${error}`);
+      throw new Error(`Error in exporting as markdown: ${error}`, { cause: error });
     }
   };
   // handle export
@@ -282,12 +283,15 @@ export function ExportPageModal(props: Props) {
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="lg" loading={isExporting} onClick={handleExport}>
-            {isExporting ? "Exporting" : "Export"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isExporting ? "Exporting" : "Export"}
+            loading={isExporting}
+            onClick={handleExport}
+          />
         </div>
       </div>
     </ModalCore>

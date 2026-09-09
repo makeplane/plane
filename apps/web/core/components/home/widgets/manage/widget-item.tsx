@@ -23,7 +23,7 @@ import { useTranslation } from "@plane/i18n";
 import type { InstructionType } from "@plane/types";
 // plane ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { DropIndicator } from "@plane/ui";
+import { DropIndicator } from "@plane/blocks/sortable";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks

@@ -6,7 +6,8 @@
 
 import React from "react";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type Props = {
   title: string;
@@ -33,14 +34,15 @@ export function EmptyState({ title, description, image, primaryButton, secondary
         <div className="flex items-center gap-4">
           {primaryButton && (
             <Button
-              size="xl"
               variant="primary"
-              prependIcon={primaryButton.icon}
+              size="lg"
+              stretch="auto"
+              label={primaryButton.text}
+              icon={primaryButton.icon ? <Icon icon={primaryButton.icon} /> : undefined}
+              iconPosition="start"
               onClick={primaryButton.onClick}
               disabled={disabled}
-            >
-              {primaryButton.text}
-            </Button>
+            />
           )}
           {secondaryButton}
         </div>

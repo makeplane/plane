@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
+import { TabNavigationList, TabNavigationItem } from "@plane/blocks/tab-navigation";
 import type { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

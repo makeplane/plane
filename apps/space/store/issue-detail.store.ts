@@ -246,7 +246,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       return res;
     } catch (error) {
       console.log("Error in uploading comment asset:", error);
-      throw new Error("Asset upload failed. Please try again later.");
+      throw new Error("Asset upload failed. Please try again later.", { cause: error });
     }
   };
 
@@ -263,7 +263,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       return res;
     } catch (error) {
       console.log("Error in uploading comment asset:", error);
-      throw new Error("Asset upload failed. Please try again later.");
+      throw new Error("Asset upload failed. Please try again later.", { cause: error });
     }
   };
 

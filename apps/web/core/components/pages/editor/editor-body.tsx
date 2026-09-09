@@ -21,7 +21,7 @@ import type {
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
-import { ERowVariant, Row } from "@plane/ui";
+import { ERowVariant, Row } from "@plane/blocks/row";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";

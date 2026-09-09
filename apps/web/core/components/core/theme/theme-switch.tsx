@@ -9,7 +9,7 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 // ui
 
 type Props = {

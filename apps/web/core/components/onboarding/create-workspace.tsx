@@ -13,11 +13,12 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/elements/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
-import { CustomSelect, Spinner } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Spinner } from "@plane/blocks/spinner";
 import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -108,9 +109,10 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
         <>
           <Button
             variant="ghost"
-            size="xl"
-            className="flex w-full items-center gap-2 bg-surface-2 text-14"
+            size="lg"
+            stretch="full"
             onClick={handleCurrentViewChange}
+            render={<button type="button" className="flex items-center gap-2 bg-surface-2 text-14" />}
           >
             I want to join invited workspaces{" "}
             <span className="flex h-4 w-4 items-center justify-center rounded-xs bg-accent-primary/80 text-11 font-medium text-on-color">
@@ -266,7 +268,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             )}
           </div>
         </div>
-        <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
+        <Button variant="primary" type="submit" size="lg" stretch="full" disabled={isButtonDisabled}>
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
       </form>

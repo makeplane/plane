@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

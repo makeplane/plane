@@ -7,7 +7,8 @@
 import { useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 
@@ -43,13 +44,14 @@ export function PageSearchInput(props: Props) {
       {!isSearchOpen && (
         <IconButton
           variant="ghost"
-          size="lg"
-          className="my-auto -mr-1 shrink-0"
+          size="md"
+          render={<button className="my-auto -mr-1 shrink-0" />}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-          icon={SearchOutline}
+          icon={<Icon icon={SearchOutline} />}
+          aria-label="Search pages"
         />
       )}
       <div

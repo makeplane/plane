@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { AddOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 

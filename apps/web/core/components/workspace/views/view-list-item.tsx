@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
 import { DeleteOutline, EditOutline } from "@makeplane/propel/icons";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { truncateText } from "@plane/utils";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";

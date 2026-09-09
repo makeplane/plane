@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // ui
-import { DragHandle } from "@plane/ui";
+import { DragHandle } from "@plane/blocks/sortable";
 // helper
 import { cn } from "@plane/utils";
 

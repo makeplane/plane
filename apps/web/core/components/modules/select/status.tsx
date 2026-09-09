@@ -11,11 +11,11 @@ import type { FieldError, Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
 import { StateOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 // types
 // constants
 

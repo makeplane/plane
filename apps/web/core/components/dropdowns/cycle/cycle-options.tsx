@@ -14,7 +14,7 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { CycleGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon } from "@plane/blocks/icons";
 import { CyclesOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // ui

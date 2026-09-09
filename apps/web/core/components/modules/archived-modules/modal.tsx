@@ -6,9 +6,9 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -69,12 +69,16 @@ export function ArchiveModuleModal(props: Props) {
           Are you sure you want to archive the module? All your archives can be restored later.
         </p>
         <div className="mt-3 flex justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="lg" tabIndex={1} onClick={handleArchiveModule} loading={isArchiving}>
-            {isArchiving ? "Archiving" : "Archive"}
-          </Button>
+          <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label="Cancel" />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            tabIndex={1}
+            onClick={handleArchiveModule}
+            loading={isArchiving}
+            label={isArchiving ? "Archiving" : "Archive"}
+          />
         </div>
       </div>
     </ModalCore>

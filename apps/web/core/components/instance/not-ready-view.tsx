@@ -10,8 +10,8 @@ import { GOD_MODE_URL } from "@plane/constants";
 import GradientLogo from "@/app/assets/auth/gradient-logo.webp?url";
 import GradientBgLogo from "@/app/assets/auth/gradient-bg-logo.webp?url";
 import DefaultLayout from "@/layouts/default-layout";
-import { PlaneLockup } from "@plane/propel/icons";
-import { Button } from "@plane/propel/button";
+import { PlaneLockup } from "@plane/blocks/icons";
+import { Button } from "@makeplane/propel/components/button";
 
 export function InstanceNotReady() {
   return (
@@ -46,9 +46,7 @@ export function InstanceNotReady() {
               </div>
             </div>
             <a href={GOD_MODE_URL} className="w-72">
-              <Button variant="primary" className="w-full" size="xl">
-                Get started
-              </Button>
+              <Button variant="primary" stretch="full" size="lg" label="Get started" />
             </a>
           </div>
         </div>

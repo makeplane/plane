@@ -14,7 +14,7 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline, EstimateOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { EEstimateSystem } from "@plane/types";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";

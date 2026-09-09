@@ -15,7 +15,8 @@ import { useTranslation } from "@plane/i18n";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";

@@ -22,7 +22,7 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";

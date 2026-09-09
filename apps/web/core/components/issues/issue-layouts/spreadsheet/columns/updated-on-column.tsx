@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
 // helpers
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 import { renderFormattedDate } from "@plane/utils";
 
 type Props = {

@@ -6,10 +6,11 @@
 
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { BarChart } from "@plane/propel/charts/bar-chart";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { BarChart } from "@plane/blocks/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IUserProfileData } from "@plane/types";
-import { Loader, Card } from "@plane/ui";
+import { Card } from "@plane/blocks/card";
+import { Loader } from "@plane/blocks/loader";
 import { capitalizeFirstLetter } from "@plane/utils";
 
 type Props = {

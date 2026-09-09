@@ -9,7 +9,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane types
 import type { IProject } from "@plane/types";

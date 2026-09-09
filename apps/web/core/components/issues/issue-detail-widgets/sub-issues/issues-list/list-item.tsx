@@ -11,7 +11,8 @@ import { ChevronRightOutline, CloseOutline, DeleteOutline, EditOutline, LinkOutl
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
-import { ControlLink, CustomMenu } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";

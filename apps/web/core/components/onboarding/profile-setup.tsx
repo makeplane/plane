@@ -13,11 +13,12 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/elements/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
+import { Spinner } from "@plane/blocks/spinner";
 // components
 import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
@@ -552,7 +553,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
             </>
           )}
-          <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
+          <Button variant="primary" type="submit" size="lg" stretch="full" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
           </Button>
         </form>

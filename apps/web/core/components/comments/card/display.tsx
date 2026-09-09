@@ -22,7 +22,7 @@ import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
 import { CommentReactions } from "../comment-reaction";
 import { CommentCardEditForm } from "./edit-form";
-import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import { EmojiReactionButton, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
 import { useMember } from "@/hooks/store/use-member";
 
 export type TCommentCardDisplayProps = {

@@ -9,7 +9,7 @@ import { Link } from "react-router";
 import { DefaultTabOutline, MoreHorizontalOutline, PinOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Menu } from "@plane/propel/menu";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // local imports
@@ -33,67 +33,65 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
   const { t } = useTranslation();
 
   return (
-    <Menu
-      ellipsis
-      buttonClassName="!p-1.5"
-      optionsClassName="min-w-[200px] space-y-1"
-      customButton={
-        <div className="flex items-center justify-center rounded-md p-1 transition-colors hover:bg-layer-1">
-          <MoreHorizontalOutline className="h-4 w-4 text-secondary" />
-        </div>
-      }
-    >
-      {overflowItems.map((item) => {
-        const itemIsActive = isActive(item);
-        // isHidden = true only for user-hidden items (not space-constrained overflow)
-        const isHidden = tabPreferences.hiddenTabs.includes(item.key);
-        const isDefault = item.key === tabPreferences.defaultTab;
+    <Menu>
+      <MenuTrigger
+        render={<div className="flex items-center justify-center rounded-md p-1 transition-colors hover:bg-layer-1" />}
+      >
+        <MoreHorizontalOutline className="h-4 w-4 text-secondary" />
+      </MenuTrigger>
+      <MenuContent>
+        {overflowItems.map((item) => {
+          const itemIsActive = isActive(item);
+          // isHidden = true only for user-hidden items (not space-constrained overflow)
+          const isHidden = tabPreferences.hiddenTabs.includes(item.key);
+          const isDefault = item.key === tabPreferences.defaultTab;
 
-        return (
-          <Menu.MenuItem key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`} className="w-full p-0">
-            <div className="group/menu-item flex w-full items-center justify-between">
-              <Link to={item.href} className="w-full min-w-0 flex-1 p-1">
-                <span className="text-11">{t(item.i18n_key)}</span>
-              </Link>
-              <div className="flex items-center">
-                {/* Show Eye icon ONLY for user-hidden items */}
-                {isHidden && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      onShow(item.key);
-                    }}
-                    className="invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary"
-                    title="Show"
-                  >
-                    <PinOutline className="size-3" />
-                  </button>
-                )}
-                <Tooltip label={isDefault ? "Clear default" : "Set as default"}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      onToggleDefault(item.key);
-                    }}
-                    className={cn(
-                      "invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary",
-                      {
-                        visible: isDefault,
-                      }
-                    )}
-                    title={isDefault ? "Clear default" : "Set as default"}
-                  >
-                    <DefaultTabOutline className="size-3" />
-                  </button>
-                </Tooltip>
-              </div>
-            </div>
-          </Menu.MenuItem>
-        );
-      })}
+          return (
+            <MenuItem
+              key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`}
+              render={<Link to={item.href} className="group/menu-item" />}
+              label={t(item.i18n_key)}
+              trailing={
+                <div className="flex items-center">
+                  {/* Show Eye icon ONLY for user-hidden items */}
+                  {isHidden && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        onShow(item.key);
+                      }}
+                      className="invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary"
+                      title="Show"
+                    >
+                      <PinOutline className="size-3" />
+                    </button>
+                  )}
+                  <Tooltip label={isDefault ? "Clear default" : "Set as default"}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        onToggleDefault(item.key);
+                      }}
+                      className={cn(
+                        "invisible rounded-sm p-1 text-tertiary transition-colors group-hover/menu-item:visible hover:text-primary",
+                        {
+                          visible: isDefault,
+                        }
+                      )}
+                      title={isDefault ? "Clear default" : "Set as default"}
+                    >
+                      <DefaultTabOutline className="size-3" />
+                    </button>
+                  </Tooltip>
+                </div>
+              }
+            />
+          );
+        })}
+      </MenuContent>
     </Menu>
   );
 }

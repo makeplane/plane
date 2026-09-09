@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { AddOutline } from "@makeplane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/header";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useUserPermissions } from "@/hooks/store/user";

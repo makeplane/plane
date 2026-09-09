@@ -9,8 +9,9 @@ import { FilterOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { PopoverMenu } from "@plane/ui";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { PopoverMenu } from "@plane/blocks/popovers";
 // helper
 import { cn } from "@plane/utils";
 // constants
@@ -31,7 +32,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
       buttonClassName="outline-none"
       button={
         <>
-          <IconButton variant="tertiary" icon={FilterOutline} />
+          <IconButton variant="tertiary" size="sm" icon={<Icon icon={FilterOutline} />} aria-label="Filter activity" />
           {selectedFilters.length < filterOptions.length && (
             <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
           )}

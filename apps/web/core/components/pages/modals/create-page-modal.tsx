@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import type { EPageAccess } from "@plane/constants";
 import type { TPage } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks

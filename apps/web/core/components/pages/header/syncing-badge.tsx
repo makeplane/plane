@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { CloudOff, Dot } from "lucide-react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Badge } from "@plane/propel/badge";
+import { Badge } from "@makeplane/propel/components/badge";
 
 type Props = {
   syncStatus: "syncing" | "synced" | "error";
@@ -54,11 +54,10 @@ export function PageSyncingBadge({ syncStatus }: Props) {
       <span className="animate-quickFadeIn">
         <Badge
           variant={syncStatus === "syncing" ? "brand" : "danger"}
-          size="lg"
-          prependIcon={syncStatus === "syncing" ? <Dot /> : <CloudOff />}
-        >
-          {content.label}
-        </Badge>
+          size="sm"
+          startIcon={syncStatus === "syncing" ? <Dot className="size-4" /> : <CloudOff className="size-4" />}
+          label={content.label}
+        />
       </span>
     </Tooltip>
   );

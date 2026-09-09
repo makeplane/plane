@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/blocks/modals";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 

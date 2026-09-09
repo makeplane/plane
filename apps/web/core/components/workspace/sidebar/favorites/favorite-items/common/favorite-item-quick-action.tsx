@@ -10,7 +10,7 @@ import { MoreHorizontalOutline, StarFilled } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IFavorite } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // helpers
 import { cn } from "@plane/utils";
 

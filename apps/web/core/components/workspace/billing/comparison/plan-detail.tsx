@@ -12,7 +12,7 @@ import {
   TALK_TO_SALES_URL,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { TBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
@@ -100,9 +100,13 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
 
       {/* Subscription button */}
       <div className="flex flex-col items-start gap-1 py-3">
-        <Button variant="primary" size="lg" onClick={handleRedirection} className="w-full">
-          {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
-        </Button>
+        <Button
+          variant="primary"
+          size="md"
+          stretch="full"
+          label={isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
+          onClick={handleRedirection}
+        />
       </div>
     </div>
   );

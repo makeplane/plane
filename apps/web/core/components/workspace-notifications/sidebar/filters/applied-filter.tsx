@@ -10,7 +10,7 @@ import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PillButton } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/header";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 

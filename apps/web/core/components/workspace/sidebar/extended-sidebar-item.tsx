@@ -17,7 +17,7 @@ import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { DragHandle, DropIndicator } from "@plane/ui";
+import { DragHandle, DropIndicator } from "@plane/blocks/sortable";
 import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";

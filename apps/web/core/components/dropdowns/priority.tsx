@@ -12,12 +12,12 @@ import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/blocks/icons";
 import { ChevronDownOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

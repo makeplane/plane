@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/propel/utils";
+import { cn } from "@plane/blocks/utils";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 // local imports

@@ -13,7 +13,8 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueRelationTypes } from "@plane/types";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { ControlLink, CustomMenu } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

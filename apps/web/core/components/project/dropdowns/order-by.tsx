@@ -8,9 +8,9 @@ import { SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import type { TProjectOrderByOptions } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 
 type Props = {
   onChange: (value: TProjectOrderByOptions) => void;
@@ -18,7 +18,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const DISABLED_ORDERING_OPTIONS = ["sort_order"];
+const DISABLED_ORDERING_OPTIONS = new Set(["sort_order"]);
 
 export function ProjectOrderByDropdown(props: Props) {
   const { onChange, value, isMobile = false } = props;
@@ -27,7 +27,7 @@ export function ProjectOrderByDropdown(props: Props) {
   const orderByDetails = PROJECT_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
   const isDescending = value?.[0] === "-";
-  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.includes(value);
+  const isOrderingDisabled = !!value && DISABLED_ORDERING_OPTIONS.has(value);
 
   return (
     <CustomMenu
@@ -35,15 +35,15 @@ export function ProjectOrderByDropdown(props: Props) {
       customButton={
         <>
           {isMobile ? (
-            <div className={getButtonStyling("secondary", "lg")}>
+            <Button variant="secondary" size="md" stretch="auto" render={<div />}>
               <SortDescendingOutline className="size-3.5 shrink-0" />
               {orderByDetails && t(orderByDetails?.i18n_label)}
-            </div>
+            </Button>
           ) : (
-            <div className={getButtonStyling("secondary", "lg")}>
+            <Button variant="secondary" size="md" stretch="auto" render={<div />}>
               <SortDescendingOutline className="size-3.5 shrink-0" />
               {orderByDetails && t(orderByDetails?.i18n_label)}
-            </div>
+            </Button>
           )}
         </>
       }

@@ -8,7 +8,8 @@ import { observer } from "mobx-react";
 import { LeftSidePaneOutline } from "@makeplane/propel/icons";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const AppSidebarToggleButton = observer(function AppSidebarToggleButton() {
   // store hooks
@@ -16,9 +17,10 @@ export const AppSidebarToggleButton = observer(function AppSidebarToggleButton()
 
   return (
     <IconButton
-      size="base"
+      size="sm"
       variant="ghost"
-      icon={LeftSidePaneOutline}
+      icon={<Icon icon={LeftSidePaneOutline} />}
+      aria-label="Toggle sidebar"
       onClick={() => {
         if (sidebarPeek) toggleSidebarPeek(false);
         toggleSidebar();

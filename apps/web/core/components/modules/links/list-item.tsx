@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 
 import { CopyOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 // plane types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ILinkDetails } from "@plane/types";
 // plane ui

@@ -8,9 +8,10 @@ import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CloseOutline } from "@makeplane/propel/icons";
-import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // components
 import { getDate, cn } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -215,12 +216,15 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
 
         <div className="mt-5 flex items-center justify-between gap-2">
           <div className="flex w-full items-center justify-end gap-2">
-            <Button variant="secondary" size="lg" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </Button>
+            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              label={isSubmitting ? "Submitting..." : "Submit"}
+              loading={isSubmitting}
+            />
           </div>
         </div>
       </form>

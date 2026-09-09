@@ -7,7 +7,8 @@
 import React from "react";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { ControlLink, Row } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
+import { Row } from "@plane/blocks/row";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

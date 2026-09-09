@@ -12,7 +12,8 @@ import type { TIssue } from "@plane/types";
 // component
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // ui
-import { ControlLink, CustomMenu } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/control-link";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks

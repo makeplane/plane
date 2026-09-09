@@ -6,7 +6,7 @@
 
 import { useRouter } from "next/navigation";
 // plane types
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { calculateTimeAgo } from "@plane/utils";
 // components

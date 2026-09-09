@@ -7,7 +7,7 @@
 import React, { useState } from "react";
 
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 
 type Props = {
   title: string;
@@ -50,9 +50,14 @@ export function NewEmptyState({ title, description, image, primaryButton, disabl
           <div className="relative flex items-start justify-center">
             {primaryButton && (
               <Button
-                className={`relative m-3 max-w-min !px-6 ${comicBox?.direction === "left" ? "flex-row-reverse" : ""}`}
-                size="xl"
                 variant="primary"
+                size="lg"
+                stretch="auto"
+                render={
+                  <button
+                    className={`relative m-3 max-w-min !px-6 ${comicBox?.direction === "left" ? "flex-row-reverse" : ""}`}
+                  />
+                }
                 onClick={primaryButton.onClick}
                 disabled={disabled}
               >

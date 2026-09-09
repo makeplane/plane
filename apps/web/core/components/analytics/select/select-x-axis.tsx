@@ -6,7 +6,7 @@
 
 // plane package imports
 import type { ChartXAxisProperty } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
 
 type Props = {
   value?: ChartXAxisProperty;

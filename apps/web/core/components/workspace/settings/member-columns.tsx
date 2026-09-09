@@ -12,11 +12,12 @@ import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { DeactivatedUserOutline, DeleteOutline } from "@makeplane/propel/icons";
-import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Badge } from "@makeplane/propel/components/badge";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { PopoverMenu } from "@plane/blocks/popovers";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -136,9 +137,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
     <>
       {isSuspended ? (
         <div className="flex w-32">
-          <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
-            Suspended
-          </Pill>
+          <Badge variant="neutral" size="sm" label="Suspended" />
         </div>
       ) : isRoleNonEditable ? (
         <div className="flex w-32">

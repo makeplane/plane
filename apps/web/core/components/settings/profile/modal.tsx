@@ -8,8 +8,9 @@ import { useCallback } from "react";
 import { CloseOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
-import { IconButton } from "@plane/propel/icon-button";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // local imports
@@ -51,7 +52,13 @@ export const ProfileSettingsModal = observer(function ProfileSettingsModal() {
           <ProfileSettingsContent activeTab={activeTab} className="flex-1 rounded-r-xl" />
         </div>
         <div className="absolute top-3.5 right-3.5">
-          <IconButton size="base" variant="tertiary" icon={CloseOutline} onClick={handleClose} />
+          <IconButton
+            size="sm"
+            variant="tertiary"
+            icon={<Icon icon={CloseOutline} />}
+            aria-label="Close"
+            onClick={handleClose}
+          />
         </div>
       </div>
     </ModalCore>

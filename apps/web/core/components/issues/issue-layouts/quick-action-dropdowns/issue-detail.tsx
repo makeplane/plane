@@ -13,7 +13,7 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
@@ -27,7 +27,8 @@ import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useWorkItemDetailMenuItems } from "./helper";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   toggleEditIssueModal?: (value: boolean) => void;
@@ -228,7 +229,14 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       <CustomMenu
         ellipsis
         placement={placements}
-        customButton={<IconButton size="lg" variant="secondary" icon={MoreHorizontalOutline} />}
+        customButton={
+          <IconButton
+            size="md"
+            variant="secondary"
+            icon={<Icon icon={MoreHorizontalOutline} />}
+            aria-label="Work item actions"
+          />
+        }
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
         maxHeight="lg"

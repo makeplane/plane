@@ -13,7 +13,8 @@ import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } fr
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, Loader } from "@plane/ui";
+import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Loader } from "@plane/blocks/loader";
 // component
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";

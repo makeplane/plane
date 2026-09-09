@@ -20,7 +20,7 @@ import { MEMBER_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/blocks/dropdowns";
 import type { IMemberFilters } from "@/store/member/utils";
 
 interface Props {

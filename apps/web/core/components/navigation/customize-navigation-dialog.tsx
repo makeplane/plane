@@ -12,7 +12,8 @@ import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import { Sortable } from "@plane/blocks/sortable";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";

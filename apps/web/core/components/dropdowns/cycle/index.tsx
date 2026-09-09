@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { ChevronDownOutline, CyclesOutline } from "@makeplane/propel/icons";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown } from "@plane/blocks/dropdowns";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

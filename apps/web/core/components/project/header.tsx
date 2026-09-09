@@ -10,9 +10,10 @@ import { usePathname } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import { ProjectsOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Header } from "@plane/blocks/header";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -61,11 +62,12 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
         {isAuthorizedUser && !isArchived ? (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
+            stretch="auto"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}
-            className="items-center gap-1"
+            render={<button className="items-center gap-1" />}
           >
             <span className="hidden sm:inline-block">{t("workspace_projects.create.label")}</span>
             <span className="inline-block sm:hidden">{t("workspace_projects.label", { count: 1 })}</span>

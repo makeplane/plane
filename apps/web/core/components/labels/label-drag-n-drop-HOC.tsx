@@ -17,7 +17,7 @@ import { createRoot } from "react-dom/client";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueLabel, InstructionType } from "@plane/types";
 // ui
-import { DropIndicator } from "@plane/ui";
+import { DropIndicator } from "@plane/blocks/sortable";
 // components
 import { useUserPermissions } from "@/hooks/store/user";
 import { LabelName } from "./label-block/label-name";
@@ -160,7 +160,7 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
         },
       })
     );
-  }, [labelRef?.current, dragHandleRef?.current, label, isChild, isGroup, isLastChild, onDrop]);
+  }, [labelRef?.current, label, isChild, isGroup, isLastChild, onDrop]);
 
   const isMakeChild = instruction == "make-child";
 

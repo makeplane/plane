@@ -7,10 +7,10 @@
 import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
 // constants
 import { API_TOKENS_LIST } from "@plane/constants";

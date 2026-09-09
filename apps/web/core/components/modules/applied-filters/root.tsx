@@ -9,7 +9,7 @@ import { PillButton } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/header";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
@@ -25,7 +25,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-const MEMBERS_FILTERS = ["lead", "members"];
+const MEMBERS_FILTERS = new Set(["lead", "members"]);
 const DATE_FILTERS = ["start_date", "target_date"];
 
 export function ModuleAppliedFiltersList(props: Props) {
@@ -75,7 +75,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                     values={value}
                   />
                 )}
-                {MEMBERS_FILTERS.includes(filterKey) && (
+                {MEMBERS_FILTERS.has(filterKey) && (
                   <AppliedMembersFilters
                     editable={isEditingAllowed}
                     handleRemove={(val) => handleRemoveFilter(filterKey, val)}

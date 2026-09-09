@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";

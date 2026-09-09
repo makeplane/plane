@@ -11,8 +11,8 @@ import { LinkOutline, MembersOutline, StarOutline } from "@makeplane/propel/icon
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
+import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
 import type { IModule, TModuleStatus } from "@plane/types";
 import { EUserPermissions } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";

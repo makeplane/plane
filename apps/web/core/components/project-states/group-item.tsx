@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import { AddOutline, ChevronDownOutline } from "@makeplane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";

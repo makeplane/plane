@@ -8,11 +8,12 @@ import { useState } from "react";
 // plane imports
 import { ROLE } from "@plane/constants";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@plane/blocks/spinner";
 import { truncateText } from "@plane/utils";
 // constants
 // helpers
@@ -98,15 +99,16 @@ export function Invitations(props: Props) {
             );
           })}
       </div>
-      <Button
+      <ButtonElement
         variant="primary"
-        size="xl"
-        className="w-full"
+        size="lg"
+        stretch="full"
+        type="button"
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
       >
         {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
-      </Button>
+      </ButtonElement>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-strong" />
         <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
@@ -114,13 +116,13 @@ export function Invitations(props: Props) {
       </div>
       <Button
         variant="ghost"
-        size="xl"
-        className="w-full bg-surface-2 text-14"
+        size="lg"
+        stretch="full"
+        render={<button type="button" className="bg-surface-2 text-14" />}
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}
-      >
-        Create your own workspace
-      </Button>
+        label="Create your own workspace"
+      />
     </div>
   ) : (
     <div>No Invitations found</div>

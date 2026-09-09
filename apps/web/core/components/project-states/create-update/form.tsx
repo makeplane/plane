@@ -9,9 +9,9 @@ import { TwitterPicker } from "react-color";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IState } from "@plane/types";
-import { Popover } from "@plane/ui";
+import { Popover } from "@plane/blocks/popovers";
 type TStateForm = {
   data: Partial<IState>;
   onSubmit: (formData: Partial<IState>) => Promise<{ status: string }>;
@@ -109,12 +109,23 @@ export function StateForm(props: TStateForm) {
         </Field>
 
         <div className="flex items-center space-x-2">
-          <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
-            {buttonTitle}
-          </Button>
-          <Button type="button" variant="secondary" size="lg" disabled={buttonDisabled} onClick={onCancel}>
-            Cancel
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={buttonTitle}
+            onClick={formSubmit}
+            disabled={buttonDisabled}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label="Cancel"
+            disabled={buttonDisabled}
+            onClick={onCancel}
+          />
         </div>
       </div>
     </div>

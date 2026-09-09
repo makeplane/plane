@@ -9,10 +9,10 @@ import { observer } from "mobx-react";
 // types
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/blocks/modals";
 // constants
 // hooks
 import { useProject } from "@/hooks/store/use-project";

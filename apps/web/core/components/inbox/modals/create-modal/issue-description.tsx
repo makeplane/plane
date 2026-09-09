@@ -12,7 +12,7 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/loader";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text/editor";
@@ -103,7 +103,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
           return asset_id;
         } catch (error) {
           console.log("Error in uploading work item asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
+          throw new Error("Asset upload failed. Please try again later.", { cause: error });
         }
       }}
       duplicateFile={async (assetId: string) => {

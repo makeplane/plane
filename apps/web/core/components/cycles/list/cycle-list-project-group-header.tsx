@@ -6,10 +6,10 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 // icons
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/row";
 // helpers
 import { cn } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";

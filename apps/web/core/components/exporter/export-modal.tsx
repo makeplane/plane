@@ -10,12 +10,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/blocks/dropdowns";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -153,14 +154,20 @@ export const Exporter = observer(function Exporter(props: Props) {
           onCheckedChange={setMultiple}
         />
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={handleClose}>
-            {t("cancel")}
-          </Button>
-          <Button variant="primary" onClick={ExportCSVToMail} disabled={exportLoading} loading={exportLoading}>
-            {exportLoading
-              ? `${t("workspace_settings.settings.exports.exporting")}...`
-              : t("workspace_settings.settings.exports.title")}
-          </Button>
+          <Button variant="secondary" size="sm" stretch="auto" onClick={handleClose} label={t("cancel")} />
+          <Button
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            onClick={ExportCSVToMail}
+            disabled={exportLoading}
+            loading={exportLoading}
+            label={
+              exportLoading
+                ? `${t("workspace_settings.settings.exports.exporting")}...`
+                : t("workspace_settings.settings.exports.title")
+            }
+          />
         </div>
       </div>
     </ModalCore>

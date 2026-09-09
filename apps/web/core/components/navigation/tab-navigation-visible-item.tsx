@@ -8,8 +8,13 @@ import { Link } from "react-router";
 import { DefaultTabOutline, UnpinOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ContextMenu } from "@plane/propel/context-menu";
-import { TabNavigationItem } from "@plane/propel/tab-navigation";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@makeplane/propel/components/context-menu";
+import { TabNavigationItem } from "@plane/blocks/tab-navigation";
 // local imports
 import type { TNavigationItem } from "./tab-navigation-root";
 import type { TTabPreferences } from "./tab-navigation-utils";
@@ -45,37 +50,31 @@ export function TabNavigationVisibleItem({
       )}
       <div key={`${item.key}-measure`} ref={itemRef}>
         <ContextMenu>
-          <ContextMenu.Trigger>
+          <ContextMenuTrigger>
             <Link key={`${item.key}-${isActive ? "active" : "inactive"}`} to={item.href}>
               <TabNavigationItem isActive={isActive}>
                 <span>{t(item.i18n_key)}</span>
               </TabNavigationItem>
             </Link>
-          </ContextMenu.Trigger>
-          <ContextMenu.Portal>
-            <ContextMenu.Content positionerClassName="z-30">
-              <ContextMenu.Item
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleDefault(item.key);
-                }}
-                className="flex cursor-pointer items-center gap-2 text-secondary transition-colors"
-              >
-                <DefaultTabOutline className="size-3 shrink-0" />
-                <span className="text-11">{isDefault ? "Clear default" : "Set as default"}</span>
-              </ContextMenu.Item>
-              <ContextMenu.Item
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onHide(item.key);
-                }}
-                className="flex cursor-pointer items-center gap-2 text-secondary transition-colors"
-              >
-                <UnpinOutline className="size-3 shrink-0" />
-                <span className="text-11">Hide in more menu</span>
-              </ContextMenu.Item>
-            </ContextMenu.Content>
-          </ContextMenu.Portal>
+          </ContextMenuTrigger>
+          <ContextMenuContent>
+            <ContextMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleDefault(item.key);
+              }}
+              icon={<DefaultTabOutline className="size-3 shrink-0" />}
+              label={isDefault ? "Clear default" : "Set as default"}
+            />
+            <ContextMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                onHide(item.key);
+              }}
+              icon={<UnpinOutline className="size-3 shrink-0" />}
+              label="Hide in more menu"
+            />
+          </ContextMenuContent>
         </ContextMenu>
       </div>
     </div>
