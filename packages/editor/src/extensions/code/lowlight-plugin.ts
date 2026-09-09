@@ -13,19 +13,18 @@ import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import highlight from "highlight.js/lib/core";
 
 function parseNodes(nodes: any[], className: string[] = []): { text: string; classes: string[] }[] {
-  return nodes
-    .flatMap((node) => {
-      const classes = [...className, ...(node.properties ? node.properties.className : [])];
+  return nodes.flatMap((node) => {
+    const classes = [...className, ...(node.properties ? node.properties.className : [])];
 
-      if (node.children) {
-        return parseNodes(node.children, classes);
-      }
+    if (node.children) {
+      return parseNodes(node.children, classes);
+    }
 
-      return {
-        text: node.value,
-        classes,
-      };
-    });
+    return {
+      text: node.value,
+      classes,
+    };
+  });
 }
 
 function getHighlightNodes(result: any) {

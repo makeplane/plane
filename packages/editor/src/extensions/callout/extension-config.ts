@@ -30,14 +30,14 @@ export const CustomCalloutExtensionConfig: CustomCalloutExtensionType = Node.cre
 
   addAttributes() {
     const attributes = Object.values(ECalloutAttributeNames).reduce(
-        (acc, value) => {
-          acc[value] = {
-            default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
-          };
-          return acc;
-        },
-        {} as Record<ECalloutAttributeNames, { default: TCalloutBlockAttributes[ECalloutAttributeNames] }>
-      );
+      (acc, value) => {
+        acc[value] = {
+          default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
+        };
+        return acc;
+      },
+      {} as Record<ECalloutAttributeNames, { default: TCalloutBlockAttributes[ECalloutAttributeNames] }>
+    );
 
     return attributes;
   },

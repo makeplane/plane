@@ -6,7 +6,7 @@
 
 // @ts-expect-error Due to live server dependencies
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
-import React, { Fragment, useEffect, useMemo } from "react";
+import React, { Fragment, useEffect, useId, useMemo } from "react";
 import { Draggable } from "./draggable";
 
 type TEnhancedData<T> = T & { __uuid__?: string };
@@ -85,10 +85,12 @@ export function Sortable<T>({ data, render, onChange, keyExtractor, containerCla
     };
   }, [data, keyExtractor, onChange]);
 
+  const generatedId = useId();
+
   const enhancedData = useMemo(() => {
-    const uuid = id ? id : Math.random().toString(36).substring(7);
+    const uuid = id ? id : generatedId;
     return data.map((item) => ({ ...item, __uuid__: uuid }));
-  }, [data, id]);
+  }, [data, id, generatedId]);
 
   return (
     <>
