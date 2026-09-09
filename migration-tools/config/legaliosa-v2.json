@@ -7,15 +7,18 @@
   "sourceDir": "C:/Users/Karol/Projects/Legaliosa-test-ox-alpha/planning",
   "externalSource": "legaliosa-v2",
   "stateFile": "state/legaliosa-v2.json",
+  "pagesStateFile": "state/legaliosa-v2-pages.json",
+  "typesFile": "state/types.json",
+  "assigneeId": "a8f10b92-1ff5-4916-9ffa-6f96e40aeafb",
   "excludeDirs": ["archive"],
   "ticketsDir": "tickets",
   "doneDir": "tickets/done",
   "planFile": "plan.md",
+  "planName": "Plan v2",
   "spPattern": "SP-*.md",
   "taskDir": ".",
   "taskPattern": "T-*.md",
   "dependsOnField": "depends-on",
-  "typesFile": "state/types.json",
   "ticketSpLabels": true,
   "stateMapping": {
     "done": "Done",
@@ -45,11 +48,22 @@
   "estimatePoints": [ { "key": 1, "value": "1" }, { "key": 2, "value": "3" }, { "key": 3, "value": "5" } ],
   "effortMapping": { "S": "1", "M": "3", "L": "5" },  "effortFromBody": true,
   "sourceLine": true,
+  "planFiles": [
+    { "file": "archive/v1/plan.md", "name": "Plan v1", "externalId": "PLAN-V1", "state": "Done" },
+    { "file": "archive/v1/SP01-scaffold-tooling.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP02-data-model-auth.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP03-paragraph-library-content.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP04-rules-engine.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP05-admin-customer-ui.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP06-pull-api.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP07-observability-issue-reporting.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP08-backups-disaster-recovery.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP09-cicd-deploy-pipeline.md", "state": "Done", "parent": "PLAN-V1" },
+    { "file": "archive/v1/SP10-disclaimer-vvt-tom-dogfood.md", "state": "Done", "parent": "PLAN-V1" }
+  ],
   "pageGroups": [
     { "pattern": "HANDOFF.md", "name": "HANDOFF" },
     { "pattern": "pilot-findings.md", "name": "Pilot findings" },
-    { "pattern": "design/reviews/*.md", "namePrefix": "Design decision — " },
-    { "pattern": "design/v2/design-system-delta.md", "name": "Design system delta" },
     { "pattern": "v2-replan-input/*.md", "namePrefix": "v2 replan input — " }
   ]
 }

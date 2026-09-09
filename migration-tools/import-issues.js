@@ -105,6 +105,13 @@ function idFromFilename(file) {
   return base;
 }
 
+// Normalize sub_plan values to SP-XX labels ("SP01" and "SP-01" → "SP-01");
+// non-SP values (e.g. "unknown", "post-v1") → null (no label).
+function normalizeSpLabel(v) {
+  const m = String(v).toUpperCase().trim().match(/^SP-?(\d+)/);
+  return m ? `SP-${m[1]}` : null;
+}
+
 async function loadState(stateFile) {
   try {
     return JSON.parse(await readFile(stateFile, "utf8"));
@@ -230,13 +237,17 @@ async function main() {
   const excludeDirs = cfg.excludeDirs || []; // subfolders skipped by all recursive walks
   const items = [];
 
-  // 1. Plan file → type Plan (the root of the hierarchy)
+  // 1. Plan file → type Plan (the root of the hierarchy; externalId "PLAN" —
+  //    the SP/T items reference it as their parent, so the whole hierarchy
+  //    nests under this root; cfg.planName overrides the display name, e.g.
+  //    "Plan v2" for Legaliosa)
   if (cfg.planFile) {
     const file = path.resolve(cfg.sourceDir, cfg.planFile);
     const raw = await readFile(file, "utf8");
     const { data, body } = parseFrontmatter(raw);
     items.push({
       file, rel: cfg.planFile, body, data,
+      name: cfg.planName || null,
       isDone: false, externalId: "PLAN", type: "Plan", depth: 0, parentExternalId: null,
       effort: null, relations: [], labelNames: [],
     });
@@ -312,9 +323,9 @@ async function main() {
       const raw = await readFile(file, "utf8");
       const { data, body } = parseFrontmatter(raw);
       const subPlan = data[cfg.subPlanField || "sub_plan"];
-      const spLabel = subPlan
-        ? String(subPlan).toUpperCase().startsWith("SP") ? String(subPlan).toUpperCase() : `SP-${subPlan}`
-        : null;
+      // Normalized SP-XX label ("SP01"/"SP-01" → "SP-01"); non-SP values
+      // (unknown, post-v1, …) → no label
+      const spLabel = subPlan ? normalizeSpLabel(subPlan) : null;
       items.push({
         file, rel, body, data,
         isDone: doneDir ? file.startsWith(doneDir + path.sep) : false,
@@ -348,7 +359,9 @@ async function main() {
   }
 
   // 7. Explicit plan files (planFiles list) → type Plan, state per entry
-  //    (supports .txt — the recursive walk only picks .md; e.g. plan-20-audit-*.txt)
+  //    (supports .txt — the recursive walk only picks .md; e.g. plan-20-audit-*.txt;
+  //    optional externalId override, e.g. "PLAN-V1" for the v1 root;
+  //    optional parent — the referenced external id becomes the parent issue)
   for (const pf of cfg.planFiles || []) {
     const file = path.resolve(cfg.sourceDir, pf.file);
     const raw = await readFile(file, "utf8");
@@ -358,7 +371,8 @@ async function main() {
       name: pf.name || null,
       isDone: false,
       stateName: pf.state || "Backlog",
-      externalId: idFromFilename(file), type: "Plan", depth: 0, parentExternalId: null,
+      externalId: pf.externalId || idFromFilename(file), type: "Plan",
+      depth: pf.parent ? 1 : 0, parentExternalId: pf.parent || null,
       effort: null, relations: [], labelNames: [],
     });
   }
@@ -452,7 +466,10 @@ async function main() {
         name: text.length > 200 ? `${text.slice(0, 200)}…` : text,
         data: { status: checked || forcedDone ? "done" : "open", severity: priority },
         isDone: false,
-        externalId: `${cs.file.replace(/\.md$/, "")}-${idx}`, type: "Ticket", depth: 0, parentExternalId: null,
+        // cs.type: issue type override (e.g. "Design" for ui-ux items);
+        // cs.openState: state for unchecked items (e.g. "ToDo" instead of Backlog)
+        stateName: checked || forcedDone ? undefined : cs.openState,
+        externalId: `${cs.file.replace(/\.md$/, "")}-${idx}`, type: cs.type || "Ticket", depth: 0, parentExternalId: null,
         effort: null,
         relations: [],
         labelNames: [cs.label || "todo"],
