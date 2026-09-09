@@ -326,6 +326,24 @@ async function main() {
     }
   }
 
+  // 6. Archived/done plan dirs (e.g. archive/v1, done/) → type Plan, state Done
+  //    (O4: done/ + archive/ → Plan issues, state Done; only .md files — code
+  //    artifacts stay in the repo; excludeDirs skips e.g. e10-import/)
+  for (const dir of cfg.donePlanDirs || []) {
+    const absDir = path.resolve(cfg.sourceDir, dir);
+    for (const file of await walk(absDir, [], excludeDirs)) {
+      if (items.some((i) => i.file === file)) continue;
+      const rel = path.relative(cfg.sourceDir, file).replace(/\\/g, "/");
+      const raw = await readFile(file, "utf8");
+      const { data, body } = parseFrontmatter(raw);
+      items.push({
+        file, rel, body, data,
+        isDone: true, externalId: idFromFilename(file), type: "Plan", depth: 0, parentExternalId: null,
+        effort: null, relations: [], labelNames: [],
+      });
+    }
+  }
+
   // Table sources (e.g. BACKLOG.md summary tables) — one issue per data row
   for (const ts of cfg.tableSources || []) {
     const file = path.resolve(cfg.sourceDir, ts.file);

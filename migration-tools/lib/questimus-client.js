@@ -155,6 +155,15 @@ export class QuestimusClient {
     return this.request("POST", `${MAIN}/workspaces/${slug}/projects/${projectId}/pages/`, { body: data });
   }
 
+  // Pages must be archived before they can be deleted (destroy 400s otherwise)
+  archivePage(slug, projectId, pageId) {
+    return this.request("POST", `${MAIN}/workspaces/${slug}/projects/${projectId}/pages/${pageId}/archive/`);
+  }
+
+  deletePage(slug, projectId, pageId) {
+    return this.request("DELETE", `${MAIN}/workspaces/${slug}/projects/${projectId}/pages/${pageId}/`);
+  }
+
   // ---- views (main API; token auth after the fork change §7.4) ----
   // The view's `filters` use the legacy format the UI understands:
   // { priority: [...], state: [...], labels: [...], assignees: [...], issue_type: [...] }
