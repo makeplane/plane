@@ -46,7 +46,9 @@ class TestChecklistCrud:
 
         list_response = session_client.get(list_url)
         assert list_response.status_code == status.HTTP_200_OK
-        assert item_id in {row["id"] for row in list_response.data}
+        # response.data holds pre-render values (UUID objects here, not JSON
+        # strings), so compare both sides as str for a representation-agnostic check.
+        assert str(item_id) in {str(row["id"]) for row in list_response.data}
 
         detail_url = CHECKLIST_DETAIL_URL.format(
             slug=workspace.slug, project_id=project.id, issue_id=issue.id, pk=item_id
@@ -58,11 +60,13 @@ class TestChecklistCrud:
         delete_response = session_client.delete(detail_url)
         assert delete_response.status_code == status.HTTP_204_NO_CONTENT
 
-        item = IssueChecklistItem.objects.get(id=item_id)
+        # `objects` excludes soft-deleted rows, so use `all_objects` to confirm
+        # the row still exists with `deleted_at` set rather than being purged.
+        item = IssueChecklistItem.all_objects.get(id=item_id)
         assert item.deleted_at is not None, "Item was not soft-deleted"
         # excluded from the default manager, which the endpoint reads through
         list_response = session_client.get(list_url)
-        assert item_id not in {row["id"] for row in list_response.data}
+        assert str(item_id) not in {str(row["id"]) for row in list_response.data}
 
     @pytest.mark.django_db
     def test_blank_name_rejected(self, session_client, workspace, project, issue):

@@ -83,7 +83,9 @@ class TestChecklistGuestWriteDenied:
         url = CHECKLIST_LIST_URL.format(slug=workspace.slug, project_id=project.id, issue_id=issue.id)
         response = guest_client.get(url)
         assert response.status_code == status.HTTP_200_OK
-        assert str(checklist_item.id) in {row["id"] for row in response.data}
+        # response.data holds pre-render values (UUID objects here, not JSON
+        # strings), so compare both sides as str for a representation-agnostic check.
+        assert str(checklist_item.id) in {str(row["id"]) for row in response.data}
 
     @pytest.mark.django_db
     def test_guest_cannot_create(self, guest_client, workspace, project, issue):

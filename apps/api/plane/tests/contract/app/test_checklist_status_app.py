@@ -68,7 +68,11 @@ class TestChecklistStatusTransitions:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["status"] == "done"
         assert response.data["completed_at"] is not None, "completed_at was not set on entering done"
-        assert response.data["completed_by"] == str(create_user.id), "completed_by was not set on entering done"
+        # response.data holds a pre-render value (a UUID object here, not a
+        # JSON string), so compare both sides as str for a robust check.
+        assert str(response.data["completed_by"]) == str(create_user.id), (
+            "completed_by was not set on entering done"
+        )
 
     @pytest.mark.django_db
     def test_skipped_sets_neither_completed_field(self, session_client, workspace, project, issue, checklist_item):
@@ -129,6 +133,6 @@ class TestChecklistStatusTransitions:
             format="json",
         )
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["completed_by"] == str(create_user.id), (
+        assert str(response.data["completed_by"]) == str(create_user.id), (
             "Client-supplied completed_by was honoured instead of the actual actor"
         )
