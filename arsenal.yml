@@ -244,12 +244,12 @@ items:
   - name: questimus-questimus
     type: skill
     deployed_version: "0.1.0"
-    deployed_hash: "25fc1f3e7c57239a"
+    deployed_hash: "fae55114839fa137"
     deployed_date: "2026-09-09"
     customized: false
     deployed_hashes:
-      claude-code: "25fc1f3e7c57239a"
-      dsh: "25fc1f3e7c57239a"
+      claude-code: "fae55114839fa137"
+      dsh: "fae55114839fa137"
   - name: ponytail-mode-hooks
     type: hook
     deployed_version: "1.0.1"
