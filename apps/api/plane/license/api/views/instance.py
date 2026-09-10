@@ -58,6 +58,8 @@ class InstanceEndpoint(BaseAPIView):
             EMAIL_HOST,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
+            IS_OIDC_ENABLED,
+            OIDC_PROVIDER_NAME,
             SLACK_CLIENT_ID,
             UNSPLASH_ACCESS_KEY,
             LLM_API_KEY,
@@ -101,6 +103,14 @@ class InstanceEndpoint(BaseAPIView):
                     "default": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
                 },
                 {
+                    "key": "IS_OIDC_ENABLED",
+                    "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                },
+                {
+                    "key": "OIDC_PROVIDER_NAME",
+                    "default": os.environ.get("OIDC_PROVIDER_NAME", ""),
+                },
+                {
                     "key": "SLACK_CLIENT_ID",
                     "default": os.environ.get("SLACK_CLIENT_ID", None),
                 },
@@ -125,6 +135,8 @@ class InstanceEndpoint(BaseAPIView):
         data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
+        data["is_oidc_enabled"] = IS_OIDC_ENABLED == "1"
+        data["oidc_provider_name"] = OIDC_PROVIDER_NAME
 
         # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)

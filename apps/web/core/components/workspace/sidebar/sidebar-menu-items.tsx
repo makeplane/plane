@@ -80,16 +80,33 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
     return [...items, ...personalItems];
   }, [personalPreferences]);
 
+  // Pinned items render directly in the sidebar; items explicitly unpinned
+  // (`is_pinned === false`) live behind the "More" panel instead. Items with
+  // no stored preference stay visible to keep the default layout unchanged.
   const sortedNavigationItems = useMemo(
     () =>
-      // oxlint-disable-next-line oxc/no-map-spread
-      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.map((item) => {
-        const preference = workspacePreferences.items[item.key];
-        return {
-          ...item,
-          sort_order: preference ? preference.sort_order : 0,
-        };
-      }).sort((a, b) => a.sort_order - b.sort_order),
+      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter(
+        (item) => workspacePreferences.items[item.key]?.is_pinned !== false
+      )
+        // oxlint-disable-next-line oxc/no-map-spread
+        .map((item) => {
+          const preference = workspacePreferences.items[item.key];
+          return {
+            ...item,
+            sort_order: preference ? preference.sort_order : 0,
+          };
+        })
+        // oxlint-disable-next-line unicorn/no-array-sort
+        .sort((a, b) => a.sort_order - b.sort_order),
+    [workspacePreferences]
+  );
+
+  // "More" only makes sense when something is hidden, or to close an open panel.
+  const hasHiddenNavigationItems = useMemo(
+    () =>
+      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.some(
+        (item) => workspacePreferences.items[item.key]?.is_pinned === false
+      ),
     [workspacePreferences]
   );
 
@@ -157,22 +174,24 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                   // oxlint-disable-next-line react/no-array-index-key
                   <SidebarItemBase key={`dynamic_${_index}`} item={item} />
                 ))}
-                <SidebarNavItem>
-                  <button
-                    type="button"
-                    onClick={() => toggleExtendedSidebar()}
-                    className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
-                    id="extended-sidebar-toggle"
-                    aria-label={t(
-                      isExtendedSidebarOpened
-                        ? "aria_labels.app_sidebar.close_extended_sidebar"
-                        : "aria_labels.app_sidebar.open_extended_sidebar"
-                    )}
-                  >
-                    <MoreHorizontalOutline className="size-4 flex-shrink-0" />
-                    <span>{isExtendedSidebarOpened ? "Hide" : "More"}</span>
-                  </button>
-                </SidebarNavItem>
+                {(hasHiddenNavigationItems || isExtendedSidebarOpened) && (
+                  <SidebarNavItem>
+                    <button
+                      type="button"
+                      onClick={() => toggleExtendedSidebar()}
+                      className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
+                      id="extended-sidebar-toggle"
+                      aria-label={t(
+                        isExtendedSidebarOpened
+                          ? "aria_labels.app_sidebar.close_extended_sidebar"
+                          : "aria_labels.app_sidebar.open_extended_sidebar"
+                      )}
+                    >
+                      <MoreHorizontalOutline className="size-4 flex-shrink-0" />
+                      <span>{isExtendedSidebarOpened ? "Hide" : "More"}</span>
+                    </button>
+                  </SidebarNavItem>
+                )}
               </>
             </Disclosure.Panel>
           )}

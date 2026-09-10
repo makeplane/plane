@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import { Banner } from "@makeplane/propel/components/banner";
+import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
@@ -52,7 +53,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
-  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled;
+  const hasConfiguredOIDC = config?.is_oidc_enabled === true;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !hasConfiguredOIDC;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -131,6 +133,23 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         authMode={authMode}
         currentAuthStep={authStep}
       />
+      {hasConfiguredOIDC && (
+        <OAuthOptions
+          options={[
+            {
+              id: "oidc",
+              text: `${oAuthActionText} with ${config?.oidc_provider_name || "OIDC"}`,
+              icon: null,
+              onClick: () => {
+                const nextPath = searchParams.get("next_path");
+                window.location.assign(`${API_BASE_URL}/auth/oidc/${nextPath ? `?next_path=${nextPath}` : ""}`);
+              },
+              enabled: true,
+            },
+          ]}
+          showDivider={isOAuthEnabled || isEmailBasedAuthEnabled}
+        />
+      )}
       {isOAuthEnabled && (
         <OAuthOptions
           options={oAuthOptions}

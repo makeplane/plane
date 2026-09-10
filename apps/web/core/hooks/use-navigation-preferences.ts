@@ -205,7 +205,7 @@ export const useWorkspaceNavigationPreferences = () => {
     async (key: string, isPinned: boolean) => {
       if (!workspaceSlug) return;
 
-      const currentItem = preferences.items[key] || { is_pinned: false, sort_order: 0 };
+      const currentItem = preferences.items[key] || { is_pinned: true, sort_order: 0 };
 
       await updateBulkSidebarPreferences(workspaceSlug.toString(), [
         {
@@ -237,7 +237,7 @@ export const useWorkspaceNavigationPreferences = () => {
   );
 
   const getWorkspaceItemState = useCallback(
-    (key: string): TWorkspaceNavigationItemState => preferences.items[key] || { is_pinned: false, sort_order: 0 },
+    (key: string): TWorkspaceNavigationItemState => preferences.items[key] || { is_pinned: true, sort_order: 0 },
     [preferences]
   );
 
@@ -253,7 +253,7 @@ export const useWorkspaceNavigationPreferences = () => {
     async (key: string, sortOrder: number) => {
       if (!workspaceSlug) return;
 
-      const currentItem = preferences.items[key] || { is_pinned: false, sort_order: 0 };
+      const currentItem = preferences.items[key] || { is_pinned: true, sort_order: 0 };
 
       await updateBulkSidebarPreferences(workspaceSlug.toString(), [
         {

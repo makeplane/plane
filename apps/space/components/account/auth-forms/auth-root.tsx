@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
+import { API_BASE_URL } from "@plane/constants";
 import { SitesAuthService } from "@plane/services";
 import type { IEmailCheckData } from "@plane/types";
 import { OAuthOptions } from "@plane/ui";
@@ -84,6 +85,7 @@ export const AuthRoot = observer(function AuthRoot() {
   const isSMTPConfigured = config?.is_smtp_configured || false;
   const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
+  const hasConfiguredOIDC = config?.is_oidc_enabled === true;
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
 
@@ -153,6 +155,23 @@ export const AuthRoot = observer(function AuthRoot() {
           <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
         )}
         <AuthHeader authMode={authMode} />
+        {hasConfiguredOIDC && (
+          <OAuthOptions
+            options={[
+              {
+                id: "oidc",
+                text: `${authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in"} with ${config?.oidc_provider_name || "OIDC"}`,
+                icon: null,
+                onClick: () => {
+                  window.location.assign(`${API_BASE_URL}/auth/mobile/oidc/`);
+                },
+                enabled: true,
+              },
+            ]}
+            compact={authStep === EAuthSteps.PASSWORD}
+            showDivider={isOAuthEnabled || isEmailPasswordEnabled}
+          />
+        )}
         {isOAuthEnabled && <OAuthOptions options={oAuthOptions} compact={authStep === EAuthSteps.PASSWORD} />}
 
         {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}

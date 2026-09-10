@@ -82,16 +82,13 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   const workspaceItems = useMemo(() => {
     const items = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
-      const hasPermission = allowPermissions(
-        item.access,
-        EUserPermissionsLevel.WORKSPACE,
-        workspaceSlug?.toString() || ""
-      );
-      return hasPermission;
+      return allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug?.toString() || "");
     }).map((item) => {
       // Get pinned status and sort order from localStorage
+      // Default to pinned so the checkbox matches the sidebar, where items
+      // without a stored preference are visible.
       const preference = workspacePreferences.items[item.key];
-      const isPinned = preference?.is_pinned ?? false;
+      const isPinned = preference?.is_pinned ?? true;
       const sortOrder = preference?.sort_order ?? 0;
 
       return {
@@ -249,7 +246,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <div className="group flex items-center gap-2 rounded-md px-2 py-1.5 transition-all duration-200 hover:bg-surface-2">
                       <DragDropOutline className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
                       <Checkbox
-                        checked={!!workspacePreferences.items[item.key]?.is_pinned}
+                        checked={item.isPinned}
                         onCheckedChange={(checked) => handleWorkspaceItemToggle(item.key, checked)}
                         aria-label={t(item.labelTranslationKey)}
                       />

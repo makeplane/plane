@@ -47,7 +47,8 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
           return {
             ...item,
             sort_order: preference?.sort_order ?? 0,
-            is_pinned: preference?.is_pinned ?? false,
+            // Keep the default consistent with the main sidebar: absent preferences are pinned.
+            is_pinned: preference?.is_pinned ?? true,
           };
         })
         // oxlint-disable-next-line unicorn/no-array-sort

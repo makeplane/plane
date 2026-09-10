@@ -61,7 +61,9 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   const { preferences: workspacePreferences, toggleWorkspaceItem } = useWorkspaceNavigationPreferences();
 
   // derived values
-  const isPinned = workspacePreferences.items[item.key]?.is_pinned ?? false;
+  // Default to pinned so the icon matches the sidebar, where items without a
+  // stored preference are visible.
+  const isPinned = workspacePreferences.items[item.key]?.is_pinned ?? true;
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
 
