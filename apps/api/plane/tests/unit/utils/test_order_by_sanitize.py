@@ -50,36 +50,24 @@ class TestProjectOrderBySanitization:
     def test_injection_payload_falls_back_to_default(self, payload):
         """Any non-allowlisted / relational value is replaced with the
         endpoint's safe default instead of reaching .order_by()."""
-        assert (
-            sanitize_order_by(payload, PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == self.DEFAULT
-        )
+        assert sanitize_order_by(payload, PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == self.DEFAULT
 
     @pytest.mark.parametrize(
         "value",
         ["created_at", "updated_at", "name", "network", "sort_order"],
     )
     def test_legitimate_ascending_values_pass_through(self, value):
-        assert (
-            sanitize_order_by(value, PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == value
-        )
+        assert sanitize_order_by(value, PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == value
 
     @pytest.mark.parametrize(
         "value",
         ["-created_at", "-updated_at", "-name", "-network", "-sort_order"],
     )
     def test_legitimate_descending_values_pass_through(self, value):
-        assert (
-            sanitize_order_by(value, PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == value
-        )
+        assert sanitize_order_by(value, PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == value
 
     def test_empty_value_uses_default(self):
-        assert (
-            sanitize_order_by("", PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == self.DEFAULT
-        )
+        assert sanitize_order_by("", PROJECT_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == self.DEFAULT
 
 
 @pytest.mark.unit
@@ -91,10 +79,7 @@ class TestIssueOrderBySanitization:
 
     @pytest.mark.parametrize("payload", INJECTION_PAYLOADS)
     def test_injection_payload_falls_back_to_default(self, payload):
-        assert (
-            sanitize_order_by(payload, ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == self.DEFAULT
-        )
+        assert sanitize_order_by(payload, ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == self.DEFAULT
 
     @pytest.mark.parametrize(
         "value",
@@ -115,18 +100,9 @@ class TestIssueOrderBySanitization:
     def test_legitimate_values_pass_through(self, value):
         """Every value the endpoint's branch logic special-cases must survive
         sanitization, otherwise legitimate ordering would silently break."""
-        assert (
-            sanitize_order_by(value, ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == value
-        )
+        assert sanitize_order_by(value, ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == value
         # Descending variant is equally valid.
-        assert (
-            sanitize_order_by(f"-{value}", ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == f"-{value}"
-        )
+        assert sanitize_order_by(f"-{value}", ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == f"-{value}"
 
     def test_default_is_preserved_for_missing_param(self):
-        assert (
-            sanitize_order_by(None, ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT)
-            == self.DEFAULT
-        )
+        assert sanitize_order_by(None, ISSUE_ORDER_BY_ALLOWLIST, default=self.DEFAULT) == self.DEFAULT
