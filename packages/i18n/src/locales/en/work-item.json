@@ -23,6 +23,7 @@
       "dependency": "Add dependency",
       "relation": "Add relation",
       "link": "Add link",
+      "checklist_item": "Add checklist item",
       "existing": "Add existing work item"
     },
     "remove": {

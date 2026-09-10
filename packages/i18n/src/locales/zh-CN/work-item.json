@@ -23,7 +23,8 @@
       "dependency": "添加依赖",
       "relation": "添加关系",
       "link": "添加链接",
-      "existing": "添加现有工作项"
+      "existing": "添加现有工作项",
+      "checklist_item": "添加清单项"
     },
     "remove": {
       "label": "移除工作项",

@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "清單"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "將工作事項匯出為 JSON 檔案。",
       "short_description": "匯出為 JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "已新增清單項目",
+        "message": "已新增該清單項目"
+      },
+      "not_created": {
+        "title": "清單項目未新增",
+        "message": "無法新增該清單項目"
+      },
+      "updated": {
+        "title": "已更新清單項目",
+        "message": "已更新該清單項目"
+      },
+      "not_updated": {
+        "title": "清單項目未更新",
+        "message": "無法更新該清單項目"
+      },
+      "removed": {
+        "title": "已移除清單項目",
+        "message": "已移除該清單項目"
+      },
+      "not_removed": {
+        "title": "清單項目未移除",
+        "message": "無法移除該清單項目"
+      }
+    },
+    "all_skipped": "已全部略過",
+    "skipped_suffix": "已略過",
+    "placeholder": "新增項目…",
+    "status": {
+      "to_do": "待辦",
+      "in_progress": "進行中",
+      "skipped": "已略過",
+      "done": "已完成"
     }
   }
 }

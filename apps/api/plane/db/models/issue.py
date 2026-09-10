@@ -15,6 +15,9 @@ from django.utils import timezone
 from django.db.models import Q
 from django import apps
 
+# Third party imports
+from crum import get_current_user
+
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.utils.path_validator import sanitize_filename
@@ -382,6 +385,75 @@ class IssueLink(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.url}"
+
+
+class IssueChecklistItem(ChangeTrackerMixin, ProjectBaseModel):
+    """A single step on a work item's checklist.
+
+    Deliberately minimal: a label and a status. No assignee, no dates — a
+    step that needs those belongs on a sub-issue instead.
+    """
+
+    TRACKED_FIELDS = ["status"]
+
+    class ChecklistItemStatus(models.TextChoices):
+        TO_DO = "to_do", "To Do"
+        IN_PROGRESS = "in_progress", "In Progress"
+        SKIPPED = "skipped", "Skipped"
+        DONE = "done", "Done"
+
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_checklist_item")
+    name = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=20,
+        choices=ChecklistItemStatus.choices,
+        default=ChecklistItemStatus.TO_DO,
+    )
+    sort_order = models.FloatField(default=65535)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    completed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="completed_checklist_items",
+    )
+
+    class Meta:
+        verbose_name = "Issue Checklist Item"
+        verbose_name_plural = "Issue Checklist Items"
+        db_table = "issue_checklist_items"
+        ordering = ("sort_order", "created_at")
+        indexes = [models.Index(fields=["issue", "sort_order"], name="checklist_issue_order_idx")]
+
+    def __str__(self):
+        return f"{self.issue.name} {self.name}"
+
+    def save(self, *args, **kwargs):
+        kwargs = self._sync_completed_at(kwargs)
+        super().save(*args, **kwargs)
+
+    def _sync_completed_at(self, kwargs):
+        """Mirror of Issue._sync_completed_at for checklist status.
+
+        Only DONE sets completed_at/completed_by — SKIPPED deliberately does
+        not, since ruling a step out is not the same as completing it.
+        """
+        if not self._state.adding and not self.has_changed("status"):
+            return kwargs
+
+        if self.status == self.ChecklistItemStatus.DONE:
+            self.completed_at = timezone.now()
+            self.completed_by = get_current_user()
+        else:
+            self.completed_at = None
+            self.completed_by = None
+
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"completed_at", "completed_by"})
+        return kwargs
+
 
 
 def get_upload_path(instance, filename):

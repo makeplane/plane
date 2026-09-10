@@ -103,6 +103,7 @@ export class IssueStore implements IIssueStore {
     if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
       this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        return res;
       });
     }
     // assignees
@@ -128,6 +129,14 @@ export class IssueStore implements IIssueStore {
 
     // fetch sub issues
     this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+
+    // fetch checklist items — ISSUES only. Epic child routes live in the EE
+    // backend and diverge from the OSS issue routes (e.g. `/epics/<id>/links/`
+    // vs `/issues/<id>/issue-links/`); without this gate every epic open
+    // would fire a 404 against `/epics/<id>/checklist-items/`.
+    if (this.serviceType === EIssueServiceType.ISSUES) {
+      this.rootIssueDetailStore.checklist.fetchChecklistItems(workspaceSlug, projectId, issueId);
+    }
 
     // fetch issue relations
     this.rootIssueDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
@@ -288,6 +297,7 @@ export class IssueStore implements IIssueStore {
     if (issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
       this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue.parent.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        return res;
       });
     }
 
@@ -320,6 +330,13 @@ export class IssueStore implements IIssueStore {
 
     // fetch sub issues
     rootWorkItemDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+
+    // fetch checklist items — ISSUES only, same reasoning as fetchIssue()
+    // above. This entry point resolves issue vs epic dynamically via
+    // `issue.is_epic`, so the gate mirrors that rather than `this.serviceType`.
+    if (!issue.is_epic) {
+      rootWorkItemDetailStore.checklist.fetchChecklistItems(workspaceSlug, projectId, issueId);
+    }
 
     // fetch issue relations
     rootWorkItemDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);

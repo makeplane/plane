@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Kontrolný zoznam"
   },
   "chart": {
     "x_axis": "Os X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovať ako JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Položka kontrolného zoznamu pridaná",
+        "message": "Položka kontrolného zoznamu bola pridaná"
+      },
+      "not_created": {
+        "title": "Položka kontrolného zoznamu nebola pridaná",
+        "message": "Položku kontrolného zoznamu sa nepodarilo pridať"
+      },
+      "updated": {
+        "title": "Položka kontrolného zoznamu aktualizovaná",
+        "message": "Položka kontrolného zoznamu bola aktualizovaná"
+      },
+      "not_updated": {
+        "title": "Položka kontrolného zoznamu nebola aktualizovaná",
+        "message": "Položku kontrolného zoznamu sa nepodarilo aktualizovať"
+      },
+      "removed": {
+        "title": "Položka kontrolného zoznamu odstránená",
+        "message": "Položka kontrolného zoznamu bola odstránená"
+      },
+      "not_removed": {
+        "title": "Položka kontrolného zoznamu nebola odstránená",
+        "message": "Položku kontrolného zoznamu sa nepodarilo odstrániť"
+      }
+    },
+    "all_skipped": "Všetko preskočené",
+    "skipped_suffix": "preskočených",
+    "placeholder": "Pridať položku…",
+    "status": {
+      "to_do": "Urobiť",
+      "in_progress": "Prebieha",
+      "skipped": "Preskočené",
+      "done": "Hotovo"
     }
   }
 }

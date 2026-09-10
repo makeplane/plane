@@ -9,6 +9,7 @@ import { action, computed, makeObservable, observable } from "mobx";
 import type {
   TIssue,
   TIssueAttachment,
+  TIssueChecklistItem,
   TIssueComment,
   TIssueCommentReaction,
   TIssueLink,
@@ -23,6 +24,8 @@ import type { IIssueActivityStore, IIssueActivityStoreActions, TActivityLoader }
 import type { IIssueRootStore } from "../root.store";
 import { IssueAttachmentStore } from "./attachment.store";
 import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
+import { IssueChecklistStore } from "./checklist.store";
+import type { IIssueChecklistStore, IIssueChecklistStoreActions } from "./checklist.store";
 import { IssueCommentStore } from "./comment.store";
 import type { IIssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
 import { IssueCommentReactionStore } from "./comment_reaction.store";
@@ -65,6 +68,7 @@ export interface IIssueDetail
     IIssueStoreActions,
     IIssueReactionStoreActions,
     IIssueLinkStoreActions,
+    IIssueChecklistStoreActions,
     IIssueSubIssuesStoreActions,
     IIssueSubscriptionStoreActions,
     IIssueAttachmentStoreActions,
@@ -118,6 +122,7 @@ export interface IIssueDetail
   commentReaction: IIssueCommentReactionStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
+  checklist: IIssueChecklistStore;
   subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
 }
@@ -139,7 +144,7 @@ export class IssueDetail implements IIssueDetail {
       issue: undefined,
     },
   };
-  openWidgets: TWorkItemWidgets[] = ["sub-work-items", "links", "attachments"];
+  openWidgets: TWorkItemWidgets[] = ["checklist", "sub-work-items", "links", "attachments"];
   lastWidgetAction: TWorkItemWidgets | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
@@ -158,6 +163,7 @@ export class IssueDetail implements IIssueDetail {
   attachment: IIssueAttachmentStore;
   subIssues: IIssueSubIssuesStore;
   link: IIssueLinkStore;
+  checklist: IIssueChecklistStore;
   subscription: IIssueSubscriptionStore;
   relation: IIssueRelationStore;
   activity: IIssueActivityStore;
@@ -213,6 +219,7 @@ export class IssueDetail implements IIssueDetail {
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this, serviceType);
     this.link = new IssueLinkStore(this, serviceType);
+    this.checklist = new IssueChecklistStore(this, serviceType);
     this.subscription = new IssueSubscriptionStore(this, serviceType);
     this.relation = new IssueRelationStore(this);
   }
@@ -255,8 +262,8 @@ export class IssueDetail implements IIssueDetail {
     this.openWidgets = state;
     if (this.lastWidgetAction) this.lastWidgetAction = null;
   };
-  setLastWidgetAction = (action: TWorkItemWidgets) => {
-    this.openWidgets = [action];
+  setLastWidgetAction = (widgetAction: TWorkItemWidgets) => {
+    this.openWidgets = [widgetAction];
   };
   toggleOpenWidget = (state: TWorkItemWidgets) => {
     if (this.openWidgets && this.openWidgets.includes(state))
@@ -331,6 +338,29 @@ export class IssueDetail implements IIssueDetail {
   ) => this.link.updateLink(workspaceSlug, projectId, issueId, linkId, data);
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) =>
     this.link.removeLink(workspaceSlug, projectId, issueId, linkId);
+
+  // checklist
+  addChecklistItems = (issueId: string, items: TIssueChecklistItem[]) =>
+    this.checklist.addChecklistItems(issueId, items);
+  fetchChecklistItems = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.checklist.fetchChecklistItems(workspaceSlug, projectId, issueId);
+  createChecklistItem = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssueChecklistItem>
+  ) => this.checklist.createChecklistItem(workspaceSlug, projectId, issueId, data);
+  updateChecklistItem = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    checklistItemId: string,
+    data: Partial<TIssueChecklistItem>
+  ) => this.checklist.updateChecklistItem(workspaceSlug, projectId, issueId, checklistItemId, data);
+  removeChecklistItem = async (workspaceSlug: string, projectId: string, issueId: string, checklistItemId: string) =>
+    this.checklist.removeChecklistItem(workspaceSlug, projectId, issueId, checklistItemId);
+  startAddingChecklistItem = (issueId: string) => this.checklist.startAddingChecklistItem(issueId);
+  stopAddingChecklistItem = (issueId: string) => this.checklist.stopAddingChecklistItem(issueId);
 
   // sub issues
   fetchSubIssues = async (workspaceSlug: string, projectId: string, issueId: string) =>

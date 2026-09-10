@@ -5,12 +5,20 @@
  */
 
 import React from "react";
-import { AttachOutline, LinkOutline, RelationsOutline, ViewsOutline } from "@makeplane/propel/icons";
+import {
+  AttachOutline,
+  CheckSquareOutline,
+  LinkOutline,
+  RelationsOutline,
+  ViewsOutline,
+} from "@makeplane/propel/icons";
+import { EIssueServiceType } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
+import { ChecklistActionButton } from "./checklist";
 import { IssueLinksActionButton } from "./links";
 import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
@@ -32,6 +40,20 @@ export function IssueDetailWidgetActionButtons(props: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {issueServiceType === EIssueServiceType.ISSUES && !hideWidgets?.includes("checklist") && (
+        <ChecklistActionButton
+          issueId={issueId}
+          customButton={
+            <IssueDetailWidgetButton
+              title={t("issue.add.checklist_item")}
+              icon={<CheckSquareOutline className="h-3.5 w-3.5 flex-shrink-0" />}
+              disabled={disabled}
+            />
+          }
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
       {!hideWidgets?.includes("sub-work-items") && (
         <SubIssuesActionButton
           issueId={issueId}

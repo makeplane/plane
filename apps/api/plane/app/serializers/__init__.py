@@ -65,6 +65,7 @@ from .issue import (
     IssueFlatSerializer,
     IssueStateSerializer,
     IssueLinkSerializer,
+    IssueChecklistItemSerializer,
     IssueIntakeSerializer,
     IssueLiteSerializer,
     IssueAttachmentSerializer,

@@ -14,6 +14,7 @@ import type {
   TIssue,
   TIssueActivity,
   TIssueLink,
+  TIssueChecklistItem,
   TIssueServiceType,
   TIssuesResponse,
   TIssueSubIssues,
@@ -329,6 +330,68 @@ export class IssueService extends APIService {
   async deleteIssueLink(workspaceSlug: string, projectId: string, issueId: string, linkId: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "links" : "issue-links"}/${linkId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Checklist items use the same `checklist-items` path segment for every
+  // service type (unlike links) so an EE backend exposing
+  // `/epics/<id>/checklist-items/` later needs no client change.
+
+  async fetchChecklistItems(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueChecklistItem[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/checklist-items/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createChecklistItem(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<TIssueChecklistItem>
+  ): Promise<TIssueChecklistItem> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/checklist-items/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateChecklistItem(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    checklistItemId: string,
+    data: Partial<TIssueChecklistItem>
+  ): Promise<TIssueChecklistItem> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/checklist-items/${checklistItemId}/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteChecklistItem(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    checklistItemId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/checklist-items/${checklistItemId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

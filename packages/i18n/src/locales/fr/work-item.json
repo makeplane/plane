@@ -23,7 +23,8 @@
       "dependency": "Ajouter une dépendance",
       "relation": "Ajouter une relation",
       "link": "Ajouter un lien",
-      "existing": "Ajouter un élément de travail existant"
+      "existing": "Ajouter un élément de travail existant",
+      "checklist_item": "Ajouter un élément de checklist"
     },
     "remove": {
       "label": "Supprimer l’élément de travail",

@@ -717,7 +717,8 @@
     "developer": "Entwickler",
     "work_structure": "Arbeitsstruktur",
     "execution": "Ausführung",
-    "administration": "Verwaltung"
+    "administration": "Verwaltung",
+    "checklist": "Checkliste"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Checklistenelement hinzugefügt",
+        "message": "Das Checklistenelement wurde hinzugefügt"
+      },
+      "not_created": {
+        "title": "Checklistenelement nicht hinzugefügt",
+        "message": "Das Checklistenelement konnte nicht hinzugefügt werden"
+      },
+      "updated": {
+        "title": "Checklistenelement aktualisiert",
+        "message": "Das Checklistenelement wurde aktualisiert"
+      },
+      "not_updated": {
+        "title": "Checklistenelement nicht aktualisiert",
+        "message": "Das Checklistenelement konnte nicht aktualisiert werden"
+      },
+      "removed": {
+        "title": "Checklistenelement entfernt",
+        "message": "Das Checklistenelement wurde entfernt"
+      },
+      "not_removed": {
+        "title": "Checklistenelement nicht entfernt",
+        "message": "Das Checklistenelement konnte nicht entfernt werden"
+      }
+    },
+    "all_skipped": "Alle übersprungen",
+    "skipped_suffix": "übersprungen",
+    "placeholder": "Element hinzufügen…",
+    "status": {
+      "to_do": "Zu erledigen",
+      "in_progress": "In Bearbeitung",
+      "skipped": "Übersprungen",
+      "done": "Erledigt"
     }
   }
 }

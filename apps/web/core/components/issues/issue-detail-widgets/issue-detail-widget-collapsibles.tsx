@@ -8,11 +8,13 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineRelationOptions } from "@/components/relations";
 // local imports
 import { AttachmentsCollapsible } from "./attachments";
+import { ChecklistCollapsible } from "./checklist";
 import { LinksCollapsible } from "./links";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
@@ -34,6 +36,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
     subIssues: { subIssuesByIssueId },
     attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
+    checklist: { getChecklistItemIdsByIssueId, isAddingChecklistItem },
   } = useIssueDetail(issueServiceType);
   // derived values
   const issue = getIssueById(issueId);
@@ -41,6 +44,15 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
   // render conditions
+  const checklistItemIds = getChecklistItemIdsByIssueId(issueId);
+  // Checklists have no modal-based "add" flow (research.md D11), so unlike
+  // every other widget here, a zero-item checklist must still be able to
+  // render — otherwise there's nowhere for the first item to appear when
+  // the top-row action button is clicked.
+  const shouldRenderChecklist =
+    issueServiceType === EIssueServiceType.ISSUES &&
+    (!!checklistItemIds?.length || isAddingChecklistItem(issueId)) &&
+    !hideWidgets?.includes("checklist");
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0 && !hideWidgets?.includes("sub-work-items");
   const shouldRenderRelations = issueRelationsCount > 0 && !hideWidgets?.includes("relations");
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0 && !hideWidgets?.includes("links");
@@ -52,6 +64,15 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
 
   return (
     <div className="flex flex-col">
+      {shouldRenderChecklist && (
+        <ChecklistCollapsible
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
       {shouldRenderSubIssues && (
         <SubIssuesCollapsible
           workspaceSlug={workspaceSlug}

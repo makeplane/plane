@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Listă de verificare"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Element din lista de verificare adăugat",
+        "message": "Elementul din lista de verificare a fost adăugat"
+      },
+      "not_created": {
+        "title": "Elementul din lista de verificare nu a fost adăugat",
+        "message": "Elementul din lista de verificare nu a putut fi adăugat"
+      },
+      "updated": {
+        "title": "Element din lista de verificare actualizat",
+        "message": "Elementul din lista de verificare a fost actualizat"
+      },
+      "not_updated": {
+        "title": "Elementul din lista de verificare nu a fost actualizat",
+        "message": "Elementul din lista de verificare nu a putut fi actualizat"
+      },
+      "removed": {
+        "title": "Element din lista de verificare eliminat",
+        "message": "Elementul din lista de verificare a fost eliminat"
+      },
+      "not_removed": {
+        "title": "Elementul din lista de verificare nu a fost eliminat",
+        "message": "Elementul din lista de verificare nu a putut fi eliminat"
+      }
+    },
+    "all_skipped": "Toate omise",
+    "skipped_suffix": "omise",
+    "placeholder": "Adăugați un element…",
+    "status": {
+      "to_do": "De făcut",
+      "in_progress": "În desfășurare",
+      "skipped": "Omis",
+      "done": "Finalizat"
     }
   }
 }

@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "チェックリスト"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "チェックリスト項目が追加されました",
+        "message": "チェックリストの項目が追加されました"
+      },
+      "not_created": {
+        "title": "チェックリスト項目を追加できませんでした",
+        "message": "チェックリストの項目を追加できませんでした"
+      },
+      "updated": {
+        "title": "チェックリスト項目が更新されました",
+        "message": "チェックリストの項目が更新されました"
+      },
+      "not_updated": {
+        "title": "チェックリスト項目を更新できませんでした",
+        "message": "チェックリストの項目を更新できませんでした"
+      },
+      "removed": {
+        "title": "チェックリスト項目が削除されました",
+        "message": "チェックリストの項目が削除されました"
+      },
+      "not_removed": {
+        "title": "チェックリスト項目を削除できませんでした",
+        "message": "チェックリストの項目を削除できませんでした"
+      }
+    },
+    "all_skipped": "すべてスキップ済み",
+    "skipped_suffix": "件スキップ",
+    "placeholder": "項目を追加…",
+    "status": {
+      "to_do": "未着手",
+      "in_progress": "進行中",
+      "skipped": "スキップ",
+      "done": "完了"
     }
   }
 }

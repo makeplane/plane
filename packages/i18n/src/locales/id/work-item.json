@@ -23,7 +23,8 @@
       "dependency": "Tambah ketergantungan",
       "relation": "Tambah hubungan",
       "link": "Tambah tautan",
-      "existing": "Tambah item kerja yang ada"
+      "existing": "Tambah item kerja yang ada",
+      "checklist_item": "Tambahkan item checklist"
     },
     "remove": {
       "label": "Hapus item kerja",

@@ -23,7 +23,8 @@
       "dependency": "新增相依性",
       "relation": "新增關聯",
       "link": "新增連結",
-      "existing": "新增現有工作事項"
+      "existing": "新增現有工作事項",
+      "checklist_item": "新增清單項目"
     },
     "remove": {
       "label": "移除工作事項",

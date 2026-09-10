@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Checklist"
   },
   "chart": {
     "x_axis": "Eixo X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Exporte itens de trabalho para um arquivo JSON.",
       "short_description": "Exportar como JSON"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Item da checklist adicionado",
+        "message": "O item da checklist foi adicionado"
+      },
+      "not_created": {
+        "title": "Item da checklist não adicionado",
+        "message": "Não foi possível adicionar o item da checklist"
+      },
+      "updated": {
+        "title": "Item da checklist atualizado",
+        "message": "O item da checklist foi atualizado"
+      },
+      "not_updated": {
+        "title": "Item da checklist não atualizado",
+        "message": "Não foi possível atualizar o item da checklist"
+      },
+      "removed": {
+        "title": "Item da checklist removido",
+        "message": "O item da checklist foi removido"
+      },
+      "not_removed": {
+        "title": "Item da checklist não removido",
+        "message": "Não foi possível remover o item da checklist"
+      }
+    },
+    "all_skipped": "Tudo ignorado",
+    "skipped_suffix": "ignorados",
+    "placeholder": "Adicionar um item…",
+    "status": {
+      "to_do": "A fazer",
+      "in_progress": "Em andamento",
+      "skipped": "Ignorado",
+      "done": "Concluído"
     }
   }
 }

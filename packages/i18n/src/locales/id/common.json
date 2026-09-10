@@ -717,7 +717,8 @@
     "developer": "Developer",
     "work_structure": "Work structure",
     "execution": "Execution",
-    "administration": "Administration"
+    "administration": "Administration",
+    "checklist": "Checklist"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -866,6 +867,43 @@
       "title": "JSON",
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
+    }
+  },
+  "checklist": {
+    "toasts": {
+      "created": {
+        "title": "Item checklist ditambahkan",
+        "message": "Item checklist telah ditambahkan"
+      },
+      "not_created": {
+        "title": "Item checklist tidak ditambahkan",
+        "message": "Item checklist tidak dapat ditambahkan"
+      },
+      "updated": {
+        "title": "Item checklist diperbarui",
+        "message": "Item checklist telah diperbarui"
+      },
+      "not_updated": {
+        "title": "Item checklist tidak diperbarui",
+        "message": "Item checklist tidak dapat diperbarui"
+      },
+      "removed": {
+        "title": "Item checklist dihapus",
+        "message": "Item checklist telah dihapus"
+      },
+      "not_removed": {
+        "title": "Item checklist tidak dihapus",
+        "message": "Item checklist tidak dapat dihapus"
+      }
+    },
+    "all_skipped": "Semua dilewati",
+    "skipped_suffix": "dilewati",
+    "placeholder": "Tambahkan item…",
+    "status": {
+      "to_do": "Belum dikerjakan",
+      "in_progress": "Sedang berlangsung",
+      "skipped": "Dilewati",
+      "done": "Selesai"
     }
   }
 }
