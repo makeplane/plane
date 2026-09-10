@@ -76,6 +76,7 @@ class ProjectCreateSerializer(BaseSerializer):
             "project_lead",
             "default_assignee",
             "identifier",
+            "network",
             "icon_prop",
             "emoji",
             "cover_image",
