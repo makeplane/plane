@@ -114,6 +114,7 @@ export function ParentIssuesListModal({
         <Combobox.Options
           as="ul"
           static
+          modal={false}
           className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
         >
           {searchTerm !== "" && (

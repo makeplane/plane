@@ -15,13 +15,16 @@ const usePeekOverviewOutsideClickDetector = (
 ) => {
   const handleClick = useCallback(
     (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) return;
+      if (!(event.target instanceof Node)) return;
+      // Headless UI v2 selects on mousedown and unmounts the list in the same event.
+      // After unmount, target is detached so contains()/closest() miss — use the event path.
+      const path = event.composedPath();
+      if (ref.current && path.includes(ref.current)) return;
       if (ref.current && !ref.current.contains(event.target)) {
-        // check for the closest element with attribute name data-prevent-outside-click
-        const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");
-        // if the closest element with attribute name data-prevent-outside-click is found
+        const preventOutsideClickElement = path.find(
+          (node): node is Element => node instanceof Element && node.hasAttribute("data-prevent-outside-click")
+        );
         if (preventOutsideClickElement) {
-          // Check if this element's ID is in the exclusion list
           const elementId = preventOutsideClickElement.id;
           const shouldExcludePrevention =
             excludePreventionElementIds && elementId && excludePreventionElementIds.includes(elementId);
@@ -32,24 +35,15 @@ const usePeekOverviewOutsideClickDetector = (
             return;
           }
         }
-        // check if the click target is the current issue element or its children
-        let targetElement: HTMLElement | null = event.target;
-        while (targetElement) {
-          if (targetElement.id === `issue-${issueId}`) {
-            // if the click target is the current issue element, return
-            return;
-          }
-          targetElement = targetElement.parentElement;
+        if (path.some((node) => node instanceof Element && node.id === `issue-${issueId}`)) {
+          return;
         }
-        const delayOutsideClickElement = event.target.closest("[data-delay-outside-click]");
-        if (delayOutsideClickElement) {
-          // if the click target is the closest element with attribute name data-delay-outside-click, delay the callback
+        if (path.some((node) => node instanceof Element && node.hasAttribute("data-delay-outside-click"))) {
           setTimeout(() => {
             callback();
           }, 0);
           return;
         }
-        // else, call the callback immediately
         callback();
       }
     },

@@ -219,6 +219,7 @@ export function ExistingIssuesListModal(props: Props) {
         <Combobox.Options
           as="ul"
           static
+          modal={false}
           className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
         >
           {/* TODO: Translate here */}

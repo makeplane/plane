@@ -35,6 +35,7 @@ export function Popover(props: TPopover) {
   // react-popper derived values
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: popperPosition,
+    strategy: "fixed",
     modifiers: [
       {
         name: "preventOverflow",

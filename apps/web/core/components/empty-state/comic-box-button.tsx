@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { Ref } from "react";
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
@@ -33,8 +32,9 @@ export function ComicBoxButton(props: Props) {
   };
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>();
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    strategy: "fixed",
     placement: "right-end",
     modifiers: [
       {
@@ -63,13 +63,14 @@ export function ComicBoxButton(props: Props) {
         </Button>
       </Popover.Button>
       {isHovered && (
-        <Popover.Panel className="fixed z-10" static>
-          <div
-            className="relative flex w-52 flex-col overflow-hidden rounded-sm rounded-xl border border-subtle bg-layer-1 p-5 hover:bg-layer-1-hover lg:w-60 xl:w-80"
-            ref={setPopperElement as Ref<HTMLDivElement>}
-            style={styles.popper}
-            {...attributes.popper}
-          >
+        <Popover.Panel
+          className="fixed z-10"
+          static
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="relative flex w-52 flex-col overflow-hidden rounded-sm rounded-xl border border-subtle bg-layer-1 p-5 hover:bg-layer-1-hover lg:w-60 xl:w-80">
             <div className="rounded-lb-sm absolute bottom-2 -left-[5px] h-2 w-2 rotate-45 transform border border-t-0 border-r-0 border-subtle bg-surface-1" />
             <h3 className="w-full text-16 font-semibold">{title}</h3>
             <h4 className="mt-1 text-13">{description}</h4>
