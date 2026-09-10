@@ -163,7 +163,7 @@ catalog:
   "remark-stringify": "^11.0.0"
   "sanitize-html": "2.17.7"
   "serve": "14.2.5"
-  "sharp": "^0.35.3"
+  "sharp": "^0.35.4"
   "smooth-scroll-into-view-if-needed": "^2.0.2"
   "storybook": "10.4.6"
   "swr": "2.4.2"
@@ -256,7 +256,7 @@ overrides:
   # affected version. fast-uri reaches us only through ajv, so stay on the
   # patched 3.x rather than 4.x, which is outside ajv's ^3.0.1 range.
   fast-uri: 3.1.6
-  "js-yaml@4": 4.3.1
+  "js-yaml@4": 4.3.2
   linkify-it: 5.0.2
   body-parser: 1.20.6
   tmp: 0.2.7
