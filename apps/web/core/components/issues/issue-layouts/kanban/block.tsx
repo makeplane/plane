@@ -25,6 +25,7 @@ import { cn, generateWorkItemLink } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS, getIssueBlockId } from "@/components/issues/issue-layouts/utils";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
@@ -96,13 +97,15 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     <>
       <div className="relative">
         {issue.project_id && (
-          <IssueIdentifier
-            issueId={issue.id}
-            projectId={issue.project_id}
-            size="xs"
-            variant="tertiary"
-            displayProperties={displayProperties}
-          />
+          <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
+            <IssueIdentifier
+              issueId={issue.id}
+              projectId={issue.project_id}
+              size="xs"
+              variant="tertiary"
+              displayProperties={displayProperties}
+            />
+          </WithDisplayPropertiesHOC>
         )}
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div

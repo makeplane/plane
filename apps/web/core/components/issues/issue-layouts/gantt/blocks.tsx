@@ -10,10 +10,11 @@ import { useParams } from "next/navigation";
 import { Popover } from "@plane/propel/popover";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { ControlLink } from "@plane/ui";
-import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
+import { generateWorkItemLink } from "@plane/utils";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -54,8 +55,6 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
   const { blockStyle } = getBlockViewDetails(issueDetails, stateDetails?.color ?? "");
 
   const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
-
-  const duration = findTotalDaysInRange(issueDetails?.start_date, issueDetails?.target_date) || 0;
 
   return (
     <Popover delay={100} openOnHover>
@@ -143,13 +142,18 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
         {issueDetails?.project_id && (
-          <IssueIdentifier
-            issueId={issueDetails.id}
-            projectId={issueDetails.project_id}
-            size="xs"
-            variant="tertiary"
-            displayProperties={issuesFilter?.issueFilters?.displayProperties}
-          />
+          <WithDisplayPropertiesHOC
+            displayProperties={issuesFilter?.issueFilters?.displayProperties || {}}
+            displayPropertyKey="key"
+          >
+            <IssueIdentifier
+              issueId={issueDetails.id}
+              projectId={issueDetails.project_id}
+              size="xs"
+              variant="tertiary"
+              displayProperties={issuesFilter?.issueFilters?.displayProperties}
+            />
+          </WithDisplayPropertiesHOC>
         )}
         <Tooltip label={issueDetails?.name ?? ""} layout="stacked" disabled={isMobile}>
           <span className="flex-grow truncate text-13 font-medium">{issueDetails?.name}</span>
