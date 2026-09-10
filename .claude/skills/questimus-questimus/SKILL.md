@@ -32,7 +32,7 @@ This skill is the interface to the **Questimus** project in Questimus. It is dep
 
 ## Scope
 
-- **Workspace:** `main` · **Project:** `Questimus` (id `ca67c7ab-6b87-454e-be68-e1a6cc9c2fe3`)
+- **Workspace:** `main` Â· **Project:** `Questimus` (id `ca67c7ab-6b87-454e-be68-e1a6cc9c2fe3`)
 - **Base URL:** `http://localhost:7000`
 - **Token:** read from `.token` in this skill folder (gitignored; deployed by `Arsenal/scripts/deploy-tokens.ps1`). Never print, never commit, never paste into chat.
 - **Auth:** `X-Api-Key: plane_api_<token>` header. Rate limit 60/min per token (local install raised to 1000/min).
@@ -40,8 +40,8 @@ This skill is the interface to the **Questimus** project in Questimus. It is dep
 
 ## Conventions
 
-- **States (6):** `Backlog` · `In Progress` · `Done` · `Cancelled` · `Blocked` · `ToDo` — UUIDs in route-meta.
-- **Types (3):** `Plan` (hierarchy) · `Ticket` (default) · `Design` (design/UI-UX work items) — UUIDs in route-meta.
+- **States (6):** `Backlog` Â· `In Progress` Â· `Done` Â· `Cancelled` Â· `Blocked` Â· `ToDo` — UUIDs in route-meta.
+- **Types (3):** `Plan` (hierarchy) Â· `Ticket` (default) Â· `Design` (design/UI-UX work items) — UUIDs in route-meta.
 - **Labels:** `todo`, `idea`, `user-report`, `verified` — UUIDs in route-meta.
 - **Priorities:** `urgent | high | medium | low`.
 - **Identifiers:** zero-padded keys (`QUESTIMUS-001`) in the UI; the API accepts the raw sequence (`QUESTIMUS-7`).
