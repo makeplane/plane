@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+import html
 import re
 
 # Django imports
@@ -30,8 +31,8 @@ def generate_plain_text_from_html(html_content):
     # Remove style tags and their content
     html_content = re.sub(r"<style[^>]*>.*?</style>", "", html_content, flags=re.DOTALL | re.IGNORECASE)
 
-    # Strip HTML tags
-    text_content = strip_tags(html_content)
+    # Strip HTML tags, then decode entities so query strings keep `&` instead of `&amp;`
+    text_content = html.unescape(strip_tags(html_content))
 
     # Remove excessive empty lines
     text_content = re.sub(r"\n\s*\n\s*\n+", "\n\n", text_content)
