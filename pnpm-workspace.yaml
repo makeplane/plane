@@ -256,10 +256,6 @@ overrides:
   # affected version. fast-uri reaches us only through ajv, so stay on the
   # patched 3.x rather than 4.x, which is outside ajv's ^3.0.1 range.
   fast-uri: 3.1.6
-  # CVE-2026-84375 (maxTotalMergeKeys does not bound CPU use for empty merge
-  # keys -> DoS, fixed 4.3.2). Pinned EXACTLY on purpose: a range would drift
-  # onto 5.x, which is a hard break. That also means this line is the vulnerable
-  # version the moment a new js-yaml advisory lands - bump it, do not widen it.
   "js-yaml@4": 4.3.2
   linkify-it: 5.0.2
   body-parser: 1.20.6
