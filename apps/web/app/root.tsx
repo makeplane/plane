@@ -7,7 +7,7 @@
 import type { ReactNode } from "react";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 // types
@@ -21,7 +21,7 @@ import ogImage from "@/app/assets/og-image.png?url";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // lib
 import { isStaleAssetError, recoverFromStaleAsset } from "@/lib/stale-asset-error";
 // local
@@ -116,14 +116,12 @@ export default function Root() {
 }
 
 export function HydrateFallback() {
-  const { resolvedTheme } = useTheme();
-
-  // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
-
+  // Propel's LogoSpinner paints both theme GIFs and CSS picks the active one via
+  // `data-theme`, so we do not wait on next-themes. Waiting left a blank canvas
+  // until `resolvedTheme` landed, which is the flash at the end of boot.
   return (
     <div className="relative flex h-screen w-full items-center justify-center bg-canvas">
-      <LogoSpinner />
+      <LogoSpinner size="fluid" alt="Loading" />
     </div>
   );
 }

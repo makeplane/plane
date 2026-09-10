@@ -8,11 +8,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook } from "@plane/types";
 // ui
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
@@ -29,6 +30,8 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   const [deleteWebhookModal, setDeleteWebhookModal] = useState(false);
   // router
   const { workspaceSlug, webhookId } = params;
+  // translation
+  const { t } = useTranslation();
   // mobx store
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
@@ -90,7 +93,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   if (!currentWebhook)
     return (
       <div className="grid h-full w-full place-items-center p-4">
-        <LogoSpinner />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 

@@ -31,6 +31,14 @@ export default defineConfig(() => ({
     },
     dedupe: ["react", "react-dom", "@headlessui/react"],
   },
+  ssr: {
+    // propel's LogoSpinner statically imports its GIF pair, which only a bundler can turn into a
+    // URL. Externalized, the server build would hand that import to Node, which cannot load a
+    // `.gif` — the SPA prerender then 500s. Bundling propel means Vite resolves the asset in the
+    // server build too, so the prerendered shell carries the same hashed `/assets/…` URL as the
+    // client bundle.
+    noExternal: ["@makeplane/propel"],
+  },
   server: {
     host: "127.0.0.1",
   },

@@ -9,7 +9,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
@@ -102,7 +102,7 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
   if (isLoading)
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <LogoSpinner />
+        <LogoSpinner size="fluid" alt={t("common.loading")} />
       </div>
     );
 

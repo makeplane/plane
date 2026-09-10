@@ -1597,9 +1597,6 @@ importers:
       react:
         specifier: 19.2.8
         version: 19.2.8
-      react-day-picker:
-        specifier: 'catalog:'
-        version: 9.5.0(react@19.2.8)
       react-dom:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
