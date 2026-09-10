@@ -75,6 +75,12 @@ export class IssueChecklistStore implements IIssueChecklistStore {
   checklistItems: TIssueChecklistItemIdMap = {};
   checklistItemMap: TIssueChecklistItemMap = {};
   activeAddInputIssueId: string | null = null;
+  // Guard against out-of-order async responses clobbering newer state: a
+  // fetch, or an update's reconciliation/rollback, is only applied if it is
+  // still the most recent request for that issue/item when it resolves.
+  // Plain bookkeeping, not rendered, so it stays outside MobX observables.
+  private issueRevision: Record<string, number> = {};
+  private itemRevision: Record<string, number> = {};
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
@@ -150,9 +156,19 @@ export class IssueChecklistStore implements IIssueChecklistStore {
     });
   };
 
+  // Bumping the revision invalidates any fetch for this issue that is still
+  // in flight, so its (now stale) response is skipped instead of overwriting
+  // the mutation that just landed. See fetchChecklistItems.
+  private bumpIssueRevision = (issueId: string) => {
+    this.issueRevision[issueId] = (this.issueRevision[issueId] ?? 0) + 1;
+  };
+
   fetchChecklistItems = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const revision = this.issueRevision[issueId] ?? 0;
     const response = await this.issueService.fetchChecklistItems(workspaceSlug, projectId, issueId);
-    this.addChecklistItems(issueId, response);
+    if ((this.issueRevision[issueId] ?? 0) === revision) {
+      this.addChecklistItems(issueId, response);
+    }
     return response;
   };
 
@@ -168,6 +184,7 @@ export class IssueChecklistStore implements IIssueChecklistStore {
       this.checklistItems[issueId] = [...(this.checklistItems[issueId] ?? []), response.id];
       this.resortIds(issueId);
     });
+    this.bumpIssueRevision(issueId);
     // Feed-visible change — refresh activity. Status toggles and reorders do
     // NOT do this (see updateChecklistItem) to avoid hammering the endpoint.
     this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -182,6 +199,12 @@ export class IssueChecklistStore implements IIssueChecklistStore {
     data: Partial<TIssueChecklistItem>
   ) => {
     const initialData = { ...this.checklistItemMap[checklistItemId] };
+    // Claim the next revision for this item. Two updates can overlap (e.g.
+    // two quick status toggles) and resolve out of order; only the call that
+    // still holds the latest revision when it resolves may reconcile or roll
+    // back, so a slow, now-superseded response can't stomp a newer one.
+    const revision = (this.itemRevision[checklistItemId] ?? 0) + 1;
+    this.itemRevision[checklistItemId] = revision;
     try {
       runInAction(() => {
         Object.keys(data).forEach((key) => {
@@ -198,13 +221,16 @@ export class IssueChecklistStore implements IIssueChecklistStore {
         data
       );
 
-      // Reconcile with the server response: completed_at/completed_by are
-      // derived server-side from the status *transition*, so an optimistic
-      // update cannot predict them — overwrite rather than merge.
-      runInAction(() => {
-        set(this.checklistItemMap, checklistItemId, response);
-        if (data.sort_order !== undefined) this.resortIds(issueId);
-      });
+      if (this.itemRevision[checklistItemId] === revision) {
+        // Reconcile with the server response: completed_at/completed_by are
+        // derived server-side from the status *transition*, so an optimistic
+        // update cannot predict them — overwrite rather than merge.
+        runInAction(() => {
+          set(this.checklistItemMap, checklistItemId, response);
+          if (data.sort_order !== undefined) this.resortIds(issueId);
+        });
+        this.bumpIssueRevision(issueId);
+      }
 
       // Only rename changes are feed-visible activity worth an eager refetch;
       // reorders and status changes still write activity server-side (except
@@ -214,16 +240,22 @@ export class IssueChecklistStore implements IIssueChecklistStore {
       }
       return response;
     } catch (error) {
-      runInAction(() => {
-        set(this.checklistItemMap, checklistItemId, initialData);
-        this.resortIds(issueId);
-      });
+      if (this.itemRevision[checklistItemId] === revision) {
+        runInAction(() => {
+          set(this.checklistItemMap, checklistItemId, initialData);
+          this.resortIds(issueId);
+        });
+      }
       throw error;
     }
   };
 
   removeChecklistItem = async (workspaceSlug: string, projectId: string, issueId: string, checklistItemId: string) => {
     await this.issueService.deleteChecklistItem(workspaceSlug, projectId, issueId, checklistItemId);
+
+    // Invalidate any update still in flight for this item so its
+    // reconciliation/rollback can't resurrect what was just deleted.
+    this.itemRevision[checklistItemId] = (this.itemRevision[checklistItemId] ?? 0) + 1;
 
     const itemIndex = this.checklistItems[issueId]?.findIndex((id) => id === checklistItemId) ?? -1;
     if (itemIndex >= 0)
@@ -232,6 +264,7 @@ export class IssueChecklistStore implements IIssueChecklistStore {
         delete this.checklistItemMap[checklistItemId];
       });
 
+    this.bumpIssueRevision(issueId);
     this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
 
