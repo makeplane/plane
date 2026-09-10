@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.core.exceptions import ObjectDoesNotExist
+
 # Third party imports
 from rest_framework import serializers
 
@@ -106,11 +109,28 @@ class BaseSerializer(serializers.ModelSerializer):
                     }
                     # Check if field in expansion  then expand the field
                     if expand in expansion:
-                        if isinstance(response.get(expand), list):
-                            exp_serializer = expansion[expand](getattr(instance, expand), many=True)
+                        is_many = isinstance(response.get(expand), list)
+                        try:
+                            related_obj = getattr(instance, expand, None)
+                        except ObjectDoesNotExist:
+                            # Forward FK descriptor raises RelatedObjectDoesNotExist
+                            # (a subclass of both the model's DoesNotExist and
+                            # AttributeError) when select_related isn't present
+                            # and the target row can't be resolved through the
+                            # filtered manager (e.g. soft-deleted). Catch it
+                            # explicitly rather than relying on getattr's default
+                            # only covering AttributeError incidentally.
+                            related_obj = None
+                        if related_obj is not None:
+                            if is_many:
+                                exp_serializer = expansion[expand](related_obj, many=True)
+                            else:
+                                exp_serializer = expansion[expand](related_obj)
+                            response[expand] = exp_serializer.data
                         else:
-                            exp_serializer = expansion[expand](getattr(instance, expand))
-                        response[expand] = exp_serializer.data
+                            # Related object is null or could not be resolved
+                            # (e.g. soft-deleted) - fall back to the raw id
+                            response[expand] = getattr(instance, f"{expand}_id", None)
                     else:
                         # You might need to handle this case differently
                         response[expand] = getattr(instance, f"{expand}_id", None)
