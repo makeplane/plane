@@ -6,7 +6,7 @@
 from itertools import chain
 
 # Django imports
-from django.db.models import Prefetch, Q
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
@@ -18,7 +18,7 @@ from rest_framework import status
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
-from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
+from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue, ProjectMember
 
 
 class IssueActivityEndpoint(BaseAPIView):
@@ -32,26 +32,31 @@ class IssueActivityEndpoint(BaseAPIView):
         if request.GET.get("created_at__gt", None) is not None:
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
+        member_check = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=request.user,
+            is_active=True,
+            deleted_at__isnull=True,
+        )
+
         issue_activities = (
-            IssueActivity.objects.filter(issue_id=issue_id)
+            IssueActivity.objects.filter(issue_id=issue_id, project_id=project_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
+            .filter(Exists(member_check))
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
         issue_comments = (
-            IssueComment.objects.filter(issue_id=issue_id)
+            IssueComment.objects.filter(issue_id=issue_id, project_id=project_id)
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
+            .filter(Exists(member_check))
             .filter(**filters)
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
