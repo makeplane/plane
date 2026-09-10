@@ -94,3 +94,57 @@ class TestIssueListOrderByInjection:
             assert response.status_code == status.HTTP_200_OK, (
                 f"order_by={value!r} got {response.status_code}: {response.data!r}"
             )
+
+
+@pytest.mark.contract
+class TestIssueListGrouping:
+    def get_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/"
+
+    @pytest.mark.django_db
+    def test_group_by_state_alias_returns_grouped_results(self, api_key_client, workspace, project, state, issue):
+        response = api_key_client.get(self.get_url(workspace.slug, project.id), {"group_by": "state"})
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["grouped_by"] == "state_id"
+        assert response.data["sub_grouped_by"] is None
+        assert str(state.id) in response.data["results"]
+        assert response.data["results"][str(state.id)]["results"][0]["id"] == issue.id
+
+    @pytest.mark.django_db
+    def test_group_by_state_id_and_sub_group_by_priority_are_supported(
+        self, api_key_client, workspace, project, state, issue
+    ):
+        response = api_key_client.get(
+            self.get_url(workspace.slug, project.id),
+            {"group_by": "state_id", "sub_group_by": "priority"},
+        )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["grouped_by"] == "state_id"
+        assert response.data["sub_grouped_by"] == "priority"
+        assert str(state.id) in response.data["results"]
+
+    @pytest.mark.django_db
+    def test_without_group_by_returns_flat_results(self, api_key_client, workspace, project, issue):
+        response = api_key_client.get(self.get_url(workspace.slug, project.id))
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["grouped_by"] is None
+        assert response.data["sub_grouped_by"] is None
+        assert response.data["results"][0]["id"] == issue.id
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "query_params",
+        [
+            {"group_by": "not_a_field"},
+            {"group_by": "state", "sub_group_by": "state_id"},
+        ],
+    )
+    def test_invalid_grouping_parameters_return_bad_request(
+        self, api_key_client, workspace, project, issue, query_params
+    ):
+        response = api_key_client.get(self.get_url(workspace.slug, project.id), query_params)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, f"Got {response.status_code}: {response.data!r}"
