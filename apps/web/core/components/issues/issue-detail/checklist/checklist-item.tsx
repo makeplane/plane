@@ -117,7 +117,9 @@ export const ChecklistItem = observer(function ChecklistItem(props: Props) {
       setName(item.name);
       return;
     }
-    if (trimmed !== item.name) checklistOperations.update(checklistItemId, { name: trimmed });
+    // update() rethrows after toasting so the store can roll back the
+    // optimistic edit; nothing here needs the rejection, so swallow it.
+    if (trimmed !== item.name) checklistOperations.update(checklistItemId, { name: trimmed }).catch(() => {});
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -131,7 +133,7 @@ export const ChecklistItem = observer(function ChecklistItem(props: Props) {
   };
 
   const handleStatusChange = (status: EChecklistItemStatus) => {
-    if (status !== item.status) checklistOperations.setStatus(checklistItemId, status);
+    if (status !== item.status) checklistOperations.setStatus(checklistItemId, status).catch(() => {});
   };
 
   const handleDeleteClick = () => {
@@ -177,7 +179,7 @@ export const ChecklistItem = observer(function ChecklistItem(props: Props) {
               "flex-shrink-0 rounded-sm p-1 hover:bg-layer-1",
               isConfirmingDelete
                 ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 flex items-center gap-1 px-1.5 text-13 font-medium"
-                : "hidden text-placeholder group-hover:block hover:text-secondary"
+                : "hidden text-placeholder group-focus-within:block group-hover:block hover:text-secondary"
             )}
             aria-label={isConfirmingDelete ? t("common.confirm") : t("common.actions.delete")}
             title={isConfirmingDelete ? t("common.confirm") : undefined}

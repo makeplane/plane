@@ -39,6 +39,11 @@ export const useChecklistOperations = (
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await createChecklistItem(workspaceSlug, projectId, issueId, data);
+          setToast({
+            message: t("checklist.toasts.created.message"),
+            type: TOAST_TYPE.SUCCESS,
+            title: t("checklist.toasts.created.title"),
+          });
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? t("checklist.toasts.not_created.message"),
@@ -52,6 +57,11 @@ export const useChecklistOperations = (
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await updateChecklistItem(workspaceSlug, projectId, issueId, checklistItemId, data);
+          setToast({
+            message: t("checklist.toasts.updated.message"),
+            type: TOAST_TYPE.SUCCESS,
+            title: t("checklist.toasts.updated.title"),
+          });
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? t("checklist.toasts.not_updated.message"),

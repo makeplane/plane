@@ -63,7 +63,10 @@ export const ChecklistAddItem = observer(function ChecklistAddItem(props: Props)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      submit();
+      // create() already surfaces failures via toast and rethrows only so
+      // submit()'s try/finally can skip clearing the input on failure —
+      // catch here so that rejection doesn't go unhandled.
+      submit().catch(() => {});
     } else if (e.key === "Escape") {
       setValue("");
       inputRef.current?.blur();
@@ -72,7 +75,7 @@ export const ChecklistAddItem = observer(function ChecklistAddItem(props: Props)
 
   const handleBlur = () => {
     if (value.trim()) {
-      submit();
+      submit().catch(() => {});
     } else {
       // Backed out without typing anything — let the zero-item render gate
       // in issue-detail-widget-collapsibles.tsx close the section again

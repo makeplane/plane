@@ -30,7 +30,10 @@ type Props = {
 export function ChecklistStatusDropdown(props: Props) {
   const { value, onChange, disabled = false } = props;
   const { t } = useTranslation();
-  const current = CHECKLIST_ITEM_STATUS_MAP[value];
+  // Falls back to the first known status (to_do) if the server ever returns
+  // a status value this client's enum doesn't know about, so an older
+  // client degrades gracefully instead of crashing on a stale build.
+  const current = CHECKLIST_ITEM_STATUS_MAP[value] ?? CHECKLIST_ITEM_STATUSES[0];
   const color = STATE_GROUPS[current.stateGroup].color;
 
   return (
