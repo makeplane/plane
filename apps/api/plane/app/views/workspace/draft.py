@@ -204,7 +204,16 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create_draft_to_issue(self, request, slug, draft_id):
-        draft_issue = self.get_queryset().filter(pk=draft_id).first()
+        # Drafts are private to their creator; scope the lookup to the owner so a
+        # workspace member cannot convert/steal/delete another user's draft
+        # Mirrors retrieve/partial_update.
+        draft_issue = self.get_queryset().filter(pk=draft_id, created_by=request.user).first()
+
+        if not draft_issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if not draft_issue.project_id:
             return Response(
