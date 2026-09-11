@@ -19,12 +19,19 @@ import type {
   TIssueOrderByOptions,
 } from "@plane/types";
 // constants
+import {
+  STATE_GROUP_COLUMN_DEFAULT_WIDTH,
+  STATE_GROUP_COLUMN_MAX_WIDTH,
+  STATE_GROUP_COLUMN_MIN_WIDTH,
+} from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
+import { useKanbanColumnResize } from "@/hooks/use-kanban-column-resize";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
@@ -56,6 +63,8 @@ export interface IKanBan {
   quickActions: TRenderQuickActions;
   collapsedGroups: TIssueKanbanFilters;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  groupWidths?: Record<string, number>;
+  onResizeColumnWidth?: (columnId: string, width: number) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
@@ -82,6 +91,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     quickActions,
     collapsedGroups,
     handleCollapsedGroups,
+    groupWidths = {},
+    onResizeColumnWidth,
     enableQuickIssueCreate,
     quickAddCallback,
     loadMoreIssues,
@@ -142,6 +153,16 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
   const isGroupByCreatedBy = group_by === "created_by";
   const approximateCardHeight = getApproximateCardHeight(displayProperties);
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
+  const { isResizing, resizingColumnId, currentWidth, startResize } = useKanbanColumnResize({
+    minWidth: STATE_GROUP_COLUMN_MIN_WIDTH,
+    maxWidth: STATE_GROUP_COLUMN_MAX_WIDTH,
+    onResizeEnd: onResizeColumnWidth ?? (() => {}),
+  });
+
+  const getEffectiveWidth = (columnId: string) => {
+    if (isResizing && resizingColumnId === columnId) return currentWidth;
+    return groupWidths[columnId] ?? STATE_GROUP_COLUMN_DEFAULT_WIDTH;
+  };
 
   return (
     <ContentWrapper className={`relative flex-row gap-4 !pt-2 !pb-0`}>
@@ -161,9 +182,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
           return (
             <div
               key={subList.id}
-              className={`group relative flex flex-shrink-0 flex-col ${
-                groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
-              } `}
+              className="group relative flex flex-shrink-0 flex-col"
+              style={groupByVisibilityToggle.showIssues ? { width: `${getEffectiveWidth(subList.id)}px` } : undefined}
             >
               {sub_group_by === null && (
                 <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-surface-2 py-1">
@@ -230,6 +250,19 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     isEpic={isEpic}
                   />
                 </RenderIfVisible>
+              )}
+
+              {!isSubGroup && groupByVisibilityToggle.showIssues && (
+                <div
+                  role="separator"
+                  aria-label="Resize column"
+                  className={cn(
+                    "absolute top-0 right-0 z-[3] h-full w-2 cursor-ew-resize transition-colors",
+                    "after:bg-subtle after:absolute after:top-0 after:right-1/2 after:h-full after:w-px after:translate-x-1/2",
+                    isResizing && resizingColumnId === subList.id ? "bg-accent-primary/20" : "hover:bg-surface-2"
+                  )}
+                  onMouseDown={(e) => startResize(e, subList.id, getEffectiveWidth(subList.id))}
+                />
               )}
             </div>
           );

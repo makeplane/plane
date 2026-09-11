@@ -142,9 +142,10 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     const displayProperties = this.computedDisplayProperties(_filters?.display_properties);
 
     // fetching the kanban toggle helpers in the local storage
-    const kanbanFilters = {
+    const kanbanFilters: TIssueKanbanFilters = {
       group_by: [],
       sub_group_by: [],
+      group_widths: {},
     };
     const currentUserId = this.rootIssueStore.currentUserId;
     if (currentUserId) {
@@ -156,6 +157,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       );
       kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
       kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
+      kanbanFilters.group_widths = _kanbanFilters?.kanban_filters?.group_widths || {};
     }
 
     runInAction(() => {

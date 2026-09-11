@@ -180,6 +180,7 @@ export interface IIssueDisplayProperties {
 export type TIssueKanbanFilters = {
   group_by: string[];
   sub_group_by: string[];
+  group_widths?: Record<string, number>;
 };
 
 export interface IIssueFilters {
