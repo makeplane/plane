@@ -55,6 +55,8 @@ class OauthAdapter(Adapter):
             return "GITLAB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitea":
             return "GITEA_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "microsoft":
+            return "MICROSOFT_OAUTH_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 
@@ -78,8 +80,11 @@ class OauthAdapter(Adapter):
             response = requests.post(self.get_token_url(), data=data, headers=headers)
             response.raise_for_status()
             return response.json()
-        except requests.RequestException:
-            self.logger.warning("Error getting user token")
+        except requests.RequestException as e:
+            if hasattr(e, 'response') and e.response is not None:
+                self.logger.warning(f"Error getting user token: {e.response.status_code} {e.response.text[:500]}")
+            else:
+                self.logger.warning(f"Error getting user token: {e}")
             code = self.authentication_error_code()
             raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
