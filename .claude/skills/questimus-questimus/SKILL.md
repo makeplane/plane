@@ -28,7 +28,7 @@ This skill is the interface to the **Questimus** project in Questimus. It is dep
   - `references/route-meta.md` — states/labels/types UUIDs (hardcoded) + re-resolve fallback
   - `references/route-plan.md` — the plan structure
   - `references/route-ticket.md` — tickets: list/read/create/update/comment/search/delete + field semantics
-- **Prefer the CLI** — `scripts/questimus.js` wraps the API (auth, UUID resolution, clean output). Raw API calls are documented in the routes as fallback.
+- **Prefer the CLI** — `scripts/questimus.js` wraps the API (auth, UUID resolution, clean output). Raw API calls are documented in the routes as fallback. Recipes below run `node scripts/questimus.js` from the skill base dir; with a project-scoped deployment the full path is `.agents/skills/questimus-questimus/scripts/questimus.js` (or `.claude/skills/…`/`.dsh/skills/…` per harness).
 
 ## Scope
 
