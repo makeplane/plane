@@ -39,16 +39,12 @@
 
 	redir /god-mode /god-mode/ permanent
 	handle /god-mode/* {
-		reverse_proxy {$ADMIN_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$ADMIN_ENDPOINT}
 	}
 
 	redir /spaces /spaces/ permanent
 	handle /spaces/* {
-		reverse_proxy {$SPACES_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$SPACES_ENDPOINT}
 	}
 
 	# Collaborative editing. The live server mounts its router at LIVE_BASE_PATH
@@ -56,38 +52,34 @@
 	# <origin>/live/collaboration, so the prefix is forwarded rather than
 	# stripped. reverse_proxy upgrades websockets without extra configuration.
 	handle /live/* {
-		reverse_proxy {$LIVE_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$LIVE_ENDPOINT}
 	}
 
 	handle /api/* {
-		reverse_proxy {$API_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$API_ENDPOINT}
 	}
 
 	handle /auth/* {
-		reverse_proxy {$API_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$API_ENDPOINT}
 	}
 
 	handle /static/* {
-		reverse_proxy {$API_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$API_ENDPOINT}
+	}
+
+	# Uploads go straight from the browser to the bucket with a presigned POST.
+	# The API signs that URL with the Host it received, so the proxy passes the
+	# client Host through untouched (no header_up Host) on every route. The bare
+	# path is the POST target; the wildcard serves the objects back.
+	handle /{$BUCKET_NAME} {
+		reverse_proxy {$BUCKET_ENDPOINT}
 	}
 
 	handle /{$BUCKET_NAME}/* {
-		reverse_proxy {$BUCKET_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$BUCKET_ENDPOINT}
 	}
 
 	handle {
-		reverse_proxy {$WEB_ENDPOINT} {
-			header_up Host {upstream_hostport}
-		}
+		reverse_proxy {$WEB_ENDPOINT}
 	}
 }

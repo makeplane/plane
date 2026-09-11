@@ -74,3 +74,16 @@ Caddyfiles. The default ceiling is 3000 requests per minute; the upstream value
 of 300 is low enough that a single browser loading the SPA trips it and gets
 429 responses. Override with the `RATE_LIMIT_EVENTS` and `RATE_LIMIT_WINDOW`
 service variables on Web and Admin if a different ceiling is wanted.
+
+## File uploads
+
+Uploads never pass through the API. The API answers `/api/assets/...` with a
+presigned POST whose URL is built from the `Host` header it received, and the
+browser posts the file straight to `<that host>/uploads`. The proxy therefore
+passes the client `Host` through to every upstream (no `header_up Host`), and
+routes both `/uploads` (the POST target) and `/uploads/*` (object reads) to the
+Bucket service. The same `Host` rule keeps OAuth callback URLs correct.
+
+The API service still carries a set of `S3_*` variables pointing at a
+Cloudflare R2 bucket. Plane reads only the `AWS_*` variables, so those are
+unused unless the storage settings are changed to consume them.
