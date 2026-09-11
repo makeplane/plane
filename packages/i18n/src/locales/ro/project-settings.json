@@ -191,6 +191,10 @@
         "duration": "Închide automat activitățile inactive de",
         "auto_close_status": "Stare închidere automată"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Avertismente automate",
         "description": "Plane va trimite avertizări automate prin e-mail și notificări în aplicație pentru a menține echipa pe calea termenelor.",

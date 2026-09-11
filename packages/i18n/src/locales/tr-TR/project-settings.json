@@ -191,6 +191,10 @@
         "duration": "Şu süre etkin olmayan iş öğelerini otomatik kapat",
         "auto_close_status": "Otomatik kapatma durumu"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Otomatik hatırlatmalar",
         "description": "Plane, e-posta ve uygulama bildirimleri aracılığıyla otomatik olarak takımınızı zamanlama yolunda tutacaktır.",

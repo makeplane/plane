@@ -191,6 +191,10 @@
         "duration": "Tự động đóng không hoạt động",
         "auto_close_status": "Trạng thái tự động đóng"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Nhắc nhở tự động",
         "description": "Plane sẽ tự động gửi nhắc nhở qua email và thông báo trong ứng dụng để giữ cho nhóm của bạn trên đường đến các hạn chót.",

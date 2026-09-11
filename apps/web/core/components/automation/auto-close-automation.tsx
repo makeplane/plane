@@ -86,7 +86,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 py-2">
+      <div className="flex flex-col gap-4 border-b border-subtle py-2">
         <div className="flex items-center gap-3">
           <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
             <AutoCloseOutline className="size-4 shrink-0 text-danger-primary" />

@@ -191,6 +191,10 @@
         "duration": "Zamknij elementy nieaktywne dłużej niż",
         "auto_close_status": "Status automatycznego zamknięcia"
       },
+      "cascade-state": {
+        "title": "Auto-close sub-issues",
+        "description": "When a parent work item is completed or cancelled, its sub-issues are moved to the same state."
+      },
       "auto-remind": {
         "title": "Automatyczne przypomnienia",
         "description": "Plane automatycznie wysyła przypomnienia przez e-mail i powiadomienia w aplikacji, aby Twoja ekipa utrzymała się na ścieżce do terminów.",
