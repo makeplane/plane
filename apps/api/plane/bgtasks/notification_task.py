@@ -316,7 +316,11 @@ def notifications(
                 else:
                     sender = "in_app:issue_activities:subscribed"
 
-                preference = UserNotificationPreference.objects.get(user_id=subscriber)
+                # Bot recipients (e.g. service accounts) have no notification
+                # preference row; still create their in-app notification but never
+                # email them. filter().first() keeps a single preference-less
+                # recipient from aborting the whole task.
+                preference = UserNotificationPreference.objects.filter(user_id=subscriber).first()
 
                 for issue_activity in issue_activities_created:
                     # If activity done in blocking then blocked by email should not go
@@ -327,9 +331,13 @@ def notifications(
                     if issue_activity.get("field") == "description":
                         continue
 
-                    # Check if the value should be sent or not
+                    # Check if the value should be sent or not. No preference (bot
+                    # recipient) => never email, but the in-app notification below
+                    # is still created.
                     send_email = False
-                    if issue_activity.get("field") == "state" and preference.state_change:
+                    if preference is None:
+                        send_email = False
+                    elif issue_activity.get("field") == "state" and preference.state_change:
                         send_email = True
                     elif (
                         issue_activity.get("field") == "state"
@@ -464,7 +472,12 @@ def notifications(
 
             for mention_id in comment_mentions:
                 if mention_id != actor_id:
-                    preference = UserNotificationPreference.objects.get(user_id=mention_id)
+                    # Bot recipients (e.g. service accounts mentioned by a human) have
+                    # no preference row: still create the in-app mention notification —
+                    # external systems react to it — but never email their synthetic
+                    # address. filter().first() also stops one preference-less recipient
+                    # from aborting notifications for everyone else.
+                    preference = UserNotificationPreference.objects.filter(user_id=mention_id).first()
                     for issue_activity in issue_activities_created:
                         notification = create_mention_notification(
                             project=project,
@@ -476,8 +489,9 @@ def notifications(
                             activity=issue_activity,
                         )
 
-                        # check for email notifications
-                        if preference.mention:
+                        # check for email notifications (skipped for preference-less
+                        # bot recipients)
+                        if preference and preference.mention:
                             bulk_email_logs.append(
                                 EmailNotificationLog(
                                     triggered_by_id=actor_id,
@@ -521,7 +535,9 @@ def notifications(
 
             for mention_id in new_mentions:
                 if mention_id != actor_id:
-                    preference = UserNotificationPreference.objects.get(user_id=mention_id)
+                    # Bot recipients have no preference row: create the in-app mention
+                    # notification but skip email (see comment-mention loop above).
+                    preference = UserNotificationPreference.objects.filter(user_id=mention_id).first()
                     if (
                         last_activity is not None
                         and last_activity.field == "description"
@@ -569,11 +585,15 @@ def notifications(
                                 },
                             )
                         )
-                        if preference.mention:
+                        if preference and preference.mention:
                             bulk_email_logs.append(
                                 EmailNotificationLog(
                                     triggered_by_id=actor_id,
-                                    receiver_id=subscriber,
+                                    # The recipient is the mentioned user. `subscriber`
+                                    # here is the task's boolean parameter (or a value
+                                    # leaked from the subscriber loop above), never a
+                                    # receiver id.
+                                    receiver_id=mention_id,
                                     entity_identifier=issue_id,
                                     entity_name="issue",
                                     data={
@@ -618,11 +638,13 @@ def notifications(
                                 issue_id=issue_id,
                                 activity=issue_activity,
                             )
-                            if preference.mention:
+                            if preference and preference.mention:
                                 bulk_email_logs.append(
                                     EmailNotificationLog(
                                         triggered_by_id=actor_id,
-                                        receiver_id=subscriber,
+                                        # See above: the recipient is the mentioned
+                                        # user, not the leaked `subscriber` value.
+                                        receiver_id=mention_id,
                                         entity_identifier=issue_id,
                                         entity_name="issue",
                                         data={
