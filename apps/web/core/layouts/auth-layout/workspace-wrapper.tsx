@@ -39,6 +39,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useMembershipRealtime } from "@/hooks/use-membership-realtime";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface IWorkspaceAuthWrapper {
@@ -62,6 +63,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
   const { fetchWorkspaceStates } = useProjectState();
+  useMembershipRealtime();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -159,14 +161,16 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-13 font-medium">{currentUser?.email}</div>
-              <div
+              <button
+                type="button"
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
+                aria-label="Sign out"
               >
                 <Tooltip label={"Sign out"} alignOffset={8} disabled={isMobile}>
                   <LogOutOutline width={14} height={14} />
                 </Tooltip>
-              </div>
+              </button>
             </div>
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">

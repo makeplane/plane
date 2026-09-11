@@ -19,6 +19,8 @@ export const SITES_URL = encodeURI(`${SPACE_BASE_URL}${SPACE_BASE_PATH}`);
 export const LIVE_BASE_URL = process.env.VITE_LIVE_BASE_URL || "";
 export const LIVE_BASE_PATH = process.env.VITE_LIVE_BASE_PATH || "";
 export const LIVE_URL = encodeURI(`${LIVE_BASE_URL}${LIVE_BASE_PATH}`);
+export const MEMBERSHIP_REALTIME_PATH = "/membership";
+export const MEMBERSHIP_REALTIME_CHANNEL_PREFIX = "plane:membership:";
 // Web App Base Url
 export const WEB_BASE_URL = process.env.VITE_WEB_BASE_URL || "";
 export const WEB_BASE_PATH = process.env.VITE_WEB_BASE_PATH || "";
