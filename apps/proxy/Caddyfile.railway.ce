@@ -1,0 +1,93 @@
+# Caddy proxy for Railway deployments of Plane.
+#
+# Railway routes public traffic to a single port on a single service, so this
+# proxy is the only service with a domain; every other app is reached over the
+# project's private network. Upstreams are supplied as environment variables
+# (host:port, e.g. web.railway.internal:3000) rather than hardcoded, because
+# Railway's internal hostnames are per-project.
+#
+# This differs from Caddyfile.ce, which targets Docker Compose: there the
+# upstreams are fixed compose service names and Caddy terminates TLS itself.
+# On Railway, TLS is terminated at the edge before traffic reaches us.
+{
+	admin off
+	persist_config off
+	# Railway terminates TLS at its edge; letting Caddy manage certificates here
+	# would attempt ACME for a domain it does not control.
+	auto_https off
+	log {
+		format json
+	}
+	servers {
+		trusted_proxies static private_ranges 100.0.0.0/8
+		client_ip_headers X-Forwarded-For X-Real-IP
+		max_header_size 25MB
+	}
+}
+
+:{$PORT} {
+	log {
+		format json
+	}
+
+	request_body {
+		max_size {$FILE_SIZE_LIMIT:5GB}
+	}
+
+	# handle blocks are mutually exclusive and Caddy orders them by path
+	# specificity, so the catch-all below cannot shadow the routes above it.
+
+	redir /god-mode /god-mode/ permanent
+	handle /god-mode/* {
+		reverse_proxy {$ADMIN_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	redir /spaces /spaces/ permanent
+	handle /spaces/* {
+		reverse_proxy {$SPACES_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	# Collaborative editing. The live server mounts its router at LIVE_BASE_PATH
+	# (default /live) and the web client opens its websocket at
+	# <origin>/live/collaboration, so the prefix is forwarded rather than
+	# stripped. reverse_proxy upgrades websockets without extra configuration.
+	handle /live/* {
+		reverse_proxy {$LIVE_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	handle /api/* {
+		reverse_proxy {$API_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	handle /auth/* {
+		reverse_proxy {$API_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	handle /static/* {
+		reverse_proxy {$API_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	handle /{$BUCKET_NAME}/* {
+		reverse_proxy {$BUCKET_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	handle {
+		reverse_proxy {$WEB_ENDPOINT} {
+			header_up Host {upstream_hostport}
+		}
+	}
+}
