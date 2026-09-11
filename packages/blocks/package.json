@@ -40,7 +40,6 @@
     "./spinner": "./dist/spinner/index.js",
     "./tab-navigation": "./dist/tab-navigation/index.js",
     "./tables": "./dist/tables/index.js",
-    "./tag": "./dist/tag/index.js",
     "./toast": "./dist/toast/index.js",
     "./utils": "./dist/utils/index.js",
     "./package.json": "./package.json"

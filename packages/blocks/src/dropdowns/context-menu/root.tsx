@@ -90,11 +90,11 @@ function ContextMenuWithoutPortal(props: ContextMenuProps) {
     };
   }, []);
 
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
     closeAllSubmenus();
     setIsOpen(false);
     setActiveItemIndex(0);
-  };
+  }, [closeAllSubmenus]);
 
   // calculate position of context menu
   useEffect(() => {
