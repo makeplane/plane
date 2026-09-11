@@ -128,6 +128,8 @@ graphify-out/
 
 # Questimus per-skill agent tokens (deployed by project-sync)
 .claude/skills/questimus*/.token
+.agents/skills/questimus*/.token
+.dsh/skills/questimus*/.token
 .agents/skills/review-fix-technical-code/output/
 
 # pnpm local store (created by in-repo builds)
