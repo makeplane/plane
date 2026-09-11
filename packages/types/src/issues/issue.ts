@@ -103,6 +103,10 @@ export type TIssue = TBaseIssue & {
   state__group?: TStateGroups | null;
 };
 
+export type TIssuePatchPayload = Partial<TIssue> & {
+  propagate_state_to_sub_issues?: boolean;
+};
+
 export type TIssueMap = {
   [issue_id: string]: TIssue;
 };
