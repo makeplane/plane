@@ -187,6 +187,21 @@ def create_mention_notification(project, notification_comment, issue, actor_id, 
     )
 
 
+def _notification_dedup_key(notification):
+    """
+    Build a key that identifies a "logically the same" notification so we can
+    dedupe both within a single task run and against notifications already
+    persisted by a prior (retried/redelivered) execution of this same task.
+    """
+    issue_activity = (notification.data or {}).get("issue_activity", {}) or {}
+    return (
+        notification.receiver_id,
+        notification.sender,
+        notification.entity_identifier,
+        issue_activity.get("id"),
+    )
+
+
 @shared_task
 def notifications(
     type,
@@ -665,8 +680,48 @@ def notifications(
                 new_mentions=new_mentions,
                 removed_mention=removed_mention,
             )
+
+            # --- Deduplicate notifications before bulk_create -----------------------------------------
+            # Guards against duplicate in-app notifications when this task executes more than once
+            # for the same event (Celery retries, broker redelivery, worker restarts). This is an
+            # app-level (non-atomic) safeguard - see notification.py for the alternative DB-constraint
+            # based approach, which is race-safe and preferred long-term.
+
+            # 1. Dedupe within this run's own batch (the code above can independently
+            #    append near-identical notifications for the same receiver/activity,
+            #    e.g. via both the general subscriber loop and the mention loops).
+            seen_in_batch = set()
+            deduped_batch = []
+            for notification in bulk_notifications:
+                key = _notification_dedup_key(notification)
+                if key in seen_in_batch:
+                    continue
+                seen_in_batch.add(key)
+                deduped_batch.append(notification)
+
+            # 2. Dedupe against notifications already persisted for this issue
+            #    (covers retries / redelivery of the same task execution).
+            if deduped_batch:
+                receiver_ids = {notification.receiver_id for notification in deduped_batch}
+                existing_keys = set(
+                    Notification.objects.filter(
+                        entity_identifier=issue_id,
+                        receiver_id__in=receiver_ids,
+                    ).values_list(
+                        "receiver_id", "sender", "entity_identifier", "data__issue_activity__id"
+                    )
+                )
+                final_notifications = [
+                    notification
+                    for notification in deduped_batch
+                    if _notification_dedup_key(notification) not in existing_keys
+                ]
+            else:
+                final_notifications = []
+
             # Bulk create notifications
-            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+            if final_notifications:
+                Notification.objects.bulk_create(final_notifications, batch_size=100)
             EmailNotificationLog.objects.bulk_create(bulk_email_logs, batch_size=100, ignore_conflicts=True)
         return
     except Exception as e:
