@@ -222,6 +222,8 @@ class ProjectMember(ProjectBaseModel):
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
+    # Set when an admin removes the member; blocks self-join until admin re-adds/invites
+    access_revoked = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.member:

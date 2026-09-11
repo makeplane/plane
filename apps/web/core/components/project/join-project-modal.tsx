@@ -7,6 +7,7 @@
 import { useState } from "react";
 // types
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -40,8 +41,16 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
         handleClose();
         return;
       })
-      .catch(() => {
-        console.error("Error joining project");
+      .catch((err: unknown) => {
+        const message =
+          err && typeof err === "object" && "error" in err && typeof (err as { error?: unknown }).error === "string"
+            ? (err as { error: string }).error
+            : "Could not join this project. Ask an admin to add you.";
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Access denied",
+          message,
+        });
       })
       .finally(() => {
         setIsJoiningLoading(false);
@@ -62,7 +71,7 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
         <Button variant="secondary" size="lg" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" size="lg" tabIndex={1} type="submit" onClick={handleJoin} loading={isJoiningLoading}>
+        <Button variant="primary" size="lg" type="submit" onClick={handleJoin} loading={isJoiningLoading}>
           {isJoiningLoading ? "Joining..." : "Join Project"}
         </Button>
       </div>
