@@ -129,6 +129,75 @@ class TestResolveAndValidate:
 
 
 # ---------------------------------------------------------------------------
+# Dev-only allow_private escape hatch (WEBHOOK_ALLOW_PRIVATE_URLS)
+# ---------------------------------------------------------------------------
+@pytest.mark.unit
+class TestValidateUrlAllowPrivate:
+    def test_allow_private_permits_private_ip_but_default_blocks(self):
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as dns:
+            dns.return_value = [_addr("10.0.0.5")]
+            # Default (guard active): private target is blocked.
+            with pytest.raises(ValueError, match="private/internal"):
+                validate_url("http://internal.example.com/x")
+            # allow_private=True: the block is lifted (no raise).
+            validate_url("http://internal.example.com/x", allow_private=True)
+
+    def test_allow_private_still_enforces_scheme(self):
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as dns:
+            dns.return_value = [_addr("10.0.0.5")]
+            with pytest.raises(ValueError, match="scheme"):
+                validate_url("ftp://internal.example.com/x", allow_private=True)
+
+
+@pytest.mark.unit
+class TestPinnedFetchAllowPrivate:
+    """allow_private lifts the delivery-time block check but preserves pinning."""
+
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_allow_private_skips_block_but_still_pins(self, mock_resolve, mock_session_cls):
+        mock_resolve.return_value = ["10.0.0.5"]
+        session = mock_session_cls.return_value
+        session.request.return_value = _resp(200)
+
+        pinned_fetch("POST", "http://host.docker.internal:8000/hook", allow_private=True, json={"a": 1})
+
+        # The private-IP block check is skipped ...
+        assert mock_resolve.call_args.kwargs["require_safe"] is False
+        # ... but the socket is STILL pinned to the resolved IP literal (no
+        # DNS-rebinding window), and the Host header keeps the real hostname.
+        _, url = session.request.call_args.args
+        assert url == "http://10.0.0.5:8000/hook"
+        assert session.request.call_args.kwargs["headers"]["Host"] == "host.docker.internal:8000"
+
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_default_keeps_block_check_on(self, mock_resolve, mock_session_cls):
+        mock_resolve.return_value = ["93.184.216.34"]
+        session = mock_session_cls.return_value
+        session.request.return_value = _resp(200)
+
+        pinned_fetch("POST", "https://example.com/hook")
+
+        # Default (no allow_private, non-trusted host): block check stays on.
+        assert mock_resolve.call_args.kwargs["require_safe"] is True
+
+    @patch("plane.utils.url_security.requests.Session")
+    @patch("plane.utils.url_security.resolve_and_validate")
+    def test_redirect_follower_never_inherits_allow_private(self, mock_resolve, mock_session_cls):
+        # The redirect-following path (OAuth avatar / link unfurl) must stay
+        # fully guarded — it must NOT inherit the webhook-only escape hatch even
+        # if a caller mistakenly threads allow_private=True via kwargs.
+        mock_resolve.return_value = ["93.184.216.34"]
+        session = mock_session_cls.return_value
+        session.request.return_value = _resp(200)
+
+        pinned_fetch_following_redirects("GET", "https://example.com/x", allow_private=True)
+
+        assert mock_resolve.call_args.kwargs["require_safe"] is True
+
+
+# ---------------------------------------------------------------------------
 # Cluster B — connection pinned to the validated IP (DNS-rebinding TOCTOU)
 # ---------------------------------------------------------------------------
 @pytest.mark.unit
@@ -186,9 +255,7 @@ class TestPinnedFetch:
 
     @patch("plane.utils.url_security.resolve_and_validate")
     def test_blocked_target_raises_before_any_request(self, mock_resolve):
-        mock_resolve.side_effect = ValueError(
-            "Access to private/internal networks is not allowed"
-        )
+        mock_resolve.side_effect = ValueError("Access to private/internal networks is not allowed")
         with pytest.raises(ValueError, match="private/internal"):
             pinned_fetch("POST", "https://attacker.com/hook")
 
@@ -275,9 +342,7 @@ class TestPinnedFetchRedirects:
             ValueError("Access to private/internal networks is not allowed"),
         ]
         session = mock_session_cls.return_value
-        session.request.return_value = _resp(
-            302, headers={"Location": "http://169.254.169.254/latest/meta-data/"}
-        )
+        session.request.return_value = _resp(302, headers={"Location": "http://169.254.169.254/latest/meta-data/"})
         with pytest.raises(ValueError, match="private/internal"):
             pinned_fetch_following_redirects("GET", "https://evil.com/r")
 
@@ -286,13 +351,9 @@ class TestPinnedFetchRedirects:
     def test_too_many_redirects(self, mock_resolve, mock_session_cls):
         mock_resolve.return_value = ["93.184.216.34"]
         session = mock_session_cls.return_value
-        session.request.return_value = _resp(
-            302, headers={"Location": "https://example.com/loop"}
-        )
+        session.request.return_value = _resp(302, headers={"Location": "https://example.com/loop"})
         with pytest.raises(requests.TooManyRedirects):
-            pinned_fetch_following_redirects(
-                "GET", "https://example.com/start", max_redirects=3
-            )
+            pinned_fetch_following_redirects("GET", "https://example.com/start", max_redirects=3)
 
 
 # ---------------------------------------------------------------------------

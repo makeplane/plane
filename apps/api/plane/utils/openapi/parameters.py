@@ -455,6 +455,43 @@ CYCLE_VIEW_PARAMETER = OpenApiParameter(
     ],
 )
 
+PAGE_ID_PARAMETER = OpenApiParameter(
+    name="page_id",
+    description="Page ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example page ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical page UUID",
+        )
+    ],
+)
+
+PAGE_TYPE_PARAMETER = OpenApiParameter(
+    name="type",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description=(
+        "Filter pages by visibility and archive state. Defaults to `all`, which returns every "
+        "non-archived page the caller can access — archived pages are returned only by `archived`. "
+        "An unrecognised value is treated as `all`."
+    ),
+    required=False,
+    examples=[
+        OpenApiExample(
+            name="All pages",
+            value="all",
+            description="Every non-archived page the caller can access (public plus their own private)",
+        ),
+        OpenApiExample(name="Public pages", value="public", description="Public, non-archived pages"),
+        OpenApiExample(name="Private pages", value="private", description="The caller's own private pages"),
+        OpenApiExample(name="Archived pages", value="archived", description="Archived pages the caller can access"),
+    ],
+)
+
 # Field Selection Parameters
 FIELDS_PARAMETER = OpenApiParameter(
     name="fields",

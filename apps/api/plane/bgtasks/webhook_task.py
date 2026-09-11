@@ -30,6 +30,7 @@ from plane.api.serializers import (
     IssueExpandSerializer,
     ModuleIssueSerializer,
     ModuleSerializer,
+    PageSerializer,
     ProjectSerializer,
     UserLiteSerializer,
     IntakeIssueSerializer,
@@ -41,6 +42,7 @@ from plane.db.models import (
     IssueComment,
     Module,
     ModuleIssue,
+    Page,
     Project,
     User,
     Webhook,
@@ -50,8 +52,10 @@ from plane.db.models import (
     IssueAssignee,
 )
 from plane.license.utils.instance_value import get_email_configuration
+from plane.settings.redis import redis_instance
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
+from plane.utils.host import base_host
 from plane.utils.url_security import pinned_fetch
 
 
@@ -63,6 +67,7 @@ SERIALIZER_MAPPER = {
     "cycle_issue": CycleIssueSerializer,
     "module_issue": ModuleIssueSerializer,
     "issue_comment": IssueCommentSerializer,
+    "page": PageSerializer,
     "user": UserLiteSerializer,
     "intake_issue": IntakeIssueSerializer,
 }
@@ -75,9 +80,102 @@ MODEL_MAPPER = {
     "cycle_issue": CycleIssue,
     "module_issue": ModuleIssue,
     "issue_comment": IssueComment,
+    "page": Page,
     "user": User,
     "intake_issue": IntakeIssue,
 }
+
+
+# ---------------------------------------------------------------------------
+# Page "updated" webhook debounce
+# ---------------------------------------------------------------------------
+# Page *content* (the rich-text body) is never written through a normal DRF
+# save. The live collaboration server (apps/live) streams Yjs updates and
+# flushes the merged document back to the API through the page ``description``
+# endpoint on a fixed Hocuspocus ``debounce`` of 10s
+# (``debounce: 10000`` in ``apps/live/src/hocuspocus.ts``). During a continuous
+# editing session that flush therefore fires roughly every 10s, and every flush
+# would otherwise emit its own ``page`` update webhook — ~6 deliveries a minute
+# for a single page.
+#
+# To keep a live editing session from spamming subscribers we rate-limit
+# ``page`` update webhooks to at most one per page per window. 60s == six live
+# flush cycles (6 * 10s) collapsed into a single delivery: enough to tame a
+# continuous editing session while still telling external systems at least once
+# a minute that the page changed. Discrete property edits (rename, access,
+# lock/unlock, archive/restore) are never suppressed — they pass
+# ``debounce=False`` and simply refresh the window so a content flush landing
+# immediately afterwards does not emit a duplicate.
+PAGE_UPDATE_WEBHOOK_DEBOUNCE = 60
+
+
+def _page_update_webhook_debounce_key(page_id: str | uuid.UUID) -> str:
+    """Redis key holding the debounce marker for one page's update webhooks."""
+    return f"page_update_webhook:{page_id}"
+
+
+def _suppress_page_update_webhook(page_id: str | uuid.UUID, debounce: bool) -> bool:
+    """Decide whether a ``page`` update webhook should be suppressed.
+
+    A single redis key per page marks that an update webhook fired recently.
+
+    - ``debounce=True`` (live content flush): claim the window atomically with a
+      ``SET NX``. If the key already exists another update webhook fired within
+      ``PAGE_UPDATE_WEBHOOK_DEBOUNCE`` seconds, so this flush is suppressed.
+    - ``debounce=False`` (discrete property edit): never suppressed; just refresh
+      the window so an immediately following content flush is coalesced.
+
+    Only call this once a delivery is actually about to be enqueued: claiming the
+    window is what silences the next 60s, so claiming it for a call that then
+    delivers nothing would drop that whole window's changes. Callers must release
+    it with :func:`_release_page_update_webhook` if the dispatch fails.
+
+    Fails open — a redis error must never drop a webhook, so on any failure we
+    return ``False`` (deliver).
+    """
+    try:
+        ri = redis_instance()
+        key = _page_update_webhook_debounce_key(page_id)
+        if debounce:
+            # ``set(nx=True)`` returns True only when the key did not exist.
+            claimed = ri.set(key, "1", nx=True, ex=PAGE_UPDATE_WEBHOOK_DEBOUNCE)
+            return not claimed
+        ri.set(key, "1", ex=PAGE_UPDATE_WEBHOOK_DEBOUNCE)
+        return False
+    except Exception as e:
+        log_exception(e, warning=True)
+        return False
+
+
+def _page_update_webhook_recently_fired(page_id: str | uuid.UUID) -> bool:
+    """Cheap read-only peek at a page's debounce window.
+
+    Lets a content flush that is going to be suppressed bail out for the price of
+    one redis GET, before the subject page and actor are loaded and serialized —
+    during a live editing session most flushes take this path, which is the whole
+    point of debouncing them. The authoritative, atomic claim still happens in
+    :func:`_suppress_page_update_webhook` right before dispatch.
+
+    Fails open (returns ``False``) so a redis error never drops a webhook.
+    """
+    try:
+        return redis_instance().get(_page_update_webhook_debounce_key(page_id)) is not None
+    except Exception as e:
+        log_exception(e, warning=True)
+        return False
+
+
+def _release_page_update_webhook(page_id: str | uuid.UUID) -> None:
+    """Drop a page's debounce marker so the next update can deliver immediately.
+
+    Used when a claimed window did not result in a delivery (the fan-out raised),
+    so a transient DB/broker failure costs one webhook instead of silencing the
+    page for the rest of the window.
+    """
+    try:
+        redis_instance().delete(_page_update_webhook_debounce_key(page_id))
+    except Exception as e:
+        log_exception(e, warning=True)
 
 
 logger = logging.getLogger("plane.worker")
@@ -319,6 +417,7 @@ def webhook_send_task(
             webhook.url,
             allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
             allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
+            allow_private=settings.WEBHOOK_ALLOW_PRIVATE_URLS,
             headers=headers,
             json=payload,
             timeout=30,
@@ -402,6 +501,7 @@ def webhook_activity(
     event_id: str | uuid.UUID,
     old_identifier: Optional[str],
     new_identifier: Optional[str],
+    debounce: bool = False,
 ) -> None:
     """
     Process and send webhook notifications for various activities in the system.
@@ -410,7 +510,7 @@ def webhook_activity(
     to all active webhooks for the workspace.
 
     Args:
-        event (str): Type of event (project, issue, module, cycle, issue_comment)
+        event (str): Type of event (project, issue, module, cycle, issue_comment, page)
         verb (str): Action performed (created, updated, deleted)
         field (Optional[str]): Name of the field that was changed
         old_value (Any): Previous value of the field
@@ -421,6 +521,10 @@ def webhook_activity(
         event_id (str | uuid.UUID): ID of the event object
         old_identifier (Optional[str]): Previous identifier if any
         new_identifier (Optional[str]): New identifier if any
+        debounce (bool): Only meaningful for ``page`` update events. When True the
+            delivery is rate-limited per page (see PAGE_UPDATE_WEBHOOK_DEBOUNCE) so
+            the high-frequency live content-persist flushes do not emit a webhook
+            each. Discrete property edits leave this False and always deliver.
 
     Returns:
         None
@@ -447,23 +551,63 @@ def webhook_activity(
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
-        for webhook in webhooks:
-            webhook_send_task.delay(
-                webhook_id=webhook.id,
-                slug=slug,
-                event=event,
-                event_data=({"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)),
-                action=verb,
-                current_site=current_site,
-                activity={
-                    "field": field,
-                    "new_value": new_value,
-                    "old_value": old_value,
-                    "actor": get_model_data(event="user", event_id=actor_id),
-                    "old_identifier": old_identifier,
-                    "new_identifier": new_identifier,
-                },
-            )
+        if event == "page":
+            webhooks = webhooks.filter(page=True)
+
+        # Collapse the live collab server's frequent content-persist flushes into
+        # at most one ``page`` update webhook per debounce window. Property edits
+        # (debounce=False) always deliver and just refresh that window.
+        debounced_page_update = event == "page" and verb == "updated"
+
+        # Cheap peek first: during a live editing session most flushes land inside
+        # an open window, and those must cost one redis GET rather than a page +
+        # actor serialization. The atomic claim still happens below.
+        if debounced_page_update and debounce and _page_update_webhook_recently_fired(event_id):
+            return
+
+        # Resolve the subscribers BEFORE touching the debounce window: a page with
+        # no subscriber must not burn a window that a later, deliverable change
+        # would then be silenced by.
+        webhooks = list(webhooks)
+        if not webhooks:
+            return
+
+        # Claim the window immediately before dispatch, and release it below if
+        # anything from here on fails, so a transient error costs one webhook
+        # rather than a whole window.
+        if debounced_page_update and _suppress_page_update_webhook(event_id, debounce):
+            return
+
+        try:
+            # Build the payload once instead of once per subscriber: every webhook
+            # for this event receives the same serialized object and actor, so
+            # doing it inside the loop re-queried and re-serialized both N times.
+            # It sits inside the try so a vanished object releases the window it
+            # just claimed instead of blacking out the page for the rest of it.
+            event_data = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
+            activity = {
+                "field": field,
+                "new_value": new_value,
+                "old_value": old_value,
+                "actor": get_model_data(event="user", event_id=actor_id),
+                "old_identifier": old_identifier,
+                "new_identifier": new_identifier,
+            }
+
+            for webhook in webhooks:
+                webhook_send_task.delay(
+                    webhook_id=webhook.id,
+                    slug=slug,
+                    event=event,
+                    event_data=event_data,
+                    action=verb,
+                    current_site=current_site,
+                    activity=activity,
+                )
+        except Exception:
+            if debounced_page_update:
+                _release_page_update_webhook(event_id)
+            raise
         return
     except Exception as e:
         # Return if a does not exist error occurs
@@ -519,3 +663,29 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
                 )
 
     return
+
+
+def dispatch_page_webhook(request, slug, page_id, verb, field=None, old_value=None, new_value=None, debounce=False):
+    """Fire a ``page`` webhook through the shared webhook activity path.
+
+    Every DRF-side page mutation — from both the internal app API and the public
+    token API (create, delete, duplicate, and the property / content updates) —
+    funnels through here so the payload, actor and origin are built identically.
+    ``debounce`` is only set for the live content-persist flush (see
+    ``PagesDescriptionViewSet`` / the public API content update) to keep an
+    editing session from emitting a webhook per flush.
+    """
+    webhook_activity.delay(
+        event="page",
+        verb=verb,
+        field=field,
+        old_value=old_value,
+        new_value=new_value,
+        actor_id=request.user.id,
+        slug=slug,
+        current_site=base_host(request=request, is_app=True),
+        event_id=page_id,
+        old_identifier=None,
+        new_identifier=None,
+        debounce=debounce,
+    )
