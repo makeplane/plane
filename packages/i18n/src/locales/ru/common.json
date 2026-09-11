@@ -57,7 +57,7 @@
     "no_worklogs": "Записей о работе пока нет",
     "no_history": "Истории пока нет"
   },
-  "preferences": "Настройки",
+  "preferences": "Предпочтения",
   "language_and_time": "Язык и время",
   "notifications": "Уведомления",
   "workspaces": "Рабочие пространства",
@@ -760,7 +760,7 @@
   "attachment": {
     "error": "Ошибка прикрепления файла",
     "only_one_file_allowed": "Можно загрузить только один файл",
-    "file_size_limit": "Максимальный размер файла - {size} МБ",
+    "file_size_limit": "Максимальный размер файла — {size} МБ",
     "drag_and_drop": "Перетащите файл для загрузки",
     "delete": "Удалить вложение"
   },
