@@ -123,6 +123,46 @@ class TestS3StorageSignedURLExpiration:
             "AWS_SECRET_ACCESS_KEY": "test-secret",
             "AWS_S3_BUCKET_NAME": "test-bucket",
             "AWS_REGION": "us-east-1",
+            "AWS_S3_ENDPOINT_URL": "https://test.r2.cloudflarestorage.com",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_generate_presigned_post_with_cloudflare_r2(self, mock_boto3):
+        """Test that Cloudflare R2 endpoints generate presigned PUT URLs instead of POST"""
+        # Mock the boto3 client and its response
+        mock_s3_client = Mock()
+        mock_s3_client.generate_presigned_url.return_value = "https://r2-test-url.com"
+        mock_boto3.client.return_value = mock_s3_client
+
+        # Create S3Storage instance 
+        storage = S3Storage()
+
+        # Call generate_presigned_post
+        result = storage.generate_presigned_post("test-object", "image/png", 1024)
+
+        # Assert that the boto3 method generate_presigned_url was called with put_object
+        mock_s3_client.generate_presigned_url.assert_called_once()
+        call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
+        assert call_kwargs["ClientMethod"] == "put_object"
+        assert call_kwargs["Params"]["Bucket"] == "test-bucket"
+        assert call_kwargs["Params"]["Key"] == "test-object"
+        assert call_kwargs["Params"]["ContentType"] == "image/png"
+        assert call_kwargs["Params"]["ContentLength"] == 1024
+        
+        # Verify the returned object structure
+        assert result["url"] == "https://r2-test-url.com"
+        assert result["fields"]["_method"] == "PUT"
+        assert result["fields"]["Content-Type"] == "image/png"
+
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
         },
         clear=True,
     )
