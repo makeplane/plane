@@ -1,0 +1,2 @@
+click "Open user menu"
+click "Sign out"

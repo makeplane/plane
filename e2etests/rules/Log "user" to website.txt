@@ -1,0 +1,6 @@
+enter string with parameters "${user}@test.com" into "Email"
+check that button "Continue" is enabled
+click "Continue"
+enter "safePassword14*" into "Password"
+check that button "Go to workspace" is enabled
+click "Go to workspace"
