@@ -64,9 +64,7 @@ class ProjectInvitationsViewset(BaseViewSet):
 
         for email in emails:
             workspace_role = (
-                WorkspaceMember.objects.filter(
-                    workspace__slug=slug, member__email=email.get("email"), is_active=True
-                )
+                WorkspaceMember.objects.filter(workspace__slug=slug, member__email=email.get("email"), is_active=True)
                 .values_list("role", flat=True)
                 .first()
             )
