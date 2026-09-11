@@ -484,6 +484,9 @@
         "heading": "指令碼",
         "new_script": "新指令碼",
         "description": "使用自訂指令碼和自動化規則，自動化您的工作流程。"
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

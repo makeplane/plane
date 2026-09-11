@@ -619,7 +619,8 @@
       "enable": "Activer",
       "disable": "Désactiver",
       "copy_markdown": "Copier le markdown",
-      "reply": "Répondre"
+      "reply": "Répondre",
+      "move_to_project": "Move to project"
     },
     "name": "Nom",
     "discard": "Abandonner",
@@ -867,5 +868,17 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
-  }
+  },
+  "issue": {
+    "move": {
+      "success": "Work item moved successfully",
+      "failed": "Failed to move work item. Please try again.",
+      "modal": {
+        "title": "Move work item to project",
+        "description": "Select the destination project. The work item keeps its name and content; sub-work-items move with it.",
+        "no_projects": "You don't have permission to move work items to any other project."
+      }
+    }
+  },
+  "home": {}
 }

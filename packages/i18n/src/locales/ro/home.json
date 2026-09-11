@@ -72,6 +72,12 @@
       "trial_ends_in_days": "Perioada de probă se încheie în {days, plural, one {# zi} other {# zile}}",
       "start_subscription": "Începe abonamentul",
       "explore_business_features": "Explorează funcțiile Business"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

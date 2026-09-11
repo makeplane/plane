@@ -23,6 +23,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
+import { MoveIssueModal } from "../../move-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
@@ -63,6 +64,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
+  const [moveIssueModal, setMoveIssueModal] = useState(false);
   const [_, setDuplicateWorkItemModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -138,6 +140,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     setCreateUpdateIssueModal: customEditAction,
     setDeleteIssueModal: customDeleteAction,
     setArchiveIssueModal: customArchiveAction,
+    setMoveIssueModal,
     setDuplicateWorkItemModal: customDuplicateAction,
     handleDelete: customDeleteAction,
     handleUpdate,
@@ -208,6 +211,12 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
           if (toggleDeleteIssueModal) toggleDeleteIssueModal(false);
         }}
         onSubmit={handleDelete}
+      />
+      <MoveIssueModal
+        data={issue}
+        isOpen={moveIssueModal}
+        handleClose={() => setMoveIssueModal(false)}
+        storeType={EIssuesStoreType.PROJECT}
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}

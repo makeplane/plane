@@ -28,7 +28,7 @@ This specialist runs when test files are modified (SCOPE_TESTS=true) or when log
 
 4. **Check for test debt:**
    - `@Disabled`, `@Skip`, `xit()`, `x.test()` — Why is this test disabled? Should it be fixed?
-   - `TODO` comments in test code — Are these tracked in TODOS.md?
+   - `TODO` comments in test code — Are these tracked as Questimus tickets? (create via the questimus skill if not)
    - Tests with long setup/teardown — Indicator of poor test isolation
 
 ## Output

@@ -619,7 +619,8 @@
       "enable": "Bật",
       "disable": "Tắt",
       "copy_markdown": "Sao chép markdown",
-      "reply": "Trả lời"
+      "reply": "Trả lời",
+      "move_to_project": "Move to project"
     },
     "name": "Tên",
     "discard": "Hủy bỏ",
@@ -867,5 +868,17 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
-  }
+  },
+  "issue": {
+    "move": {
+      "success": "Work item moved successfully",
+      "failed": "Failed to move work item. Please try again.",
+      "modal": {
+        "title": "Move work item to project",
+        "description": "Select the destination project. The work item keeps its name and content; sub-work-items move with it.",
+        "no_projects": "You don't have permission to move work items to any other project."
+      }
+    }
+  },
+  "home": {}
 }

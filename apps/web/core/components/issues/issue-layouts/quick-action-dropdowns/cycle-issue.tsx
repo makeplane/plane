@@ -22,6 +22,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
+import { MoveIssueModal } from "../../move-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
@@ -45,6 +46,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
+  const [moveIssueModal, setMoveIssueModal] = useState(false);
   const [_, setDuplicateWorkItemModal] = useState(false);
   // router
   const { workspaceSlug, cycleId } = useParams();
@@ -87,6 +89,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
     setArchiveIssueModal,
+    setMoveIssueModal,
     setDuplicateWorkItemModal,
     handleRemoveFromView,
     cycleId: cycleId?.toString(),
@@ -122,6 +125,12 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
+      />
+      <MoveIssueModal
+        data={issue}
+        isOpen={moveIssueModal}
+        handleClose={() => setMoveIssueModal(false)}
+        storeType={EIssuesStoreType.CYCLE}
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}

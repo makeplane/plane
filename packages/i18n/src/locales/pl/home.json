@@ -72,6 +72,12 @@
       "trial_ends_in_days": "Okres próbny kończy się za {days, plural, one {# dzień} few {# dni} other {# dni}}",
       "start_subscription": "Rozpocznij subskrypcję",
       "explore_business_features": "Poznaj funkcje Business"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

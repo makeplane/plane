@@ -484,6 +484,9 @@
         "heading": "脚本",
         "new_script": "新建脚本",
         "description": "使用自定义脚本和自动化规则自动化您的工作流程。"
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

@@ -72,6 +72,12 @@
       "trial_ends_in_days": "试用将在{days}天后结束",
       "start_subscription": "开始订阅",
       "explore_business_features": "探索Business功能"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

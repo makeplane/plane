@@ -484,6 +484,9 @@
         "heading": "Script",
         "new_script": "Script mới",
         "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

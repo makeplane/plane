@@ -32,6 +32,8 @@ from plane.app.views import (
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
     IssueTypeListEndpoint,
+    # Questimus fork change (QUESTIMUS-30): move a work item to another project
+    IssueMoveEndpoint,
 )
 
 urlpatterns = [
@@ -73,6 +75,12 @@ urlpatterns = [
             }
         ),
         name="project-issue",
+    ),
+    # Questimus fork change (QUESTIMUS-30): move a work item to another project
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/move/",
+        IssueMoveEndpoint.as_view(),
+        name="project-issue-move",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",

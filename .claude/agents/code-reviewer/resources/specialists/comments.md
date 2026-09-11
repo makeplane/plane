@@ -23,12 +23,12 @@ This specialist runs when code files are modified (SCOPE_COMMENTS=true).
 3. **Flag Technical Debt**: Identify comments indicating known issues or debt.
    - `TODO`, `HACK`, `FIXME`, `XXX` — note each one with context
    - Comments indicating "temporary fix" or "band-aid" — should these be fixed now?
-   - Comments mentioning deferred work — is it tracked in TODOS.md?
+   - Comments mentioning deferred work — is it tracked as a Questimus ticket?
 
 4. **Detect Comment Rot**: Identify comments likely to become stale.
    - Does the comment depend on code structure that changes frequently?
    - Are there version-specific comments (e.g., "works on Python 3.8+") that may become outdated?
-   - Comments tying to specific issues/tickets — are those still open?
+   - Comments tying to specific issues/tickets — are those still open? (verify via the questimus skill — `node questimus.js get <id>`)
 
 5. **Assess Value**: Distinguish between helpful and no-op comments.
    - "Increment counter" above `count++` is a no-op (code already says this)

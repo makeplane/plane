@@ -72,6 +72,12 @@
       "trial_ends_in_days": "Testversion endet in {days, plural, one {# Tag} other {# Tagen}}",
       "start_subscription": "Abonnement starten",
       "explore_business_features": "Business-Funktionen entdecken"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

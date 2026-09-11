@@ -117,13 +117,13 @@ items:
       dsh: "af75d506da67e285"
   - name: api-design
     type: skill
-    deployed_version: "1.4.0"
-    deployed_hash: "7dc2766020c29b4c"
-    deployed_date: "2026-09-08"
+    deployed_version: "1.4.1"
+    deployed_hash: "2c60723fce4e4c60"
+    deployed_date: "2026-09-10"
     customized: false
     deployed_hashes:
-      claude-code: "7dc2766020c29b4c"
-      dsh: "7dc2766020c29b4c"
+      claude-code: "2c60723fce4e4c60"
+      dsh: "2c60723fce4e4c60"
   - name: database-design
     type: skill
     deployed_version: "1.1.1"
@@ -181,12 +181,12 @@ items:
   - name: code-reviewer
     type: agent
     deployed_version: "1.5.1"
-    deployed_hash: "faac746f5e4a42c9"
-    deployed_date: "2026-09-08"
+    deployed_hash: "90d00efeba30deb9"
+    deployed_date: "2026-09-10"
     customized: false
     deployed_hashes:
-      claude-code: "faac746f5e4a42c9"
-      dsh: "012499037e852268"
+      claude-code: "90d00efeba30deb9"
+      dsh: "6ae31d2cc84fa9ca"
   - name: graphify
     type: skill
     deployed_version: "1.0.1"
@@ -244,12 +244,12 @@ items:
   - name: questimus-questimus
     type: skill
     deployed_version: "0.1.0"
-    deployed_hash: "fae55114839fa137"
-    deployed_date: "2026-09-09"
+    deployed_hash: "70ead3a0a4caa7c7"
+    deployed_date: "2026-09-10"
     customized: false
     deployed_hashes:
-      claude-code: "fae55114839fa137"
-      dsh: "fae55114839fa137"
+      claude-code: "70ead3a0a4caa7c7"
+      dsh: "70ead3a0a4caa7c7"
   - name: ponytail-mode-hooks
     type: hook
     deployed_version: "1.0.1"

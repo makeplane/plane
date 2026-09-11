@@ -1,16 +1,4 @@
 ---
-sync_source: "https://github.com/davila7/claude-code-templates"
-sync_path: "cli-tool/components/skills/development/api-documentation-generator/SKILL.md"
-sync_date: 2026-06-30
-best_guess_type: skill
-best_guess_name: "api-documentation-generator"
-triage_status: pending
----
-
-<!-- SOURCE: https://github.com/davila7/claude-code-templates -->
-<!-- PATH IN REPO: cli-tool/components/skills/development/api-documentation-generator/SKILL.md -->
-<!-- Researcher: confirm best_guess_type / best_guess_name, then move to raw/ or rejected/ -->
----
 name: api-documentation-generator
 description: "Generate comprehensive, developer-friendly API documentation from code, including endpoints, parameters, examples, and best practices"
 ---

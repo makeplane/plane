@@ -484,6 +484,9 @@
         "heading": "Script-uri",
         "new_script": "Script nou",
         "description": "Automatizează fluxurile tale de lucru cu scripturi personalizate și reguli de automatizare."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

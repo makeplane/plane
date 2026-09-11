@@ -484,6 +484,9 @@
         "heading": "Komut Dosyaları",
         "new_script": "Yeni Komut Dosyası",
         "description": "İş akışlarınızı özel komut dosyaları ve otomasyon kurallarıyla otomatikleştirin."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

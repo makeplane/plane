@@ -484,6 +484,9 @@
         "heading": "Skrypty",
         "new_script": "Nowy skrypt",
         "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {
