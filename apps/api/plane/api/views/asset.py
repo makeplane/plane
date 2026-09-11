@@ -335,7 +335,7 @@ class UserServerAssetEndpoint(BaseAPIView):
         )
 
         # Get the presigned URL
-        storage = S3Storage(request=request, is_server=True)
+        storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
@@ -448,7 +448,7 @@ class GenericAssetEndpoint(BaseAPIView):
             # Force attachment disposition for script-capable MIME types (e.g. SVG)
             # to prevent same-origin XSS when the asset URL shares the app's origin
             # (default MinIO self-hosted setup).
-            storage = S3Storage(request=request, is_server=True)
+            storage = S3Storage(request=request)
             asset_mime_type = (asset.attributes.get("type") or "").split(";")[0].strip().lower()
             disposition = (
                 "attachment" if asset_mime_type in settings.SCRIPT_CAPABLE_MIME_TYPES else "inline"
@@ -578,7 +578,7 @@ class GenericAssetEndpoint(BaseAPIView):
         )
 
         # Get the presigned URL
-        storage = S3Storage(request=request, is_server=True)
+        storage = S3Storage(request=request)
         presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
 
         return Response(
