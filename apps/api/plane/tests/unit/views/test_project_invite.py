@@ -70,6 +70,7 @@ class TestProjectInvitationCreate:
     def test_mismatched_workspace_role_is_still_rejected(self):
         """The guard itself is unchanged: an admin cannot be invited as a member."""
         response = self._call([{"email": "admin@example.com", "role": 15}], existing_role=20)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "different role than workspace role" in str(response.data)
 
     def test_the_send_step_uses_the_task_not_the_created_rows(self):
