@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc --noEmit && tsdown",
     "dev": "tsdown --watch --no-clean --onSuccess \"node --env-file=.env .\"",
-    "start": "node --env-file=.env .",
+    "start": "node .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
