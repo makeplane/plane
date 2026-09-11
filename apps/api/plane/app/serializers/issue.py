@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    IssueType,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -83,6 +84,12 @@ class IssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
         source="state", queryset=State.all_state_objects.all(), required=False, allow_null=True
+    )
+    # Questimus fork change (§7.12): the model FK is named `type`, so `type_id`
+    # in the payload was silently dropped — the type badge switcher PATCHes
+    # type_id on existing work items.
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
@@ -794,6 +801,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "start_date",
             "target_date",
             "sequence_id",
+            "type_id",
             "project_id",
             "parent_id",
             "cycle_id",

@@ -380,6 +380,9 @@ class WorkspaceHomePreference(BaseModel):
         MY_STICKIES = "my_stickies", "My Stickies"
         NEW_AT_PLANE = "new_at_plane", "New at Plane"
         QUICK_TUTORIAL = "quick_tutorial", "Quick Tutorial"
+        # Questimus fork change (Phase 3): home dashboard sections as widgets
+        MY_ISSUES = "my_issues", "My Issues"
+        NOW = "now", "Now"
 
     workspace = models.ForeignKey(
         "db.Workspace",

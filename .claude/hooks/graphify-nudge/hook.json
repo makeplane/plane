@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "bash|read|glob|grep",
+        "run": "graphify-nudge.js",
+        "interpreter": "node",
+        "timeout": 5
+      }
+    ]
+  }
+}

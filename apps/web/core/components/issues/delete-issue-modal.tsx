@@ -14,6 +14,8 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -120,7 +122,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
           {/* TODO: Translate here */}
           {`Are you sure you want to delete ${isEpic ? "epic" : "work item"} `}
           <span className="font-medium break-words text-primary">
-            {projectDetails?.identifier}-{issue?.sequence_id}
+            {getIssueKey(projectDetails?.identifier, issue?.sequence_id)}
           </span>
           {` ? All of the data related to the ${isEpic ? "epic" : "work item"} will be permanently removed. This action cannot be undone.`}
         </>

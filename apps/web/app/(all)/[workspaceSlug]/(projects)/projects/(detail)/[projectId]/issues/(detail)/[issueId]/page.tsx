@@ -13,6 +13,8 @@ import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?u
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { LogoSpinner } from "@/components/common/logo-spinner";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
@@ -29,7 +31,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const data = await issueService.getIssueMetaFromURL(workspaceSlug, projectId, issueId);
 
     if (data) {
-      throw redirect(`/${workspaceSlug}/browse/${data.project_identifier}-${data.sequence_id}`);
+      throw redirect(`/${workspaceSlug}/browse/${getIssueKey(data.project_identifier, data.sequence_id)}`);
     }
 
     return { error: true, workspaceSlug };

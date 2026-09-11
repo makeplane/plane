@@ -1,0 +1,143 @@
+/* Google Fontsから日本語フォントを読み込み */
+/* zero-dependency: no CDN. Self-host fonts from the design skill's assets/fonts/ kit if needed. */
+
+/* --- カラフル＆ポップテーマ --- */
+:root {
+  --color-background: #fff5f7;
+  --color-foreground: #2d2d2d;
+  --color-heading: #ff6b9d;
+  --color-accent-1: #ffd93d;
+  --color-accent-2: #6bcf7f;
+  --color-accent-3: #4d96ff;
+  --font-default: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+}
+
+section {
+  background: linear-gradient(135deg, var(--color-background) 0%, #ffe5ec 100%);
+  color: var(--color-foreground);
+  font-family: var(--font-default);
+  font-weight: 400;
+  box-sizing: border-box;
+  border-bottom: 10px solid var(--color-accent-1);
+  position: relative;
+  line-height: 1.7;
+  font-size: 24px;
+  padding: 56px;
+}
+
+section:last-of-type {
+  border-bottom: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 900;
+  color: var(--color-heading);
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 64px;
+  line-height: 1.3;
+  text-align: left;
+  background: linear-gradient(135deg, var(--color-heading), var(--color-accent-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2 {
+  position: absolute;
+  top: 40px;
+  left: 56px;
+  right: 56px;
+  font-size: 44px;
+  padding-top: 0;
+  padding-bottom: 20px;
+  background: linear-gradient(90deg, var(--color-heading), var(--color-accent-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 8px;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2), var(--color-accent-3));
+  border-radius: 2px;
+}
+
+h2 + * {
+  margin-top: 120px;
+}
+
+h3 {
+  color: var(--color-accent-3);
+  font-size: 30px;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+ul, ol {
+  padding-left: 32px;
+}
+
+li {
+  margin-bottom: 12px;
+  position: relative;
+}
+
+li::marker {
+  color: var(--color-heading);
+  font-weight: 700;
+}
+
+footer {
+  font-size: 0;
+  color: transparent;
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  bottom: 40px;
+  height: 10px;
+  background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2), var(--color-accent-3));
+  border-radius: 5px;
+}
+
+section.lead {
+  border-bottom: 10px solid var(--color-accent-1);
+  background: linear-gradient(135deg, #fff5f7 0%, #ffe5ec 50%, #ffd5e0 100%);
+}
+
+section.lead footer {
+  display: none;
+}
+
+section.lead h1 {
+  margin-bottom: 24px;
+}
+
+section.lead p {
+  font-size: 26px;
+  color: var(--color-foreground);
+  font-weight: 700;
+}
+
+/* ポップな強調 */
+strong {
+  color: var(--color-heading);
+  font-weight: 900;
+}
+
+/* カラフルな区切り線 */
+hr {
+  border: none;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2), var(--color-accent-3));
+  margin: 30px 0;
+  border-radius: 2px;
+}

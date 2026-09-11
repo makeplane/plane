@@ -72,6 +72,12 @@
       "trial_ends_in_days": "トライアル終了まであと{days}日",
       "start_subscription": "サブスクリプションを開始",
       "explore_business_features": "Business機能を探索"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

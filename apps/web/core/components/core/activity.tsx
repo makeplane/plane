@@ -32,8 +32,10 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueActivity } from "@plane/types";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProject } from "@/hooks/store/use-project";
 // types
 
 export function IssueLink({ activity }: { activity: IIssueActivity }) {
@@ -63,7 +65,9 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
           rel={activity.issue === null ? "" : "noopener noreferrer"}
           className="inline items-center gap-1 font-medium text-primary hover:underline"
         >
-          <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
+          <span className="whitespace-nowrap">
+            {getIssueKey(activity.project_detail.identifier, activity.issue_detail.sequence_id)}
+          </span>{" "}
           <span className="font-regular break-all">{activity.issue_detail?.name}</span>
         </a>
       ) : (
@@ -109,6 +113,17 @@ const LabelPill = observer(function LabelPill({ labelId, workspaceSlug }: { labe
       }}
       aria-hidden="true"
     />
+  );
+});
+
+const ProjectName = observer(function ProjectName({ projectId }: { projectId: string | null }) {
+  // store hooks
+  const { getProjectById } = useProject();
+
+  return (
+    <span className="font-medium whitespace-nowrap text-primary">
+      {getProjectById(projectId)?.name ?? projectId ?? ""}
+    </span>
   );
 });
 
@@ -574,6 +589,15 @@ const activityDetails: {
       </>
     ),
     icon: <SignalMediumIcon size={12} className="text-secondary" aria-hidden="true" />,
+  },
+  project: {
+    message: (activity, showIssue) => (
+      <>
+        moved {showIssue ? <IssueLink activity={activity} /> : "this work item"} from{" "}
+        <ProjectName projectId={activity.old_value} /> to <ProjectName projectId={activity.new_value} />
+      </>
+    ),
+    icon: <MoveRight size={12} className="text-secondary" aria-hidden="true" />,
   },
   relates_to: {
     message: (activity, showIssue) => {

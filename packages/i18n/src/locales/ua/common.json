@@ -619,7 +619,8 @@
       "enable": "Увімкнути",
       "disable": "Вимкнути",
       "copy_markdown": "Скопіювати markdown",
-      "reply": "Відповісти"
+      "reply": "Відповісти",
+      "move_to_project": "Move to project"
     },
     "name": "Назва",
     "discard": "Скасувати",
@@ -867,5 +868,17 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
-  }
+  },
+  "issue": {
+    "move": {
+      "success": "Work item moved successfully",
+      "failed": "Failed to move work item. Please try again.",
+      "modal": {
+        "title": "Move work item to project",
+        "description": "Select the destination project. The work item keeps its name and content; sub-work-items move with it.",
+        "no_projects": "You don't have permission to move work items to any other project."
+      }
+    }
+  },
+  "home": {}
 }

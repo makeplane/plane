@@ -1,0 +1,92 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Strict TypeScript 5.x",
+    "compilerOptions": {
+        // =========================================================================
+        // STRICTNESS (Maximum Type Safety)
+        // =========================================================================
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "forceConsistentCasingInFileNames": true,
+        // =========================================================================
+        // MODULE SYSTEM (Modern ESM)
+        // =========================================================================
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "isolatedModules": true,
+        "verbatimModuleSyntax": true,
+        // =========================================================================
+        // OUTPUT
+        // =========================================================================
+        "target": "ES2022",
+        "lib": [
+            "ES2022",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        // =========================================================================
+        // PERFORMANCE
+        // =========================================================================
+        "skipLibCheck": true,
+        "incremental": true,
+        // =========================================================================
+        // PATH ALIASES
+        // =========================================================================
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@/components/*": [
+                "./src/components/*"
+            ],
+            "@/lib/*": [
+                "./src/lib/*"
+            ],
+            "@/types/*": [
+                "./src/types/*"
+            ],
+            "@/utils/*": [
+                "./src/utils/*"
+            ]
+        },
+        // =========================================================================
+        // JSX (for React projects)
+        // =========================================================================
+        // "jsx": "react-jsx",
+        // =========================================================================
+        // EMIT
+        // =========================================================================
+        "noEmit": true, // Let bundler handle emit
+        // "outDir": "./dist",
+        // "rootDir": "./src",
+        // =========================================================================
+        // DECORATORS (if needed)
+        // =========================================================================
+        // "experimentalDecorators": true,
+        // "emitDecoratorMetadata": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "src/**/*.d.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "coverage",
+        "**/*.test.ts",
+        "**/*.spec.ts"
+    ]
+}

@@ -72,6 +72,12 @@
       "trial_ends_in_days": "체험판 종료까지 {days}일 남음",
       "start_subscription": "구독 시작",
       "explore_business_features": "Business 기능 살펴보기"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

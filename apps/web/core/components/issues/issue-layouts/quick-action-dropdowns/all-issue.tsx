@@ -20,6 +20,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
+import { MoveIssueModal } from "../../move-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
@@ -42,6 +43,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
+  const [moveIssueModal, setMoveIssueModal] = useState(false);
   const [_, setDuplicateWorkItemModal] = useState(false);
   // router
   const { workspaceSlug } = useParams();
@@ -78,6 +80,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
     setArchiveIssueModal,
+    setMoveIssueModal,
     setDuplicateWorkItemModal,
     handleDelete,
     handleUpdate,
@@ -110,6 +113,12 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
+      />
+      <MoveIssueModal
+        data={issue}
+        isOpen={moveIssueModal}
+        handleClose={() => setMoveIssueModal(false)}
+        storeType={EIssuesStoreType.GLOBAL}
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}

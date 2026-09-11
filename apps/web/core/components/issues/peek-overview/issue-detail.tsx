@@ -92,7 +92,7 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         />
       )}
       <div className="flex items-center justify-between gap-2">
-        <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+        <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} issueOperations={issueOperations} />
       </div>
       <IssueTitleInput
         workspaceSlug={workspaceSlug}

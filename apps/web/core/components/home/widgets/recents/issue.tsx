@@ -17,6 +17,8 @@ import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -86,7 +88,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
                 <WorkItemsOutline className="size-4 text-tertiary" />
               </div>
               <div className="text-13 font-medium whitespace-nowrap text-placeholder">
-                {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
+                {getIssueKey(issueDetails?.project_identifier, issueDetails?.sequence_id)}
               </div>
             </div>
           )}

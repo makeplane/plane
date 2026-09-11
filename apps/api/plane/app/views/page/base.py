@@ -161,7 +161,10 @@ class PageViewSet(BaseViewSet):
                 old_description_html=None,
                 page_id=serializer.data["id"],
             )
-            page = self.get_queryset().get(pk=serializer.data["id"])
+            # Fork fix (§7.13): the list queryset filters parent__isnull=True, so
+            # re-fetching a just-created child page from it raises DoesNotExist
+            # (404) even though the page was created. Fetch by pk instead.
+            page = Page.objects.get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

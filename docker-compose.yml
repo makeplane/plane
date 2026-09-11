@@ -1,3 +1,7 @@
+# Project name pinned to 'plane' so Docker reuses the existing volumes
+# (pgdata, uploads, ...) and images from the previous folder.
+name: plane
+
 services:
   web:
     container_name: web
@@ -104,6 +108,12 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+      LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+      REDIS_HOST: ${REDIS_HOST:-plane-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
 
   plane-db:
     container_name: plane-db
@@ -159,8 +169,10 @@ services:
       dockerfile: Dockerfile.ce
     restart: always
     ports:
-      - ${LISTEN_HTTP_PORT}:80
-      - ${LISTEN_HTTPS_PORT}:443
+      - 127.0.0.1:${LISTEN_HTTP_PORT:-7000}:80
+      - 127.0.0.1:${LISTEN_HTTPS_PORT:-7001}:443
+    env_file:
+      - .env
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}

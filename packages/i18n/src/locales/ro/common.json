@@ -619,7 +619,8 @@
       "enable": "Activează",
       "disable": "Dezactivează",
       "copy_markdown": "Copiază markdown",
-      "reply": "Răspunde"
+      "reply": "Răspunde",
+      "move_to_project": "Move to project"
     },
     "name": "Nume",
     "discard": "Renunță",
@@ -867,5 +868,17 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
-  }
+  },
+  "issue": {
+    "move": {
+      "success": "Work item moved successfully",
+      "failed": "Failed to move work item. Please try again.",
+      "modal": {
+        "title": "Move work item to project",
+        "description": "Select the destination project. The work item keeps its name and content; sub-work-items move with it.",
+        "no_projects": "You don't have permission to move work items to any other project."
+      }
+    }
+  },
+  "home": {}
 }

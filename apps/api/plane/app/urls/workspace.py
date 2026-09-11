@@ -36,6 +36,8 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceIssueTypeEndpoint,
+    WorkspaceIssueTypeDetailEndpoint,
 )
 
 
@@ -250,6 +252,17 @@ urlpatterns = [
         "workspaces/<str:slug>/stickies/<uuid:pk>/",
         WorkspaceStickyViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-sticky",
+    ),
+    # Questimus fork change (§7.12): central issue-type management
+    path(
+        "workspaces/<str:slug>/issue-types/",
+        WorkspaceIssueTypeEndpoint.as_view(),
+        name="workspace-issue-types",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-types/<uuid:pk>/",
+        WorkspaceIssueTypeDetailEndpoint.as_view(),
+        name="workspace-issue-type",
     ),
     # User Preference
     path(

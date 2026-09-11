@@ -12,6 +12,8 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+// helpers
+import { padIssueSequence } from "@/helpers/issue-key.helper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -71,7 +73,7 @@ export function ArchiveIssueModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">
-          {t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
+          {t("issue.archive.label")} {projectDetails?.identifier} {padIssueSequence(issue.sequence_id)}
         </h3>
         <p className="mt-3 text-13 text-secondary">{t("issue.archive.confirm_message")}</p>
         <div className="mt-3 flex justify-end gap-2">

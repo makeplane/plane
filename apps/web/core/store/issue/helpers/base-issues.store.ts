@@ -63,6 +63,12 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  moveIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    targetProjectId: string
+  ) => Promise<TIssue & { moved_ids?: string[] }>;
   clear(shouldClearPaginationOptions?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
@@ -233,6 +239,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       updateIssueDates: action,
       issueQuickAdd: action.bound,
       removeIssue: action.bound,
+      moveIssue: action.bound,
       issueArchive: action.bound,
       removeBulkIssues: action.bound,
       bulkArchiveIssues: action.bound,
@@ -610,6 +617,44 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     this.fetchParentStats(workspaceSlug, projectId);
     // Remove issue from main issue Map store
     this.rootIssueStore.issues.removeIssue(issueId);
+  }
+
+  /**
+   * This method is called to move an issue from one project to another
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
+   * @param targetProjectId
+   */
+  async moveIssue(workspaceSlug: string, projectId: string, issueId: string, targetProjectId: string) {
+    // Store Before state of the issue
+    const issueBeforeRemoval = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    // update parent stats optimistically
+    this.updateParentStats(issueBeforeRemoval, undefined);
+
+    try {
+      // Make API call
+      const response = await this.issueService.moveIssue(workspaceSlug, projectId, issueId, targetProjectId);
+      // Remove the moved root AND its whole moved subtree from the source
+      // store lists (adversarial review F4: only the root left stale rows).
+      runInAction(() => {
+        this.removeIssueFromList(issueId);
+        (response.moved_ids ?? []).forEach((mid) => this.removeIssueFromList(mid));
+      });
+      // call fetch Parent stats
+      this.fetchParentStats(workspaceSlug, projectId);
+      // Remove issues from main issue Map store (root + moved subtree)
+      this.rootIssueStore.issues.removeIssue(issueId);
+      (response.moved_ids ?? []).forEach((mid) => this.rootIssueStore.issues.removeIssue(mid));
+
+      return response;
+    } catch (error) {
+      // Revert the optimistic parent-stats update (the issue is still in the
+      // source project) and resync, then rethrow for the caller's error path.
+      this.updateParentStats(undefined, issueBeforeRemoval);
+      this.fetchParentStats(workspaceSlug, projectId);
+      throw error;
+    }
   }
 
   /**

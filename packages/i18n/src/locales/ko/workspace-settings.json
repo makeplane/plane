@@ -484,6 +484,9 @@
         "heading": "스크립트",
         "new_script": "새 스크립트",
         "description": "커스텀 스크립트와 자동화 규칙으로 워크플로우를 자동화하세요."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

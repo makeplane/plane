@@ -282,6 +282,11 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
           ),
+          // Questimus fork change (§7.12): central issue-type management
+          route(
+            ":workspaceSlug/settings/issue-types",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/issue-types/page.tsx"
+          ),
         ]),
 
         // --------------------------------------------------------------------

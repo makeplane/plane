@@ -484,6 +484,9 @@
         "heading": "Skrip",
         "new_script": "Skrip Baru",
         "description": "Otomatisasi alur kerja Anda dengan skrip kustom dan aturan otomatisasi."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

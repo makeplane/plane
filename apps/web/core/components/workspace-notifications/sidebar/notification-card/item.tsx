@@ -11,6 +11,8 @@ import { ClockOutline } from "@makeplane/propel/icons";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Row } from "@plane/ui";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useNotification } from "@/hooks/store/notifications/use-notification";
@@ -119,7 +121,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
 
           <div className="relative flex items-center gap-3 text-caption-sm-regular text-secondary">
             <div className="line-clamp-1 w-full truncate overflow-hidden break-words whitespace-normal">
-              {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
+              {getIssueKey(notification?.data?.issue?.identifier, notification?.data?.issue?.sequence_id)}&nbsp;
               {notification?.data?.issue?.name}
             </div>
             <div className="flex-shrink-0">

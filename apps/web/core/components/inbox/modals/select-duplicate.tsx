@@ -21,6 +21,8 @@ import darkSearchAsset from "@/app/assets/empty-state/search/search-dark.webp?ur
 import lightSearchAsset from "@/app/assets/empty-state/search/search-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import useDebounce from "@/hooks/use-debounce";
@@ -111,7 +113,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                     }}
                   />
                   <span className="flex-shrink-0 text-11 text-secondary">
-                    {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
+                    {getIssueKey(getProjectById(issue?.project_id)?.identifier, issue.sequence_id)}
                   </span>
                   <span className="text-secondary">{issue.name}</span>
                 </div>

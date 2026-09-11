@@ -72,6 +72,12 @@
       "trial_ends_in_days": "La prova scade tra {days, plural, one {# giorno} other {# giorni}}",
       "start_subscription": "Avvia abbonamento",
       "explore_business_features": "Esplora funzionalità Business"
+    },
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
     }
   }
 }

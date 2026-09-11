@@ -8,3 +8,4 @@ node_modules/
 out/
 pnpm-lock.yaml
 storybook-static/
+src/locales/resources.generated.ts

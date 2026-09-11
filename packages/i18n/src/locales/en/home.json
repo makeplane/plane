@@ -1,5 +1,11 @@
 {
   "home": {
+    "my_issues": {
+      "title": "My Issues"
+    },
+    "now": {
+      "title": "Now"
+    },
     "empty": {
       "quickstart_guide": "Your quickstart guide",
       "not_right_now": "Not right now",

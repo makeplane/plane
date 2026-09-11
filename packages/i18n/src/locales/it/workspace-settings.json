@@ -484,6 +484,9 @@
         "heading": "Script",
         "new_script": "Nuovo script",
         "description": "Automatizza i tuoi flussi di lavoro con script personalizzati e regole di automazione."
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

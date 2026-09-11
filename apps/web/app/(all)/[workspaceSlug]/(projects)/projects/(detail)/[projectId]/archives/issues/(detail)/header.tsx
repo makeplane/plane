@@ -15,6 +15,8 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
 // constants
 import { ISSUE_DETAILS } from "@plane/constants";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
@@ -65,7 +67,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
               <BreadcrumbLink
                 label={
                   currentProjectDetails && issueDetails
-                    ? `${currentProjectDetails.identifier}-${issueDetails.sequence_id}`
+                    ? getIssueKey(currentProjectDetails.identifier, issueDetails.sequence_id)
                     : ""
                 }
               />

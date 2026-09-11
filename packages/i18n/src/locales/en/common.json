@@ -324,6 +324,17 @@
   "deleting": "Deleting",
   "make_a_copy": "Make a copy",
   "move_to_project": "Move to project",
+  "issue": {
+    "move": {
+      "success": "Work item moved successfully",
+      "failed": "Failed to move work item. Please try again.",
+      "modal": {
+        "title": "Move work item to project",
+        "description": "Select the destination project. The work item keeps its name and content; sub-work-items move with it.",
+        "no_projects": "You don't have permission to move work items to any other project."
+      }
+    }
+  },
   "good": "Good",
   "morning": "morning",
   "afternoon": "afternoon",
@@ -605,6 +616,7 @@
     "actions": {
       "edit": "Edit",
       "make_a_copy": "Make a copy",
+      "move_to_project": "Move to project",
       "open_in_new_tab": "Open in new tab",
       "copy_link": "Copy link",
       "copy_branch_name": "Copy branch name",

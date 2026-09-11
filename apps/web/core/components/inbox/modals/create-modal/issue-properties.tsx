@@ -22,6 +22,7 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -184,7 +185,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
                   <ParentOutline className="h-3 w-3 flex-shrink-0" />
                   <span className="whitespace-nowrap">
                     {selectedParentIssue
-                      ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+                      ? getIssueKey(selectedParentIssue.project__identifier, selectedParentIssue.sequence_id)
                       : `Add parent`}
                   </span>
                 </button>

@@ -77,6 +77,67 @@ export class IssueService extends APIService {
       });
   }
 
+  // Questimus fork change (migration-karol.md §7.6/Phase 3): list a project's
+  // issue types (Plan/Subplan/Task/Subtask/Ticket/Design) for the type badge,
+  // the modal selector and the default-type-on-project-change logic.
+  async getProjectIssueTypes(workspaceSlug: string, projectId: string): Promise<any[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Questimus fork change (Phase 3): workspace-level issues for the home
+  // dashboard sections (My Issues / Now / Today) — assigned to the user.
+  async getWorkspaceIssues(workspaceSlug: string, queries: Record<string, string> = {}): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, { params: queries })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Questimus fork change (§7.12): central issue-type management (workspace level)
+  async getWorkspaceIssueTypes(workspaceSlug: string): Promise<any[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issue-types/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createWorkspaceIssueType(
+    workspaceSlug: string,
+    data: { name: string; color: string; description?: string }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/issue-types/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateWorkspaceIssueType(
+    workspaceSlug: string,
+    typeId: string,
+    data: { name?: string; color?: string; description?: string }
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/issue-types/${typeId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteWorkspaceIssueType(workspaceSlug: string, typeId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/issue-types/${typeId}/`)
+      .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssues(
     workspaceSlug: string,
     projectId: string,
@@ -233,6 +294,25 @@ export class IssueService extends APIService {
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issuesId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Questimus fork change (QUESTIMUS-30): move a work item (and its whole
+  // sub-tree) to another project. Response is the moved root issue serialized
+  // with its new project_id/sequence_id, plus moved_ids (every moved issue id)
+  // so the store can purge the whole subtree from the source view.
+  async moveIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    targetProjectId: string
+  ): Promise<TIssue & { moved_ids?: string[] }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/move/`, {
+      target_project_id: targetProjectId,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

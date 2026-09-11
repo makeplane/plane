@@ -484,6 +484,9 @@
         "heading": "スクリプト",
         "new_script": "新しいスクリプト",
         "description": "カスタムスクリプトと自動化ルールでワークフローを自動化します。"
+      },
+      "issue_types": {
+        "title": "Issue types"
       }
     },
     "empty_state": {

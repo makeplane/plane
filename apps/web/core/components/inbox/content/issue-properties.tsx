@@ -25,6 +25,8 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
+// helpers
+import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -201,7 +203,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 >
                   <Tooltip label={duplicateIssueDetails?.name ?? ""} layout="stacked">
                     <span className="flex cursor-pointer items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 pb-0.5 text-11 text-secondary">
-                      {`${currentProjectDetails?.identifier}-${duplicateIssueDetails?.sequence_id}`}
+                      {getIssueKey(currentProjectDetails?.identifier, duplicateIssueDetails?.sequence_id)}
                     </span>
                   </Tooltip>
                 </ControlLink>
