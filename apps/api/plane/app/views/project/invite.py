@@ -28,7 +28,6 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     ProjectMemberInvite,
-    User,
     WorkspaceMember,
     Project,
     ProjectUserProperty,
@@ -52,6 +51,22 @@ class ProjectInvitationsViewset(BaseViewSet):
             .select_related("project")
             .select_related("workspace", "workspace__owner")
         )
+
+    # Project invitations expose the invitee email and the raw token, and can be
+    # deleted, so list/retrieve/destroy must be admin-only like create. Without
+    # these decorators they inherit only IsAuthenticated, letting any workspace
+    # user read or delete another project's invitations.
+    @allow_permission([ROLE.ADMIN])
+    def list(self, request, slug, project_id):
+        return super().list(request)
+
+    @allow_permission([ROLE.ADMIN])
+    def retrieve(self, request, slug, project_id, pk):
+        return super().retrieve(request)
+
+    @allow_permission([ROLE.ADMIN])
+    def destroy(self, request, slug, project_id, pk):
+        return super().destroy(request)
 
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
@@ -151,7 +166,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
         # Use the workspace-scoped, network-validated project IDs only.
         # Raw project_ids may contain UUIDs from other workspaces; those are
         # absent from the `projects` queryset and therefore bypass the SECRET
-        # network check above (GHSA-45hc-q4mw-jhxm).
+        # network check above.
         validated_project_ids = [str(p.id) for p in projects]
 
         # If the user was already part of workspace
@@ -206,8 +221,7 @@ class ProjectJoinEndpoint(BaseAPIView):
 
         # Require an authenticated session — the accepting user must be the
         # person who was invited.  Without this check an attacker who knows the
-        # invitee email and obtains the token can hijack the project membership
-        # (GHSA-g36h-p63v-g9c7).
+        # invitee email and obtains the token can hijack the project membership.
         if not request.user.is_authenticated:
             return Response(
                 {"error": "Authentication required to accept project invitation"},
