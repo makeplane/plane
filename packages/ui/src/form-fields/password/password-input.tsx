@@ -28,7 +28,7 @@ export function PasswordInput({
   className,
   showToggle = true,
   error = false,
-  autoComplete = "off",
+  autoComplete = "current-password",
 }: TPasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   return (
