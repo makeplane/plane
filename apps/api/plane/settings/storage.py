@@ -68,18 +68,18 @@ class S3Storage(S3Boto3Storage):
             expiration = self.signed_url_expiration
         fields = {"Content-Type": file_type}
 
+        # boto3.generate_presigned_post derives every key-related condition
+        # itself: it injects {"bucket": ...}, {"key": <value>}, and (when
+        # `Key` ends with the literal "${filename}" placeholder) the
+        # corresponding ["starts-with", "$key", <prefix>] entry. Do NOT add
+        # any of them by hand here — AWS S3 silently accepts the resulting
+        # duplicates, but stricter S3-compatible backends enforce a hard
+        # cap on the `policy` form field (some as low as 1024 bytes) and
+        # reject the upload with `MaxMessageLengthExceeded`.
         conditions = [
-            {"bucket": self.aws_storage_bucket_name},
             ["content-length-range", 1, file_size],
             {"Content-Type": file_type},
         ]
-
-        # Add condition for the object name (key)
-        if object_name.startswith("${filename}"):
-            conditions.append(["starts-with", "$key", object_name[: -len("${filename}")]])
-        else:
-            fields["key"] = object_name
-            conditions.append({"key": object_name})
 
         # Generate the presigned POST URL
         try:
