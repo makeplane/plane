@@ -57,3 +57,18 @@ def get_email_configuration():
             },
         ]
     )
+
+
+def get_graph_email_configuration():
+    return get_configuration_value(
+        [
+            {"key": "EMAIL_PROVIDER", "default": os.environ.get("EMAIL_PROVIDER", "SMTP")},
+            {"key": "EMAIL_GRAPH_TENANT_ID", "default": os.environ.get("EMAIL_GRAPH_TENANT_ID", "")},
+            {"key": "EMAIL_GRAPH_CLIENT_ID", "default": os.environ.get("EMAIL_GRAPH_CLIENT_ID", "")},
+            {
+                "key": "EMAIL_GRAPH_CLIENT_SECRET",
+                "default": os.environ.get("EMAIL_GRAPH_CLIENT_SECRET", ""),
+            },
+            {"key": "EMAIL_HOST_USER", "default": os.environ.get("EMAIL_HOST_USER", "")},
+        ]
+    )
