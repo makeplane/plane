@@ -16,7 +16,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db import models
+from django.db import models, transaction
 from django.db.models.functions import Cast, Concat
 from django.utils import timezone
 
@@ -404,58 +404,65 @@ def transfer_cycle_issues(
         cycle_id=cycle_id,
     )
 
-    # Get the current cycle and save progress snapshot
-    current_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=cycle_id).first()
-
-    current_cycle.progress_snapshot = {
-        "total_issues": old_cycle.total_issues,
-        "completed_issues": old_cycle.completed_issues,
-        "cancelled_issues": old_cycle.cancelled_issues,
-        "started_issues": old_cycle.started_issues,
-        "unstarted_issues": old_cycle.unstarted_issues,
-        "backlog_issues": old_cycle.backlog_issues,
-        "distribution": {
-            "labels": label_distribution_data,
-            "assignees": assignee_distribution_data,
-            "completion_chart": completion_chart,
-        },
-        "estimate_distribution": (
-            {}
-            if not estimate_type
-            else {
-                "labels": label_estimate_distribution,
-                "assignees": assignee_estimate_distribution,
-                "completion_chart": estimate_completion_chart,
-            }
-        ),
-    }
-    current_cycle.save(update_fields=["progress_snapshot"])
-
-    # Get issues to transfer (only incomplete issues)
-    cycle_issues = CycleIssue.objects.filter(
-        cycle_id=cycle_id,
-        project_id=project_id,
-        workspace__slug=slug,
-        issue__archived_at__isnull=True,
-        issue__is_draft=False,
-        issue__state__group__in=["backlog", "unstarted", "started"],
-    )
-
-    updated_cycles = []
+    # Persist the progress snapshot and move the incomplete issues to the new
+    # cycle in a single atomic transaction. Without this, a process crash or
+    # DB error between the two writes leaves the source cycle marked with a
+    # snapshot while its issues were never actually transferred.
     update_cycle_issue_activity = []
-    for cycle_issue in cycle_issues:
-        cycle_issue.cycle_id = new_cycle_id
-        updated_cycles.append(cycle_issue)
-        update_cycle_issue_activity.append(
-            {
-                "old_cycle_id": str(cycle_id),
-                "new_cycle_id": str(new_cycle_id),
-                "issue_id": str(cycle_issue.issue_id),
-            }
+    with transaction.atomic():
+        # Get the current cycle and save progress snapshot
+        current_cycle = (
+            Cycle.objects.select_for_update().filter(workspace__slug=slug, project_id=project_id, pk=cycle_id).first()
         )
 
-    # Bulk update cycle issues
-    cycle_issues = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
+        current_cycle.progress_snapshot = {
+            "total_issues": old_cycle.total_issues,
+            "completed_issues": old_cycle.completed_issues,
+            "cancelled_issues": old_cycle.cancelled_issues,
+            "started_issues": old_cycle.started_issues,
+            "unstarted_issues": old_cycle.unstarted_issues,
+            "backlog_issues": old_cycle.backlog_issues,
+            "distribution": {
+                "labels": label_distribution_data,
+                "assignees": assignee_distribution_data,
+                "completion_chart": completion_chart,
+            },
+            "estimate_distribution": (
+                {}
+                if not estimate_type
+                else {
+                    "labels": label_estimate_distribution,
+                    "assignees": assignee_estimate_distribution,
+                    "completion_chart": estimate_completion_chart,
+                }
+            ),
+        }
+        current_cycle.save(update_fields=["progress_snapshot"])
+
+        # Get issues to transfer (only incomplete issues)
+        cycle_issues = CycleIssue.objects.filter(
+            cycle_id=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+            issue__archived_at__isnull=True,
+            issue__is_draft=False,
+            issue__state__group__in=["backlog", "unstarted", "started"],
+        )
+
+        updated_cycles = []
+        for cycle_issue in cycle_issues:
+            cycle_issue.cycle_id = new_cycle_id
+            updated_cycles.append(cycle_issue)
+            update_cycle_issue_activity.append(
+                {
+                    "old_cycle_id": str(cycle_id),
+                    "new_cycle_id": str(new_cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
+            )
+
+        # Bulk update cycle issues
+        CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
     # Capture Issue Activity
     issue_activity.delay(
