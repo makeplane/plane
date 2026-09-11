@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "파일을 첨부할 수 없습니다. 다시 업로드하세요.",
-    "only_one_file_allowed": "한 번에 하나의 파일만 업로드할 수 있습니다.",
-    "file_size_limit": "파일 크기는 {size}MB 이하이어야 합니다.",
     "drag_and_drop": "업로드하려면 아무 곳에나 드래그 앤 드롭하세요",
-    "delete": "첨부 파일 삭제"
+    "delete": "첨부 파일 삭제",
+    "files_too_large": "{size}MB 제한을 초과한 파일 {count, plural, one {#개} other {#개}}를 건너뛰었습니다: {files}",
+    "upload_success_title": "{count, plural, one {첨부 파일 업로드 완료} other {첨부 파일 업로드 완료}}",
+    "upload_success": "{count, plural, one {파일 #개를 첨부했습니다.} other {파일 #개를 첨부했습니다.}}",
+    "upload_failed_title": "{count, plural, one {첨부 파일 업로드 실패} other {첨부 파일 업로드 실패}}",
+    "upload_partial_failure": "{count, plural, one {파일 #개를 첨부했습니다.} other {파일 #개를 첨부했습니다.}} 첨부하지 못한 파일: {files}",
+    "upload_failure": "다음 파일을 첨부하지 못했습니다: {files}. 다시 시도해 주십시오."
   },
   "label": {
     "select": "레이블 선택",

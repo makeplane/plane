@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "无法附加文件。请重新上传。",
-    "only_one_file_allowed": "一次只能上传一个文件。",
-    "file_size_limit": "文件大小必须小于或等于 {size}MB。",
     "drag_and_drop": "拖放到任意位置以上传",
-    "delete": "删除附件"
+    "delete": "删除附件",
+    "files_too_large": "已跳过超出 {size}MB 限制的 {count, plural, one {# 个文件} other {# 个文件}}：{files}",
+    "upload_success_title": "{count, plural, one {附件已上传} other {附件已上传}}",
+    "upload_success": "{count, plural, one {已附加 # 个文件。} other {已附加 # 个文件。}}",
+    "upload_failed_title": "{count, plural, one {附件未上传} other {附件未上传}}",
+    "upload_partial_failure": "{count, plural, one {已附加 # 个文件。} other {已附加 # 个文件。}}无法附加：{files}",
+    "upload_failure": "无法附加：{files}。请重试。"
   },
   "label": {
     "select": "选择标签",

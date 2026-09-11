@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "File tidak dapat dilampirkan. Coba unggah lagi.",
-    "only_one_file_allowed": "Hanya satu file yang dapat diunggah pada satu waktu.",
-    "file_size_limit": "File harus berukuran {size}MB atau lebih kecil.",
     "drag_and_drop": "Seret dan jatuhkan di mana saja untuk mengunggah",
-    "delete": "Hapus lampiran"
+    "delete": "Hapus lampiran",
+    "files_too_large": "Melewati {count, plural, one {# berkas} other {# berkas}} yang melebihi batas {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Lampiran diunggah} other {Lampiran diunggah}}",
+    "upload_success": "{count, plural, one {# berkas telah dilampirkan.} other {# berkas telah dilampirkan.}}",
+    "upload_failed_title": "{count, plural, one {Lampiran tidak diunggah} other {Lampiran tidak diunggah}}",
+    "upload_partial_failure": "{count, plural, one {# berkas telah dilampirkan.} other {# berkas telah dilampirkan.}} Tidak dapat melampirkan: {files}",
+    "upload_failure": "Tidak dapat melampirkan: {files}. Silakan coba lagi."
   },
   "label": {
     "select": "Pilih label",

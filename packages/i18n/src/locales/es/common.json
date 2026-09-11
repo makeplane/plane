@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "No se pudo adjuntar el archivo. Intenta subirlo de nuevo.",
-    "only_one_file_allowed": "Solo se puede subir un archivo a la vez.",
-    "file_size_limit": "El archivo debe tener {size}MB o menos de tamaño.",
     "drag_and_drop": "Arrastra y suelta en cualquier lugar para subir",
-    "delete": "Eliminar archivo adjunto"
+    "delete": "Eliminar archivo adjunto",
+    "files_too_large": "Se {count, plural, one {omitió # archivo} other {omitieron # archivos}} por superar el límite de {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Archivo adjuntado} other {Archivos adjuntados}}",
+    "upload_success": "{count, plural, one {Se adjuntó # archivo.} other {Se adjuntaron # archivos.}}",
+    "upload_failed_title": "{count, plural, one {Archivo no adjuntado} other {Archivos no adjuntados}}",
+    "upload_partial_failure": "{count, plural, one {Se adjuntó # archivo.} other {Se adjuntaron # archivos.}} No se pudo adjuntar: {files}",
+    "upload_failure": "No se pudo adjuntar: {files}. Inténtelo de nuevo."
   },
   "label": {
     "select": "Seleccionar etiqueta",

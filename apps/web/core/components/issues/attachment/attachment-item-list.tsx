@@ -4,13 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
-import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { UploadOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // hooks
@@ -19,6 +17,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useFileSize } from "@/hooks/use-file-size";
 // types
 import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
+import { useAttachmentDropHandler } from "../issue-detail-widgets/attachments/helper";
 // components
 import { IssueAttachmentsListItem } from "./attachment-list-item";
 import { IssueAttachmentsUploadItem } from "./attachment-list-upload-item";
@@ -44,8 +43,6 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
   const { t } = useTranslation();
-  // states
-  const [isUploading, setIsUploading] = useState(false);
   // store hooks
   const {
     attachment: { getAttachmentsByIssueId },
@@ -62,58 +59,27 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
   const issueAttachments = getAttachmentsByIssueId(issueId);
 
   // handlers
-  const handleFetchPropertyActivities = useCallback(() => {
+  const handleUploadSettled = useCallback(() => {
     fetchActivities(workspaceSlug, projectId, issueId);
   }, [fetchActivities, workspaceSlug, projectId, issueId]);
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      const totalAttachedFiles = acceptedFiles.length + rejectedFiles.length;
-
-      if (rejectedFiles.length === 0) {
-        const currentFile: File = acceptedFiles[0];
-        if (!currentFile || !workspaceSlug) return;
-
-        setIsUploading(true);
-        createAttachment(currentFile)
-          .catch(() => {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: t("toast.error"),
-              message: t("attachment.error"),
-            });
-          })
-          .finally(() => {
-            handleFetchPropertyActivities();
-            setIsUploading(false);
-          });
-        return;
-      }
-
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("toast.error"),
-        message:
-          totalAttachedFiles > 1
-            ? t("attachment.only_one_file_allowed")
-            : t("attachment.file_size_limit", { size: maxFileSize / 1024 / 1024 }),
-      });
-      return;
-    },
-    [createAttachment, maxFileSize, workspaceSlug, handleFetchPropertyActivities]
-  );
+  const { onDrop, isUploading } = useAttachmentDropHandler({
+    create: createAttachment,
+    maxFileSize,
+    onUploadSettled: handleUploadSettled,
+  });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxSize: maxFileSize,
-    multiple: false,
-    disabled: isUploading || disabled,
+    multiple: true,
+    disabled: isUploading || disabled || !workspaceSlug,
   });
 
   return (
     <>
-      {uploadStatus?.map((uploadStatus) => (
-        <IssueAttachmentsUploadItem key={uploadStatus.id} uploadStatus={uploadStatus} />
+      {uploadStatus?.map((status) => (
+        <IssueAttachmentsUploadItem key={status.id} uploadStatus={status} />
       ))}
       {issueAttachments && (
         <>

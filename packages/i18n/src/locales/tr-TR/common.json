@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Dosya eklenemedi. Tekrar yüklemeyi deneyin.",
-    "only_one_file_allowed": "Aynı anda yalnızca bir dosya yüklenebilir.",
-    "file_size_limit": "Dosya boyutu {size}MB veya daha az olmalıdır.",
     "drag_and_drop": "Yüklemek için herhangi bir yere sürükleyip bırakın",
-    "delete": "Eki sil"
+    "delete": "Eki sil",
+    "files_too_large": "{size} MB sınırını aşan {count, plural, one {# dosya} other {# dosya}} atlandı: {files}",
+    "upload_success_title": "{count, plural, one {Ek yüklendi} other {Ekler yüklendi}}",
+    "upload_success": "{count, plural, one {# dosya eklendi.} other {# dosya eklendi.}}",
+    "upload_failed_title": "{count, plural, one {Ek yüklenmedi} other {Ekler yüklenmedi}}",
+    "upload_partial_failure": "{count, plural, one {# dosya eklendi.} other {# dosya eklendi.}} Eklenemedi: {files}",
+    "upload_failure": "Eklenemedi: {files}. Lütfen tekrar deneyin."
   },
   "label": {
     "select": "Etiket seç",

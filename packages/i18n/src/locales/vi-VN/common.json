@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Không thể đính kèm tệp. Vui lòng tải lên lại.",
-    "only_one_file_allowed": "Chỉ có thể tải lên một tệp mỗi lần.",
-    "file_size_limit": "Kích thước tệp phải nhỏ hơn hoặc bằng {size}MB.",
     "drag_and_drop": "Kéo và thả vào bất kỳ đâu để tải lên",
-    "delete": "Xóa tệp đính kèm"
+    "delete": "Xóa tệp đính kèm",
+    "files_too_large": "Đã bỏ qua {count, plural, one {# tệp} other {# tệp}} vượt quá giới hạn {size} MB: {files}",
+    "upload_success_title": "{count, plural, one {Đã tải lên tệp đính kèm} other {Đã tải lên tệp đính kèm}}",
+    "upload_success": "{count, plural, one {Đã đính kèm # tệp.} other {Đã đính kèm # tệp.}}",
+    "upload_failed_title": "{count, plural, one {Chưa tải lên tệp đính kèm} other {Chưa tải lên tệp đính kèm}}",
+    "upload_partial_failure": "{count, plural, one {Đã đính kèm # tệp.} other {Đã đính kèm # tệp.}} Không thể đính kèm: {files}",
+    "upload_failure": "Không thể đính kèm: {files}. Vui lòng thử lại."
   },
   "label": {
     "select": "Chọn nhãn",

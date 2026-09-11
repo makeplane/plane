@@ -759,10 +759,14 @@
   },
   "attachment": {
     "error": "Le fichier n’a pas pu être joint. Essayez de le télécharger à nouveau.",
-    "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
-    "file_size_limit": "Le fichier doit faire {size}MB ou moins.",
     "drag_and_drop": "Glissez-déposez n’importe où pour uploader",
-    "delete": "Supprimer la pièce jointe"
+    "delete": "Supprimer la pièce jointe",
+    "files_too_large": "{count, plural, one {# fichier ignoré} many {# fichiers ignorés} other {# fichiers ignorés}} car au-delà de la limite de {size} Mo : {files}",
+    "upload_success_title": "{count, plural, one {Pièce jointe ajoutée} many {Pièces jointes ajoutées} other {Pièces jointes ajoutées}}",
+    "upload_success": "{count, plural, one {# fichier a été joint.} many {# fichiers ont été joints.} other {# fichiers ont été joints.}}",
+    "upload_failed_title": "{count, plural, one {Pièce jointe non ajoutée} many {Pièces jointes non ajoutées} other {Pièces jointes non ajoutées}}",
+    "upload_partial_failure": "{count, plural, one {# fichier a été joint.} many {# fichiers ont été joints.} other {# fichiers ont été joints.}} Impossible de joindre : {files}",
+    "upload_failure": "Impossible de joindre : {files}. Veuillez réessayer."
   },
   "label": {
     "select": "Sélectionner une étiquette",
