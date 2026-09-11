@@ -34,6 +34,7 @@ from plane.db.models import (
     ProjectUserProperty,
 )
 from plane.db.models.project import ProjectNetwork
+from plane.bgtasks.project_invitation_task import project_invitation
 from plane.utils.host import base_host
 
 
@@ -62,12 +63,17 @@ class ProjectInvitationsViewset(BaseViewSet):
             return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         for email in emails:
-            workspace_role = WorkspaceMember.objects.filter(
-                workspace__slug=slug, member__email=email.get("email"), is_active=True
-            ).role
+            workspace_role = (
+                WorkspaceMember.objects.filter(workspace__slug=slug, member__email=email.get("email"), is_active=True)
+                .values_list("role", flat=True)
+                .first()
+            )
 
             if workspace_role in [5, 20] and workspace_role != email.get("role", 5):
-                return Response({"error": "You cannot invite a user with different role than workspace role"})
+                return Response(
+                    {"error": "You cannot invite a user with different role than workspace role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         workspace = Workspace.objects.get(slug=slug)
 
@@ -98,14 +104,14 @@ class ProjectInvitationsViewset(BaseViewSet):
                 )
 
         # Create workspace member invite
-        project_invitations = ProjectMemberInvite.objects.bulk_create(
+        created_invitations = ProjectMemberInvite.objects.bulk_create(
             project_invitations, batch_size=10, ignore_conflicts=True
         )
         current_site = base_host(request=request, is_app=True)
 
         # Send invitations
-        for invitation in project_invitations:
-            project_invitations.delay(
+        for invitation in created_invitations:
+            project_invitation.delay(
                 invitation.email,
                 project_id,
                 invitation.token,
