@@ -36,7 +36,7 @@ const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrappe
       </div>
     );
 
-  if (instanceSWRError) return <MaintenanceView />;
+  if (instanceSWRError && !instance) return <MaintenanceView />;
 
   // something went wrong while in the request
   if (error && error?.status === "error") return <>{children}</>;
