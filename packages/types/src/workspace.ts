@@ -90,6 +90,8 @@ export interface IWorkspaceMember {
   last_name?: string;
   joining_date?: string;
   display_name?: string;
+  is_bot?: boolean;
+  bot_type?: string | null;
   last_login_medium?: TLoginMediums;
   is_active?: boolean;
 }

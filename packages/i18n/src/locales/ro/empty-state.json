@@ -226,6 +226,11 @@
       "description": "Automatizați notificările către servicii externe când apar evenimente ale proiectului.",
       "cta_primary": "Adăugați webhook"
     },
+    "ai_accounts": {
+      "title": "Încă nu există conturi AI",
+      "description": "Creează conturi AI pentru a permite agenților AI să acceseze workspace-ul tău cu permisiuni cu domeniu limitat.",
+      "cta_primary": "Adaugă cont AI"
+    },
     "work_item_types": {
       "title": "Creați și personalizați tipuri de elemente de lucru",
       "description": "Definiți tipuri unice de elemente de lucru pentru proiectul dvs. Fiecare tip poate avea propriile proprietăți, fluxuri de lucru și câmpuri - adaptate la nevoile proiectului și echipei dvs.",

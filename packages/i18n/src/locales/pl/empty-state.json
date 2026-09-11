@@ -226,6 +226,11 @@
       "description": "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
       "cta_primary": "Dodaj webhook"
     },
+    "ai_accounts": {
+      "title": "Brak kont AI",
+      "description": "Utwórz konta AI, aby umożliwić agentom AI dostęp do Twojego workspace z uprawnieniami o ograniczonym zakresie.",
+      "cta_primary": "Dodaj konto AI"
+    },
     "work_item_types": {
       "title": "Twórz i dostosowuj typy elementów roboczych",
       "description": "Zdefiniuj unikalne typy elementów roboczych dla swojego projektu. Każdy typ może mieć własne właściwości, przepływy pracy i pola - dostosowane do potrzeb Twojego projektu i zespołu.",

@@ -226,6 +226,11 @@
       "description": "Automatisieren Sie Benachrichtigungen an externe Dienste, wenn Projektereignisse auftreten.",
       "cta_primary": "Webhook hinzufügen"
     },
+    "ai_accounts": {
+      "title": "Noch keine AI-Konten",
+      "description": "Erstellen Sie AI-Konten, damit AI-Agenten mit bereichsbezogenen Berechtigungen auf Ihren Workspace zugreifen können.",
+      "cta_primary": "AI-Konto hinzufügen"
+    },
     "work_item_types": {
       "title": "Arbeitselementtypen erstellen und anpassen",
       "description": "Definieren Sie einzigartige Arbeitselementtypen für Ihr Projekt. Jeder Typ kann seine eigenen Eigenschaften, Workflows und Felder haben - zugeschnitten auf die Bedürfnisse Ihres Projekts und Teams.",

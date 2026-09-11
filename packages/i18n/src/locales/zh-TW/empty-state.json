@@ -226,6 +226,11 @@
       "description": "在專案事件發生時自動向外部服務傳送通知。",
       "cta_primary": "新增 webhook"
     },
+    "ai_accounts": {
+      "title": "尚無 AI 帳戶",
+      "description": "建立 AI 帳戶，讓 AI 代理以限定範圍的權限存取您的工作區。",
+      "cta_primary": "新增 AI 帳戶"
+    },
     "work_item_types": {
       "title": "建立和自訂工作項類型",
       "description": "為專案定義獨特的工作項類型。每種類型都可以有自己的屬性、工作流程和欄位 — 根據專案和團隊需求量身訂製。",
