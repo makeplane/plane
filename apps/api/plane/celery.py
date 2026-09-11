@@ -4,20 +4,130 @@
 
 # Python imports
 import os
+import sys
 import logging
 from datetime import timedelta
 
 # Third party imports
 from celery import Celery
 from pythonjsonlogger.json import JsonFormatter
-from celery.signals import after_setup_logger, after_setup_task_logger
+from celery.signals import (
+    after_setup_logger,
+    after_setup_task_logger,
+    worker_process_init,
+    worker_process_shutdown,
+)
 from celery.schedules import crontab, schedule
 
 # Module imports
+from django.conf import settings
+
 from plane.settings.redis import redis_instance
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+
+# Bootstrap OpenTelemetry before Celery wires up so CeleryInstrumentor can
+# patch task execution. No-op unless OTel is active.
+from plane.observability.setup import (  # noqa: E402
+    configure_otel,
+    flush_otel,
+    init_process_providers,
+)
+from plane.observability.logging import TraceContextFilter, is_otel_active  # noqa: E402
+
+
+def _effective_pool() -> str:
+    """Resolve the pool `celery worker` will actually use.
+
+    Same precedence Celery applies: the `-P` / `--pool` CLI flag wins, then
+    `worker_pool` from the config object (`CELERY_WORKER_POOL` in Django
+    settings, via the namespaced config_from_object below), then the `prefork`
+    default. Reading argv alone would misclassify a settings-configured pool.
+    """
+    argv = sys.argv
+    for index, arg in enumerate(argv):
+        if arg.startswith("--pool="):
+            return arg.split("=", 1)[1].strip().lower()
+        if arg in ("-P", "--pool") and index + 1 < len(argv):
+            return argv[index + 1].strip().lower()
+    return str(getattr(settings, "CELERY_WORKER_POOL", "") or "prefork").strip().lower()
+
+
+def _is_prefork_worker() -> bool:
+    """True when this process is `celery ... worker` on the prefork pool.
+
+    The prefork pool forks its task children *after* this module is imported.
+    The OTLP gRPC exporter opens its channel eagerly in __init__ and registers
+    no os.register_at_fork handler, so a channel created here in the MainProcess
+    and inherited by a forked child is not safe to export on — child exports can
+    hang or fail nondeterministically. For that pool we defer exporter creation
+    to worker_process_init, which fires inside each child.
+
+    Everything else keeps the import-time bootstrap: `celery beat`, and the
+    non-forking pools. That distinction matters for `threads`/`gevent`/`eventlet`,
+    which run tasks in the main process and never dispatch worker_process_init —
+    deferring there would leave the providers uninitialized and export nothing.
+    """
+    # Only worker processes fork, and only they need `settings` resolved this
+    # early — keep wsgi/asgi/manage.py off that path.
+    return "worker" in sys.argv and _effective_pool() == "prefork"
+
+
+_DEFER_OTEL_PROVIDERS = _is_prefork_worker()
+
+configure_otel(defer_providers=_DEFER_OTEL_PROVIDERS)
+
+# Whether to trace-correlate worker logs. Uses the same shared is_otel_active()
+# gate as the bootstrap (setup.configure_otel) and the Django LOGGING gate, so
+# the log schema never changes in a process that exports no telemetry.
+_OTEL_LOG_ENABLED = is_otel_active()
+
+
+@worker_process_init.connect
+def init_otel_in_worker_child(*args, **kwargs):
+    """Create this child's OTLP exporters after the prefork fork.
+
+    No-op unless configure_otel() deferred them (see _is_prefork_worker).
+    """
+    init_process_providers()
+
+
+# Base JSON log fmt (unchanged off-path); the OTel variant appends the
+# trace-context fields that TraceContextFilter populates.
+_CELERY_LOG_FMT = '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s'
+_CELERY_OTEL_LOG_FMT = (
+    '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s '
+    "%(service_name)s %(trace_id)s %(span_id)s %(trace_flags)s"
+)
+
+
+@worker_process_shutdown.connect
+def flush_otel_on_worker_shutdown(*args, **kwargs):
+    """Flush buffered spans/metrics when a prefork child exits.
+
+    Prefork children exit via os._exit and skip atexit, so without this the tail
+    of each child's telemetry is dropped on --max-tasks-per-child recycling and
+    warm shutdown. No-op (bounded, never raises) unless OTel was configured.
+    """
+    flush_otel()
+
+
+def _build_celery_log_handler() -> logging.Handler:
+    """Build the worker's JSON StreamHandler.
+
+    Off-path: identical to the historical handler (same fmt). When OTel logging
+    is enabled, use the extended fmt and attach TraceContextFilter so worker
+    log lines carry trace_id/span_id/service_name, matching the Django request
+    path.
+    """
+    fmt = _CELERY_OTEL_LOG_FMT if _OTEL_LOG_ENABLED else _CELERY_LOG_FMT
+    handler = logging.StreamHandler()
+    handler.setFormatter(fmt=JsonFormatter(fmt))
+    if _OTEL_LOG_ENABLED:
+        handler.addFilter(TraceContextFilter())
+    return handler
+
 
 ri = redis_instance()
 
@@ -98,18 +208,12 @@ app.conf.beat_schedule = {
 # Setup logging
 @after_setup_logger.connect
 def setup_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+    logger.addHandler(_build_celery_log_handler())
 
 
 @after_setup_task_logger.connect
 def setup_task_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+    logger.addHandler(_build_celery_log_handler())
 
 
 # Load task modules from all registered Django app configs.

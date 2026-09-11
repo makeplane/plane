@@ -38,6 +38,18 @@ FLUSH_TIMEOUT_MILLIS = 30000
 EXPORT_INTERVAL_MILLIS = 20000
 
 
+# Headers pinned on the instance-metrics exporter so it never inherits the
+# operator's OTLP env. Both OTLP exporters fall back to
+# OTEL_EXPORTER_OTLP_HEADERS / OTEL_EXPORTER_OTLP_METRICS_HEADERS when the
+# caller passes no headers, and an empty dict is falsy so it does not suppress
+# that fallback — the value has to be non-empty. Without this, a self-hoster who
+# points their own APM at Plane with e.g.
+# `OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer <token>` would have that
+# credential attached to the instance metrics this task sends to Plane's
+# telemetry endpoint.
+_TELEMETRY_EXPORTER_HEADERS = {"x-plane-telemetry": "instance-metrics"}
+
+
 def _create_otlp_metric_exporter():
     """
     Create OTLP metric exporter based on OTLP_METRICS_PROTOCOL (http or grpc).
@@ -53,14 +65,21 @@ def _create_otlp_metric_exporter():
 
         grpc_endpoint = get_otlp_grpc_endpoint()
         insecure = os.environ.get("OTEL_EXPORTER_OTLP_METRICS_INSECURE", "").lower() == "true"
-        return GrpcOTLPMetricExporter(endpoint=grpc_endpoint, insecure=insecure)
+        return GrpcOTLPMetricExporter(
+            endpoint=grpc_endpoint,
+            insecure=insecure,
+            headers=_TELEMETRY_EXPORTER_HEADERS,
+        )
 
     # HTTP fallback
     from opentelemetry.exporter.otlp.proto.http.metric_exporter import (
         OTLPMetricExporter as HttpOTLPMetricExporter,
     )
 
-    return HttpOTLPMetricExporter(endpoint=get_otlp_http_metrics_url())
+    return HttpOTLPMetricExporter(
+        endpoint=get_otlp_http_metrics_url(),
+        headers=_TELEMETRY_EXPORTER_HEADERS,
+    )
 
 
 def _collect_and_push_metrics() -> None:
