@@ -1149,7 +1149,7 @@ def create_comment_reaction_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
-        comment_reaction_id, comment_id = (
+        reaction_data = (
             CommentReaction.objects.filter(
                 reaction=requested_data.get("reaction"),
                 project_id=project_id,
@@ -1158,6 +1158,9 @@ def create_comment_reaction_activity(
             .values_list("id", "comment__id")
             .first()
         )
+        if reaction_data is None:
+            return
+        comment_reaction_id, comment_id = reaction_data
         comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
         if comment is not None and comment_reaction_id is not None and comment_id is not None:
             issue_activities.append(
