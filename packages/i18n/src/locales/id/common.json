@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Hanya satu file yang dapat diunggah pada satu waktu.",
     "file_size_limit": "File harus berukuran {size}MB atau lebih kecil.",
     "drag_and_drop": "Seret dan jatuhkan di mana saja untuk mengunggah",
-    "delete": "Hapus lampiran"
+    "delete": "Hapus lampiran",
+    "delete_confirmation": {
+      "prefix": "Apakah Anda yakin ingin menghapus lampiran ",
+      "suffix": "? Lampiran ini akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+    }
   },
   "label": {
     "select": "Pilih label",

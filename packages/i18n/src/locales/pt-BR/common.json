@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Apenas um arquivo pode ser enviado por vez.",
     "file_size_limit": "O arquivo deve ter {size}MB ou menos.",
     "drag_and_drop": "Arraste e solte em qualquer lugar para enviar",
-    "delete": "Excluir anexo"
+    "delete": "Excluir anexo",
+    "delete_confirmation": {
+      "prefix": "Tem certeza de que deseja excluir o anexo ",
+      "suffix": "? Este anexo será removido permanentemente. Esta ação não pode ser desfeita."
+    }
   },
   "label": {
     "select": "Selecionar etiqueta",

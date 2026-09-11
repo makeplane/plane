@@ -762,7 +762,11 @@
     "only_one_file_allowed": "한 번에 하나의 파일만 업로드할 수 있습니다.",
     "file_size_limit": "파일 크기는 {size}MB 이하이어야 합니다.",
     "drag_and_drop": "업로드하려면 아무 곳에나 드래그 앤 드롭하세요",
-    "delete": "첨부 파일 삭제"
+    "delete": "첨부 파일 삭제",
+    "delete_confirmation": {
+      "prefix": "첨부 파일 ",
+      "suffix": " 삭제를 확인하시겠습니까? 이 첨부 파일은 영구적으로 삭제됩니다. 이 작업은 실행 취소할 수 없습니다."
+    }
   },
   "label": {
     "select": "레이블 선택",

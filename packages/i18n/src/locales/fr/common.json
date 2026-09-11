@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
     "file_size_limit": "Le fichier doit faire {size}MB ou moins.",
     "drag_and_drop": "Glissez-déposez n’importe où pour uploader",
-    "delete": "Supprimer la pièce jointe"
+    "delete": "Supprimer la pièce jointe",
+    "delete_confirmation": {
+      "prefix": "Voulez-vous vraiment supprimer la pièce jointe ",
+      "suffix": " ? Cette pièce jointe sera définitivement supprimée. Cette action est irréversible."
+    }
   },
   "label": {
     "select": "Sélectionner une étiquette",

@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Możesz przesłać tylko jeden plik naraz.",
     "file_size_limit": "Plik musi być mniejszy niż {size}MB.",
     "drag_and_drop": "Przeciągnij plik w dowolne miejsce, aby przesłać",
-    "delete": "Usuń załącznik"
+    "delete": "Usuń załącznik",
+    "delete_confirmation": {
+      "prefix": "Czy na pewno chcesz usunąć załącznik ",
+      "suffix": "? Ten załącznik zostanie trwale usunięty. Tej czynności nie można cofnąć."
+    }
   },
   "label": {
     "select": "Wybierz etykietę",

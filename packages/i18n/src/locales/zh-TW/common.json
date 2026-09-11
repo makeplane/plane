@@ -762,7 +762,11 @@
     "only_one_file_allowed": "一次只能上傳一個檔案。",
     "file_size_limit": "檔案大小必須小於或等於 {size}MB。",
     "drag_and_drop": "拖曳到任何位置以上傳",
-    "delete": "刪除附件"
+    "delete": "刪除附件",
+    "delete_confirmation": {
+      "prefix": "確定要刪除附件「",
+      "suffix": "」嗎？此附件將被永久刪除。此操作無法復原。"
+    }
   },
   "label": {
     "select": "選擇標籤",
