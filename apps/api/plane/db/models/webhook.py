@@ -41,6 +41,7 @@ class Webhook(BaseModel):
     module = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
     issue_comment = models.BooleanField(default=False)
+    page = models.BooleanField(default=False)
     is_internal = models.BooleanField(default=False)
     version = models.CharField(default="v1", max_length=50)
 
