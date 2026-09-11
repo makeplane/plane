@@ -646,6 +646,9 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid per_page parameter.")
 
+        if per_page <= 0:
+            raise ParseError(detail="Invalid per_page value. Must be a positive integer.")
+
         max_per_page = max(max_per_page, default_per_page)
         if per_page > max_per_page:
             raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
