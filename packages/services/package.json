@@ -14,6 +14,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch --no-clean",
+    "test": "vitest run",
     "check:lint": "oxlint --max-warnings=6 .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt --check .",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
