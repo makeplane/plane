@@ -178,7 +178,7 @@
               "required": "少なくとも1つのオプションを追加する必要があります。"
             },
             "formula": {
-              "required": "数式の式が必要です。",
+              "required": "数式は必須です。",
               "invalid": "無効な数式: {error}",
               "circular_reference": "循環参照が検出されました。数式は直接的にも間接的にも自身を参照することはできません。",
               "invalid_reference": "数式が存在しないプロパティを参照しています。"
@@ -195,7 +195,7 @@
           "validation_success_with_refs": "数式は有効です！{resultType}を返します（{count}フィールド参照）",
           "error": {
             "empty": "数式を入力してください",
-            "missing_context": "ワークスペース、プロジェクト、またはワークアイテムタイプのコンテキストがありません",
+            "missing_context": "ワークスペース、プロジェクト、または作業項目タイプのコンテキストがありません",
             "validation_failed": "検証に失敗しました"
           },
           "picker": {
@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "一度有効化すると、作業項目タイプは無効化できません。",
-          "description": "PlaneのWork itemがこのプロジェクトのデフォルトの作業項目タイプとなり、そのアイコンと背景がこのプロジェクトに表示されます。",
+          "description": "Plane標準の作業項目がこのプロジェクトのデフォルトタイプとなり、そのアイコンと背景が表示されます。",
           "button": {
             "default": "有効化",
             "loading": "設定中"
@@ -394,21 +394,21 @@
     "settings": {
       "title": "階層",
       "tab_label": "階層",
-      "description": "作業を整理するための階層レベルを設定します。各レベルは、直接上のアイテムとの親関係と、直接下のアイテムとの子関係を定義します。 ",
+      "description": "作業を整理するための階層レベルを設定します。各レベルは、直上の作業項目との親関係と、直下の作業項目との子関係を定義します。",
       "sidebar_label": "階層",
       "enable_control": {
         "title": "階層を有効にする",
-        "description": "異なる作業アイテムタイプ間に親子関係を作成します。",
+        "description": "異なる作業項目タイプ間に親子関係を作成します。",
         "tooltip": "一度有効にすると、階層を無効にすることはできません。"
       },
       "workspace_work_item_types_disabled_banner": {
-        "content": "新しい階層を作成するには、まず作業アイテムタイプを定義してください。",
-        "cta": "作業アイテムタイプの設定"
+        "content": "新しい階層を作成するには、まず作業項目タイプを定義してください。",
+        "cta": "作業項目タイプの設定"
       }
     },
     "levels": {
       "max_level_placeholder": "新しい階層レベルを追加するには、タイプをドラッグ＆ドロップしてください",
-      "empty_level_placeholder": "作業アイテムタイプをレベル {level} にドラッグ＆ドロップ",
+      "empty_level_placeholder": "作業項目タイプをレベル{level}にドラッグ＆ドロップ",
       "drag_tooltip": "ドラッグしてレベルを変更",
       "quick_actions": {
         "set_as_default": {
@@ -435,13 +435,13 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "保存すると既存のリンクが解除されます",
+      "title": "検証エラー",
       "content": {
-        "intro": "作業アイテムタイプ「{workItemTypeName}」には次が含まれます。",
-        "parent_items": "{count, plural, other {親リンク # 件が解除されます。}}",
-        "child_items": "{count, plural, other {子の作業アイテム}}",
-        "parent_line_suffix_when_also_children": "、および ",
-        "footer": "この変更により、{workItemTypeName} 作業アイテムタイプの既存の作業アイテムから親子関係が削除されます。"
+        "intro": "作業項目タイプ「{workItemTypeName}」には次の項目があります：",
+        "parent_items": "{count, plural, one {親作業項目} other {親作業項目}}",
+        "child_items": "{count, plural, one {サブ作業項目} other {サブ作業項目}}",
+        "parent_line_suffix_when_also_children": "、および",
+        "footer": "この変更により、作業項目タイプ「{workItemTypeName}」を使用する既存の作業項目から親子関係が削除されます。"
       },
       "confirm_input": {
         "label": "続けるには「確認」と入力してください。",
@@ -449,28 +449,28 @@
       },
       "error_toast": {
         "title": "エラー！",
-        "message": "リンク解除と保存に失敗しました。もう一度お試しください。"
+        "message": "階層の解除に失敗しました。もう一度お試しください。"
       },
       "confirm_button": {
-        "loading": "保存中",
-        "default": "それでも保存する"
+        "loading": "適用中",
+        "default": "適用してリンク解除"
       }
     },
     "work_item_modal": {
       "invalid_work_item_type_create_toast": {
         "title": "エラー！",
-        "message": "選択した作業アイテムタイプは階層ルールに違反するため、新しい作業アイテムの作成に使用できません。"
+        "message": "選択した作業項目タイプは階層ルールに違反するため、新しい作業項目の作成には使用できません。"
       },
       "invalid_work_item_type_update_toast": {
         "title": "エラー！",
-        "message": "作業アイテムタイプは階層ルールに違反するため更新できません。"
+        "message": "作業項目タイプは階層ルールに違反するため更新できません。"
       }
     },
     "work_item_type_modal": {
       "level": "階層レベル",
       "invalid_level_toast": {
         "title": "エラー！",
-        "message": "階層ルールに違反するため、作業アイテムタイプを更新できませんでした。"
+        "message": "階層ルールに違反するため、作業項目タイプを更新できませんでした。"
       }
     }
   }
