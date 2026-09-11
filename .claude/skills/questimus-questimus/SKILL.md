@@ -50,27 +50,33 @@ This skill is the interface to the **Questimus** project in Questimus. It is dep
 ## Workflows
 
 ### Start a session
+
 1. Read the **HANDOFF page** (`node scripts/questimus.js handoff`) — the single working record of open work. If absent, it prints `HANDOFF page not found` and exits 1.
 2. Read the plan structure (`node scripts/questimus.js plan`) to see what's next.
 
 ### End a session
+
 1. Write your run-state summary to the **HANDOFF page**: `node scripts/questimus.js handoff --write-file run-state.md` (or `--write-md "…"` / `--write-html "…"`). Creates the page if missing, updates it if present.
 
 ### Triage a user report
+
 1. List `user-report`-labeled issues: `node scripts/questimus.js list --label user-report`.
 2. Reproduce/assess; dedupe via `search`; set priority; move to **ToDo** (triage does NOT start work).
 3. Comment with the triage result.
 
 ### Work on a ticket
+
 1. Read the ticket (`get`) and its context (related tickets via `search`).
 2. Move to **In Progress** (`update --state In Progress`), do the work, comment progress.
-3. Verify against the ticket's DoD; move to **Done** and add label `verified`.
+3. Verify against the ticket's DoD; move to **Done** and add label `verified` (use `--label-add` to keep existing labels; `--label` replaces the whole set).
 
 ### Resolve a user report
+
 1. Confirm the fix; comment with the resolution; move to **Done**.
 2. Not reproducible: comment and move to **Blocked** or **Cancelled**.
 
 ### Create a ticket (new work / ideas)
+
 1. `search` first (dedupe).
 2. `create --name … --desc-md … --state Backlog --priority … --type Ticket [--label …]` — use `--desc-file <path>` when the description contains quotes or special characters (shell quoting mangles `--desc-md`).
 
