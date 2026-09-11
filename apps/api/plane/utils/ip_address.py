@@ -156,7 +156,7 @@ def resolve_and_validate(hostname, allowed_ips=None, require_safe=True):
     return validated
 
 
-def validate_url(url, allowed_ips=None, allowed_hosts=None):
+def validate_url(url, allowed_ips=None, allowed_hosts=None, allow_private=False):
     """
     Validate that a URL doesn't resolve to a private/internal IP address (SSRF protection).
 
@@ -174,6 +174,10 @@ def validate_url(url, allowed_ips=None, allowed_hosts=None):
                        Typically sourced from the WEBHOOK_ALLOWED_HOSTS setting and
                        used for trusted internal services (e.g. Silo) whose IPs are
                        dynamic in containerised deployments.
+        allow_private: When True, skip the private/internal-IP block check entirely
+                       (the host is still resolved). Scheme and hostname validation
+                       are unaffected. Dev-only escape hatch — see
+                       ``WEBHOOK_ALLOW_PRIVATE_URLS``; never enable in production.
 
     Raises:
         ValueError: If the URL is invalid or resolves to a blocked IP.
@@ -193,7 +197,7 @@ def validate_url(url, allowed_ips=None, allowed_hosts=None):
     }:
         return
 
-    resolve_and_validate(hostname, allowed_ips=allowed_ips)
+    resolve_and_validate(hostname, allowed_ips=allowed_ips, require_safe=not allow_private)
 
 
 def get_client_ip(request):
