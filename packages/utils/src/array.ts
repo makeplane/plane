@@ -48,8 +48,14 @@ export const orderArrayBy = (orgArray: any[], key: string, ordering: "ascending"
   const innerKey = key.split("."); // split the key by dot
 
   return array.sort((a, b) => {
-    const keyA = innerKey.reduce((obj, i) => obj[i], a); // get the value of the inner key
-    const keyB = innerKey.reduce((obj, i) => obj[i], b); // get the value of the inner key
+    const keyA = innerKey.reduce((obj, i) => obj?.[i], a); // get the value of the inner key
+    const keyB = innerKey.reduce((obj, i) => obj?.[i], b); // get the value of the inner key
+    
+    // Handle undefined/null values - push them to the end
+    if (keyA == null && keyB == null) return 0;
+    if (keyA == null) return 1;
+    if (keyB == null) return -1;
+    
     if (keyA < keyB) {
       return ordering === "ascending" ? -1 : 1;
     }
