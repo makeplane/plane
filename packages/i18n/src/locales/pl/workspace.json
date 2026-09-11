@@ -148,7 +148,11 @@
     "workitem_resolved_vs_pending": "Rozwiązane vs oczekujące elementy pracy",
     "projects_by_status": "Projekty według statusu",
     "active_users": "Aktywni użytkownicy",
-    "intake_trends": "Trendy przyjęć"
+    "intake_trends": "Trendy przyjęć",
+    "not_available_ce": {
+      "title": "Analytics is not available on Community Edition",
+      "description": "Advanced analytics is a Pro feature. Upgrade to Plane Pro or Cloud to access workspace analytics."
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektów}}",

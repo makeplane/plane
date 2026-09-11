@@ -148,7 +148,11 @@
     "workitem_resolved_vs_pending": "Вирішені vs очікуючі робочі елементи",
     "projects_by_status": "Проєкти за статусом",
     "active_users": "Активні користувачі",
-    "intake_trends": "Тенденції прийому"
+    "intake_trends": "Тенденції прийому",
+    "not_available_ce": {
+      "title": "Analytics is not available on Community Edition",
+      "description": "Advanced analytics is a Pro feature. Upgrade to Plane Pro or Cloud to access workspace analytics."
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проєкт} few {Проєкти} other {Проєктів}}",

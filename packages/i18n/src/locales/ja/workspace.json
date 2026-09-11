@@ -148,7 +148,11 @@
     "workitem_resolved_vs_pending": "解決済み vs 保留中の作業項目",
     "projects_by_status": "ステータス別のプロジェクト",
     "active_users": "アクティブユーザー",
-    "intake_trends": "受け入れの傾向"
+    "intake_trends": "受け入れの傾向",
+    "not_available_ce": {
+      "title": "Analytics is not available on Community Edition",
+      "description": "Advanced analytics is a Pro feature. Upgrade to Plane Pro or Cloud to access workspace analytics."
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",

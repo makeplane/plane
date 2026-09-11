@@ -148,7 +148,11 @@
     "workitem_resolved_vs_pending": "Vyriešené vs. čakajúce pracovné položky",
     "projects_by_status": "Projekty podľa stavu",
     "active_users": "Aktívni používatelia",
-    "intake_trends": "Trendy prijímania"
+    "intake_trends": "Trendy prijímania",
+    "not_available_ce": {
+      "title": "Analytics is not available on Community Edition",
+      "description": "Advanced analytics is a Pro feature. Upgrade to Plane Pro or Cloud to access workspace analytics."
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektov}}",

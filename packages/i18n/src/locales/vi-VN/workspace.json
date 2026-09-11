@@ -148,7 +148,11 @@
     "workitem_resolved_vs_pending": "Mục công việc đã giải quyết vs đang chờ",
     "projects_by_status": "Dự án theo trạng thái",
     "active_users": "Người dùng hoạt động",
-    "intake_trends": "Xu hướng tiếp nhận"
+    "intake_trends": "Xu hướng tiếp nhận",
+    "not_available_ce": {
+      "title": "Analytics is not available on Community Edition",
+      "description": "Advanced analytics is a Pro feature. Upgrade to Plane Pro or Cloud to access workspace analytics."
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
