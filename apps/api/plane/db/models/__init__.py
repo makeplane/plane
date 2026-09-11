@@ -89,4 +89,6 @@ from .device import Device, DeviceSession
 
 from .sticky import Sticky
 
+from .template import WorkItemTemplate, WorkItemTemplateItem, WorkItemTemplateDependency
+
 from .description import Description, DescriptionVersion
