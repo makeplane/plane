@@ -149,7 +149,7 @@ export class IssueReactionStore implements IIssueReactionStore {
     if (currentReaction && currentReaction.id) {
       runInAction(() => {
         pull(this.reactions[issueId][reaction], currentReaction.id);
-        delete this.reactionMap[reaction];
+        delete this.reactionMap[currentReaction.id];
       });
     }
 
