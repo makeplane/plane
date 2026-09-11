@@ -66,3 +66,11 @@ args, so they call `<origin>/api`, `<origin>/god-mode`, `<origin>/spaces` and
 `<origin>/live`. That only works when a single origin fronts everything, which
 is what the proxy provides. Do not give Web, Admin or Space their own public
 domains.
+
+## Static asset rate limit
+
+The Web and Admin images rate-limit static requests per client IP in their
+Caddyfiles. The default ceiling is 3000 requests per minute; the upstream value
+of 300 is low enough that a single browser loading the SPA trips it and gets
+429 responses. Override with the `RATE_LIMIT_EVENTS` and `RATE_LIMIT_WINDOW`
+service variables on Web and Admin if a different ceiling is wanted.
