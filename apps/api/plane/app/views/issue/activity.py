@@ -17,7 +17,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
-from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.app.permissions import ProjectEntityPermission, allow_permission, issue_hidden_from_guest, ROLE
 from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 
 
@@ -28,6 +28,13 @@ class IssueActivityEndpoint(BaseAPIView):
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id):
+        # A restricted guest may only see the activity/comments of issues they
+        # created, mirroring the issue-detail visibility rule.
+        if issue_hidden_from_guest(request, slug, project_id, issue_id):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
@@ -40,6 +47,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
+                project_id=project_id,
             )
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
@@ -51,6 +59,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
+                project_id=project_id,
             )
             .filter(**filters)
             .order_by("created_at")
