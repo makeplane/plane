@@ -242,6 +242,18 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             super().get_queryset().filter(email=self.request.user.email).select_related("workspace")
         )
 
+    def list(self, request):
+        # Declared explicitly rather than served by DRF's generic list mixin.
+        # This route is self-service and carries no `slug`, so the project/
+        # workspace role decorators cannot apply here: the authorization
+        # boundary IS the `email=request.user.email` filter in get_queryset()
+        # above, exactly as it is for create() below. Stating the action
+        # explicitly keeps that boundary from being silently widened if the
+        # queryset is ever refactored, and keeps this route out of the
+        # unauthorized-mixin-action class. The response carries the invite token,
+        # so the predicate is credential-grade and must not be relaxed.
+        return super().list(request)
+
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):

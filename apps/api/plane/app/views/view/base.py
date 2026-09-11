@@ -53,6 +53,18 @@ class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def create(self, request, slug):
+        # Declared explicitly to put a workspace-membership check in front of
+        # the create. perform_create below resolves the workspace from the URL
+        # slug and saves, but it is a save hook, not an authorization hook: as
+        # an inherited generic create this ran under the bare default permission
+        # class, so any authenticated account could create a view in any
+        # workspace. Workspace slugs are human-readable, so no identifier had to
+        # be guessed. The role set matches list() — the defect is that
+        # non-members could write here at all, not which member roles may.
+        return super().create(request, slug=slug)
+
     def perform_create(self, serializer):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
         serializer.save(workspace_id=workspace.id, owned_by=self.request.user)
@@ -262,6 +274,17 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 class IssueViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def create(self, request, slug, project_id):
+        # Declared explicitly to put a project-membership check in front of the
+        # create. perform_create below trusts project_id straight from the URL,
+        # and as an inherited generic create it ran under the bare default
+        # permission class — so any authenticated account holding a project
+        # identifier could create a view inside that project. The role set
+        # matches list()/retrieve(); the defect is that non-members could write
+        # here at all, not which member roles may.
+        return super().create(request, slug=slug, project_id=project_id)
 
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"), owned_by=self.request.user)

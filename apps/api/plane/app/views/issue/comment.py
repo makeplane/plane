@@ -181,6 +181,16 @@ class CommentReactionViewSet(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id, comment_id):
+        # Declared explicitly so the routed GET carries the same project-role
+        # check as create() below. Without it the action is served by DRF's
+        # generic list mixin, which runs under the bare default permission
+        # class: authenticated but not authorized. get_queryset() already scopes
+        # to active project members, so this states that guarantee in the
+        # authorization layer instead of relying on a queryset filter to hold.
+        return super().list(request, slug=slug, project_id=project_id, comment_id=comment_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, comment_id):
         try:
             serializer = CommentReactionSerializer(data=request.data)
