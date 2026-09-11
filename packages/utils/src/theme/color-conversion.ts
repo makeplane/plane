@@ -58,7 +58,7 @@ export function hexToOKLCH(hex: string): OKLCH {
  */
 export function oklchToCSS(oklch: OKLCH, alpha?: number): string {
   const { l, c, h } = oklch;
-  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)}${alpha ? ` / ${alpha.toFixed(2)}%` : ""})`;
+  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)}${alpha != null ? ` / ${alpha.toFixed(2)}%` : ""})`;
 }
 
 /**
