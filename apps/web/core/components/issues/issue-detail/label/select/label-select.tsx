@@ -138,7 +138,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           </Button>
         </Combobox.Button>
 
-        <Combobox.Options as="ul" className="fixed z-10">
+        <Combobox.Options as="ul" className="fixed z-10" modal={false}>
           <div
             className={`z-10 my-1 w-48 rounded-sm border border-strong bg-surface-1 py-2.5 text-11 whitespace-nowrap shadow-raised-200 focus:outline-none`}
             ref={setPopperElement}
