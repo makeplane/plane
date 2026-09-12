@@ -14,6 +14,7 @@ export type TIssueType = {
   id: string;
   name: string;
   description: string;
+  color: string;
   is_epic: boolean;
   is_default: boolean;
   level: number;

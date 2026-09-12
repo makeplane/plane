@@ -6,6 +6,7 @@
 // plane imports
 import { PriorityIcon } from "@plane/propel/icons";
 import { renderFormattedDate } from "@plane/utils";
+import type { TIssuePriorities } from "@plane/types";
 // helpers
 import { getIssueKey } from "@/helpers/issue-key.helper";
 // hooks
@@ -30,7 +31,7 @@ export const HomeIssueRow = ({ issue, workspaceSlug }: Props) => {
       onClick={() => router.push(`/${workspaceSlug}/browse/${identifier}-${issue.sequence_id}`)}
       className="group flex w-full items-center gap-2.5 rounded-sm px-2 py-1.5 text-left hover:bg-layer-transparent-hover"
     >
-      <PriorityIcon priority={issue.priority ?? "none"} size={12} className="flex-shrink-0" />
+      <PriorityIcon priority={(issue.priority ?? "none") as TIssuePriorities} size={12} className="flex-shrink-0" />
       {identifier && (
         <span className="flex-shrink-0 text-body-xs font-medium text-secondary">
           {getIssueKey(identifier, issue.sequence_id)}

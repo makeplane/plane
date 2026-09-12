@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // store hooks
 // icons
-import { TriangleIcon, SignalMediumIcon } from "lucide-react";
+import { TriangleIcon, SignalMediumIcon, MoveRight } from "lucide-react";
 import {
   ArchiveOutline,
   AttachOutline,

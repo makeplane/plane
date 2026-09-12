@@ -43,15 +43,16 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
   const { getProjectIdentifierById } = useProject();
   // derived values
   const issue = getIssueById(issueId);
-  const types = useProjectIssueTypes(workspaceSlug?.toString(), issue?.project_id);
+  const types = useProjectIssueTypes(workspaceSlug?.toString(), issue?.project_id ?? undefined);
   const currentType = types.find((t) => t.id === issue?.type_id);
 
   if (!issue || !issue.project_id) return <></>;
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
+  const projectId: string = issue.project_id;
 
   const changeType = async (typeId: string) => {
     if (typeId === issue.type_id) return;
-    await issueOperations.update(workspaceSlug?.toString() ?? "", issue.project_id, issue.id, { type_id: typeId });
+    await issueOperations.update(workspaceSlug?.toString() ?? "", projectId, issue.id, { type_id: typeId });
   };
 
   return (

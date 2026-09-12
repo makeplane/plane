@@ -150,7 +150,7 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
                       Save
                     </Button>
                     <Button
-                      variant="neutral-primary"
+                      variant="secondary"
                       size="sm"
                       onClick={() =>
                         setEditing((prev) => {
@@ -173,7 +173,7 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
                       </span>
                     )}
                     <Button
-                      variant="neutral-primary"
+                      variant="secondary"
                       size="sm"
                       onClick={() =>
                         setEditing({ ...editing, [type.id]: { name: type.name, color: type.color, description: type.description } })
@@ -181,7 +181,7 @@ const WorkspaceIssueTypesSettingsPage = observer(function WorkspaceIssueTypesSet
                     >
                       Edit
                     </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleDelete(type)}>
+                    <Button variant="error-fill" size="sm" onClick={() => handleDelete(type)}>
                       Delete
                     </Button>
                   </>
