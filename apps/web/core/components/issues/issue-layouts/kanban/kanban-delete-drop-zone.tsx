@@ -14,7 +14,7 @@ import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { getSourceFromDropPayload } from "../utils";
 
 type Props = {
-  onRequestDelete: (issueId: string | undefined) => void;
+  onRequestDelete: (workItemId: string | undefined) => void;
 };
 
 // Isolated from BaseKanBanRoot so a drag start/end re-renders only this banner, not the whole board.

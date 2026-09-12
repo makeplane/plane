@@ -125,8 +125,8 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
-  const handleRequestDelete = useCallback((issueId: string | undefined) => {
-    setDraggedIssueId(issueId);
+  const handleRequestDelete = useCallback((workItemId: string | undefined) => {
+    setDraggedIssueId(workItemId);
     setDeleteIssueModal(true);
   }, []);
 
