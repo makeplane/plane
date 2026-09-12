@@ -1,6 +1,7 @@
 ---
 name: design
 description: "One design creation umbrella: mockups, frontend UI, brand identity, design tokens/systems, logos (Gemini), corporate identity programs (CIP), SVG icon sets, banners, social photos, canvas/poster art, themes, HTML presentations, GIFs, UX copy, design handoff, and design-to-code. Every mode runs the same Consult → Explore → Build spine, outputs to design/ with v1/v2 versioning, and validates against the design system. Use when asked to design, mock up, prototype, rebrand, generate a logo/icon/banner/poster, build a design system, create slides, hand off a design, or convert a design to code."
+harness: universal
 argument-hint: "[type] [what to build] [context]"
 metadata:
   author: nextlevelbuilder (base, merged into a single umbrella 2026-08-26)
@@ -86,8 +87,10 @@ tokens/copy/handoff/to-code (no variants — see their sections).
 
 ## Shared engine
 
-All modes use these. Paths are relative to this skill's folder (deployed to
-`.claude/skills/design/`).
+All modes use these. Paths are relative to this skill's own deployed folder —
+the harness's skills directory (detect it: check which of `.claude/`, `.dsh/`,
+`.agents/`, `.gemini/` exists) — which is where this skill's scripts and data
+ship.
 
 | Engine | What it gives you | Where |
 |---|---|---|
@@ -116,8 +119,8 @@ All modes use these. Paths are relative to this skill's folder (deployed to
 └── reviews/                ← design-reviewer reports (this skill never writes here)
 ```
 
-No `.claude/designs/`, no `planning/mockups/`. **`design/` is the only
-output root** for every mode. Transient exploration artifacts are created under
+No `<harness-config-dir>/designs/`, no `planning/mockups/`. **`design/` is the
+only output root** for every mode. Transient exploration artifacts are created under
 `state/` and may be cleaned on settle; the settled `<screen>/<screen>.html` and
 the design language files are durable.
 

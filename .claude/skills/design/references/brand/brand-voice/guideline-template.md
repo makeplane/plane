@@ -202,7 +202,7 @@ Ranked by effectiveness (from conversation analysis, if available):
 ### High Priority (blocks guideline completion)
 1. **[Question Title]**
    - What was found: [description of ambiguity]
-   - Agent recommendation: [suggested resolution]
+   - agent recommendation: [suggested resolution]
    - Need from you: [specific decision]
 
 ### Medium Priority (improves quality)

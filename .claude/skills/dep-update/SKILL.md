@@ -9,6 +9,7 @@ description: >
   step-by-step fix plan to docs/dep-update-issues-YYYY-MM-DD.md.
   Usage: /dep-update
 allowed-tools: [Read, Edit, Write, Bash, AskUserQuestion]
+harness: universal
 ---
 
 # Automated Dependency Update
@@ -47,7 +48,7 @@ packages explicitly declared in `pyproject.toml` under `[project.dependencies]`
 or `[project.optional-dependencies].dev`. Discard anything else — transitive
 dependencies are managed by uv, not updated manually.
 
-Read `pyproject.toml` now to build the set of direct dependency names before
+Open `pyproject.toml` now to build the set of direct dependency names before
 filtering. When comparing names, normalise both sides: lowercase everything and
 treat hyphens and underscores as equivalent (e.g. `PyYAML` -> `pyyaml`,
 `pytest_asyncio` -> `pytest-asyncio`, `google_auth_oauthlib` -> `google-auth-oauthlib`).
@@ -106,6 +107,8 @@ The full test suite (ruff + mypy + pytest) will run after each update.
 This will take significant time on a full run. Proceed?
 ```
 
+If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
+
 ---
 
 ## Step 3 — Create the feature branch
@@ -120,7 +123,9 @@ git branch --list feat/dep-update-YYYY-MM-DD
 - If the branch **already exists**, ask the user:
   > "Branch feat/dep-update-YYYY-MM-DD already exists. Resume on it, or create
   > feat/dep-update-YYYY-MM-DD-2 for a fresh run?"
-  Wait for the answer before continuing. If the user chooses to resume, run
+  Wait for the answer before continuing. If the ask tool is unavailable, ask the
+  same question in plain text and wait for the answer. If the user chooses to
+  resume, run
   `git checkout feat/dep-update-YYYY-MM-DD` and proceed to Step 4 starting
   from the first package not yet present as a commit on that branch (check
   `git log --oneline` to see what has already been committed).
@@ -135,7 +140,7 @@ Repeat steps 4a–4e for every package in the queue, in tier order.
 
 ### 4a. Raise the floor in pyproject.toml
 
-Read `pyproject.toml` and find the package line. It may appear in either
+Open `pyproject.toml` and find the package line. It may appear in either
 `[project.dependencies]` (main packages) or `[project.optional-dependencies]`
 dev (dev tools such as `mypy`, `pytest`, `ruff`). Update the version floor to
 the new latest version in whichever section it lives. Preserve any existing
@@ -242,7 +247,7 @@ If they still fail, stop the entire skill and tell the user:
 > `git checkout -- .` to discard them if you want to return to the last commit.
 > Investigate the pre-existing failure before re-running /dep-update."
 
-#### iv. Write the failure plan
+#### iv. Create the failure plan
 
 Confirm `docs/` exists (it always does in this project, but verify rather than
 assume). Create `docs/dep-update-issues-YYYY-MM-DD.md` if it does not exist,
@@ -282,7 +287,7 @@ possible co-contributors to the failure.>
 
 ### Resolution checklist
 
-- [ ] Read the <package> changelog from <old_version> to <new_version>
+- [ ] Review the <package> changelog from <old_version> to <new_version>
 - [ ] Check `git diff uv.lock` on the failing commit for transitive dep changes
       (skip if failure was a uv lock conflict — uv.lock was not modified)
 - [ ] Identify the breaking API or behaviour change

@@ -13,7 +13,7 @@ This command systematically updates:
 
 ### Step 1: Gather Brand Input
 
-Use `AskUserQuestion` to collect:
+Use the interactive ask tool (ask_user_question) to collect:
 
 **Theme Selection:**
 - Theme name (e.g., "Ocean Professional", "Electric Creative", "Forest Calm")
@@ -33,6 +33,8 @@ Use `AskUserQuestion` to collect:
 **Brand Mood (for AI image generation):**
 - Mood keywords (e.g., "professional, trustworthy, premium" or "bold, creative, energetic")
 
+If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
+
 ### Step 2: Update Brand Guidelines
 
 Edit `design/brand-guidelines.md`:
@@ -46,7 +48,7 @@ Edit `design/brand-guidelines.md`:
 
 Run the sync script:
 ```bash
-node .claude/skills/design/scripts/tokens/sync-brand-to-tokens.cjs
+node <this skill's own deployed folder>/scripts/tokens/sync-brand-to-tokens.cjs
 ```
 
 This will:
@@ -58,7 +60,7 @@ This will:
 Confirm all files are updated:
 ```bash
 # Check brand context extraction
-node .claude/skills/design/scripts/tokens/inject-brand-context.cjs --json | head -30
+node <this skill's own deployed folder>/scripts/tokens/inject-brand-context.cjs --json | head -30
 
 # Check CSS variables
 grep "primary" design/design-tokens.css | head -5

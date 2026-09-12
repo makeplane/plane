@@ -17,7 +17,7 @@ Principles:
 
 | Method | Purpose | Idempotent? | Body? |
 |--------|---------|-------------|-------|
-| **GET** | Read resource(s) | Yes | No |
+| **GET** | read resource(s) | Yes | No |
 | **POST** | Create new resource | No | Yes |
 | **PUT** | Replace entire resource | Yes | Yes |
 | **PATCH** | Partial update | No | Yes |

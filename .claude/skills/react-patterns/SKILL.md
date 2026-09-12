@@ -1,6 +1,7 @@
 ---
 name: react-patterns
 description: Modern React patterns and principles. Hooks, composition, performance, TypeScript best practices.
+harness: universal
 allowed-tools:
   - Read
   - Write

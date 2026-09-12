@@ -10,6 +10,7 @@ allowed-tools:
   - Glob
   - AskUserQuestion
   - ExitPlanMode
+harness: universal
 ---
 
 # E2E Testing Patterns
@@ -79,7 +80,7 @@ Enter plan mode. Before writing any tests, explore the existing project:
 - Docker/docker-compose setup
 - Staging/preview environment URL pattern
 
-### Phase 2: Interview (AskUserQuestion)
+### Phase 2: Interview (ask_user_question)
 
 Ask in rounds:
 
@@ -91,9 +92,13 @@ Ask in rounds:
 
 **Round 4 — CI and parallelization:** CI provider (GitHub Actions — recommended; GitLab CI; local-only; other) and visual regression needs (none — recommended; full-page screenshots; component screenshots).
 
-### Phase 3: Plan (ExitPlanMode)
+> If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
 
-Write a concrete implementation plan covering directory structure, Playwright config (projects/browsers, base URL, retries, workers), auth setup (global setup for storageState or API-based auth), page objects, test fixtures, test suites per critical flow, and CI config (sharding, artifact upload, reporting). Present via ExitPlanMode for approval.
+### Phase 3: Plan (plan mode)
+
+write a concrete implementation plan covering directory structure, Playwright config (projects/browsers, base URL, retries, workers), auth setup (global setup for storageState or API-based auth), page objects, test fixtures, test suites per critical flow, and CI config (sharding, artifact upload, reporting). Present the plan via plan mode for approval.
+
+> If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
 
 ### Phase 4: Execute
 

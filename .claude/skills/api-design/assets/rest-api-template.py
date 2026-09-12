@@ -1,3 +1,4 @@
+# Python
 """
 Production-ready REST API template using FastAPI.
 Includes pagination, filtering, error handling, and best practices.

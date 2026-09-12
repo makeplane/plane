@@ -13,6 +13,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 Every deliberate ponytail shortcut is marked with a `ponytail:` comment naming

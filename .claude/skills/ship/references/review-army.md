@@ -18,7 +18,7 @@ Before triaging findings into tickets, check both prior skipped findings and pri
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current 2>/dev/null)
-cat .agents/skills/review-fix-technical-code/output/review-log.jsonl 2>/dev/null | grep "\"branch\":\"$CURRENT_BRANCH\"" | grep -E '"mode":"(pre-merge-gate|triage)"' | tail -30
+cat <harness-config-dir>/skills/review-fix-technical-code/output/review-log.jsonl 2>/dev/null | grep "\"branch\":\"$CURRENT_BRANCH\"" | grep -E '"mode":"(pre-merge-gate|triage)"' | tail -30
 ```
 
 Scope to entries whose `branch` field matches the current branch **and** whose `mode` is `"pre-merge-gate"` or `"triage"` — both are `/ship`'s own writes for this gate (the `via:"ship"` field distinguishes them from a standalone `review-fix-technical-code` run, but doesn't change which entries are relevant here). Widened from the old `pre-merge-gate`-only filter because ticket-writing now produces its own `"mode":"triage"` entries that also need to feed this dedup. Entries predating these fields' introduction (no `branch`/`mode` key at all) won't match either, which is correct: treat them as not applicable rather than guessing.
@@ -43,12 +43,12 @@ Output a summary header: `Pre-Landing Review: N issues (X critical, Y informatio
 
 2. **Order all tickets in play** (freshly triaged this pass, plus any already-open ones surfaced by Step 9.1) critical-first, same as `review-fix-technical-code` T4's ordering.
 
-3. **Present the full list** per the decision convention (`library/preferences/working-with-me/decision-review-format.md` — state plainly, recommend, ask A/B/adjust; `AskUserQuestion` is not used in this vault):
+3. **Present the full list** per the decision convention (`library/preferences/working-with-me/decision-review-format.md` — state plainly, recommend, ask A/B/adjust; the ask tool is not used in this vault):
    - One row per ticket: ID, severity, title, one-line summary, `new` or `still open since <date>`.
    - Overall recommendation: fix critical tickets now, defer informational ones — unless the set is small enough that fixing everything now is just as fast, in which case say so instead.
    - Options: **A) Fix ticket(s) now, in this session** (name which) **B) Defer ticket(s) — leave them open, come back to `/ship` after they're resolved** (name which) **C) Mixed — fix some now, defer the rest** (the expected common case on a real PR) **D) adjust**.
 
-4. **For every ticket chosen "fix now"**: claim and work it using `<skill-dir>/SKILL.md`'s Ticket Work procedure, W2 through W4, exactly as written there (same file already read for item 1 above) — claim (`node questimus.js update <id> --state "In Progress"`), enter Shared Engine at step 2 to *confirm* the ticket's hypothesis (build the repro loop; never inherit the hypothesis on trust), fix, verify with real evidence, fresh cold recheck (genuinely fresh `Agent` spawn, same as standalone), close the ticket (`--state Done`). This is the **full** Shared Engine, not a lightweight classify-and-apply pass — root cause, verification, cold recheck, the STOP-and-classify table on any cold-recheck FIXABLE finding, and WTF-likelihood loop control all apply exactly as `review-fix-technical-code` SKILL.md defines them. Work fix-now tickets one at a time, never batched across tickets, even when several were chosen together in one A/B/C answer.
+4. **For every ticket chosen "fix now"**: claim and work it using `<skill-dir>/SKILL.md`'s Ticket Work procedure, W2 through W4, exactly as written there (same file already read for item 1 above) — claim (`node questimus.js update <id> --state "In Progress"`), enter Shared Engine at step 2 to *confirm* the ticket's hypothesis (build the repro loop; never inherit the hypothesis on trust), fix, verify with real evidence, fresh cold recheck (genuinely fresh subagent, same as standalone), close the ticket (`--state Done`). This is the **full** Shared Engine, not a lightweight classify-and-apply pass — root cause, verification, cold recheck, the STOP-and-classify table on any cold-recheck FIXABLE finding, and WTF-likelihood loop control all apply exactly as `review-fix-technical-code` SKILL.md defines them. Work fix-now tickets one at a time, never batched across tickets, even when several were chosen together in one A/B/C answer.
 
 5. **For every ticket chosen "defer"**: leave it in `Backlog`. No further action here — it stays in Questimus for a later `review-fix-technical-code` "work the next ticket" session.
 
@@ -64,8 +64,8 @@ Output a summary header: `Pre-Landing Review: N issues (X critical, Y informatio
    - **For every ticket fixed now** (item 4 above): one `"mode":"pre-merge-gate"` entry per ticket, same shape as `review-fix-technical-code` step 8's write, `"ticket":"<id>"`, `findings` covering that ticket's own finding(s) with their final `action` (`fixed`/`auto-fixed`/`skipped`/`reverted`) and full commit history. This is a **full** Shared Engine ledger entry now, not the old reduced Fix-First-flow entry — don't add a caveat implying it's a lighter pass, because this flow no longer runs one.
 
    ```bash
-   mkdir -p .agents/skills/review-fix-technical-code/output
-   echo "{\"skill\":\"review-fix-technical-code\",\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"mode\":\"MODE\",\"ticket\":\"TICKET_ID_OR_NULL\",\"branch\":\"$(git branch --show-current 2>/dev/null)\",\"status\":\"STATUS\",\"issues_found\":N,\"critical\":N,\"informational\":N,\"quality_score\":SCORE,\"specialists\":SPECIALISTS_JSON,\"findings\":FINDINGS_JSON,\"commit\":\"$(git rev-parse --short HEAD)\",\"via\":\"ship\"}" >> .agents/skills/review-fix-technical-code/output/review-log.jsonl
+   mkdir -p <harness-config-dir>/skills/review-fix-technical-code/output
+   echo "{\"skill\":\"review-fix-technical-code\",\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"mode\":\"MODE\",\"ticket\":\"TICKET_ID_OR_NULL\",\"branch\":\"$(git branch --show-current 2>/dev/null)\",\"status\":\"STATUS\",\"issues_found\":N,\"critical\":N,\"informational\":N,\"quality_score\":SCORE,\"specialists\":SPECIALISTS_JSON,\"findings\":FINDINGS_JSON,\"commit\":\"$(git rev-parse --short HEAD)\",\"via\":\"ship\"}" >> <harness-config-dir>/skills/review-fix-technical-code/output/review-log.jsonl
    ```
    Substitute `MODE` (`"triage"` for the ticket-write entry, `"pre-merge-gate"` for each fix-now ticket's own entry), `TICKET_ID_OR_NULL` (`null` for the triage entry, the actual ticket ID for a fix-now entry), `STATUS` (`"clean"` if every ticket in play this pass got fixed now with no deferrals, else `"issues_found"`), and the rest as `review-fix-technical-code` SKILL.md step 8 already defines them.
    - `quality_score` = the PR Quality Score `diff-analysis.md` computed (triage entry only; a fix-now entry doesn't recompute it — carry the same value forward, or `10.0` if specialists were skipped).

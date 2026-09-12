@@ -113,10 +113,10 @@
 
 ```bash
 # Find layout for specific use
-python .claude/skills/design/scripts/slides/search-slides.py "metrics dashboard" -d layout
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "metrics dashboard" -d layout
 
 # Contextual recommendation
-python .claude/skills/design/scripts/slides/search-slides.py "traction slide" \
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "traction slide" \
   --context --position 4 --total 10
 ```
 

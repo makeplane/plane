@@ -35,7 +35,7 @@ Presentation runs the full spine:
 
 ## Output layout (D17 + D19)
 
-Everything lands under **`design/`** — never `.claude/designs/`,
+Everything lands under **`design/`** — never `<harness-config-dir>/designs/`,
 never `planning/mockups/`, and **never** `assets/designs/slides/` (the
 old `slides`/`design-system` output location is abolished — the slide
 scripts now default to `design/slides/`, see Mechanics 5).
@@ -138,13 +138,13 @@ The engine is a BM25 search over 8 CSVs plus a contextual decision layer.
 Run from the project root:
 
 ```bash
-python .claude/skills/design/scripts/slides/search-slides.py "investor pitch"              # auto-detect domain
-python .claude/skills/design/scripts/slides/search-slides.py "problem agitation" -d copy
-python .claude/skills/design/scripts/slides/search-slides.py "revenue growth" -d chart
-python .claude/skills/design/scripts/slides/search-slides.py "two column" -d layout
-python .claude/skills/design/scripts/slides/search-slides.py "startup funding" --all
-python .claude/skills/design/scripts/slides/search-slides.py "problem slide" --context --position 2 --total 9
-python .claude/skills/design/scripts/slides/search-slides.py "cta" --context --position 9 --prev-emotion frustration
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "investor pitch"              # auto-detect domain
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "problem agitation" -d copy
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "revenue growth" -d chart
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "two column" -d layout
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "startup funding" --all
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "problem slide" --context --position 2 --total 9
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "cta" --context --position 9 --prev-emotion frustration
 ```
 
 Domains: `strategy` (deck structures + arcs), `layout` (25 layouts),
@@ -221,7 +221,7 @@ in `references/slides-html-template.md`):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deck</title>
-<script src="../../../.claude/skills/design/assets/chart/chart.umd.js"></script>
+<script src="<skill-root>/assets/chart/chart.umd.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background: var(--color-background,#0D0D0D); color:#fff;

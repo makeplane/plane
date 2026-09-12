@@ -11,6 +11,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 # Performance

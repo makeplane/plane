@@ -2,7 +2,7 @@
 
 **Skip-flag check (before anything else):** if `plan-check` is in Step 0.5's resolved skip set (`--skip-plan-check` or CLAUDE.md `Skip: plan-check` — quick mode does **not** imply this skip by default, since this step already self-skips near-instantly when there's no plan file), skip this whole step — print "Plan completion audit skipped (--skip-plan-check / CLAUDE.md config)." and continue to Step 9.
 
-**Dispatch this step as a subagent** using the Agent tool with `subagent_type: "general-purpose"`. The subagent reads the plan file and every referenced code file in its own fresh context. Parent gets only the conclusion.
+**Dispatch this step as a subagent** (fresh context, general-purpose persona). The subagent reads the plan file and every referenced code file in its own fresh context. Parent gets only the conclusion.
 
 **Subagent prompt:** Pass these instructions to the subagent:
 
@@ -19,7 +19,7 @@ setopt +o nomatch 2>/dev/null || true  # zsh compat
 BRANCH=$(git branch --show-current 2>/dev/null | tr '/' '-')
 REPO=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
 # Search common plan file locations
-for PLAN_DIR in ".claude/plan-docs" "$HOME/.claude/plan-docs"; do
+for PLAN_DIR in "<harness-config-dir>/plan-docs" "<global-harness-config-dir>/plan-docs"; do
   [ -d "$PLAN_DIR" ] || continue
   PLAN=$(ls -t "$PLAN_DIR"/*.md 2>/dev/null | xargs grep -l "$BRANCH" 2>/dev/null | head -1)
   [ -z "$PLAN" ] && PLAN=$(ls -t "$PLAN_DIR"/*.md 2>/dev/null | xargs grep -l "$REPO" 2>/dev/null | head -1)
@@ -132,7 +132,7 @@ COMPLETION: 5/9 DONE, 1 PARTIAL, 1 NOT DONE, 1 CHANGED, 2 UNVERIFIABLE
 
 After producing the completion checklist, evaluate in priority order:
 
-1. **Any NOT DONE items** (highest priority — known missing work). Use AskUserQuestion:
+1. **Any NOT DONE items** (highest priority — known missing work). Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
    - Show the completion checklist above
    - "{N} items from the plan are NOT DONE. These were part of the original plan but are missing from the implementation."
    - RECOMMENDATION: depends on item count and severity. If 1-2 minor items (docs, config), recommend B. If core functionality is missing, recommend A.
@@ -146,10 +146,10 @@ After producing the completion checklist, evaluate in priority order:
 
 2. **Any UNVERIFIABLE items** (silent gaps — the diff cannot prove them either way). Only fires after NOT DONE is resolved or absent.
 
-   **Per-item confirmation is mandatory.** Do NOT use a single AskUserQuestion to blanket-confirm all UNVERIFIABLE items. Blanket confirmation is the failure mode that surfaced in VAS-449 (user clicks A without opening any file). Instead:
+   **Per-item confirmation is mandatory.** Do NOT use a single ask_user_question call to blanket-confirm all UNVERIFIABLE items. Blanket confirmation is the failure mode that surfaced in VAS-449 (user clicks A without opening any file). Instead:
 
    - Loop through UNVERIFIABLE items one at a time.
-   - For each item, use AskUserQuestion with the item's *specific* manual check (e.g., "Confirm: does `~/Development/domain-hq/docs/dashboard.md` exist?", not "Have you checked all items?").
+   - For each item, use ask_user_question with the item's *specific* manual check (e.g., "Confirm: does `~/Development/domain-hq/docs/dashboard.md` exist?", not "Have you checked all items?"). If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
    - Options per item:
      Y) Confirmed done — cite what you verified (free-text, embedded in PR body)
      N) Not done — block ship; treat as NOT DONE and re-enter the priority-1 gate
@@ -177,10 +177,10 @@ After producing the completion checklist, evaluate in priority order:
 
 1. Parse the LAST line of the subagent's output as JSON.
 2. Store `done`, `deferred`, `unverifiable` for PR body; use `summary` in PR body.
-3. If `deferred > 0` or `unverifiable > 0` and no user override, present the items via the appropriate AskUserQuestion (see Gate Logic priority order above) before continuing.
+3. If `deferred > 0` or `unverifiable > 0` and no user override, present the items via ask_user_question (see Gate Logic priority order above) before continuing.
 4. Embed `summary` in PR body's `## Plan Completion` section (Step 19). If `unverifiable > 0` and the user picked option A in the UNVERIFIABLE gate, also embed `## Plan Completion — Manual Verifications` listing each user-confirmed item.
 
-**If the subagent fails or returns invalid JSON:** Fall back to running the audit inline (parent processes the same plan-extraction + classification logic). If the inline fallback also fails (e.g., plan file unreadable, parser error), do NOT silently pass — surface the failure as an explicit AskUserQuestion: "Plan Completion audit could not run ({reason}). Options: (A) Skip audit and ship anyway — record that the audit was skipped in PR body; (B) Stop and fix the audit." Default and recommended option is (B). Silent fail-open is the failure shape that VAS-449 surfaced.
+**If the subagent fails or returns invalid JSON:** Fall back to running the audit inline (parent processes the same plan-extraction + classification logic). If the inline fallback also fails (e.g., plan file unreadable, parser error), do NOT silently pass — surface the failure via ask_user_question: "Plan Completion audit could not run ({reason}). Options: (A) Skip audit and ship anyway — record that the audit was skipped in PR body; (B) Stop and fix the audit." Default and recommended option is (B). If the ask tool is unavailable, ask the same question in plain text and wait for the answer. Silent fail-open is the failure shape that VAS-449 surfaced.
 
 ---
 
@@ -213,7 +213,7 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost:4000 2>/dev/null || echo
 Read the `/qa-report-only` skill from disk:
 
 ```bash
-cat .claude/skills/qa-report-only/SKILL.md
+cat <harness-config-dir>/skills/qa-report-only/SKILL.md
 ```
 
 **If unreadable:** Skip with "Could not load /qa-report-only — skipping plan verification."
@@ -228,7 +228,7 @@ Follow the /qa-report-only workflow with these modifications:
 ### 4. Gate logic
 
 - **All verification items PASS:** Continue silently. "Plan verification: PASS."
-- **Any FAIL:** Use AskUserQuestion:
+- **Any FAIL:** Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
   - Show the failures with screenshot evidence
   - RECOMMENDATION: Choose A if failures indicate broken functionality. Choose B if cosmetic only.
   - Options:

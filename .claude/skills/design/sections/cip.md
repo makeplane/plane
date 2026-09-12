@@ -41,7 +41,7 @@ design/<screen>/
     └── <brand>-cip-presentation.html     ← settled presentation
 ```
 
-Never `.claude/designs/`, never a random cwd dump. Point `--output` /
+Never `<harness-config-dir>/designs/`, never a random cwd dump. Point `--output` /
 `--images` under `design/`.
 
 ## Prerequisites

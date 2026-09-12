@@ -92,7 +92,7 @@ Invoke the helper from the **project root** so its workspace (`process/`,
 `scripts/`, `src/`) resolves to the project, not the skill:
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs <command> …
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs <command> …
 ```
 
 The helper creates `process/` (Figma data + thumbnail), `scripts/`
@@ -101,7 +101,7 @@ The helper creates `process/` (Figma data + thumbnail), `scripts/`
 **Step 0.2 — scaffold (optional).** If starting a new project:
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs scaffold-prompt "MyApp"
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs scaffold-prompt "MyApp"
 ```
 
 Follow the instructions printed by the command to create the initial
@@ -115,7 +115,7 @@ the official Figma REST API at the URL the user provides — no fixed
 third-party endpoint:
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs fetch-figma "https://figma.com/file/<FILE>" "$env:FIGMA_ACCESS_TOKEN"
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs fetch-figma "https://figma.com/file/<FILE>" "$env:FIGMA_ACCESS_TOKEN"
 # on POSIX: "$FIGMA_ACCESS_TOKEN"
 ```
 
@@ -125,7 +125,7 @@ for every later step).
 **Step 1.2 — structure.**
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs structure-prompt > scripts/structure-prompt.md
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs structure-prompt > scripts/structure-prompt.md
 ```
 
 AI task: **ATTACH** `process/thumbnail.png` (mandatory) · **READ**
@@ -135,13 +135,13 @@ Use text content to name components accurately (e.g. 'SafeProducts', not
 'FAQ')." Save the JSON to `scripts/structure-output.json`, then:
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs save-structure
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs save-structure
 ```
 
 **Step 1.3 — extract props (iterative).**
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs list-components
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs list-components
 ```
 
 For **EACH** component in the list:
@@ -155,7 +155,7 @@ For **EACH** component in the list:
 3. Save & validate:
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs save-props "ComponentName"
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs save-props "ComponentName"
 ```
 
 If `save-props` fails with "Props validation failed" (empty props), the AI
@@ -166,7 +166,7 @@ did not see the thumbnail — redo step 2 with the thumbnail attached.
 **Step 2.1 — plan tasks.**
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs list-gen-tasks
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs list-gen-tasks
 ```
 
 Returns a task list with indices (0, 1, 2…).
@@ -175,7 +175,7 @@ Returns a task list with indices (0, 1, 2…).
 parents).**
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs code-prompt 0 > scripts/code-prompt.md
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs code-prompt 0 > scripts/code-prompt.md
 ```
 
 AI task: **ATTACH** `process/thumbnail.png` (mandatory) · **READ**
@@ -185,7 +185,7 @@ data — do not hallucinate." Paste the code into `scripts/code-output.txt`,
 then:
 
 ```bash
-node .claude/skills/design/scripts/to-code/coderio-skill.mjs save-code 0
+node <this skill's own deployed folder>/scripts/to-code/coderio-skill.mjs save-code 0
 ```
 
 If the component has `states` referencing assets (e.g. `@/assets/foo.png`),

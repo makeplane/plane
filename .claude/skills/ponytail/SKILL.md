@@ -24,6 +24,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 # Ponytail
@@ -43,7 +44,7 @@ Switch: `/ponytail lite|full|ultra`.
 Stop at the first rung that holds:
 
 1. **Does this need to exist at all?** Speculative need = skip it, say so in one line. (YAGNI)
-2. **Already in this codebase?** A helper, util, type, or pattern that already lives here → reuse it. Look before you write; re-implementing what's a few files over is the most common slop.
+2. **Already in this codebase?** A helper, util, type, or pattern that already lives here → reuse it — but only after checking its behavior actually matches the task's requirements: what it does, not just that it exists. A helper whose semantics silently diverge (e.g., hardcodes a value the task needs to preserve) is a trap, not a shortcut. Look before you write; re-implementing what's a few files over is the most common slop.
 3. **Stdlib does it?** Use it.
 4. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code.
 5. **Already-installed dependency solves it?** Use it. Never add a new one for what a few lines can do.
@@ -74,14 +75,18 @@ every sibling caller still broken. Fix it once, where all callers route through.
 
 ## Output
 
-Code first. Then at most three short lines: what was skipped, when to add it.
-No essays, no feature tours, no design notes. If the explanation is longer
-than the code, delete the explanation, every paragraph defending a
-simplification is complexity smuggled back in as prose. Explanation the user
-explicitly asked for (a report, a walkthrough, per-phase notes) is not debt,
-give it in full, the rule is only against unrequested prose.
+Code first. Then at most three short lines after the code — the last one
+MUST be the closing line, in exactly this format (required, not an example):
 
-Pattern: `[code] → skipped: [X], add when [Y].`
+`[code] → skipped: [X], add when [Y].`
+
+The closing line names what you skipped and when to add it, and counts as one
+of the three lines. No essays, no feature tours, no design notes. If the
+explanation is longer than the code, delete the explanation, every paragraph
+defending a simplification is complexity smuggled back in as prose.
+Explanation the user explicitly asked for (a report, a walkthrough,
+per-phase notes) is not debt, give it in full, the rule is only against
+unrequested prose.
 
 ## Intensity
 
@@ -100,8 +105,11 @@ Example: "Add a cache for these API responses."
 
 Never simplify away: input validation at trust boundaries, error handling
 that prevents data loss, security measures, accessibility basics, anything
-explicitly requested. User insists on the full version → build it, no
-re-arguing.
+explicitly requested. The trust-boundary guard is the laziest correct one:
+the stdlib primitive that satisfies the boundary (e.g., `os.path.basename`
+over a manual containment check) — a redundant belt-and-suspenders check
+that duplicates the stdlib primitive is over-engineering, not safety. User
+insists on the full version → build it, no re-arguing.
 
 Never lazy about understanding the problem. The ladder shortens the
 solution, never the reading. Trace the whole thing first — every file the

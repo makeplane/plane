@@ -1,6 +1,7 @@
 ---
 name: clean-code
 description: Pragmatic coding standards - concise, direct, no over-engineering, no unnecessary comments
+harness: universal
 ---
 
 # Clean Code - Pragmatic AI Coding Standards
@@ -61,7 +62,7 @@ description: Pragmatic coding standards - concise, direct, no over-engineering, 
 
 | Situation | Action |
 |-----------|--------|
-| User asks for feature | Write it directly |
+| User asks for feature | Implement it directly |
 | User reports bug | Fix it, don't explain |
 | No clear requirement | Ask, don't assume |
 
@@ -100,7 +101,7 @@ File to edit: UserService.ts
 └── Do they need changes too? → Check function signatures
 ```
 
-> 🔴 **Rule:** Edit the file + all dependent files in the SAME task.
+> 🔴 **Rule:** Modify the file and all dependent files in the SAME task.
 > 🔴 **Never leave broken imports or missing updates.**
 
 ---
@@ -109,11 +110,11 @@ File to edit: UserService.ts
 
 | Do | Don't |
 |----|-------|
-| Write code directly | Write tutorials |
+| Code directly | Tutorials instead |
 | Let code self-document | Add obvious comments |
 | Fix bugs immediately | Explain the fix first |
 | Inline small things | Create unnecessary files |
 | Name things clearly | Use abbreviations |
-| Keep functions small | Write 100+ line functions |
+| Keep functions small | 100+ line functions |
 
 > **Remember: The user wants working code, not a programming lesson.**

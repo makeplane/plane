@@ -14,6 +14,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 ponytail-review, repo-wide. Scan the whole tree instead of a diff. Rank

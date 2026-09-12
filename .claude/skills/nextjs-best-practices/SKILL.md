@@ -10,6 +10,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 # Next.js Best Practices

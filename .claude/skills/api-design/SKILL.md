@@ -1,6 +1,7 @@
 ---
 name: api-design
 description: "Master REST, GraphQL, and tRPC API design: choose the right style, model resources cleanly, define errors/versioning/pagination/auth, and generate developer-friendly documentation (OpenAPI/Swagger)."
+harness: universal
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob]
 ---
 

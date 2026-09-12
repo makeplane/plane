@@ -1,6 +1,6 @@
 ## Step 10: Address Greptile review comments (if PR exists)
 
-**Dispatch the fetch + classification as a subagent** using the Agent tool with `subagent_type: "general-purpose"`. The subagent pulls every Greptile comment, runs the escalation detection algorithm, and classifies each comment. Parent receives a structured list and handles the decision, ticketing, fixing, and replies.
+**Dispatch the fetch + classification as a subagent** (fresh context, general-purpose persona). The subagent pulls every Greptile comment, runs the escalation detection algorithm, and classifies each comment. Parent receives a structured list and handles the decision, ticketing, fixing, and replies.
 
 **Subagent prompt:**
 
@@ -29,7 +29,7 @@ Otherwise, print: `+ {total} Greptile comments ({valid_actionable} valid, {alrea
 
 ## Step 10.2: Present every actionable/false-positive comment together for one decision
 
-Every remaining comment (`valid_actionable` and `false_positive`) needs a human decision — present them **together**, per the decision convention (`library/preferences/working-with-me/decision-review-format.md` — state plainly, recommend, ask A/B/adjust; `AskUserQuestion` is not used in this vault, same rule as Step 9.2 and Step 11), not as separate per-comment prompts. **Mirror Step 9.2's own fix-now/defer shape exactly** — the earlier version of this section didn't, and that was a bug (see Step 10.3):
+Every remaining comment (`valid_actionable` and `false_positive`) needs a human decision — present them **together**, per the decision convention (`library/preferences/working-with-me/decision-review-format.md` — state plainly, recommend, ask A/B/adjust; the ask tool is not used in this vault, same rule as Step 9.2 and Step 11), not as separate per-comment prompts. **Mirror Step 9.2's own fix-now/defer shape exactly** — the earlier version of this section didn't, and that was a bug (see Step 10.3):
 
 **Note on ordering vs. Step 9.2**: Step 9.2 runs Ticket Triage (bundling + real severity judgment) *before* presenting its decision table, so that table shows real severity per ticket. This section deliberately doesn't — ticketing every raw comment before the human has even confirmed it's not a false positive would ticket things that turn out not to need a ticket at all. Ticketing here happens *after* the decision (Step 10.3), scoped to whatever the human actually chose to act on — bundling still happens then, via the same Ticket Triage T1-T3, just not previewed in this table the way Step 9.2's is. What this section can't skip, though, is giving the recommendation something real to stand on:
 

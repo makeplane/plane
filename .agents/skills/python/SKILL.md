@@ -1,6 +1,7 @@
 ---
 name: python
 description: Master Python 3.12+ with modern features, tooling, testing, async programming, and production-ready practices — including dedicated Django and FastAPI framework guidance. Use for writing, reviewing, or architecting Python 3.12+ codebases, choosing frameworks/async strategy, and building production-ready services.
+harness: universal
 allowed-tools:
   - Read
   - Write
@@ -256,8 +257,8 @@ Response approach: analyze for async opportunities → design API contracts with
 For building a new endpoint (or a batch of CRUD endpoints) from scratch, use a structured 4-phase flow instead of jumping straight to code:
 
 1. **Explore (plan mode)** — before writing anything, find the app entry point, router organization (single file vs `routers/`), existing `models/`/`schemas/`/`crud/` dirs, installed deps (`pyproject.toml`), ORM in use, DB session pattern, auth pattern, response format convention, and test layout/fixtures.
-2. **Interview (`AskUserQuestion`, in rounds — don't dump all questions at once)** — Round 1: what resource + which HTTP methods (full CRUD / read-only / custom action). Round 2 (if new resource): field complexity (simple <6 fields / medium 6-15 with relations / complex nested-polymorphic). Round 3: auth method (JWT bearer / API key / none / reuse existing) + RBAC need (none / role check / ownership check). Round 4: pagination style (cursor-based recommended / offset-limit / none) + caching (none / Cache-Control headers / Redis).
-3. **Plan (`ExitPlanMode`)** — concrete plan covering files to create/modify, Pydantic schemas (`Create`/`Update`/`Response`/`List`), SQLAlchemy model, CRUD/service layer, router signatures, dependencies, and test cases — present for approval before writing code.
+2. **Interview (ask via ask_user_question, one question at a time in rounds — don't dump all questions at once)** — Round 1: what resource + which HTTP methods (full CRUD / read-only / custom action). Round 2 (if new resource): field complexity (simple <6 fields / medium 6-15 with relations / complex nested-polymorphic). Round 3: auth method (JWT bearer / API key / none / reuse existing) + RBAC need (none / role check / ownership check). Round 4: pagination style (cursor-based recommended / offset-limit / none) + caching (none / Cache-Control headers / Redis). If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
+3. **Plan (present via exit_plan_mode)** — concrete plan covering files to create/modify, Pydantic schemas (`Create`/`Update`/`Response`/`List`), SQLAlchemy model, CRUD/service layer, router signatures, dependencies, and test cases — present for approval before writing code.
 4. **Execute** — schemas → SQLAlchemy model → async CRUD functions → router with dependencies → tests, in that order.
 
 Concrete patterns worth keeping on hand:

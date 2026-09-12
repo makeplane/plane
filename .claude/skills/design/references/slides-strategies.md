@@ -76,10 +76,10 @@ Pattern breaks at 1/3 and 2/3 positions create engagement peaks.
 
 ```bash
 # Find strategy by goal
-python .claude/skills/design/scripts/slides/search-slides.py "investor pitch" -d strategy
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "investor pitch" -d strategy
 
 # Get emotion arc
-python .claude/skills/design/scripts/slides/search-slides.py "series a funding" -d strategy --json
+python <this skill's own deployed folder>/scripts/slides/search-slides.py "series a funding" -d strategy --json
 ```
 
 ## Matching Strategy to Context

@@ -157,7 +157,7 @@ The `validate-asset.cjs` script can auto-check:
 - Naming convention
 - Basic metadata
 
-Run: `node .claude/skills/design/scripts/tokens/validate-asset.cjs <asset-path>`
+Run: `node <this skill's own deployed folder>/scripts/tokens/validate-asset.cjs <asset-path>`
 
 ## Archival
 

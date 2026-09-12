@@ -13,6 +13,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 Review diffs for unnecessary complexity. One line per finding: location, what

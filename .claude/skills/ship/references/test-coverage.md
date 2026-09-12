@@ -2,7 +2,7 @@
 
 **Skip-flag check (before anything else):** if `coverage` is in Step 0.5's resolved skip set (quick mode, `--skip-coverage`, or CLAUDE.md `Skip: coverage`), skip this whole step — print "Test coverage audit skipped (quick mode / --skip-coverage / CLAUDE.md config)." and continue to Step 8. No diagram, no generation, no gate. The PR body's `## Test Coverage` section (Step 19) reflects this as "Skipped (quick mode / config)" rather than a diagram or percentage.
 
-**Dispatch this step as a subagent** using the Agent tool with `subagent_type: "general-purpose"`. The subagent runs the coverage audit in a fresh context window — the parent only sees the conclusion, not intermediate file reads. This is context-rot defense.
+**Dispatch this step as a subagent** (fresh context window, general-purpose persona). The subagent runs the coverage audit in a fresh context window — the parent only sees the conclusion, not intermediate file reads. This is context-rot defense.
 
 **Subagent prompt:** Pass the following instructions to the subagent, with `<base>` substituted with the base branch:
 
@@ -14,7 +14,7 @@
 
 Before analyzing coverage, detect the project's test framework:
 
-1. **Read CLAUDE.md** — look for a `## Testing` section with test command and framework name. If found, use that as the authoritative source.
+1. **Read the project's memory file** (CLAUDE.md on claude-code, AGENTS.md elsewhere) — look for a `## Testing` section with test command and framework name. If found, use that as the authoritative source.
 2. **If CLAUDE.md has no testing section, auto-detect:**
 
 ```bash
@@ -115,7 +115,7 @@ When checking each branch, also determine whether a unit test or E2E/integration
 
 ### REGRESSION RULE (mandatory)
 
-**IRON RULE:** When the coverage audit identifies a REGRESSION — code that previously worked but the diff broke — a regression test is written immediately. No AskUserQuestion. No skipping. Regressions are the highest-priority test because they prove something broke.
+**IRON RULE:** When the coverage audit identifies a REGRESSION — code that previously worked but the diff broke — a regression test is written immediately. No ask_user_question call. No skipping. Regressions are the highest-priority test because they prove something broke.
 
 A regression is when:
 - The diff modifies existing behavior (not new code)
@@ -187,18 +187,18 @@ Before proceeding, check CLAUDE.md for a `## Test Coverage` section with `Minimu
 Using the coverage percentage from the diagram in substep 4 (the `COVERAGE: X/Y (Z%)` line):
 
 - **>= target:** Pass. "Coverage gate: PASS ({X}%)." Continue.
-- **>= minimum, < target:** Use AskUserQuestion:
+- **>= minimum, < target:** Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
   - "AI-assessed coverage is {X}%. {N} code paths are untested. Target is {target}%."
   - RECOMMENDATION: Choose A because untested code paths are where production bugs hide.
   - Options:
     A) Generate more tests for remaining gaps (recommended)
     B) Ship anyway — I accept the coverage risk
     C) These paths don't need tests — mark as intentionally uncovered
-  - If A: Loop back to substep 5 (generate tests) targeting the remaining gaps. After second pass, if still below target, present AskUserQuestion again with updated numbers. Maximum 2 generation passes total.
+  - If A: Loop back to substep 5 (generate tests) targeting the remaining gaps. After second pass, if still below target, present ask_user_question again with updated numbers. Maximum 2 generation passes total.
   - If B: Continue. Include in PR body: "Coverage gate: {X}% — user accepted risk."
   - If C: Continue. Include in PR body: "Coverage gate: {X}% — {N} paths intentionally uncovered."
 
-- **< minimum:** Use AskUserQuestion:
+- **< minimum:** Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
   - "AI-assessed coverage is critically low ({X}%). {N} of {M} code paths have no tests. Minimum threshold is {minimum}%."
   - RECOMMENDATION: Choose A because less than {minimum}% means more code is untested than tested.
   - Options:
@@ -222,10 +222,10 @@ BRANCH=$(git branch --show-current 2>/dev/null | tr '/' '-')
 REPO=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
 USER=$(whoami)
 DATETIME=$(date +%Y%m%d-%H%M%S)
-mkdir -p .claude/ship-test-plans
+mkdir -p "<harness-config-dir>/ship-test-plans"
 ```
 
-Write to `.claude/ship-test-plans/{user}-{branch}-{datetime}.md`:
+Write to `<harness-config-dir>/ship-test-plans/{user}-{branch}-{datetime}.md`:
 
 ```markdown
 # Test Plan

@@ -19,7 +19,7 @@ setopt +o nomatch 2>/dev/null || true  # zsh compat
 ls jest.config.* vitest.config.* playwright.config.* .rspec pytest.ini pyproject.toml phpunit.xml 2>/dev/null
 ls -d test/ tests/ spec/ __tests__/ cypress/ e2e/ 2>/dev/null
 # Check opt-out marker
-[ -f .claude/no-test-bootstrap ] && echo "BOOTSTRAP_DECLINED"
+[ -f "<harness-config-dir>/no-test-bootstrap" ] && echo "BOOTSTRAP_DECLINED"
 ```
 
 **If test framework detected** (config files or test directories found):
@@ -29,20 +29,20 @@ Store conventions as prose context for use in Phase 8e.5 or Step 7. **Skip the r
 
 **If BOOTSTRAP_DECLINED** appears: Print "Test bootstrap previously declined — skipping." **Skip the rest of bootstrap.**
 
-**If NO runtime detected** (no config files found): Use AskUserQuestion:
+**If NO runtime detected** (no config files found): Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
 "I couldn't detect your project's language. What runtime are you using?"
 Options: A) Node.js/TypeScript B) Ruby/Rails C) Python D) Go E) Rust F) PHP G) Elixir H) This project doesn't need tests.
-If user picks H → write `.claude/no-test-bootstrap` and continue without tests.
+If user picks H → write `<harness-config-dir>/no-test-bootstrap` and continue without tests.
 
 **If runtime detected but no test framework — bootstrap:**
 
 ### B2. Research best practices
 
-Use WebSearch to find current best practices for the detected runtime:
+Use web_search to find current best practices for the detected runtime:
 - `"[runtime] best test framework 2025 2026"`
 - `"[framework A] vs [framework B] comparison"`
 
-If WebSearch is unavailable, use this built-in knowledge table:
+If web_search is unavailable, use this built-in knowledge table:
 
 | Runtime | Primary recommendation | Alternative |
 |---------|----------------------|-------------|
@@ -57,14 +57,14 @@ If WebSearch is unavailable, use this built-in knowledge table:
 
 ### B3. Framework selection
 
-Use AskUserQuestion:
+Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
 "I detected this is a [Runtime/Framework] project with no test framework. I researched current best practices. Here are the options:
 A) [Primary] — [rationale]. Includes: [packages]. Supports: unit, integration, smoke, e2e
 B) [Alternative] — [rationale]. Includes: [packages]
 C) Skip — don't set up testing right now
 RECOMMENDATION: Choose A because [reason based on project context]"
 
-If user picks C → write `.claude/no-test-bootstrap`. Tell user: "If you change your mind later, delete `.claude/no-test-bootstrap` and re-run." Continue without tests.
+If user picks C → write `<harness-config-dir>/no-test-bootstrap`. Tell user: "If you change your mind later, delete `<harness-config-dir>/no-test-bootstrap` and re-run." Continue without tests.
 
 If multiple runtimes detected (monorepo) → ask which runtime to set up first, with option to do both sequentially.
 
@@ -126,9 +126,9 @@ Write TESTING.md with:
 - Test layers: Unit tests (what, where, when), Integration tests, Smoke tests, E2E tests
 - Conventions: file naming, assertion style, setup/teardown patterns
 
-### B7. Update CLAUDE.md
+### B7. Update the project's memory file
 
-First check: If CLAUDE.md already has a `## Testing` section → skip. Don't duplicate.
+First check: If the memory file already has a `## Testing` section → skip. Don't duplicate.
 
 Append a `## Testing` section:
 - Run command and test directory
@@ -147,7 +147,7 @@ Append a `## Testing` section:
 git status --porcelain
 ```
 
-Only commit if there are changes. Stage all bootstrap files (config, test directory, TESTING.md, CLAUDE.md, .github/workflows/test.yml if created):
+Only commit if there are changes. Stage all bootstrap files (config, test directory, TESTING.md, the project's memory file, .github/workflows/test.yml if created):
 `git commit -m "chore: bootstrap test framework ({framework name})"`
 
 ---
@@ -163,8 +163,8 @@ Running bare test migrations without INSTANCE hits an orphan DB and corrupts str
 Run both test suites in parallel:
 
 ```bash
-bin/test-lane 2>&1 | tee /tmp/ship_tests.txt &
-npm run test 2>&1 | tee /tmp/ship_vitest.txt &
+bin/test-lane 2>&1 | tee "${TMPDIR:-/tmp}/ship_tests.txt" &
+npm run test 2>&1 | tee "${TMPDIR:-/tmp}/ship_vitest.txt" &
 wait
 ```
 
@@ -198,11 +198,11 @@ For each failing test:
 
 ### Step T3: Handle pre-existing failures
 
-Check `REPO_MODE` by reading `CLAUDE.md` for any `## Repository Mode` section, or default to `unknown`.
+Check `REPO_MODE` by reading the project's memory file (CLAUDE.md on claude-code, AGENTS.md elsewhere) for any `## Repository Mode` section, or default to `unknown`.
 
 **If REPO_MODE is `solo`:**
 
-Use AskUserQuestion:
+Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
 
 > These test failures appear pre-existing (not caused by your branch changes):
 >
@@ -217,7 +217,7 @@ Use AskUserQuestion:
 
 **If REPO_MODE is `collaborative` or `unknown`:**
 
-Use AskUserQuestion:
+Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
 
 > These test failures appear pre-existing (not caused by your branch changes):
 >
@@ -308,12 +308,12 @@ Map runner → test file: `post_generation_eval_runner.rb` → `post_generation_
 `/ship` is a pre-merge gate, so always use full tier (Sonnet structural + Opus persona judges).
 
 ```bash
-EVAL_JUDGE_TIER=full EVAL_VERBOSE=1 bin/test-lane --eval test/evals/<suite>_eval_test.rb 2>&1 | tee /tmp/ship_evals.txt
+EVAL_JUDGE_TIER=full EVAL_VERBOSE=1 bin/test-lane --eval test/evals/<suite>_eval_test.rb 2>&1 | tee "${TMPDIR:-/tmp}/ship_evals.txt"
 ```
 
 If multiple suites need to run, run them sequentially (each needs a test lane). If the first suite fails, stop immediately — don't burn API cost on remaining suites.
 
-**Long eval suites (30+ min):** Run with an extended timeout. The eval command above blocks until complete; set the Bash tool's `timeout` parameter to `5400000` (90 minutes) for long suites. If the suite times out, treat as a failure — don't ship with unknown eval results.
+**Long eval suites (30+ min):** Run with an extended timeout. The eval command above blocks until complete; set the shell (bash) `timeout` parameter to `5400000` (90 minutes) for long suites. If the suite times out, treat as a failure — don't ship with unknown eval results.
 
 **4. Check results:**
 

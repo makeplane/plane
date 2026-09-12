@@ -3,6 +3,7 @@ name: database-design
 description: Design robust, scalable database schemas for SQL and NoSQL databases, and choose the right database/ORM for the job. Provides database and ORM selection decision trees, normalization guidelines, indexing strategies, migration patterns, constraint design, and performance optimization. Ensures data integrity, query performance, and maintainable data models.
 license: MIT
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion]
+harness: universal
 ---
 
 # Database Design

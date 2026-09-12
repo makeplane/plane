@@ -1,12 +1,12 @@
 ## Step 18: Documentation sync (via subagent, before PR creation)
 
-**Dispatch /document-release as a subagent** using the Agent tool with `subagent_type: "general-purpose"`. The subagent gets a fresh context window — zero rot from the preceding 17 steps. It also runs the **full** `/document-release` workflow rather than a weaker reimplementation.
+**Dispatch /document-release as a subagent** (fresh context window, general-purpose persona). The subagent gets a fresh context window — zero rot from the preceding 17 steps. It also runs the **full** `/document-release` workflow rather than a weaker reimplementation.
 
 **Sequencing:** This step runs AFTER Step 17 (Push) and BEFORE Step 19 (Create PR). The PR is created once from final HEAD with the `## Documentation` section baked into the initial body.
 
 **Subagent prompt:**
 
-> You are executing the /document-release workflow after a code push. Read the full skill file `.claude/skills/document-release/SKILL.md` and execute its complete workflow end-to-end, including CHANGELOG clobber protection, doc exclusions, risky-change gates, and named staging. Do NOT attempt to edit the PR body — no PR exists yet. Branch: `<branch>`, base: `<base>`.
+> You are executing the /document-release workflow after a code push. Read the full skill file `<harness-config-dir>/skills/document-release/SKILL.md` and execute its complete workflow end-to-end, including CHANGELOG clobber protection, doc exclusions, risky-change gates, and named staging. Do NOT attempt to edit the PR body — no PR exists yet. Branch: `<branch>`, base: `<base>`.
 >
 > After completing the workflow, output a single JSON object on the LAST LINE of your response (no other text after it):
 > `{"files_updated":["README.md","CLAUDE.md",...],"commit_sha":"abc1234","pushed":true,"documentation_section":"<markdown block for PR body's ## Documentation section>"}`
@@ -106,7 +106,7 @@ you missed it.>
 ## Linked Spec
 <Auto-detect: look for /spec archives matching this branch:
   CURRENT_BRANCH=$(git branch --show-current)
-  SPEC_DIR=".claude/spec-archives"
+  SPEC_DIR="<harness-config-dir>/spec-archives"
   SPEC_FILE=$(grep -rl "^spec_branch: $CURRENT_BRANCH$" "$SPEC_DIR"/*.md 2>/dev/null | head -1)
   [ -z "$SPEC_FILE" ] && exit  # no spec; omit this section entirely
   SPEC_ISSUE=$(grep "^spec_issue_number:" "$SPEC_FILE" | cut -d' ' -f2)

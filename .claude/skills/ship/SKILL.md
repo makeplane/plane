@@ -1,16 +1,17 @@
 ---
 name: ship
-description: "Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR, auto-merge and clean up branches once clean. Full rigor by default; `--quick` (or a project's CLAUDE.md `## Ship` config) trims it down."
+description: "Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR, auto-merge and clean up branches once clean. Full rigor by default; `--quick` (or a project's memory-file `## Ship` config) trims it down."
+harness: universal
 allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - Agent
-  - AskUserQuestion
-  - WebSearch
+  - bash(git + test/version/changelog commands)
+  - read(project files, section files)
+  - write(version/changelog/output files)
+  - edit(diff fixes)
+  - grep(ledger + eval-runner queries)
+  - glob(plan/test-plan discovery)
+  - subagent(per-step dispatched reviewers)
+  - ask_user_question(ship decision gates)
+  - web_search(optional test-framework best-practice lookups)
 triggers:
   - ship it
   - create a pr
@@ -70,7 +71,7 @@ branch name wherever the instructions say "the base branch" or `<default>`.
    - `--full` — force full mode for this run, overriding any CLAUDE.md default (rarely needed since full is already the fallback, but useful when a project's CLAUDE.md defaults to quick and this run needs the full pass).
    - `--skip-evals`, `--skip-coverage`, `--skip-plan-check`, `--skip-pre-landing-review`, `--skip-adversarial` — independently skip that one step for this run, regardless of mode. These are always **additive** (they only ever remove a step, never a way to force a step back on that quick mode or CLAUDE.md already skips).
 
-2. **Read the project's CLAUDE.md for a `## Ship` section** (repo root). All fields optional:
+2. **Read the project's memory file (CLAUDE.md on claude-code, AGENTS.md elsewhere) for a `## Ship` section** (repo root). All fields optional:
    ```
    ## Ship
    Default mode: full
@@ -174,13 +175,15 @@ Always read each section file in full even when Step 0.5's skip set might apply 
 
 ### Review Readiness Check
 
+The review ledger lives in the harness's own project-local skills folder: `<harness-config-dir>/skills/review-fix-technical-code/output/review-log.jsonl`. Detect the harness config dir — check which of `.claude/`, `.dsh/`, `.agents/`, `.gemini/` exists — and substitute it for `<harness-config-dir>` in the script below.
+
 ```bash
 # Check if review has been run on THIS branch recently
 BRANCH=$(git branch --show-current 2>/dev/null)
 PY=$(command -v python3 || command -v python || command -v py)
-if [ -f .agents/skills/review-fix-technical-code/output/review-log.jsonl ] && [ -n "$PY" ]; then
+if [ -f <harness-config-dir>/skills/review-fix-technical-code/output/review-log.jsonl ] && [ -n "$PY" ]; then
   # Find most recent review entry for this branch (last 7 days)
-  REVIEW_ENTRY=$(tail -50 .agents/skills/review-fix-technical-code/output/review-log.jsonl 2>/dev/null | \
+  REVIEW_ENTRY=$(tail -50 <harness-config-dir>/skills/review-fix-technical-code/output/review-log.jsonl 2>/dev/null | \
     SHIP_BRANCH="$BRANCH" "$PY" -c "
 import sys, json, os
 from datetime import datetime, timezone, timedelta
@@ -202,7 +205,7 @@ else:
     print('NO_RECENT_REVIEW')
 " 2>/dev/null || echo "NO_RECENT_REVIEW")
   echo "$REVIEW_ENTRY"
-elif [ -f .agents/skills/review-fix-technical-code/output/review-log.jsonl ]; then
+elif [ -f <harness-config-dir>/skills/review-fix-technical-code/output/review-log.jsonl ]; then
   echo "NO_PYTHON_INTERPRETER"
 else
   echo "NO_REVIEW_LOG"
@@ -242,7 +245,7 @@ service with existing deployment — verify that a distribution pipeline exists.
    grep -qE 'release|publish|deploy' .gitlab-ci.yml 2>/dev/null && echo "GITLAB_CI_RELEASE"
    ```
 
-3. **If no release pipeline exists and a new artifact was added:** Use AskUserQuestion:
+3. **If no release pipeline exists and a new artifact was added:** Use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
    - "This PR adds a new binary/tool but there's no CI/CD pipeline to build and publish it.
      Users won't be able to download the artifact after merge."
    - A) Add a release workflow now (CI/CD release pipeline — GitHub Actions or GitLab CI depending on platform)
@@ -296,7 +299,7 @@ git fetch origin <base> && git merge origin/<base> --no-edit
    - **MINOR**: Ask if any feature signal (new route/page, migration, new module), OR 500+ lines.
    - **MAJOR**: Ask — milestones or breaking changes only.
 
-   For MINOR/MAJOR, use AskUserQuestion:
+   For MINOR/MAJOR, use ask_user_question with the options below. If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
    - Explain the feature signals detected
    - Options: A) MINOR bump (recommended if feature signals exist), B) PATCH bump, C) MAJOR bump (breaking changes only)
 
@@ -373,9 +376,9 @@ If `WIP_COUNT` is 0: skip this sub-step entirely.
 If `WIP_COUNT` > 0, collect the WIP context first:
 
 ```bash
-mkdir -p "$(git rev-parse --show-toplevel)/.claude"
+mkdir -p "$(git rev-parse --show-toplevel)/<harness-config-dir>"
 git log <base>..HEAD --grep="^WIP:" --format="%H%n%B%n---END---" > \
-  "$(git rev-parse --show-toplevel)/.claude/wip-context-before-squash.md" 2>/dev/null || true
+  "$(git rev-parse --show-toplevel)/<harness-config-dir>/wip-context-before-squash.md" 2>/dev/null || true
 ```
 
 **Non-destructive squash strategy:**
@@ -392,7 +395,7 @@ git reset --soft $(git merge-base HEAD origin/<base>)
 echo "WIP-only branch, reset-soft to merge base. Step 15.1 will create clean commits."
 ```
 
-If `NON_WIP` > 0 (mixed WIP and non-WIP commits): Use AskUserQuestion to confirm before attempting rebase, explaining that WIP commits need to be squashed into non-WIP commits manually. NEVER blind `git reset --soft` if there are non-WIP commits — it would uncommit real landed work.
+If `NON_WIP` > 0 (mixed WIP and non-WIP commits): Use ask_user_question to confirm before attempting rebase, explaining that WIP commits need to be squashed into non-WIP commits manually. If the ask tool is unavailable, ask the same question in plain text and wait for the answer. NEVER blind `git reset --soft` if there are non-WIP commits — it would uncommit real landed work.
 
 ### Step 15.1: Bisectable Commits
 
@@ -490,7 +493,7 @@ branch just shipped (Step 19.6 already handled that one directly). Unlike the re
 branches reaches beyond the current PR/worktree, so it counts as a genuine
 judgment call even in ship's otherwise non-interactive flow.
 
-1. Use AskUserQuestion: "Clean up local branches whose upstream is gone?"
+1. Use ask_user_question: "Clean up local branches whose upstream is gone?" If the ask tool is unavailable, ask the same question in plain text and wait for the answer.
    Options: A) Yes, clean up now, B) No, skip.
 
 2. **If No:** skip the rest of this step, workflow is complete.
@@ -522,6 +525,6 @@ judgment call even in ship's otherwise non-interactive flow.
 - **No auto-fixing review findings — pre-landing, adversarial, or Greptile.** Every finding that needs a real code fix (Step 9.2's pre-landing review, Step 11's adversarial review, Step 10.3's actionable Greptile comments) gets a ticket first, then the user explicitly decides fix-now-in-this-session vs defer-to-a-later-ticket-session for each one — there is no classification that applies a fix without asking, regardless of how mechanical it looks or which of the three review sources it came from.
 - **PR title must start with version.** `v$NEW_VERSION <type>: <summary>` — no exceptions.
 - **Full rigor is the default, always.** `--quick` (or a project's CLAUDE.md `## Ship` config) is opt-in — this is deliberate so you're never surprised by ship quietly doing less than it can; the full path stays the thing you get unless you specifically ask for less, project by project.
-- **No parallel `Agent` dispatch anywhere in this skill.** Every subagent this skill spawns (Step 7 coverage audit, Step 8 plan completion, Step 9's Ticket Work cold recheck, Step 10's Greptile classification and its own Ticket Work cold recheck when a comment is fixed now, Step 11 Claude adversarial, Step 18 doc sync) runs one at a time. The one review-fix-technical-code component `/ship` delegates into that *does* dispatch its specialists in parallel (`diff-analysis.md`'s Step 9 specialist stack) is intentionally left as-is for now, under active measurement — not a silent exception, see that file's own notes.
+- **No parallel subagent dispatch anywhere in this skill.** Every subagent this skill spawns (Step 7 coverage audit, Step 8 plan completion, Step 9's Ticket Work cold recheck, Step 10's Greptile classification and its own Ticket Work cold recheck when a comment is fixed now, Step 11 Claude adversarial, Step 18 doc sync) runs one at a time. The one review-fix-technical-code component `/ship` delegates into that *does* dispatch its specialists in parallel (`diff-analysis.md`'s Step 9 specialist stack) is intentionally left as-is for now, under active measurement — not a silent exception, see that file's own notes.
 - **Auto-merge and branch cleanup once clean, in both modes.** Once Step 19's PR is up, Step 19.5 merges automatically (or enables the platform's native auto-merge if only pending checks are in the way) unless something is genuinely blocking it — see "Only stop for" above. This isn't quick-mode-only; a full-mode run that comes back clean ships all the way through by default too.
 - **Before finishing, invoke the post-run-review skill against this run.**

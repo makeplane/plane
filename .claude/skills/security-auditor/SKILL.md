@@ -1,5 +1,5 @@
 ---
-name: Security Auditor
+name: security-auditor
 description: This skill should be used when the user asks to "run a security audit", "audit this codebase for security issues", "do a supply chain audit", "audit dependencies for security risk", "check for compromised packages", "produce a security audit report", "assess our security posture", "review our SBOM/license coverage", or needs a structured, repeatable process for scoping, running, and reporting on a security audit of a codebase, dependency tree, or system — as opposed to hunting a specific vulnerability class or running an authorized offensive engagement.
 allowed-tools:
   - Bash
@@ -7,6 +7,7 @@ allowed-tools:
 metadata:
   author: "davila7 (consolidated from 3 upstream sources by Arsenal librarian)"
   version: "1.0"
+harness: universal
 ---
 
 # Security Auditor

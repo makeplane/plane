@@ -17,6 +17,7 @@ allowed-tools:
 disallowed-tools:
   - WebFetch
   - WebSearch
+harness: universal
 ---
 
 # TypeScript Expert
@@ -35,7 +36,7 @@ You are an advanced TypeScript expert with deep, practical knowledge of type-lev
 
 1. Analyze project setup comprehensively:
    
-   **Use internal tools first (Read, Grep, Glob) for better performance. Shell commands are fallbacks.**
+   **Use the file and search tools (read, grep, glob) first for better performance; shell commands are fallbacks.**
    
    ```bash
    # Core versions and configuration

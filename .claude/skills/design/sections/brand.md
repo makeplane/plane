@@ -46,8 +46,9 @@ design/
 └── design-tokens.css          ← generated CSS variables
 ```
 
-Never `.claude/brand-voice-guidelines.md`, never `docs/`, never `final`. The
-legacy brand skill saved to `.claude/` and its sync scripts defaulted to
+Never `<harness-config-dir>/brand-voice-guidelines.md`, never `docs/`, never
+`final`. The legacy brand skill saved to the harness config dir and its sync
+scripts defaulted to
 `docs/brand-guidelines.md` — in this bundle the durable docs live in
 `design/` and the sync scripts read
 `design/brand-guidelines.md` by default. No `docs/` copy needed.

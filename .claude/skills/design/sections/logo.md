@@ -38,7 +38,7 @@ design/<screen>/
 └── <screen>.png        ← settled logo (version suffix dropped)
 ```
 
-Never `.claude/designs/`, never a random cwd dump. Batch output-dir args
+Never `<harness-config-dir>/designs/`, never a random cwd dump. Batch output-dir args
 must point under `design/`.
 
 ## Prerequisites
