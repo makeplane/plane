@@ -9,11 +9,14 @@
 :3000 {
 	root * /usr/share/caddy/html
 
-	# Per-client-IP rate limiting for static asset requests
+	# Per-client-IP rate limiting for static asset requests.
+	# 300/min starved this single-instance deployment: all host traffic NATs to
+	# one client IP, and React Router reloads the page when a chunk 429s, which
+	# amplifies into a reload storm. 3000/min keeps the protection without the loop.
 	rate_limit {
 		zone static {
 			key {client_ip}
-			events 300
+			events 3000
 			window 1m
 		}
 	}
