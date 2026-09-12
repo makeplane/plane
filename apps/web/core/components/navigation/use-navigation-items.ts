@@ -15,6 +15,7 @@ import {
   ViewsOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
+import { MessagesSquare } from "lucide-react";
 import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 
@@ -99,6 +100,16 @@ export const useNavigationItems = ({
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: !!project?.inbox_view,
         sortOrder: 6,
+      },
+      {
+        i18n_key: "sidebar.chat",
+        key: "chat",
+        name: "Chat",
+        href: `/${workspaceSlug}/projects/${projectId}/chat`,
+        icon: MessagesSquare,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+        shouldRender: true,
+        sortOrder: 7,
       },
     ],
     [project]

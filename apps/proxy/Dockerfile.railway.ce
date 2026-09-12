@@ -1,0 +1,17 @@
+# Proxy image for Railway deployments of Plane.
+#
+# The build context is the repository root, because Railway selects a Dockerfile
+# with RAILWAY_DOCKERFILE_PATH while keeping the repo root as the context.
+#
+# Unlike Dockerfile.ce, this does not build Caddy from source with xcaddy: the
+# plugins that build pulls in are for ACME DNS challenges and layer-4 proxying,
+# and Railway terminates TLS at its edge, so the stock image is sufficient.
+FROM caddy:2.11.4-alpine
+
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
+
+COPY apps/proxy/Caddyfile.railway.ce /etc/caddy/Caddyfile

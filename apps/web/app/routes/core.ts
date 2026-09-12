@@ -105,6 +105,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
         ]),
 
+        // Workspace Chat
+        layout("./(all)/[workspaceSlug]/(projects)/chat/layout.tsx", [
+          route(":workspaceSlug/chat", "./(all)/[workspaceSlug]/(projects)/chat/page.tsx"),
+        ]),
+
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
           route(":workspaceSlug/workspace-views", "./(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx"),
@@ -207,6 +212,13 @@ export const coreRoutes: RouteConfigEntry[] = [
             route(
               ":workspaceSlug/projects/:projectId/pages",
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/pages/(list)/page.tsx"
+            ),
+          ]),
+          // Project Chat
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/chat/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/chat",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/chat/page.tsx"
             ),
           ]),
           // Intake list
