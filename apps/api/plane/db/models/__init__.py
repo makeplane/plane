@@ -89,4 +89,6 @@ from .device import Device, DeviceSession
 
 from .sticky import Sticky
 
+from .chat import ChatChannel, ChatMessage
+
 from .description import Description, DescriptionVersion

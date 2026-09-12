@@ -49,6 +49,7 @@ export * from "./state";
 export * from "./stickies";
 export * from "./timezone";
 export * from "./users";
+export * from "./chat";
 export * from "./utils";
 export * from "./view-props";
 export * from "./views";

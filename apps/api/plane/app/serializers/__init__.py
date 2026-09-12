@@ -29,6 +29,7 @@ from .workspace import (
     WorkspaceHomePreferenceSerializer,
     StickySerializer,
 )
+from .chat import ChatChannelSerializer, ChatMessageSerializer
 from .project import (
     ProjectSerializer,
     ProjectListSerializer,
