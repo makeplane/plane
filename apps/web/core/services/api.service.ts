@@ -7,6 +7,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { create } from "axios";
+import { normalizeAPIRequestURL } from "@plane/services";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -23,6 +24,19 @@ export abstract class APIService {
   }
 
   private setupInterceptors() {
+    this.axiosInstance.interceptors.request.use((config) => {
+      try {
+        if (config.url) {
+          config.url = normalizeAPIRequestURL(config.url, this.baseURL);
+        }
+      } catch (error) {
+        // Never block a request because of slash normalization — fall back to the
+        // original URL and let the call proceed.
+        console.warn("[APIService] Failed to normalize trailing slash:", config.url, error);
+      }
+      return config;
+    });
+
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
