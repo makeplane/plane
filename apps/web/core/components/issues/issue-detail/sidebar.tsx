@@ -154,6 +154,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 buttonClassName={`text-body-xs-regular ${issue?.start_date ? "" : "text-placeholder"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
+                optionsClassName="right-0 left-auto!"
               />
             </SidebarPropertyListItem>
 
@@ -178,6 +179,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   })}
                   hideIcon
                   clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"
+                  optionsClassName="right-0 left-auto!"
                 />
               </div>
             </SidebarPropertyListItem>

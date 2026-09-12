@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -130,8 +129,8 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     currentUser?.id
   );
 
-  return createPortal(
-    <Combobox.Options as="ul" data-prevent-outside-click static>
+  return (
+    <Combobox.Options as="ul" className="fixed z-10" data-prevent-outside-click static modal={false}>
       <div
         className={cn(
           "z-30 my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none",
@@ -200,7 +199,6 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           )}
         </div>
       </div>
-    </Combobox.Options>,
-    document.body
+    </Combobox.Options>
   );
 });

@@ -6,7 +6,6 @@
 
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarOutline, CloseOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
@@ -178,9 +177,8 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       disabled={disabled}
       renderByDefault={renderByDefault}
     >
-      {isOpen &&
-        createPortal(
-          <Combobox.Options as="ul" data-prevent-outside-click static>
+      {isOpen && (
+        <Combobox.Options as="ul" className="fixed z-10" data-prevent-outside-click static modal={false}>
             <div
               className={cn(
                 "z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200",
@@ -206,8 +204,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
                 weekStartsOn={startOfWeek}
               />
             </div>
-          </Combobox.Options>,
-          document.body
+          </Combobox.Options>
         )}
     </ComboDropDown>
   );
