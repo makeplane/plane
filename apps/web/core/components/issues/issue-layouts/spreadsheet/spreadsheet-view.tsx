@@ -6,6 +6,7 @@
 
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane constants
 import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
@@ -15,8 +16,11 @@ import { EIssueLayoutTypes } from "@plane/types";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
+import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
@@ -62,8 +66,25 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const { currentProjectDetails } = useProject();
+  const { issueMap } = useIssues();
+  const { setPeekIssue } = useIssueDetail();
+  // router
+  const { workspaceSlug } = useParams();
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
+
+  // keyboard navigation for the rendered rows (shared single-key commands drive the cursor)
+  const buildPeekIssue = (issueId: string) => {
+    const issue = issueMap[issueId];
+    if (!workspaceSlug || !issue?.project_id) return;
+    setPeekIssue({
+      workspaceSlug: workspaceSlug.toString(),
+      projectId: issue.project_id,
+      issueId: issue.id,
+      nestingLevel: 0,
+      isArchived: !!issue.archived_at,
+    });
+  };
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
@@ -86,8 +107,16 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
         }}
         disabled={!isBulkOperationsEnabled || isEpic}
       >
-        {(helpers) => (
-          <>
+        {(helpers) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          useIssueLayoutKeyboardNav({
+            entities: (issueIds ?? []).map((id) => ({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP })),
+            containerRef,
+            openEntity: (entity) => buildPeekIssue(entity.entityID),
+            selectionHelpers: helpers,
+          });
+          return (
+            <>
             <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
               <SpreadsheetTable
                 displayProperties={displayProperties}
@@ -121,7 +150,8 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
             </div>
             <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
-        )}
+          );
+        }}
       </MultipleSelectGroup>
     </div>
   );

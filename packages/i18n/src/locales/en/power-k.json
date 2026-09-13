@@ -105,7 +105,11 @@
       "open_project_setting": "Open a project setting",
       "nav_project_settings": "Go to project settings",
       "nav_workspace_active_cycle": "Go to all active cycles",
-      "nav_project_overview": "Go to project overview"
+      "nav_project_overview": "Go to project overview",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "Sign out",

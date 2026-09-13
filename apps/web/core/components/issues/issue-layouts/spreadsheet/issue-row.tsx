@@ -25,6 +25,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useKeyboardNavStore } from "@/hooks/store/use-keyboard-nav-store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -100,7 +101,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         }
         classNames={cn("bg-surface-1 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
-          "border-[0.5px] border-strong-1": isIssueActive,
+          "border-[0.5px] border-strong-1": isIssueActive || isKeyboardFocused,
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
@@ -196,6 +197,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   // hooks
   const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked, peekIssue } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const { getIsEntityFocused } = useKeyboardNavStore();
   const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
   const { isMobile } = usePlatformOS();
 
@@ -206,6 +208,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
   const issueDetail = issue.getIssueById(issueId);
+  const isKeyboardFocused = getIsEntityFocused(issueId);
 
   const subIssueIndentation = `${spacingLeft}px`;
 

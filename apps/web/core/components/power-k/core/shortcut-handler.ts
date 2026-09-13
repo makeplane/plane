@@ -87,7 +87,9 @@ export class ShortcutHandler {
     }
 
     // Handle modifier shortcuts (Cmd+Delete, Cmd+Shift+,, etc.)
-    if (hasModifier) {
+    // `?` is typed with shift on most layouts but registers as a single-key
+    // shortcut ("?"), so it must bypass the modifier branch
+    if (hasModifier && key !== "?") {
       this.handleModifierShortcut(e);
       return;
     }

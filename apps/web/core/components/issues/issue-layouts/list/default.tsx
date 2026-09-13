@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
 // types
@@ -22,10 +23,13 @@ import type {
   IGroupByColumn,
   TIssueKanbanFilters,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // plane web hooks
@@ -82,6 +86,10 @@ export const List = observer(function List(props: IList) {
   } = props;
 
   const storeType = useIssueStoreType();
+  // router
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { setPeekIssue } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
@@ -136,12 +144,37 @@ export const List = observer(function List(props: IList) {
           entities={entities}
           disabled={!isBulkOperationsEnabled || isEpic}
         >
-          {(helpers) => (
-            <>
-              <div
-                ref={containerRef}
-                className="vertical-scrollbar relative scrollbar-lg size-full overflow-auto bg-surface-1"
-              >
+          {(helpers) => {
+            // ordered work items currently rendered (collapsed groups excluded) for keyboard navigation
+            const keyboardNavEntities = groupIds
+              .filter((groupId) => !collapsedGroups?.group_by.includes(groupId))
+              .flatMap((groupId) =>
+                (groupedIssueIds?.[groupId] ?? []).map((issueId: string) => ({ entityID: issueId, groupID: groupId }))
+              );
+            const openWorkItem = (entity: { entityID: string }) => {
+              const issue = issuesMap[entity.entityID];
+              if (!workspaceSlug || !issue || issue.project_id === undefined) return;
+              setPeekIssue({
+                workspaceSlug: workspaceSlug.toString(),
+                projectId: issue.project_id,
+                issueId: issue.id,
+                nestingLevel: 0,
+                isArchived: !!issue.archived_at,
+              });
+            };
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useIssueLayoutKeyboardNav({
+              entities: keyboardNavEntities,
+              containerRef,
+              openEntity: openWorkItem,
+              selectionHelpers: helpers,
+            });
+            return (
+              <>
+                <div
+                  ref={containerRef}
+                  className="vertical-scrollbar relative scrollbar-lg size-full overflow-auto bg-surface-1"
+                >
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup
                     key={group.id}
@@ -174,7 +207,8 @@ export const List = observer(function List(props: IList) {
 
               <IssueBulkOperationsRoot selectionHelpers={helpers} />
             </>
-          )}
+            );
+          }}
         </MultipleSelectGroup>
       )}
     </div>
