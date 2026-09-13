@@ -10,7 +10,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import Page, Project, ProjectPage
+from plane.db.models import Page, Project, ProjectPage, WorkItemPage
 from plane.utils.content_validator import validate_html_content
 
 
@@ -73,7 +73,6 @@ class PageSerializer(BaseSerializer):
                 visited.add(ancestor.id)
                 ancestor = ancestor.parent
 
-        # The parent page must belong to the same project
         project_id = self.context.get("project_id") or (
             self.instance and self.instance.project_pages.values_list("project_id", flat=True).first()
         )
@@ -84,6 +83,12 @@ class PageSerializer(BaseSerializer):
             ).exists()
         ):
             raise serializers.ValidationError("Parent page must belong to the same project")
+
+        workspace_id = self.context.get("workspace_id")
+        if workspace_id and not Page.objects.filter(
+            pk=value.id, workspace_id=workspace_id, is_global=True, deleted_at__isnull=True
+        ).exists():
+            raise serializers.ValidationError("Parent page must belong to the same workspace")
         return value
 
 
@@ -111,29 +116,53 @@ class PageDetailSerializer(PageSerializer):
         return value
 
     def create(self, validated_data):
-        project_id = self.context["project_id"]
+        project_id = self.context.get("project_id")
+        workspace_id = self.context.get("workspace_id")
         owned_by_id = self.context["owned_by_id"]
 
-        # Get the workspace id from the project
-        project = Project.objects.get(pk=project_id)
+        if project_id:
+            workspace_id = Project.objects.get(pk=project_id).workspace_id
 
         with transaction.atomic():
-            # Create the page
             page = Page.objects.create(
                 **validated_data,
                 owned_by_id=owned_by_id,
                 created_by_id=owned_by_id,
                 updated_by_id=owned_by_id,
-                workspace_id=project.workspace_id,
+                workspace_id=workspace_id,
+                is_global=not project_id,
             )
 
-            # Create the project page
-            ProjectPage.objects.create(
-                workspace_id=page.workspace_id,
-                project_id=project_id,
-                page_id=page.id,
-                created_by_id=page.created_by_id,
-                updated_by_id=page.updated_by_id,
-            )
+            if project_id:
+                ProjectPage.objects.create(
+                    workspace_id=page.workspace_id,
+                    project_id=project_id,
+                    page_id=page.id,
+                    created_by_id=page.created_by_id,
+                    updated_by_id=page.updated_by_id,
+                )
 
         return page
+
+
+class WorkItemPageCreateSerializer(serializers.Serializer):
+    page_id = serializers.UUIDField(required=True)
+
+
+class WorkItemPageSerializer(BaseSerializer):
+    page = PageSerializer(read_only=True)
+
+    class Meta:
+        model = WorkItemPage
+        fields = [
+            "id",
+            "page",
+            "issue",
+            "project",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = fields

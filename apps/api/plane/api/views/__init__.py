@@ -33,6 +33,8 @@ from .issue import (
     IssueRelationListCreateAPIEndpoint,
 )
 
+from .work_item_page import WorkItemPageListCreateAPIEndpoint, WorkItemPageDetailAPIEndpoint
+
 from .cycle import (
     CycleListCreateAPIEndpoint,
     CycleListLiteAPIEndpoint,
@@ -77,4 +79,6 @@ from .page import (
     PageListCreateAPIEndpoint,
     PageDetailAPIEndpoint,
     PageArchiveUnarchiveAPIEndpoint,
+    WorkspacePageListCreateAPIEndpoint,
+    WorkspacePageDetailAPIEndpoint,
 )

@@ -403,3 +403,77 @@ class TestPageArchiveUnarchiveAPIEndpoint:
         create_page.save()
         response = member_api_key_client.delete(url)
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def _make_workspace_page(workspace, owner, access=Page.PUBLIC_ACCESS, **kwargs):
+    return Page.objects.create(
+        workspace=workspace,
+        owned_by=owner,
+        access=access,
+        is_global=True,
+        name=kwargs.pop("name", "Workspace Page"),
+        **kwargs,
+    )
+
+
+@pytest.mark.contract
+class TestWorkspacePageAPIEndpoint:
+    """Test workspace-scoped Pages API."""
+
+    def get_page_url(self, workspace_slug, page_id=None):
+        url = f"/api/v1/workspaces/{workspace_slug}/pages/"
+        return f"{url}{page_id}/" if page_id else url
+
+    @pytest.mark.django_db
+    def test_list_workspace_pages_excludes_project_pages_and_private_pages(
+        self, api_key_client, workspace, project, create_page, other_user
+    ):
+        _make_workspace_page(workspace, other_user, name="Workspace Public")
+        _make_workspace_page(workspace, other_user, access=Page.PRIVATE_ACCESS, name="Workspace Private")
+
+        response = api_key_client.get(self.get_page_url(workspace.slug))
+
+        assert response.status_code == status.HTTP_200_OK
+        names = [page["name"] for page in response.data["results"]]
+        assert names == ["Workspace Public"]
+        assert create_page.name not in names
+
+    @pytest.mark.django_db
+    def test_create_workspace_page(self, api_key_client, workspace, page_data):
+        with patch("plane.api.views.page.page_transaction") as mock_page_transaction:
+            response = api_key_client.post(self.get_page_url(workspace.slug), page_data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        page = Page.objects.get(name=page_data["name"])
+        assert page.workspace_id == workspace.id
+        assert page.is_global is True
+        assert not ProjectPage.objects.filter(page=page).exists()
+        assert response.data["description_html"] == page_data["description_html"]
+        mock_page_transaction.delay.assert_called_once()
+
+    @pytest.mark.django_db
+    def test_retrieve_workspace_page(self, api_key_client, workspace, create_user):
+        page = _make_workspace_page(workspace, create_user)
+
+        response = api_key_client.get(self.get_page_url(workspace.slug, page.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == page.id
+        assert response.data["description_html"] == page.description_html
+
+    @pytest.mark.django_db
+    def test_update_workspace_page(self, api_key_client, workspace, create_user):
+        page = _make_workspace_page(workspace, create_user)
+
+        with patch("plane.api.views.page.page_transaction") as mock_page_transaction:
+            response = api_key_client.patch(
+                self.get_page_url(workspace.slug, page.id),
+                {"name": "Updated Workspace Page", "description_html": "<p>Updated</p>"},
+                format="json",
+            )
+
+        assert response.status_code == status.HTTP_200_OK
+        page.refresh_from_db()
+        assert page.name == "Updated Workspace Page"
+        assert page.description_html == "<p>Updated</p>"
+        mock_page_transaction.delay.assert_called_once()
