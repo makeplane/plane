@@ -186,7 +186,9 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
           {
             "border-accent-strong": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
-            "border-strong-1": isIssueActive || isKeyboardFocused,
+            "border-strong-1": isIssueActive,
+            // keyboard cursor: needs real width + tint to be visible
+            "border-l-2 border-accent-strong bg-accent-primary/10 hover:bg-accent-primary/10": isKeyboardFocused,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
             "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
             "bg-layer-1": isCurrentBlockDragging,

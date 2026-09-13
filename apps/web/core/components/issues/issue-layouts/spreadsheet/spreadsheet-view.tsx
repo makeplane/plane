@@ -11,13 +11,13 @@ import { useParams } from "next/navigation";
 import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
 import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes, EIssueServiceType } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useIssues } from "@/hooks/store/use-issues";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { useProject } from "@/hooks/store/use-project";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
@@ -66,8 +66,10 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { issueMap } = useIssues();
-  const { setPeekIssue } = useIssueDetail();
+  // the peek builder reads issue records, so it must use the same store as the
+  // layout (project/team/workspace/epic) - the default store is a different map
+  const { issueMap } = useIssuesStore();
+  const { setPeekIssue } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   // router
   const { workspaceSlug } = useParams();
   // plane web hooks
@@ -117,39 +119,39 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
           });
           return (
             <>
-            <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
-              <SpreadsheetTable
-                displayProperties={displayProperties}
-                displayFilters={displayFilters}
-                handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-                issueIds={issueIds}
-                isEstimateEnabled={isEstimateEnabled}
-                portalElement={portalRef}
-                quickActions={quickActions}
-                updateIssue={updateIssue}
-                canEditProperties={canEditProperties}
-                containerRef={containerRef}
-                canLoadMoreIssues={canLoadMoreIssues}
-                loadMoreIssues={loadMoreIssues}
-                spreadsheetColumnsList={spreadsheetColumnsList}
-                selectionHelpers={helpers}
-                isEpic={isEpic}
-              />
-            </div>
-            <div className="border-t border-subtle">
-              <div className="sticky bottom-0 left-0 z-5">
-                {enableQuickCreateIssue && !disableIssueCreation && (
-                  <QuickAddIssueRoot
-                    layout={EIssueLayoutTypes.SPREADSHEET}
-                    QuickAddButton={SpreadsheetAddIssueButton}
-                    quickAddCallback={quickAddCallback}
-                    isEpic={isEpic}
-                  />
-                )}
+              <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
+                <SpreadsheetTable
+                  displayProperties={displayProperties}
+                  displayFilters={displayFilters}
+                  handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                  issueIds={issueIds}
+                  isEstimateEnabled={isEstimateEnabled}
+                  portalElement={portalRef}
+                  quickActions={quickActions}
+                  updateIssue={updateIssue}
+                  canEditProperties={canEditProperties}
+                  containerRef={containerRef}
+                  canLoadMoreIssues={canLoadMoreIssues}
+                  loadMoreIssues={loadMoreIssues}
+                  spreadsheetColumnsList={spreadsheetColumnsList}
+                  selectionHelpers={helpers}
+                  isEpic={isEpic}
+                />
               </div>
-            </div>
-            <IssueBulkOperationsRoot selectionHelpers={helpers} />
-          </>
+              <div className="border-t border-subtle">
+                <div className="sticky bottom-0 left-0 z-5">
+                  {enableQuickCreateIssue && !disableIssueCreation && (
+                    <QuickAddIssueRoot
+                      layout={EIssueLayoutTypes.SPREADSHEET}
+                      QuickAddButton={SpreadsheetAddIssueButton}
+                      quickAddCallback={quickAddCallback}
+                      isEpic={isEpic}
+                    />
+                  )}
+                </div>
+              </div>
+              <IssueBulkOperationsRoot selectionHelpers={helpers} />
+            </>
           );
         }}
       </MultipleSelectGroup>

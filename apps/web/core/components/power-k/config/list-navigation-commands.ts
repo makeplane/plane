@@ -4,7 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { CheckSquareOutline, ChevronDownOutline, ChevronUpOutline, FullScreenPeekOutline, SidePeekOutline } from "@makeplane/propel/icons";
+import {
+  CheckSquareOutline,
+  ChevronDownOutline,
+  ChevronUpOutline,
+  FullScreenPeekOutline,
+  SidePeekOutline,
+} from "@makeplane/propel/icons";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks

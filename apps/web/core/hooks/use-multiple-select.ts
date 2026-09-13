@@ -29,6 +29,16 @@ export type TSelectionSnapshot = {
 export type TSelectionHelper = {
   handleClearSelection: () => void;
   handleEntityClick: (event: React.MouseEvent, entityID: string, groupId: string) => void;
+  /**
+   * Force a selection state on one or more entities without needing a mouse
+   * event - used by keyboard/bulk flows. `forceAction` decides add vs remove,
+   * which is what makes a toggle possible.
+   */
+  handleEntitySelection: (
+    entityDetails: TEntityDetails | TEntityDetails[],
+    shouldScroll?: boolean,
+    forceAction?: "force-add" | "force-remove" | null
+  ) => void;
   getIsEntitySelected: (entityID: string) => boolean;
   getIsEntityActive: (entityID: string) => boolean;
   handleGroupClick: (groupID: string) => void;
@@ -390,6 +400,7 @@ export const useMultipleSelect = (props: Props) => {
     () => ({
       handleClearSelection: clearSelection,
       handleEntityClick,
+      handleEntitySelection,
       getIsEntitySelected,
       getIsEntityActive,
       handleGroupClick,
@@ -402,6 +413,7 @@ export const useMultipleSelect = (props: Props) => {
       getIsEntityActive,
       getIsEntitySelected,
       handleEntityClick,
+      handleEntitySelection,
       handleGroupClick,
       isGroupSelected,
     ]

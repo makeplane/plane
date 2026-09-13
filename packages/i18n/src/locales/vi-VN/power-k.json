@@ -105,7 +105,11 @@
       "open_project_setting": "Mở một cài đặt dự án",
       "nav_project_settings": "Đi đến cài đặt dự án",
       "nav_workspace_active_cycle": "Đi đến tất cả chu kỳ đang hoạt động",
-      "nav_project_overview": "Đi đến tổng quan dự án"
+      "nav_project_overview": "Đi đến tổng quan dự án",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "Đăng xuất",

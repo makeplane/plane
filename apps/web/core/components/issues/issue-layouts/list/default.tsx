@@ -119,7 +119,7 @@ export const List = observer(function List(props: IList) {
 
   const getGroupIndex = (groupId: string | undefined) => groups.findIndex(({ id }) => id === groupId);
 
-  const is_list = group_by === null ? true : false;
+  const is_list = group_by === null;
 
   // create groupIds array and entities object for bulk ops
   const groupIds = groups.map((g) => g.id);
@@ -151,11 +151,11 @@ export const List = observer(function List(props: IList) {
               .flatMap((groupId) =>
                 (groupedIssueIds?.[groupId] ?? []).map((issueId: string) => ({ entityID: issueId, groupID: groupId }))
               );
-            const openWorkItem = (entity: { entityID: string }) => {
+            const openWorkItem = (entity: { entityID: string }, slug: string) => {
               const issue = issuesMap[entity.entityID];
-              if (!workspaceSlug || !issue || issue.project_id === undefined) return;
+              if (!slug || !issue?.project_id) return;
               setPeekIssue({
-                workspaceSlug: workspaceSlug.toString(),
+                workspaceSlug: slug,
                 projectId: issue.project_id,
                 issueId: issue.id,
                 nestingLevel: 0,
@@ -166,7 +166,7 @@ export const List = observer(function List(props: IList) {
             useIssueLayoutKeyboardNav({
               entities: keyboardNavEntities,
               containerRef,
-              openEntity: openWorkItem,
+              openEntity: (entity) => openWorkItem(entity, workspaceSlug?.toString() ?? ""),
               selectionHelpers: helpers,
             });
             return (
@@ -175,38 +175,38 @@ export const List = observer(function List(props: IList) {
                   ref={containerRef}
                   className="vertical-scrollbar relative scrollbar-lg size-full overflow-auto bg-surface-1"
                 >
-                {groups.map((group: IGroupByColumn) => (
-                  <ListGroup
-                    key={group.id}
-                    groupIssueIds={groupedIssueIds?.[group.id]}
-                    issuesMap={issuesMap}
-                    group_by={group_by}
-                    group={group}
-                    updateIssue={updateIssue}
-                    quickActions={quickActions}
-                    orderBy={orderBy}
-                    getGroupIndex={getGroupIndex}
-                    handleOnDrop={handleOnDrop}
-                    displayProperties={displayProperties}
-                    enableIssueQuickAdd={enableIssueQuickAdd}
-                    showEmptyGroup={showEmptyGroup}
-                    canEditProperties={canEditProperties}
-                    quickAddCallback={quickAddCallback}
-                    disableIssueCreation={disableIssueCreation}
-                    addIssuesToView={addIssuesToView}
-                    isCompletedCycle={isCompletedCycle}
-                    loadMoreIssues={loadMoreIssues}
-                    containerRef={containerRef}
-                    selectionHelpers={helpers}
-                    handleCollapsedGroups={handleCollapsedGroups}
-                    collapsedGroups={collapsedGroups}
-                    isEpic={isEpic}
-                  />
-                ))}
-              </div>
+                  {groups.map((group: IGroupByColumn) => (
+                    <ListGroup
+                      key={group.id}
+                      groupIssueIds={groupedIssueIds?.[group.id]}
+                      issuesMap={issuesMap}
+                      group_by={group_by}
+                      group={group}
+                      updateIssue={updateIssue}
+                      quickActions={quickActions}
+                      orderBy={orderBy}
+                      getGroupIndex={getGroupIndex}
+                      handleOnDrop={handleOnDrop}
+                      displayProperties={displayProperties}
+                      enableIssueQuickAdd={enableIssueQuickAdd}
+                      showEmptyGroup={showEmptyGroup}
+                      canEditProperties={canEditProperties}
+                      quickAddCallback={quickAddCallback}
+                      disableIssueCreation={disableIssueCreation}
+                      addIssuesToView={addIssuesToView}
+                      isCompletedCycle={isCompletedCycle}
+                      loadMoreIssues={loadMoreIssues}
+                      containerRef={containerRef}
+                      selectionHelpers={helpers}
+                      handleCollapsedGroups={handleCollapsedGroups}
+                      collapsedGroups={collapsedGroups}
+                      isEpic={isEpic}
+                    />
+                  ))}
+                </div>
 
-              <IssueBulkOperationsRoot selectionHelpers={helpers} />
-            </>
+                <IssueBulkOperationsRoot selectionHelpers={helpers} />
+              </>
             );
           }}
         </MultipleSelectGroup>

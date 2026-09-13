@@ -105,7 +105,11 @@
       "open_project_setting": "開啟專案設定",
       "nav_project_settings": "前往專案設定",
       "nav_workspace_active_cycle": "前往所有進行中的週期",
-      "nav_project_overview": "前往專案概覽"
+      "nav_project_overview": "前往專案概覽",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "登出",

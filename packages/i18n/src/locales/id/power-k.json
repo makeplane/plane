@@ -105,7 +105,11 @@
       "open_project_setting": "Buka pengaturan proyek",
       "nav_project_settings": "Ke pengaturan proyek",
       "nav_workspace_active_cycle": "Ke semua siklus aktif",
-      "nav_project_overview": "Ke ikhtisar proyek"
+      "nav_project_overview": "Ke ikhtisar proyek",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "Keluar",

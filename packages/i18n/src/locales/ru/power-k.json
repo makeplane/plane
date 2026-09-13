@@ -105,7 +105,11 @@
       "open_project_setting": "Открыть настройку проекта",
       "nav_project_settings": "Перейти в настройки проекта",
       "nav_workspace_active_cycle": "Перейти ко всем активным циклам",
-      "nav_project_overview": "Перейти к обзору проекта"
+      "nav_project_overview": "Перейти к обзору проекта",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "Выйти",

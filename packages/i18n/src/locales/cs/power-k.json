@@ -105,7 +105,11 @@
       "open_project_setting": "Otevřít nastavení projektu",
       "nav_project_settings": "Přejít do nastavení projektu",
       "nav_workspace_active_cycle": "Přejít na všechny aktivní cykly",
-      "nav_project_overview": "Přejít na přehled projektu"
+      "nav_project_overview": "Přejít na přehled projektu",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "Odhlásit se",

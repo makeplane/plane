@@ -105,7 +105,11 @@
       "open_project_setting": "프로젝트 설정 열기",
       "nav_project_settings": "프로젝트 설정으로 이동",
       "nav_workspace_active_cycle": "모든 활성 주기로 이동",
-      "nav_project_overview": "프로젝트 개요로 이동"
+      "nav_project_overview": "프로젝트 개요로 이동",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item"
     },
     "account_actions": {
       "sign_out": "로그아웃",
