@@ -237,14 +237,22 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             )
 
             if request.data.get("cycle_id", None):
-                created_records = CycleIssue.objects.create(
-                    cycle_id=request.data.get("cycle_id", None),
-                    issue_id=serializer.data.get("id", None),
-                    project_id=draft_issue.project_id,
-                    workspace_id=draft_issue.workspace_id,
-                    created_by_id=draft_issue.created_by_id,
-                    updated_by_id=draft_issue.updated_by_id,
-                )
+                try:
+                    cycle = Cycle.objects.get(
+                        workspace__slug=slug,
+                        project_id=draft_issue.project_id,
+                        pk=request.data.get("cycle_id", None),
+                    )
+                    created_records = CycleIssue.objects.create(
+                        cycle_id=cycle.id,
+                        issue_id=serializer.data.get("id", None),
+                        project_id=draft_issue.project_id,
+                        workspace_id=draft_issue.workspace_id,
+                        created_by_id=draft_issue.created_by_id,
+                        updated_by_id=draft_issue.updated_by_id,
+                    )
+                except Cycle.DoesNotExist:
+                    pass
                 # Capture Issue Activity
                 issue_activity.delay(
                     type="cycle.activity.created",
@@ -264,36 +272,44 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 )
 
             if request.data.get("module_ids", []):
-                # bulk create the module
-                ModuleIssue.objects.bulk_create(
-                    [
-                        ModuleIssue(
-                            module_id=module,
-                            issue_id=serializer.data.get("id", None),
-                            workspace_id=draft_issue.workspace_id,
-                            project_id=draft_issue.project_id,
-                            created_by_id=draft_issue.created_by_id,
-                            updated_by_id=draft_issue.updated_by_id,
-                        )
-                        for module in request.data.get("module_ids", [])
-                    ],
-                    batch_size=10,
-                )
-                # Update the activity
-                _ = [
-                    issue_activity.delay(
-                        type="module.activity.created",
-                        requested_data=json.dumps({"module_id": str(module)}),
-                        actor_id=str(request.user.id),
-                        issue_id=serializer.data.get("id", None),
+                valid_modules = list(
+                    Module.objects.filter(
+                        workspace__slug=slug,
                         project_id=draft_issue.project_id,
-                        current_instance=None,
-                        epoch=int(timezone.now().timestamp()),
-                        notification=True,
-                        origin=base_host(request=request, is_app=True),
+                        pk__in=request.data.get("module_ids", []),
+                    ).values_list("id", flat=True)
+                )
+                if valid_modules:
+                    # bulk create the module
+                    ModuleIssue.objects.bulk_create(
+                        [
+                            ModuleIssue(
+                                module_id=module,
+                                issue_id=serializer.data.get("id", None),
+                                workspace_id=draft_issue.workspace_id,
+                                project_id=draft_issue.project_id,
+                                created_by_id=draft_issue.created_by_id,
+                                updated_by_id=draft_issue.updated_by_id,
+                            )
+                            for module in valid_modules
+                        ],
+                        batch_size=10,
                     )
-                    for module in request.data.get("module_ids", [])
-                ]
+                    # Update the activity
+                    _ = [
+                        issue_activity.delay(
+                            type="module.activity.created",
+                            requested_data=json.dumps({"module_id": str(module)}),
+                            actor_id=str(request.user.id),
+                            issue_id=serializer.data.get("id", None),
+                            project_id=draft_issue.project_id,
+                            current_instance=None,
+                            epoch=int(timezone.now().timestamp()),
+                            notification=True,
+                            origin=base_host(request=request, is_app=True),
+                        )
+                        for module in valid_modules
+                    ]
 
             # Update file assets
             file_assets = FileAsset.objects.filter(draft_issue_id=draft_id)
