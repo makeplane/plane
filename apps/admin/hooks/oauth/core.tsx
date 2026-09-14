@@ -5,6 +5,8 @@
  */
 
 import { KeyOutline, MailOutline } from "@makeplane/propel/icons";
+// plane imports
+import { BRAND_NAME } from "@plane/constants";
 // types
 import type {
   TCoreInstanceAuthenticationModeKeys,
@@ -36,8 +38,7 @@ export const getCoreAuthenticationModesMap: (
   "unique-codes": {
     key: "unique-codes",
     name: "Unique codes",
-    description:
-      "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
+    description: `Log in or sign up for ${BRAND_NAME} using codes sent via email. You need to have set up SMTP to use this method.`,
     icon: <MailOutline className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "ENABLE_MAGIC_LINK_LOGIN",
@@ -53,7 +54,7 @@ export const getCoreAuthenticationModesMap: (
   google: {
     key: "google",
     name: "Google",
-    description: "Allow members to log in or sign up for Plane with their Google accounts.",
+    description: `Allow members to log in or sign up for ${BRAND_NAME} with their Google accounts.`,
     icon: <img src={googleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GOOGLE_ENABLED",
@@ -61,7 +62,7 @@ export const getCoreAuthenticationModesMap: (
   github: {
     key: "github",
     name: "GitHub",
-    description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
+    description: `Allow members to log in or sign up for ${BRAND_NAME} with their GitHub accounts.`,
     icon: (
       <img
         src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}

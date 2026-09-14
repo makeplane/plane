@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+import { BRAND_NAME } from "@plane/constants";
 // plane internal packages
 import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
@@ -172,6 +173,6 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Plane Web" }];
+export const meta: Route.MetaFunction = () => [{ title: `Authentication Settings - ${BRAND_NAME}` }];
 
 export default InstanceAuthenticationPage;

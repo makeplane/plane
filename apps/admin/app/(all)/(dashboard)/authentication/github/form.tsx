@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { MonitorOutline } from "@makeplane/propel/icons";
 // plane internal packages
-import { API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL, BRAND_SHORT_NAME } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { TOAST_TYPE, setToast } from "@/providers/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
@@ -197,7 +197,7 @@ export function InstanceGithubConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
           <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
-            <div className="pt-2.5 text-18 font-medium">GitHub-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">{`GitHub-provided details for ${BRAND_SHORT_NAME}`}</div>
             {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -235,7 +235,7 @@ export function InstanceGithubConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 flex flex-col gap-y-6 md:col-span-1">
-            <div className="pt-2 text-18 font-medium">Plane-provided details for GitHub</div>
+            <div className="pt-2 text-18 font-medium">{`${BRAND_SHORT_NAME}-provided details for GitHub`}</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}

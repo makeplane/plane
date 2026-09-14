@@ -5,7 +5,6 @@
  */
 
 import { useForm } from "react-hook-form";
-import { ThoughtsOutline } from "@makeplane/propel/icons";
 import { Button } from "@makeplane/propel/components/button";
 import type { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
 // components
@@ -33,53 +32,37 @@ export function InstanceAIForm(props: IInstanceAIForm) {
   } = useForm<AIFormValues>({
     defaultValues: {
       LLM_API_KEY: config["LLM_API_KEY"],
+      LLM_BASE_URL: config["LLM_BASE_URL"],
       LLM_MODEL: config["LLM_MODEL"],
     },
   });
 
   const aiFormFields: TControllerInputFormField<AIFormValues>[] = [
     {
-      key: "LLM_MODEL",
+      key: "LLM_BASE_URL",
       type: "text",
-      label: "LLM Model",
-      description: (
-        <>
-          Choose an OpenAI engine.{" "}
-          <a
-            href="https://platform.openai.com/docs/models/overview"
-            target="_blank"
-            className="text-accent-primary hover:underline"
-            rel="noreferrer"
-            aria-label="OpenAI models documentation"
-          >
-            Learn more
-          </a>
-        </>
-      ),
-      placeholder: "gpt-4o-mini",
-      error: Boolean(errors.LLM_MODEL),
+      label: "AI gateway base URL",
+      description: "OpenAI-compatible endpoint served by your private AI gateway.",
+      placeholder: "https://ai-gateway.internal/v1",
+      error: Boolean(errors.LLM_BASE_URL),
       required: false,
     },
     {
       key: "LLM_API_KEY",
       type: "password",
       label: "API key",
-      description: (
-        <>
-          You will find your API key{" "}
-          <a
-            href="https://platform.openai.com/api-keys"
-            target="_blank"
-            className="text-accent-primary hover:underline"
-            rel="noreferrer"
-            aria-label="OpenAI API keys page"
-          >
-            here.
-          </a>
-        </>
-      ),
+      description: "Credential issued by your private AI gateway.",
       placeholder: "sk-asddassdfasdefqsdfasd23das3dasdcasd",
       error: Boolean(errors.LLM_API_KEY),
+      required: false,
+    },
+    {
+      key: "LLM_MODEL",
+      type: "text",
+      label: "LLM model",
+      description: "Model name exposed by your private AI gateway.",
+      placeholder: "internal-chat-model",
+      error: Boolean(errors.LLM_MODEL),
       required: false,
     },
   ];
@@ -102,8 +85,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
-          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-18 font-medium text-primary">Private AI gateway</div>
+          <div className="text-13 font-regular text-tertiary">OpenAI-compatible API credentials.</div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
@@ -131,16 +114,6 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           loading={isSubmitting}
           label={isSubmitting ? "Saving" : "Save changes"}
         />
-
-        <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary">
-          <ThoughtsOutline className="size-4" />
-          <div>
-            If you have a preferred AI models vendor, please get in{" "}
-            <a className="font-medium underline" href="https://plane.so/contact">
-              touch with us.
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   );

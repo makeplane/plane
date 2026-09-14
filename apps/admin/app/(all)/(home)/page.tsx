@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { BRAND_NAME } from "@plane/constants";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceFailureView } from "@/components/instance/failure";
@@ -46,5 +47,5 @@ export default observer(HomePage);
 
 export const meta: Route.MetaFunction = () => [
   { title: "Admin – Instance Setup & Sign-In" },
-  { name: "description", content: "Configure your Plane instance or sign in to the admin portal." },
+  { name: "description", content: `Configure your ${BRAND_NAME} instance or sign in to the admin portal.` },
 ];

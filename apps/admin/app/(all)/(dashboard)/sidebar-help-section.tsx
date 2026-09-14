@@ -8,39 +8,14 @@ import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
-import { WEB_BASE_URL } from "@plane/constants";
+import { BRAND_SHORT_NAME, DOCUMENTATION_URL, FEEDBACK_URL, WEB_BASE_URL } from "@plane/constants";
 // plane internal packages
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import {
-  ArrowNarrowLeftOutline,
-  ChatOutline,
-  Github,
-  HelpOutline,
-  NewTabOutline,
-  PagesOutline,
-} from "@makeplane/propel/icons";
+import { ArrowNarrowLeftOutline, ChatOutline, HelpOutline, NewTabOutline, PagesOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance, useTheme } from "@/hooks/store";
 // assets
-
-const helpOptions = [
-  {
-    name: "Documentation",
-    href: "https://docs.plane.so/",
-    Icon: PagesOutline,
-  },
-  {
-    name: "Join our Forum",
-    href: "https://forum.plane.so",
-    Icon: ChatOutline,
-  },
-  {
-    name: "Report a bug",
-    href: "https://github.com/makeplane/plane/issues/new/choose",
-    Icon: Github,
-  },
-];
 
 export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection() {
   // states
@@ -52,6 +27,22 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
   const redirectionLink = encodeURI(WEB_BASE_URL + "/");
+  const helpOptions = [
+    DOCUMENTATION_URL
+      ? {
+          name: "Documentation",
+          href: DOCUMENTATION_URL,
+          Icon: PagesOutline,
+        }
+      : null,
+    FEEDBACK_URL
+      ? {
+          name: "Send feedback",
+          href: FEEDBACK_URL,
+          Icon: ChatOutline,
+        }
+      : null,
+  ].filter((option): option is { name: string; href: string; Icon: typeof PagesOutline } => option !== null);
 
   return (
     <div
@@ -70,17 +61,17 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
               className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
             >
               <NewTabOutline width={14} height={14} />
-              {!isSidebarCollapsed && "Redirect to Plane"}
+              {!isSidebarCollapsed && `Open ${BRAND_SHORT_NAME}`}
             </a>
           </>
         ) : (
-          <Tooltip label="Redirect to Plane" side="right">
+          <Tooltip label={`Open ${BRAND_SHORT_NAME}`} side="right">
             <a
               href={redirectionLink}
               className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
             >
               <NewTabOutline width={14} height={14} />
-              {!isSidebarCollapsed && "Redirect to Plane"}
+              {!isSidebarCollapsed && `Open ${BRAND_SHORT_NAME}`}
             </a>
           </Tooltip>
         )}

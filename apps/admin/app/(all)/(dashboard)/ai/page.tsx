@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { BRAND_NAME } from "@plane/constants";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { Skeleton } from "@/components/common/skeleton";
@@ -26,7 +27,7 @@ const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentP
     <PageWrapper
       header={{
         title: "AI features for all your workspaces",
-        description: "Configure your AI API credentials so Plane AI features are turned on for all your workspaces.",
+        description: `Configure your private AI gateway so AI features are turned on for all ${BRAND_NAME} workspaces.`,
       }}
     >
       {formattedConfig ? (

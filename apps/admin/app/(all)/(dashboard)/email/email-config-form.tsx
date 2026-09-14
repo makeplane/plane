@@ -81,7 +81,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       label: "Sender's email address",
       description:
         "This is the email address your users will see when getting emails from this instance. You will need to verify this address.",
-      placeholder: "no-reply@projectplane.so",
+      placeholder: "no-reply@example.org",
       error: Boolean(errors.EMAIL_FROM),
       required: true,
     },
@@ -92,7 +92,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       key: "EMAIL_HOST_USER",
       type: "text",
       label: "Username",
-      placeholder: "getitdone@projectplane.so",
+      placeholder: "workspace@example.org",
       error: Boolean(errors.EMAIL_HOST_USER),
       required: false,
     },

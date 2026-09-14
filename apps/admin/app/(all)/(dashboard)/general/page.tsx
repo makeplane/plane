@@ -21,8 +21,7 @@ function GeneralPage() {
     <PageWrapper
       header={{
         title: "General settings",
-        description:
-          "Change the name of your instance and instance admin e-mail addresses. Enable or disable telemetry in your instance.",
+        description: "Change the name of your instance and instance admin e-mail addresses.",
       }}
     >
       {instance && instanceAdmins && <GeneralConfigurationForm instance={instance} instanceAdmins={instanceAdmins} />}
