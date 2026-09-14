@@ -3,7 +3,7 @@ import test from "node:test";
 import type { TCustomPlaylist, TCustomPlaylistClip } from "@/services/media-library.service";
 // Node's type-stripping test runner requires explicit TypeScript extensions.
 // @ts-expect-error See comment above.
-import { buildCardPlaylists } from "../create-card-model.ts";
+import { buildCardPlaylists, buildCoachingCardPlaylists } from "../create-card-model.ts";
 import type { SgTagRow } from "../types";
 
 const playlist = (id: string, clips: TCustomPlaylistClip[]): TCustomPlaylist => ({
@@ -98,4 +98,28 @@ test("the same clip in two playlists keeps separate context keys", () => {
   );
   const [one, two] = groups.map((group) => group.clips[0].key);
   assert.notEqual(one, two);
+});
+
+test("coaching card payload includes only selected playlists and clips", () => {
+  const groups = buildCardPlaylists(
+    [
+      playlist("One", [
+        { id: "first", title: "First" },
+        { id: "second", title: "Second" },
+      ]),
+      playlist("Two", [{ id: "third", title: "Third" }]),
+    ],
+    []
+  );
+
+  const payload = buildCoachingCardPlaylists(groups, [{ id: "One", clipIds: ["second"] }]);
+
+  assert.equal(payload.length, 1);
+  assert.equal(payload[0].id, "One");
+  assert.deepEqual(
+    payload[0].clips.map((clip) => clip.id),
+    ["second"]
+  );
+  assert.equal(payload[0].clips[0].duration_seconds, null);
+  assert.equal(payload[0].clips[0].secondary_detail, "");
 });

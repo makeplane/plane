@@ -9,6 +9,7 @@ from rest_framework.exceptions import APIException
 
 from plane.bgtasks import service_gateway_sync_helpers as sg
 from plane.db.models import Issue
+from plane.utils.coaching_card import is_coaching_card_event_data
 from plane.utils.exception_logger import log_exception
 
 logger = logging.getLogger("plane.worker")
@@ -661,6 +662,13 @@ def service_gateway_event_sync(event: str, verb: str, event_data: Optional[Dict[
 
     if not isinstance(event_data, dict):
         logger.warning("Skipping service-gateway sync because event_data is invalid")
+        return
+
+    if is_coaching_card_event_data(event_data):
+        logger.info(
+            "Skipping service-gateway sync for coaching card issue %s",
+            event_data.get("id"),
+        )
         return
 
     if verb == "created":

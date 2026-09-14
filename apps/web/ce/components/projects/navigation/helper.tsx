@@ -1,7 +1,7 @@
 // plane imports
+import { Users2Icon } from "lucide-react";
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Users2Icon } from "lucide-react";
 // components
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 
@@ -14,12 +14,13 @@ export const getProjectFeatureNavigation = (
     issue_views_view: boolean;
     page_view: boolean;
     inbox_view: boolean;
+    sport?: string | null;
   }
 ): TNavigationItem[] => [
   {
     i18n_key: "sidebar.work_items",
     key: EProjectFeatureKey.WORK_ITEMS,
-    name: "Work items",
+    name: project.sport ? "Coaching Board" : "Work items",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     icon: WorkItemsIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],

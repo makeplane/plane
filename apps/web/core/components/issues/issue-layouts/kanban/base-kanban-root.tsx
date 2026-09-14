@@ -8,14 +8,14 @@ import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-sc
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import type { EIssuesStoreType } from "@plane/types";
-import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 //constants
 //hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -65,6 +65,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const storeType = useIssueStoreType() as KanbanStoreType;
   const { allowPermissions } = useUserPermissions();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
+  const { getProjectById } = useProject();
   const {
     issue: { getIssueById },
   } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
@@ -103,7 +104,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         fetchNextIssues(groupId, subgroupId);
       }
     },
-    [fetchNextIssues]
+    [fetchNextIssues, issues]
   );
 
   const groupedIssueIds = issues?.groupedIssueIds;
@@ -113,6 +114,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const KanBanView = sub_group_by ? KanBanSwimLanes : KanBan;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
+  const currentProject = projectId ? getProjectById(projectId.toString()) : undefined;
+  const isCoachingBoard = storeType === EIssuesStoreType.PROJECT && Boolean(currentProject?.sport?.trim());
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -285,10 +288,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}
                 collapsedGroups={collapsedGroups}
-                enableQuickIssueCreate={enableQuickAdd}
-                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+                enableQuickIssueCreate={isCoachingBoard ? false : enableQuickAdd}
+                showEmptyGroup={isCoachingBoard ? false : (userDisplayFilters?.show_empty_groups ?? true)}
                 quickAddCallback={quickAddIssue}
-                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                disableIssueCreation={isCoachingBoard || !enableIssueCreation || !isEditingAllowed || isCompletedCycle}
                 canEditProperties={canEditProperties}
                 addIssuesToView={addIssuesToView}
                 scrollableContainerRef={scrollableContainerRef}

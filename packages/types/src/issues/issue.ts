@@ -40,6 +40,80 @@ export type TOppositionTeam = {
   logo: string;
 };
 
+export type TCoachingCardClip = {
+  key: string;
+  id: string;
+  title: string;
+  thumbnail: string | null;
+  duration_seconds: number | null;
+  timecode: string;
+  team: string;
+  detail: string;
+  result: string;
+  secondary_detail: string;
+  group: string;
+};
+
+export type TCoachingCardPlaylist = {
+  id: string;
+  name: string;
+  clips: TCoachingCardClip[];
+};
+
+export type TCoachingCardData = {
+  schema_version: 1;
+  kind: "coaching_card";
+  request_id: string;
+  source_issue: {
+    id: string;
+    name: string;
+    sequence_id: number;
+    sg_event_id: string | number | null;
+  };
+  player: {
+    id: string;
+    name: string;
+    jersey_number: string;
+    position: string;
+  };
+  sport: string;
+  feedback: string;
+  progress_status: string;
+  playlists: TCoachingCardPlaylist[];
+  summary: {
+    playlist_count: number;
+    clip_count: number;
+    primary_thumbnail: string | null;
+    primary_clip_title: string;
+  };
+};
+
+export type TCreateCoachingCardsPayload = {
+  request_id: string;
+  source_issue_id: string;
+  player_ids: string[];
+  feedback: string;
+  progress_status: string;
+  sport_label: string;
+  playlists: TCoachingCardPlaylist[];
+};
+
+export type TCreateCoachingCardsResponse = {
+  created_count: number;
+  idempotent_replay: boolean;
+  cards: Array<{
+    id: string;
+    name: string;
+    sequence_id: number;
+    project_id: string;
+    state_id: string;
+    parent_id: string;
+    category: string;
+    roster_player_id: string;
+    coaching_card_data: TCoachingCardData;
+  }>;
+};
+
 export type TBaseIssue = {
   id: string;
   sequence_id: number;
@@ -81,6 +155,8 @@ export type TBaseIssue = {
   sport: string | null;
   year: string | null;
   category: string | null;
+  roster_player_id?: string | null;
+  coaching_card_data?: TCoachingCardData | null;
 
   is_draft: boolean;
   is_epic?: boolean;
@@ -173,37 +249,36 @@ export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attac
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
-export interface IPublicIssue
-  extends Pick<
-    TIssue,
-    | "description_html"
-    | "created_at"
-    | "updated_at"
-    | "created_by"
-    | "id"
-    | "name"
-    | "priority"
-    | "state_id"
-    | "project_id"
-    | "sequence_id"
-    | "sort_order"
-    | "start_date"
-    | "start_time"
-    | "target_date"
-    | "cycle_id"
-    | "module_ids"
-    | "label_ids"
-    | "assignee_ids"
-    | "attachment_count"
-    | "sub_issues_count"
-    | "link_count"
-    | "estimate_point"
-    | "level"
-    | "sport"
-    | "program"
-    | "year"
-    | "category"
-  > {
+export interface IPublicIssue extends Pick<
+  TIssue,
+  | "description_html"
+  | "created_at"
+  | "updated_at"
+  | "created_by"
+  | "id"
+  | "name"
+  | "priority"
+  | "state_id"
+  | "project_id"
+  | "sequence_id"
+  | "sort_order"
+  | "start_date"
+  | "start_time"
+  | "target_date"
+  | "cycle_id"
+  | "module_ids"
+  | "label_ids"
+  | "assignee_ids"
+  | "attachment_count"
+  | "sub_issues_count"
+  | "link_count"
+  | "estimate_point"
+  | "level"
+  | "sport"
+  | "program"
+  | "year"
+  | "category"
+> {
   comments: TIssuePublicComment[];
   reaction_items: IIssuePublicReaction[];
   vote_items: IPublicVote[];

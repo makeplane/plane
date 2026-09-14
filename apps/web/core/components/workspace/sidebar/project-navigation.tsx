@@ -5,6 +5,7 @@ import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { Users2Icon, VideoIcon } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -17,7 +18,6 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { Users2Icon, VideoIcon } from "lucide-react";
 
 export type TNavigationItem = {
   name: string;
@@ -69,7 +69,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
-        name: "Work items",
+        name: project.sport ? "Coaching Board" : "Work items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: WorkItemsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -200,7 +200,9 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex items-center gap-1.5 py-[1px]">
                 <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
-                <span className="text-xs font-medium">{t(item.i18n_key)}</span>
+                <span className="text-xs font-medium">
+                  {item.key === "work_items" && project.sport ? item.name : t(item.i18n_key)}
+                </span>
               </div>
             </SidebarNavItem>
           </Link>

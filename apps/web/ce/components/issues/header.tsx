@@ -54,6 +54,7 @@ export const IssuesHeader = observer(() => {
   const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const isCoachingBoard = Boolean(currentProjectDetails?.sport?.trim());
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -74,7 +75,15 @@ export const IssuesHeader = observer(() => {
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this program`}
+              tooltipContent={`There are ${issuesCount} ${
+                isCoachingBoard
+                  ? issuesCount > 1
+                    ? "coaching cards"
+                    : "coaching card"
+                  : issuesCount > 1
+                    ? "work items"
+                    : "work item"
+              } in this program`}
               position="bottom"
             >
               <CountChip count={issuesCount} />

@@ -1,4 +1,4 @@
-import type { IRosterPlayer } from "@plane/types";
+import type { IRosterPlayer, TCoachingCardPlaylist } from "@plane/types";
 import type { TCustomPlaylist } from "@/services/media-library.service";
 import type { SgTagRow } from "./types";
 
@@ -89,4 +89,34 @@ export const buildCardPlaylists = (playlists: TCustomPlaylist[], availableRows: 
       };
     }),
   }));
+};
+
+export const buildCoachingCardPlaylists = (
+  groups: CardPlaylist[],
+  selections: CardFormValues["playlists"]
+): TCoachingCardPlaylist[] => {
+  const selectedClipIdsByPlaylist = new Map(selections.map((selection) => [selection.id, new Set(selection.clipIds)]));
+
+  return groups.flatMap((group) => {
+    const selectedClipIds = selectedClipIdsByPlaylist.get(group.id);
+    if (!selectedClipIds) return [];
+
+    const clips = group.clips
+      .filter((clip) => selectedClipIds.has(clip.id))
+      .map((clip) => ({
+        key: clip.key,
+        id: clip.id,
+        title: clip.title,
+        thumbnail: clip.thumbnail,
+        duration_seconds: clip.durationSeconds,
+        timecode: clip.timecode,
+        team: clip.team,
+        detail: clip.detail,
+        result: clip.result,
+        secondary_detail: clip.secondaryDetail,
+        group: clip.group,
+      }));
+
+    return clips.length > 0 ? [{ id: group.id, name: group.name, clips }] : [];
+  });
 };

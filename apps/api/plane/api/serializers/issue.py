@@ -68,7 +68,16 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at", "sg_event_id"]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "updated_by",
+            "updated_at",
+            "sg_event_id",
+            "roster_player",
+            "coaching_card_data",
+        ]
         exclude = ["description", "description_stripped"]
 
     def validate(self, data):
@@ -686,6 +695,8 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
             "sg_event_id",
+            "roster_player",
+            "coaching_card_data",
         ]
 
 

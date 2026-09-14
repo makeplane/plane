@@ -60,6 +60,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.coaching_card import COACHING_CARD_CATEGORY
 from plane.utils.global_paginator import paginate
 from plane.utils.grouper import (
     issue_group_values,
@@ -191,6 +192,8 @@ class IssueListEndpoint(BaseAPIView):
                 "year",
                 "category",
                 "sg_event_id",
+                "roster_player_id",
+                "coaching_card_data",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -282,6 +285,9 @@ class IssueViewSet(BaseViewSet):
             issue_queryset = issue_queryset.filter(sg_event_id__isnull=False)
         elif layout:
             issue_queryset = issue_queryset.filter(sg_event_id__isnull=True)
+
+        if request.GET.get("coaching_cards", "").lower() in {"1", "true"}:
+            issue_queryset = issue_queryset.filter(category=COACHING_CARD_CATEGORY)
 
         # Keeping a copy of the queryset before applying annotations
         filtered_issue_queryset = copy.deepcopy(issue_queryset)
@@ -436,6 +442,8 @@ class IssueViewSet(BaseViewSet):
                     "year",
                     "category",
                     "sg_event_id",
+                    "roster_player_id",
+                    "coaching_card_data",
                 )
                 .first(),
             )
@@ -494,6 +502,8 @@ class IssueViewSet(BaseViewSet):
                     "year",
                     "category",
                     "sg_event_id",
+                    "roster_player_id",
+                    "coaching_card_data",
                 )
                 .first()
             )
@@ -725,6 +735,8 @@ class IssueViewSet(BaseViewSet):
                     "year",
                     "category",
                     "sg_event_id",
+                    "roster_player_id",
+                    "coaching_card_data",
                 )
                 .first(),
             )
@@ -764,7 +776,11 @@ class IssueViewSet(BaseViewSet):
                 # delete workitems using service gateway for proper cascade delete and webhook trigger
 
         deleted_issue_id = issue.id
-        deleted_issue_event_data = {"id": deleted_issue_id, "sg_event_id": issue.sg_event_id}
+        deleted_issue_event_data = {
+            "id": deleted_issue_id,
+            "sg_event_id": issue.sg_event_id,
+            "category": issue.category,
+        }
 
         issue.delete()
         service_gateway_event_sync(event="issue", verb="deleted", event_data=deleted_issue_event_data)
@@ -835,7 +851,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         issues = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
-        deleted_issue_payloads = list(issues.values("id", "sg_event_id"))
+        deleted_issue_payloads = list(issues.values("id", "sg_event_id", "category"))
         total_issues = len(deleted_issue_payloads)
 
         # First, delete all related cycle issues

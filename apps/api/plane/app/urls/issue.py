@@ -27,6 +27,7 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    CoachingCardBulkCreateEndpoint,
 )
 
 urlpatterns = [
@@ -39,6 +40,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueViewSet.as_view({"get": "list", "post": "create"}),
         name="project-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/create-coaching-cards/",
+        CoachingCardBulkCreateEndpoint.as_view(),
+        name="project-issue-create-coaching-cards",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues-detail/",

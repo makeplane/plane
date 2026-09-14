@@ -1,7 +1,5 @@
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-// i18n
-import { useTranslation } from "@plane/i18n";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -93,8 +91,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     subGroupIndex = 0,
     isEpic = false,
   } = props;
-  // i18n
-  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
@@ -137,7 +133,10 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   };
 
   const isGroupByCreatedBy = group_by === "created_by";
-  const approximateCardHeight = getApproximateCardHeight(displayProperties);
+  const hasCoachingCards = Object.values(issuesMap).some(
+    (issue) => issue.category === "Coaching Card" && issue.coaching_card_data?.kind === "coaching_card"
+  );
+  const approximateCardHeight = hasCoachingCards ? 280 : getApproximateCardHeight(displayProperties);
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (

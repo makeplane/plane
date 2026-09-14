@@ -16,6 +16,24 @@ from plane.bgtasks.service_gateway_webhook_task import (
 
 @pytest.mark.unit
 class TestServiceGatewayWebhookTask:
+    @override_settings(
+        SERVICE_GATEWAY_WEBHOOK_ENABLED=True,
+        SERVICE_GATEWAY_EVENT_API="https://sports.kanavio.com/sports/api/event",
+    )
+    def test_coaching_cards_do_not_sync_to_service_gateway(self):
+        with patch("plane.bgtasks.service_gateway_webhook_task.requests.Session") as session:
+            service_gateway_event_sync(
+                event="issue",
+                verb="updated",
+                event_data={
+                    "id": "card-123",
+                    "category": "Coaching Card",
+                    "sg_event_id": None,
+                },
+            )
+
+        session.assert_not_called()
+
     def test_expired_ssl_error_has_user_friendly_message(self):
         error = requests.exceptions.SSLError(
             "certificate verify failed: certificate has expired"

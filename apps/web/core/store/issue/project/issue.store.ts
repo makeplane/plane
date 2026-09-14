@@ -77,7 +77,9 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
    * @param projectId
    */
   fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
-    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+    if (projectId) {
+      await this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+    }
   };
 
   /** */
@@ -108,6 +110,8 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
+      const project = this.rootIssueStore.projectMap?.[projectId];
+      if (project?.sport && params.layout === "kanban") params.coaching_cards = true;
       // call the fetch issues API with the params
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
@@ -149,6 +153,8 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
         groupId,
         subGroupId
       );
+      const project = this.rootIssueStore.projectMap?.[projectId];
+      if (project?.sport && params.layout === "kanban") params.coaching_cards = true;
       // call the fetch issues API with the params for next page in issues
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 

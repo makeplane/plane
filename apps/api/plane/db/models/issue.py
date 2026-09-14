@@ -147,6 +147,14 @@ class Issue(ProjectBaseModel):
     category = models.CharField(max_length=100, null=True, blank=True)
     opposition_team = models.JSONField(null=True, blank=True)
     sg_event_id = models.BigIntegerField(null=True, blank=True, db_index=True)
+    roster_player = models.ForeignKey(
+        "db.RosterPlayer",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="coaching_card_issues",
+    )
+    coaching_card_data = models.JSONField(null=True, blank=True)
 
     priority = models.CharField(
         max_length=30,

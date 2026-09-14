@@ -11,6 +11,8 @@ import type {
   TIssueServiceType,
   TIssuesResponse,
   TIssueSubIssues,
+  TCreateCoachingCardsPayload,
+  TCreateCoachingCardsResponse,
 } from "@plane/types";
 import { getIssuesShouldFallbackToServer } from "@plane/utils";
 // services
@@ -26,6 +28,18 @@ export class IssueService extends APIService {
 
   async createIssue(workspaceSlug: string, projectId: string, data: Partial<TIssue>): Promise<TIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createCoachingCards(
+    workspaceSlug: string,
+    projectId: string,
+    data: TCreateCoachingCardsPayload
+  ): Promise<TCreateCoachingCardsResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/create-coaching-cards/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

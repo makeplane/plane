@@ -15,6 +15,7 @@ import {
 import type { TCustomPlaylistAnnotation } from "@/components/annotation";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { IssueService } from "@/services/issue/issue.service";
 import type {
   TCustomPlaylist,
   TCustomPlaylistClip,
@@ -25,6 +26,8 @@ import { RosterService } from "@/services/roster.service";
 import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { CreateCardModal } from "./create-card-modal";
+import { buildCardPlaylists, buildCoachingCardPlaylists } from "./create-card-model";
+import type { CardFormValues } from "./create-card-model";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
 import { SgEventDetailsCard } from "./details-card";
 import { SgEventHeader, SgEventTitleBar } from "./header";
@@ -306,6 +309,7 @@ export const SgEventDetailPage = ({
   const { getProjectById } = useProject();
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const rosterService = useMemo(() => new RosterService(), []);
+  const issueService = useMemo(() => new IssueService(), []);
   const [tagViewMode, setTagViewMode] = useState<SgEventTagViewMode>(() => {
     if (defaultTagViewMode === "matrix" && !enableMatrixView) return "timeline";
     return defaultTagViewMode ?? (enableMatrixView ? "matrix" : "timeline");
@@ -556,11 +560,12 @@ export const SgEventDetailPage = ({
   const [createCardContext, setCreateCardContext] = useState<{
     playlists: TCustomPlaylist[];
     rows: SgTagRow[];
+    requestId: string;
   } | null>(null);
 
   const handleCreatePlaylistCard = useCallback(
     (playlists: TCustomPlaylist[]) => {
-      if (playlists.length > 0) setCreateCardContext({ playlists, rows: tagTypeRows });
+      if (playlists.length > 0) setCreateCardContext({ playlists, rows: tagTypeRows, requestId: uuidv4() });
     },
     [tagTypeRows]
   );
@@ -570,6 +575,7 @@ export const SgEventDetailPage = ({
       if (rows.length === 0) return;
       setCreateCardContext({
         rows,
+        requestId: uuidv4(),
         playlists: [
           {
             id: "selected-clips",
@@ -584,6 +590,36 @@ export const SgEventDetailPage = ({
       });
     },
     [resolvedCustomPlaylistEventId]
+  );
+
+  const handleCreateCards = useCallback(
+    async (values: CardFormValues) => {
+      if (!createCardContext || !resolvedWorkItemId) {
+        throw new Error("The source event is unavailable.");
+      }
+
+      const groups = buildCardPlaylists(createCardContext.playlists, createCardContext.rows);
+      const playlists = buildCoachingCardPlaylists(groups, values.playlists);
+      if (playlists.length === 0) throw new Error("At least one staged tag is required.");
+
+      const response = await issueService.createCoachingCards(workspaceSlug, projectId, {
+        request_id: createCardContext.requestId,
+        source_issue_id: resolvedWorkItemId,
+        player_ids: values.playerIds,
+        feedback: values.feedback,
+        progress_status: values.progressStatus,
+        sport_label: resolvedSport,
+        playlists,
+      });
+
+      const cardCount = response.cards.length;
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: cardCount === 1 ? "Coaching card created" : "Coaching cards created",
+        message: `${cardCount} card${cardCount === 1 ? "" : "s"} added to the New column on the coaching board.`,
+      });
+    },
+    [createCardContext, issueService, projectId, resolvedSport, resolvedWorkItemId, workspaceSlug]
   );
 
   const handleCreateCustomPlaylist = useCallback(
@@ -1299,6 +1335,7 @@ export const SgEventDetailPage = ({
           isRosterLoading={isRosterLoading}
           hasRosterError={Boolean(rosterError)}
           onRetryRoster={() => void mutateRoster().catch(() => undefined)}
+          onSubmit={handleCreateCards}
           onClose={() => setCreateCardContext(null)}
           sportLabel={resolvedSport}
         />

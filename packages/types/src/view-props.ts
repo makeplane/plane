@@ -97,10 +97,11 @@ export type TIssueParams =
   | "per_page"
   | "issue_type"
   | "layout"
+  | "coaching_cards"
   | "expand"
   | "filters";
 
-export type TCalendarLayouts = "month"  | "day";
+export type TCalendarLayouts = "month" | "day";
 
 /**
  * Keys for the work item filter properties

@@ -122,6 +122,7 @@ from .issue.base import (
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
 )
+from .issue.coaching_card import CoachingCardBulkCreateEndpoint
 
 from .issue.activity import IssueActivityEndpoint
 
