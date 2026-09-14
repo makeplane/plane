@@ -4,13 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
-import { GOD_MODE_URL } from "@plane/constants";
+import { BRAND_NAME, GOD_MODE_URL } from "@plane/constants";
 // assets
-import GradientLogo from "@/app/assets/auth/gradient-logo.webp?url";
 import GradientBgLogo from "@/app/assets/auth/gradient-bg-logo.webp?url";
 import DefaultLayout from "@/layouts/default-layout";
-import { PlaneLockup } from "@plane/propel/icons";
+import { BrandMark } from "@/components/common/brand-mark";
 import { Button } from "@plane/propel/button";
 
 export function InstanceNotReady() {
@@ -33,13 +31,13 @@ export function InstanceNotReady() {
         {/* Main content */}
         <div className="flex h-full w-full flex-col items-center px-8 pt-6 pb-10">
           <div className="sticky top-0 flex w-full shrink-0 items-center justify-between gap-6">
-            <PlaneLockup height={20} width={95} className="text-primary" />
+            <BrandMark className="h-5 text-primary" />
           </div>
           <div className="flex h-full w-full flex-col items-center justify-center gap-7">
             <div className="flex flex-col items-center gap-11">
-              <img src={GradientLogo} className="h-24 w-40 object-contain" alt="Plane Logo" />
+              <BrandMark className="h-24 text-primary" />
               <div className="flex max-w-124 flex-col items-center gap-3">
-                <h1 className="text-h2-semibold text-primary">Welcome to Plane</h1>
+                <h1 className="text-h2-semibold text-primary">Welcome to {BRAND_NAME}</h1>
                 <p className="text-center text-body-md-regular text-secondary">
                   Set up your instance and create your first workspace to begin managing projects and work.
                 </p>

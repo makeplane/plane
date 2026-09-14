@@ -5,6 +5,7 @@
  */
 
 import Link from "next/link";
+import { BRAND_SHORT_NAME } from "@plane/constants";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
@@ -27,7 +28,7 @@ export function IssueCreatorDisplay(props: TIssueUser) {
   return (
     <>
       {customUserName ? (
-        <span className="font-medium text-primary">{customUserName || "Plane"}</span>
+        <span className="font-medium text-primary">{customUserName || BRAND_SHORT_NAME}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}

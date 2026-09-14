@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { BRAND_SHORT_NAME } from "@plane/constants";
 // types
 import type { TWorkspaceBaseActivity } from "@plane/types";
 // store hooks
@@ -29,7 +30,7 @@ export const User = observer(function User(props: TUser) {
   return (
     <>
       {customUserName || actorDetail?.display_name?.includes("-intake") ? (
-        <span className="font-medium text-primary">{customUserName || "Plane"}</span>
+        <span className="font-medium text-primary">{customUserName || BRAND_SHORT_NAME}</span>
       ) : (
         <Link
           href={`/${workspaceDetail?.slug}/profile/${actorDetail?.id}`}

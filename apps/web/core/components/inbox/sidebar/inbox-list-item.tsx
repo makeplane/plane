@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { BRAND_SHORT_NAME } from "@plane/constants";
 import { Row } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // components
@@ -123,8 +124,8 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
               )}
             </div>
             {/* created by */}
-            {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
-              <Avatar alt="Plane" fallback="P" size="xs" />
+            {createdByDetails?.is_bot ? (
+              <Avatar alt={BRAND_SHORT_NAME} fallback={BRAND_SHORT_NAME.slice(0, 1)} size="xs" />
             ) : createdByDetails ? (
               <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
             ) : null}

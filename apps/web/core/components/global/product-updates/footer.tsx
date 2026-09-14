@@ -5,71 +5,57 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-// ui
-import { getButtonStyling } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
-// helpers
-import { cn } from "@plane/utils";
+import { BRAND_URL, DOCUMENTATION_URL, FEEDBACK_URL, SUPPORT_EMAIL, SUPPORT_URL } from "@plane/constants";
+// components
+import { BrandMark } from "@/components/common/brand-mark";
+// hooks
+import { useInstance } from "@/hooks/store/use-instance";
 
 export function ProductUpdatesFooter() {
   const { t } = useTranslation();
+  const { config } = useInstance();
+  const supportHref = SUPPORT_URL || (SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}` : "");
+  const changelogUrl = config?.instance_changelog_url || "";
+  const links = [
+    DOCUMENTATION_URL ? { label: t("docs"), href: DOCUMENTATION_URL } : null,
+    changelogUrl ? { label: t("full_changelog"), href: changelogUrl } : null,
+    supportHref ? { label: t("support"), href: supportHref } : null,
+    FEEDBACK_URL ? { label: t("power_k.help_actions.report_bug"), href: FEEDBACK_URL } : null,
+  ].filter((link): link is { label: string; href: string } => link !== null);
+
+  if (links.length === 0 && !BRAND_URL) return null;
+
   return (
     <div className="m-6 mb-4 flex flex-shrink-0 items-center justify-between gap-4">
       <div className="flex items-center gap-2">
-        <a
-          href="https://go.plane.so/p-docs"
-          target="_blank"
-          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
-          rel="noreferrer"
-        >
-          {t("docs")}
-        </a>
-        <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-          <circle cx={1} cy={1} r={1} />
-        </svg>
-        <a
-          href="https://go.plane.so/p-changelog"
-          target="_blank"
-          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
-          rel="noreferrer"
-        >
-          {t("full_changelog")}
-        </a>
-        <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-          <circle cx={1} cy={1} r={1} />
-        </svg>
-        <a
-          href="mailto:support@plane.so"
-          target="_blank"
-          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
-          rel="noreferrer"
-        >
-          {t("support")}
-        </a>
-        <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-          <circle cx={1} cy={1} r={1} />
-        </svg>
-        <a
-          href="https://forum.plane.so"
-          target="_blank"
-          className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
-          rel="noreferrer"
-        >
-          Forum
-        </a>
+        {links.map((link, index) => (
+          <span key={link.href} className="flex items-center gap-2">
+            {index > 0 && (
+              <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
+                <circle cx={1} cy={1} r={1} />
+              </svg>
+            )}
+            <a
+              href={link.href}
+              target="_blank"
+              className="text-13 text-secondary underline-offset-1 outline-none hover:text-primary hover:underline"
+              rel="noreferrer"
+            >
+              {link.label}
+            </a>
+          </span>
+        ))}
       </div>
-      <a
-        href="https://plane.so/pages"
-        target="_blank"
-        className={cn(
-          getButtonStyling("secondary", "base"),
-          "flex items-center gap-1.5 text-center font-medium underline-offset-2 outline-none hover:underline"
-        )}
-        rel="noreferrer"
-      >
-        <PlaneLogo className="h-4 w-auto text-primary" />
-        {t("powered_by_plane_pages")}
-      </a>
+      {BRAND_URL && (
+        <a
+          href={BRAND_URL}
+          target="_blank"
+          className="text-13 font-medium text-secondary underline-offset-2 outline-none hover:text-primary hover:underline"
+          rel="noreferrer"
+        >
+          <BrandMark className="h-3 text-secondary" />
+        </a>
+      )}
     </div>
   );
 }

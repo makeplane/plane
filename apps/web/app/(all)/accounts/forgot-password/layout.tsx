@@ -5,10 +5,11 @@
  */
 
 import { Outlet } from "react-router";
+import { BRAND_NAME } from "@plane/constants";
 import type { Route } from "./+types/layout";
 
 export default function ForgotPasswordLayout() {
   return <Outlet />;
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "Forgot Password - Plane" }];
+export const meta: Route.MetaFunction = () => [{ title: `Forgot Password - ${BRAND_NAME}` }];

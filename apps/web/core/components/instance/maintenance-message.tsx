@@ -4,40 +4,34 @@
  * See the LICENSE file for details.
  */
 
+import { BRAND_NAME, SUPPORT_EMAIL, SUPPORT_URL } from "@plane/constants";
+
 export function MaintenanceMessage() {
-  const linkMap = [
-    {
-      key: "mail_to",
-      label: "Contact Support",
-      value: "mailto:support@plane.so",
-    },
-  ];
+  const supportHref = SUPPORT_URL || (SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}` : "");
 
   return (
     <>
       <div className="flex flex-col gap-2.5">
         <h1 className="text-left text-18 font-semibold text-primary">
-          &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
+          &#x1F6A7; Looks like {BRAND_NAME} didn&apos;t start up correctly!
         </h1>
         <span className="text-left text-14 font-medium text-secondary">
           Some services might have failed to start. Please check your container logs to identify and resolve the issue.
-          If you&apos;re stuck, reach out to our support team for more help.
+          If you&apos;re stuck, contact your administrator for more help.
         </span>
       </div>
-      <div className="mt-1 flex items-center justify-start gap-6">
-        {linkMap.map((link) => (
-          <div key={link.key}>
-            <a
-              href={link.value}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-13 text-accent-primary hover:underline"
-            >
-              {link.label}
-            </a>
-          </div>
-        ))}
-      </div>
+      {supportHref && (
+        <div className="mt-1 flex items-center justify-start gap-6">
+          <a
+            href={supportHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-13 text-accent-primary hover:underline"
+          >
+            Contact Support
+          </a>
+        </div>
+      )}
     </>
   );
 }

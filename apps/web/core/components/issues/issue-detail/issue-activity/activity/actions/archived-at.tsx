@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { ArchiveOutline, RefreshOutline } from "@makeplane/propel/icons";
+import { BRAND_SHORT_NAME } from "@plane/constants";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -36,7 +37,7 @@ export const IssueArchivedAtActivity = observer(function IssueArchivedAtActivity
       }
       activityId={activityId}
       ends={ends}
-      customUserName={activity.new_value === "archive" ? "Plane" : undefined}
+      customUserName={activity.new_value === "archive" ? BRAND_SHORT_NAME : undefined}
     >
       {activity.new_value === "restore" ? "restored the work item" : "archived the work item"}.
     </IssueActivityBlockComponent>

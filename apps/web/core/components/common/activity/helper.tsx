@@ -5,6 +5,7 @@
  */
 
 import type { FC, ReactNode } from "react";
+import { BRAND_SHORT_NAME } from "@plane/constants";
 import {
   AlignLeftOutline,
   ArchiveOutline,
@@ -102,7 +103,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
     case "archived_at":
       return {
         message: newValue === "restore" ? "restored the project" : "archived the project",
-        customUserName: newValue === "archive" ? "Plane" : undefined,
+        customUserName: newValue === "archive" ? BRAND_SHORT_NAME : undefined,
       };
     case "name":
       return {

@@ -5,6 +5,7 @@
  */
 
 import { useTheme } from "next-themes";
+import { STATUS_URL, SUPPORT_EMAIL, SUPPORT_URL } from "@plane/constants";
 // plane imports
 import { Button } from "@plane/propel/button";
 // assets
@@ -12,24 +13,6 @@ import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode
 import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
-
-const linkMap = [
-  {
-    key: "mail_to",
-    label: "Contact Support",
-    value: "mailto:support@plane.so",
-  },
-  {
-    key: "status",
-    label: "Status Page",
-    value: "https://status.plane.so/",
-  },
-  {
-    key: "twitter_handle",
-    label: "@planepowers",
-    value: "https://x.com/planepowers",
-  },
-];
 
 // Production Error Component
 interface ProdErrorComponentProps {
@@ -39,6 +22,11 @@ interface ProdErrorComponentProps {
 export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
   // hooks
   const { resolvedTheme } = useTheme();
+  const supportHref = SUPPORT_URL || (SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}` : "");
+  const linkMap = [
+    supportHref ? { key: "support", label: "Contact Support", value: supportHref } : null,
+    STATUS_URL ? { key: "status", label: "Status Page", value: STATUS_URL } : null,
+  ].filter((link): link is { key: string; label: string; value: string } => link !== null);
 
   // derived values
   const maintenanceModeImage = resolvedTheme === "dark" ? maintenanceModeDarkModeImage : maintenanceModeLightModeImage;
@@ -64,20 +52,22 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
             </span>
           </div>
 
-          <div className="mt-1 flex items-center justify-start gap-6">
-            {linkMap.map((link) => (
-              <div key={link.key}>
-                <a
-                  href={link.value}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-13 text-accent-primary hover:underline"
-                >
-                  {link.label}
-                </a>
-              </div>
-            ))}
-          </div>
+          {linkMap.length > 0 && (
+            <div className="mt-1 flex items-center justify-start gap-6">
+              {linkMap.map((link) => (
+                <div key={link.key}>
+                  <a
+                    href={link.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-13 text-accent-primary hover:underline"
+                  >
+                    {link.label}
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="flex items-center justify-start gap-6">
             <Button variant="primary" size="lg" onClick={onGoHome}>

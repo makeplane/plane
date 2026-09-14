@@ -16,6 +16,7 @@ import {
   ViewsOutline,
 } from "@makeplane/propel/icons";
 // plane imports
+import { BRAND_NAME } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
@@ -66,10 +67,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       role: formData.role,
     };
     try {
-      await Promise.all([
-        updateUserProfile(profileUpdatePayload),
-        // totalSteps > 2 && stepChange({ profile_complete: true }),
-      ]);
+      [await updateUserProfile(profileUpdatePayload)];
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -99,7 +97,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What's your role?" description="Let's set up Plane for how you work." />
+      <CommonOnboardingHeader title="What's your role?" description={`Let's set up ${BRAND_NAME} for how you work.`} />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
         <p className="text-body-sm-semibold text-placeholder">Select one</p>

@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { ChatOutline, DocumentationOutline, Github, RocketOutline } from "@makeplane/propel/icons";
+import { DocumentationOutline, MessageSupportOutline, RocketOutline } from "@makeplane/propel/icons";
+import { DOCUMENTATION_URL, FEEDBACK_URL } from "@plane/constants";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -31,29 +32,16 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "open_plane_documentation",
+      id: "open_documentation",
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.open_plane_documentation",
       icon: DocumentationOutline,
       action: () => {
-        window.open("https://docs.plane.so/", "_blank", "noopener,noreferrer");
+        window.open(DOCUMENTATION_URL, "_blank", "noopener,noreferrer");
       },
       isEnabled: () => true,
-      isVisible: () => true,
-      closeOnSelect: true,
-    },
-    {
-      id: "join_forum",
-      type: "action",
-      group: "help",
-      i18n_title: "power_k.help_actions.join_forum",
-      icon: ChatOutline,
-      action: () => {
-        window.open("https://forum.plane.so", "_blank", "noopener,noreferrer");
-      },
-      isEnabled: () => true,
-      isVisible: () => true,
+      isVisible: () => Boolean(DOCUMENTATION_URL),
       closeOnSelect: true,
     },
     {
@@ -61,12 +49,12 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.report_bug",
-      icon: Github,
+      icon: MessageSupportOutline,
       action: () => {
-        window.open("https://github.com/makeplane/plane/issues/new/choose", "_blank", "noopener,noreferrer");
+        window.open(FEEDBACK_URL, "_blank", "noopener,noreferrer");
       },
       isEnabled: () => true,
-      isVisible: () => true,
+      isVisible: () => Boolean(FEEDBACK_URL),
       closeOnSelect: true,
     },
   ];

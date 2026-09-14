@@ -5,6 +5,7 @@
  */
 
 import { useEffect } from "react";
+import { BRAND_NAME } from "@plane/constants";
 
 type PageHeadTitleProps = {
   title?: string;
@@ -16,7 +17,7 @@ export function PageHead(props: PageHeadTitleProps) {
 
   useEffect(() => {
     if (title) {
-      document.title = title ?? "Plane | Simple, extensible, open-source project management tool.";
+      document.title = title ?? BRAND_NAME;
     }
   }, [title]);
 

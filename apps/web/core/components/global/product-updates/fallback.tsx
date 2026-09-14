@@ -8,16 +8,11 @@ import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
 type TProductUpdatesFallbackProps = {
   description: string;
-  variant: "cloud" | "self-managed";
+  changelogUrl?: string;
 };
 
 export function ProductUpdatesFallback(props: TProductUpdatesFallbackProps) {
-  const { description, variant } = props;
-  // derived values
-  const changelogUrl =
-    variant === "cloud"
-      ? "https://plane.so/changelog?category=cloud"
-      : "https://plane.so/changelog?category=self-hosted";
+  const { description, changelogUrl } = props;
 
   return (
     <div className="py-8">
@@ -25,13 +20,17 @@ export function ProductUpdatesFallback(props: TProductUpdatesFallbackProps) {
         assetKey="changelog"
         description={description}
         align="center"
-        actions={[
-          {
-            label: "Go to changelog",
-            variant: "primary",
-            onClick: () => window.open(changelogUrl, "_blank"),
-          },
-        ]}
+        actions={
+          changelogUrl
+            ? [
+                {
+                  label: "Go to changelog",
+                  variant: "primary",
+                  onClick: () => window.open(changelogUrl, "_blank"),
+                },
+              ]
+            : []
+        }
       />
     </div>
   );
