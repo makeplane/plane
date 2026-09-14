@@ -86,13 +86,20 @@ export const useIssueLayoutKeyboardNav = (props: Props) => {
     };
   }, [keyboardNav, managers]);
 
-  // fingerprint the rendered order so the store is fed on real changes only;
-  // the click-triggered scroll runs after `setOrderedEntities` so the cursor
-  // reset below wins whenever the visible list itself changes
+  // fingerprint the rendered order so the store is fed on real changes only.
+  // A regrouping or refilter can move the focused entity without removing it,
+  // and the click-triggered scroll runs after `setOrderedEntities`, so the
+  // cursor is re-pointed at the same entity rather than blindly reset.
   const entityKey = entities.map((entity) => `${entity.groupID}:${entity.entityID}`).join("|");
+  const entityKeyRef = useRef(entityKey);
+  const entitiesRef = useRef(entities);
+  entitiesRef.current = entities;
   useEffect(() => {
-    keyboardNav.setOrderedEntities(entities);
-    keyboardNav.resetCursor();
+    if (entityKeyRef.current === entityKey) return;
+    entityKeyRef.current = entityKey;
+    const focusedEntity = keyboardNav.getFocusedEntity();
+    keyboardNav.setOrderedEntities(entitiesRef.current);
+    if (focusedEntity) keyboardNav.focusEntity(focusedEntity.entityID);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyboardNav, entityKey]);
 };

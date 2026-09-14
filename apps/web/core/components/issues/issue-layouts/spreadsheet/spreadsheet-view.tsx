@@ -22,6 +22,7 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { useProject } from "@/hooks/store/use-project";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
@@ -44,6 +45,33 @@ type Props = {
   isWorkspaceLevel?: boolean;
   isEpic?: boolean;
 };
+
+type TSpreadsheetKeyboardNavBridgeProps = {
+  issueIds: string[];
+  containerRef: React.MutableRefObject<HTMLTableElement | null>;
+  openEntity: (entity: { entityID: string }) => void;
+  openInNewTab: (entity: { entityID: string }) => void;
+  selectionHelpers: TSelectionHelper;
+};
+
+/**
+ * @description Registers the spreadsheet layout with the keyboard-nav store.
+ * A component rather than an inline call because the select-group hands its
+ * selection helpers to a render prop, where hooks cannot run.
+ */
+const SpreadsheetKeyboardNavBridge = observer(function SpreadsheetKeyboardNavBridge(
+  props: TSpreadsheetKeyboardNavBridgeProps
+) {
+  const { issueIds, containerRef, openEntity, openInNewTab, selectionHelpers } = props;
+  useIssueLayoutKeyboardNav({
+    entities: issueIds.map((id) => ({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP })),
+    containerRef: containerRef as React.MutableRefObject<HTMLElement | null>,
+    openEntity,
+    openInNewTab,
+    selectionHelpers,
+  });
+  return null;
+});
 
 export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
@@ -132,16 +160,15 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
         disabled={!isBulkOperationsEnabled || isEpic}
       >
         {(helpers) => {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          useIssueLayoutKeyboardNav({
-            entities: (issueIds ?? []).map((id) => ({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP })),
-            containerRef,
-            openEntity: (entity) => buildPeekIssue(entity.entityID),
-            openInNewTab: (entity) => openIssueInNewTab(entity.entityID),
-            selectionHelpers: helpers,
-          });
           return (
             <>
+              <SpreadsheetKeyboardNavBridge
+                issueIds={issueIds}
+                containerRef={containerRef}
+                openEntity={(entity) => buildPeekIssue(entity.entityID)}
+                openInNewTab={(entity) => openIssueInNewTab(entity.entityID)}
+                selectionHelpers={helpers}
+              />
               <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
                 <SpreadsheetTable
                   displayProperties={displayProperties}

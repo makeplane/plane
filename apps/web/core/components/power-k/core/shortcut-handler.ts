@@ -103,11 +103,17 @@ export class ShortcutHandler {
       return;
     }
 
-    // Handle single key shortcuts and sequences (c, p, gm, op, etc.)
-    // Control keys are never part of a sequence: drop any pending prefix so
-    // the key after Escape/Enter/an arrow is never silently swallowed.
+    // Named keys (Enter, Escape, arrows, function keys) can never extend a
+    // sequence, so any pending prefix is dropped. They may still carry a
+    // binding of their own - Enter opens the focused work item - so the
+    // registered shortcut is dispatched before the key is discarded.
     if (isSequenceTerminator(e)) {
       this.resetSequence();
+      const command = this.registry.findByShortcut(this.getContext(), key);
+      if (command && this.canExecuteCommand(command)) {
+        e.preventDefault();
+        this.executeCommand(command);
+      }
       return;
     }
     this.handleKeyOrSequence(e, key);

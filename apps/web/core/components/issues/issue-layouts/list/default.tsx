@@ -32,6 +32,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // plane web hooks
@@ -63,6 +64,25 @@ export interface IList {
   collapsedGroups: TIssueKanbanFilters;
   isEpic?: boolean;
 }
+
+type TKeyboardNavBridgeProps = {
+  entities: { entityID: string; groupID: string }[];
+  containerRef: React.MutableRefObject<HTMLElement | null>;
+  openEntity: (entity: { entityID: string }) => void;
+  openInNewTab: (entity: { entityID: string }) => void;
+  selectionHelpers: TSelectionHelper;
+};
+
+/**
+ * @description Registers the list layout with the keyboard-nav store. This is a
+ * component rather than an inline call because the select-group hands its
+ * selection helpers to a render prop, and hooks cannot run inside one.
+ */
+const ListKeyboardNavBridge = observer(function ListKeyboardNavBridge(props: TKeyboardNavBridgeProps) {
+  const { entities, containerRef, openEntity, openInNewTab, selectionHelpers } = props;
+  useIssueLayoutKeyboardNav({ entities, containerRef, openEntity, openInNewTab, selectionHelpers });
+  return null;
+});
 
 export const List = observer(function List(props: IList) {
   const {
@@ -185,16 +205,15 @@ export const List = observer(function List(props: IList) {
                 "noopener,noreferrer"
               );
             };
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            useIssueLayoutKeyboardNav({
-              entities: keyboardNavEntities,
-              containerRef,
-              openEntity: (entity) => openWorkItem(entity, workspaceSlug?.toString() ?? ""),
-              openInNewTab: (entity) => openWorkItemInNewTab(entity, workspaceSlug?.toString() ?? ""),
-              selectionHelpers: helpers,
-            });
             return (
               <>
+                <ListKeyboardNavBridge
+                  entities={keyboardNavEntities}
+                  containerRef={containerRef}
+                  openEntity={(entity) => openWorkItem(entity, workspaceSlug?.toString() ?? "")}
+                  openInNewTab={(entity) => openWorkItemInNewTab(entity, workspaceSlug?.toString() ?? "")}
+                  selectionHelpers={helpers}
+                />
                 <div
                   ref={containerRef}
                   className="vertical-scrollbar relative scrollbar-lg size-full overflow-auto bg-surface-1"
