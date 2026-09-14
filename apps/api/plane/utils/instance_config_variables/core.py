@@ -221,21 +221,14 @@ llm_config_variables = [
         "is_encrypted": True,
     },
     {
-        "key": "LLM_PROVIDER",
-        "value": os.environ.get("LLM_PROVIDER", "openai"),
+        "key": "LLM_BASE_URL",
+        "value": os.environ.get("LLM_BASE_URL", ""),
         "category": "AI",
         "is_encrypted": False,
     },
     {
         "key": "LLM_MODEL",
         "value": os.environ.get("LLM_MODEL", "gpt-4o-mini"),
-        "category": "AI",
-        "is_encrypted": False,
-    },
-    # Deprecated, use LLM_MODEL
-    {
-        "key": "GPT_ENGINE",
-        "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
         "category": "AI",
         "is_encrypted": False,
     },
