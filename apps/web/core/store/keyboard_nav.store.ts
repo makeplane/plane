@@ -20,6 +20,8 @@ export type TKeyboardNavEntity = {
  */
 export type TKeyboardNavManagers = {
   openEntity: (entity: TKeyboardNavEntity) => void;
+  // opens the work item at its own URL (browser tab), not inside the peek panel
+  openInNewTab: (entity: TKeyboardNavEntity) => void;
   toggleSelection: (entity: TKeyboardNavEntity) => void;
   scrollToEntity: (entity: TKeyboardNavEntity) => void;
 };
@@ -50,6 +52,7 @@ export type IKeyboardNavStore = {
   openFocusedEntity: () => void;
   scrollFocusedEntity: () => void;
   toggleFocusedSelection: () => void;
+  openFocusedEntityInNewTab: () => void;
   resetCursor: () => void;
   clear: () => void;
 };
@@ -184,6 +187,14 @@ export class KeyboardNavStore implements IKeyboardNavStore {
   toggleFocusedSelection = (): void => {
     const entity = this.getFocusedEntity();
     if (entity) this.managers?.toggleSelection(entity);
+  };
+
+  /**
+   * @description open the focused entity in a new browser tab
+   */
+  openFocusedEntityInNewTab = (): void => {
+    const entity = this.getFocusedEntity();
+    if (entity) this.managers?.openInNewTab(entity);
   };
 
   /**

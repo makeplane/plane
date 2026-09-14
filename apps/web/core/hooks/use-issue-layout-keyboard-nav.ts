@@ -18,6 +18,8 @@ type Props = {
   containerRef: React.MutableRefObject<HTMLElement | null>;
   // opens the work item peek for an entity
   openEntity: (entity: TKeyboardNavEntity) => void;
+  // opens the work item at its own URL in a new browser tab
+  openInNewTab: (entity: TKeyboardNavEntity) => void;
   // selection helpers from the layout's MultipleSelectGroup (may change identity every render)
   selectionHelpers: TSelectionHelper;
 };
@@ -33,21 +35,24 @@ type Props = {
  * values through refs instead of closing over render-scoped objects.
  */
 export const useIssueLayoutKeyboardNav = (props: Props) => {
-  const { entities, containerRef, openEntity, selectionHelpers } = props;
+  const { entities, containerRef, openEntity, openInNewTab, selectionHelpers } = props;
   // store hooks
   const keyboardNav = useKeyboardNavStore();
   // refs
   const selectionHelpersRef = useRef(selectionHelpers);
   const openEntityRef = useRef(openEntity);
+  const openInNewTabRef = useRef(openInNewTab);
 
   useEffect(() => {
     selectionHelpersRef.current = selectionHelpers;
     openEntityRef.current = openEntity;
-  }, [openEntity, selectionHelpers]);
+    openInNewTabRef.current = openInNewTab;
+  }, [openEntity, openInNewTab, selectionHelpers]);
 
   const managers = useMemo(
     () => ({
       openEntity: (entity: TKeyboardNavEntity) => openEntityRef.current(entity),
+      openInNewTab: (entity: TKeyboardNavEntity) => openInNewTabRef.current(entity),
       toggleSelection: (entity: TKeyboardNavEntity) => {
         const helpers = selectionHelpersRef.current;
         if (helpers.isSelectionDisabled) return;

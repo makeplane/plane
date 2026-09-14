@@ -12,6 +12,7 @@ import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/cons
 // types
 import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes, EIssueServiceType } from "@plane/types";
+import { generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
@@ -65,7 +66,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const containerRef = useRef<HTMLTableElement | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, getProjectIdentifierById } = useProject();
   // the peek builder reads issue records, so it must use the same store as the
   // layout (project/team/workspace/epic) - the default store is a different map
   const { issueMap } = useIssuesStore();
@@ -86,6 +87,27 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
       nestingLevel: 0,
       isArchived: !!issue.archived_at,
     });
+  };
+
+  // `ctrl/cmd + enter`: the work item's own URL in a browser tab
+  const openIssueInNewTab = (issueId: string) => {
+    const issue = issueMap[issueId];
+    const projectIdentifier = issue?.project_id ? getProjectIdentifierById(issue.project_id) : undefined;
+    if (!workspaceSlug || !issue?.project_id || !projectIdentifier) return;
+    window.open(
+      window.location.origin +
+        generateWorkItemLink({
+          workspaceSlug: workspaceSlug.toString(),
+          projectId: issue.project_id,
+          issueId: issue.id,
+          projectIdentifier,
+          sequenceId: issue.sequence_id,
+          isArchived: !!issue.archived_at,
+          isEpic,
+        }),
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
@@ -115,6 +137,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
             entities: (issueIds ?? []).map((id) => ({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP })),
             containerRef,
             openEntity: (entity) => buildPeekIssue(entity.entityID),
+            openInNewTab: (entity) => openIssueInNewTab(entity.entityID),
             selectionHelpers: helpers,
           });
           return (

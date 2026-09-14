@@ -11,6 +11,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
+import { generateWorkItemLink } from "@plane/utils";
 // types
 import type {
   GroupByColumnTypes,
@@ -28,6 +29,7 @@ import { EIssueServiceType } from "@plane/types";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
 // plane web components
@@ -90,6 +92,7 @@ export const List = observer(function List(props: IList) {
   const { workspaceSlug } = useParams();
   // store hooks
   const { setPeekIssue } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const { getProjectIdentifierById } = useProject();
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
@@ -162,11 +165,32 @@ export const List = observer(function List(props: IList) {
                 isArchived: !!issue.archived_at,
               });
             };
+            // `ctrl/cmd + enter`: the work item's own URL in a browser tab
+            const openWorkItemInNewTab = (entity: { entityID: string }, slug: string) => {
+              const issue = issuesMap[entity.entityID];
+              const projectIdentifier = issue?.project_id ? getProjectIdentifierById(issue.project_id) : undefined;
+              if (!slug || !issue?.project_id || !projectIdentifier) return;
+              window.open(
+                window.location.origin +
+                  generateWorkItemLink({
+                    workspaceSlug: slug,
+                    projectId: issue.project_id,
+                    issueId: issue.id,
+                    projectIdentifier,
+                    sequenceId: issue.sequence_id,
+                    isArchived: !!issue.archived_at,
+                    isEpic,
+                  }),
+                "_blank",
+                "noopener,noreferrer"
+              );
+            };
             // eslint-disable-next-line react-hooks/rules-of-hooks
             useIssueLayoutKeyboardNav({
               entities: keyboardNavEntities,
               containerRef,
               openEntity: (entity) => openWorkItem(entity, workspaceSlug?.toString() ?? ""),
+              openInNewTab: (entity) => openWorkItemInNewTab(entity, workspaceSlug?.toString() ?? ""),
               selectionHelpers: helpers,
             });
             return (
