@@ -27,18 +27,11 @@ export interface IInstance {
   instance_name: string | undefined;
   whitelist_emails: string | undefined;
   instance_id: string | undefined;
-  license_key: string | undefined;
   current_version: string | undefined;
-  latest_version: string | undefined;
-  last_checked_at: string | undefined;
-  namespace: string | undefined;
-  is_telemetry_enabled: boolean;
-  is_support_required: boolean;
   is_activated: boolean;
   is_setup_done: boolean;
   is_signup_screen_visited: boolean;
   user_count: number | undefined;
-  is_verified: boolean;
   created_by: string | undefined;
   updated_by: string | undefined;
   workspaces_exist: boolean;

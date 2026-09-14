@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
-from enum import Enum
-
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -15,33 +12,16 @@ from plane.db.models import BaseModel
 ROLE_CHOICES = ((20, "Admin"),)
 
 
-class InstanceEdition(Enum):
-    PLANE_COMMUNITY = "PLANE_COMMUNITY"
-
-
 class Instance(BaseModel):
     # General information
     instance_name = models.CharField(max_length=255)
     whitelist_emails = models.TextField(blank=True, null=True)
     instance_id = models.CharField(max_length=255, unique=True)
     current_version = models.CharField(max_length=255)
-    latest_version = models.CharField(max_length=255, null=True, blank=True)
-    edition = models.CharField(max_length=255, default=InstanceEdition.PLANE_COMMUNITY.value)
-    domain = models.TextField(blank=True)
-    # Instance specifics
-    last_checked_at = models.DateTimeField()
-    namespace = models.CharField(max_length=255, blank=True, null=True)
-    # telemetry and support
-    is_telemetry_enabled = models.BooleanField(default=True)
-    is_support_required = models.BooleanField(default=True)
     # is setup done
     is_setup_done = models.BooleanField(default=False)
     # signup screen
     is_signup_screen_visited = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)
-    is_test = models.BooleanField(default=False)
-    # field for validating if the current version is deprecated
-    is_current_version_deprecated = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Instance"
@@ -59,7 +39,6 @@ class InstanceAdmin(BaseModel):
     )
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
     role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
-    is_verified = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["instance", "user"]

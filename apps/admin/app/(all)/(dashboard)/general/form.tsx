@@ -5,12 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { Controller, useForm } from "react-hook-form";
-import { UsageOutline } from "@makeplane/propel/icons";
+import { useForm } from "react-hook-form";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import { Input } from "@makeplane/propel/components/input";
-import { Switch } from "@makeplane/propel/components/switch";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
@@ -36,7 +34,6 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   } = useForm<Partial<IInstance>>({
     defaultValues: {
       instance_name: instance?.instance_name,
-      is_telemetry_enabled: instance?.is_telemetry_enabled,
     },
   });
 
@@ -91,43 +88,6 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
             <div className="w-full">
               <Input id="instance_id" name="instance_id" type="text" size="lg" value={instance.instance_id} disabled />
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        <div className="border-b border-subtle pb-1.5 text-16 font-medium text-primary">Telemetry</div>
-        <div className="flex items-center gap-14">
-          <div className="flex grow items-center gap-4">
-            <div className="shrink-0">
-              <div className="flex size-11 items-center justify-center rounded-lg bg-layer-1">
-                <UsageOutline className="size-5 text-tertiary" />
-              </div>
-            </div>
-            <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
-              <div className="text-11 leading-5 font-regular text-tertiary">
-                No PII is collected.This anonymized data is used to understand how you use Plane and build new features
-                in line with{" "}
-                <a
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  className="text-accent-primary hover:underline"
-                  rel="noreferrer"
-                >
-                  our Telemetry Policy.
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
-            <Controller
-              control={control}
-              name="is_telemetry_enabled"
-              render={({ field: { value, onChange } }) => (
-                <Switch checked={value ?? false} onCheckedChange={onChange} size="sm" disabled={isSubmitting} />
-              )}
-            />
           </div>
         </div>
       </div>

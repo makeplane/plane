@@ -319,9 +319,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             return Response(
                 {
                     "pql": (
-                        "PQL and structured filters are not supported on this Plane edition. "
-                        "Remove the pql/filters parameter and filter results client-side, or use "
-                        "a Plane edition that supports work item query filtering."
+                        "PQL and structured filters are not supported by this private deployment. "
+                        "Remove the pql/filters parameter and filter results client-side."
                     ),
                     "unsupported_parameters": unsupported_filters,
                 },
