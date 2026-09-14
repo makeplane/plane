@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { EUserPermissions, IJiraMetadata } from "@plane/types";
+import type { EUserPermissions } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
@@ -110,32 +110,9 @@ export const USER_ACTIVITY = (params: { cursor?: string }) => `USER_ACTIVITY_${p
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 
-// integrations
-export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
-export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
-  `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
-
-export const JIRA_IMPORTER_DETAIL = (workspaceSlug: string, params: IJiraMetadata) => {
-  const { api_token, cloud_hostname, email, project_key } = params;
-
-  return `JIRA_IMPORTER_DETAIL_${workspaceSlug.toUpperCase()}_${api_token}_${cloud_hostname}_${email}_${project_key}`;
-};
-
-//import-export
-export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
-  `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
-
 //export
 export const EXPORT_SERVICES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
   `EXPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
-
-// github-importer
-export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>
-  `GITHUB_REPO_INFO_${workspaceSlug.toString().toUpperCase()}_${repoName.toUpperCase()}`;
-
-// slack-project-integration
-export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
-  `SLACK_CHANNEL_INFO_${workspaceSlug.toString().toUpperCase()}_${projectId.toUpperCase()}`;
 
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>

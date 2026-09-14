@@ -132,21 +132,6 @@ export const USER_ROLES = [
   { value: "Other", i18n_label: "user_roles.other" },
 ];
 
-export const IMPORTERS_LIST = [
-  {
-    provider: "github",
-    type: "import",
-    i18n_title: "importer.github.title",
-    i18n_description: "importer.github.description",
-  },
-  {
-    provider: "jira",
-    type: "import",
-    i18n_title: "importer.jira.title",
-    i18n_description: "importer.jira.description",
-  },
-];
-
 export const EXPORTERS_LIST = [
   {
     provider: "csv",

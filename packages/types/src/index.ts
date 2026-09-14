@@ -26,7 +26,6 @@ export * from "./home";
 export * from "./importer";
 export * from "./inbox";
 export * from "./instance";
-export * from "./integration";
 export * from "./issues";
 export * from "./issues/base"; // TODO: Remove this after development and the refactor/mobx-store-issue branch is stable
 export * from "./issues/issue-identifier";
