@@ -766,7 +766,11 @@ export const SgMatrixPlaylistPanel = ({
     () => customPlaylists.filter((playlist) => selectedPlaylistIds.has(playlist.id)),
     [customPlaylists, selectedPlaylistIds]
   );
-  const isCreateCardDisabled = !onCreateCard || !selectedPlaylists.some((playlist) => (playlist.clips ?? []).length > 0);
+  const isCreateCardDisabled =
+    !onCreateCard || !selectedPlaylists.some((playlist) => (playlist.clips ?? []).length > 0);
+  const deletePlaylistClipCount = playlistPendingDelete ? getPlaylistCardClipCount(playlistPendingDelete) : 0;
+  const deletePlaylistName =
+    playlistPendingDelete?.name?.trim().replace(GENERATED_PLAYLIST_NAME_SUFFIX, "") || "Playlist";
 
   return (
     <>
@@ -949,9 +953,9 @@ export const SgMatrixPlaylistPanel = ({
                               return (
                                 <li
                                   key={clip.id || `${playlist.id}-clip-${index + 1}`}
-                                  className="mx-2 mb-1 flex h-[27px] min-w-0 items-center gap-1.5 rounded-[5px] border border-emerald-400/15 border-l-[3px] border-l-emerald-400 bg-emerald-400/[0.04] px-1.5 last:mb-0"
+                                  className="mx-2 mb-1 flex h-[27px] min-w-0 items-center gap-1.5 rounded-[5px] border border-gray-400/15 border-l-[3px] border-l-gray-400 bg-gray-400/[0.04] px-1.5 last:mb-0"
                                 >
-                                  <span className="inline-flex h-[17px] shrink-0 items-center gap-1 rounded-[3px] border border-emerald-400/35 bg-emerald-400/10 px-1 text-[8px] font-medium leading-none text-emerald-300">
+                                  <span className="inline-flex h-[17px] shrink-0 items-center gap-1 rounded-[3px] border border-gray-400/35 bg-gray-400/10 px-1 text-[8px] font-medium leading-none text-gray-400">
                                     <Video className="h-2.5 w-2.5" />
                                     GAME
                                   </span>
@@ -1005,9 +1009,9 @@ export const SgMatrixPlaylistPanel = ({
         title="Delete playlist"
         content={
           <>
-            Delete{" "}
+            Are you sure you want to delete the playlist{" "}
             <strong className="font-medium text-custom-text-100">
-              {playlistPendingDelete?.name?.trim() || "this playlist"}
+              {deletePlaylistName}({deletePlaylistClipCount} clip{deletePlaylistClipCount === 1 ? "" : "s"})
             </strong>
             ? This action cannot be undone.
           </>
