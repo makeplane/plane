@@ -7,6 +7,16 @@ import { joinUrlPath } from "@plane/utils";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
+// Backend targets for the dev-server proxy. Keeping the browser on the same
+// origin lets the app work no matter which host/IP/hostname it is opened from.
+const apiProxyTarget = process.env.API_PROXY_TARGET || "http://localhost:8001";
+const liveProxyTarget = process.env.LIVE_PROXY_TARGET || "http://localhost:3100";
+const proxy = {
+  "/api": { target: apiProxyTarget, changeOrigin: true },
+  "/auth": { target: apiProxyTarget, changeOrigin: true },
+  "/live": { target: liveProxyTarget, changeOrigin: true, ws: true },
+};
+
 // Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
   .filter((k) => k.startsWith("VITE_"))
@@ -34,6 +44,7 @@ export default defineConfig(() => ({
     dedupe: ["react", "react-dom"],
   },
   server: {
-    host: "127.0.0.1",
+    host: process.env.HOST || "127.0.0.1",
+    proxy,
   },
 }));
