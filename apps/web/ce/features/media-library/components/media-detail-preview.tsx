@@ -477,8 +477,8 @@ export const MediaDetailPreview = ({
               {showVideoTimeline ? (
                 <div
                   ref={handleVideoAnnotationPropertiesElement}
-                  className="flex max-h-[520px] w-full shrink-0 overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 p-2 lg:w-[250px] xl:w-[280px]"
-                  style={{ maxHeight: videoPreviewHeight }}
+                  className="vertical-scrollbar scrollbar-md flex h-full min-h-0 w-full shrink-0 overflow-x-hidden overflow-y-auto overscroll-contain rounded-lg border border-custom-border-200 bg-custom-background-90 p-2 lg:w-[250px] xl:w-[280px]"
+                  style={videoPreviewHeightStyle}
                   aria-label="Annotation properties"
                 />
               ) : null}

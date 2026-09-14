@@ -125,9 +125,9 @@ export const PlaylistDraftEditor = ({
           {draftRows.map((row, index) => (
             <li
               key={row.id}
-              className="flex min-w-0 items-center gap-1.5 rounded border border-emerald-400/15 bg-emerald-400/[0.04] px-1.5 py-1"
+              className="flex min-w-0 items-center gap-1.5 rounded border border-gray-400/15 bg-gray-400/[0.04] px-1.5 py-1"
             >
-              <Video className="h-3 w-3 shrink-0 text-emerald-400" />
+              <Video className="h-3 w-3 shrink-0 text-gray-400" />
               <span className="min-w-0 flex-1 truncate text-[10px] text-[var(--sg-matrix-text-secondary)]">
                 {index + 1}. {row.action || row.primaryDetail || "Clip"}
               </span>
