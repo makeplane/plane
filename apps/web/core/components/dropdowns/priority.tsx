@@ -6,7 +6,6 @@
 
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
-import { usePopper } from "react-popper";
 import { SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
@@ -17,7 +16,7 @@ import { ChevronDownOutline, SearchOutline, TickOutline } from "@makeplane/prope
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, DropdownPanel } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -333,21 +332,8 @@ export function PriorityDropdown(props: Props) {
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  // popper-js refs
+  // anchor for the floating panel
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
@@ -444,14 +430,13 @@ export function PriorityDropdown(props: Props) {
       button={comboButton}
       renderByDefault={renderByDefault}
     >
-      {isOpen && (
-        <Combobox.Options as="ul" className="fixed z-10" static>
-          <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+        <Combobox.Options
+          as="ul"
+          className="w-48 rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
+          static
+        >
+          <div>
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
@@ -494,7 +479,7 @@ export function PriorityDropdown(props: Props) {
             </div>
           </div>
         </Combobox.Options>
-      )}
+      </DropdownPanel>
     </ComboDropDown>
   );
 }

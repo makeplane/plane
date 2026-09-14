@@ -1766,6 +1766,9 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-hitbox':
         specifier: 'catalog:'
         version: 1.1.0
+      '@floating-ui/react':
+        specifier: 'catalog:'
+        version: 0.27.20(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@headlessui/react':
         specifier: 'catalog:'
         version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1793,6 +1796,9 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      framer-motion:
+        specifier: 'catalog:'
+        version: 12.23.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lodash-es:
         specifier: 4.18.1
         version: 4.18.1

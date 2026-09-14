@@ -7,8 +7,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
 import { ArrowNarrowRightOutline, CalendarOutline, CloseOutline, DueDateOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -16,7 +14,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, DropdownPanel } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
@@ -66,6 +64,7 @@ type Props = {
   customTooltipContent?: string;
   customTooltipHeading?: string;
   defaultOpen?: boolean;
+  /** @deprecated the panel always renders in a portal */
   renderInPortal?: boolean;
 };
 
@@ -102,7 +101,6 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
     customTooltipContent,
     customTooltipHeading,
     defaultOpen = false,
-    renderInPortal = false,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -114,19 +112,6 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();
@@ -254,34 +239,6 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
     </button>
   );
 
-  const comboOptions = (
-    <Combobox.Options as="ul" data-prevent-outside-click static>
-      <div
-        className="z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1"
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-      >
-        <Calendar
-          className="rounded-md border border-subtle p-3 text-12"
-          captionLayout="dropdown"
-          selected={dateRange}
-          onSelect={(val: DateRange | undefined) => {
-            onSelect?.(val);
-          }}
-          mode="range"
-          disabled={disabledDays}
-          showOutsideDays
-          fixedWeeks
-          weekStartsOn={startOfWeek}
-          initialFocus
-        />
-      </div>
-    </Combobox.Options>
-  );
-
-  const Options = renderInPortal ? createPortal(comboOptions, document.body) : comboOptions;
-
   return (
     <ComboDropDown
       as="div"
@@ -297,7 +254,28 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
       disabled={disabled}
       renderByDefault={renderByDefault}
     >
-      {isOpen && Options}
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+        <Combobox.Options
+          as="ul"
+          className="overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 shadow-raised-200"
+          static
+        >
+          <Calendar
+            className="rounded-md border border-subtle p-3 text-12"
+            captionLayout="dropdown"
+            selected={dateRange}
+            onSelect={(val: DateRange | undefined) => {
+              onSelect?.(val);
+            }}
+            mode="range"
+            disabled={disabledDays}
+            showOutsideDays
+            fixedWeeks
+            weekStartsOn={startOfWeek}
+            initialFocus
+          />
+        </Combobox.Options>
+      </DropdownPanel>
     </ComboDropDown>
   );
 });

@@ -7,12 +7,12 @@
 import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
-import { usePopper } from "react-popper";
 import { AddOutline, CloseOutline, LoadingOutline } from "@makeplane/propel/icons";
 import { Popover } from "@headlessui/react";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { IIssueLabel } from "@plane/types";
+import { DropdownPanel } from "@plane/ui";
 // hooks
 
 // ui
@@ -39,7 +39,6 @@ export function LabelCreate(props: ILabelCreate) {
   const [isCreateToggle, setIsCreateToggle] = useState(false);
   const handleIsCreateToggle = () => setIsCreateToggle(!isCreateToggle);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // react hook form
   const {
     handleSubmit,
@@ -49,18 +48,6 @@ export function LabelCreate(props: ILabelCreate) {
     setFocus,
   } = useForm<Partial<IIssueLabel>>({
     defaultValues,
-  });
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
   });
 
   useEffect(() => {
@@ -100,30 +87,31 @@ export function LabelCreate(props: ILabelCreate) {
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Popover>
-                  <>
-                    <Popover.Button as={Fragment}>
-                      <button type="button" ref={setReferenceElement} className="grid place-items-center outline-none">
-                        {value && value?.trim() !== "" && (
-                          <span
-                            className="h-5 w-5 rounded-sm"
-                            style={{
-                              backgroundColor: value ?? "black",
-                            }}
-                          />
-                        )}
-                      </button>
-                    </Popover.Button>
-                    <Popover.Panel className="fixed z-10">
-                      <div
-                        className="max-w-xs p-2 sm:px-0"
-                        ref={setPopperElement}
-                        style={styles.popper}
-                        {...attributes.popper}
-                      >
-                        <TwitterPicker triangle={"hide"} color={value} onChange={(value) => onChange(value.hex)} />
-                      </div>
-                    </Popover.Panel>
-                  </>
+                  {({ open }) => (
+                    <>
+                      <Popover.Button as={Fragment}>
+                        <button
+                          type="button"
+                          ref={setReferenceElement}
+                          className="grid place-items-center outline-none"
+                        >
+                          {value && value?.trim() !== "" && (
+                            <span
+                              className="h-5 w-5 rounded-sm"
+                              style={{
+                                backgroundColor: value ?? "black",
+                              }}
+                            />
+                          )}
+                        </button>
+                      </Popover.Button>
+                      <DropdownPanel open={open} reference={referenceElement} placement="bottom-start">
+                        <Popover.Panel static className="max-w-xs p-2 sm:px-0">
+                          <TwitterPicker triangle={"hide"} color={value} onChange={(value) => onChange(value.hex)} />
+                        </Popover.Panel>
+                      </DropdownPanel>
+                    </>
+                  )}
                 </Popover>
               )}
             />

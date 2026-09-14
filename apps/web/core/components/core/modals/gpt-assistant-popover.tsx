@@ -4,18 +4,17 @@
  * See the LICENSE file for details.
  */
 
-import type { Ref } from "react";
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import type { Placement } from "@popperjs/core";
 import { Controller, useForm } from "react-hook-form"; // services
-import { usePopper } from "react-popper";
 import { WarningCircleOutline } from "@makeplane/propel/icons";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // plane imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { DropdownPanel } from "@plane/ui";
 
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -60,14 +59,9 @@ export function GptAssistantPopover(props: Props) {
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const responseRef = useRef<EditorRefApi>(null);
-  // popper
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "auto",
-  });
   // form
   const {
     handleSubmit,
@@ -203,22 +197,11 @@ export function GptAssistantPopover(props: Props) {
           {button}
         </button>
       </Popover.Button>
-      <Transition
-        show={isOpen}
-        as={React.Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement ?? "auto"}>
         <Popover.Panel
           as="div"
-          className={`shadow fixed z-10 flex w-full max-w-full min-w-[50rem] flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 ${className}`}
-          ref={setPopperElement as Ref<HTMLDivElement>}
-          style={styles.popper}
-          {...attributes.popper}
+          static
+          className={`shadow flex w-full max-w-full min-w-[50rem] flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 ${className}`}
         >
           <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
             {prompt && (
@@ -299,7 +282,7 @@ export function GptAssistantPopover(props: Props) {
             </div>
           </div>
         </Popover.Panel>
-      </Transition>
+      </DropdownPanel>
     </Popover>
   );
 }

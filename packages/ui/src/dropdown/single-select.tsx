@@ -7,10 +7,10 @@
 import { Combobox } from "@headlessui/react";
 import { sortBy } from "lodash-es";
 import React, { useMemo, useRef, useState } from "react";
-import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
+import { DropdownPanel } from "../dropdowns/dropdown-panel";
 import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
 import { cn } from "../utils";
 import { DropdownButton } from "./common";
@@ -49,24 +49,10 @@ export function Dropdown(props: ISingleSelectDropdown) {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  // popper-js refs
+  // dropdown panel anchor
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   // handlers
   const toggleDropdown = () => {
@@ -141,36 +127,33 @@ export function Dropdown(props: ISingleSelectDropdown) {
         buttonContainerClassName={buttonContainerClassName}
         disabled={disabled}
       />
-      {isOpen && (
-        <Combobox.Options as="ul" className="fixed z-10" static>
-          <div
-            className={cn(
-              "my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2 text-11 shadow-raised-200 focus:outline-none",
-              optionsContainerClassName
-            )}
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <DropdownOptions
-              isOpen={isOpen}
-              query={query}
-              setQuery={setQuery}
-              inputIcon={inputIcon}
-              inputPlaceholder={inputPlaceholder}
-              inputClassName={inputClassName}
-              inputContainerClassName={inputContainerClassName}
-              disableSearch={disableSearch}
-              keyExtractor={keyExtractor}
-              options={sortedOptions}
-              value={value}
-              renderItem={renderItem}
-              loader={loader}
-              handleClose={handleClose}
-            />
-          </div>
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+        <Combobox.Options
+          as="ul"
+          className={cn(
+            "w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2 text-11 shadow-raised-200 focus:outline-none",
+            optionsContainerClassName
+          )}
+          static
+        >
+          <DropdownOptions
+            isOpen={isOpen}
+            query={query}
+            setQuery={setQuery}
+            inputIcon={inputIcon}
+            inputPlaceholder={inputPlaceholder}
+            inputClassName={inputClassName}
+            inputContainerClassName={inputContainerClassName}
+            disableSearch={disableSearch}
+            keyExtractor={keyExtractor}
+            options={sortedOptions}
+            value={value}
+            renderItem={renderItem}
+            loader={loader}
+            handleClose={handleClose}
+          />
         </Combobox.Options>
-      )}
+      </DropdownPanel>
     </Combobox>
   );
 }

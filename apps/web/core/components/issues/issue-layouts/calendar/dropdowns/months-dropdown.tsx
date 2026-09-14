@@ -6,14 +6,14 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { usePopper } from "react-popper";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 import { ChevronLeftOutline, ChevronRightOutline } from "@makeplane/propel/icons";
 //hooks
 // icons
 // constants
 import { getDate } from "@plane/utils";
 import { MONTHS_LIST } from "@plane/constants";
+import { DropdownPanel } from "@plane/ui";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
@@ -32,19 +32,6 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "auto",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   const { activeMonthDate } = issueCalendarView.calendarFilters;
 
@@ -81,75 +68,67 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
 
   return (
     <Popover className="relative">
-      <Popover.Button as={React.Fragment}>
-        <button
-          type="button"
-          ref={setReferenceElement}
-          className="text-18 font-semibold outline-none"
-          disabled={calendarLayout === "week"}
-        >
-          {calendarLayout === "month"
-            ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
-            : getWeekLayoutHeader()}
-        </button>
-      </Popover.Button>
-      <Transition
-        as={React.Fragment}
-        enter="transition ease-out duration-200"
-        enterFrom="opacity-0 translate-y-1"
-        enterTo="opacity-100 translate-y-0"
-        leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 translate-y-0"
-        leaveTo="opacity-0 translate-y-1"
-      >
-        <Popover.Panel className="fixed z-50">
-          <div
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-            className="w-56 divide-y divide-subtle-1 rounded-sm border border-subtle bg-surface-1 p-3 shadow-raised-200"
-          >
-            <div className="flex items-center justify-between gap-2 pb-3">
-              <button
-                type="button"
-                className="grid place-items-center"
-                onClick={() => {
-                  const previousYear = new Date(activeMonthDate.getFullYear() - 1, activeMonthDate.getMonth(), 1);
-                  handleDateChange(previousYear);
-                }}
-              >
-                <ChevronLeftOutline height={14} width={14} />
-              </button>
-              <span className="text-11">{activeMonthDate.getFullYear()}</span>
-              <button
-                type="button"
-                className="grid place-items-center"
-                onClick={() => {
-                  const nextYear = new Date(activeMonthDate.getFullYear() + 1, activeMonthDate.getMonth(), 1);
-                  handleDateChange(nextYear);
-                }}
-              >
-                <ChevronRightOutline height={14} width={14} />
-              </button>
-            </div>
-            <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
-              {Object.values(MONTHS_LIST).map((month, index) => (
+      {({ open }) => (
+        <>
+          <Popover.Button as={React.Fragment}>
+            <button
+              type="button"
+              ref={setReferenceElement}
+              className="text-18 font-semibold outline-none"
+              disabled={calendarLayout === "week"}
+            >
+              {calendarLayout === "month"
+                ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
+                : getWeekLayoutHeader()}
+            </button>
+          </Popover.Button>
+          <DropdownPanel open={open} reference={referenceElement} placement="auto" className="z-50">
+            <Popover.Panel
+              static
+              className="w-56 divide-y divide-subtle-1 rounded-sm border border-subtle bg-surface-1 p-3 shadow-raised-200"
+            >
+              <div className="flex items-center justify-between gap-2 pb-3">
                 <button
-                  key={month.shortTitle}
                   type="button"
-                  className="rounded-sm py-0.5 text-11 hover:bg-layer-1"
+                  className="grid place-items-center"
                   onClick={() => {
-                    const newDate = new Date(activeMonthDate.getFullYear(), index, 1);
-                    handleDateChange(newDate);
+                    const previousYear = new Date(activeMonthDate.getFullYear() - 1, activeMonthDate.getMonth(), 1);
+                    handleDateChange(previousYear);
                   }}
                 >
-                  {month.shortTitle}
+                  <ChevronLeftOutline height={14} width={14} />
                 </button>
-              ))}
-            </div>
-          </div>
-        </Popover.Panel>
-      </Transition>
+                <span className="text-11">{activeMonthDate.getFullYear()}</span>
+                <button
+                  type="button"
+                  className="grid place-items-center"
+                  onClick={() => {
+                    const nextYear = new Date(activeMonthDate.getFullYear() + 1, activeMonthDate.getMonth(), 1);
+                    handleDateChange(nextYear);
+                  }}
+                >
+                  <ChevronRightOutline height={14} width={14} />
+                </button>
+              </div>
+              <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
+                {Object.values(MONTHS_LIST).map((month, index) => (
+                  <button
+                    key={month.shortTitle}
+                    type="button"
+                    className="rounded-sm py-0.5 text-11 hover:bg-layer-1"
+                    onClick={() => {
+                      const newDate = new Date(activeMonthDate.getFullYear(), index, 1);
+                      handleDateChange(newDate);
+                    }}
+                  >
+                    {month.shortTitle}
+                  </button>
+                ))}
+              </div>
+            </Popover.Panel>
+          </DropdownPanel>
+        </>
+      )}
     </Popover>
   );
 });

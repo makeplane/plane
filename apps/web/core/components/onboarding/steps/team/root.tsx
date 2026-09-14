@@ -15,7 +15,6 @@ import type {
   UseFormWatch,
 } from "react-hook-form";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { usePopper } from "react-popper";
 import { AddOutline, ChevronDownOutline, CloseCircleOutline, TickOutline } from "@makeplane/propel/icons";
 import { Listbox } from "@headlessui/react";
 // plane imports
@@ -27,7 +26,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EOnboardingSteps } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { DropdownPanel, Spinner } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -94,7 +93,6 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
   } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { t } = useTranslation();
 
@@ -123,18 +121,6 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       }
     }
   };
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-end",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   return (
     <div>
@@ -186,57 +172,60 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 }}
                 className="w-full flex-shrink-0 text-left"
               >
-                <Listbox.Button
-                  type="button"
-                  ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md border-[0.5px] border-strong px-2.5 py-2 text-13"
-                >
-                  <span
-                    className={`text-13 ${
-                      !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
-                    } sm:text-13`}
-                  >
-                    {ROLE[value]}
-                  </span>
-
-                  <ChevronDownOutline
-                    className={`size-3 ${
-                      !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
-                    }`}
-                  />
-                </Listbox.Button>
-
-                <Listbox.Options as="div">
-                  <div
-                    className="shadow-sm absolute z-10 mt-1 h-fit w-48 space-y-1 rounded-md border border-strong bg-surface-1 p-2 focus:outline-none sm:w-60"
-                    ref={setPopperElement}
-                    style={styles.popper}
-                    {...attributes.popper}
-                  >
-                    {Object.entries(ROLE_DETAILS).map(([key, value]) => (
-                      <Listbox.Option
-                        as="div"
-                        key={key}
-                        value={parseInt(key)}
-                        className={({ active, selected }) =>
-                          `cursor-pointer truncate rounded-sm px-1 py-1.5 select-none ${
-                            active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-primary" : "text-secondary"}`
-                        }
+                {({ open }) => (
+                  <>
+                    <Listbox.Button
+                      type="button"
+                      ref={setReferenceElement}
+                      className="flex w-full items-center justify-between gap-1 rounded-md border-[0.5px] border-strong px-2.5 py-2 text-13"
+                    >
+                      <span
+                        className={`text-13 ${
+                          !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
+                        } sm:text-13`}
                       >
-                        {({ selected }) => (
-                          <div className="flex items-center gap-2 p-1 text-wrap">
-                            <div className="flex flex-col">
-                              <div className="text-13 font-medium">{t(value.i18n_title)}</div>
-                              <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
-                            </div>
-                            {selected && <TickOutline className="h-4 w-4 shrink-0" />}
-                          </div>
-                        )}
-                      </Listbox.Option>
-                    ))}
-                  </div>
-                </Listbox.Options>
+                        {ROLE[value]}
+                      </span>
+
+                      <ChevronDownOutline
+                        className={`size-3 ${
+                          !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
+                        }`}
+                      />
+                    </Listbox.Button>
+
+                    <DropdownPanel open={open} reference={referenceElement} placement="bottom-end">
+                      <Listbox.Options
+                        as="div"
+                        static
+                        className="shadow-sm h-fit w-48 space-y-1 rounded-md border border-strong bg-surface-1 p-2 focus:outline-none sm:w-60"
+                      >
+                        {Object.entries(ROLE_DETAILS).map(([key, value]) => (
+                          <Listbox.Option
+                            as="div"
+                            key={key}
+                            value={parseInt(key)}
+                            className={({ active, selected }) =>
+                              `cursor-pointer truncate rounded-sm px-1 py-1.5 select-none ${
+                                active || selected ? "bg-onboarding-background-400/40" : ""
+                              } ${selected ? "text-primary" : "text-secondary"}`
+                            }
+                          >
+                            {({ selected }) => (
+                              <div className="flex items-center gap-2 p-1 text-wrap">
+                                <div className="flex flex-col">
+                                  <div className="text-13 font-medium">{t(value.i18n_title)}</div>
+                                  <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
+                                </div>
+                                {selected && <TickOutline className="h-4 w-4 shrink-0" />}
+                              </div>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </DropdownPanel>
+                  </>
+                )}
               </Listbox>
             )}
           />

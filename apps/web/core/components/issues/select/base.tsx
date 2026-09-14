@@ -7,7 +7,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { usePopper } from "react-popper";
 import { GroupOutline, LabelsOutline, LoadingOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 import { getRandomLabelColor } from "@plane/constants";
@@ -15,6 +14,7 @@ import { getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueLabel } from "@plane/types";
+import { DropdownPanel } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { IssueLabelsList } from "@/components/ui/labels-list";
@@ -60,17 +60,12 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
   // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-  });
   // derived values
   const labelsList = labelIds.map((labelId) => getLabelById(labelId)).filter((label) => !!label);
   const filteredOptions =
@@ -189,14 +184,13 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
           </div>
         )}
       </button>
-      {isDropdownOpen && (
-        <Combobox.Options as="ul" className="fixed z-10" static>
-          <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
+      <DropdownPanel open={isDropdownOpen} reference={referenceElement} placement={placement}>
+        <Combobox.Options
+          as="ul"
+          className="w-48 rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
+          static
+        >
+          <div>
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
@@ -316,7 +310,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
             </div>
           </div>
         </Combobox.Options>
-      )}
+      </DropdownPanel>
     </Combobox>
   );
 });

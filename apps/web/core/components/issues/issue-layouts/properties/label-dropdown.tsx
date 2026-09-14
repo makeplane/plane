@@ -7,7 +7,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
 import { ChevronDownOutline, LoadingOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -18,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, DropdownPanel } from "@plane/ui";
 import { sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
@@ -82,7 +81,6 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   //hooks
   const { fetchProjectLabels, getProjectLabels, createLabel } = useLabel();
@@ -124,18 +122,6 @@ export function LabelDropdown(props: ILabelDropdownProps) {
       ),
     [options, query, value]
   );
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   const onOpen = useCallback(() => {
     if (!storeLabels && workspaceSlug && projectId)
@@ -250,14 +236,13 @@ export function LabelDropdown(props: ILabelDropdownProps) {
         renderByDefault={renderByDefault}
         multiple
       >
-        {isOpen && (
-          <Combobox.Options as="ul" className="fixed z-10" static>
-            <div
-              className={`z-10 my-1 h-auto w-48 rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular whitespace-nowrap shadow-raised-200 focus:outline-none ${optionsClassName}`}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
+        <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+          <Combobox.Options
+            as="ul"
+            className={`z-10 h-auto w-48 rounded-md border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular whitespace-nowrap shadow-raised-200 focus:outline-none ${optionsClassName}`}
+            static
+          >
+            <div>
               <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
                 <SearchOutline className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
@@ -330,7 +315,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               </div>
             </div>
           </Combobox.Options>
-        )}
+        </DropdownPanel>
       </ComboDropDown>
     </div>
   );

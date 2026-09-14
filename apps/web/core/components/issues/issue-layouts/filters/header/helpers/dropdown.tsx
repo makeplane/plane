@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import type { Placement } from "@popperjs/core";
-import { usePopper } from "react-popper";
 // headless ui
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // ui
 import { Button } from "@plane/propel/button";
+import { DropdownPanel } from "@plane/ui";
 
 type Props = {
   children: React.ReactNode;
@@ -38,11 +38,6 @@ export function FiltersDropdown(props: Props) {
   } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | HTMLDivElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "auto",
-  });
 
   return (
     <Popover as="div">
@@ -88,29 +83,16 @@ export function FiltersDropdown(props: Props) {
               </div>
             )}
           </Popover.Button>
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-y-1"
-            enterTo="opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-1"
-          >
-            {/** translate-y-0 is a hack to create new stacking context. Required for safari  */}
-            <Popover.Panel className="fixed z-10 translate-y-0">
-              <div
-                className="my-1 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-100"
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-              >
-                <div className="flex max-h-[30rem] w-[18.75rem] flex-col overflow-hidden lg:max-h-[37.5rem]">
-                  {children}
-                </div>
+          <DropdownPanel open={open} reference={referenceElement} placement={placement ?? "auto"}>
+            <Popover.Panel
+              static
+              className="overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-100"
+            >
+              <div className="flex max-h-[30rem] w-[18.75rem] flex-col overflow-hidden lg:max-h-[37.5rem]">
+                {children}
               </div>
             </Popover.Panel>
-          </Transition>
+          </DropdownPanel>
         </>
       )}
     </Popover>

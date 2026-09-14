@@ -7,13 +7,12 @@
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownOutline, ProjectsOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
-import { ComboDropDown } from "@plane/ui";
+import { ComboDropDown, DropdownPanel } from "@plane/ui";
 import { cn, sortBySelectedFirst } from "@plane/utils";
 // components
 // hooks
@@ -78,24 +77,11 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   // plane hooks
   const { t } = useTranslation();
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
   // store hooks
   const options = projectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
@@ -233,14 +219,13 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       renderByDefault={renderByDefault}
       multiple={multiple}
     >
-      {isOpen && (
-        <Combobox.Options as="ul" className="fixed z-10" static>
-          <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+        <Combobox.Options
+          as="ul"
+          className="w-48 rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
+          static
+        >
+          <div>
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
@@ -288,7 +273,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             </div>
           </div>
         </Combobox.Options>
-      )}
+      </DropdownPanel>
     </ComboDropDown>
   );
 });

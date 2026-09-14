@@ -5,13 +5,13 @@
  */
 
 import React, { useState, useRef, useContext } from "react";
-import { usePopper } from "react-popper";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 // helpers
 import { cn } from "../../utils";
+import { DropdownPanel } from "../dropdown-panel";
 // types
 import type { TContextMenuItem } from "./root";
-import { ContextMenuContext, Portal } from "./root";
+import { ContextMenuContext } from "./root";
 
 type ContextMenuItemProps = {
   handleActiveItem: () => void;
@@ -26,38 +26,12 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
   // Nested menu state
   const [isNestedOpen, setIsNestedOpen] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [activeNestedIndex, setActiveNestedIndex] = useState<number>(0);
   const nestedMenuRef = useRef<HTMLDivElement | null>(null);
 
   const contextMenuContext = useContext(ContextMenuContext);
   const hasNestedItems = item.nestedMenuItems && item.nestedMenuItems.length > 0;
   const renderedNestedItems = item.nestedMenuItems?.filter((nestedItem) => nestedItem.shouldRender !== false) || [];
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right-start",
-    strategy: "fixed",
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, 4],
-        },
-      },
-      {
-        name: "flip",
-        options: {
-          fallbackPlacements: ["left-start", "right-end", "left-end", "top-start", "bottom-start"],
-        },
-      },
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 8,
-        },
-      },
-    ],
-  });
 
   const closeNestedMenu = React.useCallback(() => {
     setIsNestedOpen(false);
@@ -190,13 +164,17 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
       </button>
 
       {/* Nested Menu */}
-      {hasNestedItems && isNestedOpen && (
-        <Portal container={contextMenuContext?.portalContainer}>
+      {hasNestedItems && (
+        <DropdownPanel
+          open={isNestedOpen}
+          reference={referenceElement}
+          placement="right-start"
+          collisionPadding={8}
+          className="z-[35]"
+          portalRoot={(contextMenuContext?.portalContainer as HTMLElement | null | undefined) ?? undefined}
+        >
           <div
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-            className="fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11"
+            className="min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11"
             data-context-submenu="true"
           >
             <div ref={nestedMenuRef} className="vertical-scrollbar scrollbar-sm max-h-72 overflow-y-scroll">
@@ -242,7 +220,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
               ))}
             </div>
           </div>
-        </Portal>
+        </DropdownPanel>
       )}
     </>
   );

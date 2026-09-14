@@ -8,12 +8,12 @@ import { Menu } from "@headlessui/react";
 import { ChevronDownOutline, ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import * as React from "react";
 import ReactDOM from "react-dom";
-import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane helpers
 // helpers
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
+import { DropdownPanel } from "./dropdown-panel";
 // hooks
 // types
 import type {
@@ -86,15 +86,10 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
   } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);
   // refs
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
   const submenuClosersRef = React.useRef<Set<() => void>>(new Set());
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "auto",
-  });
 
   const closeAllSubmenus = React.useCallback(() => {
     submenuClosersRef.current.forEach((closeSubmenu) => closeSubmenu());
@@ -193,39 +188,6 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     [closeAllSubmenus, registerSubmenu]
   );
 
-  let menuItems = (
-    <Menu.Items
-      data-prevent-outside-click={!!portalElement}
-      className={cn(
-        "fixed z-30 translate-y-0",
-        menuItemsClassName
-      )} /** translate-y-0 is a hack to create new stacking context. Required for safari  */
-      static
-    >
-      <div
-        className={cn(
-          "shadow-md my-1 min-w-[12rem] overflow-y-scroll rounded-md border border-strong-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap ring-1 ring-strong-1/15 outline-none focus:outline-none",
-          {
-            "max-h-60": maxHeight === "lg",
-            "max-h-48": maxHeight === "md",
-            "max-h-36": maxHeight === "rg",
-            "max-h-28": maxHeight === "sm",
-          },
-          optionsClassName
-        )}
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-      >
-        <MenuContext.Provider value={menuContextValue}>{children}</MenuContext.Provider>
-      </div>
-    </Menu.Items>
-  );
-
-  if (portalElement) {
-    menuItems = ReactDOM.createPortal(menuItems, portalElement);
-  }
-
   return (
     <Menu
       as="div"
@@ -299,7 +261,29 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
               )}
             </>
           )}
-          {isOpen && menuItems}
+          <DropdownPanel
+            open={isOpen}
+            reference={referenceElement}
+            placement={placement ?? "auto"}
+            portalRoot={(portalElement as HTMLElement | null | undefined) ?? undefined}
+          >
+            <Menu.Items className={cn("outline-none", menuItemsClassName)} static>
+              <div
+                className={cn(
+                  "shadow-md min-w-[12rem] overflow-y-scroll rounded-md border border-strong-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap ring-1 ring-strong-1/15 outline-none focus:outline-none",
+                  {
+                    "max-h-60": maxHeight === "lg",
+                    "max-h-48": maxHeight === "md",
+                    "max-h-36": maxHeight === "rg",
+                    "max-h-28": maxHeight === "sm",
+                  },
+                  optionsClassName
+                )}
+              >
+                <MenuContext.Provider value={menuContextValue}>{children}</MenuContext.Provider>
+              </div>
+            </Menu.Items>
+          </DropdownPanel>
         </>
       )}
     </Menu>
@@ -325,35 +309,9 @@ function SubMenu(props: ICustomSubMenuProps) {
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState<HTMLSpanElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
   const submenuRef = React.useRef<HTMLDivElement | null>(null);
 
   const menuContext = React.useContext(MenuContext);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement,
-    strategy: "fixed", // Use fixed positioning to escape overflow constraints
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, 4],
-        },
-      },
-      {
-        name: "flip",
-        options: {
-          fallbackPlacements: ["left-start", "right-end", "left-end", "top-start", "bottom-start"],
-        },
-      },
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 8,
-        },
-      },
-    ],
-  });
 
   const closeSubmenu = React.useCallback(() => {
     setIsOpen(false);
@@ -425,38 +383,32 @@ function SubMenu(props: ICustomSubMenuProps) {
         </Menu.Item>
       </span>
 
-      {isOpen && (
-        <Portal>
-          <div
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-            className={cn(
-              "shadow-md fixed z-30 min-w-[12rem] overflow-hidden rounded-md border border-strong-1 bg-surface-1 p-1 text-11 ring-1 ring-strong-1/15",
-              contentClassName
-            )}
-            data-prevent-outside-click="true"
-            onMouseEnter={() => {
-              // Notify parent menu that we're hovering over submenu
-              const mainMenuElement = document.querySelector('[data-main-menu="true"]');
-              if (mainMenuElement) {
-                const mouseEnterEvent = new MouseEvent("mouseenter", { bubbles: true });
-                mainMenuElement.dispatchEvent(mouseEnterEvent);
-              }
-            }}
-            onMouseLeave={() => {
-              // Notify parent menu that we're leaving submenu
-              const mainMenuElement = document.querySelector('[data-main-menu="true"]');
-              if (mainMenuElement) {
-                const mouseLeaveEvent = new MouseEvent("mouseleave", { bubbles: true });
-                mainMenuElement.dispatchEvent(mouseLeaveEvent);
-              }
-            }}
-          >
-            <SubMenuContext.Provider value={subMenuContextValue}>{children}</SubMenuContext.Provider>
-          </div>
-        </Portal>
-      )}
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement} sideOffset={4}>
+        <div
+          className={cn(
+            "shadow-md min-w-[12rem] overflow-hidden rounded-md border border-strong-1 bg-surface-1 p-1 text-11 ring-1 ring-strong-1/15",
+            contentClassName
+          )}
+          onMouseEnter={() => {
+            // Notify parent menu that we're hovering over submenu
+            const mainMenuElement = document.querySelector('[data-main-menu="true"]');
+            if (mainMenuElement) {
+              const mouseEnterEvent = new MouseEvent("mouseenter", { bubbles: true });
+              mainMenuElement.dispatchEvent(mouseEnterEvent);
+            }
+          }}
+          onMouseLeave={() => {
+            // Notify parent menu that we're leaving submenu
+            const mainMenuElement = document.querySelector('[data-main-menu="true"]');
+            if (mainMenuElement) {
+              const mouseLeaveEvent = new MouseEvent("mouseleave", { bubbles: true });
+              mainMenuElement.dispatchEvent(mouseLeaveEvent);
+            }
+          }}
+        >
+          <SubMenuContext.Provider value={subMenuContextValue}>{children}</SubMenuContext.Provider>
+        </div>
+      </DropdownPanel>
     </div>
   );
 }

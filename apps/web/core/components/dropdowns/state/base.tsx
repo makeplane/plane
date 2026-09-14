@@ -7,14 +7,13 @@
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "@plane/propel/icons";
 import { ChevronDownOutline, SearchOutline } from "@makeplane/propel/icons";
 import type { IState } from "@plane/types";
-import { ComboDropDown, Spinner } from "@plane/ui";
+import { ComboDropDown, DropdownPanel, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";
@@ -77,7 +76,6 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -86,18 +84,6 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
   const statesList = stateIds.map((stateId) => getStateById(stateId)).filter((state) => !!state);
   const defaultState = statesList?.find((state) => state?.default);
   const stateValue = value ? value : showDefaultState ? defaultState?.id : undefined;
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
   // dropdown init
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,
@@ -213,14 +199,13 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
       button={comboButton}
       renderByDefault={renderByDefault}
     >
-      {isOpen && (
-        <Combobox.Options as="ul" className="fixed z-10" static>
-          <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
+      <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+        <Combobox.Options
+          as="ul"
+          className="w-48 rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
+          static
+        >
+          <div>
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
@@ -255,7 +240,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             </div>
           </div>
         </Combobox.Options>
-      )}
+      </DropdownPanel>
     </ComboDropDown>
   );
 });

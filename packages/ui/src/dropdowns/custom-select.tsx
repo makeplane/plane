@@ -7,8 +7,6 @@
 import { Combobox } from "@headlessui/react";
 
 import React, { createContext, useCallback, useContext, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 // plane helpers
@@ -16,6 +14,7 @@ import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
 import { cn } from "../utils";
+import { DropdownPanel } from "./dropdown-panel";
 // types
 import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
@@ -42,14 +41,9 @@ function CustomSelect(props: ICustomSelectProps) {
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-  });
 
   const openDropdown = useCallback(() => {
     setIsOpen(true);
@@ -117,32 +111,27 @@ function CustomSelect(props: ICustomSelectProps) {
             </Combobox.Button>
           )}
         </>
-        {isOpen &&
-          createPortal(
-            <Combobox.Options as="ul" data-prevent-outside-click>
-              <div
-                className={cn(
-                  "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
-                  optionsClassName
-                )}
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-              >
-                <div
-                  className={cn("space-y-1 overflow-y-scroll", {
-                    "max-h-60": maxHeight === "lg",
-                    "max-h-48": maxHeight === "md",
-                    "max-h-36": maxHeight === "rg",
-                    "max-h-28": maxHeight === "sm",
-                  })}
-                >
-                  {children}
-                </div>
-              </div>
-            </Combobox.Options>,
-            document.body
-          )}
+        <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+          <Combobox.Options
+            as="ul"
+            className={cn(
+              "min-w-48 overflow-y-auto rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap shadow-raised-200 focus:outline-none",
+              optionsClassName
+            )}
+            static
+          >
+            <div
+              className={cn("space-y-1 overflow-y-scroll", {
+                "max-h-60": maxHeight === "lg",
+                "max-h-48": maxHeight === "md",
+                "max-h-36": maxHeight === "rg",
+                "max-h-28": maxHeight === "sm",
+              })}
+            >
+              {children}
+            </div>
+          </Combobox.Options>
+        </DropdownPanel>
       </Combobox>
     </DropdownContext.Provider>
   );

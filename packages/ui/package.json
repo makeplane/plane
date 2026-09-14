@@ -29,6 +29,7 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
+    "@floating-ui/react": "catalog:",
     "@headlessui/react": "catalog:",
     "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
@@ -38,6 +39,7 @@
     "@plane/utils": "workspace:*",
     "@popperjs/core": "catalog:",
     "clsx": "catalog:",
+    "framer-motion": "catalog:",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react-color": "catalog:",

@@ -7,9 +7,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
 import { ChevronUpOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // hooks
 // ui
 // icons
@@ -17,6 +16,7 @@ import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
+import { DropdownPanel } from "@plane/ui";
 import { Switch } from "@makeplane/propel/components/switch";
 // types
 // constants
@@ -48,19 +48,6 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
   const [windowWidth] = useSize();
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "auto",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
 
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
@@ -119,53 +106,41 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
               </div>
             </button>
           </Popover.Button>
-          <Transition
-            as={React.Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-y-1"
-            enterTo="opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-1"
-          >
-            <Popover.Panel className="fixed z-50">
-              <div
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
-              >
-                <div>
-                  {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
-                    <button
-                      key={layout}
-                      type="button"
-                      className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
-                      onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
-                    >
-                      {layoutDetails.title}
-                      {calendarLayout === layout && <TickOutline width={12} height={12} />}
-                    </button>
-                  ))}
+          <DropdownPanel open={open} reference={referenceElement} placement="auto" className="z-50">
+            <Popover.Panel
+              static
+              className="min-w-[12rem] overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
+            >
+              <div>
+                {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
                   <button
+                    key={layout}
                     type="button"
                     className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
-                    onClick={handleToggleWeekends}
+                    onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                   >
-                    {t("common.actions.show_weekends")}
-                    <Switch
-                      size="sm"
-                      checked={showWeekends}
-                      onCheckedChange={() => {
-                        if (windowWidth <= 768) closePopover();
-                      }}
-                      aria-label={t("common.actions.show_weekends")}
-                    />
+                    {layoutDetails.title}
+                    {calendarLayout === layout && <TickOutline width={12} height={12} />}
                   </button>
-                </div>
+                ))}
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
+                  onClick={handleToggleWeekends}
+                >
+                  {t("common.actions.show_weekends")}
+                  <Switch
+                    size="sm"
+                    checked={showWeekends}
+                    onCheckedChange={() => {
+                      if (windowWidth <= 768) closePopover();
+                    }}
+                    aria-label={t("common.actions.show_weekends")}
+                  />
+                </button>
               </div>
             </Popover.Panel>
-          </Transition>
+          </DropdownPanel>
         </>
       )}
     </Popover>

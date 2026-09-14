@@ -4,15 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 import * as React from "react";
 import * as ColorPicker from "react-color";
 import type { ColorResult } from "react-color";
-import { usePopper } from "react-popper";
 // helpers
 import { Button } from "../button/button";
 import { cn } from "../utils";
 // components
+import { DropdownPanel } from "../dropdowns/dropdown-panel";
 import { Input } from "./input";
 
 export interface InputColorPickerProps {
@@ -29,11 +29,6 @@ export function InputColorPicker(props: InputColorPickerProps) {
   const { value, hasError, onChange, name, className, style, placeholder } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "auto",
-  });
 
   const handleColorChange = (newColor: ColorResult) => {
     const { hex } = newColor;
@@ -59,7 +54,7 @@ export function InputColorPicker(props: InputColorPickerProps) {
       />
 
       <Popover as="div" className="absolute top-1/2 right-1 z-10 -translate-y-1/2">
-        {() => (
+        {({ open }) => (
           <>
             <Popover.Button as={React.Fragment}>
               <Button ref={setReferenceElement} variant="neutral-primary" className="border-none !bg-transparent">
@@ -83,26 +78,14 @@ export function InputColorPicker(props: InputColorPickerProps) {
                 </svg>
               </Button>
             </Popover.Button>
-            <Transition
-              as={React.Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel>
-                <div
-                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200"
-                  ref={setPopperElement}
-                  style={styles.popper}
-                  {...attributes.popper}
-                >
-                  <ColorPicker.SketchPicker color={value} onChange={handleColorChange} />
-                </div>
+            <DropdownPanel open={open} reference={referenceElement} placement="auto">
+              <Popover.Panel
+                static
+                className="overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200"
+              >
+                <ColorPicker.SketchPicker color={value} onChange={handleColorChange} />
               </Popover.Panel>
-            </Transition>
+            </DropdownPanel>
           </>
         )}
       </Popover>

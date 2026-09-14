@@ -7,14 +7,13 @@
 import { Combobox } from "@headlessui/react";
 import { ChevronDownOutline, InfoOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import React, { useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
+import { DropdownPanel } from "./dropdown-panel";
 import type { ICustomSearchSelectProps } from "./helper";
 
 export function CustomSearchSelect(props: ICustomSearchSelectProps) {
@@ -45,14 +44,9 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
@@ -140,90 +134,87 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                 </button>
               </Combobox.Button>
             )}
-            {isOpen &&
-              createPortal(
-                <Combobox.Options as="ul" data-prevent-outside-click static>
-                  <div
-                    className={cn(
-                      "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 py-2.5 text-11 whitespace-nowrap focus:outline-none",
-                      optionsClassName
-                    )}
-                    ref={setPopperElement}
-                    style={styles.popper}
-                    {...attributes.popper}
-                  >
-                    <div className="mx-2 flex items-center gap-1.5 rounded-sm border border-subtle px-2">
-                      <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
-                      <Combobox.Input
-                        className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search"
-                        displayValue={(assigned: any) => assigned?.name}
-                      />
-                    </div>
-                    <div
-                      className={cn("vertical-scrollbar mt-2 scrollbar-xs space-y-1 overflow-y-scroll px-2", {
-                        "max-h-96": maxHeight === "2xl",
-                        "max-h-80": maxHeight === "xl",
-                        "max-h-60": maxHeight === "lg",
-                        "max-h-48": maxHeight === "md",
-                        "max-h-36": maxHeight === "rg",
-                        "max-h-28": maxHeight === "sm",
-                      })}
-                    >
-                      {filteredOptions ? (
-                        filteredOptions.length > 0 ? (
-                          filteredOptions.map((option) => (
-                            <Combobox.Option
-                              as="li"
-                              key={option.value}
-                              value={option.value}
-                              className={({ active }) =>
-                                cn(
-                                  "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
-                                  {
-                                    "bg-layer-transparent-hover": active,
-                                    "cursor-not-allowed text-placeholder opacity-60": option.disabled,
-                                  }
-                                )
-                              }
-                              onClick={() => {
-                                if (!multiple) closeDropdown();
-                              }}
-                              disabled={option.disabled}
-                            >
-                              {({ selected }) => (
-                                <>
-                                  <span className="flex-grow truncate">{option.content}</span>
-                                  {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
-                                  {option.tooltip && (
-                                    <>
-                                      {typeof option.tooltip === "string" ? (
-                                        <Tooltip tooltipContent={option.tooltip}>
-                                          <InfoOutline className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
-                                        </Tooltip>
-                                      ) : (
-                                        option.tooltip
-                                      )}
-                                    </>
-                                  )}
-                                </>
-                              )}
-                            </Combobox.Option>
-                          ))
-                        ) : (
-                          <p className="px-1.5 py-1 text-placeholder italic">{noResultsMessage}</p>
-                        )
-                      ) : (
-                        <p className="px-1.5 py-1 text-placeholder italic">Loading...</p>
-                      )}
-                    </div>
-                    {footerOption}
+            <DropdownPanel open={isOpen} reference={referenceElement} placement={placement}>
+              <Combobox.Options
+                as="ul"
+                className={cn(
+                  "min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 py-2.5 text-11 whitespace-nowrap focus:outline-none",
+                  optionsClassName
+                )}
+                static
+              >
+                <div>
+                  <div className="mx-2 flex items-center gap-1.5 rounded-sm border border-subtle px-2">
+                    <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
+                    <Combobox.Input
+                      className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search"
+                      displayValue={(assigned: any) => assigned?.name}
+                    />
                   </div>
-                </Combobox.Options>,
-                document.body
-              )}
+                  <div
+                    className={cn("vertical-scrollbar mt-2 scrollbar-xs space-y-1 overflow-y-scroll px-2", {
+                      "max-h-96": maxHeight === "2xl",
+                      "max-h-80": maxHeight === "xl",
+                      "max-h-60": maxHeight === "lg",
+                      "max-h-48": maxHeight === "md",
+                      "max-h-36": maxHeight === "rg",
+                      "max-h-28": maxHeight === "sm",
+                    })}
+                  >
+                    {filteredOptions ? (
+                      filteredOptions.length > 0 ? (
+                        filteredOptions.map((option) => (
+                          <Combobox.Option
+                            as="li"
+                            key={option.value}
+                            value={option.value}
+                            className={({ active }) =>
+                              cn(
+                                "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
+                                {
+                                  "bg-layer-transparent-hover": active,
+                                  "cursor-not-allowed text-placeholder opacity-60": option.disabled,
+                                }
+                              )
+                            }
+                            onClick={() => {
+                              if (!multiple) closeDropdown();
+                            }}
+                            disabled={option.disabled}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className="flex-grow truncate">{option.content}</span>
+                                {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
+                                {option.tooltip && (
+                                  <>
+                                    {typeof option.tooltip === "string" ? (
+                                      <Tooltip tooltipContent={option.tooltip}>
+                                        <InfoOutline className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
+                                      </Tooltip>
+                                    ) : (
+                                      option.tooltip
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))
+                      ) : (
+                        <p className="px-1.5 py-1 text-placeholder italic">{noResultsMessage}</p>
+                      )
+                    ) : (
+                      <p className="px-1.5 py-1 text-placeholder italic">Loading...</p>
+                    )}
+                  </div>
+                  {footerOption}
+                </div>
+              </Combobox.Options>
+            </DropdownPanel>
           </>
         );
       }}
