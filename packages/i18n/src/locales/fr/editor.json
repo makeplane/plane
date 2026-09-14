@@ -17,9 +17,6 @@
         "description": "Quelque chose s'est mal passé. Veuillez réessayer."
       }
     },
-    "upgrade": {
-      "description": "Mettez à niveau votre plan pour voir cette pièce jointe."
-    },
     "aria": {
       "click_to_upload": "Cliquez pour télécharger la pièce jointe"
     }

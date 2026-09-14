@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Khi đã kích hoạt, Loại mục công việc không thể bị vô hiệu hóa.",
-          "description": "Mục công việc của Plane sẽ trở thành loại mục công việc mặc định cho dự án này và sẽ hiển thị với biểu tượng và nền của nó trong dự án này.",
+          "description": "Mục công việc của AI4MS sẽ trở thành loại mục công việc mặc định cho dự án này và sẽ hiển thị với biểu tượng và nền của nó trong dự án này.",
           "button": {
             "default": "Kích hoạt",
             "loading": "Đang thiết lập"
@@ -379,13 +379,6 @@
         "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
         "primary_button": {
           "text": "Nâng cấp lên Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Nâng cấp để kích hoạt Loại mục công việc.",
-        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
-        "primary_button": {
-          "text": "Nâng cấp"
         }
       }
     }

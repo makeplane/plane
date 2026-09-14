@@ -29,12 +29,7 @@
       "label": "对于在",
       "state_change_label": "可以移动到"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "使用工作流控制更改和审查的混乱。",
-        "description": "使用 Plane 中的工作流定义您工作的移动规则，包括谁、何时。"
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "查看更改历史",
       "reset_workflow": "重置工作流"

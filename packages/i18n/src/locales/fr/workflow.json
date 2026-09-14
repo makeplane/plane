@@ -29,12 +29,7 @@
       "label": "Pour les éléments de travail dans",
       "state_change_label": "peuvent le déplacer vers"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Contrôlez le chaos des changements et des révisions avec les Workflows.",
-        "description": "Définissez des règles pour où votre travail se déplace, par qui, et quand avec les Workflows dans Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Voir l'historique des changements",
       "reset_workflow": "Réinitialiser le workflow"

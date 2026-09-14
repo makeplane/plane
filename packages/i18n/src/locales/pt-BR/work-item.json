@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Seu trabalho no piloto automático",
-        "description": "Configure uma vez. Nós o traremos de volta quando chegar a hora. Faça upgrade para o Business para tornar o trabalho recorrente mais fácil."
-      },
       "no_templates": {
         "button": "Crie seu primeiro item de trabalho recorrente"
       }

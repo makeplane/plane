@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "網站 URL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "無效的 URL",
               "maxLength": "URL 應少於 800 個字元"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "公司名稱",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "公司名稱為必填項",
               "maxLength": "公司名稱應少於255個字符"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "支持電子郵件",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "無效的電子郵件地址",
               "maxLength": "支持電子郵件應少於255個字符"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "隱私政策連結",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "無效的URL",
               "maxLength": "URL應少於800個字符"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "使用條款連結",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "無效的URL",
               "maxLength": "URL應少於800個字符"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "模板",
-        "description": "使用Plane中的專案、工作項目和頁面模板，您無需從頭創建專案或手動設置工作項目屬性。",
-        "sub_description": "使用模板可節省80%的管理時間。"
-      },
       "no_templates": {
         "button": "創建您的第一個模板"
       },

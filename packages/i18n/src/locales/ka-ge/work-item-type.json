@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Once enabled, Work item Types can't be disabled.",
-          "description": "Plane's Work Item will become the default work item type for this project and will show up with its icon and background in this project.",
+          "description": "AI4MS's Work Item will become the default work item type for this project and will show up with its icon and background in this project.",
           "button": {
             "default": "Enable",
             "loading": "Setting up"
@@ -379,13 +379,6 @@
         "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
         "primary_button": {
           "text": "Get Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Upgrade to enable Work item types.",
-        "description": "Shape work items to your work with Work item types. Customize with icons, backgrounds, and properties and configure them for this project.",
-        "primary_button": {
-          "text": "Upgrade"
         }
       }
     }

@@ -14,7 +14,7 @@
       "sidebar_header": "Konfigurace spouštěče",
       "input_label": "Co je spouštěčem této automatizace?",
       "input_placeholder": "Vyberte možnost",
-      "section_plane_events": "Události Plane",
+      "section_plane_events": "Události AI4MS",
       "section_time_based": "Časově založené",
       "fixed_schedule": "Pevný rozvrh",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Zatím nejsou k zobrazení žádné automatizace.",
         "description": "Automatizace vám pomáhají eliminovat opakující se úkoly nastavením spouštěčů, podmínek a akcí. Vytvořte jednu, abyste ušetřili čas a udrželi práci v plynulém chodu."
-      },
-      "upgrade": {
-        "title": "Automatizace",
-        "description": "Automatizace jsou způsob, jak automatizovat úkoly ve vašem projektu.",
-        "sub_description": "Získejte zpět 80% svého administrativního času, když používáte automatizace."
       }
     },
     "global_automations": {

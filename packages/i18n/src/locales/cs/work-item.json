@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Vaše práce na autopilotu",
-        "description": "Nastavte to jednou. Připomeneme vám to, až bude čas. Upgradujte na Business a opakující se práce bude bez námahy."
-      },
       "no_templates": {
         "button": "Vytvořte svou první opakující se pracovní položku"
       }

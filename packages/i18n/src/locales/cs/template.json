@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL webové stránky",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by měla být kratší než 800 znaků"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Název společnosti",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Název společnosti je povinný",
               "maxLength": "Název společnosti by měl být kratší než 255 znaků"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email podpory",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Neplatná emailová adresa",
               "maxLength": "Email podpory by měl být kratší než 255 znaků"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Odkaz na vaši ochranu osobních údajů",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by měla být kratší než 800 znaků"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Odkaz na vaše podmínky použití",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by měla být kratší než 800 znaků"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Šablony",
-        "description": "S šablonami projektů, pracovních položek a stránek v Plane nemusíte vytvářet projekt od nuly nebo nastavovat vlastnosti pracovních položek ručně.",
-        "sub_description": "Získejte 80 % svého administrativního času zpět, když používáte šablony."
-      },
       "no_templates": {
         "button": "Vytvořte svou první šablonu"
       },

@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "网站 URL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "无效的 URL",
               "maxLength": "URL 应少于800个字符"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "公司名称",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "公司名称是必填项",
               "maxLength": "公司名称应少于255个字符"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "支持邮箱",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "无效的邮箱地址",
               "maxLength": "支持邮箱应少于255个字符"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "隐私政策链接",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "无效的URL",
               "maxLength": "URL应少于800个字符"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "使用条款链接",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "无效的URL",
               "maxLength": "URL应少于800个字符"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "模板",
-        "description": "使用Plane中的项目、工作项和页面模板，您无需从头开始创建项目或手动设置工作项属性。",
-        "sub_description": "使用模板可以收回80%的管理时间。"
-      },
       "no_templates": {
         "button": "创建您的第一个模板"
       },

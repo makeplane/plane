@@ -29,12 +29,7 @@
       "label": "Đối với mục công việc trong",
       "state_change_label": "có thể di chuyển nó đến"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Kiểm soát sự hỗn loạn của thay đổi và xem xét với Quy trình làm việc.",
-        "description": "Đặt quy tắc cho nơi công việc của bạn di chuyển, bởi ai và khi nào với Quy trình làm việc trong Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Xem lịch sử thay đổi",
       "reset_workflow": "Đặt lại quy trình làm việc"

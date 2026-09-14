@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Votre travail, en pilote automatique",
-        "description": "Configurez-le une fois. Nous vous le rappellerons quand il sera dû. Passez à Business pour rendre le travail récurrent sans effort."
-      },
       "no_templates": {
         "button": "Créez votre premier élément de travail récurrent"
       }

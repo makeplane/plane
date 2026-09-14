@@ -123,7 +123,6 @@
   "active_cycles": "활성 주기",
   "active_cycles_description": "프로젝트 전반의 주기를 모니터링하고, 고우선 작업 항목을 추적하며, 주의가 필요한 주기를 확대합니다.",
   "on_demand_snapshots_of_all_your_cycles": "모든 주기의 주문형 스냅샷",
-  "upgrade": "업그레이드",
   "10000_feet_view": "10,000피트 뷰",
   "10000_feet_view_description": "모든 프로젝트의 주기를 한 번에 확인할 수 있습니다.",
   "get_snapshot_of_each_active_cycle": "각 활성 주기의 스냅샷을 얻으세요.",
@@ -244,7 +243,6 @@
   "full_changelog": "전체 변경 로그",
   "support": "지원",
   "forum": "Forum",
-  "powered_by_plane_pages": "Plane Pages 제공",
   "please_select_at_least_one_invitation": "최소 하나의 초대를 선택하세요.",
   "please_select_at_least_one_invitation_description": "작업 공간에 참여하려면 최소 하나의 초대를 선택하세요.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "누군가가 작업 공간에 참여하도록 초대했습니다",
@@ -654,7 +652,6 @@
     "from": "{name}에서",
     "authenticated": "인증됨",
     "select": "선택",
-    "upgrade": "업그레이드",
     "add_seats": "좌석 추가",
     "projects": "프로젝트",
     "workspace": "작업 공간",
@@ -705,7 +702,6 @@
     "project_updates": "프로젝트 업데이트",
     "workflows": "워크플로우",
     "templates": "템플릿",
-    "business": "비즈니스",
     "members_and_teamspaces": "멤버와 팀스페이스",
     "recurring_work_items": "반복 작업 항목",
     "milestones": "마일스톤",
@@ -820,7 +816,7 @@
     "edited_by": "편집자"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane이 시작되지 않았습니다. 이는 하나 이상의 Plane 서비스가 시작에 실패했기 때문일 수 있습니다.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS이 시작되지 않았습니다. 이는 하나 이상의 AI4MS 서비스가 시작에 실패했기 때문일 수 있습니다.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "확실히 하려면 setup.sh와 Docker 로그에서 View Logs를 선택하세요."
   },
   "customize_navigation": "내비게이션 사용자 지정",

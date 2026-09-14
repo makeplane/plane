@@ -14,7 +14,7 @@
       "sidebar_header": "Configuration du déclencheur",
       "input_label": "Quel est le déclencheur pour cette automatisation ?",
       "input_placeholder": "Sélectionnez une option",
-      "section_plane_events": "Événements Plane",
+      "section_plane_events": "Événements AI4MS",
       "section_time_based": "Basé sur le temps",
       "fixed_schedule": "Horaire fixe",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Il n'y a pas encore d'automatisations à afficher.",
         "description": "Les automatisations vous aident à éliminer les tâches répétitives en définissant des déclencheurs, des conditions et des actions. Créez-en une pour gagner du temps et maintenir le travail en mouvement sans effort."
-      },
-      "upgrade": {
-        "title": "Automatisations",
-        "description": "Les automatisations sont un moyen d'automatiser les tâches dans votre projet.",
-        "sub_description": "Récupérez 80% de votre temps administratif lorsque vous utilisez les Automatisations."
       }
     },
     "global_automations": {

@@ -123,7 +123,6 @@
   "active_cycles": "活动周期",
   "active_cycles_description": "监控各个项目的周期，跟踪高优先级工作项，并关注需要注意的周期。",
   "on_demand_snapshots_of_all_your_cycles": "所有周期的实时快照",
-  "upgrade": "升级",
   "10000_feet_view": "所有活动周期的全局视图。",
   "10000_feet_view_description": "放大视角，一次性查看所有项目中正在进行的周期，而不是在每个项目中逐个查看周期。",
   "get_snapshot_of_each_active_cycle": "获取每个活动周期的快照。",
@@ -244,7 +243,6 @@
   "full_changelog": "完整更新日志",
   "support": "支持",
   "forum": "Forum",
-  "powered_by_plane_pages": "由Plane Pages提供支持",
   "please_select_at_least_one_invitation": "请至少选择一个邀请。",
   "please_select_at_least_one_invitation_description": "请至少选择一个加入工作区的邀请。",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "我们看到有人邀请您加入工作区",
@@ -654,7 +652,6 @@
     "from": "来自 {name}",
     "authenticated": "已认证",
     "select": "选择",
-    "upgrade": "升级",
     "add_seats": "添加席位",
     "projects": "项目",
     "workspace": "工作区",
@@ -705,7 +702,6 @@
     "project_updates": "项目更新",
     "workflows": "工作流",
     "templates": "模板",
-    "business": "商业",
     "members_and_teamspaces": "成员和团队空间",
     "recurring_work_items": "重复工作项",
     "milestones": "里程碑",
@@ -820,7 +816,7 @@
     "edited_by": "编辑者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS 未能启动。这可能是因为一个或多个 AI4MS 服务启动失败。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
   },
   "customize_navigation": "自定义导航",

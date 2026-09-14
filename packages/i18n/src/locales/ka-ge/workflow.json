@@ -29,12 +29,7 @@
       "label": "For work items in",
       "state_change_label": "can move it to"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Control the chaos of changes and reviews with Workflows.",
-        "description": "Set rules for where your work moves, by who, and when with Workflows in Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "View change history",
       "reset_workflow": "Reset workflow"

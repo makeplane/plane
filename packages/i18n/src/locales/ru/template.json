@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL веб-сайта",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "Некорректный URL",
               "maxLength": "URL должен быть менее 800 символов"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Название компании",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Название компании обязательно",
               "maxLength": "Название компании должно быть менее 255 символов"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email поддержки",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Некорректный email адрес",
               "maxLength": "Email поддержки должен быть менее 255 символов"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Ссылка на вашу политику конфиденциальности",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "Некорректный URL",
               "maxLength": "URL должен быть менее 800 символов"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Ссылка на ваши условия использования",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "Некорректный URL",
               "maxLength": "URL должен быть менее 800 символов"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Шаблоны",
-        "description": "С шаблонами проектов, рабочих элементов и страниц в Plane вам не нужно создавать проект с нуля или вручную устанавливать свойства рабочих элементов.",
-        "sub_description": "Верните 80% времени администрирования, используя Шаблоны."
-      },
       "no_templates": {
         "button": "Создайте ваш первый шаблон"
       },

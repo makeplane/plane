@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Jakmile budou povoleny, typy pracovních položek nelze zakázat.",
-          "description": "Typ pracovních položek Plane se stane výchozím typem pracovních položek pro tento projekt a zobrazí se s ikonou a pozadím v tomto projektu.",
+          "description": "Typ pracovních položek AI4MS se stane výchozím typem pracovních položek pro tento projekt a zobrazí se s ikonou a pozadím v tomto projektu.",
           "button": {
             "default": "Povolit",
             "loading": "Nastavuji"
@@ -379,13 +379,6 @@
         "description": "Upravte pracovní položky podle svých potřeb s typy pracovních položek. Přizpůsobte je ikonami, pozadím a vlastnostmi a nakonfigurujte je pro tento projekt.",
         "primary_button": {
           "text": "Získejte Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Upgradujte pro povolení typů pracovních položek.",
-        "description": "Upravte pracovní položky podle svých potřeb s typy pracovních položek. Přizpůsobte je ikonami, pozadím a vlastnostmi a nakonfigurujte je pro tento projekt.",
-        "primary_button": {
-          "text": "Upgradovat"
         }
       }
     }

@@ -17,9 +17,6 @@
         "description": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
       }
     },
-    "upgrade": {
-      "description": "Bu eki görüntülemek için planınızı yükseltin."
-    },
     "aria": {
       "click_to_upload": "Ek yüklemek için tıklayın"
     }

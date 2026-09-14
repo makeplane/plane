@@ -17,9 +17,6 @@
         "description": "Something went wrong. Please try again."
       }
     },
-    "upgrade": {
-      "description": "Upgrade your plan to view this attachment."
-    },
     "aria": {
       "click_to_upload": "Click to upload attachment"
     }

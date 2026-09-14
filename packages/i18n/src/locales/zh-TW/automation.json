@@ -14,7 +14,7 @@
       "sidebar_header": "觸發器設定",
       "input_label": "此自動化的觸發器是什麼？",
       "input_placeholder": "選擇一個選項",
-      "section_plane_events": "Plane 事件",
+      "section_plane_events": "AI4MS 事件",
       "section_time_based": "基於時間",
       "fixed_schedule": "固定排程",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "尚無自動化可顯示。",
         "description": "自動化透過設定觸發器、條件和動作來幫助您消除重複性任務。建立一個來節省時間並讓工作輕鬆進行。"
-      },
-      "upgrade": {
-        "title": "自動化",
-        "description": "自動化是在您的專案中自動執行任務的方式。",
-        "sub_description": "使用自動化可以節省80%的管理時間。"
       }
     },
     "global_automations": {

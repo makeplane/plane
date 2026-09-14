@@ -17,9 +17,6 @@
         "description": "Coś poszło nie tak. Spróbuj ponownie."
       }
     },
-    "upgrade": {
-      "description": "Uaktualnij swój plan, aby wyświetlić ten załącznik."
-    },
     "aria": {
       "click_to_upload": "Kliknij, aby przesłać załącznik"
     }

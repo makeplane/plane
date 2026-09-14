@@ -14,7 +14,7 @@
       "sidebar_header": "Tetikleyici yapılandırması",
       "input_label": "Bu otomasyon için tetikleyici nedir?",
       "input_placeholder": "Bir seçenek seçin",
-      "section_plane_events": "Plane olayları",
+      "section_plane_events": "AI4MS olayları",
       "section_time_based": "Zamana dayalı",
       "fixed_schedule": "Sabit zamanlama",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Henüz gösterilecek otomasyon yok.",
         "description": "Otomasyonlar, tetikleyiciler, koşullar ve eylemler ayarlayarak tekrarlayan görevleri ortadan kaldırmanıza yardımcı olur. Zaman kazanmak ve işlerin zahmetsizce devam etmesini sağlamak için bir tane oluşturun."
-      },
-      "upgrade": {
-        "title": "Otomasyonlar",
-        "description": "Otomasyonlar, projenizdeki görevleri otomatikleştirmenin bir yoludur.",
-        "sub_description": "Otomasyonları kullandığınızda yönetim zamanınızın %80'ini geri kazanın."
       }
     },
     "global_automations": {

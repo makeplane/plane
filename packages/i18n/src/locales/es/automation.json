@@ -14,7 +14,7 @@
       "sidebar_header": "Configuración del disparador",
       "input_label": "¿Cuál es el disparador para esta automatización?",
       "input_placeholder": "Selecciona una opción",
-      "section_plane_events": "Eventos de Plane",
+      "section_plane_events": "Eventos de AI4MS",
       "section_time_based": "Basado en tiempo",
       "fixed_schedule": "Horario fijo",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Aún no hay automatizaciones para mostrar.",
         "description": "Las automatizaciones te ayudan a eliminar tareas repetitivas configurando disparadores, condiciones y acciones. Crea una para ahorrar tiempo y mantener el trabajo fluyendo sin esfuerzo."
-      },
-      "upgrade": {
-        "title": "Automatizaciones",
-        "description": "Las automatizaciones son una forma de automatizar tareas en tu proyecto.",
-        "sub_description": "Recupera el 80% de tu tiempo administrativo cuando uses Automatizaciones."
       }
     },
     "global_automations": {

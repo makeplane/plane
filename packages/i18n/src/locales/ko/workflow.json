@@ -29,12 +29,7 @@
       "label": "다음에 있는 워크 아이템의 경우",
       "state_change_label": "다음으로 이동할 수 있습니다"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "워크플로우로 변경 및 리뷰의 혼란을 제어하세요.",
-        "description": "플레인의 워크플로우로 작업이 이동하는 위치, 누가, 언제 이동하는지에 대한 규칙을 설정하세요."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "변경 내역 보기",
       "reset_workflow": "워크플로우 리셋"

@@ -29,12 +29,7 @@
       "label": "Para itens de trabalho em",
       "state_change_label": "pode movê-lo para"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Controle o caos de mudanças e revisões com Fluxos de Trabalho.",
-        "description": "Defina regras para onde seu trabalho se move, por quem e quando com Fluxos de Trabalho no Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Ver histórico de mudanças",
       "reset_workflow": "Reiniciar fluxo de trabalho"

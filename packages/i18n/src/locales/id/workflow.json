@@ -29,12 +29,7 @@
       "label": "Untuk item kerja di",
       "state_change_label": "dapat memindahkannya ke"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Kendalikan kekacauan perubahan dan tinjauan dengan Workflows.",
-        "description": "Tetapkan aturan untuk ke mana pekerjaan Anda bergerak, oleh siapa, dan kapan dengan Workflows di Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Lihat riwayat perubahan",
       "reset_workflow": "Atur ulang workflow"

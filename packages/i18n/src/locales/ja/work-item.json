@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "あなたの作業を自動化",
-        "description": "一度設定すれば、期限が来たときに自動で再作成します。定期作業をより簡単にするにはBusinessへアップグレードしてください。"
-      },
       "no_templates": {
         "button": "最初の定期作業項目を作成"
       }

@@ -14,7 +14,7 @@
       "sidebar_header": "Configurazione trigger",
       "input_label": "Qual è il trigger per questa automazione?",
       "input_placeholder": "Seleziona un'opzione",
-      "section_plane_events": "Eventi Plane",
+      "section_plane_events": "Eventi AI4MS",
       "section_time_based": "Basato sul tempo",
       "fixed_schedule": "Pianificazione fissa",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Non ci sono ancora automazioni da mostrare.",
         "description": "Le automazioni ti aiutano a eliminare le attività ripetitive impostando trigger, condizioni e azioni. Creane una per risparmiare tempo e mantenere il lavoro in movimento senza sforzo."
-      },
-      "upgrade": {
-        "title": "Automazioni",
-        "description": "Le automazioni sono un modo per automatizzare le attività nel tuo progetto.",
-        "sub_description": "Recupera l'80% del tuo tempo amministrativo quando usi le Automazioni."
       }
     },
     "global_automations": {

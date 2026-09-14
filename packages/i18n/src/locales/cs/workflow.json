@@ -29,12 +29,7 @@
       "label": "Pro pracovní položky v",
       "state_change_label": "může ji přesunout na"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Ovládejte chaos změn a recenzí pomocí pracovních toků.",
-        "description": "Nastavte pravidla pro to, kam se vaše práce přesouvá, kým a kdy pomocí pracovních toků v Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Zobrazit historii změn",
       "reset_workflow": "Resetovat pracovní tok"

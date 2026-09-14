@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Il tuo lavoro, in automatico",
-        "description": "Impostalo una volta sola. Lo riproporremo quando sarà il momento. Passa a Business per rendere il lavoro ricorrente senza sforzo."
-      },
       "no_templates": {
         "button": "Crea il tuo primo elemento di lavoro ricorrente"
       }

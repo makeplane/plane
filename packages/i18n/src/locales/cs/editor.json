@@ -17,9 +17,6 @@
         "description": "Něco se pokazilo. Zkuste to znovu."
       }
     },
-    "upgrade": {
-      "description": "Upgradujte svůj plán pro zobrazení této přílohy."
-    },
     "aria": {
       "click_to_upload": "Klikněte pro nahrání přílohy"
     }

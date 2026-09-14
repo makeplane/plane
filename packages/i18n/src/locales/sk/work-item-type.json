@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Po povolení nemožno Typy pracovných položiek zakázať.",
-          "description": "Pracovná položka Plane sa stane predvoleným typom pracovnej položky pre tento projekt a zobrazí sa so svojou ikonou a pozadím v tomto projekte.",
+          "description": "Pracovná položka AI4MS sa stane predvoleným typom pracovnej položky pre tento projekt a zobrazí sa so svojou ikonou a pozadím v tomto projekte.",
           "button": {
             "default": "Povoliť",
             "loading": "Nastavuje sa"
@@ -379,13 +379,6 @@
         "description": "Formujte pracovné položky podľa vašej práce pomocou Typov pracovných položiek. Prispôsobte ich ikonami, pozadiami a vlastnosťami a nakonfigurujte ich pre tento projekt.",
         "primary_button": {
           "text": "Získať Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Inovácia pre povolenie Typov pracovných položiek.",
-        "description": "Formujte pracovné položky podľa vašej práce pomocou Typov pracovných položiek. Prispôsobte ich ikonami, pozadiami a vlastnosťami a nakonfigurujte ich pre tento projekt.",
-        "primary_button": {
-          "text": "Inovovať"
         }
       }
     }

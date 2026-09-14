@@ -29,12 +29,7 @@
       "label": "Pentru elemente de lucru în",
       "state_change_label": "poate să-l mute la"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Controlează haosul schimbărilor și evaluărilor cu Fluxuri de lucru.",
-        "description": "Setează reguli pentru unde se mută lucrul tău, de către cine și când cu Fluxuri de lucru în Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Vezi istoricul schimbărilor",
       "reset_workflow": "Resetează fluxul de lucru"

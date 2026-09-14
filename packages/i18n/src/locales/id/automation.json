@@ -14,7 +14,7 @@
       "sidebar_header": "Konfigurasi pemicu",
       "input_label": "Apa pemicu untuk otomatisasi ini?",
       "input_placeholder": "Pilih opsi",
-      "section_plane_events": "Peristiwa Plane",
+      "section_plane_events": "Peristiwa AI4MS",
       "section_time_based": "Berbasis waktu",
       "fixed_schedule": "Jadwal tetap",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Belum ada otomatisasi untuk ditampilkan.",
         "description": "Otomatisasi membantu Anda menghilangkan tugas berulang dengan mengatur pemicu, kondisi, dan aksi. Buat satu untuk menghemat waktu dan menjaga pekerjaan berjalan dengan mudah."
-      },
-      "upgrade": {
-        "title": "Otomatisasi",
-        "description": "Otomatisasi adalah cara untuk mengotomatisasi tugas dalam proyek Anda.",
-        "sub_description": "Dapatkan kembali 80% waktu admin Anda ketika menggunakan Otomatisasi."
       }
     },
     "global_automations": {

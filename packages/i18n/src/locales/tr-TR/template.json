@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "Web sitesi URL'si",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "Geçersiz URL",
               "maxLength": "URL 800 karakterden az olmalıdır"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Şirket adı",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Şirket adı gereklidir",
               "maxLength": "Şirket adı 255 karakterden az olmalıdır"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Destek e-postası",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Geçersiz e-posta adresi",
               "maxLength": "Destek e-postası 255 karakterden az olmalıdır"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Gizlilik politikası bağlantısı",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "Geçersiz URL",
               "maxLength": "URL 800 karakterden az olmalıdır"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Kullanım koşulları bağlantısı",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "Geçersiz URL",
               "maxLength": "URL 800 karakterden az olmalıdır"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Şablonlar",
-        "description": "Plane'deki proje, iş-öğesi ve sayfa şablonlarıyla, bir projeyi sıfırdan oluşturmanız veya iş öğesi özelliklerini manuel olarak ayarlamanız gerekmez.",
-        "sub_description": "Şablonları kullandığınızda admin zamanınızın %80'ini geri kazanın."
-      },
       "no_templates": {
         "button": "İlk şablonunuzu oluşturun"
       },

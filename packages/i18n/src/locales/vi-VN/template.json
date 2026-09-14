@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL trang web",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "URL không hợp lệ",
               "maxLength": "URL không nên vượt quá 800 ký tự"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Tên công ty",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Tên công ty là bắt buộc",
               "maxLength": "Tên công ty không nên vượt quá 255 ký tự"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email hỗ trợ",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Địa chỉ email không hợp lệ",
               "maxLength": "Email hỗ trợ không nên vượt quá 255 ký tự"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Liên kết đến chính sách bảo mật của bạn",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "URL không hợp lệ",
               "maxLength": "URL không nên vượt quá 800 ký tự"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Liên kết đến điều khoản sử dụng của bạn",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "URL không hợp lệ",
               "maxLength": "URL không nên vượt quá 800 ký tự"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Mẫu",
-        "description": "Với mẫu dự án, mẫu mục công việc và mẫu trang trong Plane, bạn không phải tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc theo cách thủ công.",
-        "sub_description": "Nhận lại 80% thời gian quản lý của bạn khi bạn sử dụng Mẫu."
-      },
       "no_templates": {
         "button": "Tạo mẫu của bạn"
       },

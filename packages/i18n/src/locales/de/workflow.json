@@ -29,12 +29,7 @@
       "label": "Für Arbeitsaufgaben in",
       "state_change_label": "kann es verschieben nach"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Kontrollieren Sie das Chaos von Änderungen und Überprüfungen mit Workflows.",
-        "description": "Legen Sie Regeln fest, wohin sich Ihre Arbeit bewegt, durch wen und wann mit Workflows in Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Änderungsverlauf anzeigen",
       "reset_workflow": "Workflow zurücksetzen"

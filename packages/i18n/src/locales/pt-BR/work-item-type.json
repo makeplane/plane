@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Uma vez ativados, os Tipos de Item de Trabalho não podem ser desativados.",
-          "description": "O Item de Trabalho do Plane se tornará o tipo de item de trabalho padrão para este projeto e aparecerá com seu ícone e plano de fundo neste projeto.",
+          "description": "O Item de Trabalho do AI4MS se tornará o tipo de item de trabalho padrão para este projeto e aparecerá com seu ícone e plano de fundo neste projeto.",
           "button": {
             "default": "Ativar",
             "loading": "Configurando"
@@ -379,13 +379,6 @@
         "description": "Molde itens de trabalho para seu trabalho com Tipos de Item de Trabalho. Personalize com ícones, planos de fundo e propriedades e configure-os para este projeto.",
         "primary_button": {
           "text": "Obter Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Faça upgrade para ativar Tipos de Item de Trabalho.",
-        "description": "Molde itens de trabalho para seu trabalho com Tipos de Item de Trabalho. Personalize com ícones, planos de fundo e propriedades e configure-os para este projeto.",
-        "primary_button": {
-          "text": "Fazer upgrade"
         }
       }
     }

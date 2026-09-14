@@ -14,7 +14,7 @@
       "sidebar_header": "Cấu hình kích hoạt",
       "input_label": "Kích hoạt nào cho tự động hóa này?",
       "input_placeholder": "Chọn một tùy chọn",
-      "section_plane_events": "Sự kiện Plane",
+      "section_plane_events": "Sự kiện AI4MS",
       "section_time_based": "Dựa trên thời gian",
       "fixed_schedule": "Lịch trình cố định",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "Chưa có tự động hóa nào để hiển thị.",
         "description": "Tự động hóa giúp bạn loại bỏ các tác vụ lặp lại bằng cách thiết lập kích hoạt, điều kiện và hành động. Tạo một cái để tiết kiệm thời gian và giữ cho công việc diễn ra một cách dễ dàng."
-      },
-      "upgrade": {
-        "title": "Tự động hóa",
-        "description": "Tự động hóa là cách để tự động hóa các tác vụ trong dự án của bạn.",
-        "sub_description": "Lấy lại 80% thời gian quản trị của bạn khi sử dụng Tự động hóa."
       }
     },
     "global_automations": {

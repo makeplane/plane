@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Munca ta, pe pilot automat",
-        "description": "Setează o dată. Îl readucem când este necesar. Fă upgrade la Business pentru ca munca recurentă să fie fără efort."
-      },
       "no_templates": {
         "button": "Creează primul tău element de lucru recurent"
       }

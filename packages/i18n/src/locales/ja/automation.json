@@ -14,7 +14,7 @@
       "sidebar_header": "トリガー設定",
       "input_label": "この自動化のトリガーは何ですか？",
       "input_placeholder": "オプションを選択",
-      "section_plane_events": "Planeイベント",
+      "section_plane_events": "AI4MSイベント",
       "section_time_based": "時間ベース",
       "fixed_schedule": "固定スケジュール",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "まだ表示する自動化がありません。",
         "description": "自動化は、トリガー、条件、アクションを設定することで繰り返し作業を排除するのに役立ちます。時間を節約し、作業を効率的に進めるために作成してください。"
-      },
-      "upgrade": {
-        "title": "自動化",
-        "description": "自動化は、プロジェクト内のタスクを自動化する方法です。",
-        "sub_description": "自動化を使用すると、管理時間の80%を節約できます。"
       }
     },
     "global_automations": {

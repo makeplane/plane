@@ -14,7 +14,7 @@
       "sidebar_header": "触发器配置",
       "input_label": "此自动化的触发器是什么？",
       "input_placeholder": "选择一个选项",
-      "section_plane_events": "Plane 事件",
+      "section_plane_events": "AI4MS 事件",
       "section_time_based": "基于时间",
       "fixed_schedule": "固定计划",
       "schedule": {
@@ -233,11 +233,6 @@
       "no_automations": {
         "title": "还没有自动化可显示。",
         "description": "自动化通过设置触发器、条件和操作来帮助您消除重复性任务。创建一个来节省时间并让工作轻松进行。"
-      },
-      "upgrade": {
-        "title": "自动化",
-        "description": "自动化是在您的项目中自动执行任务的方式。",
-        "sub_description": "使用自动化可以节省80%的管理时间。"
       }
     },
     "global_automations": {

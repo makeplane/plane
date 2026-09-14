@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "WebサイトのURL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "無効なURL",
               "maxLength": "URLは800文字未満にしてください"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "会社名",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "会社名は必須です",
               "maxLength": "会社名は255文字未満にしてください"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "サポートメールアドレス",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "無効なメールアドレス",
               "maxLength": "サポートメールアドレスは255文字未満にしてください"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "プライバシーポリシーのURL",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "無効なURL",
               "maxLength": "URLは800文字未満にしてください"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "利用規約のURL",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "無効なURL",
               "maxLength": "URLは800文字未満にしてください"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "テンプレート",
-        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
-        "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
-      },
       "no_templates": {
         "button": "最初のテンプレートを作成"
       },

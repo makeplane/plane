@@ -123,7 +123,6 @@
   "active_cycles": "Siklus aktif",
   "active_cycles_description": "Pantau siklus di seluruh proyek, lacak item kerja prioritas tinggi, dan fokus pada siklus yang membutuhkan perhatian.",
   "on_demand_snapshots_of_all_your_cycles": "Snapshot sesuai permintaan dari semua siklus Anda",
-  "upgrade": "Tingkatkan",
   "10000_feet_view": "Tampilan 10.000 kaki dari semua siklus aktif.",
   "10000_feet_view_description": "Perbesar untuk melihat siklus yang berjalan di seluruh proyek Anda sekaligus, bukan berpindah dari Siklus ke Siklus di setiap proyek.",
   "get_snapshot_of_each_active_cycle": "Dapatkan snapshot dari setiap siklus aktif.",
@@ -244,7 +243,6 @@
   "full_changelog": "Changelog lengkap",
   "support": "Dukungan",
   "forum": "Forum",
-  "powered_by_plane_pages": "Ditenagai oleh Plane Pages",
   "please_select_at_least_one_invitation": "Silakan pilih setidaknya satu undangan.",
   "please_select_at_least_one_invitation_description": "Silakan pilih setidaknya satu undangan untuk bergabung dengan ruang kerja.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Kami melihat bahwa seseorang telah mengundang Anda untuk bergabung dengan ruang kerja",
@@ -654,7 +652,6 @@
     "from": "dari {name}",
     "authenticated": "Terautentikasi",
     "select": "Pilih",
-    "upgrade": "Tingkatkan",
     "add_seats": "Tambahkan Kursi",
     "projects": "Proyek",
     "workspace": "Ruang kerja",
@@ -705,7 +702,6 @@
     "project_updates": "Pembaruan Proyek",
     "workflows": "Alur Kerja",
     "templates": "Templat",
-    "business": "Bisnis",
     "members_and_teamspaces": "Anggota & Teamspaces",
     "recurring_work_items": "Item kerja berulang",
     "milestones": "Tonggak",
@@ -820,7 +816,7 @@
     "edited_by": "Disunting oleh"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane tidak berhasil dimulai. Ini bisa karena satu atau lebih layanan Plane gagal untuk dimulai.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS tidak berhasil dimulai. Ini bisa karena satu atau lebih layanan AI4MS gagal untuk dimulai.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Pilih View Logs dari setup.sh dan log Docker untuk memastikan."
   },
   "customize_navigation": "Sesuaikan navigasi",

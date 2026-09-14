@@ -123,7 +123,6 @@
   "active_cycles": "進行中的週期",
   "active_cycles_description": "監控跨專案的週期、追蹤高優先順序工作事項，並關注需要注意的週期。",
   "on_demand_snapshots_of_all_your_cycles": "依需求檢視所有週期的快照",
-  "upgrade": "升級",
   "10000_feet_view": "俯瞰所有進行中的週期。",
   "10000_feet_view_description": "一次檢視所有專案的進行中週期，不需逐一檢視每個專案的週期。",
   "get_snapshot_of_each_active_cycle": "取得每個進行中週期的快照。",
@@ -244,7 +243,6 @@
   "full_changelog": "完整更新日誌",
   "support": "支援",
   "forum": "Forum",
-  "powered_by_plane_pages": "由 Plane Pages 提供",
   "please_select_at_least_one_invitation": "請至少選擇一個邀請。",
   "please_select_at_least_one_invitation_description": "請至少選擇一個邀請加入工作區。",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "我們發現有人邀請您加入工作區",
@@ -654,7 +652,6 @@
     "from": "來自 {name}",
     "authenticated": "已認證",
     "select": "選擇",
-    "upgrade": "升級",
     "add_seats": "新增席位",
     "projects": "專案",
     "workspace": "工作區",
@@ -705,7 +702,6 @@
     "project_updates": "專案更新",
     "workflows": "工作流程",
     "templates": "模板",
-    "business": "商業版",
     "members_and_teamspaces": "成員和團隊空間",
     "recurring_work_items": "重複工作事項",
     "milestones": "里程碑",
@@ -820,7 +816,7 @@
     "edited_by": "編輯者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS 未能啟動。這可能是因為一個或多個 AI4MS 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
   },
   "customize_navigation": "自訂導覽",

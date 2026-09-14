@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Una volta abilitato, i Tipi di Elementi di Lavoro non possono essere disattivati.",
-          "description": "Plane's Elemento di Lavoro diventerà il tipo di elemento di lavoro predefinito per questo progetto e apparirà con la sua icona e sfondo in questo progetto.",
+          "description": "AI4MS's Elemento di Lavoro diventerà il tipo di elemento di lavoro predefinito per questo progetto e apparirà con la sua icona e sfondo in questo progetto.",
           "button": {
             "default": "Abilita",
             "loading": "Configurazione"
@@ -379,13 +379,6 @@
         "description": "Forma gli elementi di lavoro per il tuo lavoro con i Tipi di Elementi di Lavoro. Personalizza con icone, sfondi e proprietà e configurali per questo progetto.",
         "primary_button": {
           "text": "Ottieni Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Aggiorna per abilitare i Tipi di Elementi di Lavoro.",
-        "description": "Forma gli elementi di lavoro per il tuo lavoro con i Tipi di Elementi di Lavoro. Personalizza con icone, sfondi e proprietà e configurali per questo progetto.",
-        "primary_button": {
-          "text": "Aggiorna"
         }
       }
     }

@@ -367,7 +367,7 @@
         },
         "confirmation": {
           "title": "Setelah diaktifkan, Tipe Item Kerja tidak dapat dinonaktifkan.",
-          "description": "Item Kerja Plane akan menjadi tipe item kerja default untuk proyek ini dan akan muncul dengan ikon dan latar belakangnya di proyek ini.",
+          "description": "Item Kerja AI4MS akan menjadi tipe item kerja default untuk proyek ini dan akan muncul dengan ikon dan latar belakangnya di proyek ini.",
           "button": {
             "default": "Aktifkan",
             "loading": "Menyiapkan"
@@ -379,13 +379,6 @@
         "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
         "primary_button": {
           "text": "Dapatkan Pro"
-        }
-      },
-      "upgrade": {
-        "title": "Tingkatkan untuk mengaktifkan Tipe item kerja.",
-        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
-        "primary_button": {
-          "text": "Tingkatkan"
         }
       }
     }

@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Công việc của bạn, tự động hóa",
-        "description": "Thiết lập một lần. Chúng tôi sẽ tự động lặp lại khi đến hạn. Nâng cấp lên Doanh nghiệp để công việc lặp lại trở nên dễ dàng."
-      },
       "no_templates": {
         "button": "Tạo mục công việc lặp lại đầu tiên của bạn"
       }

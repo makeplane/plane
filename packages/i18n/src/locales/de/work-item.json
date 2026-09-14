@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Ihre Arbeit, auf Autopilot",
-        "description": "Einmal einstellen. Wir erinnern Sie daran, wenn es fällig ist. Upgrade auf Business, um wiederkehrende Arbeit mühelos zu machen."
-      },
       "no_templates": {
         "button": "Erstellen Sie Ihre erste wiederkehrende Arbeitsaufgabe"
       }

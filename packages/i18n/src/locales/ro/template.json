@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL site web",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "URL invalid",
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Numele companiei",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Numele companiei este obligatoriu",
               "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email de suport",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Adresa email-ului este invalidă",
               "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Link către politică de confidențialitate",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "URL-ul este invalid",
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Link către termenii de utilizare",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "URL-ul este invalid",
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Șabloane",
-        "description": "Cu șabloane de proiect, element de lucru și pagină în Plane, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
-        "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Șabloane."
-      },
       "no_templates": {
         "button": "Creează primul tău șablon"
       },

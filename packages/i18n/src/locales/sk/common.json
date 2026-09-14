@@ -123,7 +123,6 @@
   "active_cycles": "Aktívne cykly",
   "active_cycles_description": "Sledujte cykly naprieč projektmi, monitorujte vysoko prioritné pracovné položky a zamerajte sa na cykly vyžadujúce pozornosť.",
   "on_demand_snapshots_of_all_your_cycles": "Okamžité snapshoty všetkých vašich cyklov",
-  "upgrade": "Upgradovať",
   "10000_feet_view": "Pohľad z výšky 10 000 stôp na všetky aktívne cykly.",
   "10000_feet_view_description": "Priblížte si všetky prebiehajúce cykly naprieč všetkými projektmi naraz, namiesto prepínania medzi cyklami v každom projekte.",
   "get_snapshot_of_each_active_cycle": "Získajte snapshot každého aktívneho cyklu.",
@@ -244,7 +243,6 @@
   "full_changelog": "Úplný zmenový protokol",
   "support": "Podpora",
   "forum": "Forum",
-  "powered_by_plane_pages": "Poháňa Plane Pages",
   "please_select_at_least_one_invitation": "Vyberte aspoň jednu pozvánku.",
   "please_select_at_least_one_invitation_description": "Vyberte aspoň jednu pozvánku na pripojenie do pracovného priestoru.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "Vidíme, že vás niekto pozval do pracovného priestoru",
@@ -654,7 +652,6 @@
     "from": "od {name}",
     "authenticated": "Overené",
     "select": "Vybrať",
-    "upgrade": "Upgradovať",
     "add_seats": "Pridať miesta",
     "projects": "Projekty",
     "workspace": "Pracovný priestor",
@@ -705,7 +702,6 @@
     "project_updates": "Aktualizácie projektov",
     "workflows": "Vorkflou",
     "templates": "Šablóny",
-    "business": "Biznis",
     "members_and_teamspaces": "Členovia a tímspejse",
     "recurring_work_items": "Opakujúce sa pracovné položky",
     "milestones": "Míľniky",
@@ -820,7 +816,7 @@
     "edited_by": "Upravené používateľom"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb Plane nepodarilo spustiť.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb AI4MS nepodarilo spustiť.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logov, aby ste si boli istí."
   },
   "customize_navigation": "Prispôsobiť navigáciu",

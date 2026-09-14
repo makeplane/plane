@@ -29,12 +29,7 @@
       "label": "Pre pracovné položky v",
       "state_change_label": "môže ho presunúť do"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Ovládajte chaos zmien a recenzií s Vorkflou.",
-        "description": "Nastavte pravidlá pre to, kam sa vaša práca presúva, kým a kedy s Vorkflou v Plane."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Zobraziť históriu zmien",
       "reset_workflow": "Resetovať vorkflou"

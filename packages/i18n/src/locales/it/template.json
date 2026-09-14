@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL del sito web",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "URL non valido",
               "maxLength": "L'URL deve contenere meno di 800 caratteri"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nome dell'azienda",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Il nome dell'azienda è obbligatorio",
               "maxLength": "Il nome dell'azienda deve contenere meno di 255 caratteri"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email di supporto",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Indirizzo email non valido",
               "maxLength": "L'email di supporto deve contenere meno di 255 caratteri"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Link alla tua politica privacy",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "URL non valido",
               "maxLength": "URL deve contenere meno di 800 caratteri"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Link alla tua politica di utilizzo",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "URL non valido",
               "maxLength": "URL deve contenere meno di 800 caratteri"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Modelli",
-        "description": "Con i modelli di progetto, elemento di lavoro e pagina in Plane, non devi creare un progetto da zero o impostare manualmente le proprietà degli elementi di lavoro.",
-        "sub_description": "Recupera l'80% del tuo tempo di amministrazione quando utilizzi i Modelli."
-      },
       "no_templates": {
         "button": "Crea il tuo primo modello"
       },

@@ -29,12 +29,7 @@
       "label": "Şuradaki iş öğeleri için",
       "state_change_label": "şuraya taşıyabilir"
     },
-    "empty_state": {
-      "upgrade": {
-        "title": "Değişikliklerin ve incelemelerin kargaşasını İş Akışları ile kontrol edin.",
-        "description": "Plane'deki İş Akışları ile işinizin nereye, kim tarafından ve ne zaman taşınacağına dair kurallar belirleyin."
-      }
-    },
+    "empty_state": {},
     "quick_actions": {
       "view_change_history": "Değişiklik geçmişini görüntüle",
       "reset_workflow": "İş akışını sıfırla"

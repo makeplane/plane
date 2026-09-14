@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL вебсайту",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://example.org",
             "validation": {
               "invalid": "Некоректний URL",
               "maxLength": "URL має бути менше 800 символів"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Назва компанії",
-            "placeholder": "Plane",
+            "placeholder": "AI4MS",
             "validation": {
               "required": "Назва компанії обов'язкова",
               "maxLength": "Назва компанії має бути менше 255 символів"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email підтримки",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@example.org",
             "validation": {
               "invalid": "Некоректна email адреса",
               "maxLength": "Email підтримки має бути менше 255 символів"
@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Посилання на вашу політику конфіденційності",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://example.org/privacy-policy",
             "validation": {
               "invalid": "Некоректне посилання",
               "maxLength": "Посилання має бути менше 800 символів"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Посилання на ваші умови використання",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://example.org/terms-of-use",
             "validation": {
               "invalid": "Некоректне посилання",
               "maxLength": "Посилання має бути менше 800 символів"
@@ -225,11 +225,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Темплейти",
-        "description": "З темплейтами проджектів, робочих елементів та пейджів у Плейн, вам не доведеться створювати проджект з нуля або вручну налаштовувати пропси робочих елементів.",
-        "sub_description": "Поверніть 80% часу адміністрування, коли використовуєте Темплейти."
-      },
       "no_templates": {
         "button": "Створіть ваш перший темплейт"
       },

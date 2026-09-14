@@ -365,10 +365,6 @@
       }
     },
     "empty_state": {
-      "upgrade": {
-        "title": "Pekerjaan Anda, otomatis",
-        "description": "Atur sekali saja. Kami akan mengingatkannya saat waktunya tiba. Tingkatkan ke Bisnis untuk membuat pekerjaan berulang terasa mudah."
-      },
       "no_templates": {
         "button": "Buat item kerja berulang pertama Anda"
       }
