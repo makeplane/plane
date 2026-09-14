@@ -5,6 +5,7 @@
  */
 
 // helpers
+import { BRAND_NAME } from "@plane/constants";
 import { EAuthModes } from "@/types/auth";
 
 type TAuthHeader = {
@@ -27,7 +28,7 @@ const Titles: TAuthHeaderDetails = {
   },
   [EAuthModes.SIGN_UP]: {
     header: "View, comment, and do more",
-    subHeader: "Sign up or log in to work with Plane work items and Pages.",
+    subHeader: `Sign up or log in to work with ${BRAND_NAME} work items and Pages.`,
   },
 };
 
@@ -41,7 +42,7 @@ export function AuthHeader(props: TAuthHeader) {
 
     return {
       header: "Comment or react to work items",
-      subHeader: "Use plane to add your valuable inputs to features.",
+      subHeader: `Use ${BRAND_NAME} to add your valuable inputs to features.`,
     };
   };
 

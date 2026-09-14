@@ -17,10 +17,11 @@ import { IssuesNavbarRoot } from "@/components/issues/navbar";
 import { PageNotFound } from "@/components/ui/not-found";
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
+import { BRAND_NAME } from "@plane/constants";
 import type { Route } from "./+types/layout";
 
-const DEFAULT_TITLE = "Plane";
-const DEFAULT_DESCRIPTION = "Made with Plane, an AI-powered work management platform with publishing capabilities.";
+const DEFAULT_TITLE = `${BRAND_NAME} Publish`;
+const DEFAULT_DESCRIPTION = "Public project feedback and updates.";
 
 interface IssueMetadata {
   name?: string;

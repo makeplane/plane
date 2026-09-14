@@ -5,8 +5,8 @@
  */
 
 import { WEBSITE_URL } from "@plane/constants";
-// assets
-import { PlaneLogo } from "@plane/propel/icons";
+// components
+import { BrandMark } from "./brand-mark";
 
 type TPoweredBy = {
   disabled?: boolean;
@@ -25,10 +25,8 @@ export function PoweredBy(props: TPoweredBy) {
       target="_blank"
       rel="noreferrer noopener"
     >
-      <PlaneLogo className="h-3 w-auto text-primary" />
-      <div className="text-11">
-        Powered by <span className="font-semibold">Plane Publish</span>
-      </div>
+      <BrandMark className="h-3 text-primary" />
+      <div className="text-11">Publish</div>
     </a>
   );
 }
