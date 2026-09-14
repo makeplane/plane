@@ -111,5 +111,8 @@
       "success_message": "Halaman dihapus dari koleksi.",
       "error_message": "Halaman tidak dapat dihapus dari koleksi. Silakan coba lagi."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Batas konten tercapai dan sinkronisasi langsung nonaktif. Buat halaman baru atau gunakan halaman bertingkat untuk melanjutkan sinkronisasi."
   }
 }

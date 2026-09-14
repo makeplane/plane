@@ -7,13 +7,15 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 // icons import
-import { OverviewIcon } from "../icons/overview-icon";
-import { CycleIcon } from "../icons/project/cycle-icon";
-import { IntakeIcon } from "../icons/project/intake-icon";
-import { ModuleIcon } from "../icons/project/module-icon";
-import { PageIcon } from "../icons/project/page-icon";
-import { ViewsIcon } from "../icons/project/view-icon";
-import { WorkItemsIcon } from "../icons/project/work-items-icon";
+import {
+  CyclesOutline,
+  IntakeOutline,
+  ModuleOutline,
+  OverviewOutline,
+  PagesOutline,
+  ViewsOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
 // tab navigation import
 import { TabNavigationItem } from "./tab-navigation-item";
 import { TabNavigationList } from "./tab-navigation-list";
@@ -42,13 +44,13 @@ export const Default: Story = {
 
     // Example navigation items (matching actual Plane project navigation)
     const navItems = [
-      { key: "overview", name: "Overview", href: "#overview", icon: OverviewIcon },
-      { key: "work_items", name: "Work items", href: "#work_items", icon: WorkItemsIcon },
-      { key: "cycles", name: "Cycles", href: "#cycles", icon: CycleIcon },
-      { key: "modules", name: "Modules", href: "#modules", icon: ModuleIcon },
-      { key: "views", name: "Views", href: "#views", icon: ViewsIcon },
-      { key: "pages", name: "Pages", href: "#pages", icon: PageIcon },
-      { key: "intake", name: "Intake", href: "#intake", icon: IntakeIcon },
+      { key: "overview", name: "Overview", href: "#overview", icon: OverviewOutline },
+      { key: "work_items", name: "Work items", href: "#work_items", icon: WorkItemsOutline },
+      { key: "cycles", name: "Cycles", href: "#cycles", icon: CyclesOutline },
+      { key: "modules", name: "Modules", href: "#modules", icon: ModuleOutline },
+      { key: "views", name: "Views", href: "#views", icon: ViewsOutline },
+      { key: "pages", name: "Pages", href: "#pages", icon: PagesOutline },
+      { key: "intake", name: "Intake", href: "#intake", icon: IntakeOutline },
     ];
 
     return (

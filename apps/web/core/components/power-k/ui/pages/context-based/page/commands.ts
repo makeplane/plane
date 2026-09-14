@@ -6,10 +6,19 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { ArchiveIcon, ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, Star, StarOff } from "lucide-react";
+import { StarOff } from "lucide-react";
+import {
+  ArchiveOutline,
+  GlobeOutline,
+  LinkOutline,
+  LockOutline,
+  LockedOutline,
+  RestoreOutline,
+  StarOutline,
+  UnlockedOutline,
+} from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { LinkIcon, GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
@@ -80,7 +89,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     {
       id: "toggle_page_lock",
       i18n_title: isLocked ? "power_k.contextual_actions.page.unlock" : "power_k.contextual_actions.page.lock",
-      icon: isLocked ? LockKeyholeOpen : LockKeyhole,
+      icon: isLocked ? UnlockedOutline : LockedOutline,
       group: "contextual",
       contextType: "page",
       type: "action",
@@ -107,7 +116,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
         access === EPageAccess.PUBLIC
           ? "power_k.contextual_actions.page.make_private"
           : "power_k.contextual_actions.page.make_public",
-      icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
+      icon: access === EPageAccess.PUBLIC ? LockOutline : GlobeOutline,
       group: "contextual",
       contextType: "page",
       type: "action",
@@ -129,7 +138,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     {
       id: "toggle_page_archive",
       i18n_title: archived_at ? "power_k.contextual_actions.page.restore" : "power_k.contextual_actions.page.archive",
-      icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+      icon: archived_at ? RestoreOutline : ArchiveOutline,
       group: "contextual",
       contextType: "page",
       type: "action",
@@ -153,7 +162,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       i18n_title: isFavorite
         ? "power_k.contextual_actions.page.remove_from_favorites"
         : "power_k.contextual_actions.page.add_to_favorites",
-      icon: isFavorite ? StarOff : Star,
+      icon: isFavorite ? StarOff : StarOutline,
       group: "contextual",
       contextType: "page",
       type: "action",
@@ -166,7 +175,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     {
       id: "copy_page_url",
       i18n_title: "power_k.contextual_actions.page.copy_url",
-      icon: LinkIcon,
+      icon: LinkOutline,
       group: "contextual",
       contextType: "page",
       type: "action",

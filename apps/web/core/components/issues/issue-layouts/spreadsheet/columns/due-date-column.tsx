@@ -6,7 +6,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { DueDatePropertyIcon } from "@plane/propel/icons";
+import { DueDateOutline } from "@makeplane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -48,7 +48,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
         }}
         disabled={disabled}
         placeholder="Due date"
-        icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+        icon={<DueDateOutline className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn(

@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/propel/utils";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
@@ -20,7 +20,7 @@ interface IFilterItemPropertyProps<P extends TFilterProperty, E extends TExterna
   isDisabled?: boolean;
   filter: IFilterInstance<P, E>;
   label: string;
-  tooltipContent?: React.ReactNode | undefined;
+  tooltipContent?: string;
 }
 
 export const FilterItemProperty = observer(function FilterItemProperty<
@@ -54,7 +54,7 @@ function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(pr
   const { icon: Icon, label, tooltipContent, className } = props;
 
   return (
-    <Tooltip tooltipContent={tooltipContent} position="bottom-start" disabled={!tooltipContent}>
+    <Tooltip label={tooltipContent ?? ""} layout="stacked" side="bottom" align="start" disabled={!tooltipContent}>
       <div
         className={cn(
           "flex h-full min-w-0 items-center gap-1 px-2 py-[5px] text-11 text-tertiary",

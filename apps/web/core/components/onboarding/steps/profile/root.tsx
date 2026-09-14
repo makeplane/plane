@@ -7,7 +7,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ImageIcon } from "lucide-react";
+import { ImageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -189,7 +189,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
-          <ImageIcon className="size-4" />
+          <ImageOutline className="size-4" />
           <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>

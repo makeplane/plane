@@ -8,7 +8,7 @@ import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Ellipsis } from "lucide-react";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
@@ -228,7 +228,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       <CustomMenu
         ellipsis
         placement={placements}
-        customButton={<IconButton size="lg" variant="secondary" icon={Ellipsis} />}
+        customButton={<IconButton size="lg" variant="secondary" icon={MoreHorizontalOutline} />}
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
         maxHeight="lg"

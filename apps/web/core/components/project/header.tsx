@@ -7,11 +7,11 @@
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // i18n
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
-import { ProjectIcon } from "@plane/propel/icons";
+import { ProjectsOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -46,7 +46,7 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
             component={
               <BreadcrumbLink
                 label={t("workspace_projects.label", { count: 2 })}
-                icon={<ProjectIcon className="h-4 w-4 text-tertiary" />}
+                icon={<ProjectsOutline className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -65,7 +65,6 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
             onClick={() => {
               toggleCreateProjectModal(true);
             }}
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
             className="items-center gap-1"
           >
             <span className="hidden sm:inline-block">{t("workspace_projects.create.label")}</span>

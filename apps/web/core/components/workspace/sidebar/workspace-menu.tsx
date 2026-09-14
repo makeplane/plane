@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
+import { AnalyticsOutline, CyclesOutline, ProjectsOutline, ViewsOutline } from "@makeplane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -31,28 +31,28 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
       labelTranslationKey: "sidebar.projects",
       href: `/${workspaceSlug}/projects/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: ProjectIcon,
+      Icon: ProjectsOutline,
     },
     {
       key: "views",
       labelTranslationKey: "sidebar.views",
       href: `/${workspaceSlug}/workspace-views/all-issues/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: ViewsIcon,
+      Icon: ViewsOutline,
     },
     {
       key: "active-cycles",
       labelTranslationKey: "sidebar.cycles",
       href: `/${workspaceSlug}/active-cycles/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: CycleIcon,
+      Icon: CyclesOutline,
     },
     {
       key: "analytics",
       labelTranslationKey: "sidebar.analytics",
       href: `/${workspaceSlug}/analytics/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: AnalyticsIcon,
+      Icon: AnalyticsOutline,
     },
   ];
 
@@ -60,6 +60,7 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
     <Disclosure as="div" defaultOpen>
       <SidebarWorkspaceMenuHeader isWorkspaceMenuOpen={isWorkspaceMenuOpen} toggleWorkspaceMenu={toggleWorkspaceMenu} />
       <Transition
+        as="div"
         show={isWorkspaceMenuOpen}
         enter="transition duration-100 ease-out"
         enterFrom="transform scale-95 opacity-0"

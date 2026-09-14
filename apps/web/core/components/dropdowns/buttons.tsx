@@ -7,7 +7,7 @@
 import React from "react";
 // helpers
 import { Button } from "@plane/propel/button";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -18,7 +18,7 @@ export type DropdownButtonProps = {
   children: React.ReactNode;
   className?: string;
   isActive: boolean;
-  tooltipContent?: string | React.ReactNode | null;
+  tooltipContent?: string;
   tooltipHeading: string;
   showTooltip: boolean;
   variant: TButtonVariants;
@@ -29,7 +29,7 @@ type ButtonProps = {
   children: React.ReactNode;
   className?: string;
   isActive: boolean;
-  tooltipContent?: string | React.ReactNode | null;
+  tooltipContent?: string;
   tooltipHeading: string;
   showTooltip: boolean;
   renderToolTipByDefault?: boolean;
@@ -67,16 +67,14 @@ export function DropdownButton(props: DropdownButtonProps) {
 }
 
 function BorderButton(props: ButtonProps) {
-  const { children, className, isActive, tooltipContent, renderToolTipByDefault, tooltipHeading, showTooltip } = props;
+  const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
 
   return (
     <Tooltip
-      tooltipHeading={tooltipHeading}
-      tooltipContent={<>{tooltipContent}</>}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={tooltipContent ? `${tooltipHeading}: ${tooltipContent}` : tooltipHeading}
+      layout="stacked"
+      disabled={!showTooltip || isMobile}
     >
       <Button
         variant="ghost"
@@ -96,15 +94,13 @@ function BorderButton(props: ButtonProps) {
 }
 
 function BackgroundButton(props: ButtonProps) {
-  const { children, className, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
+  const { children, className, tooltipContent, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
     <Tooltip
-      tooltipHeading={tooltipHeading}
-      tooltipContent={<>{tooltipContent}</>}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={tooltipContent ? `${tooltipHeading}: ${tooltipContent}` : tooltipHeading}
+      layout="stacked"
+      disabled={!showTooltip || isMobile}
     >
       <Button
         variant="ghost"
@@ -121,15 +117,13 @@ function BackgroundButton(props: ButtonProps) {
 }
 
 function TransparentButton(props: ButtonProps) {
-  const { children, className, isActive, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
+  const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
     <Tooltip
-      tooltipHeading={tooltipHeading}
-      tooltipContent={<>{tooltipContent}</>}
-      disabled={!showTooltip}
-      isMobile={isMobile}
-      renderByDefault={renderToolTipByDefault}
+      label={tooltipContent ? `${tooltipHeading}: ${tooltipContent}` : tooltipHeading}
+      layout="stacked"
+      disabled={!showTooltip || isMobile}
     >
       <Button
         variant="ghost"

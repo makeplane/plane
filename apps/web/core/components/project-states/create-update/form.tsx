@@ -6,10 +6,12 @@
 
 import { useEffect, useState } from "react";
 import { TwitterPicker } from "react-color";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { Button } from "@plane/propel/button";
 import type { IState } from "@plane/types";
-import { Popover, Input, TextArea } from "@plane/ui";
-
+import { Popover } from "@plane/ui";
 type TStateForm = {
   data: Partial<IState>;
   onSubmit: (formData: Partial<IState>) => Promise<{ status: string }>;
@@ -73,29 +75,38 @@ export function StateForm(props: TStateForm) {
 
       <div className="w-full space-y-2">
         {/* title */}
-        <Input
-          id="name"
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData?.name}
-          onChange={(e) => handleFormData("name", e.target.value)}
-          hasError={(errors && Boolean(errors.name)) || false}
-          className="w-full"
-          maxLength={100}
-          autoFocus
-        />
+        <Field name="name" invalid={(errors && Boolean(errors.name)) || false}>
+          <InputGroup size="2xl">
+            <Input
+              size="2xl"
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData?.name}
+              onChange={(e) => handleFormData("name", e.target.value)}
+              maxLength={100}
+              autoFocus
+            />
+          </InputGroup>
+        </Field>
 
         {/* description */}
-        <TextArea
-          id="description"
-          name="description"
-          placeholder="Describe this state for your members."
-          value={formData?.description}
-          onChange={(e) => handleFormData("description", e.target.value)}
-          hasError={(errors && Boolean(errors.description)) || false}
-          className="min-h-14 w-full resize-none text-13"
-        />
+        <Field name="description" invalid={(errors && Boolean(errors.description)) || false}>
+          <TextAreaGroup resize="none">
+            <TextArea
+              size="lg"
+              surface="field"
+              autoResize
+              maxRows={8}
+              id="description"
+              name="description"
+              placeholder="Describe this state for your members."
+              value={formData?.description ?? ""}
+              onChange={(e) => handleFormData("description", e.target.value)}
+            />
+          </TextAreaGroup>
+        </Field>
 
         <div className="flex items-center space-x-2">
           <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>

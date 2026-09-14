@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { MoveRight } from "lucide-react";
-import { Tooltip } from "@plane/propel/tooltip";
+import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Loader } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -23,9 +23,9 @@ export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
     <Loader className="h-screen w-full space-y-6 overflow-hidden p-5">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
+          <Tooltip label="Close the peek view" disabled={isMobile}>
             <button onClick={removeRoutePeekId}>
-              <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
+              <ArrowNarrowRightOutline className="h-4 w-4 text-tertiary hover:text-secondary" />
             </button>
           </Tooltip>
           <Loader.Item width="30px" height="30px" />

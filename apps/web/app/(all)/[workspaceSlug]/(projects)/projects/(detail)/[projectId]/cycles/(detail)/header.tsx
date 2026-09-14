@@ -8,21 +8,19 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
+import { BarOutline, CyclesOutline, PreferencesOutline, RightSidePaneOutline } from "@makeplane/propel/icons";
 // plane imports
 import {
   EIssueFilterType,
   EUserPermissions,
   EUserPermissionsLevel,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { IconButton } from "@plane/propel/icon-button";
-import { CycleIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Breadcrumbs, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
@@ -119,7 +117,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
       return {
         value: _cycle.id,
         query: _cycle.name,
-        content: <SwitcherLabel name={_cycle.name} LabelIcon={CycleIcon} />,
+        content: <SwitcherLabel name={_cycle.name} LabelIcon={CyclesOutline} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -144,7 +142,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                   <BreadcrumbLink
                     label="Cycles"
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
-                    icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
+                    icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
@@ -159,7 +157,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     title={cycleDetails?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <CycleIcon className="size-4 flex-shrink-0 text-tertiary" />
+                        <CyclesOutline className="size-4 flex-shrink-0 text-tertiary" />
                       </Breadcrumbs.Icon>
                     }
                     isLast
@@ -170,11 +168,10 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             </Breadcrumbs>
             {workItemsCount && workItemsCount > 0 ? (
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={`There are ${workItemsCount} ${
-                  workItemsCount > 1 ? "work items" : "work item"
-                } in this cycle`}
-                position="bottom"
+                label={`There are ${workItemsCount} ${workItemsCount > 1 ? "work items" : "work item"} in this cycle`}
+                layout="stacked"
+                side="bottom"
+                disabled={isMobile}
               >
                 <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
@@ -215,7 +212,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             <FiltersDropdown
               title={t("common.display")}
               placement="bottom-end"
-              miniIcon={<SlidersHorizontal className="size-3.5" />}
+              miniIcon={<PreferencesOutline className="size-3.5" />}
             >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
@@ -236,7 +233,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
                   <span className="hidden @4xl:flex">Analytics</span>
                   <span className="@4xl:hidden">
-                    <ChartNoAxesColumn className="size-3.5" />
+                    <BarOutline className="size-3.5" />
                   </span>
                 </Button>
                 {!isCompletedCycle && (
@@ -246,7 +243,6 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
-                    data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
                   >
                     {t("issue.add.label")}
                   </Button>
@@ -256,7 +252,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             <IconButton
               variant="tertiary"
               size="lg"
-              icon={PanelRight}
+              icon={RightSidePaneOutline}
               onClick={toggleSidebar}
               className={cn({
                 "bg-accent-subtle text-accent-primary": !isSidebarCollapsed,

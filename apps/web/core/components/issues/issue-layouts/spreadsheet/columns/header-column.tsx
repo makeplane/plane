@@ -5,7 +5,14 @@
  */
 
 //ui
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
+import { Eraser } from "lucide-react";
+import {
+  ArrowNarrowRightOutline,
+  ChevronDownOutline,
+  SortAscendingOutline,
+  SortDescendingOutline,
+  TickOutline,
+} from "@makeplane/propel/icons";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
@@ -62,13 +69,13 @@ export function HeaderColumn(props: Props) {
             {activeSortingProperty === property && (
               <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                 {propertyDetails.ascendingOrderKey === displayFilters.order_by ? (
-                  <ArrowDownWideNarrow className="h-3 w-3" />
+                  <SortDescendingOutline className="h-3 w-3" />
                 ) : (
-                  <ArrowUpNarrowWide className="h-3 w-3" />
+                  <SortAscendingOutline className="h-3 w-3" />
                 )}
               </div>
             )}
-            <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+            <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
           </div>
         </Row>
       }
@@ -85,13 +92,15 @@ export function HeaderColumn(props: Props) {
           }`}
         >
           <div className="flex items-center gap-2">
-            <ArrowDownWideNarrow className="h-3 w-3 stroke-[1.5]" />
+            <SortDescendingOutline className="h-3 w-3 stroke-[1.5]" />
             <span>{propertyDetails.ascendingOrderTitle}</span>
-            <MoveRight className="h-3 w-3" />
+            <ArrowNarrowRightOutline className="h-3 w-3" />
             <span>{propertyDetails.descendingOrderTitle}</span>
           </div>
 
-          {selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}` && <CheckIcon className="h-3 w-3" />}
+          {selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}` && (
+            <TickOutline className="h-3 w-3" />
+          )}
         </div>
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
@@ -103,14 +112,14 @@ export function HeaderColumn(props: Props) {
           }`}
         >
           <div className="flex items-center gap-2">
-            <ArrowUpNarrowWide className="h-3 w-3 stroke-[1.5]" />
+            <SortAscendingOutline className="h-3 w-3 stroke-[1.5]" />
             <span>{propertyDetails.descendingOrderTitle}</span>
-            <MoveRight className="h-3 w-3" />
+            <ArrowNarrowRightOutline className="h-3 w-3" />
             <span>{propertyDetails.ascendingOrderTitle}</span>
           </div>
 
           {selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}` && (
-            <CheckIcon className="h-3 w-3" />
+            <TickOutline className="h-3 w-3" />
           )}
         </div>
       </CustomMenu.MenuItem>

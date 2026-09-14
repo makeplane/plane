@@ -4,8 +4,9 @@
  * See the LICENSE file for details.
  */
 
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Input } from "@plane/ui";
 
 type Props = {
   value: string;
@@ -19,16 +20,20 @@ export function WebhookInput(props: Props) {
   return (
     <>
       <h6 className="text-13 font-medium">{t("workspace_settings.settings.webhooks.modal.payload")}</h6>
-      <Input
-        type="url"
-        className="h-11 w-full"
-        onChange={(e) => onChange(e.target.value)}
-        value={value}
-        autoComplete="off"
-        hasError={hasError}
-        placeholder="https://example.com/post"
-        autoFocus
-      />
+      <Field name="payload" invalid={hasError}>
+        <InputGroup size="2xl">
+          <Input
+            size="2xl"
+            type="url"
+            onChange={(e) => onChange(e.target.value)}
+            value={value}
+            autoComplete="off"
+            placeholder="https://example.com/post"
+            autoFocus
+            aria-label={t("workspace_settings.settings.webhooks.modal.payload")}
+          />
+        </InputGroup>
+      </Field>
     </>
   );
 }

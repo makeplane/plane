@@ -18,7 +18,7 @@ import Masonry from "react-masonry-component";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
@@ -129,7 +129,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
                 description={t("stickies.empty_state.general.description")}
                 assetPath={stickiesResolvedPath}
                 primaryButton={{
-                  prependIcon: <PlusIcon className="size-4" />,
+                  prependIcon: <AddOutline className="size-4" />,
                   text: t("stickies.empty_state.general.primary_button.text"),
                   onClick: () => {
                     toggleShowNewSticky(true);

@@ -6,11 +6,23 @@
 
 import { useState, useEffect } from "react";
 import { CloudOff, Dot } from "lucide-react";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Badge } from "@plane/propel/badge";
 
 type Props = {
   syncStatus: "syncing" | "synced" | "error";
+};
+
+const BADGE_CONTENT = {
+  syncing: {
+    label: "Syncing...",
+    tooltipLabel: "Syncing... Your changes are being synced with the server. You can continue making changes.",
+  },
+  error: {
+    label: "Connection lost",
+    tooltipLabel:
+      "Connection lost. We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
+  },
 };
 
 export function PageSyncingBadge({ syncStatus }: Props) {
@@ -34,25 +46,11 @@ export function PageSyncingBadge({ syncStatus }: Props) {
 
   if (!isVisible || syncStatus === "synced") return null;
 
-  const badgeContent = {
-    syncing: {
-      label: "Syncing...",
-      tooltipHeading: "Syncing...",
-      tooltipContent: "Your changes are being synced with the server. You can continue making changes.",
-    },
-    error: {
-      label: "Connection lost",
-      tooltipHeading: "Connection lost",
-      tooltipContent:
-        "We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
-    },
-  };
-
-  // This way we guarantee badgeContent is defined
-  const content = badgeContent[syncStatus];
+  // The synced early-return above guarantees this key exists
+  const content = BADGE_CONTENT[syncStatus];
 
   return (
-    <Tooltip tooltipHeading={content.tooltipHeading} tooltipContent={content.tooltipContent}>
+    <Tooltip label={content.tooltipLabel} layout="stacked">
       <span className="animate-quickFadeIn">
         <Badge
           variant={syncStatus === "syncing" ? "brand" : "danger"}

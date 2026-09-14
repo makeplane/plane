@@ -6,7 +6,7 @@
 
 import { Combobox } from "@headlessui/react";
 import React, { useEffect, useRef } from "react";
-import { SearchIcon } from "@plane/propel/icons";
+import { SearchOutline } from "@makeplane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 
@@ -48,7 +48,7 @@ export function InputSearch(props: IInputSearch) {
         inputContainerClassName
       )}
     >
-      {inputIcon ? <>{inputIcon}</> : <SearchIcon className="h-4 w-4 text-tertiary" aria-hidden="true" />}
+      {inputIcon ? <>{inputIcon}</> : <SearchOutline className="h-4 w-4 text-tertiary" aria-hidden="true" />}
       <Combobox.Input
         as="input"
         ref={inputRef}

@@ -12,7 +12,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { CheckIcon, SearchIcon, ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, ProjectsOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, sortBySelectedFirst } from "@plane/utils";
 // components
@@ -164,7 +164,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
               return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
-            <ProjectIcon className="size-3 text-tertiary" />
+            <ProjectsOutline className="size-3 text-tertiary" />
           )}
         </div>
       );
@@ -174,53 +174,49 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
     }
   };
 
-  const comboButton = (
-    <>
-      {button ? (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-          onClick={handleOnClick}
-          disabled={disabled}
-        >
-          {button}
-        </button>
-      ) : (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-secondary": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          onClick={handleOnClick}
-          disabled={disabled}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading="Project"
-            tooltipContent={value?.length ? `${value.length} project${value.length !== 1 ? "s" : ""}` : placeholder}
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-            renderToolTipByDefault={renderByDefault}
-          >
-            {!hideIcon && getProjectIcon(value)}
-            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="max-w-40 truncate">{getDisplayName(value, placeholder)}</span>
-            )}
-            {dropdownArrow && (
-              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-            )}
-          </DropdownButton>
-        </button>
+  const comboButton = button ? (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      {button}
+    </button>
+  ) : (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-secondary": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
       )}
-    </>
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading="Project"
+        tooltipContent={value?.length ? `${value.length} project${value.length !== 1 ? "s" : ""}` : placeholder}
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
+      >
+        {!hideIcon && getProjectIcon(value)}
+        {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+          <span className="max-w-40 truncate">{getDisplayName(value, placeholder)}</span>
+        )}
+        {dropdownArrow && (
+          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+        )}
+      </DropdownButton>
+    </button>
   );
 
   return (
@@ -238,7 +234,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       multiple={multiple}
     >
       {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
+        <Combobox.Options as="ul" className="fixed z-10" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
@@ -246,7 +242,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -265,6 +261,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                     if (!option) return;
                     return (
                       <Combobox.Option
+                        as="li"
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
@@ -276,7 +273,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                         {({ selected }) => (
                           <>
                             <span className="flex-grow truncate">{option.content}</span>
-                            {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                            {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                           </>
                         )}
                       </Combobox.Option>

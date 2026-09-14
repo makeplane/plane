@@ -7,12 +7,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
-import { Rocket } from "lucide-react";
+import { RocketOutline, SearchOutline } from "@makeplane/propel/icons";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
@@ -99,7 +98,7 @@ export function ParentIssuesListModal({
         }}
       >
         <div className="relative m-1">
-          <SearchIcon
+          <SearchOutline
             className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
@@ -112,7 +111,11 @@ export function ParentIssuesListModal({
             tabIndex={baseTabIndex}
           />
         </div>
-        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
+        <Combobox.Options
+          as="ul"
+          static
+          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+        >
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
               Search results for{" "}
@@ -145,6 +148,7 @@ export function ParentIssuesListModal({
                 <ul className={`text-13 ${issues.length > 0 ? "p-2" : ""}`}>
                   {issues.map((issue) => (
                     <Combobox.Option
+                      as="li"
                       key={issue.id}
                       value={issue}
                       className={({ active, selected }) =>
@@ -185,7 +189,7 @@ export function ParentIssuesListModal({
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Rocket className="h-4 w-4" />
+                        <RocketOutline className="h-4 w-4" />
                       </a>
                     </Combobox.Option>
                   ))}

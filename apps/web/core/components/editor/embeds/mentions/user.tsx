@@ -8,9 +8,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link } from "react-router";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { ROLE } from "@plane/constants";
 import { Popover } from "@plane/propel/popover";
-import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -63,11 +63,10 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
             <div className="flex items-center gap-3">
               <div className="grid size-10 flex-shrink-0 place-items-center">
                 <Avatar
+                  alt={userDetails?.display_name}
+                  fallback={userDetails?.display_name?.[0]?.toUpperCase()}
                   src={getFileURL(userDetails?.avatar_url ?? "")}
-                  name={userDetails?.display_name}
-                  size={40}
-                  className="text-18"
-                  showTooltip={false}
+                  size="xl"
                 />
               </div>
               <div>

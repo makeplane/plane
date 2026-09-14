@@ -10,7 +10,7 @@ import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ParentPropertyIcon } from "@plane/propel/icons";
+import { ParentOutline } from "@makeplane/propel/icons";
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
@@ -314,7 +314,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-caption-sm-regular hover:bg-layer-1"
             onClick={() => setParentIssueListModalOpen(true)}
           >
-            <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+            <ParentOutline className="h-3 w-3 flex-shrink-0" />
             <span className="whitespace-nowrap">{t("add_parent")}</span>
           </button>
         )}

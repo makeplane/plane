@@ -7,9 +7,10 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { CloseIcon, SearchIcon } from "@plane/propel/icons";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
-import { Input } from "@plane/ui";
+
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
@@ -66,24 +67,25 @@ export function ShortcutsModal(props: Props) {
                   <Dialog.Title as="h3" className="flex justify-between px-5">
                     <span className="text-16 font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
-                      <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
+                      <CloseOutline className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
                   <div className="px-5">
-                    <div className="flex w-full items-center rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2">
-                      <SearchIcon className="h-3.5 w-3.5 text-secondary" />
+                    <InputGroup size="2xl">
+                      <SearchOutline className="h-3.5 w-3.5 text-secondary" />
                       <Input
+                        size="2xl"
                         id="search"
                         name="search"
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search for shortcuts"
-                        className="w-full border-none bg-transparent py-1 text-11 text-secondary outline-none"
+                        aria-label="Search for shortcuts"
                         autoFocus
                         tabIndex={1}
                       />
-                    </div>
+                    </InputGroup>
                   </div>
 
                   <ScrollArea size="sm" rootClassName="overflow-y-scroll px-5">

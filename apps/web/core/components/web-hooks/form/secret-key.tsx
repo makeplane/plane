@@ -9,12 +9,11 @@ import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Eye, EyeOff, RefreshCw } from "lucide-react";
+import { CopyOutline, HideOutline, RefreshOutline, ShowOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CopyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IWebhook } from "@plane/types";
 // ui
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
@@ -94,8 +93,8 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
   const toggleShowKey = () => setShouldShowKey((prevState) => !prevState);
 
   const SECRET_KEY_OPTIONS = [
-    { label: "View secret key", Icon: shouldShowKey ? EyeOff : Eye, onClick: toggleShowKey, key: "eye" },
-    { label: "Copy secret key", Icon: CopyIcon, onClick: handleCopySecretKey, key: "copy" },
+    { label: "View secret key", Icon: shouldShowKey ? HideOutline : ShowOutline, onClick: toggleShowKey, key: "eye" },
+    { label: "Copy secret key", Icon: CopyOutline, onClick: handleCopySecretKey, key: "copy" },
   ];
 
   return (
@@ -122,7 +121,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
               {webhookSecretKey && (
                 <div className="flex items-center gap-2">
                   {SECRET_KEY_OPTIONS.map((option) => (
-                    <Tooltip key={option.key} tooltipContent={option.label} isMobile={isMobile}>
+                    <Tooltip key={option.key} label={option.label} layout="stacked" disabled={isMobile}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
                         <option.Icon className="h-3 w-3 text-placeholder" />
                       </button>
@@ -138,7 +137,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
                   variant="secondary"
                   size="lg"
                   loading={isRegenerating}
-                  prependIcon={<RefreshCw />}
+                  prependIcon={<RefreshOutline />}
                 >
                   {isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
                 </Button>

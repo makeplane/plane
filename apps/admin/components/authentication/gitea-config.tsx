@@ -7,12 +7,12 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Settings2 } from "lucide-react";
+import { SettingsOutline } from "@makeplane/propel/icons";
 // plane internal packages
-import { getButtonStyling } from "@plane/propel/button";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Button } from "@makeplane/propel/components/button";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
-import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -34,12 +34,16 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
     <>
       {GiteaConfigured ? (
         <div className="flex items-center gap-4">
-          <Link href="/authentication/gitea" className={cn(getButtonStyling("link", "base"), "font-medium")}>
-            Edit
-          </Link>
-          <ToggleSwitch
-            value={Boolean(parseInt(GiteaConfig))}
-            onChange={() => {
+          <AnchorButton
+            variant="primary"
+            size="sm"
+            nativeButton={false}
+            render={<Link href="/authentication/gitea" />}
+            label="Edit"
+          />
+          <Switch
+            checked={Boolean(parseInt(GiteaConfig))}
+            onCheckedChange={() => {
               Boolean(parseInt(GiteaConfig)) === true
                 ? updateConfig("IS_GITEA_ENABLED", "0")
                 : updateConfig("IS_GITEA_ENABLED", "1");
@@ -49,10 +53,15 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
           />
         </div>
       ) : (
-        <Link href="/authentication/gitea" className={cn(getButtonStyling("secondary", "base"), "text-tertiary")}>
-          <Settings2 className="h-4 w-4 p-0.5 text-tertiary" />
-          Configure
-        </Link>
+        <Button
+          variant="secondary"
+          size="sm"
+          stretch="auto"
+          nativeButton={false}
+          render={<Link href="/authentication/gitea" />}
+          icon={<SettingsOutline className="h-4 w-4 p-0.5 text-tertiary" />}
+          label="Configure"
+        />
       )}
     </>
   );

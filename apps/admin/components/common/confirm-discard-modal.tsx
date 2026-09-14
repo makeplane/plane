@@ -9,7 +9,7 @@ import Link from "next/link";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 
 type Props = {
   isOpen: boolean;
@@ -61,12 +61,15 @@ export function ConfirmDiscardModal(props: Props) {
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="secondary" size="lg" onClick={handleClose}>
-                    Keep editing
-                  </Button>
-                  <Link href={onDiscardHref} className={getButtonStyling("primary", "base")}>
-                    Go back
-                  </Link>
+                  <Button variant="secondary" size="md" stretch="auto" onClick={handleClose} label="Keep editing" />
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    stretch="auto"
+                    nativeButton={false}
+                    render={<Link href={onDiscardHref} />}
+                    label="Go back"
+                  />
                 </div>
               </Dialog.Panel>
             </Transition.Child>

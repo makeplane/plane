@@ -7,9 +7,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { ListFilter } from "lucide-react";
+import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";
@@ -65,7 +64,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={SearchIcon}
+            icon={SearchOutline}
           />
         )}
         <div
@@ -76,7 +75,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
             }
           )}
         >
-          <SearchIcon className="h-3.5 w-3.5" />
+          <SearchOutline className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
@@ -94,7 +93,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
                 setIsSearchOpen(false);
               }}
             >
-              <CloseIcon className="h-3 w-3" />
+              <CloseOutline className="h-3 w-3" />
             </button>
           )}
         </div>
@@ -109,7 +108,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
           }}
         />
         <FiltersDropdown
-          icon={<ListFilter className="h-3 w-3" />}
+          icon={<FilterOutline className="h-3 w-3" />}
           title="Filters"
           placement="bottom-end"
           isFiltersApplied={false}

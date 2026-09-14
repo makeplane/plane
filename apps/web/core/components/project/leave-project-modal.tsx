@@ -7,12 +7,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { AlertTriangleIcon } from "lucide-react";
+import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // Plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -99,7 +101,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
         <div className="flex w-full items-center justify-start gap-6">
           <span className="place-items-center rounded-full bg-danger-subtle p-4">
-            <AlertTriangleIcon className="h-6 w-6 text-danger-primary" aria-hidden="true" />
+            <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
             <h3 className="text-18 font-medium 2xl:text-20">Leave Project</h3>
@@ -125,17 +127,20 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
               required: "Label title is required",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="projectName"
-                name="projectName"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.projectName)}
-                placeholder="Enter project name"
-                className="mt-2 w-full"
-              />
+              <Field name="projectName" invalid={Boolean(errors.projectName)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="projectName"
+                    name="projectName"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder="Enter project name"
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
         </div>
@@ -148,17 +153,20 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             control={control}
             name="confirmLeave"
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="confirmLeave"
-                name="confirmLeave"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.confirmLeave)}
-                placeholder="Enter 'leave project'"
-                className="mt-2 w-full"
-              />
+              <Field name="confirmLeave" invalid={Boolean(errors.confirmLeave)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="confirmLeave"
+                    name="confirmLeave"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder="Enter 'leave project'"
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
         </div>

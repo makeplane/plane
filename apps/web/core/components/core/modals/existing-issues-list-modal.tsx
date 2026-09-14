@@ -5,18 +5,18 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { Rocket } from "lucide-react";
+import { CloseOutline, RocketOutline, SearchOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -139,14 +139,15 @@ export function ExistingIssuesListModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <Combobox
         as="div"
-        onChange={(val: ISearchIssueResponse) => {
+        onChange={(val: ISearchIssueResponse | null) => {
+          if (val === null) return;
           if (selectedIssues.some((i) => i.id === val.id))
             setSelectedIssues((prevData) => prevData.filter((i) => i.id !== val.id));
           else setSelectedIssues((prevData) => [...prevData, val]);
         }}
       >
         <div className="relative m-1">
-          <SearchIcon
+          <SearchOutline
             className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
@@ -180,7 +181,7 @@ export function ExistingIssuesListModal(props: Props) {
                     className="group p-1"
                     onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                   >
-                    <CloseIcon className="h-3 w-3 text-secondary group-hover:text-primary" />
+                    <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
                   </button>
                 </div>
               ))}
@@ -191,13 +192,18 @@ export function ExistingIssuesListModal(props: Props) {
             </div>
           )}
           {workspaceLevelToggle && (
-            <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
+            <Tooltip label="Toggle workspace level search" disabled={isMobile}>
               <div
                 className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
                   isWorkspaceLevel ? "text-primary" : "text-secondary"
                 }`}
               >
-                <ToggleSwitch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
+                <Switch
+                  size="sm"
+                  checked={isWorkspaceLevel}
+                  onCheckedChange={setIsWorkspaceLevel}
+                  aria-label={t("common.workspace_level")}
+                />
                 <button
                   type="button"
                   onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
@@ -210,7 +216,11 @@ export function ExistingIssuesListModal(props: Props) {
           )}
         </div>
 
-        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
+        <Combobox.Options
+          as="ul"
+          static
+          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+        >
           {/* TODO: Translate here */}
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
@@ -290,7 +300,7 @@ export function ExistingIssuesListModal(props: Props) {
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Rocket className="h-4 w-4" />
+                          <RocketOutline className="h-4 w-4" />
                         </a>
                       </Combobox.Option>
                     );

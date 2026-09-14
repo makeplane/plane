@@ -7,7 +7,7 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ProjectIcon } from "@plane/propel/icons";
+import { ProjectsOutline } from "@makeplane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // hooks
@@ -75,7 +75,7 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
               <SwitcherLabel
                 name={project.name}
                 logo_props={project.logo_props}
-                LabelIcon={ProjectIcon}
+                LabelIcon={ProjectsOutline}
                 type="material"
               />
             ),

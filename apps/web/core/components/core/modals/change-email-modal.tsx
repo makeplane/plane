@@ -8,10 +8,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
@@ -151,22 +153,22 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.email)}
-                placeholder={changeEmailT("form.email.placeholder")}
-                className={cn(
-                  { "border-danger-strong": errors.email },
-                  { "cursor-not-allowed !bg-surface-2": secondStep }
-                )}
-                autoComplete="off"
-                disabled={secondStep}
-              />
+              <Field name="email" invalid={Boolean(errors.email)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={changeEmailT("form.email.placeholder")}
+                    autoComplete="off"
+                    disabled={secondStep}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           {errors?.email && <span className="text-11 text-danger-primary">{errors?.email?.message}</span>}
@@ -180,17 +182,19 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
               name="code"
               rules={{ required: changeEmailT("form.code.errors.required") }}
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="code"
-                  name="code"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  placeholder={changeEmailT("form.code.placeholder")}
-                  className={cn({ "border-danger-strong": errors.code })}
-                  autoComplete="off"
-                  autoFocus
-                />
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="code"
+                    name="code"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={changeEmailT("form.code.placeholder")}
+                    autoComplete="off"
+                    autoFocus
+                  />
+                </InputGroup>
               )}
             />
             {errors?.code ? (

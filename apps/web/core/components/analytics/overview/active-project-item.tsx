@@ -6,8 +6,8 @@
 
 // plane package imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { ProjectsOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -49,12 +49,12 @@ function ActiveProjectItem(props: Props) {
               <Logo logo={projectDetails?.logo_props} size={16} />
             ) : (
               <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                <ProjectIcon className="h-4 w-4" />
+                <ProjectsOutline className="h-4 w-4" />
               </span>
             )}
           </span>
         </div>
-        <Tooltip tooltipContent={projectDetails?.name} position="top-start">
+        <Tooltip label={projectDetails?.name} layout="stacked" align="start">
           <p className="truncate text-13 font-medium">{projectDetails?.name}</p>
         </Tooltip>
       </div>

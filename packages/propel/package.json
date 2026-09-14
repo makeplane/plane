@@ -1,6 +1,6 @@
 {
   "name": "@plane/propel",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -37,6 +37,7 @@
     "./portal": "./dist/portal/index.js",
     "./scrollarea": "./dist/scrollarea/index.js",
     "./skeleton": "./dist/skeleton/index.js",
+    "./spinners": "./dist/spinners/index.js",
     "./switch": "./dist/switch/index.js",
     "./tab-navigation": "./dist/tab-navigation/index.js",
     "./table": "./dist/table/index.js",
@@ -63,6 +64,7 @@
   },
   "dependencies": {
     "@base-ui-components/react": "catalog:",
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",

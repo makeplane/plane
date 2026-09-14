@@ -1212,7 +1212,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueId = issue?.id ?? issueBeforeUpdate?.id;
     if (!issueId) return;
 
-    // Get display filters to check if 'Show sub Work items' is enabled - Donot add Work item to main list if disabled.
+    // Get display filters to check if 'Show sub Work items' is enabled - Do not add Work item to main list if disabled.
     const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;
 
     // get issueUpdates from another method by passing down the three arguments

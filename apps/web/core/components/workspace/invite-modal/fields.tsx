@@ -8,10 +8,12 @@ import { observer } from "mobx-react";
 import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
-import { CustomSelect, Input } from "@plane/ui";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -62,17 +64,20 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
               }}
               render={({ field: { value, onChange, ref } }) => (
                 <>
-                  <Input
-                    id={`emails.${index}.email`}
-                    name={`emails.${index}.email`}
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.emails?.[index]?.email)}
-                    placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                    className="w-full text-caption-sm-regular sm:text-body-xs-regular"
-                  />
+                  <Field name="input" invalid={Boolean(errors.emails?.[index]?.email)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id={`emails.${index}.email`}
+                        name={`emails.${index}.email`}
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("workspace_settings.settings.members.modal.placeholder")}
+                      />
+                    </InputGroup>
+                  </Field>
                   {errors.emails?.[index]?.email && (
                     <span className="ml-1 text-caption-sm-regular text-danger-primary">
                       {errors.emails?.[index]?.email?.message}
@@ -115,7 +120,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                   className="place-items-center self-center rounded-sm"
                   onClick={() => remove(index)}
                 >
-                  <CloseIcon className="h-4 w-4 text-secondary" />
+                  <CloseOutline className="h-4 w-4 text-secondary" />
                 </button>
               </div>
             )}

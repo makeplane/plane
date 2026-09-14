@@ -14,7 +14,8 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader } from "@plane/ui";
 // constants
 import { PROJECT_DETAILS } from "@plane/constants";
 // hooks
@@ -187,11 +188,12 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
           description="This will allow guests to have view access to all the project work items."
         >
           <div className="flex items-center justify-end">
-            <ToggleSwitch
-              value={!!currentProjectDetails?.guest_view_all_features}
-              onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
-              disabled={!isAdmin}
+            <Switch
               size="sm"
+              checked={!!currentProjectDetails?.guest_view_all_features}
+              onCheckedChange={toggleGuestViewAllIssues}
+              disabled={!isAdmin}
+              aria-label="Guest access"
             />
           </div>
         </DefaultSettingItem>

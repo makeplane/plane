@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "無法封存工作事項。請再試一次。"
-      }
+      },
+      "banner_message": "此工作事項已封存。請前往封存區段以還原它。",
+      "go_to_archives": "前往封存"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "無法更新工作項目",
         "message": "某些工作項目不允許狀態變更。請確保狀態變更是允許的。"
       }
+    },
+    "upgrade_banner": {
+      "message": "一次性變更多個工作事項的狀態、優先順序等。平均每次操作可節省三分鐘。",
+      "cta": "升級到 One"
     }
   },
   "recurring_work_items": {

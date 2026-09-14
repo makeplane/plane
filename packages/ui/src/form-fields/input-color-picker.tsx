@@ -10,7 +10,7 @@ import * as ColorPicker from "react-color";
 import type { ColorResult } from "react-color";
 import { usePopper } from "react-popper";
 // helpers
-import { Button } from "../button";
+import { Button } from "../button/button";
 import { cn } from "../utils";
 // components
 import { Input } from "./input";

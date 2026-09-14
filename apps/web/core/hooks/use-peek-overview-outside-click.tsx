@@ -8,7 +8,7 @@ import type React from "react";
 import { useEffect, useCallback } from "react";
 
 const usePeekOverviewOutsideClickDetector = (
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   callback: () => void,
   issueId: string,
   excludePreventionElementIds?: string[]

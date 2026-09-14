@@ -9,7 +9,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EditIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 // components
 import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -54,7 +54,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
 
   const customMenuItems: ICustomMenuItem[] = [
     {
-      CustomIcon: EditIcon,
+      CustomIcon: EditOutline,
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
@@ -64,7 +64,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
       key: "edit_label",
     },
     {
-      CustomIcon: TrashIcon,
+      CustomIcon: DeleteOutline,
       onClick: () => {
         handleLabelDelete(label);
       },
@@ -117,13 +117,14 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
 
                       <Disclosure.Button>
                         <span>
-                          <ChevronDownIcon
+                          <ChevronDownOutline
                             className={`h-4 w-4 text-placeholder ${!open ? "rotate-90 transform" : ""}`}
                           />
                         </span>
                       </Disclosure.Button>
                     </div>
                     <Transition
+                      as="div"
                       show={open}
                       enter="transition duration-100 ease-out"
                       enterFrom="transform opacity-0"

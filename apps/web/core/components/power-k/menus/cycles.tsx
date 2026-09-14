@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ContrastIcon } from "@plane/propel/icons";
+import { CyclesOutline } from "@makeplane/propel/icons";
 import type { ICycle } from "@plane/types";
 // local imports
 import { PowerKMenuBuilder } from "./builder";
@@ -22,7 +22,7 @@ export const PowerKCyclesMenu = observer(function PowerKCyclesMenu({ cycles, onS
   return (
     <PowerKMenuBuilder
       items={cycles}
-      getIcon={() => ContrastIcon}
+      getIcon={() => CyclesOutline}
       getKey={(cycle) => cycle.id}
       getValue={(cycle) => cycle.name}
       getLabel={(cycle) => cycle.name}

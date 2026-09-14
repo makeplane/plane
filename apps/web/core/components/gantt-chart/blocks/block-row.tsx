@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { ArrowRight } from "lucide-react";
+import { ArrowNarrowRightOutline } from "@makeplane/propel/icons";
 // helpers
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -25,7 +25,7 @@ type Props = {
   handleScrollToBlock: (block: IGanttBlock) => void;
   enableAddBlock: boolean;
   selectionHelpers: TSelectionHelper;
-  ganttContainerRef: React.RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const BlockRow = observer(function BlockRow(props: Props) {
@@ -107,7 +107,7 @@ export const BlockRow = observer(function BlockRow(props: Props) {
                 }}
                 onClick={() => handleScrollToBlock(block)}
               >
-                <ArrowRight
+                <ArrowNarrowRightOutline
                   className={cn("h-3.5 w-3.5", {
                     "rotate-180": isBlockHiddenOnLeft,
                   })}

@@ -14,7 +14,8 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
-import { Checkbox, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -145,12 +146,12 @@ export const Exporter = observer(function Exporter(props: Props) {
             multiple
           />
         </div>
-        <div className="flex max-w-min cursor-pointer items-center gap-2">
-          <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
-          <div className="text-13 whitespace-nowrap">
-            {t("workspace_settings.settings.exports.export_separate_files")}
-          </div>
-        </div>
+        <Checkbox
+          label={t("workspace_settings.settings.exports.export_separate_files")}
+          stretch="auto"
+          checked={multiple}
+          onCheckedChange={setMultiple}
+        />
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={handleClose}>
             {t("cancel")}

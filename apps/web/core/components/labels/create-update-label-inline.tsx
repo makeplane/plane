@@ -11,12 +11,13 @@ import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
-import { Input } from "@plane/ui";
 
 // error codes
 const errorCodes = {
@@ -219,18 +220,21 @@ export const CreateUpdateLabelInline = observer(
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="labelName"
-                  name="name"
-                  type="text"
-                  autoFocus
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.name)}
-                  placeholder={t("project_settings.labels.label_title")}
-                  className="w-full"
-                />
+                <Field name="name" invalid={Boolean(errors.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="labelName"
+                      name="name"
+                      type="text"
+                      autoFocus
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={t("project_settings.labels.label_title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
           </div>

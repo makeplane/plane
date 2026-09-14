@@ -9,13 +9,14 @@ import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // icons
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input, PasswordStrengthIndicator } from "@plane/ui";
+import { PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // hooks
@@ -117,81 +118,81 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           <label className="text-13 font-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               id="email"
               name="email"
               type="email"
               value={user?.email}
-              //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full cursor-not-allowed border border-strong !bg-surface-1 pr-12 text-placeholder"
               autoComplete="off"
               disabled
             />
-          </div>
+          </InputGroup>
         </div>
         <div className="space-y-1">
           <label className="text-13 font-medium text-tertiary" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               type={showPassword.password ? "text" : "password"}
               name="password"
+              id="password"
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
-              //hasError={Boolean(errors.password)}
               placeholder={t("auth.common.password.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="new-password"
               autoFocus
             />
-            {showPassword.password ? (
-              <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("password")}
-              />
-            ) : (
-              <Eye
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("password")}
-              />
-            )}
-          </div>
+            <button
+              type="button"
+              onClick={() => handleShowPassword("password")}
+              className="grid size-5 place-items-center"
+            >
+              {showPassword.password ? (
+                <HideOutline className="size-5 text-placeholder" />
+              ) : (
+                <ShowOutline className="size-5 text-placeholder" />
+              )}
+            </button>
+          </InputGroup>
           <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
           <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               type={showPassword.retypePassword ? "text" : "password"}
               name="confirm_password"
+              id="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="new-password"
             />
-            {showPassword.retypePassword ? (
-              <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
-              />
-            ) : (
-              <Eye
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
-              />
-            )}
-          </div>
+            <button
+              type="button"
+              onClick={() => handleShowPassword("retypePassword")}
+              className="grid size-5 place-items-center"
+            >
+              {showPassword.retypePassword ? (
+                <HideOutline className="size-5 text-placeholder" />
+              ) : (
+                <ShowOutline className="size-5 text-placeholder" />
+              )}
+            </button>
+          </InputGroup>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
             renderPasswordMatchError && (

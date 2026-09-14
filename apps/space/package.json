@@ -1,6 +1,6 @@
 {
   "name": "space",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -22,6 +22,7 @@
     "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/material-symbols-rounded": "catalog:",
     "@headlessui/react": "catalog:",
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/i18n": "workspace:*",

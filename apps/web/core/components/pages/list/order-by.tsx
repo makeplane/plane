@@ -4,11 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
+import { SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
 // types
-import { CheckIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 
@@ -37,7 +36,7 @@ export function PageOrderByDropdown(props: Props) {
     <CustomMenu
       customButton={
         <div className={getButtonStyling("secondary", "lg")}>
-          {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
+          {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
           {orderByDetails?.label}
         </div>
       }
@@ -56,7 +55,7 @@ export function PageOrderByDropdown(props: Props) {
           }
         >
           {option.label}
-          {sortKey === option.key && <CheckIcon className="h-3 w-3" />}
+          {sortKey === option.key && <TickOutline className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
       <hr className="my-2 border-subtle" />
@@ -70,7 +69,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Ascending
-        {!isDescending && <CheckIcon className="h-3 w-3" />}
+        {!isDescending && <TickOutline className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
@@ -82,7 +81,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Descending
-        {isDescending && <CheckIcon className="h-3 w-3" />}
+        {isDescending && <TickOutline className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );

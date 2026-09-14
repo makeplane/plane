@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { File, Folder, Settings, User } from "lucide-react";
+import { FileOutline, FolderOutline, SettingsOutline, UserOutline } from "@makeplane/propel/icons";
 import { Command } from "./command";
 
 const meta = {
@@ -52,19 +52,19 @@ export const WithIcons: Story = {
         />
         <Command.List className="max-h-80 overflow-auto py-2">
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <Folder className="h-4 w-4" />
+            <FolderOutline className="h-4 w-4" />
             <span>Documents</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <Folder className="h-4 w-4" />
+            <FolderOutline className="h-4 w-4" />
             <span>Downloads</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <File className="h-4 w-4" />
+            <FileOutline className="h-4 w-4" />
             <span>README.md</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <File className="h-4 w-4" />
+            <FileOutline className="h-4 w-4" />
             <span>package.json</span>
           </Command.Item>
         </Command.List>
@@ -85,21 +85,21 @@ export const WithCategories: Story = {
         <Command.List className="max-h-80 overflow-auto py-2">
           <div className="text-gray-500 px-2 py-1.5 text-11 font-semibold">User</div>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <User className="h-4 w-4" />
+            <UserOutline className="h-4 w-4" />
             <span>Profile</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <Settings className="h-4 w-4" />
+            <SettingsOutline className="h-4 w-4" />
             <span>Settings</span>
           </Command.Item>
 
           <div className="text-gray-500 mt-2 px-2 py-1.5 text-11 font-semibold">Files</div>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <Folder className="h-4 w-4" />
+            <FolderOutline className="h-4 w-4" />
             <span>Open Folder</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <File className="h-4 w-4" />
+            <FileOutline className="h-4 w-4" />
             <span>New File</span>
           </Command.Item>
         </Command.List>
@@ -148,15 +148,15 @@ export const WithoutSearch: Story = {
       <Command className="border-gray-200 w-96 rounded-lg border p-2">
         <Command.List className="max-h-80 overflow-auto py-2">
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <User className="h-4 w-4" />
+            <UserOutline className="h-4 w-4" />
             <span>Profile</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <Settings className="h-4 w-4" />
+            <SettingsOutline className="h-4 w-4" />
             <span>Settings</span>
           </Command.Item>
           <Command.Item className="hover:bg-gray-100 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2">
-            <Folder className="h-4 w-4" />
+            <FolderOutline className="h-4 w-4" />
             <span>Files</span>
           </Command.Item>
         </Command.List>

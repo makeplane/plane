@@ -10,11 +10,10 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Paperclip } from "lucide-react";
+import { AttachOutline, DueDateOutline, LinkOutline, StartDateOutline, ViewsOutline } from "@makeplane/propel/icons";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import {
@@ -278,7 +277,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDateOutline className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
             disabled={isReadOnly}
@@ -302,7 +301,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<DueDatePropertyIcon className="h-3 w-3 shrink-0" />}
+            icon={<DueDateOutline className="h-3 w-3 shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={
               shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
@@ -410,12 +409,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           displayPropertyKey="sub_issue_count"
           shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
         >
-          <Tooltip
-            tooltipHeading={t("common.sub_work_items")}
-            tooltipContent={`${subIssueCount}`}
-            isMobile={isMobile}
-            renderByDefault={false}
-          >
+          <Tooltip label={`${t("common.sub_work_items")}: ${subIssueCount}`} disabled={isMobile}>
             {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
             <div
               onFocus={handleEventPropagation}
@@ -431,7 +425,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                 }
               )}
             >
-              <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+              <ViewsOutline className="h-3 w-3 flex-shrink-0" />
               <div className="text-caption-sm-regular">{subIssueCount}</div>
             </div>
           </Tooltip>
@@ -444,19 +438,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <Tooltip
-          tooltipHeading={t("common.attachments")}
-          tooltipContent={`${issue.attachment_count}`}
-          isMobile={isMobile}
-          renderByDefault={false}
-        >
+        <Tooltip label={`${t("common.attachments")}: ${issue.attachment_count}`} disabled={isMobile}>
           {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <AttachOutline className="h-3 w-3 flex-shrink-0" />
             <div className="text-caption-sm-regular">{issue.attachment_count}</div>
           </div>
         </Tooltip>
@@ -468,19 +457,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <Tooltip
-          tooltipHeading={t("common.links")}
-          tooltipContent={`${issue.link_count}`}
-          isMobile={isMobile}
-          renderByDefault={false}
-        >
+        <Tooltip label={`${t("common.links")}: ${issue.link_count}`} disabled={isMobile}>
           {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkOutline className="h-3 w-3 flex-shrink-0" />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>

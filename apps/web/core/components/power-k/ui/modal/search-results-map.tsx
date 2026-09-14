@@ -4,9 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
+import {
+  CyclesOutline,
+  DocumentationOutline,
+  GridOutline,
+  ModuleOutline,
+  ProjectsOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
 // plane imports
-import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
 import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -43,7 +49,7 @@ type TPowerKSearchResultGroupsMap = {
 
 export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: TPowerKSearchResultGroupsMap = {
   cycle: {
-    icon: ContrastIcon,
+    icon: CyclesOutline,
     itemName: (cycle: IWorkspaceDefaultSearchResult, searchTerm: string) => (
       <p>
         <span className="text-11 text-tertiary">{cycle.project__identifier}</span>{" "}
@@ -85,7 +91,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: TPowerKSearchResultGroupsMap = {
     title: "Work items",
   },
   issue_view: {
-    icon: Layers,
+    icon: WorkItemsOutline,
     itemName: (view: IWorkspaceDefaultSearchResult, searchTerm: string) => (
       <p>
         <span className="text-11 text-tertiary">{view.project__identifier}</span>{" "}
@@ -97,7 +103,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: TPowerKSearchResultGroupsMap = {
     title: "Views",
   },
   module: {
-    icon: DiceIcon,
+    icon: ModuleOutline,
     itemName: (module: IWorkspaceDefaultSearchResult, searchTerm: string) => (
       <p>
         <span className="text-11 text-tertiary">{module.project__identifier}</span>{" "}
@@ -109,8 +115,10 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: TPowerKSearchResultGroupsMap = {
     title: "Modules",
   },
   page: {
-    icon: FileText,
+    icon: DocumentationOutline,
     itemName: (page: IWorkspacePageSearchResult, searchTerm: string) => (
+    icon: DocumentationOutline,
+    itemName: (page: IWorkspacePageSearchResult) => (
       <p>
         <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span>{" "}
         {highlightSearchMatches(page.name, searchTerm)}
@@ -126,14 +134,14 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: TPowerKSearchResultGroupsMap = {
     title: "Pages",
   },
   project: {
-    icon: Briefcase,
+    icon: ProjectsOutline,
     itemName: (project: IWorkspaceProjectSearchResult, searchTerm: string) =>
       highlightSearchMatches(project?.name, searchTerm),
     path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
     title: "Projects",
   },
   workspace: {
-    icon: LayoutGrid,
+    icon: GridOutline,
     itemName: (workspace: IWorkspaceSearchResult, searchTerm: string) =>
       highlightSearchMatches(workspace?.name, searchTerm),
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,

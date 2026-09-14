@@ -5,12 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope } from "lucide-react";
+import { CircleDashed, Microscope } from "lucide-react";
+import { AlertOctagonOutline, BarOutline, FolderOutline, SearchOutline } from "@makeplane/propel/icons";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { SearchIcon } from "@plane/propel/icons";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
@@ -31,7 +31,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     title: "10,000-feet view of all active cycles.",
     description:
       "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
-    icon: Folder,
+    icon: FolderOutline,
   },
   {
     key: "get_snapshot_of_each_active_cycle",
@@ -44,20 +44,20 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     key: "compare_burndowns",
     title: "Compare burndowns.",
     description: "Monitor how each of your teams are performing with a peek into each cycle’s burndown report.",
-    icon: BarChart4,
+    icon: BarOutline,
   },
   {
     key: "quickly_see_make_or_break_issues",
     title: "Quickly see make-or-break work items. ",
     description:
       "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
-    icon: AlertOctagon,
+    icon: AlertOctagonOutline,
   },
   {
     key: "zoom_into_cycles_that_need_attention",
     title: "Zoom into cycles that need attention. ",
     description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
-    icon: SearchIcon,
+    icon: SearchOutline,
   },
   {
     key: "stay_ahead_of_blockers",

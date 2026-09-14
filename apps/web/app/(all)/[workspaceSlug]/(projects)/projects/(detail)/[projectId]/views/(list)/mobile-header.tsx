@@ -6,8 +6,7 @@
 
 import { observer } from "mobx-react";
 // icons
-import { ListFilter } from "lucide-react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, FilterOutline } from "@makeplane/propel/icons";
 // components
 import { Row } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -40,14 +39,14 @@ export const ViewMobileHeader = observer(function ViewMobileHeader() {
         </Row>
         <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
-            icon={<ListFilter className="h-3 w-3" />}
+            icon={<FilterOutline className="h-3 w-3" />}
             title="Filters"
             placement="bottom-end"
             isFiltersApplied={false}
             menuButton={
               <Row className="flex items-center text-13 text-secondary">
                 Filters
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </Row>
             }
           >

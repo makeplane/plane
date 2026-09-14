@@ -7,13 +7,12 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Loader } from "lucide-react";
+import { AddOutline, LoadingOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CheckIcon, SearchIcon, PlusIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -132,14 +131,14 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
             type="button"
             variant="tertiary"
             size="sm"
-            prependIcon={<PlusIcon />}
+            prependIcon={<AddOutline />}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
           </Button>
         </Combobox.Button>
 
-        <Combobox.Options className="fixed z-10">
+        <Combobox.Options as="ul" className="fixed z-10">
           <div
             className={`z-10 my-1 w-48 rounded-sm border border-strong bg-surface-1 py-2.5 text-11 whitespace-nowrap shadow-raised-200 focus:outline-none`}
             ref={setPopperElement}
@@ -148,7 +147,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           >
             <div className="px-2">
               <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
-                <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
+                <SearchOutline className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
@@ -160,54 +159,60 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                 />
               </div>
             </div>
-            <div className={`vertical-scrollbar mt-2 scrollbar-sm max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
+            <div className={`vertical-scrollbar mt-2 scrollbar-sm max-h-48 overflow-y-scroll px-2 pr-0`}>
               {isLoading ? (
                 <p className="text-center text-secondary">{t("common.loading")}</p>
               ) : filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
+                <ul className="space-y-1">
+                  {filteredOptions.map((option) => (
+                    <Combobox.Option
+                      as="li"
+                      key={option.value}
+                      value={option.value}
+                      className={({ selected }) =>
+                        `flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none hover:bg-layer-1 ${
+                          selected ? "text-primary" : "text-secondary"
+                        }`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          {option.content}
+                          {selected && (
+                            <div className="flex-shrink-0">
+                              <TickOutline className={`h-3.5 w-3.5`} />
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))}
+                </ul>
+              ) : submitting ? (
+                <LoadingOutline className="spin h-3.5 w-3.5" />
+              ) : canCreateLabel ? (
+                <ul className="space-y-1">
                   <Combobox.Option
-                    key={option.value}
-                    value={option.value}
-                    className={({ selected }) =>
-                      `flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none hover:bg-layer-1 ${
-                        selected ? "text-primary" : "text-secondary"
-                      }`
-                    }
+                    as="li"
+                    value={query}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (!query.length) return;
+                      handleAddLabel(query);
+                    }}
+                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
-                    {({ selected }) => (
+                    {query.length ? (
                       <>
-                        {option.content}
-                        {selected && (
-                          <div className="flex-shrink-0">
-                            <CheckIcon className={`h-3.5 w-3.5`} />
-                          </div>
-                        )}
+                        {/* TODO: Translate here */}+ Add <span className="text-primary">&quot;{query}&quot;</span> to
+                        labels
                       </>
+                    ) : (
+                      t("label.create.type")
                     )}
                   </Combobox.Option>
-                ))
-              ) : submitting ? (
-                <Loader className="spin h-3.5 w-3.5" />
-              ) : canCreateLabel ? (
-                <Combobox.Option
-                  value={query}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (!query.length) return;
-                    handleAddLabel(query);
-                  }}
-                  className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
-                >
-                  {query.length ? (
-                    <>
-                      {/* TODO: Translate here */}+ Add <span className="text-primary">&quot;{query}&quot;</span> to
-                      labels
-                    </>
-                  ) : (
-                    t("label.create.type")
-                  )}
-                </Combobox.Option>
+                </ul>
               ) : (
                 <p className="text-left text-secondary">{t("common.search.no_matching_results")}</p>
               )}

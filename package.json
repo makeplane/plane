@@ -1,6 +1,6 @@
 {
   "name": "plane",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "description": "Open-source project management that unlocks customer value",
   "license": "AGPL-3.0",
@@ -37,7 +37,7 @@
     ]
   },
   "engines": {
-    "node": ">=22.18.0"
+    "node": ">=22.22.0"
   },
-  "packageManager": "pnpm@11.3.0+sha512.2c403d6594527287672b1f7056343a1f7c3634036a67ffabfcc2b3d7595d843768f8787148d1b57cf7956c90606bbd192857c363af19e96d2d0ec9ec5741d215"
+  "packageManager": "pnpm@11.10.0+sha512.0b7f8b98060031904c017e3a41eb187a16d40eeb829b95c4f8cb03681761fc4ab53dd219115b9b447f4dce1a05a214764461e7d3703392a9f32f9511ce8c86c8"
 }

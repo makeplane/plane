@@ -12,7 +12,7 @@ import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
@@ -21,7 +21,7 @@ import { QuickAddIssueFormRoot } from "./form";
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
-  ref: React.RefObject<HTMLFormElement>;
+  ref: React.RefObject<HTMLFormElement | null>;
   isOpen: boolean;
   projectDetail: IProject;
   hasError: boolean;
@@ -167,7 +167,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
               className="flex w-full cursor-pointer items-center gap-2 bg-layer-transparent px-2 py-3 hover:bg-layer-transparent-hover"
               onClick={() => handleIsOpen(true)}
             >
-              <PlusIcon className="h-3.5 w-3.5 stroke-2" />
+              <AddOutline className="h-3.5 w-3.5" />
               <span className="text-13 font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
             </button>
           )}

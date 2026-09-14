@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -69,7 +69,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
               }}
               tabIndex={getIndex("remove_parent")}
             >
-              <CloseIcon className="h-3 w-3 cursor-pointer" />
+              <CloseOutline className="h-3 w-3 cursor-pointer" />
             </button>
           </div>
         </div>

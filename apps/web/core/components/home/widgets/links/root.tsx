@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import type { THomeWidgetProps } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
@@ -53,7 +53,7 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
             onClick={handleCreateLinkModal}
             className="my-auto flex gap-1 text-13 font-medium text-accent-primary"
           >
-            <PlusIcon className="my-auto size-4" /> <span>{t("home.quick_links.add")}</span>
+            <AddOutline className="my-auto size-4" /> <span>{t("home.quick_links.add")}</span>
           </button>
         </div>
         <div className="flex w-full flex-wrap">

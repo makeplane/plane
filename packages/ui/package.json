@@ -1,6 +1,6 @@
 {
   "name": "@plane/ui",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "private": true,
   "description": "UI components shared across multiple apps internally",
   "license": "AGPL-3.0",
@@ -29,16 +29,14 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
-    "@blueprintjs/core": "catalog:",
-    "@blueprintjs/popover2": "catalog:",
     "@headlessui/react": "catalog:",
+    "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
     "@popperjs/core": "catalog:",
-    "@radix-ui/react-scroll-area": "catalog:",
     "clsx": "catalog:",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
@@ -72,7 +70,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

@@ -20,7 +20,7 @@ export type GanttChartBlocksProps = {
   enableAddBlock: boolean | ((blockId: string) => boolean);
   showAllBlocks: boolean;
   selectionHelpers: TSelectionHelper;
-  ganttContainerRef: React.RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export function GanttChartRowList(props: GanttChartBlocksProps) {

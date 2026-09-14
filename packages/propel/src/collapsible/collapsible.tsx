@@ -25,7 +25,7 @@ type RootProps = {
 type TriggerProps = {
   children: React.ReactNode;
   className?: string;
-  buttonRef?: React.RefObject<HTMLButtonElement>;
+  buttonRef?: React.RefObject<HTMLButtonElement | null>;
 };
 
 type ContentProps = {

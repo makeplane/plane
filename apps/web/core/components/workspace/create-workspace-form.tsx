@@ -8,13 +8,15 @@ import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 // ui
-import { CustomSelect, Input } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -134,22 +136,25 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                 },
               }}
               render={({ field: { value, ref, onChange } }) => (
-                <Input
-                  id="workspaceName"
-                  type="text"
-                  value={value}
-                  onChange={(e) => {
-                    onChange(e.target.value);
-                    setValue("name", e.target.value);
-                    setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
-                      shouldValidate: true,
-                    });
-                  }}
-                  ref={ref}
-                  hasError={Boolean(errors.name)}
-                  placeholder={t("workspace_creation.form.name.placeholder")}
-                  className="w-full"
-                />
+                <Field name="workspaceName" invalid={Boolean(errors.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="workspaceName"
+                      type="text"
+                      value={value}
+                      onChange={(e) => {
+                        onChange(e.target.value);
+                        setValue("name", e.target.value);
+                        setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                          shouldValidate: true,
+                        });
+                      }}
+                      ref={ref}
+                      placeholder={t("workspace_creation.form.name.placeholder")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -160,37 +165,38 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-danger-primary">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border border-subtle bg-layer-2 px-3">
-            <span className="text-12 whitespace-nowrap text-secondary">{window && window.location.host}/</span>
-            <Controller
-              control={control}
-              name="slug"
-              rules={{
-                required: t("common.errors.required"),
-                maxLength: {
-                  value: 48,
-                  message: t("workspace_creation.errors.validation.url_length"),
-                },
-              }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Input
-                  id="workspaceUrl"
-                  type="text"
-                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
-                  onChange={(e) => {
-                    const validation = validateSlug(e.target.value);
-                    if (validation === true) setInvalidSlug(false);
-                    else setInvalidSlug(true);
-                    onChange(e.target.value.toLowerCase());
-                  }}
-                  ref={ref}
-                  hasError={Boolean(errors.slug)}
-                  placeholder={t("workspace_creation.form.url.placeholder")}
-                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-12"
-                />
-              )}
-            />
-          </div>
+          <Controller
+            control={control}
+            name="slug"
+            rules={{
+              required: t("common.errors.required"),
+              maxLength: {
+                value: 48,
+                message: t("workspace_creation.errors.validation.url_length"),
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Field name="workspaceUrl" invalid={invalidSlug || Boolean(errors.slug)}>
+                <InputGroup size="2xl">
+                  <span className="text-12 whitespace-nowrap text-secondary">{window && window.location.host}/</span>
+                  <Input
+                    size="2xl"
+                    id="workspaceUrl"
+                    type="text"
+                    value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+                    onChange={(e) => {
+                      const validation = validateSlug(e.target.value);
+                      if (validation === true) setInvalidSlug(false);
+                      else setInvalidSlug(true);
+                      onChange(e.target.value.toLowerCase());
+                    }}
+                    ref={ref}
+                    placeholder={t("workspace_creation.form.url.placeholder")}
+                  />
+                </InputGroup>
+              </Field>
+            )}
+          />
           {slugError && (
             <p className="-mt-3 text-13 text-danger-primary">
               {t("workspace_creation.errors.validation.url_already_taken")}

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";
@@ -30,7 +30,7 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
         isOpen={isPaidPlanPurchaseModalOpen}
         handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
       />
-      <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
+      <Tooltip label={`Version: v${packageJson.version}`} disabled={isMobile}>
         <Button
           variant="tertiary"
           size="lg"

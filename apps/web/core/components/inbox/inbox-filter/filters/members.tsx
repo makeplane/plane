@@ -8,9 +8,10 @@ import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane types
+import { Avatar } from "@makeplane/propel/components/avatar";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
-import { Avatar, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -86,10 +87,10 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                       onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
                       icon={
                         <Avatar
-                          name={member.display_name}
+                          alt={member.display_name}
+                          fallback={member.display_name?.[0]?.toUpperCase()}
                           src={getFileURL(member.avatar_url)}
-                          showTooltip={false}
-                          size="md"
+                          size="xs"
                         />
                       }
                       title={currentUser?.id === member.id ? "You" : member?.display_name}

@@ -9,15 +9,14 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Ellipsis } from "lucide-react";
+import { AddOutline, ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Loader } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
@@ -187,15 +186,14 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               </Disclosure.Button>
               <div className="flex items-center gap-1">
                 {isAuthorizedUser && (
-                  <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+                  <Tooltip label={t("create_project")}>
                     <IconButton
                       variant="ghost"
                       size="sm"
-                      icon={PlusIcon}
+                      icon={AddOutline}
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
-                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
                       className="hidden text-placeholder group-hover:inline-flex"
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                     />
@@ -204,7 +202,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                 <IconButton
                   variant="ghost"
                   size="sm"
-                  icon={ChevronRightIcon}
+                  icon={ChevronRightOutline}
                   onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                   className="text-placeholder"
                   iconClassName={cn("transition-transform", {
@@ -219,6 +217,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               </div>
             </div>
             <Transition
+              as="div"
               show={isAllProjectsListOpen}
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"
@@ -262,7 +261,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                               : "aria_labels.app_sidebar.open_extended_sidebar"
                           )}
                         >
-                          <Ellipsis className="size-4 flex-shrink-0" />
+                          <MoreHorizontalOutline className="size-4 flex-shrink-0" />
                           <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
                         </button>
                       </SidebarNavItem>
@@ -277,7 +276,6 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
             className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2"
             onClick={() => {
               toggleCreateProjectModal(true);

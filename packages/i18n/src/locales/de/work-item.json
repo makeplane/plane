@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Archivierung des Arbeitselements fehlgeschlagen. Bitte versuchen Sie es erneut."
-      }
+      },
+      "banner_message": "Dieses Arbeitselement wurde archiviert. Rufen Sie den Bereich „Archive“ auf, um es wiederherzustellen.",
+      "go_to_archives": "Zu den Archiven"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Arbeitsaufgaben können nicht aktualisiert werden",
         "message": "Statusänderung ist für einige Arbeitsaufgaben nicht erlaubt. Stellen Sie sicher, dass die Statusänderung zulässig ist."
       }
+    },
+    "upgrade_banner": {
+      "message": "Status, Priorität und mehr für mehrere Arbeitselemente gleichzeitig ändern. Im Schnitt drei Minuten pro Vorgang sparen.",
+      "cta": "Upgrade auf One"
     }
   },
   "recurring_work_items": {

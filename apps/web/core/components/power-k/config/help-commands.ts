@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
+import { ChatOutline, DocumentationOutline, Github, RocketOutline } from "@makeplane/propel/icons";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -23,7 +23,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.open_keyboard_shortcuts",
-      icon: Rocket,
+      icon: RocketOutline,
       modifierShortcut: "cmd+/",
       action: () => toggleShortcutsListModal(true),
       isEnabled: () => true,
@@ -35,7 +35,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.open_plane_documentation",
-      icon: FileText,
+      icon: DocumentationOutline,
       action: () => {
         window.open("https://docs.plane.so/", "_blank", "noopener,noreferrer");
       },
@@ -48,7 +48,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.join_forum",
-      icon: MessageSquare,
+      icon: ChatOutline,
       action: () => {
         window.open("https://forum.plane.so", "_blank", "noopener,noreferrer");
       },
@@ -61,7 +61,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.report_bug",
-      icon: GithubIcon,
+      icon: Github,
       action: () => {
         window.open("https://github.com/makeplane/plane/issues/new/choose", "_blank", "noopener,noreferrer");
       },

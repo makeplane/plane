@@ -1,0 +1,418 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "შექმნის თარიღი",
+      "updated_at": "განახლების თარიღი",
+      "name": "სახელი"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "ციკლის დამატება",
+    "more_details": "მეტი დეტალები",
+    "cycle": "ციკლი",
+    "update_cycle": "ციკლის განახლება",
+    "create_cycle": "ციკლის შექმნა",
+    "no_matching_cycles": "შესაბამისი ციკლები არ მოიძებნა",
+    "remove_filters_to_see_all_cycles": "ამოიღეთ ფილტრები ყველა ციკლის სანახავად",
+    "remove_search_criteria_to_see_all_cycles": "ამოიღეთ ძიების კრიტერიუმი ყველა ციკლის სანახავად",
+    "only_completed_cycles_can_be_archived": "მხოლოდ დასრულებული ციკლები შეიძლება დაარქივდეს",
+    "start_date": "დაწყების თარიღი",
+    "end_date": "დასრულების თარიღი",
+    "in_your_timezone": "თქვენს დროის სარტყელში",
+    "transfer_work_items": "{count} სამუშაო ელემენტის გადატანა",
+    "transfer": {
+      "no_cycles_available": "No other cycles available to transfer work items to."
+    },
+    "date_range": "თარიღის დიაპაზონი",
+    "add_date": "თარიღის დამატება",
+    "active_cycle": {
+      "label": "აქტიური ციკლი",
+      "progress": "პროგრესი",
+      "chart": "Burn-down გრაფიკი",
+      "priority_issue": "პრიორიტეტული სამუშაო ელემენტები",
+      "assignees": "მინიჭებულები",
+      "issue_burndown": "სამუშაო ელემენტის burn-down",
+      "ideal": "იდეალური",
+      "current": "მიმდინარე",
+      "labels": "იარლიყები",
+      "trailing": "Trailing",
+      "leading": "Leading"
+    },
+    "upcoming_cycle": {
+      "label": "მომავალი ციკლი"
+    },
+    "completed_cycle": {
+      "label": "დასრულებული ციკლი"
+    },
+    "status": {
+      "days_left": "დღეები დარჩენილი",
+      "completed": "დასრულებული",
+      "yet_to_start": "ჯერ არ დაწყებული",
+      "in_progress": "მიმდინარე",
+      "draft": "მონახაზი"
+    },
+    "action": {
+      "restore": {
+        "title": "ციკლის აღდგენა",
+        "success": {
+          "title": "ციკლი აღდგენილია",
+          "description": "ციკლი აღდგენილია."
+        },
+        "failed": {
+          "title": "ციკლის აღდგენა წარუმატებელი იყო",
+          "description": "ციკლის აღდგენა ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა."
+        }
+      },
+      "favorite": {
+        "loading": "ციკლის ფავორიტებში დამატება",
+        "success": {
+          "description": "ციკლი ფავორიტებში დაემატა.",
+          "title": "წარმატება!"
+        },
+        "failed": {
+          "description": "ციკლის ფავორიტებში დამატება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+          "title": "შეცდომა!"
+        }
+      },
+      "unfavorite": {
+        "loading": "ციკლის ფავორიტებიდან ამოღება",
+        "success": {
+          "description": "ციკლი ფავორიტებიდან ამოიღეს.",
+          "title": "წარმატება!"
+        },
+        "failed": {
+          "description": "ციკლის ფავორიტებიდან ამოღება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+          "title": "შეცდომა!"
+        }
+      },
+      "update": {
+        "loading": "ციკლის განახლება",
+        "success": {
+          "description": "ციკლი წარმატებით განახლდა.",
+          "title": "წარმატება!"
+        },
+        "failed": {
+          "description": "ციკლის განახლების შეცდომა. გთხოვთ, სცადოთ ხელახლა.",
+          "title": "შეცდომა!"
+        },
+        "error": {
+          "already_exists": "თქვენ უკვე გაქვთ ციკლი მოცემულ თარიღებზე, თუ გსურთ ციკლის მონახაზის შექმნა, შეგიძლიათ ამოიღოთ ორივე თარიღი."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "დააჯგუფეთ და დაგეგმეთ თქვენი სამუშაო ციკლებში.",
+        "description": "გაყავით სამუშაო დროით შეზღუდულ ნაწილებად, იმუშავეთ უკუღმა თქვენი პროექტის ვადებიდან თარიღების დასაყენებლად და გააკეთეთ ხელშესახები პროგრესი გუნდურად.",
+        "primary_button": {
+          "text": "დააყენეთ თქვენი პირველი ციკლი",
+          "comic": {
+            "title": "ციკლები არის განმეორებადი დროის ყუთები.",
+            "description": "სპრინტი, იტერაცია ან ნებისმიერი სხვა ტერმინი, რომელსაც იყენებთ კვირეული ან ორკვირეული სამუშაოს თვალყურის დევნებისთვის, არის ციკლი."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "ციკლში სამუშაო ელემენტები დამატებული არ არის",
+        "description": "დაამატეთ ან შექმენით სამუშაო ელემენტები, რომლებიც გსურთ დაგეგმოთ და მიაწოდოთ ამ ციკლში",
+        "primary_button": {
+          "text": "ახალი სამუშაო ელემენტის შექმნა"
+        },
+        "secondary_button": {
+          "text": "არსებული სამუშაო ელემენტის დამატება"
+        }
+      },
+      "completed_no_issues": {
+        "title": "ციკლში სამუშაო ელემენტები არ არის",
+        "description": "ციკლში სამუშაო ელემენტები არ არის. სამუშაო ელემენტები ან გადატანილია ან დამალულია. თუ არსებობს დამალული სამუშაო ელემენტები, განაახლეთ თქვენი ჩვენების თვისებები შესაბამისად."
+      },
+      "active": {
+        "title": "აქტიური ციკლი არ არის",
+        "description": "აქტიური ციკლი მოიცავს ნებისმიერ პერიოდს, რომელიც მოიცავს დღევანდელ თარიღს თავის დიაპაზონში. იპოვეთ აქტიური ციკლის პროგრესი და დეტალები აქ."
+      },
+      "archived": {
+        "title": "ჯერ დაარქივებული ციკლები არ არის",
+        "description": "თქვენი პროექტის მოწესრიგებისთვის, დაარქივეთ დასრულებული ციკლები. იპოვეთ ისინი აქ ერთხელ დაარქივების შემდეგ."
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "შეინახეთ გაფილტრული ხედები თქვენი პროექტისთვის. შექმენით იმდენი, რამდენიც გჭირდებათ",
+        "description": "ხედები არის შენახული ფილტრების ნაკრები, რომელსაც ხშირად იყენებთ ან გსურთ მარტივი წვდომა. თქვენი ყველა კოლეგა პროექტში შეუძლია ნახოს ყველას ხედები და აირჩიოს რომელი უფრო უხდება მათ საჭიროებებს.",
+        "primary_button": {
+          "text": "შექმენით თქვენი პირველი ხედი",
+          "comic": {
+            "title": "ხედები მუშაობს სამუშაო ელემენტის თვისებებზე.",
+            "description": "თქვენ შეგიძლიათ შექმნათ ხედი აქ იმდენი თვისებით და ფილტრით, რამდენიც გჭირდებათ."
+          }
+        },
+        "filter": {
+          "title": "No matching views",
+          "description": "No views match the search criteria.\n Create a new view instead."
+        }
+      },
+      "no_archived_issues": {
+        "title": "No archived work items yet",
+        "description": "Manually or through automation, you can archive work items that are completed or cancelled. Find them here once archived.",
+        "primary_button": {
+          "text": "Set automation"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "No work items found matching the filters applied",
+        "secondary_button": {
+          "text": "Clear all filters"
+        }
+      },
+      "public": {
+        "title": "No public pages yet",
+        "description": "See pages shared with everyone in your project right here.",
+        "primary_button": {
+          "text": "Create your first page"
+        }
+      },
+      "archived": {
+        "title": "No archived pages yet",
+        "description": "Archive pages not on your radar. Access them here when needed."
+      },
+      "shared": {
+        "title": "No shared pages yet",
+        "description": "Pages that others have shared with you will appear here."
+      }
+    },
+    "delete_view": {
+      "title": "Are you sure you want to delete this view?",
+      "content": "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them."
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "შექმენით სამუშაო ელემენტი და მიანიჭეთ იგი ვინმეს, თუნდაც საკუთარ თავს",
+        "description": "იფიქრეთ სამუშაო ელემენტებზე, როგორც სამუშაოებზე, დავალებებზე, სამუშაოზე ან JTBD-ზე. რაც გვიყვარს. სამუშაო ელემენტი და მისი ქვე-სამუშაო ელემენტები ჩვეულებრივ დროით შეზღუდული მოქმედებებია, რომლებიც მინიჭებულია თქვენი გუნდის წევრებზე. თქვენი გუნდი ქმნის, მინიჭავს და ასრულებს სამუშაო ელემენტებს თქვენი პროექტის მიზნისკენ წინსვლისთვის.",
+        "primary_button": {
+          "text": "შექმენით თქვენი პირველი სამუშაო ელემენტი",
+          "comic": {
+            "title": "სამუშაო ელემენტები არის Plane-ის სამშენებლო ბლოკები.",
+            "description": "Plane UI-ის რედიზაინი, კომპანიის რებრენდინგი ან ახალი საწვავის ინჟექტორის სისტემის გაშვება არის სამუშაო ელემენტების მაგალითები, რომლებსაც სავარაუდოდ აქვთ ქვე-სამუშაო ელემენტები."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "ჯერ დაარქივებული სამუშაო ელემენტები არ არის",
+        "description": "ხელით ან ავტომატიზაციის მეშვეობით, შეგიძლიათ დაარქივოთ დასრულებული ან გაუქმებული სამუშაო ელემენტები. იპოვეთ ისინი აქ ერთხელ დაარქივების შემდეგ.",
+        "primary_button": {
+          "text": "ავტომატიზაციის დაყენება"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "გამოყენებული ფილტრების შესაბამისი სამუშაო ელემენტები არ მოიძებნა",
+        "secondary_button": {
+          "text": "ყველა ფილტრის გასუფთავება"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "მოდულის დამატება",
+    "update_module": "მოდულის განახლება",
+    "create_module": "მოდულის შექმნა",
+    "archive_module": "მოდულის არქივირება",
+    "restore_module": "მოდულის აღდგენა",
+    "delete_module": "მოდულის წაშლა",
+    "empty_state": {
+      "general": {
+        "title": "თქვენი პროექტის ეტაპების მირჩევა მოდულებში და თვალყური ადევნეთ აგრეგირებულ სამუშაოს მარტივად.",
+        "description": "სამუშაო ელემენტების ჯგუფი, რომელიც ეკუთვნის ლოგიკურ, იერარქიულ მშობელს, ქმნის მოდულს. იფიქრეთ მათზე, როგორც პროექტის ეტაპებით სამუშაოს თვალყურის დევნების გზაზე. მათ აქვთ საკუთარი პერიოდები და ვადები, ასევე ანალიტიკა, რომელიც დაგეხმარებათ ნახოთ რამდენად ახლოს ან შორს ხართ ეტაპიდან.",
+        "primary_button": {
+          "text": "შექმენით თქვენი პირველი მოდული",
+          "comic": {
+            "title": "მოდულები ეხმარება სამუშაოს იერარქიით ჯგუფირებას.",
+            "description": "კალათის მოდული, შასის მოდული და საწყობის მოდული ყველა კარგი მაგალითია ამ ჯგუფირების."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "მოდულში სამუშაო ელემენტები არ არის",
+        "description": "შექმენით ან დაამატეთ სამუშაო ელემენტები, რომლებიც გსურთ შეასრულოთ ამ მოდულის ფარგლებში",
+        "primary_button": {
+          "text": "ახალი სამუშაო ელემენტების შექმნა"
+        },
+        "secondary_button": {
+          "text": "არსებული სამუშაო ელემენტის დამატება"
+        }
+      },
+      "archived": {
+        "title": "ჯერ დაარქივებული მოდულები არ არის",
+        "description": "თქვენი პროექტის მოწესრიგებისთვის, დაარქივეთ დასრულებული ან გაუქმებული მოდულები. იპოვეთ ისინი აქ ერთხელ დაარქივების შემდეგ."
+      },
+      "sidebar": {
+        "in_active": "ეს მოდული ჯერ აქტიური არ არის.",
+        "invalid_date": "არასწორი თარიღი. გთხოვთ, შეიყვანეთ სწორი თარიღი."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "მოდულის არქივირება",
+      "archive_module_description": "მხოლოდ დასრულებული ან გაუქმებული\nმოდული შეიძლება დაარქივდეს.",
+      "delete_module": "მოდულის წაშლა"
+    },
+    "toast": {
+      "copy": {
+        "success": "მოდულის ბმული კოპირებულია ბუფერში"
+      },
+      "delete": {
+        "success": "მოდული წარმატებით წაიშალა",
+        "error": "მოდულის წაშლა ვერ მოხერხდა"
+      }
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "ჩაწერეთ ჩანაწერი, დოკუმენტი ან სრული ცოდნის ბაზა. მიიღეთ Galileo, Plane-ის AI ასისტენტი, რომ დაგეხმაროთ დაწყებაში",
+        "description": "გვერდები არის აზრების შესანახი სივრცე Plane-ში. ჩაწერეთ შეხვედრის ჩანაწერები, მარტივად დააფორმატეთ ისინი, ჩაურთეთ სამუშაო ელემენტები, განათავსეთ ისინი კომპონენტების ბიბლიოთეკის გამოყენებით და შეინახეთ ყველა თქვენი პროექტის კონტექსტში. ნებისმიერი დოკუმენტის სწრაფად შესაქმნელად, გამოიძახეთ Galileo, Plane-ის AI, მალსახმობით ან დაწკაპუნებით.",
+        "primary_button": {
+          "text": "შექმენით თქვენი პირველი გვერდი"
+        }
+      },
+      "private": {
+        "title": "ჯერ პირადი გვერდები არ არის",
+        "description": "შეინახეთ თქვენი პირადი აზრები აქ. როდესაც მზად იქნებით გაზიარებისთვის, გუნდი მხოლოდ ერთი დაწკაპუნებით არის.",
+        "primary_button": {
+          "text": "შექმენით თქვენი პირველი გვერდი"
+        }
+      },
+      "public": {
+        "title": "ჯერ საჯარო გვერდები არ არის",
+        "description": "ნახეთ გვერდები, რომლებიც გაზიარებულია ყველასთან თქვენს პროექტში აქვე.",
+        "primary_button": {
+          "text": "შექმენით თქვენი პირველი გვერდი"
+        }
+      },
+      "archived": {
+        "title": "ჯერ დაარქივებული გვერდები არ არის",
+        "description": "დაარქივეთ გვერდები, რომლებიც არ არის თქვენს რადარში. წვდომა მათზე აქვე, როდესაც საჭირო იქნება."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Intake არ არის ჩართული პროექტისთვის.",
+        "description": "Intake დაგეხმარებათ თქვენი პროექტის შემომავალი მოთხოვნების მართვაში და მათ დამატებაში სამუშაო ელემენტებად თქვენს ნაკადში. ჩართეთ Intake პროექტის პარამეტრებიდან მოთხოვნების მართვისთვის.",
+        "primary_button": {
+          "text": "ფუნქციების მართვა"
+        }
+      },
+      "cycle": {
+        "title": "ციკლები არ არის ჩართული ამ პროექტისთვის.",
+        "description": "გაყავით სამუშაო დროით შეზღუდულ ნაწილებად, იმუშავეთ უკუღმა თქვენი პროექტის ვადებიდან თარიღების დასაყენებლად და გააკეთეთ ხელშესახები პროგრესი გუნდურად. ჩართეთ ციკლების ფუნქცია თქვენი პროექტისთვის მათი გამოყენების დასაწყებად.",
+        "primary_button": {
+          "text": "ფუნქციების მართვა"
+        }
+      },
+      "module": {
+        "title": "მოდულები არ არის ჩართული პროექტისთვის.",
+        "description": "მოდულები არის თქვენი პროექტის სამშენებლო ბლოკები. ჩართეთ მოდულები პროექტის პარამეტრებიდან მათი გამოყენების დასაწყებად.",
+        "primary_button": {
+          "text": "ფუნქციების მართვა"
+        }
+      },
+      "page": {
+        "title": "გვერდები არ არის ჩართული პროექტისთვის.",
+        "description": "გვერდები არის თქვენი პროექტის სამშენებლო ბლოკები. ჩართეთ გვერდები პროექტის პარამეტრებიდან მათი გამოყენების დასაწყებად.",
+        "primary_button": {
+          "text": "ფუნქციების მართვა"
+        }
+      },
+      "view": {
+        "title": "ხედები არ არის ჩართული პროექტისთვის.",
+        "description": "ხედები არის თქვენი პროექტის სამშენებლო ბლოკები. ჩართეთ ხედები პროექტის პარამეტრებიდან მათი გამოყენების დასაწყებად.",
+        "primary_button": {
+          "text": "ფუნქციების მართვა"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "ჩამორჩენა",
+      "planned": "დაგეგმილი",
+      "in_progress": "მიმდინარე",
+      "paused": "შეჩერებული",
+      "completed": "დასრულებული",
+      "cancelled": "გაუქმებული"
+    },
+    "layout": {
+      "list": "სიის განლაგება",
+      "board": "გალერეის განლაგება",
+      "timeline": "დროის ხაზის განლაგება"
+    },
+    "order_by": {
+      "name": "სახელი",
+      "progress": "პროგრესი",
+      "issues": "სამუშაო ელემენტების რაოდენობა",
+      "due_date": "ვადის თარიღი",
+      "created_at": "შექმნის თარიღი",
+      "manual": "ხელით"
+    }
+  },
+  "project_members": {
+    "full_name": "Full name",
+    "display_name": "Display name",
+    "email": "Email",
+    "joining_date": "Joining date",
+    "role": "Role"
+  },
+  "project": {
+    "members_import": {
+      "title": "Import Members from CSV",
+      "description": "Upload a CSV with columns: Email and Role (5=Guest, 15=Member, 20=Admin). Users must already be workspace members.",
+      "download_sample": "Download sample CSV",
+      "dropzone": {
+        "active": "Drop CSV file here",
+        "inactive": "Drag & drop or click to upload",
+        "file_type": "Only .csv files supported"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "import": "Import",
+        "try_again": "Try Again",
+        "close": "Close",
+        "done": "Done"
+      },
+      "progress": {
+        "uploading": "Uploading...",
+        "importing": "Importing..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Import Complete"
+        },
+        "message": {
+          "success": "Successfully imported {count} member{plural} to the project.",
+          "no_imports": "No new members were imported from the CSV file."
+        },
+        "stats": {
+          "added": "Added",
+          "reactivated": "Reactivated",
+          "already_members": "Already Members",
+          "skipped": "Skipped"
+        },
+        "download_errors": "Download skipped details"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Invalid file",
+          "message": "Only CSV files are supported."
+        },
+        "import_failed": {
+          "title": "Import failed",
+          "message": "Something went wrong."
+        }
+      }
+    }
+  }
+}

@@ -8,9 +8,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
-import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
+import { CyclesOutline, IntakeOutline, ModuleOutline, PagesOutline, ViewsOutline } from "@makeplane/propel/icons";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
@@ -33,7 +33,7 @@ const PROJECT_FEATURES_LIST = {
     property: "cycle_view",
     title: "Cycles",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
-    icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
+    icon: <CyclesOutline className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -42,7 +42,7 @@ const PROJECT_FEATURES_LIST = {
     property: "module_view",
     title: "Modules",
     description: "Group work into sub-project-like set-ups with their own leads and assignees.",
-    icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
+    icon: <ModuleOutline width={20} height={20} className="flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -51,7 +51,7 @@ const PROJECT_FEATURES_LIST = {
     property: "issue_views_view",
     title: "Views",
     description: "Save sorts, filters, and display options for later or share them.",
-    icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    icon: <ViewsOutline className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -60,7 +60,7 @@ const PROJECT_FEATURES_LIST = {
     property: "page_view",
     title: "Pages",
     description: "Write anything like you write anything.",
-    icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    icon: <PagesOutline className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -69,7 +69,7 @@ const PROJECT_FEATURES_LIST = {
     property: "inbox_view",
     title: "Intake",
     description: "Consider and discuss work items before you add them to your project.",
-    icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    icon: <IntakeOutline className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -120,7 +120,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                   <span className="flex items-center gap-2">
                     {t(featureItem.key)}
                     {featureItem.isPro && (
-                      <Tooltip tooltipContent="Pro feature" position="top">
+                      <Tooltip label="Pro feature">
                         <UpgradeBadge className="rounded-sm" />
                       </Tooltip>
                     )}

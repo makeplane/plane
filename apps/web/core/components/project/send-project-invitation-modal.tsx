@@ -8,12 +8,13 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { AddOutline, ChevronDownOutline, CloseOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Avatar, CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -140,7 +141,12 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="shrink-0 pt-0.5">
-              <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
+              <Avatar
+                alt={memberDetails?.member.display_name}
+                fallback={memberDetails?.member.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(memberDetails?.member.avatar_url)}
+                size="xs"
+              />
             </div>
             <div className="truncate">
               {memberDetails?.member.display_name} (
@@ -200,15 +206,17 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                               {value && value !== "" ? (
                                 <div className="flex items-center gap-2">
                                   <Avatar
-                                    name={selectedMember?.member.display_name}
+                                    alt={selectedMember?.member.display_name}
+                                    fallback={selectedMember?.member.display_name?.[0]?.toUpperCase()}
                                     src={getFileURL(selectedMember?.member.avatar_url ?? "")}
+                                    size="xs"
                                   />
                                   {selectedMember?.member.display_name}
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                               )}
-                              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                              <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
                             </button>
                           }
                           onChange={(val: string) => {
@@ -247,7 +255,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                           customButton={
                             <div className="shadow-sm flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
                               <span className="capitalize">{field.value ? ROLE[field.value] : "Select role"}</span>
-                              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                              <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
                             </div>
                           }
                           input
@@ -278,7 +286,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                         className="place-items-center self-center rounded-sm"
                         onClick={() => remove(index)}
                       >
-                        <CloseIcon className="h-4 w-4 text-secondary" />
+                        <CloseOutline className="h-4 w-4 text-secondary" />
                       </button>
                     </div>
                   )}
@@ -293,7 +301,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
             className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
             onClick={appendField}
           >
-            <PlusIcon className="h-4 w-4" />
+            <AddOutline className="h-4 w-4" />
             {t("common.add_more")}
           </button>
           <div className="flex items-center gap-2">

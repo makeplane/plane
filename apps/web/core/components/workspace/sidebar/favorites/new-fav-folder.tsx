@@ -9,13 +9,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers
 // plane ui
 import { FavoriteFolderIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input } from "@plane/ui";
+
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 
@@ -146,12 +147,14 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
-            <Input
-              className="w-full"
-              placeholder={t("new_folder")}
-              aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
-              {...field}
-            />
+            <InputGroup size="2xl">
+              <Input
+                size="2xl"
+                placeholder={t("new_folder")}
+                aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
+                {...field}
+              />
+            </InputGroup>
           )}
         />
       </form>
