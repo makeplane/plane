@@ -24,8 +24,6 @@ import { GanttChartSidebar, MonthChartView, QuarterChartView, WeekChartView } fr
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { GanttChartRowList } from "@/components/gantt-chart/blocks/block-row-list";
 import { GanttChartBlocksList } from "@/components/gantt-chart/blocks/blocks-list";
-import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
-import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 // local imports
 import { DEFAULT_BLOCK_WIDTH, GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
 import { getItemPositionWidth } from "../views";
@@ -87,9 +85,6 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
   const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
   const { currentView, currentViewData } = useTimeLineChartStore();
-  // plane web hooks
-  const isBulkOperationsEnabled = useBulkOperationStatus();
-
   // Enable Auto Scroll for Ganttlist
   useEffect(() => {
     const element = ganttContainerRef.current;
@@ -163,7 +158,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
         entities={{
           [GANTT_SELECT_GROUP]: blockIds ?? [],
         }}
-        disabled={!isBulkOperationsEnabled || isEpic}
+        disabled
       >
         {(helpers) => (
           <>
@@ -229,7 +224,6 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
               </div>
             </div>
             {quickAdd ? quickAdd : null}
-            <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}
       </MultipleSelectGroup>

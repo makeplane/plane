@@ -7,14 +7,7 @@
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import {
-  BoxesOutline,
-  CloseOutline,
-  ShareAltOutline,
-  StarOutline,
-  TickOutline,
-  UserOutline,
-} from "@makeplane/propel/icons";
+import { BoxesOutline, CloseOutline, ShareAltOutline, TickOutline, UserOutline } from "@makeplane/propel/icons";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
@@ -60,9 +53,9 @@ function WorkspaceInvitationPage() {
       })
       .then(() => {
         if (invitationDetail.email === currentUser?.email) {
-          router.push(`/${invitationDetail.workspace.slug}`);
+          return router.push(`/${invitationDetail.workspace.slug}`);
         } else {
-          router.push("/");
+          return router.push("/");
         }
       })
       .catch((err: unknown) => console.error(err));
@@ -76,7 +69,7 @@ function WorkspaceInvitationPage() {
         token: token,
       })
       .then(() => {
-        router.push("/");
+        return router.push("/");
       })
       .catch((err: unknown) => console.error(err));
   };
@@ -117,7 +110,6 @@ function WorkspaceInvitationPage() {
               ) : (
                 <EmptySpaceItem Icon={BoxesOutline} title="Continue to home" href="/" />
               )}
-              <EmptySpaceItem Icon={StarOutline} title="Star us on GitHub" href="https://github.com/makeplane" />
               <EmptySpaceItem
                 Icon={ShareAltOutline}
                 title="Join our community of active creators"

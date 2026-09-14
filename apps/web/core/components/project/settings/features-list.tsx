@@ -8,7 +8,6 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
 import { CyclesOutline, IntakeOutline, ModuleOutline, PagesOutline, ViewsOutline } from "@makeplane/propel/icons";
 // components
@@ -16,8 +15,6 @@ import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-it
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web imports
-import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 // local imports
 import { ProjectFeatureToggle } from "./helper";
 
@@ -34,7 +31,6 @@ const PROJECT_FEATURES_LIST = {
     title: "Cycles",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
     icon: <CyclesOutline className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
-    isPro: false,
     isEnabled: true,
   },
   modules: {
@@ -43,7 +39,6 @@ const PROJECT_FEATURES_LIST = {
     title: "Modules",
     description: "Group work into sub-project-like set-ups with their own leads and assignees.",
     icon: <ModuleOutline width={20} height={20} className="flex-shrink-0 text-tertiary" />,
-    isPro: false,
     isEnabled: true,
   },
   views: {
@@ -52,7 +47,6 @@ const PROJECT_FEATURES_LIST = {
     title: "Views",
     description: "Save sorts, filters, and display options for later or share them.",
     icon: <ViewsOutline className="h-5 w-5 flex-shrink-0 text-tertiary" />,
-    isPro: false,
     isEnabled: true,
   },
   pages: {
@@ -61,7 +55,6 @@ const PROJECT_FEATURES_LIST = {
     title: "Pages",
     description: "Write anything like you write anything.",
     icon: <PagesOutline className="h-5 w-5 flex-shrink-0 text-tertiary" />,
-    isPro: false,
     isEnabled: true,
   },
   inbox: {
@@ -70,7 +63,6 @@ const PROJECT_FEATURES_LIST = {
     title: "Intake",
     description: "Consider and discuss work items before you add them to your project.",
     icon: <IntakeOutline className="h-5 w-5 flex-shrink-0 text-tertiary" />,
-    isPro: false,
     isEnabled: true,
   },
 };
@@ -116,16 +108,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
           {Object.entries(PROJECT_FEATURES_LIST).map(([featureItemKey, featureItem]) => (
             <div key={featureItemKey}>
               <SettingsBoxedControlItem
-                title={
-                  <span className="flex items-center gap-2">
-                    {t(featureItem.key)}
-                    {featureItem.isPro && (
-                      <Tooltip label="Pro feature">
-                        <UpgradeBadge className="rounded-sm" />
-                      </Tooltip>
-                    )}
-                  </span>
-                }
+                title={<span className="flex items-center gap-2">{t(featureItem.key)}</span>}
                 description={t(`${featureItem.key}_description`)}
                 control={
                   <ProjectFeatureToggle

@@ -13,10 +13,8 @@ import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from
 import { EIssueLayoutTypes } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
-import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
@@ -62,9 +60,6 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const { currentProjectDetails } = useProject();
-  // plane web hooks
-  const isBulkOperationsEnabled = useBulkOperationStatus();
-
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
   const spreadsheetColumnsList = isWorkspaceLevel
@@ -84,7 +79,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
-        disabled={!isBulkOperationsEnabled || isEpic}
+        disabled
       >
         {(helpers) => (
           <>
@@ -119,7 +114,6 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 )}
               </div>
             </div>
-            <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}
       </MultipleSelectGroup>

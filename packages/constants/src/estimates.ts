@@ -78,7 +78,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: true,
-    is_ee: false,
   },
   categories: {
     name: "Categories",
@@ -117,7 +116,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: true,
-    is_ee: false,
   },
   time: {
     name: "Time",
@@ -137,6 +135,5 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: true,
-    is_ee: true,
   },
 };

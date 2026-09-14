@@ -4,17 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { InfoOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TEstimateSystemKeys } from "@plane/types";
-// helpers
-import { isEstimateSystemEnabled } from "./helper";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-// components
-import { UpgradeBadge } from "@/components/workspace/upgrade-badge";
 import { RadioInput } from "../radio-select";
 
 type TEstimateCreateStageOne = {
@@ -39,26 +33,10 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
           options={Object.keys(ESTIMATE_SYSTEMS)
             .map((system) => {
               const currentSystem = system as TEstimateSystemKeys;
-              const isEnabled = isEstimateSystemEnabled(currentSystem);
-              if (!isEnabled) return null;
               return {
-                label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
-                  <div className="relative flex cursor-no-drop items-center gap-2 text-tertiary">
-                    {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
-                    <Tooltip label={t("common.coming_soon")}>
-                      <InfoOutline width={12} height={12} />
-                    </Tooltip>
-                  </div>
-                ) : !isEnabled ? (
-                  <div className="relative flex cursor-no-drop items-center gap-2 text-tertiary">
-                    {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
-                    <UpgradeBadge />
-                  </div>
-                ) : (
-                  <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>
-                ),
+                label: <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>,
                 value: system,
-                disabled: !isEnabled,
+                disabled: false,
               };
             })
             .filter((option) => option !== null)}
@@ -72,7 +50,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
           onChange={(value) => handleEstimateSystem(value as TEstimateSystemKeys)}
         />
       </div>
-      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && !ESTIMATE_SYSTEMS[estimateSystem]?.is_ee && (
+      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && (
         <>
           <div className="space-y-1.5">
             <div className="text-13 font-medium text-secondary">

@@ -68,7 +68,6 @@ export type TEstimateSystem = {
   i18n_name: string;
   templates: Record<string, TTemplateValues>;
   is_available: boolean;
-  is_ee: boolean;
 };
 
 export type TEstimateSystems = {

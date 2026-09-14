@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { PiChatLogo } from "@plane/propel/icons";
-import { DashboardsOutline, DraftsOutline, HomeOutline, YourWorkOutline } from "@makeplane/propel/icons";
+import { DraftsOutline, HomeOutline, YourWorkOutline } from "@makeplane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
@@ -30,13 +30,6 @@ export const SidebarUserMenu = observer(function SidebarUserMenu() {
       href: `/${workspaceSlug.toString()}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: HomeOutline,
-    },
-    {
-      key: "dashboards",
-      labelTranslationKey: "workspace_dashboards",
-      href: `/${workspaceSlug.toString()}/dashboards/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: DashboardsOutline,
     },
     {
       key: "your-work",
