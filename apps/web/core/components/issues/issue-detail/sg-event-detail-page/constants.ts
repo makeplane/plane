@@ -355,7 +355,7 @@ export const SURFACE_CLASS = "rounded-lg border border-custom-border-200 bg-cust
 export const ICON_BUTTON_CLASS =
   "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-custom-border-200 bg-custom-background-100 text-custom-text-300 transition-colors hover:bg-custom-background-90 hover:text-custom-text-100";
 
-export const PLAYER_FRAME_CLASS = "h-[clamp(260px,42vw,505px)] w-full";
+export const PLAYER_FRAME_CLASS = "h-[clamp(260px,48vw,620px)] w-full";
 
 export const PLAYER_STAGE_CLASS = "mx-auto h-full w-full max-w-full overflow-hidden rounded-[5px]";
 
