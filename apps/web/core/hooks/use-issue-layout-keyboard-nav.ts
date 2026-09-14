@@ -91,7 +91,8 @@ export const useIssueLayoutKeyboardNav = (props: Props) => {
   // and the click-triggered scroll runs after `setOrderedEntities`, so the
   // cursor is re-pointed at the same entity rather than blindly reset.
   const entityKey = entities.map((entity) => `${entity.groupID}:${entity.entityID}`).join("|");
-  const entityKeyRef = useRef(entityKey);
+  // starts undefined so the first render always registers the rendered order
+  const entityKeyRef = useRef<string | undefined>(undefined);
   const entitiesRef = useRef(entities);
   entitiesRef.current = entities;
   useEffect(() => {
