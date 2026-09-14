@@ -10,18 +10,10 @@ import type { TDocumentPayload, TPage } from "@plane/types";
 import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";
 
-export type TUserMention = {
-  id: string;
-  display_name: string;
-  avatar_url?: string;
-};
-
 export abstract class PageCoreService extends APIService {
   protected abstract basePath: string;
 
-  constructor() {
-    super();
-  }
+  
 
   async fetchDetails(pageId: string): Promise<TPage> {
     try {
@@ -128,100 +120,5 @@ export abstract class PageCoreService extends APIService {
       logger.error("Failed to update page description binary", appError);
       throw appError;
     }
-  }
-
-  /**
-   * Fetches user mentions for a page
-   * @param pageId - The page ID
-   * @returns Array of user mentions
-   */
-  async fetchUserMentions(pageId: string): Promise<TUserMention[]> {
-    try {
-      const response = await this.get(`${this.basePath}/pages/${pageId}/mentions/`, {
-        headers: this.getHeader(),
-        params: {
-          mention_type: "user_mention",
-        },
-      });
-      return (response?.data as TUserMention[]) ?? [];
-    } catch (error) {
-      const appError = new AppError(error, {
-        context: { operation: "fetchUserMentions", pageId },
-      });
-      logger.error("Failed to fetch user mentions", appError);
-      throw appError;
-    }
-  }
-
-  /**
-   * Resolves an image asset ID to its actual URL by following the 302 redirect
-   * @param workspaceSlug - The workspace slug
-   * @param assetId - The asset UUID
-   * @param projectId - Optional project ID for project-specific assets
-   * @returns The resolved image URL (presigned S3 URL)
-   */
-  async resolveImageAssetUrl(
-    workspaceSlug: string,
-    assetId: string,
-    projectId?: string | null
-  ): Promise<string | null> {
-    const path = projectId
-      ? `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`
-      : `/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`;
-
-    try {
-      const response = await this.get(path, {
-        headers: this.getHeader(),
-        maxRedirects: 0,
-        validateStatus: (status: number) => status >= 200 && status < 400,
-      });
-      // If we get a 302, the Location header contains the presigned URL
-      if (response.status === 302 || response.status === 301) {
-        return response.headers?.location || null;
-      }
-      return null;
-    } catch (error) {
-      // Axios throws on 3xx when maxRedirects is 0, so we need to handle the redirect from the error
-      if ((error as any).response?.status === 302 || (error as any).response?.status === 301) {
-        return (error as any).response.headers?.location || null;
-      }
-      logger.error("Failed to resolve image asset URL", {
-        assetId,
-        workspaceSlug,
-        error: (error as any).message,
-      });
-      return null;
-    }
-  }
-
-  /**
-   * Resolves multiple image asset IDs to their actual URLs
-   * @param workspaceSlug - The workspace slug
-   * @param assetIds - Array of asset UUIDs
-   * @param projectId - Optional project ID for project-specific assets
-   * @returns Map of assetId to resolved URL
-   */
-  async resolveImageAssetUrls(
-    workspaceSlug: string,
-    assetIds: string[],
-    projectId?: string | null
-  ): Promise<Map<string, string>> {
-    const urlMap = new Map<string, string>();
-
-    // Resolve all asset URLs in parallel
-    const results = await Promise.allSettled(
-      assetIds.map(async (assetId) => {
-        const url = await this.resolveImageAssetUrl(workspaceSlug, assetId, projectId);
-        return { assetId, url };
-      })
-    );
-
-    for (const result of results) {
-      if (result.status === "fulfilled" && result.value.url) {
-        urlMap.set(result.value.assetId, result.value.url);
-      }
-    }
-
-    return urlMap;
   }
 }
