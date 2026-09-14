@@ -24,6 +24,12 @@ import { HocusPocusServerManager } from "@/hocuspocus";
 // redis
 import { redisManager } from "@/redis";
 
+// Upper bound on how long shutdown waits for HocusPocus to flush and unload
+// every open document. HocusPocus' own destroy() only resolves once the
+// document count reaches zero, which can stall on a half-open websocket, so the
+// wait is capped to stay inside the platform's SIGTERM grace window.
+const HOCUSPOCUS_DESTROY_TIMEOUT_MS = 10000;
+
 export class Server {
   private app: Express;
   private router: Router;
@@ -105,8 +111,7 @@ export class Server {
 
   public async destroy() {
     if (this.hocuspocusServer) {
-      this.hocuspocusServer.closeConnections();
-      logger.info("SERVER: HocusPocus connections closed gracefully.");
+      await this.destroyHocuspocusServer(this.hocuspocusServer);
     }
 
     await redisManager.disconnect();
@@ -124,5 +129,47 @@ export class Server {
         });
       });
     }
+  }
+
+  /**
+   * Shut HocusPocus down properly rather than only dropping its sockets.
+   *
+   * destroy() runs beforeUnloadDocument and afterUnloadDocument for every open
+   * document, which is what flushes pending title updates and the debounced
+   * onStoreDocument writes, and it fires the extensions' onDestroy hooks.
+   * closeConnections() on its own drops the sockets and loses both.
+   */
+  private async destroyHocuspocusServer(hocuspocusServer: Hocuspocus): Promise<void> {
+    let timer: NodeJS.Timeout | undefined;
+
+    // This promise outlives the race below whenever the timeout wins, so it
+    // must never reject: an unhandled rejection would take the process down
+    // mid-shutdown.
+    const destroyed = hocuspocusServer
+      .destroy()
+      .then(() => "destroyed" as const)
+      .catch((error) => {
+        logger.error("SERVER: HocusPocus destroy failed:", error);
+        return "failed" as const;
+      });
+
+    const timedOut = new Promise<"timed-out">((resolve) => {
+      timer = setTimeout(() => resolve("timed-out"), HOCUSPOCUS_DESTROY_TIMEOUT_MS);
+    });
+
+    const outcome = await Promise.race([destroyed, timedOut]);
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    if (outcome === "destroyed") {
+      logger.info("SERVER: HocusPocus documents flushed and connections closed gracefully.");
+      return;
+    }
+
+    logger.warn(
+      `SERVER: HocusPocus shutdown did not complete (${outcome}) within ${HOCUSPOCUS_DESTROY_TIMEOUT_MS}ms, forcing remaining connections closed.`
+    );
+    hocuspocusServer.closeConnections();
   }
 }
