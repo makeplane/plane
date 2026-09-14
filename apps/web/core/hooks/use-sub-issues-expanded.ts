@@ -7,8 +7,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { EIssueServiceType } from "@plane/types";
+// components
+import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { getValueFromLocalStorage, setValueIntoLocalStorage } from "@/hooks/use-local-storage";
 
@@ -21,7 +22,8 @@ const STORAGE_KEY = "expanded_sub_issues";
 export const useSubIssuesExpanded = (issueId: string, isEpic = false) => {
   const { workspaceSlug } = useParams();
   const { issueMap } = useIssues();
-  const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  // shows an error toast if the fetch fails
+  const { fetchSubIssues } = useSubIssueOperations(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const [isExpanded, setExpanded] = useState<boolean>(() =>
     getValueFromLocalStorage(STORAGE_KEY, []).includes(issueId)
   );
@@ -33,8 +35,8 @@ export const useSubIssuesExpanded = (issueId: string, isEpic = false) => {
   useEffect(() => {
     if (!shouldFetchOnRestore.current || !workspaceSlug || !projectId) return;
     shouldFetchOnRestore.current = false;
-    subIssuesStore.fetchSubIssues(workspaceSlug.toString(), projectId, issueId);
-  }, [workspaceSlug, projectId, issueId, subIssuesStore]);
+    void fetchSubIssues(workspaceSlug.toString(), projectId, issueId);
+  }, [workspaceSlug, projectId, issueId, fetchSubIssues]);
 
   useEffect(() => {
     const expandedIds: string[] = getValueFromLocalStorage(STORAGE_KEY, []);
