@@ -343,6 +343,8 @@ sequenceDiagram
 
 P0 首批（优先完成）：系统管理基础（组织架构、角色权限、账号与 SSO）→ 项目管理（每人一个科研 Project）→ 周报 / 月报（含图片、PDF 上传，Markdown `.md` 解析导入，按组织架构的报告访问分级）。
 
+P0 的开发级细化（需求编号、数据模型、接口契约、10 个开发阶段、验收清单）见 [research-p0-development-prd.md](./research-p0-development-prd.md)。
+
 P0 不包含：
 
 - 科研阶段评审（预开题 / 开题 / 中期 / 结题）。
