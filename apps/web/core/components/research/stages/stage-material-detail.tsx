@@ -18,6 +18,8 @@ import { Button } from "@plane/propel/button";
 import { Input } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
+import { ExternalReferenceCard } from "@/components/research/integrations/external-reference-card";
+import { ExternalReferencePicker } from "@/components/research/integrations/external-reference-picker";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
 import { useUser } from "@/hooks/store/user";
@@ -45,6 +47,9 @@ export const StageMaterialDetail = observer(function StageMaterialDetail({
   const { data: currentUser } = useUser();
   const material = research.stageMaterials[materialId];
   const versions = research.materialVersions[materialId] ?? [];
+  const linkedReferences = research
+    .getExternalReferences()
+    .filter((reference) => reference.links.some((link) => link.target_id === materialId));
   const [title, setTitle] = useState("");
   const [reason, setReason] = useState("");
   const [errorKey, setErrorKey] = useState<string | null>(null);
@@ -196,6 +201,25 @@ export const StageMaterialDetail = observer(function StageMaterialDetail({
         ))}
       </div>
       <p className="text-11 text-tertiary">{t("research.stages.materials.stage_hint", { stage: stageCode })}</p>
+      <div className="flex flex-col gap-2">
+        <h3 className="text-13 font-medium text-primary">{t("research.integrations.references_title")}</h3>
+        {linkedReferences.map((reference) => (
+          <ExternalReferenceCard
+            key={reference.id}
+            reference={reference}
+            onRemove={() => {
+              void research.deleteExternalReference(workspaceSlug, reference.id).catch(() => undefined);
+            }}
+          />
+        ))}
+        <ExternalReferencePicker
+          workspaceSlug={workspaceSlug}
+          onRegister={async (referenceId) => {
+            await research.linkExternalReference(workspaceSlug, referenceId, "STAGE_MATERIAL", materialId);
+            await research.fetchExternalReferences(workspaceSlug).catch(() => undefined);
+          }}
+        />
+      </div>
       {currentUser && <span className="text-11 text-tertiary">{t("research.stages.materials.reviewer_hint")}</span>}
     </div>
   );

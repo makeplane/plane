@@ -19,6 +19,8 @@ import { useResearch } from "@/hooks/store/use-research";
 
 type Props = {
   workspaceSlug: string;
+  /** When provided, the picker links the new reference to this target. */
+  onRegister?: (referenceId: string) => Promise<void>;
 };
 
 /**
@@ -26,7 +28,7 @@ type Props = {
  * system is unavailable the picker shows the degraded state instead of failing
  * (P1-INT-06, P1-INT-11).
  */
-export const ExternalReferencePicker = observer(function ExternalReferencePicker({ workspaceSlug }: Props) {
+export const ExternalReferencePicker = observer(function ExternalReferencePicker({ workspaceSlug, onRegister }: Props) {
   const { t } = useTranslation();
   const research = useResearch();
   const [system, setSystem] = useState<string>("RAGPORTAL");
@@ -96,8 +98,8 @@ export const ExternalReferencePicker = observer(function ExternalReferencePicker
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() =>
-                  void research.createExternalReference(workspaceSlug, {
+                onClick={async () => {
+                  const created = await research.createExternalReference(workspaceSlug, {
                     system: reference.system,
                     external_type: reference.external_type,
                     external_id: reference.external_id,
@@ -106,8 +108,9 @@ export const ExternalReferencePicker = observer(function ExternalReferencePicker
                     source_url: reference.source_url,
                     acl_hint: (item.acl_hint as Record<string, unknown>) ?? { public: false },
                     metadata: (item.metadata as Record<string, unknown>) ?? {},
-                  })
-                }
+                  });
+                  if (onRegister) await onRegister(created.id);
+                }}
               >
                 {t("research.integrations.reference")}
               </Button>

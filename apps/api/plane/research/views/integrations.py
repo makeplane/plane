@@ -44,6 +44,7 @@ from plane.research.utils.integrations import (
     set_cached,
 )
 from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.reference_targets import resolve_target
 from plane.research.views.base import ResearchAPIView
 
 SECTION = "integrations"
@@ -496,6 +497,17 @@ class ResearchExternalReferenceLinkEndpoint(ResearchAPIView):
             return research_error(
                 ResearchErrorCode.EXTERNAL_REFERENCE_INVALID,
                 "target_type and target_id are required.",
+            )
+        target, target_error = resolve_target(request.user, workspace, target_type, target_id)
+        if target is None:
+            if target_error == "external_reference_invalid":
+                return research_error(
+                    ResearchErrorCode.EXTERNAL_REFERENCE_INVALID,
+                    "Unknown link target type.",
+                )
+            return research_not_found(
+                ResearchErrorCode.EXTERNAL_REFERENCE_LINK_NOT_FOUND,
+                "The link target was not found or is not visible to you.",
             )
         link, created = ExternalReferenceLink.objects.get_or_create(
             reference=reference,
