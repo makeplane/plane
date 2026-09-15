@@ -61,13 +61,13 @@ docker compose -f docker-compose-test.yml down -v
 
 ## How it works
 
-| Service      | Image                                | Purpose                                       |
-| ------------ | ------------------------------------ | --------------------------------------------- |
-| `test-db`    | `postgres:15.7-alpine`               | Application database                          |
-| `test-redis` | `valkey/valkey:7.2.11-alpine`        | Cache / Celery broker                         |
-| `test-mq`    | `rabbitmq:3.13.6-management-alpine`  | Task queue                                    |
-| `test-minio` | `minio/minio`                        | S3-compatible object storage                  |
-| `api-tests`  | built from `apps/api/Dockerfile.dev` | Installs `requirements/test.txt`, runs pytest |
+| Service      | Image                                              | Purpose                                       |
+| ------------ | -------------------------------------------------- | --------------------------------------------- |
+| `test-db`    | `postgres:15.7-alpine`                             | Application database                          |
+| `test-redis` | `valkey/valkey:7.2.11-alpine`                      | Cache / Celery broker                         |
+| `test-mq`    | `rabbitmq:3.13.6-management-alpine`                | Task queue                                    |
+| `test-minio` | `quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z` | S3-compatible object storage                  |
+| `api-tests`  | built from `apps/api/Dockerfile.dev`               | Installs `requirements/test.txt`, runs pytest |
 
 All four dependencies expose health checks; `api-tests` waits for `service_healthy` on each via `depends_on`, so pytest only starts once the stack is ready.
 
