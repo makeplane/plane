@@ -91,6 +91,7 @@ from .literature import (
 )
 from .experiments import (
     ResearchExperimentAmendmentActionEndpoint,
+    ResearchExperimentIngestEndpoint,
     ResearchExperimentAmendmentDetailEndpoint,
     ResearchExperimentAmendmentListCreateEndpoint,
     ResearchExperimentArchiveEndpoint,
@@ -174,6 +175,7 @@ __all__ = [
     "ResearchExperimentAssetDetailEndpoint",
     "ResearchExperimentAssetEndpoint",
     "ResearchExperimentDetailEndpoint",
+    "ResearchExperimentIngestEndpoint",
     "ResearchExperimentListCreateEndpoint",
     "ResearchExperimentStatusEndpoint",
     "ResearchExperimentSubmitEndpoint",

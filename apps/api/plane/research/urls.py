@@ -80,6 +80,7 @@ from plane.research.views import (
     ResearchLiteratureStatusEndpoint,
     ResearchLiteratureThresholdEndpoint,
     ResearchExperimentAmendmentActionEndpoint,
+    ResearchExperimentIngestEndpoint,
     ResearchExperimentAmendmentDetailEndpoint,
     ResearchExperimentAmendmentListCreateEndpoint,
     ResearchExperimentArchiveEndpoint,
@@ -428,6 +429,11 @@ urlpatterns = [
         "research/workspaces/<str:slug>/experiments/<uuid:record_id>/assets/",
         ResearchExperimentAssetEndpoint.as_view(),
         name="research-experiment-assets",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/experiments/ingest/",
+        ResearchExperimentIngestEndpoint.as_view(),
+        name="research-experiment-ingest",
     ),
     path(
         "research/workspaces/<str:slug>/experiments/<uuid:record_id>/amendments/",

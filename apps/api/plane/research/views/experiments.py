@@ -25,6 +25,7 @@ from plane.research.serializers import (
     ExperimentRecordSerializer,
     ExperimentRecordVersionSerializer,
 )
+from plane.research.services.lab_ingest import ingest_run
 from plane.research.services.experiment_service import (
     STATUS,
     archive_experiment,
@@ -480,6 +481,43 @@ class ResearchExperimentAssetEndpoint(ResearchAPIView):
             request=request,
         )
         return Response(ExperimentAssetLinkSerializer(link).data, status=status.HTTP_201_CREATED)
+
+
+class ResearchExperimentIngestEndpoint(ResearchAPIView):
+    """``POST /api/research/workspaces/<slug>/projects/<project_id>/experiments/ingest/``
+
+    SpecLabOS pushes a finished run here. The record is created as
+    ``AUTOMATED``; a repeated push of the same run returns the existing record
+    instead of creating a second one (P1-LAB-04). When the source system cannot
+    be reached the record is still created with a pending note (P1-LAB-06).
+    """
+
+    def post(self, request, slug, project_id):
+        workspace, error = self.get_workspace(section=SECTION)
+        if error:
+            return error
+        profile = ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
+        if profile is None:
+            return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
+        if profile.owner_id != request.user.id and not is_workspace_admin(request.user, workspace):
+            return research_permission_denied()
+        record, outcome = ingest_run(workspace, project_id, request.user, request.data, request=request)
+        if record is None:
+            return research_error(
+                ResearchErrorCode.EXPERIMENT_STATE_CONFLICT,
+                "external_run_id is required.",
+                status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        payload = ExperimentRecordSerializer(record).data
+        payload["created"] = outcome.created
+        payload["duplicate_of"] = outcome.duplicate_of
+        payload["degraded"] = outcome.degraded
+        payload["degraded_reason"] = outcome.degraded_reason
+        payload["asset_count"] = len(outcome.assets)
+        return Response(
+            payload,
+            status=status.HTTP_201_CREATED if outcome.created else status.HTTP_200_OK,
+        )
 
 
 class ResearchExperimentAssetDetailEndpoint(ResearchAPIView):

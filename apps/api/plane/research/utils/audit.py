@@ -84,6 +84,7 @@ class ResearchAuditAction:
     EXPERIMENT_AMENDMENT_CANCEL = "experiment.amendment.cancel"
     EXPERIMENT_ASSET_LINK = "experiment.asset.link"
     EXPERIMENT_ASSET_UNLINK = "experiment.asset.unlink"
+    EXPERIMENT_INGEST = "experiment.ingest"
     CODE_REPOSITORY_CREATE = "code.repository.create"
     CODE_REPOSITORY_UPDATE = "code.repository.update"
     CODE_REPOSITORY_ARCHIVE = "code.repository.archive"

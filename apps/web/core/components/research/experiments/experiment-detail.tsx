@@ -85,6 +85,11 @@ export const ExperimentDetail = observer(function ExperimentDetail({ workspaceSl
           <span className="text-11 text-tertiary">
             {t("research.experiments.version", { version: record.current_version_no })}
           </span>
+          {record.status_note === "pending_source_sync" && (
+            <span className="rounded bg-warning-subtle px-1.5 py-0.5 text-11 text-warning-primary">
+              {t("research.experiments.pending_source")}
+            </span>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {record.status === "PLANNED" && (
@@ -291,6 +296,11 @@ export const ExperimentDetail = observer(function ExperimentDetail({ workspaceSl
                 >
                   {t("research.experiments.open_source")}
                 </a>
+              )}
+              {!asset.last_verified_at && (
+                <span className="rounded bg-warning-subtle px-1.5 py-0.5 text-warning-primary">
+                  {t("research.experiments.pending_source")}
+                </span>
               )}
             </span>
           </div>

@@ -1569,7 +1569,8 @@
         "hypothesis": "实验假设",
         "result": "实验结果",
         "status_note": "状态说明"
-      }
+      },
+      "pending_source": "待补（源系统未同步）"
     },
     "code": {
       "description": "登记外部代码仓库，并为每个结果保留代码快照。",

@@ -1569,7 +1569,8 @@
         "hypothesis": "Hypothesis",
         "result": "Result",
         "status_note": "Status note"
-      }
+      },
+      "pending_source": "Pending source sync"
     },
     "code": {
       "description": "Register external repositories and keep the code snapshots of each result.",
