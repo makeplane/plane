@@ -376,6 +376,8 @@ P0 不包含：
 
 P1 的开发级细化（需求编号、数据模型、接口契约、14 个开发阶段、验收清单）见 [research-p1-development-prd.md](./research-p1-development-prd.md)。
 
+**实施状态（2026-09-16）**：P1 已按上述 PRD 完成交付，进入 `v2.2.0`；实现回写与验证结果见该 PRD 的 §16，发布与回滚见 [research-p1-release-notes.md](./research-p1-release-notes.md)。P2 / P3 范围不变。
+
 ## 5.3 P2：扩展、治理与发布
 
 目标：补齐高阶汇总与治理能力，完成发布收尾。

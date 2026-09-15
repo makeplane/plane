@@ -3,8 +3,8 @@
 | 项目     | 内容                                                                                                                   |
 | -------- | ---------------------------------------------------------------------------------------------------------------------- |
 | 文档名称 | Plane for AI4MS 科研管理 P1 开发 PRD                                                                                   |
-| 文档版本 | v1.0                                                                                                                   |
-| 文档状态 | Draft / 待评审                                                                                                         |
+| 文档版本 | v1.1（实现完成回写，见 §16）                                                                                           |
+| 文档状态 | 已评审 / 实现完成（十四阶段全部交付并验证）                                                                            |
 | 日期     | 2026-09-15                                                                                                             |
 | 上游依据 | [`research-management-prd-roadmap.md`](./research-management-prd-roadmap.md) §5.2（P1 范围）、§6.4–§6.10、§7 Phase 5–6 |
 | 前置文档 | [`research-p0-development-prd.md`](./research-p0-development-prd.md) v1.1（P0 已实现）                                 |
@@ -593,6 +593,11 @@ P1 全部功能建立在既有能力之上，新增代码只做"叠加"，不做
 | `ResearchOutcomeLink`       | 成果关联关系                 | P1-B4    | 0138 |
 
 迁移编号为规划值，实际以合入时的最新编号顺延；同一阶段内的多个模型可合并到同一迁移文件。P1 合计新增 21 张表与 3 处既有表增量字段（§4.9）。
+
+实际合入编号（v1.1 回写，见 §16）：`0131` 阶段实例 / 流转 / 门槛，`0132` 阶段材料与版本，
+`0133` 评审指派 / 评审 / 评审版本，`0134` 文献条目，`0135` 实验条目 / 版本 / 修订 / 资产引用，
+`0136` 代码仓库与制品，`0137` 模板扩展（scope / stage / material_type / variables），
+`0138` 成果与成果关联，`0139` 集成连接 / 外部引用 / 引用关联 / 调用日志。
 
 ### 4.2 阶段流程模型
 
@@ -1332,8 +1337,8 @@ P1 拆成 14 个可独立验收的阶段，分属 5 组：A 阶段治理、B 阶
 | P1-A1 | 阶段状态机与 gate      | P1-STG-01 ~ 13                            | P0 全部交付         | 13 人日    | 四阶段顺序推进，gate 逐项可解释            |
 | P1-A2 | 多人评审与评审规则     | P1-REV-01 ~ 12                            | P1-A1               | 11 人日    | 直接导师必评、主 PI 分支齐全、评审留痕可查 |
 | P1-B1 | 预开题与文献登记       | P1-LIT-01 ~ 12                            | P1-A2               | 12 人日    | 文献数量门槛生效，预开题可提交可评审       |
-| P1-B2 | 开题与研究计划         | P1-OPN-01 ~ 10                            | P1-B1               | 12 人日    | 材料清单 + 实验参与 + 代码登记三项门槛生效 |
-| P1-B3 | 中期检查               | P1-MID-01 ~ 08                            | P1-B2               | 9 人日     | 进展汇总与中期评审跑通                     |
+| P1-B2 | 开题与研究计划         | P1-OPN-01 ~ 10                            | P1-B1、P1-C2        | 12 人日    | 材料清单 + 实验参与 + 代码登记三项门槛生效 |
+| P1-B3 | 中期检查               | P1-MID-01 ~ 08                            | P1-B2、P1-C1        | 9 人日     | 进展汇总与中期评审跑通                     |
 | P1-B4 | 结题与成果登记         | P1-FIN-01 ~ 08、P1-CHAIN-07               | P1-B3               | 10 人日    | 结题材料齐备，项目进入已完成态             |
 | P1-C1 | 实验条目与修订留痕     | P1-EXP-01 ~ 14                            | P1-A1               | 17 人日    | 字段锁定 + 修订审批 + 版本不可变           |
 | P1-C2 | 代码仓库登记与快照     | P1-CODE-01 ~ 10                           | P1-A1               | 12 人日    | 仓库 / commit / 快照可关联实验             |
@@ -2100,6 +2105,91 @@ SPEC_AGENT_AUTH_SECRET=
 - 环境变量默认值必须保证"未配置即可安全运行"：子开关不影响 P0 行为，外部系统未配置时集成入口不可用或降级展示。
 - 每个外部系统的连接状态与最近一次成功时间必须在集成健康接口可见，便于运维排查。
 
+## 16. 附录 D：实现回写记录（v1.1）
+
+本附录记录评审（[`research-p1-development-prd-review.md`](./research-p1-development-prd-review.md)）确定的处理决定如何在实现中落地。
+正文与实现冲突时以本附录为准；本附录由代码、迁移与测试实测得出。
+
+### 16.1 一致性问题（D 类）的落地
+
+| 编号 | 处理决定                                    | 实现落点                                                                                                                      |
+| ---- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| D-01 | 引用清单导出由 B4 最小实现、E1 扩展链路口径 | `research/utils/chain.py::build_chain_markdown` 支持 `chain=thinking\|development`；`views/outcomes.py` 暴露 `?chain=`        |
+| D-02 | B2 依赖 C2、B3 依赖 C1                      | §7.0 依赖列已修正；实现顺序 A1 → A2 → C1/C2 → B1 → B2 → B3 → B4                                                               |
+| D-03 | 依赖图补充 C 组 → B 组                      | 同 D-02                                                                                                                       |
+| D-04 | 材料集合只支持 GET/POST                     | `ResearchStageMaterialListCreateEndpoint`；编辑只走 `PATCH /materials/{id}/`                                                  |
+| D-05 | 门槛配置集合级 upsert + 明细停用            | `ResearchStageRequirementEndpoint.patch`（`items` 数组）、`.../stage-requirements/{id}/`                                      |
+| D-06 | 材料状态由阶段流转驱动                      | 提交 → `SUBMITTED`；通过 → `ACCEPTED`；退回 / reopen → `DRAFT`；gate 以 DRAFT/SUBMITTED/ACCEPTED 计齐备                       |
+| D-07 | 门槛可按组织节点覆盖                        | 唯一约束 `(workspace, stage, code)` / `(workspace, stage, code, org_unit)`，节点行覆盖 Workspace 行                           |
+| D-08 | `requirement_type` 增加 `REVIEW_RULE`       | `ResearchStageRequirement.RequirementType.REVIEW_RULE`；评审规则读取 `stage_min_reviewers` 等配置码                           |
+| D-09 | 评审评分为可选、不参与判定                  | `StageReview.score` 可空；`review_rules` 不读取该字段                                                                         |
+| D-10 | 迁移编号按实际顺延                          | 见 §4.1 回写段落（`0131`–`0139`）                                                                                             |
+| D-11 | `ARCHIVED` 为实验终态                       | `experiment_service.STATUS_TRANSITIONS`；归档后不可提交、不可修订、不可删除                                                   |
+| D-12 | 降级返回码：读 200 / 写 424                 | `IntegrationResult.as_payload` 统一 200 + `degraded=true`；写入类接口在源不可用时拒绝                                         |
+| D-13 | 集成页路由按 §6.1                           | `/{workspaceSlug}/research/integrations`，侧边栏归入设置分组                                                                  |
+| D-14 | `current_stage` 由阶段服务维护              | `stage_service._sync_project_stage`；无直接写入口                                                                             |
+| D-15 | 门槛分两阶段：提交前 / 通过前               | `stage_gate.evaluate_stage_gate(phase="submit"\|"pass")`；`review_rule` 只作用于 pass，`/gate/` 返回全部项并标注 `applies_to` |
+| D-16 | 中期未完成实验需要状态说明字段              | `ExperimentRecord.status_note`（新增可空字段），MIDTERM gate `experiment_status_notes` 逐条列出                               |
+| D-17 | `PLANNED → CANCELLED` 允许                  | `STATUS_TRANSITIONS`；用于登记后取消，其余边仍严格按 §4.5                                                                     |
+| D-18 | 预开题引用来源必须可核验                    | PRE_OPENING gate 新增 `literature_cited_sources`（纳入文献需有 DOI / URL / 期刊），覆盖 P1-LIT-08                             |
+| D-19 | 评审规则通过比例保留为 Workspace 浮点配置   | `WorkspaceResearchSetting.stage_pass_ratio`（门槛表只有整数阈值）                                                             |
+| D-20 | 授权评审人有有效期                          | `StageReviewerAssignment.valid_until`（新增可空字段），`is_active=False` 即撤销                                               |
+
+### 16.2 技术决策（T 类）的落地
+
+| 编号 | 决策                                | 实现落点                                                                                            |
+| ---- | ----------------------------------- | --------------------------------------------------------------------------------------------------- |
+| T-01 | `--nomigrations` 下应用层兜底唯一性 | 服务层事务内先查后写；契约用例覆盖重复注册（DOI / 仓库 / 引用 / 制品）返回 409                      |
+| T-02 | 只追加表                            | `db/models/research/append_only.py`：`save()` 只允许新增、`delete()` 抛错、批量写被拒               |
+| T-03 | `metadata` 字段可用                 | `ResearchExternalReference.metadata`、`IntegrationCallLog` 等已实测可用                             |
+| T-04 | Page 旁路守卫扩展                   | `utils/page_guard.py` 同时识别报告与阶段材料；普通 Page 仍短路返回 `None`                           |
+| T-05 | 快照走预签名直传                    | `views/code.py`（`snapshots`）复用 `FileAsset` 两段式，`POST` 不接收文件字节                        |
+| T-06 | 通知沿用既有链路                    | `utils/stage_notifications.py`、`review_notifications.py`、`experiment_notifications.py`            |
+| T-07 | `sections` 一次性返回 7 个键        | `utils/settings.py::workspace_research_sections`；前端 `identity.sections` 同步扩展                 |
+| T-08 | 集成调用不进事务、显式超时          | `services/integrations/base.py` 使用 `timeout=(connection.timeout_seconds)`，阶段提交不发起外部调用 |
+| T-09 | 缓存 key 含权限维度                 | `utils/integrations.py::cache_key`（用户 + 角色 + 节点 + 管理范围摘要），降级 TTL 30s               |
+| T-10 | 聚合批量化                          | `services/chain.py`、`services/progress.py` 逐类批量查询后内存归并；性能用例守护                    |
+| T-11 | 审计与版本只追加                    | 不提供 update/delete 路由（`test_research_security.py` 覆盖）                                       |
+| T-12 | 指派移除与重提                      | `is_active=False` + `superseded_at`；重新提交会重新生成指派                                         |
+| T-13 | i18n key 完整性                     | 提交前脚本比对中英 key 集合，`research.*` 命名空间 457 个 key 完全一致                              |
+| T-14 | 版本号策略                          | 阶段内不动版本；E2 统一升 `2.2.0`（根 / web / api / ui）                                            |
+| T-15 | 迁移可回滚                          | `0131`–`0139` 全部为新增表 / 可空字段 / 索引，`migrate 0130` 可回滚                                 |
+| T-16 | 未交付模块的计数项不阻塞            | `stage_gate` 对不存在的模型返回 `available=false` 且不阻塞（交付完成前的中途态）                    |
+| T-17 | 集成 ACL 收窄                       | `filter_source_items` / `reference_allowed` 对缺失 `acl_hint` 默认拒绝                              |
+
+### 16.3 需求实现索引
+
+| 需求组    | 实现入口                                                                                     | 验证                                                                     |
+| --------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| P1-STG    | `services/stage_gate.py`、`services/stage_service.py`、`views/stages.py`                     | `test_stage_gate.py`、`test_stage_machine.py`、`test_research_stages.py` |
+| P1-REV    | `services/review_rules.py`、`services/review_service.py`、`views/reviews.py`                 | `test_review_rules.py`、`test_research_reviews.py`                       |
+| P1-LIT    | `db/models/research/literature.py`、`views/literature.py`、`utils/literature.py`             | `test_literature.py`、`test_research_literature.py`                      |
+| P1-OPN    | `views/stages.py`（模板 / 代改）、`views/stage_overrides.py`                                 | `test_research_opening.py`                                               |
+| P1-MID    | `services/progress.py`、`views/progress.py`                                                  | `test_research_midterm.py`                                               |
+| P1-FIN    | `db/models/research/outcome.py`、`views/outcomes.py`、`utils/chain.py`                       | `test_research_outcomes.py`                                              |
+| P1-EXP    | `db/models/research/experiment.py`、`services/experiment_service.py`、`views/experiments.py` | `test_experiment_service.py`、`test_research_experiments.py`             |
+| P1-CODE   | `db/models/research/code.py`、`views/code.py`                                                | `test_research_code.py`                                                  |
+| P1-INT    | `db/models/research/integration.py`、`services/integrations/`、`views/integrations.py`       | `test_integration_base.py`、`test_research_integrations.py`              |
+| P1-KB     | `services/integrations/adapters.py`（RagPortal / WeKnora）、`utils/reference_targets.py`     | `test_research_knowledge.py`                                             |
+| P1-LAB    | `services/lab_ingest.py`、`services/integrations/adapters.py`（SpecLabOS / SmartAccess）     | `test_research_lab.py`                                                   |
+| P1-RD     | `services/integrations/adapters.py`（Poly_Agent / Spec_Agent）、引用同步接口                 | `test_research_rd.py`                                                    |
+| P1-CHAIN  | `services/chain.py`、`views/chain.py`、`utils/chain.py`                                      | `test_research_chain.py`                                                 |
+| P1-UI     | `core/components/research/**`、`app/(all)/[workspaceSlug]/(projects)/research/**`            | 前端类型检查 + OxLint + 手工验收                                         |
+| P1-COMPAT | `tests/conftest.py`（缓存隔离）、既有 P0 用例、`test_research_security.py`                   | 全量 `pytest plane/tests`                                                |
+
+### 16.4 验证记录（发布门禁）
+
+| 项           | 命令 / 方式                                                 | 结果                                                      |
+| ------------ | ----------------------------------------------------------- | --------------------------------------------------------- |
+| 后端全量     | `pytest plane/tests`（Docker 测试栈）                       | **1029 passed**（含 unit / contract / smoke）             |
+| 科研专项     | `pytest plane/tests/unit/research plane/tests/contract/app` | **605 passed**                                            |
+| 安全回归     | `test_research_security.py`                                 | 9 passed（Page 旁路、跨 Workspace、快照 ACL、凭证、审计） |
+| 性能守护     | `test_research_performance.py`                              | 2 passed（gate < 2s、timeline / progress < 5s）           |
+| 前端类型     | `pnpm --filter=web check:types`                             | 无错误                                                    |
+| 前端静态检查 | `oxlint`                                                    | 0 error                                                   |
+| 国际化       | 中英 key 集合比对                                           | 一致，无缺失 key                                          |
+| 版本号       | 根 / web / api / ui                                         | 均为 `2.2.0`                                              |
+
 ## 15. 附录 C：文档维护与版本管理
 
 ### 15.1 本文档维护规则
@@ -2123,6 +2213,7 @@ SPEC_AGENT_AUTH_SECRET=
 
 ### 15.3 变更记录
 
-| 版本 | 日期       | 变更内容                                                             | 作者 |
-| ---- | ---------- | -------------------------------------------------------------------- | ---- |
-| v1.0 | 2026-09-15 | 首版：基于路线图 §5.2（P1 范围）拆解为 15 组需求编号与 14 个开发阶段 | —    |
+| 版本 | 日期       | 变更内容                                                                                    | 作者 |
+| ---- | ---------- | ------------------------------------------------------------------------------------------- | ---- |
+| v1.0 | 2026-09-15 | 首版：基于路线图 §5.2（P1 范围）拆解为 15 组需求编号与 14 个开发阶段                        | —    |
+| v1.1 | 2026-09-16 | 评审回写：修正 §7.0 依赖与 §4.1 迁移编号，补充 §16 实现回写记录与验证结果；状态更新为已实现 | —    |
