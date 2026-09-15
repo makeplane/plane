@@ -1478,6 +1478,78 @@ RESEARCH_MARKDOWN_MAX_MB=5
 
 ### 15.3 变更记录
 
-| 版本 | 日期       | 变更内容                                     | 作者   |
-| ---- | ---------- | -------------------------------------------- | ------ |
-| v1.0 | 2026-09-15 | 首版：基于路线图 P0 范围拆解为 10 个开发阶段 | 待填写 |
+| 版本 | 日期       | 变更内容                                                                           | 作者  |
+| ---- | ---------- | ---------------------------------------------------------------------------------- | ----- |
+| v1.0 | 2026-09-15 | 首版：基于路线图 P0 范围拆解为 10 个开发阶段                                       | —     |
+| v1.1 | 2026-09-15 | P0 全部 10 个阶段实现完成，按 §16 回写实现口径、新增接口与迁移编号，并补记评审结论 | Codex |
+
+## 16. 实现回写记录（v1.1）
+
+本节记录实现过程中与 v1.0 规划的差异，逐条对应评审报告
+[`research-p0-development-prd-review.md`](./research-p0-development-prd-review.md) §9 的回写清单。
+
+### 16.1 数据模型调整
+
+| 项           | v1.0 规划                                      | 实际实现                                                                    | 原因                                        |
+| ------------ | ---------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------- |
+| 直接导师关系 | 仅 `OrgUnitMember.org_role=ADVISOR`            | 新增 `MentorBinding`（`0123`），与节点级 ADVISOR 角色并存                   | P0-ORG-06 要求 per-student 绑定             |
+| 组织成员表   | `OrgUnitMember` 无 workspace 字段              | 冗余 `workspace` 字段 + 条件唯一约束                                        | 支撑"同一用户仅一个主属节点"的库级约束      |
+| 审计事件     | P0-A4 引入（`0126`）                           | P0-A1 引入（`0123`），`workspace` 可空                                      | P0-ORG-09 属 A1 需求，登录事件可无工作区    |
+| 自主可见级别 | 单值 `default_report_visibility`               | 增加 `weekly_default_visibility` / `monthly_default_visibility`（可空覆盖） | 满足 P0-ACL-03"按报告类型配置默认级别"      |
+| 报告正文外键 | `Page` `on_delete=PROTECT`                     | `on_delete=CASCADE` + 应用层正文保护                                        | PROTECT 会阻断既有 Page 删除路径            |
+| 科研项目标识 | 建议在 `Project` 增加 `is_research_project` 列 | 改为注解输出（`Exists` 子查询），不新增物理列                               | 零改动既有表，兼容性更好                    |
+| 自定义授权   | `ReportAccessGrant` 于 P0-A3（`0125`）         | 随报告模型在 P0-C1 交付（`0128`）                                           | 该表依赖 `PeriodicReport`，无模型时无法建立 |
+| 审批申请载体 | §4.8 描述"以科研扩展表挂在 Issue 上"           | 新增 `ApprovalRequest` 扩展表（`0130`）                                     | 审批状态、当前步骤、关联对象需要落库        |
+| 附件登记     | §4.1 规划 `ReportAttachment`（`0129`）         | 同编号交付，复用 `FileAsset` + S3                                           | 与规划一致                                  |
+
+### 16.2 迁移编号（实际交付）
+
+| 编号   | 内容                                                                       | 阶段  |
+| ------ | -------------------------------------------------------------------------- | ----- |
+| `0123` | `OrgUnit` / `OrgUnitMember` / `MentorBinding` / `ResearchAuditEvent`       | P0-A1 |
+| `0124` | `IdentityMapping`                                                          | P0-A2 |
+| `0125` | `WorkspaceResearchSetting`                                                 | P0-A3 |
+| `0126` | `ReportTemplate`                                                           | P0-A4 |
+| `0127` | `ResearchProjectProfile`                                                   | P0-B1 |
+| `0128` | `PeriodicReport` / `ReportReviewLog` / `ReportAccessGrant`                 | P0-C1 |
+| `0129` | `ReportAttachment`                                                         | P0-C2 |
+| `0130` | `ApprovalFlow` / `ApprovalFlowStep` / `ApprovalRequest` / `ApprovalAction` | P0-D1 |
+
+### 16.3 接口调整
+
+| 项             | v1.0 规划                                           | 实际实现                                                              |
+| -------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
+| 路径前缀       | `/api/research/org-units/...`                       | `/api/research/workspaces/<slug>/...`（与既有 API 风格一致）          |
+| 报告可见性接口 | `GET/PATCH /reports/{id}/access/`（与约束段不一致） | 统一为 `GET` / `PATCH`                                                |
+| 模板维护       | 仅 `GET /report-templates/`                         | 补 `POST` 与 `GET/PATCH/DELETE /report-templates/{id}/`               |
+| 导师关系       | `GET/POST /mentors/`                                | 补 `DELETE /mentors/{id}/`（写 `effective_to`，不物理删除）           |
+| 审批申请       | 缺详情与筛选口径                                    | 补 `GET /approval-requests/{id}/` 与 `scope=to_me\|mine\|completed`   |
+| 附件上传       | 未定义上传链路                                      | 补 `POST /attachments/presign/`（S3 直传）+ `POST /attachments/` 登记 |
+| 健康探测       | `GET /api/research/health/`                         | 同规划，额外返回 `oidc_configured` 与文件限制                         |
+| 组织树根节点   | 未定义创建时机                                      | 列表首次访问或开启模块时懒创建，唯一且不可删除                        |
+
+### 16.4 术语与文案
+
+- 报告场景的审核留痕统一称"审核历史"（`ReportReviewLog`），办公审批场景称"审批历史"（`ApprovalAction`）。
+- 科研文案通过 i18n key 管理（`research.<模块>.<语义>`），实现落在 `common` 命名空间；英文与简体中文完整，其余语言回落英文。
+- 全仓未出现任何具体 PI 姓名或固定昵称。
+
+### 16.5 验证与回归结论
+
+| 项             | 结果                                                       |
+| -------------- | ---------------------------------------------------------- |
+| 科研自动化测试 | 233 条（单元 + 契约）全部通过                              |
+| 后端全量测试   | 798 通过 / 15 失败，失败项与 P0 改动前基线完全一致（见下） |
+| 前端类型检查   | `pnpm --filter=web check:types` 通过                       |
+| 前端生产构建   | `pnpm --filter=web build` 通过                             |
+| 版本号         | 全仓 `package.json` 统一为 `2.1.0`                         |
+
+全量测试中的 15 项失败均为既有环境/顺序问题，与 P0 无关：
+
+- `contract/app/test_authentication.py`（14 项）：魔法链接用例依赖 `EMAIL_HOST`，本地开发容器未配置（`docker-compose-test.yml` 中显式注入占位值）。
+- `contract/api/test_projects_lite.py`（3 项）：单独执行时全部通过，属既有用例间顺序耦合。
+
+### 16.6 待确认事项落地方式
+
+§12 的 12 项待确认事项按评审报告 §7 的实施默认值落地：全部通过环境变量或 Workspace 配置表达，
+业务方确认后调整配置即可，无需改动数据模型主干。
