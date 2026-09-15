@@ -72,6 +72,7 @@ export interface IResearchStore {
   isOrgSectionEnabled: boolean;
   isReportSectionEnabled: boolean;
   isApprovalSectionEnabled: boolean;
+  // lookup helpers (plain methods: reads are tracked in the caller's reactive context)
   getOrgUnits: (workspaceSlug: string) => TOrgUnit[];
   getReports: (workspaceSlug: string) => TPeriodicReport[];
   getResearchProjects: (workspaceSlug: string) => TResearchProject[];
@@ -254,13 +255,6 @@ export class ResearchStore implements IResearchStore {
       isOrgSectionEnabled: computed,
       isReportSectionEnabled: computed,
       isApprovalSectionEnabled: computed,
-      getOrgUnits: computed,
-      getReports: computed,
-      getResearchProjects: computed,
-      getApprovalRequests: computed,
-      getApprovalFlows: computed,
-      getReportTemplates: computed,
-      getAuditEvents: computed,
       // actions
       fetchIdentity: action,
       fetchOrgUnits: action,
