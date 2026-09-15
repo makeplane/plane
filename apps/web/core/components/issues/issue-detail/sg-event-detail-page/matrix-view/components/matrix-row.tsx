@@ -18,6 +18,7 @@ type MatrixRowProps = {
     options?: { additive?: boolean; range?: boolean }
   ) => void;
   onCellDoubleClick?: (cell: MatrixCellData) => void;
+  onCellDragStart?: (cell: MatrixCellData, dataTransfer: DataTransfer) => void;
   openCellId?: string | null;
   previousColumnGroup?: string;
   row: MatrixRowData;
@@ -44,6 +45,7 @@ export const MatrixRow = memo(function MatrixRow({
   maxVisibleCount,
   onCellActivate,
   onCellDoubleClick,
+  onCellDragStart,
   openCellId,
   previousColumnGroup = "",
   row,
@@ -106,6 +108,7 @@ export const MatrixRow = memo(function MatrixRow({
             maxVisibleCount={maxVisibleCount}
             onActivate={onCellActivate}
             onDoubleClick={onCellDoubleClick}
+            onDragStart={onCellDragStart}
             rowLabel={row.label}
           />
         );

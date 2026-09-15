@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
-import { Disclosure } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 import type { IRosterPlayer } from "@plane/types";
 import { formatCardPlayer } from "./create-card-model";
 
@@ -23,9 +23,9 @@ export const CreateCardRosterPicker = ({ players, selectedPlayers, onChange, isL
   }, [players, query]);
 
   return (
-    <section>
-      <Disclosure>
-        {({ open }) => (
+    <section className="relative z-20">
+      <Popover>
+        {({ close, open }) => (
           <>
             <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
               <div className="flex flex-wrap items-baseline gap-x-2">
@@ -56,7 +56,7 @@ export const CreateCardRosterPicker = ({ players, selectedPlayers, onChange, isL
                     </button>
                   </span>
                 ))}
-                <Disclosure.Button
+                <Popover.Button
                   disabled={isLoading || hasError || players.length === 0}
                   aria-label={open ? "Hide roster players" : "Show roster players"}
                   aria-describedby="create-card-roster-status"
@@ -66,9 +66,9 @@ export const CreateCardRosterPicker = ({ players, selectedPlayers, onChange, isL
                     <span className="flex-1 text-left">{isLoading ? "Loading roster…" : "Select players…"}</span>
                   )}
                   <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
-                </Disclosure.Button>
+                </Popover.Button>
               </div>
-              <Disclosure.Panel className="mt-1.5 overflow-hidden rounded-lg border border-custom-border-300 bg-custom-background-100">
+              <Popover.Panel className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-lg border border-custom-border-300 bg-custom-background-100 shadow-xl ring-1 ring-black/20">
                 <div className="m-2 flex items-center gap-2 rounded-md border border-custom-border-300 bg-custom-background-90 px-2">
                   <Search className="h-3.5 w-3.5 text-custom-text-300" />
                   <input
@@ -80,7 +80,11 @@ export const CreateCardRosterPicker = ({ players, selectedPlayers, onChange, isL
                     className="min-w-0 flex-1 bg-transparent py-2 text-xs text-custom-text-100 outline-none placeholder:text-custom-text-300"
                   />
                 </div>
-                <div role="group" aria-label="Roster players" className="max-h-56 overflow-y-auto px-2 pb-2">
+                <div
+                  role="group"
+                  aria-label="Roster players"
+                  className="vertical-scrollbar scrollbar-sm max-h-56 overflow-y-auto overscroll-contain px-2 pb-2"
+                >
                   {filteredPlayers.length ? (
                     filteredPlayers.map((player) => {
                       const selected = selectedPlayers.some((candidate) => candidate.id === player.id);
@@ -117,20 +121,25 @@ export const CreateCardRosterPicker = ({ players, selectedPlayers, onChange, isL
                   <span aria-live="polite" className="text-custom-text-300">
                     {selectedPlayers.length} of {players.length} selected
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => onChange([])}
-                    disabled={!selectedPlayers.length}
-                    className="text-custom-primary-100 hover:underline disabled:opacity-40"
-                  >
-                    Clear all
-                  </button>
+                  <span className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => onChange([])}
+                      disabled={!selectedPlayers.length}
+                      className="text-custom-primary-100 hover:underline disabled:opacity-40"
+                    >
+                      Clear all
+                    </button>
+                    <button type="button" onClick={() => close()} className="text-custom-primary-100 hover:underline">
+                      Done
+                    </button>
+                  </span>
                 </div>
-              </Disclosure.Panel>
+              </Popover.Panel>
             </div>
           </>
         )}
-      </Disclosure>
+      </Popover>
       <p id="create-card-roster-status" role="status" className="mt-1 text-xs text-custom-text-300">
         {hasError ? (
           <>

@@ -1,20 +1,15 @@
 import { Aperture, ArrowLeft, ChevronDown } from "lucide-react";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
-import { Tooltip } from "@plane/propel/tooltip";
 import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
-import type { TMediaItem } from "ce/features/media-library/types/media-library.types";
 import type { SgEventDevice } from "./types";
 import { formatLooseLabel } from "./utils";
 
 type SgEventHeaderProps = {
   eventStatus: string;
   eventTitle: string;
-  fullStreamPlaybackItem: TMediaItem | null;
   handleBack: () => void;
-  handleSwitchToFullStream: () => void;
   isLoadingViews: boolean;
-  isTagClipActive: boolean;
   selectedViewId: string;
   selectedViewLabel: string;
   setSelectedViewId: (value: string) => void;
@@ -22,12 +17,10 @@ type SgEventHeaderProps = {
 };
 
 export const SgEventHeader = ({
+  eventStatus,
   eventTitle,
-  fullStreamPlaybackItem,
   handleBack,
-  handleSwitchToFullStream,
   isLoadingViews,
-  isTagClipActive,
   selectedViewId,
   selectedViewLabel,
   setSelectedViewId,
@@ -43,12 +36,28 @@ export const SgEventHeader = ({
         <ArrowLeft className="h-4 w-4" />
         <span>Back</span>
       </button>
-      <div className="min-w-0 border-l border-[var(--sg-matrix-border)] pl-3">
+      <div className="flex min-w-0 items-center gap-2 border-l border-[var(--sg-matrix-border)] pl-3">
         <h1 className="truncate text-[13px] font-medium text-[var(--sg-matrix-text)]">{eventTitle}</h1>
+        <Pill variant={EPillVariant.PRIMARY} size={EPillSize.SM} className="shrink-0 border-none">
+          Scheduled event tagged
+        </Pill>
       </div>
     </div>
 
     <div className="flex items-center gap-2">
+      <Pill
+        variant={eventStatus.toLowerCase().includes("cancel") ? EPillVariant.ERROR : EPillVariant.SUCCESS}
+        size={EPillSize.SM}
+        className={cn(
+          "w-fit shrink-0 border border-[var(--sg-matrix-status-success-border)] bg-[var(--sg-matrix-status-success-bg)] px-3 py-1 text-[var(--sg-matrix-status-success-text)]",
+          {
+            "border-[var(--sg-matrix-status-cancelled-border)] bg-[var(--sg-matrix-status-cancelled-bg)] text-[var(--sg-matrix-status-cancelled-text)]":
+              eventStatus.toLowerCase().includes("cancel"),
+          }
+        )}
+      >
+        Status: {formatLooseLabel(eventStatus)}
+      </Pill>
       <div className="flex items-center gap-2">
         {viewDevices.length > 0 ? (
           <CustomSelect
@@ -75,57 +84,23 @@ export const SgEventHeader = ({
             <ChevronDown className="h-4 w-4 text-[var(--sg-matrix-text-muted)]" />
           </button>
         )}
-        {fullStreamPlaybackItem && isTagClipActive && (
-          <Tooltip tooltipContent="Switch to full stream" isMobile={false}>
-            <button
-              type="button"
-              onClick={handleSwitchToFullStream}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
-            >
-              <Aperture className="h-4 w-4" />
-            </button>
-          </Tooltip>
-        )}
       </div>
     </div>
   </div>
 );
 
-export const SgEventTitleBar = ({
-  eventStatus,
-  eventTitle,
-  handleSwitchToFullStream,
-  isTagClipActive,
-}: Pick<SgEventHeaderProps, "eventStatus" | "eventTitle" | "handleSwitchToFullStream" | "isTagClipActive">) => (
-  <div className="flex flex-col gap-3 px-0.5 lg:flex-row lg:items-center lg:justify-between">
-    <div className="flex min-w-0 flex-wrap items-center gap-3">
-      <h1 className="truncate text-base font-semibold text-custom-text-100">{eventTitle}</h1>
-      {isTagClipActive && (
-        <button
-          type="button"
-          onClick={handleSwitchToFullStream}
-          className="inline-flex h-7 items-center gap-1.5 rounded-full border border-custom-border-200 bg-custom-background-100 px-3 text-xs text-custom-text-100 transition-colors hover:bg-custom-background-90"
-        >
-          <Aperture className="h-3.5 w-3.5" />
-          <span>Switch to full stream</span>
-        </button>
-      )}
-      <Pill variant={EPillVariant.PRIMARY} size={EPillSize.SM} className="border-none">
-        Scheduled event tagged
-      </Pill>
-    </div>
-    <Pill
-      variant={eventStatus.toLowerCase().includes("cancel") ? EPillVariant.ERROR : EPillVariant.SUCCESS}
-      size={EPillSize.SM}
-      className={cn(
-        "w-fit border border-[var(--sg-matrix-status-success-border)] bg-[var(--sg-matrix-status-success-bg)] px-3 py-1 text-[var(--sg-matrix-status-success-text)]",
-        {
-          "border-[var(--sg-matrix-status-cancelled-border)] bg-[var(--sg-matrix-status-cancelled-bg)] text-[var(--sg-matrix-status-cancelled-text)]":
-            eventStatus.toLowerCase().includes("cancel"),
-        }
-      )}
-    >
-      Status: {formatLooseLabel(eventStatus)}
-    </Pill>
-  </div>
+type SgFullStreamButtonProps = {
+  onClick: () => void;
+};
+
+export const SgFullStreamButton = ({ onClick }: SgFullStreamButtonProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title="Switch to full stream"
+    className="inline-flex h-8 items-center gap-1.5 rounded-[5px] border border-[var(--sg-matrix-border)] bg-[var(--sg-matrix-panel)] px-3 text-[11px] font-medium text-[var(--sg-matrix-text-secondary)] transition-colors hover:bg-[var(--sg-matrix-hover)] hover:text-[var(--sg-matrix-text)]"
+  >
+    <Aperture className="h-3.5 w-3.5" />
+    <span>Switch to full stream</span>
+  </button>
 );
