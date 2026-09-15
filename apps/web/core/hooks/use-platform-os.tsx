@@ -4,7 +4,16 @@
  * See the LICENSE file for details.
  */
 
-export const usePlatformOS = () => {
+type PlatformOS = {
+  isMobile: boolean;
+  platform: string;
+};
+
+const detectPlatformOS = (): PlatformOS => {
+  if (typeof window === "undefined") {
+    return { isMobile: false, platform: "" };
+  }
+
   const userAgent = window.navigator.userAgent;
   const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
   let platform = "";
@@ -22,3 +31,8 @@ export const usePlatformOS = () => {
   }
   return { isMobile, platform };
 };
+
+// device/OS can't change mid-session, so detect once at module load and return a stable reference
+const PLATFORM_OS: PlatformOS = Object.freeze(detectPlatformOS());
+
+export const usePlatformOS = () => PLATFORM_OS;

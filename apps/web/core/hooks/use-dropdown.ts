@@ -68,7 +68,8 @@ export const useDropdown = (args: TArguments) => {
   };
 
   // close the dropdown when the user clicks outside of the dropdown
-  useOutsideClickDetector(dropdownRef, handleClose);
+  // skip binding the document listener entirely while the dropdown is closed
+  useOutsideClickDetector(dropdownRef, handleClose, false, isOpen);
 
   // focus the search input when the dropdown is open
   useEffect(() => {
