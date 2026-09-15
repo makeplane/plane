@@ -90,6 +90,13 @@ from plane.research.views import (
     ResearchExperimentStatusEndpoint,
     ResearchExperimentSubmitEndpoint,
     ResearchExperimentVersionsEndpoint,
+    ResearchCodeArtifactDetailEndpoint,
+    ResearchCodeArtifactListCreateEndpoint,
+    ResearchCodeRepositoryDetailEndpoint,
+    ResearchCodeRepositoryListCreateEndpoint,
+    ResearchCodeRepositorySyncEndpoint,
+    ResearchCodeSnapshotEndpoint,
+    ResearchCodeSummaryEndpoint,
 )
 
 urlpatterns = [
@@ -311,6 +318,44 @@ urlpatterns = [
         "research/workspaces/<str:slug>/amendments/<uuid:amendment_id>/<str:action>/",
         ResearchExperimentAmendmentActionEndpoint.as_view(),
         name="research-experiment-amendment-action",
+    ),
+    # ------------------------------------------------------------------
+    # P1 code repositories and snapshots (§5.6)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/code-repositories/",
+        ResearchCodeRepositoryListCreateEndpoint.as_view(),
+        name="research-code-repositories",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/code-summary/",
+        ResearchCodeSummaryEndpoint.as_view(),
+        name="research-code-summary",
+    ),
+    path(
+        "research/workspaces/<str:slug>/code-repositories/<uuid:repository_id>/",
+        ResearchCodeRepositoryDetailEndpoint.as_view(),
+        name="research-code-repository",
+    ),
+    path(
+        "research/workspaces/<str:slug>/code-repositories/<uuid:repository_id>/sync/",
+        ResearchCodeRepositorySyncEndpoint.as_view(),
+        name="research-code-repository-sync",
+    ),
+    path(
+        "research/workspaces/<str:slug>/code-repositories/<uuid:repository_id>/artifacts/",
+        ResearchCodeArtifactListCreateEndpoint.as_view(),
+        name="research-code-artifacts",
+    ),
+    path(
+        "research/workspaces/<str:slug>/code-repositories/<uuid:repository_id>/snapshots/",
+        ResearchCodeSnapshotEndpoint.as_view(),
+        name="research-code-snapshots",
+    ),
+    path(
+        "research/workspaces/<str:slug>/code-artifacts/<uuid:artifact_id>/",
+        ResearchCodeArtifactDetailEndpoint.as_view(),
+        name="research-code-artifact",
     ),
     # office approvals
     path(

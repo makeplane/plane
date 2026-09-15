@@ -67,6 +67,12 @@ export type {
   TExperimentSource,
   TExperimentStatus,
   TExperimentVersion,
+  TCodeArtifact,
+  TCodeProvider,
+  TCodeRefType,
+  TCodeRepository,
+  TCodeRepositoryStatus,
+  TCodeSummary,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -337,7 +343,43 @@ export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
   { key: "stages", labelKey: "research.nav.stages", path: "stages", section: "stages" },
   { key: "literature", labelKey: "research.nav.literature", path: "literature", section: "stages" },
   { key: "experiments", labelKey: "research.nav.experiments", path: "experiments", section: "experiments" },
+  { key: "code", labelKey: "research.nav.code", path: "code", section: "code" },
 ] as const;
+
+// ---------------------------------------------------------------------------
+// P1 code registration (§3.8, §4.6)
+// ---------------------------------------------------------------------------
+
+export const CODE_PROVIDERS = [
+  "GITHUB",
+  "GITLAB",
+  "GITEA",
+  "LOCAL_GIT",
+  "OTHER",
+] as const satisfies readonly TCodeProvider[];
+
+export const CODE_PROVIDER_LABELS: Record<TCodeProvider, string> = {
+  GITHUB: "research.code.provider.github",
+  GITLAB: "research.code.provider.gitlab",
+  GITEA: "research.code.provider.gitea",
+  LOCAL_GIT: "research.code.provider.local_git",
+  OTHER: "research.code.provider.other",
+};
+
+export const CODE_REPOSITORY_STATUS_LABELS: Record<TCodeRepositoryStatus, string> = {
+  ACTIVE: "research.code.status.active",
+  ARCHIVED: "research.code.status.archived",
+  SYNC_FAILED: "research.code.status.sync_failed",
+};
+
+export const CODE_REF_TYPES = ["COMMIT", "BRANCH", "TAG", "SNAPSHOT"] as const satisfies readonly TCodeRefType[];
+
+export const CODE_REF_TYPE_LABELS: Record<TCodeRefType, string> = {
+  COMMIT: "research.code.ref_type.commit",
+  BRANCH: "research.code.ref_type.branch",
+  TAG: "research.code.ref_type.tag",
+  SNAPSHOT: "research.code.ref_type.snapshot",
+};
 
 // ---------------------------------------------------------------------------
 // P1 experiment records (§3.7, §4.5)
@@ -542,4 +584,17 @@ export const researchEndpoints = {
   amendment: (slug: string, amendmentId: string) => `${RESEARCH_API_ROOT}/${slug}/amendments/${amendmentId}/`,
   amendmentAction: (slug: string, amendmentId: string, action: string) =>
     `${RESEARCH_API_ROOT}/${slug}/amendments/${amendmentId}/${action}/`,
+  // ---- P1 code registration (§5.6) ----
+  codeRepositories: (slug: string, projectId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/code-repositories/`,
+  codeSummary: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/code-summary/`,
+  codeRepository: (slug: string, repositoryId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/code-repositories/${repositoryId}/`,
+  codeRepositorySync: (slug: string, repositoryId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/code-repositories/${repositoryId}/sync/`,
+  codeArtifacts: (slug: string, repositoryId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/code-repositories/${repositoryId}/artifacts/`,
+  codeSnapshots: (slug: string, repositoryId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/code-repositories/${repositoryId}/snapshots/`,
+  codeArtifact: (slug: string, artifactId: string) => `${RESEARCH_API_ROOT}/${slug}/code-artifacts/${artifactId}/`,
 } as const;

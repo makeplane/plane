@@ -36,6 +36,9 @@ import type {
   TExperimentAssetLink,
   TExperimentRecord,
   TExperimentVersion,
+  TCodeArtifact,
+  TCodeRepository,
+  TCodeSummary,
   TReviewSummary,
   TToMeReview,
   TWorkspaceResearchSetting,
@@ -65,6 +68,8 @@ import type {
   TExperimentCreatePayload,
   TExperimentListParams,
 } from "@/services/research/experiment.service";
+import { ResearchCodeService } from "@/services/research/code.service";
+import type { TCodeArtifactPayload, TCodeRepositoryPayload } from "@/services/research/code.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -81,6 +86,7 @@ export interface IResearchStore {
   reviewLoader: boolean;
   literatureLoader: boolean;
   experimentLoader: boolean;
+  codeLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
   identityErrorCode: string | null;
@@ -128,6 +134,10 @@ export interface IResearchStore {
   experimentVersions: Record<string, TExperimentVersion[]>;
   experimentAmendments: Record<string, TExperimentAmendment[]>;
   experimentAssets: Record<string, TExperimentAssetLink[]>;
+  codeRepositories: Record<string, TCodeRepository>;
+  codeRepositoryIdsByProject: Record<string, string[]>;
+  codeArtifacts: Record<string, TCodeArtifact[]>;
+  codeSummary: Record<string, TCodeSummary>;
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -356,6 +366,27 @@ export interface IResearchStore {
     comment?: string
   ) => Promise<TExperimentAmendment>;
   getExperiments: (workspaceSlug: string, projectId: string) => TExperimentRecord[];
+  // code registration (P1-C2)
+  fetchCodeRepositories: (workspaceSlug: string, projectId: string) => Promise<TCodeRepository[]>;
+  createCodeRepository: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TCodeRepositoryPayload
+  ) => Promise<TCodeRepository>;
+  syncCodeRepository: (workspaceSlug: string, repositoryId: string) => Promise<TCodeRepository>;
+  fetchCodeArtifacts: (workspaceSlug: string, repositoryId: string) => Promise<TCodeArtifact[]>;
+  createCodeArtifact: (
+    workspaceSlug: string,
+    repositoryId: string,
+    payload: TCodeArtifactPayload
+  ) => Promise<TCodeArtifact>;
+  uploadCodeSnapshot: (
+    workspaceSlug: string,
+    repositoryId: string,
+    payload: { file: File; ref_value: string; description?: string }
+  ) => Promise<TCodeArtifact>;
+  fetchCodeSummary: (workspaceSlug: string, projectId: string) => Promise<TCodeSummary>;
+  getCodeRepositories: (workspaceSlug: string, projectId: string) => TCodeRepository[];
 }
 
 export class ResearchStore implements IResearchStore {
@@ -370,6 +401,7 @@ export class ResearchStore implements IResearchStore {
   reviewLoader = false;
   literatureLoader = false;
   experimentLoader = false;
+  codeLoader = false;
 
   identity: TResearchIdentity | null = null;
   identityErrorCode: string | null = null;
@@ -418,6 +450,10 @@ export class ResearchStore implements IResearchStore {
   experimentVersions: Record<string, TExperimentVersion[]> = {};
   experimentAmendments: Record<string, TExperimentAmendment[]> = {};
   experimentAssets: Record<string, TExperimentAssetLink[]> = {};
+  codeRepositories: Record<string, TCodeRepository> = {};
+  codeRepositoryIdsByProject: Record<string, string[]> = {};
+  codeArtifacts: Record<string, TCodeArtifact[]> = {};
+  codeSummary: Record<string, TCodeSummary> = {};
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -428,6 +464,7 @@ export class ResearchStore implements IResearchStore {
   private reviewService: ResearchReviewService;
   private literatureService: ResearchLiteratureService;
   private experimentService: ResearchExperimentService;
+  private codeService: ResearchCodeService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -443,6 +480,7 @@ export class ResearchStore implements IResearchStore {
       reviewLoader: observable,
       literatureLoader: observable,
       experimentLoader: observable,
+      codeLoader: observable,
       // observables
       identity: observable,
       identityErrorCode: observable,
@@ -491,6 +529,10 @@ export class ResearchStore implements IResearchStore {
       experimentVersions: observable,
       experimentAmendments: observable,
       experimentAssets: observable,
+      codeRepositories: observable,
+      codeRepositoryIdsByProject: observable,
+      codeArtifacts: observable,
+      codeSummary: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -592,6 +634,13 @@ export class ResearchStore implements IResearchStore {
       unlinkExperimentAsset: action,
       createAmendment: action,
       amendExperiment: action,
+      fetchCodeRepositories: action,
+      createCodeRepository: action,
+      syncCodeRepository: action,
+      fetchCodeArtifacts: action,
+      createCodeArtifact: action,
+      uploadCodeSnapshot: action,
+      fetchCodeSummary: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -603,6 +652,7 @@ export class ResearchStore implements IResearchStore {
     this.reviewService = new ResearchReviewService();
     this.literatureService = new ResearchLiteratureService();
     this.experimentService = new ResearchExperimentService();
+    this.codeService = new ResearchCodeService();
   }
 
   // ---------------------------------------------------------------------
@@ -691,6 +741,11 @@ export class ResearchStore implements IResearchStore {
     (this.experimentIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
       .map((id) => this.experiments[id])
       .filter((record): record is TExperimentRecord => Boolean(record));
+
+  getCodeRepositories = (workspaceSlug: string, projectId: string) =>
+    (this.codeRepositoryIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
+      .map((id) => this.codeRepositories[id])
+      .filter((repository): repository is TCodeRepository => Boolean(repository));
 
   // ---------------------------------------------------------------------
   // identity
@@ -1661,5 +1716,90 @@ export class ResearchStore implements IResearchStore {
     const amendment = await this.experimentService.amendAction(workspaceSlug, amendmentId, amendmentAction, comment);
     await this.fetchExperiment(workspaceSlug, amendment.record).catch(() => undefined);
     return amendment;
+  };
+  // ---------------------------------------------------------------------
+  // code registration (P1-C2)
+  // ---------------------------------------------------------------------
+
+  fetchCodeRepositories = async (workspaceSlug: string, projectId: string) => {
+    this.codeLoader = true;
+    try {
+      const response = await this.codeService.getRepositories(workspaceSlug, projectId);
+      runInAction(() => {
+        this.codeRepositoryIdsByProject[`${workspaceSlug}:${projectId}`] = response.results.map(
+          (repository) => repository.id
+        );
+        response.results.forEach((repository) => {
+          this.codeRepositories[repository.id] = repository;
+        });
+      });
+      return response.results;
+    } finally {
+      runInAction(() => {
+        this.codeLoader = false;
+      });
+    }
+  };
+
+  createCodeRepository = async (workspaceSlug: string, projectId: string, payload: TCodeRepositoryPayload) => {
+    const repository = await this.codeService.createRepository(workspaceSlug, projectId, payload);
+    await this.fetchCodeRepositories(workspaceSlug, projectId).catch(() => undefined);
+    return repository;
+  };
+
+  syncCodeRepository = async (workspaceSlug: string, repositoryId: string) => {
+    const repository = await this.codeService.syncRepository(workspaceSlug, repositoryId);
+    runInAction(() => {
+      this.codeRepositories[repository.id] = repository;
+    });
+    return repository;
+  };
+
+  fetchCodeArtifacts = async (workspaceSlug: string, repositoryId: string) => {
+    const response = await this.codeService.getArtifacts(workspaceSlug, repositoryId);
+    runInAction(() => {
+      this.codeArtifacts[repositoryId] = response.results;
+    });
+    return response.results;
+  };
+
+  createCodeArtifact = async (workspaceSlug: string, repositoryId: string, payload: TCodeArtifactPayload) => {
+    const artifact = await this.codeService.createArtifact(workspaceSlug, repositoryId, payload);
+    await this.fetchCodeArtifacts(workspaceSlug, repositoryId).catch(() => undefined);
+    return artifact;
+  };
+
+  uploadCodeSnapshot = async (
+    workspaceSlug: string,
+    repositoryId: string,
+    payload: { file: File; ref_value: string; description?: string }
+  ) => {
+    const presigned = await this.codeService.presignSnapshot(workspaceSlug, repositoryId, {
+      file_name: payload.file.name,
+      content_type: payload.file.type || "application/zip",
+      size: payload.file.size,
+    });
+    const uploadData = presigned.upload_data as { url?: string; fields?: Record<string, string> };
+    if (uploadData?.url && uploadData?.fields) {
+      const form = new FormData();
+      Object.entries(uploadData.fields).forEach(([key, value]) => form.append(key, value));
+      form.append("file", payload.file);
+      await fetch(uploadData.url, { method: "POST", body: form }).catch(() => undefined);
+    }
+    const artifact = await this.codeService.registerSnapshot(workspaceSlug, repositoryId, {
+      asset_id: presigned.asset_id,
+      ref_value: payload.ref_value,
+      description: payload.description,
+    });
+    await this.fetchCodeArtifacts(workspaceSlug, repositoryId).catch(() => undefined);
+    return artifact;
+  };
+
+  fetchCodeSummary = async (workspaceSlug: string, projectId: string) => {
+    const summary = await this.codeService.getSummary(workspaceSlug, projectId);
+    runInAction(() => {
+      this.codeSummary[projectId] = summary;
+    });
+    return summary;
   };
 }

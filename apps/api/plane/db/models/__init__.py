@@ -98,6 +98,8 @@ from .research import (
     STAGE_SEQUENCE,
     STAGE_SORT_ORDER,
     IdentityMapping,
+    CodeArtifact,
+    ProjectCodeRepository,
     LiteratureEntry,
     AMENDABLE_FIELDS,
     LOCKED_FIELDS,

@@ -689,3 +689,58 @@ export type TExperimentAssetLink = {
   created_at: string;
   updated_at: string;
 };
+
+export type TCodeProvider = "GITHUB" | "GITLAB" | "GITEA" | "LOCAL_GIT" | "OTHER";
+export type TCodeRepositoryStatus = "ACTIVE" | "ARCHIVED" | "SYNC_FAILED";
+export type TCodeRefType = "COMMIT" | "BRANCH" | "TAG" | "SNAPSHOT";
+
+export type TCodeRepository = {
+  id: string;
+  workspace: string;
+  project: string;
+  provider: TCodeProvider;
+  repository_url: string;
+  repository_slug: string;
+  default_branch: string;
+  visibility: "PUBLIC" | "INTERNAL" | "PRIVATE";
+  status: TCodeRepositoryStatus;
+  credential_ref: string;
+  has_credential: boolean;
+  last_synced_commit: string;
+  last_sync_at: string | null;
+  sync_error: string;
+  artifact_count?: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TCodeArtifact = {
+  id: string;
+  repository: string;
+  ref_type: TCodeRefType;
+  ref_value: string;
+  commit_message: string;
+  author_name: string;
+  committed_at: string | null;
+  snapshot_asset: string | null;
+  linked_experiment: string | null;
+  description: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TCodeSummary = {
+  project: string;
+  repository_count: number;
+  artifact_count: number;
+  snapshot_count: number;
+  linked_experiment_count: number;
+  sync_failed_count: number;
+  last_commit: {
+    ref_value: string | null;
+    message: string | null;
+    author: string | null;
+    committed_at: string | null;
+  };
+  snapshots: { id: string; ref_value: string; created_at: string }[];
+};

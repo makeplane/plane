@@ -880,7 +880,8 @@
       "stages": "科研阶段",
       "reviews": "待我评审",
       "literature": "文献调研",
-      "experiments": "实验条目"
+      "experiments": "实验条目",
+      "code": "代码管理"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1245,7 +1246,13 @@
       "experiment_amendment_change_set_required": "修订必须包含至少一处字段变更。",
       "experiment_amendment_field_not_allowed": "该字段不允许修订。",
       "experiment_amendment_pending_exists": "已存在待审核的修订申请。",
-      "experiment_amendment_comment_required": "拒绝修订必须填写意见。"
+      "experiment_amendment_comment_required": "拒绝修订必须填写意见。",
+      "code_repository_not_found": "代码仓库不存在。",
+      "code_repository_exists": "该项目已登记同一仓库。",
+      "code_repository_invalid": "仓库配置不合法。",
+      "code_artifact_not_found": "版本引用不存在。",
+      "code_artifact_exists": "该版本引用已登记。",
+      "code_artifact_invalid": "版本引用不合法。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1536,6 +1543,53 @@
         "hypothesis": "实验假设",
         "result": "实验结果",
         "status_note": "状态说明"
+      }
+    },
+    "code": {
+      "description": "登记外部代码仓库，并为每个结果保留代码快照。",
+      "register": "登记仓库",
+      "repository_placeholder": "https://github.com/org/repo",
+      "sync": "同步",
+      "empty": "还没有登记仓库。",
+      "add_artifact": "登记版本引用",
+      "ref_placeholder": "commit SHA、分支或 tag",
+      "snapshot_ref": "快照标识",
+      "upload_snapshot": "上传快照",
+      "no_artifacts": "暂无版本引用。",
+      "linked": "已关联",
+      "summary_repositories": "仓库 {count} 个",
+      "summary_artifacts": "制品 {count} 条",
+      "summary_snapshots": "快照 {count} 个",
+      "summary_linked": "关联实验 {count} 条",
+      "summary_sync_failed": "{count} 个仓库同步失败",
+      "summary_last_commit": "最近提交 {ref}",
+      "provider": {
+        "github": "GitHub",
+        "gitlab": "GitLab",
+        "gitea": "Gitea",
+        "local_git": "本地 git",
+        "other": "其他"
+      },
+      "status": {
+        "active": "正常",
+        "archived": "已归档",
+        "sync_failed": "同步失败"
+      },
+      "ref_type": {
+        "commit": "Commit",
+        "branch": "分支",
+        "tag": "Tag",
+        "snapshot": "快照"
+      },
+      "columns": {
+        "repository": "仓库",
+        "provider": "提供方",
+        "status": "状态",
+        "last_sync": "最近同步",
+        "ref_type": "类型",
+        "ref_value": "版本",
+        "message": "说明",
+        "experiment": "关联实验"
       }
     }
   }

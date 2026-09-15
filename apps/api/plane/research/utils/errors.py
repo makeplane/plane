@@ -126,6 +126,13 @@ class ResearchErrorCode:
     AMENDMENT_PENDING_EXISTS = "experiment_amendment_pending_exists"
     AMENDMENT_COMMENT_REQUIRED = "experiment_amendment_comment_required"
 
+    CODE_REPOSITORY_NOT_FOUND = "code_repository_not_found"
+    CODE_REPOSITORY_EXISTS = "code_repository_exists"
+    CODE_REPOSITORY_INVALID = "code_repository_invalid"
+    CODE_ARTIFACT_NOT_FOUND = "code_artifact_not_found"
+    CODE_ARTIFACT_EXISTS = "code_artifact_exists"
+    CODE_ARTIFACT_INVALID = "code_artifact_invalid"
+
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):
     return Response({"error_code": error_code, "message": message}, status=http_status)

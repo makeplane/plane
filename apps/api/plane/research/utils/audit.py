@@ -84,6 +84,14 @@ class ResearchAuditAction:
     EXPERIMENT_AMENDMENT_CANCEL = "experiment.amendment.cancel"
     EXPERIMENT_ASSET_LINK = "experiment.asset.link"
     EXPERIMENT_ASSET_UNLINK = "experiment.asset.unlink"
+    CODE_REPOSITORY_CREATE = "code.repository.create"
+    CODE_REPOSITORY_UPDATE = "code.repository.update"
+    CODE_REPOSITORY_ARCHIVE = "code.repository.archive"
+    CODE_CREDENTIAL_UPDATE = "code.credential.update"
+    CODE_SYNC = "code.sync"
+    CODE_ARTIFACT_CREATE = "code.artifact.create"
+    CODE_ARTIFACT_UPDATE = "code.artifact.update"
+    CODE_SNAPSHOT_CREATE = "code.snapshot.create"
 
 
 class ResearchResourceType:
@@ -108,6 +116,8 @@ class ResearchResourceType:
     EXPERIMENT = "experiment_record"
     EXPERIMENT_AMENDMENT = "experiment_amendment"
     EXPERIMENT_ASSET = "experiment_asset_link"
+    CODE_REPOSITORY = "code_repository"
+    CODE_ARTIFACT = "code_artifact"
 
 
 def _client_metadata(request):

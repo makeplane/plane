@@ -880,7 +880,8 @@
       "stages": "Stages",
       "reviews": "Reviews",
       "literature": "Literature",
-      "experiments": "Experiments"
+      "experiments": "Experiments",
+      "code": "Code"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1245,7 +1246,13 @@
       "experiment_amendment_change_set_required": "An amendment needs at least one field change.",
       "experiment_amendment_field_not_allowed": "That field cannot be amended.",
       "experiment_amendment_pending_exists": "An amendment is already pending.",
-      "experiment_amendment_comment_required": "A comment is required to reject an amendment."
+      "experiment_amendment_comment_required": "A comment is required to reject an amendment.",
+      "code_repository_not_found": "Repository not found.",
+      "code_repository_exists": "This repository is already registered for the project.",
+      "code_repository_invalid": "The repository configuration is not valid.",
+      "code_artifact_not_found": "Artifact not found.",
+      "code_artifact_exists": "This reference is already registered.",
+      "code_artifact_invalid": "The artifact reference is not valid."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1536,6 +1543,53 @@
         "hypothesis": "Hypothesis",
         "result": "Result",
         "status_note": "Status note"
+      }
+    },
+    "code": {
+      "description": "Register external repositories and keep the code snapshots of each result.",
+      "register": "Register repository",
+      "repository_placeholder": "https://github.com/org/repo",
+      "sync": "Sync",
+      "empty": "No repository registered yet.",
+      "add_artifact": "Add reference",
+      "ref_placeholder": "Commit SHA, branch or tag",
+      "snapshot_ref": "Snapshot label",
+      "upload_snapshot": "Upload snapshot",
+      "no_artifacts": "No artifact registered yet.",
+      "linked": "linked",
+      "summary_repositories": "{count} repositories",
+      "summary_artifacts": "{count} artifacts",
+      "summary_snapshots": "{count} snapshots",
+      "summary_linked": "{count} linked experiments",
+      "summary_sync_failed": "{count} repositories failed to sync",
+      "summary_last_commit": "last commit {ref}",
+      "provider": {
+        "github": "GitHub",
+        "gitlab": "GitLab",
+        "gitea": "Gitea",
+        "local_git": "Local git",
+        "other": "Other"
+      },
+      "status": {
+        "active": "Active",
+        "archived": "Archived",
+        "sync_failed": "Sync failed"
+      },
+      "ref_type": {
+        "commit": "Commit",
+        "branch": "Branch",
+        "tag": "Tag",
+        "snapshot": "Snapshot"
+      },
+      "columns": {
+        "repository": "Repository",
+        "provider": "Provider",
+        "status": "Status",
+        "last_sync": "Last sync",
+        "ref_type": "Type",
+        "ref_value": "Reference",
+        "message": "Message",
+        "experiment": "Experiment"
       }
     }
   }

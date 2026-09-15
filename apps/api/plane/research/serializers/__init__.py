@@ -25,6 +25,7 @@ from .experiment import (
     ExperimentRecordSerializer,
     ExperimentRecordVersionSerializer,
 )
+from .code import CodeArtifactSerializer, ProjectCodeRepositorySerializer
 from .stage import (
     ResearchStageInstanceSerializer,
     ResearchStageRequirementSerializer,
@@ -57,6 +58,8 @@ __all__ = [
     "ExperimentAssetLinkSerializer",
     "ExperimentRecordSerializer",
     "ExperimentRecordVersionSerializer",
+    "CodeArtifactSerializer",
+    "ProjectCodeRepositorySerializer",
     "ApprovalActionSerializer",
     "ApprovalFlowSerializer",
     "ApprovalFlowStepSerializer",

@@ -6,6 +6,7 @@ from .audit import ResearchAuditEvent
 from .attachment import ReportAttachment
 from .approval import ApprovalAction, ApprovalFlow, ApprovalFlowStep, ApprovalRequest
 from .config import ReportVisibility, WorkspaceResearchSetting
+from .code import CodeArtifact, ProjectCodeRepository
 from .experiment import (
     AMENDABLE_FIELDS,
     LOCKED_FIELDS,
@@ -46,6 +47,8 @@ from .template import ReportTemplate
 
 __all__ = [
     "IdentityMapping",
+    "CodeArtifact",
+    "ProjectCodeRepository",
     "LiteratureEntry",
     "AMENDABLE_FIELDS",
     "LOCKED_FIELDS",

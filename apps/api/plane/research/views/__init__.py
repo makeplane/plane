@@ -102,6 +102,15 @@ from .experiments import (
     ResearchExperimentSubmitEndpoint,
     ResearchExperimentVersionsEndpoint,
 )
+from .code import (
+    ResearchCodeArtifactDetailEndpoint,
+    ResearchCodeArtifactListCreateEndpoint,
+    ResearchCodeRepositoryDetailEndpoint,
+    ResearchCodeRepositoryListCreateEndpoint,
+    ResearchCodeRepositorySyncEndpoint,
+    ResearchCodeSnapshotEndpoint,
+    ResearchCodeSummaryEndpoint,
+)
 
 __all__ = [
     "ResearchHealthEndpoint",
@@ -146,6 +155,13 @@ __all__ = [
     "ResearchExperimentStatusEndpoint",
     "ResearchExperimentSubmitEndpoint",
     "ResearchExperimentVersionsEndpoint",
+    "ResearchCodeArtifactDetailEndpoint",
+    "ResearchCodeArtifactListCreateEndpoint",
+    "ResearchCodeRepositoryDetailEndpoint",
+    "ResearchCodeRepositoryListCreateEndpoint",
+    "ResearchCodeRepositorySyncEndpoint",
+    "ResearchCodeSnapshotEndpoint",
+    "ResearchCodeSummaryEndpoint",
     "ResearchSettingsEndpoint",
     "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",
