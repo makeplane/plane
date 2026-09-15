@@ -144,6 +144,7 @@ class ResearchErrorCode:
     EXTERNAL_REFERENCE_EXISTS = "external_reference_exists"
     EXTERNAL_REFERENCE_INVALID = "external_reference_invalid"
     EXTERNAL_REFERENCE_LINK_NOT_FOUND = "external_reference_link_not_found"
+    CHAIN_INVALID = "research_chain_invalid"
 
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):

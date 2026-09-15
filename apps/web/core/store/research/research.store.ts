@@ -43,7 +43,9 @@ import type {
   TExternalReference,
   TIntegrationCallLog,
   TIntegrationConnection,
+  TResearchTimeline,
   TReviewSummary,
+  TTimelineFilters,
   TToMeReview,
   TWorkspaceResearchSetting,
 } from "@plane/types";
@@ -78,6 +80,7 @@ import type { TCodeArtifactPayload, TCodeRepositoryPayload } from "@/services/re
 import { ResearchOutcomeService } from "@/services/research/outcome.service";
 import type { TOutcomePayload } from "@/services/research/outcome.service";
 import { ResearchIntegrationService } from "@/services/research/integration.service";
+import { ResearchTimelineService } from "@/services/research/timeline.service";
 import type {
   TExternalReferencePayload,
   TIntegrationConnectionPayload,
@@ -159,6 +162,7 @@ export interface IResearchStore {
   integrationCallLogs: TIntegrationCallLog[];
   externalReferences: Record<string, TExternalReference>;
   externalReferenceIds: string[];
+  timeline: Record<string, TResearchTimeline>;
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -450,6 +454,10 @@ export interface IResearchStore {
     targetId: string
   ) => Promise<TExternalReference>;
   getExternalReferences: () => TExternalReference[];
+  // timeline (P1-E1)
+  fetchTimeline: (workspaceSlug: string, projectId: string, filters?: TTimelineFilters) => Promise<TResearchTimeline>;
+  getTimeline: (projectId: string) => TResearchTimeline | undefined;
+  timelineExportUrl: (workspaceSlug: string, projectId: string, chain?: string) => string;
 }
 
 export class ResearchStore implements IResearchStore {
@@ -525,6 +533,7 @@ export class ResearchStore implements IResearchStore {
   integrationCallLogs: TIntegrationCallLog[] = [];
   externalReferences: Record<string, TExternalReference> = {};
   externalReferenceIds: string[] = [];
+  timeline: Record<string, TResearchTimeline> = {};
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -538,6 +547,7 @@ export class ResearchStore implements IResearchStore {
   private codeService: ResearchCodeService;
   private outcomeService: ResearchOutcomeService;
   private integrationService: ResearchIntegrationService;
+  private timelineService: ResearchTimelineService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -614,6 +624,7 @@ export class ResearchStore implements IResearchStore {
       integrationCallLogs: observable,
       externalReferences: observable,
       externalReferenceIds: observable,
+      timeline: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -739,6 +750,7 @@ export class ResearchStore implements IResearchStore {
       createExternalReference: action,
       deleteExternalReference: action,
       linkExternalReference: action,
+      fetchTimeline: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -753,6 +765,7 @@ export class ResearchStore implements IResearchStore {
     this.codeService = new ResearchCodeService();
     this.outcomeService = new ResearchOutcomeService();
     this.integrationService = new ResearchIntegrationService();
+    this.timelineService = new ResearchTimelineService();
   }
 
   // ---------------------------------------------------------------------
@@ -854,6 +867,11 @@ export class ResearchStore implements IResearchStore {
 
   chainExportUrl = (workspaceSlug: string, projectId: string) =>
     this.outcomeService.exportChainUrl(workspaceSlug, projectId);
+
+  getTimeline = (projectId: string) => this.timeline[projectId];
+
+  timelineExportUrl = (workspaceSlug: string, projectId: string, chain?: string) =>
+    this.timelineService.exportUrl(workspaceSlug, projectId, chain);
 
   getExternalReferences = () =>
     this.externalReferenceIds
@@ -2066,5 +2084,17 @@ export class ResearchStore implements IResearchStore {
       this.externalReferences[reference.id] = reference;
     });
     return reference;
+  };
+
+  // ---------------------------------------------------------------------
+  // timeline (P1-E1)
+  // ---------------------------------------------------------------------
+
+  fetchTimeline = async (workspaceSlug: string, projectId: string, filters: TTimelineFilters = {}) => {
+    const timeline = await this.timelineService.getTimeline(workspaceSlug, projectId, filters);
+    runInAction(() => {
+      this.timeline[projectId] = timeline;
+    });
+    return timeline;
   };
 }

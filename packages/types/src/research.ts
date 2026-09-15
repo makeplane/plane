@@ -835,3 +835,46 @@ export type TExternalReference = {
   created_at: string;
   updated_at: string;
 };
+
+export type TTimelineKind =
+  | "literature"
+  | "stage_transition"
+  | "stage_review"
+  | "report"
+  | "experiment"
+  | "code_artifact"
+  | "outcome"
+  | "external_reference";
+
+export type TTimelineItem = {
+  kind: TTimelineKind;
+  at: string | null;
+  title: string;
+  chains: ("thinking" | "development")[];
+  target_id?: string;
+  stage?: TStageType;
+  action?: string;
+  recommendation?: string;
+  status?: string;
+  source_system?: string;
+  external_type?: string;
+  source_url?: string;
+  degraded?: boolean;
+};
+
+export type TResearchTimeline = {
+  project: string;
+  items: TTimelineItem[];
+  count: number;
+  degraded_sources: string[];
+  stage_sequence: TStageType[];
+  generated_at: string;
+};
+
+export type TTimelineFilters = {
+  chain?: string;
+  stage?: string;
+  date_from?: string;
+  date_to?: string;
+  source_system?: string;
+};

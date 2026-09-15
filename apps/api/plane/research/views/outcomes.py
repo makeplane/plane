@@ -310,14 +310,23 @@ class ResearchChainExportEndpoint(ResearchAPIView):
         profile = research_project(workspace, project_id)
         if profile is None:
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
+        chain = str(request.GET.get("chain") or "").lower() or None
+        if chain and chain not in ("thinking", "development"):
+            return research_error(
+                ResearchErrorCode.CHAIN_INVALID,
+                "chain must be thinking or development.",
+            )
         progress = build_progress(workspace, project_id, request.user)
         markdown = build_chain_markdown(
             progress,
             profile.project.name,
             generated_by=getattr(request.user, "display_name", ""),
+            chain=chain,
         )
         response = HttpResponse(markdown, content_type="text/markdown")
-        file_name = f"research-chain-{profile.project.identifier or project_id}-{timezone.localdate():%Y%m%d}.md"
+        suffix = f"-{chain}" if chain else ""
+        identifier = profile.project.identifier or project_id
+        file_name = f"research-chain{suffix}-{identifier}-{timezone.localdate():%Y%m%d}.md"
         response["Content-Disposition"] = f'attachment; filename="{file_name}"'
         record_audit_event(
             workspace=workspace,

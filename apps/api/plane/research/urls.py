@@ -104,6 +104,8 @@ from plane.research.views import (
     ResearchOutcomeDetailEndpoint,
     ResearchOutcomeLinkEndpoint,
     ResearchOutcomeListCreateEndpoint,
+    ResearchProjectChainEndpoint,
+    ResearchProjectTimelineEndpoint,
     ResearchDeviceExecutionSearchEndpoint,
     ResearchExternalReferenceDetailEndpoint,
     ResearchExternalReferenceLinkEndpoint,
@@ -304,6 +306,16 @@ urlpatterns = [
         "research/workspaces/<str:slug>/projects/<uuid:project_id>/chain/export/",
         ResearchChainExportEndpoint.as_view(),
         name="research-chain-export",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/timeline/",
+        ResearchProjectTimelineEndpoint.as_view(),
+        name="research-project-timeline",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/chain/",
+        ResearchProjectChainEndpoint.as_view(),
+        name="research-project-chain",
     ),
     path(
         "research/workspaces/<str:slug>/outcomes/<uuid:outcome_id>/",

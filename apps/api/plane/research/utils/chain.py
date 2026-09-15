@@ -12,8 +12,21 @@ uses, so the file matches what the caller may already read.
 from django.utils import timezone
 
 
-def build_chain_markdown(progress, project_name, *, generated_by=""):
-    """Render the development chain (experiments → code → outcomes) as Markdown."""
+def build_chain_markdown(progress, project_name, *, generated_by="", chain=None):
+    """Render the reference list as Markdown, optionally for one chain."""
+    if chain == "thinking":
+        progress = {
+            **progress,
+            "experiments": {"items": [], "completed": 0, "total": 0},
+            "code": {"repositories": [], "artifact_count": 0, "snapshot_count": 0},
+            "outcomes": {"items": [], "count": 0},
+        }
+    elif chain == "development":
+        progress = {
+            **progress,
+            "literature": {"items": [], "included": 0},
+            "reports": {"items": [], "count": 0},
+        }
     today = timezone.localdate().isoformat()
     lines = [
         f"# Research chain — {project_name}",

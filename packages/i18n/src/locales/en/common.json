@@ -883,7 +883,8 @@
       "experiments": "Experiments",
       "code": "Code",
       "outcomes": "Outcomes",
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "timeline": "Timeline"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1265,7 +1266,8 @@
       "external_reference_not_found": "External reference not found.",
       "external_reference_exists": "This external object is already referenced.",
       "external_reference_invalid": "The external reference is not valid.",
-      "external_reference_link_not_found": "Reference link not found."
+      "external_reference_link_not_found": "Reference link not found.",
+      "research_chain_invalid": "The chain filter is not valid."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1702,6 +1704,29 @@
         "latency": "Latency (ms)",
         "error": "Error",
         "time": "Time"
+      }
+    },
+    "timeline": {
+      "description": "Thinking chain, development chain and the full project timeline.",
+      "empty": "Nothing recorded for this filter yet.",
+      "export": "Export reference list (Markdown)",
+      "all_stages": "All stages",
+      "all_sources": "All source systems",
+      "degraded": "Degraded sources: {systems}",
+      "chain": {
+        "all": "Everything",
+        "thinking": "Thinking chain",
+        "development": "Development chain"
+      },
+      "kind": {
+        "literature": "Literature",
+        "stage_transition": "Stage transition",
+        "stage_review": "Stage review",
+        "report": "Report",
+        "experiment": "Experiment",
+        "code_artifact": "Code artifact",
+        "outcome": "Outcome",
+        "external_reference": "External reference"
       }
     }
   }

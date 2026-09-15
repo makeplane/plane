@@ -883,7 +883,8 @@
       "experiments": "实验条目",
       "code": "代码管理",
       "outcomes": "论文与成果",
-      "integrations": "系统集成"
+      "integrations": "系统集成",
+      "timeline": "时间线"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1265,7 +1266,8 @@
       "external_reference_not_found": "外部引用不存在。",
       "external_reference_exists": "该外部对象已被引用。",
       "external_reference_invalid": "外部引用不合法。",
-      "external_reference_link_not_found": "引用关联不存在。"
+      "external_reference_link_not_found": "引用关联不存在。",
+      "research_chain_invalid": "链条筛选参数不合法。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1702,6 +1704,29 @@
         "latency": "耗时（毫秒）",
         "error": "错误码",
         "time": "时间"
+      }
+    },
+    "timeline": {
+      "description": "思维链、研发链与项目全流程时间线。",
+      "empty": "当前筛选条件下暂无记录。",
+      "export": "导出引用清单（Markdown）",
+      "all_stages": "全部阶段",
+      "all_sources": "全部来源系统",
+      "degraded": "降级来源：{systems}",
+      "chain": {
+        "all": "全部",
+        "thinking": "思维链",
+        "development": "研发链"
+      },
+      "kind": {
+        "literature": "文献",
+        "stage_transition": "阶段流转",
+        "stage_review": "阶段评审",
+        "report": "周报月报",
+        "experiment": "实验记录",
+        "code_artifact": "代码制品",
+        "outcome": "论文与成果",
+        "external_reference": "外部引用"
       }
     }
   }

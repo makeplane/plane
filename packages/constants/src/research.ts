@@ -81,6 +81,10 @@ export type {
   TIntegrationCallLog,
   TIntegrationConnection,
   TIntegrationSystem,
+  TResearchTimeline,
+  TTimelineFilters,
+  TTimelineItem,
+  TTimelineKind,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -353,6 +357,7 @@ export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
   { key: "experiments", labelKey: "research.nav.experiments", path: "experiments", section: "experiments" },
   { key: "code", labelKey: "research.nav.code", path: "code", section: "code" },
   { key: "outcomes", labelKey: "research.nav.outcomes", path: "outcomes", section: "stages" },
+  { key: "timeline", labelKey: "research.nav.timeline", path: "timeline", section: "stages" },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -382,6 +387,17 @@ export const INTEGRATION_HEALTH_LABELS: Record<string, string> = {
   OK: "research.integrations.health.ok",
   DEGRADED: "research.integrations.health.degraded",
   DOWN: "research.integrations.health.down",
+};
+
+export const TIMELINE_KIND_LABELS: Record<string, string> = {
+  literature: "research.timeline.kind.literature",
+  stage_transition: "research.timeline.kind.stage_transition",
+  stage_review: "research.timeline.kind.stage_review",
+  report: "research.timeline.kind.report",
+  experiment: "research.timeline.kind.experiment",
+  code_artifact: "research.timeline.kind.code_artifact",
+  outcome: "research.timeline.kind.outcome",
+  external_reference: "research.timeline.kind.external_reference",
 };
 
 export const EXTERNAL_TYPE_LABELS: Record<string, string> = {
@@ -704,4 +720,7 @@ export const researchEndpoints = {
     `${RESEARCH_API_ROOT}/${slug}/external-references/${referenceId}/`,
   externalReferenceLinks: (slug: string, referenceId: string) =>
     `${RESEARCH_API_ROOT}/${slug}/external-references/${referenceId}/links/`,
+  // ---- P1 timeline and chains (§5.8) ----
+  projectTimeline: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/timeline/`,
+  projectChain: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/chain/`,
 } as const;

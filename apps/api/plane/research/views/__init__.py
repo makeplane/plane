@@ -130,6 +130,7 @@ from .integrations import (
     ResearchRdAnalysisSearchEndpoint,
     ResearchRdProjectSearchEndpoint,
 )
+from .chain import ResearchProjectChainEndpoint, ResearchProjectTimelineEndpoint
 from .outcomes import (
     ResearchChainExportEndpoint,
     ResearchOutcomeDetailEndpoint,
@@ -194,6 +195,8 @@ __all__ = [
     "ResearchOutcomeDetailEndpoint",
     "ResearchOutcomeLinkEndpoint",
     "ResearchOutcomeListCreateEndpoint",
+    "ResearchProjectChainEndpoint",
+    "ResearchProjectTimelineEndpoint",
     "ResearchDeviceExecutionSearchEndpoint",
     "ResearchExternalReferenceDetailEndpoint",
     "ResearchExternalReferenceLinkEndpoint",
