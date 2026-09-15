@@ -18,6 +18,12 @@ from .report import (
     ReportReviewLogSerializer,
 )
 from .attachment import ReportAttachmentSerializer
+from .approval import (
+    ApprovalActionSerializer,
+    ApprovalFlowSerializer,
+    ApprovalFlowStepSerializer,
+    ApprovalRequestSerializer,
+)
 
 __all__ = [
     "IdentityMappingSerializer",
@@ -29,6 +35,10 @@ __all__ = [
     "ReportAccessGrantSerializer",
     "ReportReviewLogSerializer",
     "ReportAttachmentSerializer",
+    "ApprovalActionSerializer",
+    "ApprovalFlowSerializer",
+    "ApprovalFlowStepSerializer",
+    "ApprovalRequestSerializer",
     "ResearchAuditEventSerializer",
     "ResearchUserSerializer",
     "WorkspaceResearchSettingSerializer",

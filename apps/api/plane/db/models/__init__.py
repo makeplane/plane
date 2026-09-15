@@ -93,6 +93,10 @@ from .description import Description, DescriptionVersion
 
 from .research import (
     IdentityMapping,
+    ApprovalAction,
+    ApprovalFlow,
+    ApprovalFlowStep,
+    ApprovalRequest,
     MentorBinding,
     OrgUnit,
     OrgUnitMember,

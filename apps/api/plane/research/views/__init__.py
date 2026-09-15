@@ -9,6 +9,14 @@ from .attachments import (
     ResearchReportAttachmentPresignEndpoint,
     ResearchReportMarkdownImportEndpoint,
 )
+from .approvals import (
+    ResearchApprovalFlowDetailEndpoint,
+    ResearchApprovalFlowListCreateEndpoint,
+    ResearchApprovalRequestActionEndpoint,
+    ResearchApprovalRequestDetailEndpoint,
+    ResearchApprovalRequestHistoryEndpoint,
+    ResearchApprovalRequestListCreateEndpoint,
+)
 from .health import ResearchHealthEndpoint
 from .settings import ResearchSettingsEndpoint
 from .summary import ResearchReportSummaryEndpoint
@@ -51,6 +59,12 @@ __all__ = [
     "ResearchSettingsEndpoint",
     "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",
+    "ResearchApprovalFlowDetailEndpoint",
+    "ResearchApprovalFlowListCreateEndpoint",
+    "ResearchApprovalRequestActionEndpoint",
+    "ResearchApprovalRequestDetailEndpoint",
+    "ResearchApprovalRequestHistoryEndpoint",
+    "ResearchApprovalRequestListCreateEndpoint",
     "ResearchReportAttachmentDetailEndpoint",
     "ResearchReportAttachmentListCreateEndpoint",
     "ResearchReportAttachmentPresignEndpoint",

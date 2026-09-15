@@ -12,6 +12,12 @@ upstream route (P0-COMPAT-02).
 from django.urls import path
 
 from plane.research.views import (
+    ResearchApprovalFlowDetailEndpoint,
+    ResearchApprovalFlowListCreateEndpoint,
+    ResearchApprovalRequestActionEndpoint,
+    ResearchApprovalRequestDetailEndpoint,
+    ResearchApprovalRequestHistoryEndpoint,
+    ResearchApprovalRequestListCreateEndpoint,
     ResearchAuditEventListEndpoint,
     ResearchReportAttachmentDetailEndpoint,
     ResearchReportAttachmentListCreateEndpoint,
@@ -48,6 +54,37 @@ from plane.research.views import (
 urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
+    # office approvals
+    path(
+        "research/workspaces/<str:slug>/approval-flows/",
+        ResearchApprovalFlowListCreateEndpoint.as_view(),
+        name="research-approval-flows",
+    ),
+    path(
+        "research/workspaces/<str:slug>/approval-flows/<uuid:pk>/",
+        ResearchApprovalFlowDetailEndpoint.as_view(),
+        name="research-approval-flow",
+    ),
+    path(
+        "research/workspaces/<str:slug>/approval-requests/",
+        ResearchApprovalRequestListCreateEndpoint.as_view(),
+        name="research-approval-requests",
+    ),
+    path(
+        "research/workspaces/<str:slug>/approval-requests/<uuid:pk>/",
+        ResearchApprovalRequestDetailEndpoint.as_view(),
+        name="research-approval-request",
+    ),
+    path(
+        "research/workspaces/<str:slug>/approval-requests/<uuid:pk>/history/",
+        ResearchApprovalRequestHistoryEndpoint.as_view(),
+        name="research-approval-request-history",
+    ),
+    path(
+        "research/workspaces/<str:slug>/approval-requests/<uuid:pk>/<str:action>/",
+        ResearchApprovalRequestActionEndpoint.as_view(),
+        name="research-approval-request-action",
+    ),
     # identity
     path(
         "research/workspaces/<str:slug>/reports/",

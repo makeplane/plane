@@ -268,6 +268,7 @@ export type TApprovalRequest = {
   issue: string;
   issue_detail?: { id: string; name: string; sequence_id?: number };
   flow: string;
+  flow_name?: string;
   flow_version: number;
   approval_type: "TASK" | "PURCHASE" | "CUSTOM";
   status: "PENDING" | "APPROVED" | "REJECTED" | "WITHDRAWN" | "CANCELLED";

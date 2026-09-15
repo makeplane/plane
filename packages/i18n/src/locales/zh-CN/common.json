@@ -1076,6 +1076,31 @@
         "unit": "组织节点"
       }
     },
+    "approvals": {
+      "description": "基于工作项的任务审批与采购审批。",
+      "to_me": "待我审批",
+      "mine": "我发起的",
+      "completed": "已完成",
+      "approve": "通过",
+      "reject": "驳回",
+      "withdraw": "撤回",
+      "confirm_reject": "确认驳回",
+      "comment_placeholder": "审批意见",
+      "reject_placeholder": "填写驳回原因",
+      "flows": "审批流配置",
+      "flow_name_placeholder": "审批流名称",
+      "add_flow": "新增审批流",
+      "steps": "级审批",
+      "no_flows": "暂无审批流",
+      "empty": "当前列表暂无审批申请",
+      "columns": {
+        "subject": "工作项",
+        "type": "审批类型",
+        "flow": "审批流",
+        "step": "当前步骤",
+        "status": "状态"
+      }
+    },
     "platform": {
       "description": "模块开关、上传限制与默认可见级别。",
       "switches": "模块开关",

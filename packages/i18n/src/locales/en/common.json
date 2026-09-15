@@ -1076,6 +1076,31 @@
         "unit": "Organisation node"
       }
     },
+    "approvals": {
+      "description": "Task and purchase approvals built on work items.",
+      "to_me": "Waiting for me",
+      "mine": "Raised by me",
+      "completed": "Completed",
+      "approve": "Approve",
+      "reject": "Reject",
+      "withdraw": "Withdraw",
+      "confirm_reject": "Confirm rejection",
+      "comment_placeholder": "Approval comment",
+      "reject_placeholder": "Explain the rejection reason",
+      "flows": "Approval flows",
+      "flow_name_placeholder": "Flow name",
+      "add_flow": "Add flow",
+      "steps": "step(s)",
+      "no_flows": "No approval flow yet",
+      "empty": "No approval request in this list",
+      "columns": {
+        "subject": "Work item",
+        "type": "Approval type",
+        "flow": "Flow",
+        "step": "Current step",
+        "status": "Status"
+      }
+    },
     "platform": {
       "description": "Module switches, upload limits and default visibility.",
       "switches": "Module switches",

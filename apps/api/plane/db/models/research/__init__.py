@@ -4,6 +4,7 @@
 
 from .audit import ResearchAuditEvent
 from .attachment import ReportAttachment
+from .approval import ApprovalAction, ApprovalFlow, ApprovalFlowStep, ApprovalRequest
 from .config import ReportVisibility, WorkspaceResearchSetting
 from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
@@ -18,6 +19,10 @@ __all__ = [
     "PeriodicReport",
     "ReportAccessGrant",
     "ReportAttachment",
+    "ApprovalAction",
+    "ApprovalFlow",
+    "ApprovalFlowStep",
+    "ApprovalRequest",
     "ReportReviewLog",
     "ResearchProjectProfile",
     "ResearchAuditEvent",

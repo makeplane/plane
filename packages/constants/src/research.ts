@@ -153,6 +153,9 @@ export const APPROVAL_REQUEST_STATUS_LABELS: Record<TApprovalRequestStatus, stri
   CANCELLED: "research.approval_status.cancelled",
 };
 
+/** Organisation roles that may be used as an approval step approver. */
+export const APPROVAL_FLOW_STEP_ROLES = ["PI", "OWNER", "UNIT_ADMIN", "ADVISOR", "REVIEWER"] as const;
+
 /** Research navigation tree - rendered only when the workspace switch is on. */
 export const RESEARCH_NAVIGATION_ITEMS = [
   { key: "reports", labelKey: "research.nav.reports", path: "reports", section: "reports" },
