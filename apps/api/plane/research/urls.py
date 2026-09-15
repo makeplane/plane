@@ -24,6 +24,10 @@ from plane.research.views import (
     ResearchOrgUnitMemberDetailEndpoint,
     ResearchOrgUnitMemberListCreateEndpoint,
     ResearchOrgUnitPiTransferEndpoint,
+    ResearchProjectArchiveEndpoint,
+    ResearchProjectDetailEndpoint,
+    ResearchProjectListCreateEndpoint,
+    ResearchProjectRestoreEndpoint,
     ResearchReportTemplateDetailEndpoint,
     ResearchReportTemplateListCreateEndpoint,
     ResearchSettingsEndpoint,
@@ -95,6 +99,26 @@ urlpatterns = [
         name="research-org-unit-pi",
     ),
     # direct advisors
+    path(
+        "research/workspaces/<str:slug>/projects/",
+        ResearchProjectListCreateEndpoint.as_view(),
+        name="research-projects",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/",
+        ResearchProjectDetailEndpoint.as_view(),
+        name="research-project",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
+        ResearchProjectArchiveEndpoint.as_view(),
+        name="research-project-archive",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/restore/",
+        ResearchProjectRestoreEndpoint.as_view(),
+        name="research-project-restore",
+    ),
     path(
         "research/workspaces/<str:slug>/mentors/",
         ResearchMentorBindingListCreateEndpoint.as_view(),

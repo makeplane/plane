@@ -34,6 +34,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectNetwork,
     ProjectUserProperty,
+    ResearchProjectProfile,
     State,
     DEFAULT_STATES,
     Workspace,
@@ -86,6 +87,10 @@ class ProjectViewSet(BaseViewSet):
                 ).values("anchor")
             )
             .annotate(sort_order=Subquery(sort_order))
+            # additive research flag used by the optional serializer field
+            .annotate(
+                is_research_project=Exists(ResearchProjectProfile.objects.filter(project_id=OuterRef("pk")))
+            )
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
@@ -171,6 +176,9 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
+            .annotate(
+                is_research_project=Exists(ResearchProjectProfile.objects.filter(project_id=OuterRef("pk")))
+            )
             .distinct()
         ).values(
             "id",
@@ -187,6 +195,7 @@ class ProjectViewSet(BaseViewSet):
             "module_view",
             "page_view",
             "inbox_view",
+            "is_research_project",
             "guest_view_all_features",
             "project_lead",
             "network",

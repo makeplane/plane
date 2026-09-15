@@ -6,12 +6,14 @@ from .audit import ResearchAuditEvent
 from .config import ReportVisibility, WorkspaceResearchSetting
 from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
+from .project import ResearchProjectProfile
 from .template import ReportTemplate
 
 __all__ = [
     "IdentityMapping",
     "ReportVisibility",
     "ReportTemplate",
+    "ResearchProjectProfile",
     "ResearchAuditEvent",
     "WorkspaceResearchSetting",
     "MentorBinding",

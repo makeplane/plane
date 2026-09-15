@@ -23,6 +23,12 @@ from .org import (
     ResearchOrgUnitMemberListCreateEndpoint,
     ResearchOrgUnitPiTransferEndpoint,
 )
+from .projects import (
+    ResearchProjectArchiveEndpoint,
+    ResearchProjectDetailEndpoint,
+    ResearchProjectListCreateEndpoint,
+    ResearchProjectRestoreEndpoint,
+)
 
 __all__ = [
     "ResearchHealthEndpoint",
@@ -40,4 +46,8 @@ __all__ = [
     "ResearchOrgUnitMemberDetailEndpoint",
     "ResearchOrgUnitMemberListCreateEndpoint",
     "ResearchOrgUnitPiTransferEndpoint",
+    "ResearchProjectArchiveEndpoint",
+    "ResearchProjectDetailEndpoint",
+    "ResearchProjectListCreateEndpoint",
+    "ResearchProjectRestoreEndpoint",
 ]

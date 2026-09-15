@@ -999,6 +999,23 @@
     "auth": {
       "sso_with": "with"
     },
+    "projects": {
+      "description": "One personal research project per research owner.",
+      "owner_placeholder": "Research owner email or ID (empty = me)",
+      "create": "Create research project",
+      "archive": "Archive",
+      "restore": "Restore",
+      "empty": "No research project yet",
+      "all_statuses": "All statuses",
+      "columns": {
+        "name": "Project",
+        "owner": "Research owner",
+        "type": "Type",
+        "org_unit": "Organisation node",
+        "status": "Research status",
+        "started_at": "Started"
+      }
+    },
     "platform": {
       "description": "Module switches, upload limits and default visibility.",
       "switches": "Module switches",

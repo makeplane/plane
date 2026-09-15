@@ -999,6 +999,23 @@
     "auth": {
       "sso_with": "使用"
     },
+    "projects": {
+      "description": "每个科研责任人一个个人科研项目。",
+      "owner_placeholder": "科研责任人邮箱或 ID（留空表示本人）",
+      "create": "创建科研项目",
+      "archive": "归档",
+      "restore": "恢复",
+      "empty": "暂无科研项目",
+      "all_statuses": "全部状态",
+      "columns": {
+        "name": "项目",
+        "owner": "科研责任人",
+        "type": "类型",
+        "org_unit": "组织节点",
+        "status": "科研状态",
+        "started_at": "开始时间"
+      }
+    },
     "platform": {
       "description": "模块开关、上传限制与默认可见级别。",
       "switches": "模块开关",

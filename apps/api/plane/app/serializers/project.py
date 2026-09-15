@@ -27,6 +27,21 @@ from plane.utils.content_validator import (
 )
 
 
+def resolve_is_research_project(obj):
+    """Optional additive flag for the project serializers (P0-PRJ-06).
+
+    Uses the ``_is_research_project`` annotation when the queryset provides it
+    (keeps project lists free of N+1 queries) and falls back to a lookup
+    otherwise. Plain projects always answer ``False``.
+    """
+    annotated = getattr(obj, "is_research_project", None)
+    if annotated is not None:
+        return bool(annotated)
+    from plane.db.models import ResearchProjectProfile
+
+    return ResearchProjectProfile.objects.filter(project_id=obj.id).exists()
+
+
 class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
@@ -121,6 +136,11 @@ class ProjectListSerializer(DynamicBaseSerializer):
     cover_image_url = serializers.CharField(read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
     next_work_item_sequence = serializers.SerializerMethodField()
+    # Additive optional flag: false for every upstream project (P0-PRJ-06)
+    is_research_project = serializers.SerializerMethodField()
+
+    def get_is_research_project(self, obj):
+        return resolve_is_research_project(obj)
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)
@@ -147,6 +167,11 @@ class ProjectDetailSerializer(BaseSerializer):
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
+    # Additive optional flag: false for every upstream project (P0-PRJ-06)
+    is_research_project = serializers.SerializerMethodField()
+
+    def get_is_research_project(self, obj):
+        return resolve_is_research_project(obj)
 
     class Meta:
         model = Project

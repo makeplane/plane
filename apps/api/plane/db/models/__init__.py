@@ -99,5 +99,6 @@ from .research import (
     ReportTemplate,
     ReportVisibility,
     ResearchAuditEvent,
+    ResearchProjectProfile,
     WorkspaceResearchSetting,
 )
