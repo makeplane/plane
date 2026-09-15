@@ -39,6 +39,7 @@ import type {
   TCodeArtifact,
   TCodeRepository,
   TCodeSummary,
+  TResearchOutcome,
   TReviewSummary,
   TToMeReview,
   TWorkspaceResearchSetting,
@@ -71,6 +72,8 @@ import type {
 } from "@/services/research/experiment.service";
 import { ResearchCodeService } from "@/services/research/code.service";
 import type { TCodeArtifactPayload, TCodeRepositoryPayload } from "@/services/research/code.service";
+import { ResearchOutcomeService } from "@/services/research/outcome.service";
+import type { TOutcomePayload } from "@/services/research/outcome.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -140,6 +143,8 @@ export interface IResearchStore {
   codeRepositoryIdsByProject: Record<string, string[]>;
   codeArtifacts: Record<string, TCodeArtifact[]>;
   codeSummary: Record<string, TCodeSummary>;
+  outcomes: Record<string, TResearchOutcome>;
+  outcomeIdsByProject: Record<string, string[]>;
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -395,6 +400,22 @@ export interface IResearchStore {
   ) => Promise<TCodeArtifact>;
   fetchCodeSummary: (workspaceSlug: string, projectId: string) => Promise<TCodeSummary>;
   getCodeRepositories: (workspaceSlug: string, projectId: string) => TCodeRepository[];
+  // outcomes (P1-B4)
+  fetchOutcomes: (workspaceSlug: string, projectId: string) => Promise<TResearchOutcome[]>;
+  createOutcome: (workspaceSlug: string, projectId: string, payload: TOutcomePayload) => Promise<TResearchOutcome>;
+  updateOutcome: (
+    workspaceSlug: string,
+    outcomeId: string,
+    payload: Partial<TOutcomePayload>
+  ) => Promise<TResearchOutcome>;
+  deleteOutcome: (workspaceSlug: string, outcomeId: string) => Promise<void>;
+  linkOutcome: (
+    workspaceSlug: string,
+    outcomeId: string,
+    payload: { target_type: string; target_id: string }
+  ) => Promise<TResearchOutcome>;
+  getOutcomes: (workspaceSlug: string, projectId: string) => TResearchOutcome[];
+  chainExportUrl: (workspaceSlug: string, projectId: string) => string;
 }
 
 export class ResearchStore implements IResearchStore {
@@ -463,6 +484,8 @@ export class ResearchStore implements IResearchStore {
   codeRepositoryIdsByProject: Record<string, string[]> = {};
   codeArtifacts: Record<string, TCodeArtifact[]> = {};
   codeSummary: Record<string, TCodeSummary> = {};
+  outcomes: Record<string, TResearchOutcome> = {};
+  outcomeIdsByProject: Record<string, string[]> = {};
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -474,6 +497,7 @@ export class ResearchStore implements IResearchStore {
   private literatureService: ResearchLiteratureService;
   private experimentService: ResearchExperimentService;
   private codeService: ResearchCodeService;
+  private outcomeService: ResearchOutcomeService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -543,6 +567,8 @@ export class ResearchStore implements IResearchStore {
       codeRepositoryIdsByProject: observable,
       codeArtifacts: observable,
       codeSummary: observable,
+      outcomes: observable,
+      outcomeIdsByProject: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -653,6 +679,11 @@ export class ResearchStore implements IResearchStore {
       createCodeArtifact: action,
       uploadCodeSnapshot: action,
       fetchCodeSummary: action,
+      fetchOutcomes: action,
+      createOutcome: action,
+      updateOutcome: action,
+      deleteOutcome: action,
+      linkOutcome: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -665,6 +696,7 @@ export class ResearchStore implements IResearchStore {
     this.literatureService = new ResearchLiteratureService();
     this.experimentService = new ResearchExperimentService();
     this.codeService = new ResearchCodeService();
+    this.outcomeService = new ResearchOutcomeService();
   }
 
   // ---------------------------------------------------------------------
@@ -758,6 +790,14 @@ export class ResearchStore implements IResearchStore {
     (this.codeRepositoryIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
       .map((id) => this.codeRepositories[id])
       .filter((repository): repository is TCodeRepository => Boolean(repository));
+
+  getOutcomes = (workspaceSlug: string, projectId: string) =>
+    (this.outcomeIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
+      .map((id) => this.outcomes[id])
+      .filter((outcome): outcome is TResearchOutcome => Boolean(outcome));
+
+  chainExportUrl = (workspaceSlug: string, projectId: string) =>
+    this.outcomeService.exportChainUrl(workspaceSlug, projectId);
 
   // ---------------------------------------------------------------------
   // identity
@@ -1833,5 +1873,61 @@ export class ResearchStore implements IResearchStore {
       this.codeSummary[projectId] = summary;
     });
     return summary;
+  };
+  // ---------------------------------------------------------------------
+  // outcomes (P1-B4)
+  // ---------------------------------------------------------------------
+
+  fetchOutcomes = async (workspaceSlug: string, projectId: string) => {
+    const response = await this.outcomeService.getOutcomes(workspaceSlug, projectId);
+    runInAction(() => {
+      this.outcomeIdsByProject[`${workspaceSlug}:${projectId}`] = response.results.map((outcome) => outcome.id);
+      response.results.forEach((outcome) => {
+        this.outcomes[outcome.id] = outcome;
+      });
+    });
+    return response.results;
+  };
+
+  createOutcome = async (workspaceSlug: string, projectId: string, payload: TOutcomePayload) => {
+    const outcome = await this.outcomeService.createOutcome(workspaceSlug, projectId, payload);
+    runInAction(() => {
+      this.outcomes[outcome.id] = outcome;
+      this.outcomeIdsByProject[`${workspaceSlug}:${projectId}`] = [
+        outcome.id,
+        ...(this.outcomeIdsByProject[`${workspaceSlug}:${projectId}`] ?? []),
+      ];
+    });
+    return outcome;
+  };
+
+  updateOutcome = async (workspaceSlug: string, outcomeId: string, payload: Partial<TOutcomePayload>) => {
+    const outcome = await this.outcomeService.updateOutcome(workspaceSlug, outcomeId, payload);
+    runInAction(() => {
+      this.outcomes[outcome.id] = outcome;
+    });
+    return outcome;
+  };
+
+  deleteOutcome = async (workspaceSlug: string, outcomeId: string) => {
+    await this.outcomeService.deleteOutcome(workspaceSlug, outcomeId);
+    runInAction(() => {
+      delete this.outcomes[outcomeId];
+      Object.keys(this.outcomeIdsByProject).forEach((key) => {
+        this.outcomeIdsByProject[key] = this.outcomeIdsByProject[key].filter((id) => id !== outcomeId);
+      });
+    });
+  };
+
+  linkOutcome = async (
+    workspaceSlug: string,
+    outcomeId: string,
+    payload: { target_type: string; target_id: string }
+  ) => {
+    const outcome = await this.outcomeService.linkOutcome(workspaceSlug, outcomeId, payload);
+    runInAction(() => {
+      this.outcomes[outcome.id] = outcome;
+    });
+    return outcome;
   };
 }

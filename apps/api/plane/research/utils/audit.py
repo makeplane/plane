@@ -92,6 +92,11 @@ class ResearchAuditAction:
     CODE_ARTIFACT_CREATE = "code.artifact.create"
     CODE_ARTIFACT_UPDATE = "code.artifact.update"
     CODE_SNAPSHOT_CREATE = "code.snapshot.create"
+    OUTCOME_CREATE = "outcome.create"
+    OUTCOME_UPDATE = "outcome.update"
+    OUTCOME_DELETE = "outcome.delete"
+    OUTCOME_LINK = "outcome.link"
+    CHAIN_EXPORT = "chain.export"
 
 
 class ResearchResourceType:
@@ -118,6 +123,7 @@ class ResearchResourceType:
     EXPERIMENT_ASSET = "experiment_asset_link"
     CODE_REPOSITORY = "code_repository"
     CODE_ARTIFACT = "code_artifact"
+    OUTCOME = "research_outcome"
 
 
 def _client_metadata(request):

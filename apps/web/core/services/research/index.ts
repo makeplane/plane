@@ -14,3 +14,4 @@ export * from "./review.service";
 export * from "./literature.service";
 export * from "./experiment.service";
 export * from "./code.service";
+export * from "./outcome.service";

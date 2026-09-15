@@ -73,6 +73,10 @@ export type {
   TCodeRepository,
   TCodeRepositoryStatus,
   TCodeSummary,
+  TOutcomeStatus,
+  TOutcomeType,
+  TResearchOutcome,
+  TResearchOutcomeLink,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -344,7 +348,44 @@ export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
   { key: "literature", labelKey: "research.nav.literature", path: "literature", section: "stages" },
   { key: "experiments", labelKey: "research.nav.experiments", path: "experiments", section: "experiments" },
   { key: "code", labelKey: "research.nav.code", path: "code", section: "code" },
+  { key: "outcomes", labelKey: "research.nav.outcomes", path: "outcomes", section: "stages" },
 ] as const;
+
+// ---------------------------------------------------------------------------
+// P1 outcomes (§3.6, §4.8)
+// ---------------------------------------------------------------------------
+
+export const OUTCOME_TYPES = [
+  "PAPER",
+  "PATENT",
+  "SOFTWARE",
+  "DATASET",
+  "AWARD",
+  "OTHER",
+] as const satisfies readonly TOutcomeType[];
+
+export const OUTCOME_STATUSES = [
+  "DRAFT",
+  "SUBMITTED",
+  "ACCEPTED",
+  "PUBLISHED",
+] as const satisfies readonly TOutcomeStatus[];
+
+export const OUTCOME_TYPE_LABELS: Record<TOutcomeType, string> = {
+  PAPER: "research.outcomes.type.paper",
+  PATENT: "research.outcomes.type.patent",
+  SOFTWARE: "research.outcomes.type.software",
+  DATASET: "research.outcomes.type.dataset",
+  AWARD: "research.outcomes.type.award",
+  OTHER: "research.outcomes.type.other",
+};
+
+export const OUTCOME_STATUS_LABELS: Record<TOutcomeStatus, string> = {
+  DRAFT: "research.outcomes.status.draft",
+  SUBMITTED: "research.outcomes.status.submitted",
+  ACCEPTED: "research.outcomes.status.accepted",
+  PUBLISHED: "research.outcomes.status.published",
+};
 
 // ---------------------------------------------------------------------------
 // P1 code registration (§3.8, §4.6)
@@ -598,4 +639,9 @@ export const researchEndpoints = {
     `${RESEARCH_API_ROOT}/${slug}/code-repositories/${repositoryId}/snapshots/`,
   codeArtifact: (slug: string, artifactId: string) => `${RESEARCH_API_ROOT}/${slug}/code-artifacts/${artifactId}/`,
   projectProgress: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/progress/`,
+  // ---- P1 outcomes (§5.8) ----
+  outcomes: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/outcomes/`,
+  outcome: (slug: string, outcomeId: string) => `${RESEARCH_API_ROOT}/${slug}/outcomes/${outcomeId}/`,
+  outcomeLinks: (slug: string, outcomeId: string) => `${RESEARCH_API_ROOT}/${slug}/outcomes/${outcomeId}/links/`,
+  chainExport: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/chain/export/`,
 } as const;

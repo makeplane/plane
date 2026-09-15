@@ -99,6 +99,10 @@ from plane.research.views import (
     ResearchCodeSummaryEndpoint,
     ResearchStageMaterialOverrideEndpoint,
     ResearchProjectProgressEndpoint,
+    ResearchChainExportEndpoint,
+    ResearchOutcomeDetailEndpoint,
+    ResearchOutcomeLinkEndpoint,
+    ResearchOutcomeListCreateEndpoint,
 )
 
 urlpatterns = [
@@ -272,6 +276,34 @@ urlpatterns = [
         "research/workspaces/<str:slug>/projects/<uuid:project_id>/progress/",
         ResearchProjectProgressEndpoint.as_view(),
         name="research-project-progress",
+    ),
+    # ------------------------------------------------------------------
+    # P1 outcomes and the exported reference list (§5.8)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/outcomes/",
+        ResearchOutcomeListCreateEndpoint.as_view(),
+        name="research-outcomes",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/chain/export/",
+        ResearchChainExportEndpoint.as_view(),
+        name="research-chain-export",
+    ),
+    path(
+        "research/workspaces/<str:slug>/outcomes/<uuid:outcome_id>/",
+        ResearchOutcomeDetailEndpoint.as_view(),
+        name="research-outcome",
+    ),
+    path(
+        "research/workspaces/<str:slug>/outcomes/<uuid:outcome_id>/links/",
+        ResearchOutcomeLinkEndpoint.as_view(),
+        name="research-outcome-links",
+    ),
+    path(
+        "research/workspaces/<str:slug>/outcomes/<uuid:outcome_id>/links/<uuid:link_id>/",
+        ResearchOutcomeLinkEndpoint.as_view(),
+        name="research-outcome-link",
     ),
     # ------------------------------------------------------------------
     # P1 experiment records and amendments (§5.5)

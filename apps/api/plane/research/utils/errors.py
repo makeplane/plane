@@ -133,6 +133,9 @@ class ResearchErrorCode:
     CODE_ARTIFACT_NOT_FOUND = "code_artifact_not_found"
     CODE_ARTIFACT_EXISTS = "code_artifact_exists"
     CODE_ARTIFACT_INVALID = "code_artifact_invalid"
+    OUTCOME_NOT_FOUND = "research_outcome_not_found"
+    OUTCOME_INVALID = "research_outcome_invalid"
+    OUTCOME_TARGET_NOT_FOUND = "research_outcome_target_not_found"
 
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):

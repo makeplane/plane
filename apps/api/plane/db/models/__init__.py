@@ -112,6 +112,8 @@ from .research import (
     ApprovalFlowStep,
     ApprovalRequest,
     MentorBinding,
+    ResearchOutcome,
+    ResearchOutcomeLink,
     OrgUnit,
     OrgUnitMember,
     PeriodicReport,

@@ -881,7 +881,8 @@
       "reviews": "Reviews",
       "literature": "Literature",
       "experiments": "Experiments",
-      "code": "Code"
+      "code": "Code",
+      "outcomes": "Outcomes"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1252,7 +1253,10 @@
       "code_repository_invalid": "The repository configuration is not valid.",
       "code_artifact_not_found": "Artifact not found.",
       "code_artifact_exists": "This reference is already registered.",
-      "code_artifact_invalid": "The artifact reference is not valid."
+      "code_artifact_invalid": "The artifact reference is not valid.",
+      "research_outcome_not_found": "Outcome not found.",
+      "research_outcome_invalid": "The outcome configuration is not valid.",
+      "research_outcome_target_not_found": "The linked object was not found."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1603,6 +1607,37 @@
         "ref_value": "Reference",
         "message": "Message",
         "experiment": "Experiment"
+      }
+    },
+    "outcomes": {
+      "description": "Register papers, patents, software and datasets, and export the reference chain.",
+      "register": "Register outcome",
+      "empty": "No outcome registered yet.",
+      "title_placeholder": "Outcome title",
+      "venue_placeholder": "Journal / venue",
+      "doi_placeholder": "DOI or patent number",
+      "export_chain": "Export reference list (Markdown)",
+      "link_hint": "Outcomes can be linked to experiments and code artifacts through the API; the export lists references only.",
+      "type": {
+        "paper": "Paper",
+        "patent": "Patent",
+        "software": "Software",
+        "dataset": "Dataset",
+        "award": "Award",
+        "other": "Other"
+      },
+      "status": {
+        "draft": "Draft",
+        "submitted": "Submitted",
+        "accepted": "Accepted",
+        "published": "Published"
+      },
+      "columns": {
+        "title": "Title",
+        "type": "Type",
+        "venue": "Venue",
+        "status": "Status",
+        "links": "Links"
       }
     }
   }

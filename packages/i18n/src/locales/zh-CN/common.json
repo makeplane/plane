@@ -881,7 +881,8 @@
       "reviews": "待我评审",
       "literature": "文献调研",
       "experiments": "实验条目",
-      "code": "代码管理"
+      "code": "代码管理",
+      "outcomes": "论文与成果"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1252,7 +1253,10 @@
       "code_repository_invalid": "仓库配置不合法。",
       "code_artifact_not_found": "版本引用不存在。",
       "code_artifact_exists": "该版本引用已登记。",
-      "code_artifact_invalid": "版本引用不合法。"
+      "code_artifact_invalid": "版本引用不合法。",
+      "research_outcome_not_found": "成果不存在。",
+      "research_outcome_invalid": "成果信息不合法。",
+      "research_outcome_target_not_found": "关联对象不存在。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1603,6 +1607,37 @@
         "ref_value": "版本",
         "message": "说明",
         "experiment": "关联实验"
+      }
+    },
+    "outcomes": {
+      "description": "登记论文、专利、软件与数据集，并导出引用链条清单。",
+      "register": "登记成果",
+      "empty": "还没有登记成果。",
+      "title_placeholder": "成果名称",
+      "venue_placeholder": "期刊 / 授予单位",
+      "doi_placeholder": "DOI 或专利号",
+      "export_chain": "导出引用清单（Markdown）",
+      "link_hint": "成果可通过接口关联实验与代码制品；导出清单只包含引用信息。",
+      "type": {
+        "paper": "论文",
+        "patent": "专利",
+        "software": "软件",
+        "dataset": "数据集",
+        "award": "获奖",
+        "other": "其他"
+      },
+      "status": {
+        "draft": "草稿",
+        "submitted": "已提交",
+        "accepted": "已录用",
+        "published": "已发表"
+      },
+      "columns": {
+        "title": "名称",
+        "type": "类型",
+        "venue": "期刊 / 单位",
+        "status": "状态",
+        "links": "关联"
       }
     }
   }

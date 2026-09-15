@@ -744,3 +744,33 @@ export type TCodeSummary = {
   };
   snapshots: { id: string; ref_value: string; created_at: string }[];
 };
+
+export type TOutcomeType = "PAPER" | "PATENT" | "SOFTWARE" | "DATASET" | "AWARD" | "OTHER";
+export type TOutcomeStatus = "DRAFT" | "SUBMITTED" | "ACCEPTED" | "PUBLISHED";
+
+export type TResearchOutcomeLink = {
+  id: string;
+  outcome: string;
+  target_type: "EXPERIMENT_RECORD" | "CODE_ARTIFACT" | "STAGE_MATERIAL" | "PERIODIC_REPORT";
+  target_id: string;
+  created_at: string;
+};
+
+export type TResearchOutcome = {
+  id: string;
+  workspace: string;
+  project: string;
+  output_type: TOutcomeType;
+  title: string;
+  authors: string[];
+  venue: string;
+  doi: string;
+  external_url: string;
+  file_asset: string | null;
+  status: TOutcomeStatus;
+  published_at: string | null;
+  visibility: TReportVisibility;
+  links: TResearchOutcomeLink[];
+  created_at: string;
+  updated_at: string;
+};

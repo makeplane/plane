@@ -18,6 +18,7 @@ from .experiment import (
 from .identity import IdentityMapping
 from .literature import LiteratureEntry
 from .org import MentorBinding, OrgUnit, OrgUnitMember
+from .outcome import ResearchOutcome, ResearchOutcomeLink
 from .project import ResearchProjectProfile
 from .report import PeriodicReport, ReportAccessGrant, ReportReviewLog
 from .review import (
@@ -77,6 +78,8 @@ __all__ = [
     "ResearchAuditEvent",
     "WorkspaceResearchSetting",
     "MentorBinding",
+    "ResearchOutcome",
+    "ResearchOutcomeLink",
     "OrgUnit",
     "OrgUnitMember",
     "ALL_MATERIAL_TYPES",
