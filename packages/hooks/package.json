@@ -1,6 +1,6 @@
 {
   "name": "@plane/hooks",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "React hooks that are shared across multiple apps internally",
   "license": "AGPL-3.0",

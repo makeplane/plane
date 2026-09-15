@@ -1,6 +1,6 @@
 {
   "name": "live",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "A realtime collaborative server powers Plane's rich text editor",
   "license": "AGPL-3.0",
