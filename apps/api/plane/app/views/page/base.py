@@ -31,7 +31,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
-from plane.research.utils.page_guard import page_mutation_error_code
+from plane.research.utils.page_guard import page_mutation_error_code, page_mutation_error_message
 from plane.app.serializers import (
     PageSerializer,
     PageDetailSerializer,
@@ -185,7 +185,7 @@ class PageViewSet(BaseViewSet):
             guard_error = page_mutation_error_code(page, "update")
             if guard_error:
                 return Response(
-                    {"error_code": guard_error, "message": "Submitted reports are read only."},
+                    {"error_code": guard_error, "message": page_mutation_error_message(guard_error)},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
@@ -403,7 +403,7 @@ class PageViewSet(BaseViewSet):
         guard_error = page_mutation_error_code(page, "delete")
         if guard_error:
             return Response(
-                {"error_code": guard_error, "message": "Submitted reports are read only."},
+                {"error_code": guard_error, "message": page_mutation_error_message(guard_error)},
                 status=status.HTTP_403_FORBIDDEN,
             )
 

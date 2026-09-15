@@ -19,6 +19,13 @@ import type {
   TReportTemplate,
   TResearchAuditEvent,
   TResearchIdentity,
+  TStageGate,
+  TStageGatePhase,
+  TStageInstance,
+  TStageMaterial,
+  TStageMaterialVersion,
+  TStageRequirement,
+  TStageTransition,
   TWorkspaceResearchSetting,
 } from "@plane/types";
 // services
@@ -30,6 +37,12 @@ import { ResearchProjectService } from "@/services/research/project.service";
 import type { TResearchProject, TResearchProjectCreatePayload } from "@/services/research/project.service";
 import { ResearchReportService } from "@/services/research/report.service";
 import type { TReportCreatePayload, TReportListParams } from "@/services/research/report.service";
+import { ResearchStageService } from "@/services/research/stage.service";
+import type {
+  TStageMaterialCreatePayload,
+  TStageMaterialUpdatePayload,
+  TStageRequirementUpdate,
+} from "@/services/research/stage.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -42,6 +55,7 @@ export interface IResearchStore {
   approvalLoader: boolean;
   templatesLoader: boolean;
   auditLoader: boolean;
+  stageLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
   identityErrorCode: string | null;
@@ -66,12 +80,21 @@ export interface IResearchStore {
   approvalRequestIdsByWorkspace: Record<string, string[]>;
   auditEvents: Record<string, TResearchAuditEvent>;
   auditEventIdsByWorkspace: Record<string, string[]>;
+  stages: Record<string, TStageInstance>;
+  stageIdsByProject: Record<string, string[]>;
+  stageGate: Record<string, TStageGate>;
+  stageTransitions: Record<string, TStageTransition[]>;
+  stageMaterials: Record<string, TStageMaterial>;
+  materialIdsByStage: Record<string, string[]>;
+  materialVersions: Record<string, TStageMaterialVersion[]>;
+  stageRequirements: Record<string, TStageRequirement[]>;
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
   isOrgSectionEnabled: boolean;
   isReportSectionEnabled: boolean;
   isApprovalSectionEnabled: boolean;
+  isStageSectionEnabled: boolean;
   // lookup helpers (plain methods: reads are tracked in the caller's reactive context)
   getOrgUnits: (workspaceSlug: string) => TOrgUnit[];
   getReports: (workspaceSlug: string) => TPeriodicReport[];
@@ -80,6 +103,8 @@ export interface IResearchStore {
   getApprovalFlows: (workspaceSlug: string) => TApprovalFlow[];
   getReportTemplates: (workspaceSlug: string) => TReportTemplate[];
   getAuditEvents: (workspaceSlug: string) => TResearchAuditEvent[];
+  getProjectStages: (workspaceSlug: string, projectId: string) => TStageInstance[];
+  getStageMaterials: (stageId: string) => TStageMaterial[];
   // actions
   fetchIdentity: (workspaceSlug: string) => Promise<TResearchIdentity>;
   fetchOrgUnits: (workspaceSlug: string, options?: { includeInactive?: boolean }) => Promise<TOrgUnit[]>;
@@ -172,6 +197,33 @@ export interface IResearchStore {
     workspaceSlug: string,
     payload: Partial<TWorkspaceResearchSetting>
   ) => Promise<TWorkspaceResearchSetting | null>;
+  // stage workflow (P1-A1)
+  fetchProjectStages: (workspaceSlug: string, projectId: string) => Promise<TStageInstance[]>;
+  createProjectStages: (workspaceSlug: string, projectId: string) => Promise<TStageInstance[]>;
+  fetchStage: (workspaceSlug: string, stageId: string) => Promise<TStageInstance>;
+  fetchStageGate: (workspaceSlug: string, stageId: string, phase?: TStageGatePhase) => Promise<TStageGate>;
+  fetchStageTransitions: (workspaceSlug: string, stageId: string) => Promise<TStageTransition[]>;
+  enterStage: (workspaceSlug: string, stageId: string) => Promise<TStageInstance>;
+  submitStage: (workspaceSlug: string, stageId: string) => Promise<TStageInstance>;
+  returnStage: (workspaceSlug: string, stageId: string, reason: string) => Promise<TStageInstance>;
+  passStage: (workspaceSlug: string, stageId: string) => Promise<TStageInstance>;
+  reopenStage: (workspaceSlug: string, stageId: string, reason: string, confirm?: boolean) => Promise<TStageInstance>;
+  fetchStageMaterials: (workspaceSlug: string, stageId: string) => Promise<TStageMaterial[]>;
+  createStageMaterial: (
+    workspaceSlug: string,
+    stageId: string,
+    payload: TStageMaterialCreatePayload
+  ) => Promise<TStageMaterial>;
+  fetchStageMaterial: (workspaceSlug: string, materialId: string) => Promise<TStageMaterial>;
+  updateStageMaterial: (
+    workspaceSlug: string,
+    materialId: string,
+    payload: TStageMaterialUpdatePayload
+  ) => Promise<TStageMaterial>;
+  submitStageMaterial: (workspaceSlug: string, materialId: string) => Promise<TStageMaterial>;
+  fetchMaterialVersions: (workspaceSlug: string, materialId: string) => Promise<TStageMaterialVersion[]>;
+  fetchStageRequirements: (workspaceSlug: string, stage?: string) => Promise<TStageRequirement[]>;
+  updateStageRequirements: (workspaceSlug: string, items: TStageRequirementUpdate[]) => Promise<void>;
 }
 
 export class ResearchStore implements IResearchStore {
@@ -182,6 +234,7 @@ export class ResearchStore implements IResearchStore {
   approvalLoader = false;
   templatesLoader = false;
   auditLoader = false;
+  stageLoader = false;
 
   identity: TResearchIdentity | null = null;
   identityErrorCode: string | null = null;
@@ -207,12 +260,21 @@ export class ResearchStore implements IResearchStore {
   auditEvents: Record<string, TResearchAuditEvent> = {};
   auditEventIdsByWorkspace: Record<string, string[]> = {};
   settings: Record<string, TWorkspaceResearchSetting> = {};
+  stages: Record<string, TStageInstance> = {};
+  stageIdsByProject: Record<string, string[]> = {};
+  stageGate: Record<string, TStageGate> = {};
+  stageTransitions: Record<string, TStageTransition[]> = {};
+  stageMaterials: Record<string, TStageMaterial> = {};
+  materialIdsByStage: Record<string, string[]> = {};
+  materialVersions: Record<string, TStageMaterialVersion[]> = {};
+  stageRequirements: Record<string, TStageRequirement[]> = {};
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
   private projectService: ResearchProjectService;
   private approvalService: ResearchApprovalService;
   private platformService: ResearchPlatformService;
+  private stageService: ResearchStageService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -224,6 +286,7 @@ export class ResearchStore implements IResearchStore {
       approvalLoader: observable,
       templatesLoader: observable,
       auditLoader: observable,
+      stageLoader: observable,
       // observables
       identity: observable,
       identityErrorCode: observable,
@@ -249,12 +312,21 @@ export class ResearchStore implements IResearchStore {
       auditEvents: observable,
       auditEventIdsByWorkspace: observable,
       settings: observable,
+      stages: observable,
+      stageIdsByProject: observable,
+      stageGate: observable,
+      stageTransitions: observable,
+      stageMaterials: observable,
+      materialIdsByStage: observable,
+      materialVersions: observable,
+      stageRequirements: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
       isOrgSectionEnabled: computed,
       isReportSectionEnabled: computed,
       isApprovalSectionEnabled: computed,
+      isStageSectionEnabled: computed,
       // actions
       fetchIdentity: action,
       fetchOrgUnits: action,
@@ -300,6 +372,25 @@ export class ResearchStore implements IResearchStore {
       fetchAuditEvents: action,
       fetchSettings: action,
       updateSettings: action,
+      // stage workflow (P1-A1)
+      fetchProjectStages: action,
+      createProjectStages: action,
+      fetchStage: action,
+      fetchStageGate: action,
+      fetchStageTransitions: action,
+      enterStage: action,
+      submitStage: action,
+      returnStage: action,
+      passStage: action,
+      reopenStage: action,
+      fetchStageMaterials: action,
+      createStageMaterial: action,
+      fetchStageMaterial: action,
+      updateStageMaterial: action,
+      submitStageMaterial: action,
+      fetchMaterialVersions: action,
+      fetchStageRequirements: action,
+      updateStageRequirements: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -307,6 +398,7 @@ export class ResearchStore implements IResearchStore {
     this.projectService = new ResearchProjectService();
     this.approvalService = new ResearchApprovalService();
     this.platformService = new ResearchPlatformService();
+    this.stageService = new ResearchStageService();
   }
 
   // ---------------------------------------------------------------------
@@ -331,6 +423,10 @@ export class ResearchStore implements IResearchStore {
 
   get isApprovalSectionEnabled() {
     return Boolean(this.isEnabled && this.identity?.sections?.approvals);
+  }
+
+  get isStageSectionEnabled() {
+    return Boolean(this.isEnabled && this.identity?.sections?.stages);
   }
 
   getOrgUnits = (workspaceSlug: string) =>
@@ -367,6 +463,16 @@ export class ResearchStore implements IResearchStore {
     (this.auditEventIdsByWorkspace[workspaceSlug] ?? [])
       .map((id) => this.auditEvents[id])
       .filter((event): event is TResearchAuditEvent => Boolean(event));
+
+  getProjectStages = (workspaceSlug: string, projectId: string) =>
+    (this.stageIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
+      .map((id) => this.stages[id])
+      .filter((stage): stage is TStageInstance => Boolean(stage));
+
+  getStageMaterials = (stageId: string) =>
+    (this.materialIdsByStage[stageId] ?? [])
+      .map((id) => this.stageMaterials[id])
+      .filter((material): material is TStageMaterial => Boolean(material));
 
   // ---------------------------------------------------------------------
   // identity
@@ -846,5 +952,185 @@ export class ResearchStore implements IResearchStore {
       this.settings[workspaceSlug] = settings;
     });
     return settings;
+  };
+
+  // ---------------------------------------------------------------------
+  // stage workflow (P1-A1)
+  // ---------------------------------------------------------------------
+
+  private applyStages = (workspaceSlug: string, projectId: string, stages: TStageInstance[]) => {
+    runInAction(() => {
+      this.stageIdsByProject[`${workspaceSlug}:${projectId}`] = stages.map((stage) => stage.id);
+      stages.forEach((stage) => {
+        this.stages[stage.id] = { ...this.stages[stage.id], ...stage };
+        if (stage.materials) {
+          this.materialIdsByStage[stage.id] = stage.materials.map((material) => material.id);
+          stage.materials.forEach((material) => {
+            this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+          });
+        }
+      });
+    });
+  };
+
+  fetchProjectStages = async (workspaceSlug: string, projectId: string) => {
+    this.stageLoader = true;
+    try {
+      const response = await this.stageService.getProjectStages(workspaceSlug, projectId);
+      this.applyStages(workspaceSlug, projectId, response.results);
+      return response.results;
+    } finally {
+      runInAction(() => {
+        this.stageLoader = false;
+      });
+    }
+  };
+
+  createProjectStages = async (workspaceSlug: string, projectId: string) => {
+    const response = await this.stageService.createProjectStages(workspaceSlug, projectId);
+    this.applyStages(workspaceSlug, projectId, response.results);
+    return response.results;
+  };
+
+  fetchStage = async (workspaceSlug: string, stageId: string) => {
+    this.stageLoader = true;
+    try {
+      const stage = await this.stageService.getStage(workspaceSlug, stageId);
+      runInAction(() => {
+        this.stages[stage.id] = { ...this.stages[stage.id], ...stage };
+        if (stage.materials) {
+          this.materialIdsByStage[stage.id] = stage.materials.map((material) => material.id);
+          stage.materials.forEach((material) => {
+            this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+          });
+        }
+        if (stage.transitions) this.stageTransitions[stage.id] = stage.transitions;
+        if (stage.gate) this.stageGate[stage.id] = stage.gate;
+      });
+      return stage;
+    } finally {
+      runInAction(() => {
+        this.stageLoader = false;
+      });
+    }
+  };
+
+  fetchStageGate = async (workspaceSlug: string, stageId: string, phase: TStageGatePhase = "submit") => {
+    const gate = await this.stageService.getGate(workspaceSlug, stageId, phase);
+    runInAction(() => {
+      if (phase === "submit") this.stageGate[stageId] = gate;
+    });
+    return gate;
+  };
+
+  fetchStageTransitions = async (workspaceSlug: string, stageId: string) => {
+    const response = await this.stageService.getTransitions(workspaceSlug, stageId);
+    runInAction(() => {
+      this.stageTransitions[stageId] = response.results;
+    });
+    return response.results;
+  };
+
+  private refreshStage = async (workspaceSlug: string, stage: TStageInstance) => {
+    runInAction(() => {
+      this.stages[stage.id] = { ...this.stages[stage.id], ...stage };
+    });
+    // stage transitions change the gate, the history and the project overview
+    await Promise.all([
+      this.fetchStageGate(workspaceSlug, stage.id).catch(() => undefined),
+      this.fetchStageTransitions(workspaceSlug, stage.id).catch(() => undefined),
+      this.fetchStageMaterials(workspaceSlug, stage.id).catch(() => undefined),
+    ]);
+    return this.stages[stage.id];
+  };
+
+  enterStage = async (workspaceSlug: string, stageId: string) => {
+    const stage = await this.stageService.enterStage(workspaceSlug, stageId);
+    return this.refreshStage(workspaceSlug, stage);
+  };
+
+  submitStage = async (workspaceSlug: string, stageId: string) => {
+    const stage = await this.stageService.submitStage(workspaceSlug, stageId);
+    return this.refreshStage(workspaceSlug, stage);
+  };
+
+  returnStage = async (workspaceSlug: string, stageId: string, reason: string) => {
+    const stage = await this.stageService.returnStage(workspaceSlug, stageId, reason);
+    return this.refreshStage(workspaceSlug, stage);
+  };
+
+  passStage = async (workspaceSlug: string, stageId: string) => {
+    const stage = await this.stageService.passStage(workspaceSlug, stageId);
+    return this.refreshStage(workspaceSlug, stage);
+  };
+
+  reopenStage = async (workspaceSlug: string, stageId: string, reason: string, confirm = false) => {
+    const stage = await this.stageService.reopenStage(workspaceSlug, stageId, reason, confirm);
+    return this.refreshStage(workspaceSlug, stage);
+  };
+
+  fetchStageMaterials = async (workspaceSlug: string, stageId: string) => {
+    const response = await this.stageService.getMaterials(workspaceSlug, stageId);
+    runInAction(() => {
+      this.materialIdsByStage[stageId] = response.results.map((material) => material.id);
+      response.results.forEach((material) => {
+        this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+      });
+    });
+    return response.results;
+  };
+
+  createStageMaterial = async (workspaceSlug: string, stageId: string, payload: TStageMaterialCreatePayload) => {
+    const material = await this.stageService.createMaterial(workspaceSlug, stageId, payload);
+    runInAction(() => {
+      this.stageMaterials[material.id] = material;
+      this.materialIdsByStage[stageId] = [...(this.materialIdsByStage[stageId] ?? []), material.id];
+    });
+    return material;
+  };
+
+  fetchStageMaterial = async (workspaceSlug: string, materialId: string) => {
+    const material = await this.stageService.getMaterial(workspaceSlug, materialId);
+    runInAction(() => {
+      this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+    });
+    return material;
+  };
+
+  updateStageMaterial = async (workspaceSlug: string, materialId: string, payload: TStageMaterialUpdatePayload) => {
+    const material = await this.stageService.updateMaterial(workspaceSlug, materialId, payload);
+    runInAction(() => {
+      this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+    });
+    return material;
+  };
+
+  submitStageMaterial = async (workspaceSlug: string, materialId: string) => {
+    const material = await this.stageService.submitMaterial(workspaceSlug, materialId);
+    runInAction(() => {
+      this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+    });
+    return material;
+  };
+
+  fetchMaterialVersions = async (workspaceSlug: string, materialId: string) => {
+    const response = await this.stageService.getMaterialVersions(workspaceSlug, materialId);
+    runInAction(() => {
+      this.materialVersions[materialId] = response.results;
+    });
+    return response.results;
+  };
+
+  fetchStageRequirements = async (workspaceSlug: string, stage?: string) => {
+    const response = await this.stageService.getStageRequirements(workspaceSlug, stage);
+    runInAction(() => {
+      this.stageRequirements[stage ?? "all"] = response.results;
+    });
+    return response.results;
+  };
+
+  updateStageRequirements = async (workspaceSlug: string, items: TStageRequirementUpdate[]) => {
+    await this.stageService.updateStageRequirements(workspaceSlug, items);
+    await this.fetchStageRequirements(workspaceSlug);
   };
 }

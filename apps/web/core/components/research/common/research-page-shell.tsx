@@ -18,7 +18,7 @@ import { useResearch } from "@/hooks/store/use-research";
 type Props = {
   titleKey: string;
   descriptionKey?: string;
-  section?: "org" | "reports" | "approvals";
+  section?: "org" | "reports" | "approvals" | "stages" | "experiments" | "code" | "integrations";
   adminOnly?: boolean;
   /** Platform settings must stay reachable while the workspace switch is off. */
   allowDisabled?: boolean;
@@ -55,12 +55,7 @@ export const ResearchPageShell = observer(function ResearchPageShell({
   // module off / not a member: fall back to the workspace home (P0-UI-07)
   if (identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
 
-  const sectionEnabled =
-    section === "org"
-      ? identity?.sections.org
-      : section === "approvals"
-        ? identity?.sections.approvals
-        : identity?.sections.reports;
+  const sectionEnabled = identity?.sections?.[section] ?? identity?.sections?.reports;
 
   if (identityLoader || !identity) {
     return (

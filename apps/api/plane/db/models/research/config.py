@@ -54,6 +54,19 @@ class WorkspaceResearchSetting(BaseModel):
     markdown_max_mb = models.PositiveIntegerField(default=5)
     timezone = models.CharField(max_length=255, null=True, blank=True)
     audit_retention_days = models.PositiveIntegerField(default=0)
+    # ------------------------------------------------------------------
+    # P1 sub switches and gate defaults (§4.9). All additive and optional:
+    # an existing row keeps working with the defaults below.
+    # ------------------------------------------------------------------
+    stage_enabled = models.BooleanField(default=True)
+    experiment_enabled = models.BooleanField(default=True)
+    code_enabled = models.BooleanField(default=True)
+    integration_enabled = models.BooleanField(default=True)
+    literature_min_included = models.PositiveIntegerField(default=20)
+    literature_max_entries = models.PositiveIntegerField(default=100)
+    stage_min_reviewers = models.PositiveIntegerField(default=3)
+    stage_pass_ratio = models.FloatField(default=0.5)
+    code_snapshot_max_mb = models.PositiveIntegerField(default=500)
 
     class Meta:
         verbose_name = "Workspace Research Setting"

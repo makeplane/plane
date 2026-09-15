@@ -53,6 +53,16 @@ class ResearchAuditAction:
     APPROVAL_REJECT = "approval.reject"
     APPROVAL_WITHDRAW = "approval.withdraw"
     APPROVAL_CANCEL = "approval.cancel"
+    STAGE_ENTER = "stage.enter"
+    STAGE_SUBMIT = "stage.submit"
+    STAGE_RETURN = "stage.return"
+    STAGE_PASS = "stage.pass"
+    STAGE_REOPEN = "stage.reopen"
+    STAGE_MATERIAL_CREATE = "stage.material.create"
+    STAGE_MATERIAL_UPDATE = "stage.material.update"
+    STAGE_MATERIAL_SUBMIT = "stage.material.submit"
+    STAGE_MATERIAL_OVERRIDE = "stage.material.override"
+    STAGE_REQUIREMENT_UPDATE = "stage.requirement.update"
 
 
 class ResearchResourceType:
@@ -68,6 +78,9 @@ class ResearchResourceType:
     PROJECT_PROFILE = "research_project"
     APPROVAL_FLOW = "approval_flow"
     APPROVAL_REQUEST = "approval_request"
+    STAGE = "stage_instance"
+    STAGE_MATERIAL = "stage_material"
+    STAGE_REQUIREMENT = "stage_requirement"
 
 
 def _client_metadata(request):

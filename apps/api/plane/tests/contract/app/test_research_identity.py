@@ -66,7 +66,16 @@ class TestResearchIdentityMe:
         response = client.get(f"/api/research/workspaces/{workspace.slug}/identity/me/")
         assert response.status_code == 200
         payload = response.json()
-        assert payload["sections"] == {"org": True, "reports": True, "approvals": True}
+        # P0 sections stay untouched; P1 adds four sub switches to the same map
+        assert payload["sections"] == {
+            "org": True,
+            "reports": True,
+            "approvals": True,
+            "stages": True,
+            "experiments": True,
+            "code": True,
+            "integrations": True,
+        }
         assert payload["user"]["is_workspace_admin"] is False
         assert payload["user"]["is_research_owner"] is False
         assert payload["identity"]["configured"] is False

@@ -9,7 +9,12 @@ configuration stage) the workspace switch falls back to the deployment level
 switch, so a partially rolled out installation still behaves predictably.
 """
 
-from plane.research.utils.config import research_file_limits, research_module_enabled
+from plane.research.utils.config import (
+    research_file_limits,
+    research_gate_defaults,
+    research_module_enabled,
+    research_submodule_defaults,
+)
 
 
 def default_workspace_research_settings():
@@ -25,6 +30,8 @@ def default_workspace_research_settings():
         "monthly_default_visibility": None,
         "timezone": None,
         "audit_retention_days": 0,
+        **research_submodule_defaults(),
+        **research_gate_defaults(),
         **limits,
     }
 
@@ -56,6 +63,15 @@ def get_workspace_research_settings(workspace):
         "image_max_mb": setting.image_max_mb,
         "pdf_max_mb": setting.pdf_max_mb,
         "markdown_max_mb": setting.markdown_max_mb,
+        "stage_enabled": bool(setting.stage_enabled),
+        "experiment_enabled": bool(setting.experiment_enabled),
+        "code_enabled": bool(setting.code_enabled),
+        "integration_enabled": bool(setting.integration_enabled),
+        "literature_min_included": setting.literature_min_included,
+        "literature_max_entries": setting.literature_max_entries,
+        "stage_min_reviewers": setting.stage_min_reviewers,
+        "stage_pass_ratio": setting.stage_pass_ratio,
+        "code_snapshot_max_mb": setting.code_snapshot_max_mb,
     }
 
 
@@ -73,6 +89,10 @@ def workspace_research_sections(workspace):
         "org": bool(enabled and settings["org_enabled"]),
         "reports": bool(enabled and settings["report_enabled"]),
         "approvals": bool(enabled and settings["approval_enabled"]),
+        "stages": bool(enabled and settings["stage_enabled"]),
+        "experiments": bool(enabled and settings["experiment_enabled"]),
+        "code": bool(enabled and settings["code_enabled"]),
+        "integrations": bool(enabled and settings["integration_enabled"]),
     }
 
 

@@ -13,6 +13,21 @@ export type TResearchProjectType = "PHD" | "MASTER" | "POSTDOC" | "RESEARCH_PROJ
 export type TResearchProjectStatus = "ACTIVE" | "ARCHIVED" | "COMPLETED";
 export type TApprovalType = "TASK" | "PURCHASE" | "CUSTOM";
 export type TApprovalRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "WITHDRAWN" | "CANCELLED";
+export type TStageType = "PRE_OPENING" | "OPENING" | "MIDTERM" | "FINAL";
+export type TStageStatus = "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "NEEDS_REVISION" | "PASSED";
+export type TStageGateResult = "PASS" | "BLOCKED" | "WAIVED";
+export type TStageTransitionAction = "ENTER" | "SUBMIT" | "RETURN" | "PASS" | "REOPEN" | "OVERRIDE";
+export type TStageMaterialStatus = "DRAFT" | "SUBMITTED" | "ACCEPTED" | "REJECTED";
+export type TStageMaterialChangeSource = "MANUAL" | "ADMIN_OVERRIDE" | "STAGE_REOPEN";
+export type TStageRequirementType =
+  | "MANUAL"
+  | "LITERATURE_COUNT"
+  | "EXPERIMENT_LINKED"
+  | "CODE_REPO"
+  | "OUTCOME_COUNT"
+  | "MATERIAL_SET"
+  | "REVIEW_RULE";
+export type TStageGatePhase = "submit" | "pass";
 
 export type TResearchUserLite = {
   id: string;
@@ -207,6 +222,10 @@ export type TResearchIdentity = {
     org: boolean;
     reports: boolean;
     approvals: boolean;
+    stages?: boolean;
+    experiments?: boolean;
+    code?: boolean;
+    integrations?: boolean;
   };
   user: {
     id: string;
@@ -302,4 +321,127 @@ export type TResearchAuditEvent = {
 export type TResearchError = {
   error_code: string;
   message: string;
+};
+
+export type TStageGateItem = {
+  code: string;
+  label: string;
+  label_key: string;
+  passed: boolean;
+  available: boolean;
+  blocking: boolean;
+  required: number;
+  actual: number | null;
+  applies_to: TStageGatePhase[];
+  threshold_source?: string;
+  hint?: string;
+  missing?: string[];
+  unannotated?: string[];
+  unexplained?: { sequence_no: number; title: string }[];
+  pending_required_roles?: string[];
+};
+
+export type TStageGate = {
+  stage: TStageType;
+  stage_id: string;
+  project: string;
+  phase: TStageGatePhase;
+  result: "PASS" | "BLOCKED";
+  rule_version: string;
+  evaluated_at: string;
+  items: TStageGateItem[];
+  blockers: TStageGateItem[];
+};
+
+export type TStageMaterial = {
+  id: string;
+  stage_instance: string;
+  material_type: string;
+  page: string | null;
+  page_detail?: {
+    id: string;
+    name: string;
+    description_json: Record<string, unknown>;
+    description_html: string;
+  } | null;
+  status: TStageMaterialStatus;
+  visibility: TReportVisibility;
+  is_required: boolean;
+  submitted_at: string | null;
+  last_version_no: number;
+  owner: string;
+  owner_detail?: TResearchUserLite;
+  can_edit?: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TStageMaterialVersion = {
+  id: string;
+  material: string;
+  version_no: number;
+  snapshot: Record<string, unknown>;
+  change_source: TStageMaterialChangeSource;
+  reason: string;
+  diff_summary: Record<string, unknown>;
+  created_by: string | null;
+  created_by_detail?: TResearchUserLite | null;
+  created_at: string;
+};
+
+export type TStageTransition = {
+  id: string;
+  stage_instance: string;
+  actor: string | null;
+  actor_detail?: TResearchUserLite | null;
+  action: TStageTransitionAction;
+  from_status: TStageStatus;
+  to_status: TStageStatus;
+  reason: string;
+  gate_snapshot: TStageGate | Record<string, never>;
+  review_snapshot: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+
+export type TStageInstance = {
+  id: string;
+  workspace: string;
+  project: string;
+  stage: TStageType;
+  status: TStageStatus;
+  sort_order: number;
+  entered_at: string | null;
+  submitted_at: string | null;
+  passed_at: string | null;
+  gate_result: TStageGateResult | null;
+  attempt_count: number;
+  org_unit: string | null;
+  created_at: string;
+  updated_at: string;
+  is_editable?: boolean;
+  materials?: TStageMaterial[];
+  gate?: TStageGate;
+  gate_pass?: TStageGate;
+  transitions?: TStageTransition[];
+  required_materials?: string[];
+  review?: {
+    reviewers: unknown[];
+    reviews: unknown[];
+    summary: Record<string, unknown>;
+  };
+};
+
+export type TStageRequirement = {
+  stage: TStageType;
+  code: string;
+  requirement_type: TStageRequirementType;
+  threshold: number | null;
+  is_blocking: boolean;
+  is_active: boolean;
+  direction: "min" | "max";
+  source: string;
+  label_key: string;
+  applies_to: TStageGatePhase[];
+  material_types: string[];
 };

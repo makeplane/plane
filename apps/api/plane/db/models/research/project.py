@@ -60,6 +60,9 @@ class ResearchProjectProfile(BaseModel):
     expected_end_at = models.DateField(null=True, blank=True)
     completed_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    # Redundant current stage for list filtering and summaries; maintained by
+    # the stage service only (D-14), never written directly by clients.
+    current_stage = models.CharField(max_length=16, null=True, blank=True)
 
     class Meta:
         verbose_name = "Research Project Profile"

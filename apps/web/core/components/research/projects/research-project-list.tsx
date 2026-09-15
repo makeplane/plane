@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 // plane imports
 import { RESEARCH_PROJECT_STATUS_LABELS, RESEARCH_PROJECT_TYPE_LABELS, RESEARCH_PROJECT_TYPES } from "@plane/constants";
 import type { TResearchProjectType } from "@plane/constants";
@@ -164,6 +165,12 @@ export const ResearchProjectList = observer(function ResearchProjectList({ works
               </td>
               <td className="py-2 text-tertiary">{project.research?.started_at ?? "-"}</td>
               <td className="py-2 text-right">
+                <Link
+                  className="mr-2 text-12 text-accent-primary hover:underline"
+                  href={`/${workspaceSlug}/research/projects/${project.id}/stages`}
+                >
+                  {t("research.nav.stages")}
+                </Link>
                 {project.research?.workflow_status === "ACTIVE" ? (
                   <Button variant="ghost" size="sm" onClick={() => void handleArchive(project.id)}>
                     {t("research.projects.archive")}

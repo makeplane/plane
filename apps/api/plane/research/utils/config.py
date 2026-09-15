@@ -38,6 +38,52 @@ def research_file_limits(defaults=None):
     }
 
 
+def _env_bool(name, default):
+    raw = getattr(settings, name, None)
+    if raw is None:
+        return default
+    if isinstance(raw, bool):
+        return raw
+    return str(raw).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _env_float(name, default):
+    try:
+        return float(getattr(settings, name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def research_submodule_defaults():
+    """P1 sub switch defaults; every workspace row can override them (§4.9)."""
+    return {
+        "stage_enabled": _env_bool("RESEARCH_STAGE_ENABLED", True),
+        "experiment_enabled": _env_bool("RESEARCH_EXPERIMENT_ENABLED", True),
+        "code_enabled": _env_bool("RESEARCH_CODE_ENABLED", True),
+        "integration_enabled": _env_bool("RESEARCH_INTEGRATION_ENABLED", True),
+    }
+
+
+def research_gate_defaults():
+    """P1 threshold defaults, overridable per workspace (§14)."""
+    return {
+        "literature_min_included": _env_int("RESEARCH_LITERATURE_MIN_INCLUDED", 20),
+        "literature_max_entries": _env_int("RESEARCH_LITERATURE_MAX_ENTRIES", 100),
+        "stage_min_reviewers": _env_int("RESEARCH_STAGE_MIN_REVIEWERS", 3),
+        "stage_pass_ratio": _env_float("RESEARCH_STAGE_PASS_RATIO", 0.5),
+        "code_snapshot_max_mb": _env_int("RESEARCH_CODE_SNAPSHOT_MAX_MB", 500),
+    }
+
+
+def research_integration_defaults():
+    """Integration base layer defaults (P1-INT-06, P1-INT-07)."""
+    return {
+        "timeout_seconds": _env_int("RESEARCH_INTEGRATION_TIMEOUT_SECONDS", 3),
+        "cache_ttl_seconds": _env_int("RESEARCH_INTEGRATION_CACHE_TTL_SECONDS", 300),
+        "degraded_mode": str(getattr(settings, "RESEARCH_INTEGRATION_DEGRADED_MODE", "link_only")).lower(),
+    }
+
+
 def oidc_settings():
     """OIDC configuration snapshot. Values are backend-only."""
     return {

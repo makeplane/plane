@@ -14,6 +14,13 @@ import type {
   TReportVisibility,
   TResearchProjectStatus,
   TResearchProjectType,
+  TStageGateResult,
+  TStageMaterialChangeSource,
+  TStageMaterialStatus,
+  TStageRequirementType,
+  TStageStatus,
+  TStageTransitionAction,
+  TStageType,
 } from "@plane/types";
 
 export type {
@@ -26,6 +33,20 @@ export type {
   TReportVisibility,
   TResearchProjectStatus,
   TResearchProjectType,
+  TStageGate,
+  TStageGateItem,
+  TStageGatePhase,
+  TStageGateResult,
+  TStageInstance,
+  TStageMaterial,
+  TStageMaterialStatus,
+  TStageMaterialVersion,
+  TStageRequirement,
+  TStageRequirementType,
+  TStageStatus,
+  TStageTransition,
+  TStageTransitionAction,
+  TStageType,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -164,6 +185,137 @@ export const RESEARCH_NAVIGATION_ITEMS = [
   { key: "approvals", labelKey: "research.nav.approvals", path: "approvals", section: "approvals" },
 ] as const;
 
+// ---------------------------------------------------------------------------
+// P1 stage workflow (§3.1, §4.2)
+// ---------------------------------------------------------------------------
+
+export const STAGE_TYPES = ["PRE_OPENING", "OPENING", "MIDTERM", "FINAL"] as const satisfies readonly TStageType[];
+
+export const STAGE_TYPE_LABELS: Record<TStageType, string> = {
+  PRE_OPENING: "research.stages.type.pre_opening",
+  OPENING: "research.stages.type.opening",
+  MIDTERM: "research.stages.type.midterm",
+  FINAL: "research.stages.type.final",
+};
+
+export const STAGE_STATUSES = [
+  "NOT_STARTED",
+  "IN_PROGRESS",
+  "SUBMITTED",
+  "NEEDS_REVISION",
+  "PASSED",
+] as const satisfies readonly TStageStatus[];
+
+export const STAGE_STATUS_LABELS: Record<TStageStatus, string> = {
+  NOT_STARTED: "research.stages.status.not_started",
+  IN_PROGRESS: "research.stages.status.in_progress",
+  SUBMITTED: "research.stages.status.submitted",
+  NEEDS_REVISION: "research.stages.status.needs_revision",
+  PASSED: "research.stages.status.passed",
+};
+
+export const STAGE_GATE_RESULTS = ["PASS", "BLOCKED", "WAIVED"] as const satisfies readonly TStageGateResult[];
+
+export const STAGE_GATE_RESULT_LABELS: Record<TStageGateResult, string> = {
+  PASS: "research.stages.gate_result.pass",
+  BLOCKED: "research.stages.gate_result.blocked",
+  WAIVED: "research.stages.gate_result.waived",
+};
+
+export const STAGE_TRANSITION_ACTIONS = [
+  "ENTER",
+  "SUBMIT",
+  "RETURN",
+  "PASS",
+  "REOPEN",
+  "OVERRIDE",
+] as const satisfies readonly TStageTransitionAction[];
+
+export const STAGE_TRANSITION_ACTION_LABELS: Record<TStageTransitionAction, string> = {
+  ENTER: "research.stages.action.enter",
+  SUBMIT: "research.stages.action.submit",
+  RETURN: "research.stages.action.return",
+  PASS: "research.stages.action.pass",
+  REOPEN: "research.stages.action.reopen",
+  OVERRIDE: "research.stages.action.override",
+};
+
+export const STAGE_MATERIAL_STATUSES = [
+  "DRAFT",
+  "SUBMITTED",
+  "ACCEPTED",
+  "REJECTED",
+] as const satisfies readonly TStageMaterialStatus[];
+
+export const STAGE_MATERIAL_STATUS_LABELS: Record<TStageMaterialStatus, string> = {
+  DRAFT: "research.stages.material_status.draft",
+  SUBMITTED: "research.stages.material_status.submitted",
+  ACCEPTED: "research.stages.material_status.accepted",
+  REJECTED: "research.stages.material_status.rejected",
+};
+
+export const STAGE_MATERIAL_CHANGE_SOURCE_LABELS: Record<TStageMaterialChangeSource, string> = {
+  MANUAL: "research.stages.change_source.manual",
+  ADMIN_OVERRIDE: "research.stages.change_source.admin_override",
+  STAGE_REOPEN: "research.stages.change_source.stage_reopen",
+};
+
+export const STAGE_REQUIREMENT_TYPES = [
+  "MANUAL",
+  "LITERATURE_COUNT",
+  "EXPERIMENT_LINKED",
+  "CODE_REPO",
+  "OUTCOME_COUNT",
+  "MATERIAL_SET",
+  "REVIEW_RULE",
+] as const satisfies readonly TStageRequirementType[];
+
+/**
+ * Material set per stage (§4.2). The order is the display order of the
+ * checklist and the canonical order of the material set.
+ */
+export const STAGE_MATERIAL_TYPES: Record<TStageType, readonly string[]> = {
+  PRE_OPENING: ["TOPIC_DESCRIPTION", "GAP_ANALYSIS"],
+  OPENING: [
+    "RESEARCH_QUESTION",
+    "LITERATURE_REVIEW",
+    "HYPOTHESIS",
+    "TECHNICAL_ROUTE",
+    "EXPERIMENT_DESIGN",
+    "DATA_AND_METRICS",
+    "TIME_PLAN",
+    "RISK_AND_BACKUP",
+    "CODE_PLAN",
+    "EXPERIMENT_RECORD_PLAN",
+  ],
+  MIDTERM: [
+    "GOAL_COMPLETION",
+    "COMPLETED_EXPERIMENTS",
+    "FAILED_EXPERIMENTS",
+    "DATA_SUMMARY",
+    "CODE_PROGRESS",
+    "PAPER_PROGRESS",
+    "RISK_ADJUSTMENT",
+  ],
+  FINAL: [
+    "FINAL_REPORT",
+    "THESIS_OR_OUTPUT",
+    "FULL_RESEARCH_CHAIN",
+    "EXPERIMENT_SUMMARY",
+    "CODE_AND_SNAPSHOT",
+    "DATA_AND_ATTACHMENT_LIST",
+    "ADVISOR_OPINION",
+  ],
+};
+
+/** Material labels resolve through i18n: `research.stages.material.<code>`. */
+export const stageMaterialLabelKey = (materialType: string) => `research.stages.material.${materialType.toLowerCase()}`;
+
+/** Project scoped research navigation (P1-UI-01). Grows stage by stage. */
+export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
+  { key: "stages", labelKey: "research.nav.stages", path: "stages", section: "stages" },
+] as const;
+
 export const RESEARCH_SETTINGS_NAVIGATION_ITEMS = [
   { key: "org", labelKey: "research.nav.org_settings", path: "settings/org", section: "org" },
   { key: "templates", labelKey: "research.nav.templates", path: "settings/templates", section: "reports" },
@@ -218,4 +370,22 @@ export const researchEndpoints = {
     `${RESEARCH_API_ROOT}/${slug}/approval-requests/${id}/withdraw/`,
   approvalRequestHistory: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/approval-requests/${id}/history/`,
   auditEvents: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/audit-events/`,
+  // ---- P1 stage workflow (§5.2) ----
+  projectStages: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/stages/`,
+  stage: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/`,
+  stageEnter: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/enter/`,
+  stageSubmit: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/submit/`,
+  stageReturn: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/return/`,
+  stagePass: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/pass/`,
+  stageReopen: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/reopen/`,
+  stageGate: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/gate/`,
+  stageTransitions: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/transitions/`,
+  stageMaterials: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/materials/`,
+  material: (slug: string, materialId: string) => `${RESEARCH_API_ROOT}/${slug}/materials/${materialId}/`,
+  materialSubmit: (slug: string, materialId: string) => `${RESEARCH_API_ROOT}/${slug}/materials/${materialId}/submit/`,
+  materialVersions: (slug: string, materialId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/materials/${materialId}/versions/`,
+  stageRequirements: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/stage-requirements/`,
+  stageRequirement: (slug: string, requirementId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/stage-requirements/${requirementId}/`,
 } as const;

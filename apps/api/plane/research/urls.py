@@ -49,11 +49,104 @@ from plane.research.views import (
     ResearchReportTemplateDetailEndpoint,
     ResearchReportTemplateListCreateEndpoint,
     ResearchSettingsEndpoint,
+    ResearchProjectStageListCreateEndpoint,
+    ResearchStageDetailEndpoint,
+    ResearchStageEnterEndpoint,
+    ResearchStageGateEndpoint,
+    ResearchStageMaterialDetailEndpoint,
+    ResearchStageMaterialListCreateEndpoint,
+    ResearchStageMaterialSubmitEndpoint,
+    ResearchStageMaterialVersionsEndpoint,
+    ResearchStagePassEndpoint,
+    ResearchStageReopenEndpoint,
+    ResearchStageRequirementDetailEndpoint,
+    ResearchStageRequirementEndpoint,
+    ResearchStageReturnEndpoint,
+    ResearchStageSubmitEndpoint,
+    ResearchStageTransitionsEndpoint,
 )
 
 urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
+    # ------------------------------------------------------------------
+    # P1 stage workflow (§5.2) - additive, nothing below is renumbered
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/stages/",
+        ResearchProjectStageListCreateEndpoint.as_view(),
+        name="research-project-stages",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/",
+        ResearchStageDetailEndpoint.as_view(),
+        name="research-stage",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/enter/",
+        ResearchStageEnterEndpoint.as_view(),
+        name="research-stage-enter",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/submit/",
+        ResearchStageSubmitEndpoint.as_view(),
+        name="research-stage-submit",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/return/",
+        ResearchStageReturnEndpoint.as_view(),
+        name="research-stage-return",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/pass/",
+        ResearchStagePassEndpoint.as_view(),
+        name="research-stage-pass",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/reopen/",
+        ResearchStageReopenEndpoint.as_view(),
+        name="research-stage-reopen",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/gate/",
+        ResearchStageGateEndpoint.as_view(),
+        name="research-stage-gate",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/transitions/",
+        ResearchStageTransitionsEndpoint.as_view(),
+        name="research-stage-transitions",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/materials/",
+        ResearchStageMaterialListCreateEndpoint.as_view(),
+        name="research-stage-materials",
+    ),
+    path(
+        "research/workspaces/<str:slug>/materials/<uuid:material_id>/",
+        ResearchStageMaterialDetailEndpoint.as_view(),
+        name="research-stage-material",
+    ),
+    path(
+        "research/workspaces/<str:slug>/materials/<uuid:material_id>/submit/",
+        ResearchStageMaterialSubmitEndpoint.as_view(),
+        name="research-stage-material-submit",
+    ),
+    path(
+        "research/workspaces/<str:slug>/materials/<uuid:material_id>/versions/",
+        ResearchStageMaterialVersionsEndpoint.as_view(),
+        name="research-stage-material-versions",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stage-requirements/",
+        ResearchStageRequirementEndpoint.as_view(),
+        name="research-stage-requirements",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stage-requirements/<uuid:pk>/",
+        ResearchStageRequirementDetailEndpoint.as_view(),
+        name="research-stage-requirement",
+    ),
     # office approvals
     path(
         "research/workspaces/<str:slug>/approval-flows/",

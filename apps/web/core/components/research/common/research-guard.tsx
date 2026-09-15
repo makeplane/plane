@@ -14,7 +14,7 @@ import { useResearch } from "@/hooks/store/use-research";
 
 type Props = {
   /** Which sub switch the section needs (P0-CFG-03). */
-  section?: "org" | "reports" | "approvals";
+  section?: "org" | "reports" | "approvals" | "stages" | "experiments" | "code" | "integrations";
   /** Restricts the section to workspace admins. */
   adminOnly?: boolean;
 };
@@ -47,14 +47,7 @@ export const ResearchGuard = observer(function ResearchGuard({ section, adminOnl
     );
   }
 
-  const sectionEnabled =
-    section === "org"
-      ? identity.sections.org
-      : section === "approvals"
-        ? identity.sections.approvals
-        : section === "reports"
-          ? identity.sections.reports
-          : true;
+  const sectionEnabled = section ? (identity.sections?.[section] ?? false) : true;
 
   if (!isEnabled || !sectionEnabled || (adminOnly && !isWorkspaceAdmin)) {
     return <Navigate to={`/${workspaceSlug}/`} replace />;

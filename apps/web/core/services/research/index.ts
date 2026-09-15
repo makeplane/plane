@@ -9,3 +9,4 @@ export * from "./platform.service";
 export * from "./project.service";
 export * from "./report.service";
 export * from "./approval.service";
+export * from "./stage.service";

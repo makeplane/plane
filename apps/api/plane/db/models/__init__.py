@@ -92,6 +92,11 @@ from .sticky import Sticky
 from .description import Description, DescriptionVersion
 
 from .research import (
+    ALL_MATERIAL_TYPES,
+    MATERIAL_SET_COMPLETE_STATES,
+    MATERIAL_TYPES_BY_STAGE,
+    STAGE_SEQUENCE,
+    STAGE_SORT_ORDER,
     IdentityMapping,
     ApprovalAction,
     ApprovalFlow,
@@ -108,5 +113,12 @@ from .research import (
     ReportVisibility,
     ResearchAuditEvent,
     ResearchProjectProfile,
+    ResearchStageInstance,
+    ResearchStageRequirement,
+    StageMaterial,
+    StageMaterialType,
+    StageMaterialVersion,
+    StageTransition,
+    StageType,
     WorkspaceResearchSetting,
 )

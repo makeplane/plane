@@ -77,6 +77,22 @@ class ResearchErrorCode:
     APPROVAL_ACTION_NOT_ALLOWED = "approval_action_not_allowed"
     APPROVAL_COMMENT_REQUIRED = "approval_comment_required"
 
+    STAGE_NOT_FOUND = "stage_not_found"
+    STAGE_INSTANCES_EXIST = "stage_instances_exist"
+    STAGE_STATE_CONFLICT = "stage_state_conflict"
+    STAGE_SEQUENCE_BLOCKED = "stage_sequence_blocked"
+    STAGE_ALREADY_ACTIVE = "stage_already_active"
+    STAGE_GATE_BLOCKED = "stage_gate_blocked"
+    STAGE_REVIEW_BLOCKED = "stage_review_blocked"
+    STAGE_REASON_REQUIRED = "stage_reason_required"
+    STAGE_CONFIRM_REQUIRED = "stage_confirm_required"
+    STAGE_REQUIREMENT_NOT_FOUND = "stage_requirement_not_found"
+    STAGE_REQUIREMENT_INVALID = "stage_requirement_invalid"
+    MATERIAL_NOT_FOUND = "stage_material_not_found"
+    MATERIAL_TYPE_INVALID = "stage_material_type_invalid"
+    MATERIAL_READ_ONLY = "stage_material_read_only"
+    MATERIAL_VERSION_NOT_FOUND = "stage_material_version_not_found"
+
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):
     return Response({"error_code": error_code, "message": message}, status=http_status)

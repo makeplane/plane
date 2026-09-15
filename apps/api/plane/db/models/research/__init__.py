@@ -10,6 +10,20 @@ from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .project import ResearchProjectProfile
 from .report import PeriodicReport, ReportAccessGrant, ReportReviewLog
+from .stage import (
+    ALL_MATERIAL_TYPES,
+    MATERIAL_SET_COMPLETE_STATES,
+    MATERIAL_TYPES_BY_STAGE,
+    STAGE_SEQUENCE,
+    STAGE_SORT_ORDER,
+    ResearchStageInstance,
+    ResearchStageRequirement,
+    StageMaterial,
+    StageMaterialType,
+    StageMaterialVersion,
+    StageTransition,
+    StageType,
+)
 from .template import ReportTemplate
 
 __all__ = [
@@ -30,4 +44,16 @@ __all__ = [
     "MentorBinding",
     "OrgUnit",
     "OrgUnitMember",
+    "ALL_MATERIAL_TYPES",
+    "MATERIAL_SET_COMPLETE_STATES",
+    "MATERIAL_TYPES_BY_STAGE",
+    "STAGE_SEQUENCE",
+    "STAGE_SORT_ORDER",
+    "ResearchStageInstance",
+    "ResearchStageRequirement",
+    "StageMaterial",
+    "StageMaterialType",
+    "StageMaterialVersion",
+    "StageTransition",
+    "StageType",
 ]

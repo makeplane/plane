@@ -114,7 +114,15 @@ class TestResearchSettingsEndpoint:
         identity = env["member_client"].get(env["identity_url"]).json()
         assert identity["module_enabled"] is True
         assert identity["workspace_enabled"] is False
-        assert identity["sections"] == {"org": False, "reports": False, "approvals": False}
+        assert identity["sections"] == {
+            "org": False,
+            "reports": False,
+            "approvals": False,
+            "stages": False,
+            "experiments": False,
+            "code": False,
+            "integrations": False,
+        }
 
         blocked = env["member_client"].get(org_units_url(env["workspace"]))
         assert blocked.status_code == 403
@@ -123,7 +131,15 @@ class TestResearchSettingsEndpoint:
     def test_sub_switch_disables_only_its_section(self, env):
         enable_research(env["workspace"], report_enabled=False)
         identity = env["member_client"].get(env["identity_url"]).json()
-        assert identity["sections"] == {"org": True, "reports": False, "approvals": True}
+        assert identity["sections"] == {
+            "org": True,
+            "reports": False,
+            "approvals": True,
+            "stages": True,
+            "experiments": True,
+            "code": True,
+            "integrations": True,
+        }
         assert env["member_client"].get(org_units_url(env["workspace"])).status_code == 200
 
     def test_deployment_switch_wins(self, env, settings):
