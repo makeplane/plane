@@ -74,7 +74,7 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/org-units/``"""
 
     def get(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
 
@@ -88,7 +88,7 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
         return Response(_serialize_units(list(units)), status=status.HTTP_200_OK)
 
     def post(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
 
@@ -186,7 +186,7 @@ class ResearchOrgUnitDetailEndpoint(ResearchAPIView):
         return OrgUnit.objects.filter(workspace=workspace, pk=pk).first()
 
     def get(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         unit = self._get_unit(workspace, pk)
@@ -198,7 +198,7 @@ class ResearchOrgUnitDetailEndpoint(ResearchAPIView):
         return Response(payload, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         unit = self._get_unit(workspace, pk)
@@ -311,7 +311,7 @@ class ResearchOrgUnitDetailEndpoint(ResearchAPIView):
         return Response(OrgUnitSerializer(unit).data, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         unit = self._get_unit(workspace, pk)
@@ -352,7 +352,7 @@ class ResearchOrgUnitMemberListCreateEndpoint(ResearchAPIView):
         return OrgUnit.objects.filter(workspace=workspace, pk=pk).first()
 
     def get(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         unit = self._get_unit(workspace, pk)
@@ -372,7 +372,7 @@ class ResearchOrgUnitMemberListCreateEndpoint(ResearchAPIView):
         )
 
     def post(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         unit = self._get_unit(workspace, pk)
@@ -457,7 +457,7 @@ class ResearchOrgUnitMemberDetailEndpoint(ResearchAPIView):
         )
 
     def patch(self, request, slug, pk, member_id):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         member = self._get_member(workspace, pk, member_id)
@@ -540,7 +540,7 @@ class ResearchOrgUnitMemberDetailEndpoint(ResearchAPIView):
         return Response(OrgUnitMemberSerializer(member).data, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, pk, member_id):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         member = self._get_member(workspace, pk, member_id)
@@ -573,7 +573,7 @@ class ResearchOrgUnitPiTransferEndpoint(ResearchAPIView):
     """
 
     def post(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         unit = OrgUnit.objects.filter(workspace=workspace, pk=pk).first()
@@ -649,7 +649,7 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/mentors/``"""
 
     def get(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         bindings = MentorBinding.objects.filter(workspace=workspace).select_related("mentee", "mentor")
@@ -671,7 +671,7 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
         )
 
     def post(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
 
@@ -751,7 +751,7 @@ class ResearchMentorBindingDetailEndpoint(ResearchAPIView):
     """``DELETE /api/research/workspaces/<slug>/mentors/<pk>/``"""
 
     def delete(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         binding = MentorBinding.objects.filter(workspace=workspace, pk=pk).select_related("mentee").first()

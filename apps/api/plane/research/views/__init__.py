@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 from .health import ResearchHealthEndpoint
+from .settings import ResearchSettingsEndpoint
 from .identity import (
     ResearchIdentityMappingDetailEndpoint,
     ResearchIdentityMappingListCreateEndpoint,
@@ -20,6 +21,7 @@ from .org import (
 
 __all__ = [
     "ResearchHealthEndpoint",
+    "ResearchSettingsEndpoint",
     "ResearchIdentityMappingDetailEndpoint",
     "ResearchIdentityMappingListCreateEndpoint",
     "ResearchIdentityMeEndpoint",

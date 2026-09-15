@@ -9,6 +9,7 @@ from .org import (
     OrgUnitSerializer,
     ResearchUserSerializer,
 )
+from .settings import WorkspaceResearchSettingSerializer
 
 __all__ = [
     "IdentityMappingSerializer",
@@ -16,4 +17,5 @@ __all__ = [
     "OrgUnitMemberSerializer",
     "OrgUnitSerializer",
     "ResearchUserSerializer",
+    "WorkspaceResearchSettingSerializer",
 ]

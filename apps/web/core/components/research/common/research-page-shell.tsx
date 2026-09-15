@@ -20,6 +20,8 @@ type Props = {
   descriptionKey?: string;
   section?: "org" | "reports" | "approvals";
   adminOnly?: boolean;
+  /** Platform settings must stay reachable while the workspace switch is off. */
+  allowDisabled?: boolean;
   actions?: ReactNode;
   children: ReactNode;
 };
@@ -33,6 +35,7 @@ export const ResearchPageShell = observer(function ResearchPageShell({
   descriptionKey,
   section = "reports",
   adminOnly = false,
+  allowDisabled = false,
   actions,
   children,
 }: Props) {
@@ -67,14 +70,9 @@ export const ResearchPageShell = observer(function ResearchPageShell({
     );
   }
 
-  if (!research.isEnabled || !sectionEnabled || (adminOnly && !research.isWorkspaceAdmin)) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-        <p className="text-14 text-secondary">{t("research.errors.module_disabled")}</p>
-        <p className="text-12 text-tertiary">{t("research.errors.permission_denied")}</p>
-      </div>
-    );
-  }
+  // switch off or no permission: fall back to the workspace home (P0-UI-07)
+  if ((!allowDisabled && (!research.isEnabled || !sectionEnabled)) || (adminOnly && !research.isWorkspaceAdmin))
+    return <Navigate to={`/${workspaceSlug}/`} replace />;
 
   return (
     <>

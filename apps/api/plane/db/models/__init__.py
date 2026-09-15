@@ -96,5 +96,7 @@ from .research import (
     MentorBinding,
     OrgUnit,
     OrgUnitMember,
+    ReportVisibility,
     ResearchAuditEvent,
+    WorkspaceResearchSetting,
 )

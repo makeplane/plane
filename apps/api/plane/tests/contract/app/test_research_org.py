@@ -10,6 +10,7 @@ from rest_framework.test import APIClient
 from plane.db.models import MentorBinding, OrgUnit, OrgUnitMember, ResearchAuditEvent
 from plane.tests.research_fixtures import (
     add_workspace_member,
+    enable_research,
     make_user,
     make_workspace,
     mentors_url,
@@ -35,6 +36,7 @@ def client_for(user):
 def env(db):
     admin = make_user(first_name="Admin")
     workspace = make_workspace(admin)
+    enable_research(workspace)
     member = make_user(first_name="Member")
     add_workspace_member(workspace, member)
     guest = make_user(first_name="Guest")

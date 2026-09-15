@@ -23,12 +23,18 @@ from plane.research.views import (
     ResearchOrgUnitMemberDetailEndpoint,
     ResearchOrgUnitMemberListCreateEndpoint,
     ResearchOrgUnitPiTransferEndpoint,
+    ResearchSettingsEndpoint,
 )
 
 urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
     # identity
+    path(
+        "research/workspaces/<str:slug>/settings/",
+        ResearchSettingsEndpoint.as_view(),
+        name="research-settings",
+    ),
     path(
         "research/workspaces/<str:slug>/identity/me/",
         ResearchIdentityMeEndpoint.as_view(),

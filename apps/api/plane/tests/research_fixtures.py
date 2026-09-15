@@ -6,7 +6,7 @@
 
 from uuid import uuid4
 
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceResearchSetting
 
 WORKSPACE_ADMIN_ROLE = 20
 WORKSPACE_MEMBER_ROLE = 15
@@ -53,3 +53,19 @@ def org_units_url(workspace, suffix=""):
 
 def mentors_url(workspace, suffix=""):
     return f"/api/research/workspaces/{workspace.slug}/mentors/{suffix}"
+
+
+def enable_research(workspace, **overrides):
+    """Turn the research module on for a workspace (P0-CFG-02)."""
+    defaults = {
+        "module_enabled": True,
+        "org_enabled": True,
+        "report_enabled": True,
+        "approval_enabled": True,
+    }
+    defaults.update(overrides)
+    setting, _ = WorkspaceResearchSetting.objects.update_or_create(
+        workspace=workspace,
+        defaults=defaults,
+    )
+    return setting

@@ -10,7 +10,12 @@ from rest_framework.test import APIClient
 
 from plane.db.models import IdentityMapping, ResearchAuditEvent
 from plane.license.models import Instance
-from plane.tests.research_fixtures import add_workspace_member, make_user, make_workspace
+from plane.tests.research_fixtures import (
+    add_workspace_member,
+    enable_research,
+    make_user,
+    make_workspace,
+)
 
 pytestmark = pytest.mark.contract
 
@@ -53,6 +58,7 @@ class TestResearchIdentityMe:
     def test_returns_roles_and_sections(self, settings):
         admin = make_user()
         workspace = make_workspace(admin)
+        enable_research(workspace)
         member = make_user()
         add_workspace_member(workspace, member)
 
@@ -69,6 +75,7 @@ class TestResearchIdentityMe:
         configure_oidc(settings)
         admin = make_user()
         workspace = make_workspace(admin)
+        enable_research(workspace)
         member = make_user(email="researcher@example.com")
         add_workspace_member(workspace, member)
         IdentityMapping.objects.create(
@@ -104,6 +111,7 @@ class TestResearchIdentityMe:
         settings.RESEARCH_MODULE_ENABLED = False
         admin = make_user()
         workspace = make_workspace(admin)
+        enable_research(workspace)
         response = client_for(admin).get(f"/api/research/workspaces/{workspace.slug}/identity/me/")
         assert response.status_code == 404
         assert response.json()["error_code"] == "research_module_disabled"
@@ -111,6 +119,7 @@ class TestResearchIdentityMe:
     def test_guest_is_denied(self):
         admin = make_user()
         workspace = make_workspace(admin)
+        enable_research(workspace)
         guest = make_user()
         add_workspace_member(workspace, guest, role=5)
         response = client_for(guest).get(f"/api/research/workspaces/{workspace.slug}/identity/me/")
@@ -122,6 +131,7 @@ class TestIdentityMappingApi:
     def _env(self):
         admin = make_user()
         workspace = make_workspace(admin)
+        enable_research(workspace)
         member = make_user()
         add_workspace_member(workspace, member)
         target = make_user(email="target@example.com")

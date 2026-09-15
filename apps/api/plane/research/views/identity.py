@@ -13,7 +13,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
-from plane.research.utils.config import oidc_configured, oidc_settings
+from plane.research.utils.config import oidc_configured, oidc_settings, research_module_enabled
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_error,
@@ -21,7 +21,7 @@ from plane.research.utils.errors import (
     research_permission_denied,
 )
 from plane.research.utils.org import effective_mentee_ids, effective_mentor_ids, is_workspace_admin
-from plane.research.utils.settings import workspace_research_sections
+from plane.research.utils.settings import workspace_research_enabled, workspace_research_sections
 from plane.research.views.base import ResearchAPIView, resolve_user
 
 
@@ -33,7 +33,7 @@ class ResearchIdentityMeEndpoint(ResearchAPIView):
     """
 
     def get(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(require_enabled=False)
         if error:
             return error
 
@@ -58,8 +58,8 @@ class ResearchIdentityMeEndpoint(ResearchAPIView):
 
         return Response(
             {
-                "module_enabled": True,
-                "workspace_enabled": True,
+                "module_enabled": research_module_enabled(),
+                "workspace_enabled": workspace_research_enabled(workspace),
                 "sections": workspace_research_sections(workspace),
                 "user": {
                     "id": str(request.user.id),
@@ -85,7 +85,7 @@ class ResearchIdentityMappingListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/identity/mappings/`` (admin only)."""
 
     def get(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         if not is_workspace_admin(request.user, workspace.id):
@@ -107,7 +107,7 @@ class ResearchIdentityMappingListCreateEndpoint(ResearchAPIView):
         )
 
     def post(self, request, slug):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         if not is_workspace_admin(request.user, workspace.id):
@@ -160,7 +160,7 @@ class ResearchIdentityMappingDetailEndpoint(ResearchAPIView):
     """``DELETE /api/research/workspaces/<slug>/identity/mappings/<pk>/`` (admin only)."""
 
     def delete(self, request, slug, pk):
-        workspace, error = self.get_workspace()
+        workspace, error = self.get_workspace(section="org")
         if error:
             return error
         if not is_workspace_admin(request.user, workspace.id):

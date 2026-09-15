@@ -27,6 +27,7 @@ from plane.research.utils.errors import (
     research_permission_denied,
 )
 from plane.research.utils.org import READABLE_WORKSPACE_ROLES
+from plane.research.utils.settings import workspace_research_enabled, workspace_research_sections
 
 
 def resolve_user(value):
@@ -107,7 +108,7 @@ class ResearchAPIView(BaseAPIView):
     def workspace_slug(self):
         return self.kwargs.get("slug")
 
-    def get_workspace(self, roles=READABLE_WORKSPACE_ROLES):
+    def get_workspace(self, roles=READABLE_WORKSPACE_ROLES, section=None, require_enabled=True):
         """Resolve the workspace and verify the caller's membership.
 
         Returns ``(workspace, error_response)`` with exactly one non-null side.
@@ -136,6 +137,19 @@ class ResearchAPIView(BaseAPIView):
             )
         if roles is not None and membership.role not in roles:
             return None, research_permission_denied()
+        if require_enabled:
+            if not workspace_research_enabled(workspace):
+                return None, research_error(
+                    ResearchErrorCode.MODULE_NOT_ENABLED,
+                    "The research module is not enabled for this workspace.",
+                    status.HTTP_403_FORBIDDEN,
+                )
+            if section and not workspace_research_sections(workspace).get(section):
+                return None, research_error(
+                    ResearchErrorCode.SUBMODULE_DISABLED,
+                    "This research section is not enabled for this workspace.",
+                    status.HTTP_403_FORBIDDEN,
+                )
         return workspace, None
 
     def today(self):

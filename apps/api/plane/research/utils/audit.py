@@ -29,6 +29,29 @@ class ResearchAuditAction:
     IDENTITY_PROVISION = "identity.provision"
     IDENTITY_CONFLICT = "identity.conflict"
     IDENTITY_SUSPENDED = "identity.suspended"
+    CONFIG_UPDATE = "config.update"
+    TEMPLATE_CREATE = "template.create"
+    TEMPLATE_UPDATE = "template.update"
+    TEMPLATE_DELETE = "template.delete"
+    REPORT_VISIBILITY_UPDATE = "report.visibility.update"
+    REPORT_SUBMIT = "report.submit"
+    REPORT_RETURN = "report.return"
+    REPORT_ACCEPT = "report.accept"
+    REPORT_CREATE = "report.create"
+    REPORT_ATTACHMENT_ADD = "report.attachment.add"
+    REPORT_ATTACHMENT_DELETE = "report.attachment.delete"
+    REPORT_ATTACHMENT_DENIED = "report.attachment.denied"
+    PROJECT_CREATE = "project.create"
+    PROJECT_ARCHIVE = "project.archive"
+    PROJECT_RESTORE = "project.restore"
+    PROJECT_OWNER_CHANGE = "project.owner.change"
+    APPROVAL_FLOW_CREATE = "approval.flow.create"
+    APPROVAL_FLOW_UPDATE = "approval.flow.update"
+    APPROVAL_REQUEST_CREATE = "approval.request.create"
+    APPROVAL_APPROVE = "approval.approve"
+    APPROVAL_REJECT = "approval.reject"
+    APPROVAL_WITHDRAW = "approval.withdraw"
+    APPROVAL_CANCEL = "approval.cancel"
 
 
 class ResearchResourceType:
@@ -37,6 +60,13 @@ class ResearchResourceType:
     MENTOR_BINDING = "mentor_binding"
     IDENTITY_MAPPING = "identity_mapping"
     USER = "user"
+    WORKSPACE_SETTING = "workspace_setting"
+    REPORT_TEMPLATE = "report_template"
+    REPORT = "report"
+    REPORT_ATTACHMENT = "report_attachment"
+    PROJECT_PROFILE = "research_project"
+    APPROVAL_FLOW = "approval_flow"
+    APPROVAL_REQUEST = "approval_request"
 
 
 def _client_metadata(request):
