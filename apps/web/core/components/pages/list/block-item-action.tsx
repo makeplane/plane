@@ -20,6 +20,7 @@ import type { EPageStoreType } from "@/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageActions } from "../dropdowns";
+import { PageLinkedWorkItemBadge } from "../linked-work-item-badge";
 
 type Props = {
   page: TPageInstance;
@@ -41,6 +42,8 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
 
   return (
     <>
+      {/* linked work item */}
+      <PageLinkedWorkItemBadge pageId={page.id} projectId={page.project_ids?.[0]} />
       {/* page details */}
       <div className="cursor-default">
         <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
@@ -77,6 +80,8 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       {/* quick actions dropdown */}
       <PageActions
         optionsOrder={[
+          "add-sub-page",
+          "move-under",
           "open-in-new-tab",
           "copy-link",
           "make-a-copy",

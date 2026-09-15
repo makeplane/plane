@@ -30,6 +30,7 @@ import type {
   TExtensions,
   TFileHandler,
   TMentionHandler,
+  TPageEmbedHandler,
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
@@ -59,6 +60,7 @@ export type TEditorCommands =
   | "divider"
   | "link"
   | "issue-embed"
+  | "page-embed"
   | "text-color"
   | "background-color"
   | "text-align"
@@ -171,6 +173,7 @@ export type IEditorProps = {
   initialValue: string;
   isTouchDevice?: boolean;
   mentionHandler: TMentionHandler;
+  pageEmbedHandler?: TPageEmbedHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
   onChange?: (json: object, html: string, { isMigrationUpdate }?: { isMigrationUpdate?: boolean }) => void;

@@ -11,6 +11,7 @@ export * from "./due-date-column";
 export * from "./estimate-column";
 export * from "./label-column";
 export * from "./link-column";
+export * from "./page-column";
 export * from "./priority-column";
 export * from "./start-date-column";
 export * from "./state-column";

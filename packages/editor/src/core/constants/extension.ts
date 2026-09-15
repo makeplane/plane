@@ -47,6 +47,7 @@ export enum CORE_EXTENSIONS {
   UNDERLINE = "underline",
   UTILITY = "utility",
   WORK_ITEM_EMBED = "issue-embed-component",
+  PAGE_EMBED = "page-embed-component",
   EMOJI = "emoji",
   UNIQUE_ID = "uniqueID",
 }

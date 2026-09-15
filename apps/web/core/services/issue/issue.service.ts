@@ -14,6 +14,8 @@ import type {
   TIssue,
   TIssueActivity,
   TIssueLink,
+  TIssuePage,
+  TIssuePageLink,
   TIssueServiceType,
   TIssuesResponse,
   TIssueSubIssues,
@@ -329,6 +331,42 @@ export class IssueService extends APIService {
   async deleteIssueLink(workspaceSlug: string, projectId: string, issueId: string, linkId: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "links" : "issue-links"}/${linkId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchIssuePages(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssuePage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async fetchIssuePageLinks(workspaceSlug: string, projectId: string): Promise<TIssuePageLink[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-page-links/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async linkIssuePage(workspaceSlug: string, projectId: string, issueId: string, pageId: string): Promise<TIssuePage[]> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-pages/`, {
+      page: pageId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteIssuePage(workspaceSlug: string, projectId: string, issueId: string, issuePageId: string): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-pages/${issuePageId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

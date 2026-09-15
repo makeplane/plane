@@ -154,6 +154,9 @@ export const useParseEditorContent = (args: TArgs) => {
       // remove all issue-embed-component elements
       const issueEmbedComponents = doc.querySelectorAll("issue-embed-component");
       issueEmbedComponents.forEach((component) => component.remove());
+      // remove all page-embed-component elements
+      const pageEmbedComponents = doc.querySelectorAll("page-embed-component");
+      pageEmbedComponents.forEach((component) => component.remove());
       // serialize the document back into a string
       let serializedDoc = doc.body.innerHTML;
       // remove null colors from table elements
@@ -212,6 +215,9 @@ export const useParseEditorContent = (args: TArgs) => {
       // remove all issue-embed components
       const issueEmbedRegex = /<issue-embed-component[^>]*>[^]*<\/issue-embed-component>/g;
       parsedMarkdownContent = parsedMarkdownContent.replace(issueEmbedRegex, "");
+      // remove all page-embed components
+      const pageEmbedRegex = /<page-embed-component[^>]*>[^]*<\/page-embed-component>/g;
+      parsedMarkdownContent = parsedMarkdownContent.replace(pageEmbedRegex, "");
       return parsedMarkdownContent;
     },
     [getUserDetails, parseAdditionalEditorContent, workspaceSlug]

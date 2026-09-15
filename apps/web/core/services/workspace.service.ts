@@ -211,6 +211,7 @@ export class WorkspaceService extends APIService {
       project_id?: string;
       search: string;
       workspace_search: boolean;
+      entities?: string;
     }
   ): Promise<IWorkspaceSearchResults> {
     return this.get(`/api/workspaces/${workspaceSlug}/search/`, {

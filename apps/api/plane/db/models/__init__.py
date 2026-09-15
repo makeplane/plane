@@ -38,6 +38,7 @@ from .issue import (
     IssueLabel,
     IssueLink,
     IssueMention,
+    IssuePage,
     IssueReaction,
     IssueRelation,
     IssueSequence,

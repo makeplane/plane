@@ -6,3 +6,4 @@
 
 export * from "./use-editor-config";
 export * from "./use-editor-mention";
+export * from "./use-editor-page-embed";

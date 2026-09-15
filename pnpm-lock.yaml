@@ -1323,6 +1323,9 @@ importers:
       '@tiptap/extension-blockquote':
         specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
+      '@tiptap/extension-bullet-list':
+        specifier: ^2.22.3
+        version: 2.26.2(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-character-count':
         specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)

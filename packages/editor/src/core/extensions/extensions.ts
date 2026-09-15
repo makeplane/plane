@@ -27,6 +27,7 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
+  PageEmbedExtension,
   Table,
   TableCell,
   TableHeader,
@@ -52,6 +53,7 @@ type TArguments = Pick<
   | "getEditorMetaData"
   | "isTouchDevice"
   | "mentionHandler"
+  | "pageEmbedHandler"
   | "placeholder"
   | "showPlaceholderOnEmpty"
   | "tabIndex"
@@ -71,6 +73,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     getEditorMetaData,
     isTouchDevice = false,
     mentionHandler,
+    pageEmbedHandler,
     placeholder,
     showPlaceholderOnEmpty,
     tabIndex,
@@ -150,6 +153,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         isEditable: editable,
       })
     );
+  }
+
+  if (pageEmbedHandler && !disabledExtensions.includes("page-embed")) {
+    extensions.push(PageEmbedExtension(pageEmbedHandler));
   }
 
   return extensions;

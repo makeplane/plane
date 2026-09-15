@@ -100,7 +100,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
         ? EIssueGroupByToServerOptions[displayFilters.sub_group_by]
         : undefined,
       order_by: displayFilters?.order_by || undefined,
-      sub_issue: displayFilters?.sub_issue ?? true,
+      sub_issue: displayFilters?.sub_issue ?? false,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};

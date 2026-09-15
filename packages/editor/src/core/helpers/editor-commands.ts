@@ -12,6 +12,7 @@ import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-
 import type { InsertImageComponentProps } from "@/extensions/custom-image/types";
 // helpers
 import type { ExtendedEmojiStorage } from "@/extensions/emoji/emoji";
+import { PAGE_EMBED_TRIGGER_CHAR } from "@/extensions/page-embed/extension";
 import { findTableAncestor } from "@/helpers/common";
 
 export const setText = (editor: Editor, range?: Range) => {
@@ -197,4 +198,10 @@ export const openEmojiPicker = (editor: Editor, range?: Range) => {
   const emojiStorage = editor.storage.emoji as ExtendedEmojiStorage;
   emojiStorage.forceOpen = true;
   editor.chain().focus().insertContent(":").run();
+};
+
+export const openPageEmbedSuggestion = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).run();
+  // insert as a text node: a bare "+" string goes through the markdown parser and becomes an empty list item
+  editor.chain().focus().insertContent({ type: "text", text: PAGE_EMBED_TRIGGER_CHAR }).run();
 };

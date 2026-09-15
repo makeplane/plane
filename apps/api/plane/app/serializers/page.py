@@ -126,6 +126,27 @@ class PageSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
+class PageLiteSerializer(BaseSerializer):
+    project_ids = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "logo_props",
+            "access",
+            "is_locked",
+            "archived_at",
+            "workspace",
+            "project_ids",
+        ]
+        read_only_fields = fields
+
+    def get_project_ids(self, obj):
+        return list(obj.projects.values_list("id", flat=True))
+
+
 class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField()
 

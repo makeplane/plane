@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 // plane helpers
 import { MoreHorizontal } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -60,16 +61,25 @@ interface IssueDetailsBlockProps {
   quickActions: TRenderQuickActions;
   isReadOnly: boolean;
   isEpic?: boolean;
+  onOpenIssue: (issue: TIssue) => void;
 }
 
 const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
-  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
+  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false, onOpenIssue } =
+    props;
   // refs
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [isSubIssuesExpanded, setIsSubIssuesExpanded] = useState(false);
+  // router
+  const { workspaceSlug } = useParams();
   // hooks
   const { isMobile } = usePlatformOS();
+  const {
+    subIssues: subIssuesStore,
+    issue: { getIssueById },
+  } = useIssueDetail();
 
   const customActionButton = (
     // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
@@ -84,10 +94,22 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     </div>
   );
 
+  // derived values
+  const subIssueCount = issue?.sub_issues_count ?? 0;
+
+  const subIssueIds = isSubIssuesExpanded ? subIssuesStore.subIssuesByIssueId(issue.id) : undefined;
+
   // oxlint-disable-next-line unicorn/consistent-function-scoping
   const handleEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+  };
+
+  const handleToggleSubIssues = (e: React.MouseEvent) => {
+    handleEventPropagation(e);
+    if (!isSubIssuesExpanded && workspaceSlug && issue.project_id)
+      void subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
+    setIsSubIssuesExpanded((prev) => !prev);
   };
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
@@ -135,6 +157,57 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         isReadOnly={isReadOnly}
         isEpic={isEpic}
       />
+
+      {/* expandable sub-work items */}
+      {!isEpic && subIssueCount > 0 && (
+        <div className="pt-1">
+          <button
+            type="button"
+            onClick={handleToggleSubIssues}
+            className="flex items-center gap-1 rounded-sm px-1 py-0.5 text-caption-sm-regular text-tertiary hover:bg-layer-1 hover:text-secondary"
+          >
+            <ChevronRightIcon
+              className={cn("size-3.5 transition-transform", { "rotate-90": isSubIssuesExpanded })}
+              strokeWidth={2.5}
+            />
+            {subIssueCount} sub-work {subIssueCount === 1 ? "item" : "items"}
+          </button>
+          {isSubIssuesExpanded && (
+            <div className="mt-1 space-y-0.5 border-l border-subtle pl-2">
+              {subIssueIds === undefined ? (
+                <div className="px-1.5 py-1 text-caption-sm-regular text-placeholder">Loading...</div>
+              ) : (
+                subIssueIds.map((subIssueId) => {
+                  const subIssue = getIssueById(subIssueId);
+                  if (!subIssue) return null;
+                  return (
+                    <button
+                      key={subIssueId}
+                      type="button"
+                      onClick={(e) => {
+                        handleEventPropagation(e);
+                        onOpenIssue(subIssue);
+                      }}
+                      className="flex w-full items-center gap-2 rounded-sm px-1.5 py-1 text-left hover:bg-layer-1"
+                    >
+                      {subIssue.project_id && (
+                        <IssueIdentifier
+                          issueId={subIssue.id}
+                          projectId={subIssue.project_id}
+                          size="xs"
+                          variant="tertiary"
+                          displayProperties={displayProperties}
+                        />
+                      )}
+                      <span className="truncate text-caption-sm-regular text-secondary">{subIssue.name}</span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 });
@@ -286,6 +359,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
               quickActions={quickActions}
               isReadOnly={!canEditIssueProperties}
               isEpic={isEpic}
+              onOpenIssue={handleIssuePeekOverview}
             />
           </RenderIfVisible>
         </ControlLink>

@@ -94,7 +94,6 @@ class PageViewSet(BaseViewSet):
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
-            .filter(parent__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .prefetch_related("projects")
             .select_related("workspace")
@@ -165,12 +164,21 @@ class PageViewSet(BaseViewSet):
 
             parent = request.data.get("parent", None)
             if parent:
-                _ = Page.objects.get(
+                parent_page = Page.objects.get(
                     pk=parent,
                     workspace__slug=slug,
                     projects__id=project_id,
                     project_pages__deleted_at__isnull=True,
                 )
+                # prevent cycles: the new parent can't be the page itself or one of its sub-pages
+                ancestor = parent_page
+                while ancestor is not None:
+                    if ancestor.id == page.id:
+                        return Response(
+                            {"error": "A page cannot be moved under itself or one of its sub-pages"},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+                    ancestor = ancestor.parent
 
             # Only update access if the page owner is the requesting  user
             if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:

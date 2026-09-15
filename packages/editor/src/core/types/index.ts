@@ -13,6 +13,7 @@ export * from "./embed";
 export * from "./extensions";
 export * from "./hook";
 export * from "./mention";
+export * from "./page-embed";
 export * from "./slash-commands-suggestion";
 export * from "./document-collaborative-events";
 

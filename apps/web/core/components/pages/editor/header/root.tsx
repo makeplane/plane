@@ -13,6 +13,7 @@ import { cn } from "@plane/utils";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
+import { PageLinkedWorkItemBadge } from "../../linked-work-item-badge";
 import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
@@ -21,7 +22,7 @@ type Props = {
 };
 
 export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props: Props) {
-  const { page } = props;
+  const { page, projectId } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   // derived values
@@ -31,6 +32,12 @@ export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props
 
   return (
     <>
+      <PageLinkedWorkItemBadge
+        pageId={page.id}
+        projectId={projectId ?? page.project_ids?.[0]}
+        showName
+        className="mt-4 w-fit"
+      />
       <div className="flex h-[48px] items-end text-left">
         {!isLogoSelected && (
           <div

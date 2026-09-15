@@ -53,7 +53,7 @@ def get_default_props():
             "group_by": None,
             "order_by": "-created_at",
             "type": None,
-            "sub_issue": True,
+            "sub_issue": False,
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",

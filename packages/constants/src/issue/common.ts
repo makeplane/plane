@@ -149,6 +149,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "state",
   "sub_issue_count",
   "link",
+  "page",
   "attachment_count",
   "estimate",
   "created_on",
@@ -202,6 +203,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
     titleTranslationKey: "issue.display.properties.attachment_count",
   },
   { key: "link", titleTranslationKey: "common.link" },
+  { key: "page", titleTranslationKey: "common.page" },
   {
     key: "estimate",
     titleTranslationKey: "common.estimate",
@@ -223,6 +225,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "created_on",
   "updated_on",
   "link",
+  "page",
   "attachment_count",
   "sub_issue_count",
 ];
@@ -235,6 +238,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: TIssueOrderByOptions;
     descendingOrderTitle: string;
     icon: string;
+    disableSorting?: boolean;
   };
 } = {
   assignee: {
@@ -332,6 +336,15 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "link_count",
     descendingOrderTitle: "Least",
     icon: "Link2",
+  },
+  page: {
+    i18n_title: "common.page",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "",
+    icon: "PageIcon",
+    disableSorting: true,
   },
   attachment_count: {
     i18n_title: "common.attachment",

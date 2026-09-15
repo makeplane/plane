@@ -47,6 +47,14 @@ export function HeaderColumn(props: Props) {
 
   if (!propertyDetails) return null;
 
+  if (propertyDetails.disableSorting)
+    return (
+      <Row className="flex w-full items-center gap-1.5 py-2 text-13 text-secondary">
+        <SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />
+        {t(propertyDetails.i18n_title)}
+      </Row>
+    );
+
   return (
     <CustomMenu
       customButtonClassName="clickable !w-full"

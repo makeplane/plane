@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 // plane imports
 import { PageIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
@@ -22,6 +22,11 @@ import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePage, usePageStore } from "@/hooks/store";
+// store
+import type { TPageInstance } from "@/store/pages/base-page";
+
+// guards against malformed (cyclic) hierarchies
+const MAX_BREADCRUMB_DEPTH = 20;
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -33,6 +38,8 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
+  const searchParams = useSearchParams();
+  const fromPageId = searchParams.get("from");
   // store hooks
   const { loader } = useProject();
   const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
@@ -60,6 +67,19 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
+  // hierarchy: follow the page it was opened from (a page can be linked from several places), else its parent chain
+  const ancestorPages: TPageInstance[] = [];
+  const visitedPageIds = new Set<string>([pageId?.toString() ?? ""]);
+  let ancestorId: string | null | undefined =
+    fromPageId && fromPageId !== pageId && getPageById(fromPageId) ? fromPageId : page?.parent;
+  while (ancestorId && !visitedPageIds.has(ancestorId) && ancestorPages.length < MAX_BREADCRUMB_DEPTH) {
+    const ancestorPage = getPageById(ancestorId);
+    if (!ancestorPage) break;
+    visitedPageIds.add(ancestorId);
+    ancestorPages.unshift(ancestorPage);
+    ancestorId = ancestorPage.parent;
+  }
+
   if (!page) return null;
 
   return (
@@ -77,6 +97,19 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 />
               }
             />
+
+            {ancestorPages.map((ancestorPage) => (
+              <Breadcrumbs.Item
+                key={ancestorPage.id}
+                component={
+                  <BreadcrumbLink
+                    label={getPageName(ancestorPage.name)}
+                    href={`/${workspaceSlug}/projects/${projectId}/pages/${ancestorPage.id}`}
+                    icon={<SwitcherIcon logo_props={ancestorPage.logo_props} LabelIcon={PageIcon} size={16} />}
+                  />
+                }
+              />
+            ))}
 
             <Breadcrumbs.Item
               component={

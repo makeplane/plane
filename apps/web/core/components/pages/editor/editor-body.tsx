@@ -19,14 +19,17 @@ import type {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
+import type { TPageEmbedSuggestion } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
+import { EditorPageEmbedRoot } from "@/components/editor/embeds/page-embed";
 // hooks
-import { useEditorMention } from "@/hooks/editor";
+import { useEditorMention, useEditorPageEmbed } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
@@ -37,7 +40,10 @@ import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 import type { TExtendedEditorExtensionsConfig } from "@/hooks/pages";
 import type { EPageStoreType } from "@/hooks/store";
+import { usePageStore } from "@/hooks/store";
 import { useEditorFlagging } from "@/hooks/use-editor-flagging";
+// services
+import { ProjectPageService } from "@/services/page";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -45,6 +51,8 @@ import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
 import { EditorAIMenu } from "./ai/menu";
+
+const projectPageService = new ProjectPageService();
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -110,6 +118,33 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     enableAdvancedMentions: true,
     searchEntity: handlers.fetchEntity,
   });
+  // use editor page embed
+  const { fetchPageSuggestions } = useEditorPageEmbed({
+    workspaceSlug,
+    projectId,
+    excludePageId: pageId,
+    searchEntity: handlers.fetchEntity,
+  });
+  const { getPageById } = usePageStore(storeType);
+  // a page embedded here becomes a sub-page of this page
+  const handlePageEmbedSelect = useCallback(
+    (item: TPageEmbedSuggestion) => {
+      const embeddedPageId = item.entity_identifier;
+      if (!pageId || !projectId || !embeddedPageId || embeddedPageId === pageId) return;
+      if (getPageById(embeddedPageId)?.parent === pageId) return;
+      projectPageService
+        .update(workspaceSlug, projectId, embeddedPageId, { parent: pageId })
+        .then(() => getPageById(embeddedPageId)?.mutateProperties({ parent: pageId }))
+        .catch(() =>
+          setToast({
+            type: TOAST_TYPE.INFO,
+            title: "Page linked",
+            message: `"${item.title}" was linked but couldn't be moved under this page, it may be one of this page's parents.`,
+          })
+        );
+    },
+    [getPageById, pageId, projectId, workspaceSlug]
+  );
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
     workspaceSlug,
@@ -291,6 +326,11 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
               // oxlint-disable-next-line no-shadow
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+            }}
+            pageEmbedHandler={{
+              searchCallback: fetchPageSuggestions,
+              onSelect: handlePageEmbedSelect,
+              widgetCallback: (embedProps) => <EditorPageEmbedRoot {...embedProps} />,
             }}
             updatePageProperties={updatePageProperties}
             realtimeConfig={realtimeConfig}

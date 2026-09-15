@@ -20,6 +20,7 @@ import {
   UserCirclePropertyIcon,
   EstimatePropertyIcon,
   ParentPropertyIcon,
+  PageIcon,
 } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
@@ -41,6 +42,7 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
+import { IssuePageSelect } from "../issue-detail/page-select";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -237,6 +239,16 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             issueOperations={issueOperations}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
+          />
+        </SidebarPropertyListItem>
+
+        <SidebarPropertyListItem icon={PageIcon} label={t("common.page")}>
+          <IssuePageSelect
+            className="h-7.5 w-full grow"
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            disabled={disabled}
           />
         </SidebarPropertyListItem>
 

@@ -303,6 +303,7 @@ export const getComputedDisplayProperties = (
   sub_issue_count: displayProperties?.sub_issue_count ?? true,
   attachment_count: displayProperties?.attachment_count ?? true,
   link: displayProperties?.link ?? true,
+  page: displayProperties?.page ?? true,
   estimate: displayProperties?.estimate ?? true,
   key: displayProperties?.key ?? true,
   created_on: displayProperties?.created_on ?? true,

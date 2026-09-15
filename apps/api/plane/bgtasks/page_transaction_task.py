@@ -4,6 +4,7 @@
 
 # Python imports
 import logging
+import uuid
 
 # Django imports
 from django.utils import timezone
@@ -33,6 +34,14 @@ COMPONENT_MAP = {
             "entity_name": "image",
             "entity_type": None,
             "entity_identifier": m.get("src"),
+        },
+    },
+    "page-embed-component": {
+        "attributes": ["id", "entity_identifier"],
+        "extract": lambda m: {
+            "entity_name": "page_mention",
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
         },
     },
 }
@@ -79,6 +88,55 @@ def get_entity_details(component: str, mention: dict):
     if not config:
         return {"entity_name": None, "entity_type": None, "entity_identifier": None}
     return config["extract"](mention)
+
+
+def get_embedded_page_ids(components):
+    """Returns the valid page ids embedded through page-embed components."""
+    page_ids = set()
+    for embed in components.get("page-embed-component", []):
+        try:
+            page_ids.add(uuid.UUID(str(embed.get("entity_identifier"))))
+        except (TypeError, ValueError):
+            continue
+    return page_ids
+
+
+def is_same_or_descendant(page, ancestor_id, max_depth=50):
+    """Returns True if `page` is `ancestor_id` or sits somewhere below it."""
+    current, depth = page, 0
+    while current is not None and depth < max_depth:
+        if current.id == ancestor_id:
+            return True
+        current, depth = current.parent, depth + 1
+    return False
+
+
+def reparent_unlinked_pages(page, old_embedded_page_ids, new_embedded_page_ids):
+    """
+    A sub-page whose link was removed from its parent moves under another page that still links it,
+    or back to the root when nothing links to it anymore.
+    """
+    removed_page_ids = old_embedded_page_ids - new_embedded_page_ids
+    if not removed_page_ids:
+        return
+
+    for child_page in Page.objects.filter(pk__in=removed_page_ids, parent_id=page.id):
+        linking_page_ids = (
+            PageLog.objects.filter(entity_name="page_mention", entity_identifier=child_page.id)
+            .exclude(page_id=page.id)
+            .values_list("page_id", flat=True)
+            .distinct()
+        )
+        new_parent = next(
+            (
+                linking_page
+                for linking_page in Page.objects.filter(pk__in=linking_page_ids, archived_at__isnull=True)
+                if not is_same_or_descendant(linking_page, child_page.id)
+            ),
+            None,
+        )
+        child_page.parent = new_parent
+        child_page.save(update_fields=["parent"])
 
 
 @shared_task
@@ -134,6 +192,13 @@ def page_transaction(new_description_html, old_description_html, page_id):
 
         if deleted_transaction_ids:
             PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()
+
+        # move sub-pages that are no longer linked from this page
+        reparent_unlinked_pages(
+            page,
+            get_embedded_page_ids(old_components),
+            get_embedded_page_ids(new_components),
+        )
 
     except Page.DoesNotExist:
         return

@@ -21,6 +21,7 @@ import { EmojiExtension } from "./emoji/extension";
 import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionConfig } from "./image";
 import { CustomMentionExtensionConfig } from "./mentions/extension-config";
+import { PageEmbedExtensionConfig } from "./page-embed/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { CustomStarterKitExtension } from "./starter-kit";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
@@ -57,6 +58,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionExtensionConfig,
+  PageEmbedExtensionConfig,
   CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   CustomColorExtension,

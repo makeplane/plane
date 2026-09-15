@@ -45,6 +45,7 @@
     "@plane/utils": "workspace:*",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "catalog:",
+    "@tiptap/extension-bullet-list": "^2.22.3",
     "@tiptap/extension-character-count": "catalog:",
     "@tiptap/extension-collaboration": "catalog:",
     "@tiptap/extension-document": "catalog:",

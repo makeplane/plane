@@ -8,6 +8,7 @@ import {
   ALargeSmall,
   CaseSensitive,
   Code2,
+  FileText,
   Heading1,
   Heading2,
   Heading3,
@@ -40,6 +41,7 @@ import {
   insertCallout,
   setText,
   openEmojiPicker,
+  openPageEmbedSuggestion,
 } from "@/helpers/editor-commands";
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
@@ -299,6 +301,19 @@ export const getSlashCommandFilteredSections =
         command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
         section: "general",
         pushAfter: "code",
+      });
+    }
+    if (!disabledExtensions?.includes("page-embed")) {
+      internalAdditionalOptions.push({
+        commandKey: "page-embed",
+        key: "page-embed",
+        title: "Page",
+        icon: <FileText className="size-3.5" />,
+        description: "Link to a page",
+        searchTerms: ["page", "link", "subpage", "embed"],
+        command: ({ editor, range }: CommandProps) => openPageEmbedSuggestion(editor, range),
+        section: "general",
+        pushAfter: "table",
       });
     }
 

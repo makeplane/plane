@@ -63,7 +63,7 @@ def get_default_display_filters():
         "group_by": None,
         "order_by": "-created_at",
         "type": None,
-        "sub_issue": True,
+        "sub_issue": False,
         "show_empty_groups": True,
         "layout": "list",
         "calendar_date_range": "",
@@ -382,6 +382,34 @@ class IssueLink(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.url}"
+
+
+class IssuePage(ProjectBaseModel):
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_pages")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="issue_pages")
+
+    class Meta:
+        unique_together = ["issue", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "page"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_page_unique_issue_page_when_deleted_at_null",
+            ),
+            # a work item can only be linked to a single page
+            models.UniqueConstraint(
+                fields=["issue"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_page_unique_issue_when_deleted_at_null",
+            ),
+        ]
+        verbose_name = "Issue Page"
+        verbose_name_plural = "Issue Pages"
+        db_table = "issue_pages"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.page.name}"
 
 
 def get_upload_path(instance, filename):

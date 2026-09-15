@@ -7,21 +7,25 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
+import { ArchiveRestoreIcon, FileOutput, FilePlus, FolderInput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
 import { EPageAccess } from "@plane/constants";
 // plane editor
 import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
+import { MoveUnderPageModal } from "@/components/pages/modals/move-under-page-modal";
 // hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web hooks
 import type { EPageStoreType } from "@/hooks/store";
+import { usePageStore } from "@/hooks/store";
 import { usePageFlag } from "@/hooks/use-page-flag";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -39,7 +43,9 @@ export type TPageActions =
   | "delete"
   | "version-history"
   | "export"
-  | "move";
+  | "move"
+  | "add-sub-page"
+  | "move-under";
 
 type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
@@ -54,8 +60,12 @@ export const PageActions = observer(function PageActions(props: Props) {
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
+  const [moveUnderPageModal, setMoveUnderPageModal] = useState(false);
   // params
   const { workspaceSlug } = useParams();
+  const router = useAppRouter();
+  // store hooks
+  const { canCurrentUserCreatePage, createPage } = usePageStore(storeType);
   // page flag
   const { isMovePageEnabled } = usePageFlag({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -75,11 +85,42 @@ export const PageActions = observer(function PageActions(props: Props) {
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
     canCurrentUserMovePage,
+    canCurrentUserEditPage,
   } = page;
+  // handlers
+  const handleCreateSubPage = async () => {
+    try {
+      const subPage = await createPage({ parent: page.id, access: page.access });
+      const subPageProjectId = subPage?.project_ids?.[0] ?? page.project_ids?.[0];
+      if (subPage?.id && subPageProjectId) router.push(`/${workspaceSlug}/projects/${subPageProjectId}/pages/${subPage.id}`);
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: (error as { error?: string })?.error || "Sub-page could not be created. Please try again.",
+      });
+    }
+  };
   // menu items
   const MENU_ITEMS = useMemo(
     function MENU_ITEMS() {
       const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
+        {
+          key: "add-sub-page",
+          action: () => {
+            void handleCreateSubPage();
+          },
+          title: "Add sub-page",
+          icon: FilePlus,
+          shouldRender: canCurrentUserCreatePage && !archived_at,
+        },
+        {
+          key: "move-under",
+          action: () => setMoveUnderPageModal(true),
+          title: "Move under…",
+          icon: FolderInput,
+          shouldRender: canCurrentUserEditPage && !archived_at,
+        },
         {
           key: "toggle-lock",
           action: () => {
@@ -165,6 +206,9 @@ export const PageActions = observer(function PageActions(props: Props) {
       canCurrentUserMovePage,
       isMovePageEnabled,
       pageOperations,
+      canCurrentUserCreatePage,
+      canCurrentUserEditPage,
+      handleCreateSubPage,
     ]
   );
   // arrange options
@@ -178,6 +222,12 @@ export const PageActions = observer(function PageActions(props: Props) {
 
   return (
     <>
+      <MoveUnderPageModal
+        isOpen={moveUnderPageModal}
+        onClose={() => setMoveUnderPageModal(false)}
+        page={page}
+        storeType={storeType}
+      />
       <DeletePageModal
         isOpen={deletePageModal}
         onClose={() => setDeletePageModal(false)}

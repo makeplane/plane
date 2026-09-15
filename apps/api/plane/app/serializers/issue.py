@@ -17,6 +17,7 @@ from .user import UserLiteSerializer
 from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
+from .page import PageLiteSerializer
 from plane.db.models import (
     User,
     Issue,
@@ -32,6 +33,7 @@ from plane.db.models import (
     Module,
     ModuleIssue,
     IssueLink,
+    IssuePage,
     FileAsset,
     IssueReaction,
     CommentReaction,
@@ -596,6 +598,24 @@ class IssueLinkSerializer(BaseSerializer):
             raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
+
+
+class IssuePageSerializer(BaseSerializer):
+    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    page_detail = PageLiteSerializer(read_only=True, source="page")
+
+    class Meta:
+        model = IssuePage
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "issue",
+        ]
 
 
 class IssueLinkLiteSerializer(BaseSerializer):

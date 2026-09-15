@@ -13,7 +13,7 @@ import { useParams } from "next/navigation";
 import { Paperclip } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, PageIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -41,6 +41,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useIssuePageLinks } from "@/hooks/use-issue-page-links";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "./labels";
@@ -82,6 +83,9 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const subIssueCount = issue?.sub_issues_count ?? 0;
+  // linked page
+  const { getLinkByIssueId } = useIssuePageLinks(workspaceSlug?.toString(), issue.project_id);
+  const pageLink = getLinkByIssueId(issue.id);
 
   const issueOperations = useMemo(
     () => ({
@@ -482,6 +486,33 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           >
             <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
+          </div>
+        </Tooltip>
+      </WithDisplayPropertiesHOC>
+
+      {/* page */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="page"
+        shouldRenderProperty={(properties) => !!properties.page && !!pageLink}
+      >
+        <Tooltip
+          tooltipHeading={t("common.page")}
+          tooltipContent={pageLink?.page_name || "Untitled"}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
+          <div
+            className="flex h-5 max-w-40 flex-shrink-0 cursor-pointer items-center gap-1.5 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1 hover:bg-layer-1"
+            onFocus={handleEventPropagation}
+            onClick={(e) => {
+              handleEventPropagation(e);
+              if (pageLink)
+                router.push(`/${workspaceSlug}/projects/${pageLink.issue_project_id}/pages/${pageLink.page_id}`);
+            }}
+          >
+            <PageIcon className="h-3 w-3 flex-shrink-0" />
+            <div className="truncate text-caption-sm-regular">{pageLink?.page_name || "Untitled"}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

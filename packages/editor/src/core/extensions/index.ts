@@ -11,6 +11,7 @@ export * from "./custom-link";
 export * from "./custom-list-keymap";
 export * from "./image";
 export * from "./mentions";
+export * from "./page-embed";
 export * from "./slash-commands";
 export * from "./table";
 export * from "./typography";
