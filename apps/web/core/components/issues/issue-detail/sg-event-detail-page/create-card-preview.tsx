@@ -4,6 +4,7 @@ import type { IRosterPlayer } from "@plane/types";
 import { cn } from "@plane/utils";
 import { formatCardDuration, formatCardPlayer } from "./create-card-model";
 import type { CardClip, CardPlaylist, CardProgressStatus } from "./create-card-model";
+import { CreateCardScrollArea } from "./create-card-scroll-area";
 import { buildCustomPlaylistThumbnailUrl } from "./utils";
 
 export const CardClipThumbnail = ({
@@ -99,7 +100,11 @@ export const CreateCardPreview = ({ players, playlists, feedback, progressStatus
                 {playlists.length} playlists · {clipCount} tags
               </span>
             </div>
-            <div className="space-y-2.5">
+            <CreateCardScrollArea
+              className="max-h-[min(38dvh,360px)] space-y-2.5 pr-1"
+              message="Scroll for more tags"
+              refreshKey={clipCount}
+            >
               {playlists.map((playlist) => (
                 <div key={playlist.id}>
                   <p className="mb-1 truncate text-xs text-custom-text-100" title={playlist.name}>
@@ -116,7 +121,7 @@ export const CreateCardPreview = ({ players, playlists, feedback, progressStatus
                 </div>
               ))}
               {clipCount === 0 && <p className="text-xs text-custom-text-300">No tags to preview.</p>}
-            </div>
+            </CreateCardScrollArea>
           </section>
           <section>
             <h3 className="mb-1 text-[10px] uppercase tracking-[0.12em] text-custom-text-300">Feedback</h3>

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@plane/utils";
+import { setTagDragPreview } from "../../tags-view/components/tag-drag-preview";
 import type { SportTableKind, SgTagRow } from "../../types";
 import { useMatrixData } from "../hooks/use-matrix-data";
 import { useMatrixSelection } from "../hooks/use-matrix-selection";
@@ -18,6 +19,7 @@ export type MatrixViewProps = {
   activeRowId?: string | null;
   canCreatePlaylist?: boolean;
   className?: string;
+  clipThumbnailUrl?: string;
   error?: Error | string | null;
   hasEvent?: boolean;
   isCreatingPlaylist?: boolean;
@@ -37,6 +39,7 @@ export const MatrixView = ({
   activeRowId,
   canCreatePlaylist,
   className,
+  clipThumbnailUrl = "",
   error = null,
   hasEvent = true,
   isCreatingPlaylist = false,
@@ -152,6 +155,22 @@ export const MatrixView = ({
     },
     [selectCell]
   );
+  const handleCellDragStart = useCallback(
+    (cell: MatrixCell, dataTransfer: DataTransfer) => {
+      const previewRow = cell.sourceRowIds
+        .map((rowId) => tagRowsById.get(rowId))
+        .find((row): row is SgTagRow => Boolean(row));
+      if (!previewRow) return;
+
+      setTagDragPreview(dataTransfer, {
+        count: cell.sourceRowIds.length,
+        row: previewRow,
+        sport: sportResolution.config?.sport ?? "default",
+        thumbnailUrl: previewRow.thumbnailUrl || clipThumbnailUrl,
+      });
+    },
+    [clipThumbnailUrl, sportResolution.config?.sport, tagRowsById]
+  );
   const handleCreatePlaylist = useCallback(() => {
     if (selectedPlayableRows.length > 0) void onCreatePlaylist?.(selectedPlayableRows);
   }, [onCreatePlaylist, selectedPlayableRows]);
@@ -247,6 +266,7 @@ export const MatrixView = ({
                   const firstRow = cell.sourceRowIds.map((rowId) => tagRowsById.get(rowId)).find(Boolean);
                   if (firstRow) void onPlayTagRow?.(firstRow);
                 }}
+                onCellDragStart={handleCellDragStart}
                 openCellId={activeCell?.id}
                 selectedCellIds={selectedCellIds}
                 stickySummaries={!isWorkspaceLayout}

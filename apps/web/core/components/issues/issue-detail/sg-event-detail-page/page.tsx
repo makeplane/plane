@@ -1,6 +1,5 @@
 "use client";
 
-import type { UIEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -26,8 +25,7 @@ import type { TMediaItem } from "ce/features/media-library/types/media-library.t
 import { getEventMediaDetails } from "ce/features/media-library/utils/media-event";
 import { CreateCardModal } from "./create-card-modal";
 import { buildEventPayloadDevices, fetchSgEventDevices, loadSgMediaPayload } from "./data";
-import { SgEventDetailsCard } from "./details-card";
-import { SgEventHeader, SgEventTitleBar } from "./header";
+import { SgEventHeader, SgFullStreamButton } from "./header";
 import { useSgEventPlaybackState } from "./hooks/use-sg-event-playback-state";
 import { useSgEventTagState } from "./hooks/use-sg-event-tag-state";
 import { fetchKanavioTagRowsPayload, isNumericEventId, normalizeFetchedTagPayload } from "./kanavio-tag-payload";
@@ -51,7 +49,6 @@ import {
   buildCustomPlaylistUrl,
   buildEventTitle,
   firstNonEmptyRecord,
-  formatLongDateTime,
   getCpServerBaseUrl,
   getLastPathSegment,
   getSportTableConfig,
@@ -310,8 +307,6 @@ export const SgEventDetailPage = ({
     if (defaultTagViewMode === "matrix" && !enableMatrixView) return "timeline";
     return defaultTagViewMode ?? (enableMatrixView ? "matrix" : "timeline");
   });
-  const [isTagListBodyScrolled, setIsTagListBodyScrolled] = useState(false);
-  const [isListPageScrolled, setIsListPageScrolled] = useState(false);
   const [isCreatingCustomPlaylist, setIsCreatingCustomPlaylist] = useState(false);
   const isCreatingCustomPlaylistRef = useRef(false);
   const [playlistDraft, setPlaylistDraft] = useState<PlaylistDraft | null>(null);
@@ -498,12 +493,6 @@ export const SgEventDetailPage = ({
   });
 
   useEffect(() => {
-    if (tagViewMode === "list") return;
-    setIsTagListBodyScrolled(false);
-    setIsListPageScrolled(false);
-  }, [tagViewMode]);
-
-  useEffect(() => {
     if (tagViewMode !== "timeline" && isTimelinePlaylistSelectionMode) {
       setIsTimelinePlaylistSelectionMode(false);
     }
@@ -521,23 +510,11 @@ export const SgEventDetailPage = ({
     payload: eventPayload,
     projectName,
   });
-  const venueName =
-    pickText(payloadSources, ["venue", "venue_name", "location", "location_label", "locationLabel"]) ||
-    eventDetails?.locationLabel ||
-    "";
-  const venueAddress = pickText(payloadSources, ["address", "venue_address", "location_address", "locationAddress"]);
   const eventStatus =
     pickText(payloadSources, ["status", "event_status"]) ||
     eventDetails?.status ||
     toText(mediaMeta.status) ||
     (issue?.completed_at ? "Completed" : "Scheduled");
-  const levelLabel =
-    pickText(payloadSources, ["team_level", "level"]) ||
-    eventDetails?.level ||
-    toText(mediaMeta.level) ||
-    issue?.level ||
-    "Freshmen";
-  const eventDateTimeLabel = formatLongDateTime(dateValue, timeValue);
 
   const handleBack = () => {
     if (onBack) {
@@ -1065,33 +1042,19 @@ export const SgEventDetailPage = ({
   const matrixPreferenceKey = `plane:media-library:matrix-columns:${workspaceSlug}:${projectId}:${
     resolvedSgEventId || mediaItem?.id || resolvedWorkItemId || "event"
   }:${sportTableConfig.sport}`;
-  const isTagListScrolled = isTagListBodyScrolled || isListPageScrolled;
-  const shouldShowEventSummary = tagViewMode !== "list" || !isTagListScrolled;
-  const shouldShowMatrixEventSummary = !isListPageScrolled;
-  const handlePageScroll = useCallback(
-    (event: UIEvent<HTMLDivElement>) => {
-      if (tagViewMode !== "list" && tagViewMode !== "matrix") return;
-      setIsListPageScrolled(event.currentTarget.scrollTop > 8);
-    },
-    [tagViewMode]
-  );
-
   const viewToggle = (
     <SgEventViewModeToggle isMatrixViewEnabled={enableMatrixView} onChange={setTagViewMode} value={tagViewMode} />
   );
 
   return (
     <div className="sg-matrix-workspace h-full bg-[var(--sg-matrix-page)] text-[var(--sg-matrix-text)]">
-      <div className={TIMELINE_PAGE_SCROLL_CLASS} onScroll={handlePageScroll}>
+      <div className={TIMELINE_PAGE_SCROLL_CLASS}>
         <div className={TIMELINE_PAGE_CONTENT_CLASS}>
           <SgEventHeader
             eventStatus={eventStatus}
             eventTitle={eventTitle}
-            fullStreamPlaybackItem={fullStreamPlaybackItem}
             handleBack={handleBack}
-            handleSwitchToFullStream={handleSwitchToFullStream}
             isLoadingViews={isLoadingViews}
-            isTagClipActive={isPlaybackOverrideActive}
             selectedViewId={selectedViewId}
             selectedViewLabel={selectedViewLabel}
             setSelectedViewId={setSelectedViewId}
@@ -1130,22 +1093,10 @@ export const SgEventDetailPage = ({
                 />
               </div>
 
-              {shouldShowMatrixEventSummary && (
-                <>
-                  <SgEventTitleBar
-                    eventStatus={eventStatus}
-                    eventTitle={eventTitle}
-                    handleSwitchToFullStream={handleSwitchToFullStream}
-                    isTagClipActive={isPlaybackOverrideActive}
-                  />
-
-                  <SgEventDetailsCard
-                    eventDateTimeLabel={eventDateTimeLabel}
-                    levelLabel={levelLabel}
-                    venueAddress={venueAddress}
-                    venueName={venueName}
-                  />
-                </>
+              {isPlaybackOverrideActive && (fullStreamPlaybackItem || activeVideo) && (
+                <div className="flex min-h-8 items-center px-0.5">
+                  <SgFullStreamButton onClick={handleSwitchToFullStream} />
+                </div>
               )}
 
               <div className="flex flex-col gap-2">
@@ -1153,6 +1104,7 @@ export const SgEventDetailPage = ({
                   activeRowId={activeMatrixRowId}
                   className="min-h-0"
                   canCreatePlaylist={Boolean(matrixStreamName) || hasMatrixRowStreamName}
+                  clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
                   error={matrixError}
                   hasEvent={Boolean(mediaItem || issue || eventDetails || eventPayload)}
                   isCreatingPlaylist={isCreatingCustomPlaylist}
@@ -1203,22 +1155,10 @@ export const SgEventDetailPage = ({
                     />
                   </div>
 
-                  {shouldShowEventSummary && (
-                    <>
-                      <SgEventTitleBar
-                        eventStatus={eventStatus}
-                        eventTitle={eventTitle}
-                        handleSwitchToFullStream={handleSwitchToFullStream}
-                        isTagClipActive={isPlaybackOverrideActive}
-                      />
-
-                      <SgEventDetailsCard
-                        eventDateTimeLabel={eventDateTimeLabel}
-                        levelLabel={levelLabel}
-                        venueAddress={venueAddress}
-                        venueName={venueName}
-                      />
-                    </>
+                  {isPlaybackOverrideActive && (fullStreamPlaybackItem || activeVideo) && (
+                    <div className="flex min-h-8 items-center px-0.5">
+                      <SgFullStreamButton onClick={handleSwitchToFullStream} />
+                    </div>
                   )}
                 </div>
 
@@ -1226,6 +1166,7 @@ export const SgEventDetailPage = ({
                   <SgEventTimelinePanel
                     activePlaybackOverrideId={activePlaybackOverrideId}
                     activeTagRowId={activeTimelineTagId}
+                    clipThumbnailUrl={activeVideo?.thumbnail || mediaItem?.thumbnail || playbackItem?.thumbnail || ""}
                     isCreatingPlaylist={isCreatingCustomPlaylist}
                     isPlaylistSelectionMode={isTimelinePlaylistSelectionMode}
                     isMediaLoading={isTagRowsLoading}
@@ -1265,7 +1206,6 @@ export const SgEventDetailPage = ({
                     isCreatingPlaylist={isCreatingCustomPlaylist}
                     isMediaLoading={isTagRowsLoading}
                     isSearchOpen={isSearchOpen}
-                    onListScrollStateChange={setIsTagListBodyScrolled}
                     onCreatePlaylist={() => void handleCreateCustomPlaylist(activePlaylistRows)}
                     onPlayTagRow={handlePlayTagRow}
                     onRemoveTag={handleRemoveTag}

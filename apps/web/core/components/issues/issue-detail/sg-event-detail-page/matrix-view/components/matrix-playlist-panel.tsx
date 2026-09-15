@@ -13,6 +13,7 @@ import { PLAYER_FRAME_CLASS } from "../../constants";
 import type { PlaylistDraft } from "../../playlist-draft";
 import type { SgTagRow } from "../../types";
 import { buildCustomPlaylistThumbnailUrl, buildCustomPlaylistUrl, parseTimecodeToSeconds } from "../../utils";
+import { PlaylistClipThumbnail } from "./playlist-clip-thumbnail";
 import { PlaylistDraftEditor } from "./playlist-draft-editor";
 
 type SgMatrixPlaylistPanelProps = {
@@ -953,14 +954,19 @@ export const SgMatrixPlaylistPanel = ({
                               return (
                                 <li
                                   key={clip.id || `${playlist.id}-clip-${index + 1}`}
-                                  className="mx-2 mb-1 flex h-[27px] min-w-0 items-center gap-1.5 rounded-[5px] border border-gray-400/15 border-l-[3px] border-l-gray-400 bg-gray-400/[0.04] px-1.5 last:mb-0"
+                                  className="mx-2 mb-1 flex min-h-[58px] min-w-0 items-center gap-2 rounded-[5px] border border-gray-400/15 border-l-2 border-l-[#A3A39F] bg-gray-400/[0.04] px-1.5 py-1.5 last:mb-0"
                                 >
-                                  <span className="inline-flex h-[17px] shrink-0 items-center gap-1 rounded-[3px] border border-gray-400/35 bg-gray-400/10 px-1 text-[8px] font-medium leading-none text-gray-400">
-                                    <Video className="h-2.5 w-2.5" />
-                                    GAME
-                                  </span>
-                                  <span className="min-w-0 flex-1 truncate text-[9px] font-medium leading-none text-[var(--sg-matrix-text-secondary)]">
-                                    {clipTitle}
+                                  <PlaylistClipThumbnail
+                                    thumbnail={clip.thumbnail || playlist.thumbnail}
+                                    className="h-11 w-[72px]"
+                                  />
+                                  <span className="min-w-0 flex-1">
+                                    <span className="block truncate text-[10px] font-medium uppercase leading-4 text-[var(--sg-matrix-text)]">
+                                      {clipTitle}
+                                    </span>
+                                    <span className="block truncate text-[9px] leading-3 text-[var(--sg-matrix-text-muted)]">
+                                      {normalizeCardText(clip.subtitle) || normalizeCardText(clip.groupValue)}
+                                    </span>
                                   </span>
                                   <span className="shrink-0 text-[8px] tabular-nums text-[var(--sg-matrix-text-muted)]">
                                     {clipDurationLabel}

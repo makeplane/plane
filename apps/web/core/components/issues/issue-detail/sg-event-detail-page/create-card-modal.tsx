@@ -9,6 +9,7 @@ import { buildCardPlaylists, CARD_PROGRESS_OPTIONS, formatCardDuration, formatCa
 import type { CardFormValues, CardProgressStatus } from "./create-card-model";
 import { CardClipThumbnail, CreateCardPreview } from "./create-card-preview";
 import { CreateCardRosterPicker } from "./create-card-roster-picker";
+import { CreateCardScrollArea } from "./create-card-scroll-area";
 import type { SgTagRow } from "./types";
 
 type Props = {
@@ -133,12 +134,17 @@ export const CreateCardModal = ({
                 <legend className="text-sm text-custom-text-200">Player Progress Status</legend>
                 <div className="mt-2 flex flex-wrap gap-2 rounded-lg border border-custom-border-300 bg-custom-background-90 p-2">
                   {CARD_PROGRESS_OPTIONS.map((option) => (
-                    <label key={option} className="cursor-pointer">
+                    <label
+                      key={option}
+                      className={cn("cursor-pointer", option !== "New Player" && "cursor-not-allowed opacity-45")}
+                      title={option === "New Player" ? undefined : "This progress status is not available yet"}
+                    >
                       <input
                         type="radio"
                         name="card-progress"
                         value={option}
                         checked={progressStatus === option}
+                        disabled={option !== "New Player"}
                         onChange={() => setProgressStatus(option)}
                         className="peer sr-only"
                       />
@@ -191,7 +197,13 @@ export const CreateCardModal = ({
                             />
                           </button>
                         </div>
-                        <div id={listId} hidden={isCollapsed} className="border-t border-custom-border-200">
+                        <CreateCardScrollArea
+                          id={listId}
+                          hidden={isCollapsed}
+                          className="max-h-[min(38dvh,360px)] border-t border-custom-border-200"
+                          message="Scroll for more tags"
+                          refreshKey={`${group.clips.length}:${isCollapsed}`}
+                        >
                           {group.clips.length ? (
                             group.clips.map((clip) => (
                               <div
@@ -225,7 +237,7 @@ export const CreateCardModal = ({
                               No saved tags are available for this playlist.
                             </p>
                           )}
-                        </div>
+                        </CreateCardScrollArea>
                       </div>
                     );
                   })}
