@@ -12,6 +12,7 @@ upstream route (P0-COMPAT-02).
 from django.urls import path
 
 from plane.research.views import (
+    ResearchAuditEventListEndpoint,
     ResearchHealthEndpoint,
     ResearchIdentityMappingDetailEndpoint,
     ResearchIdentityMappingListCreateEndpoint,
@@ -23,6 +24,8 @@ from plane.research.views import (
     ResearchOrgUnitMemberDetailEndpoint,
     ResearchOrgUnitMemberListCreateEndpoint,
     ResearchOrgUnitPiTransferEndpoint,
+    ResearchReportTemplateDetailEndpoint,
+    ResearchReportTemplateListCreateEndpoint,
     ResearchSettingsEndpoint,
 )
 
@@ -30,6 +33,21 @@ urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
     # identity
+    path(
+        "research/workspaces/<str:slug>/report-templates/",
+        ResearchReportTemplateListCreateEndpoint.as_view(),
+        name="research-report-templates",
+    ),
+    path(
+        "research/workspaces/<str:slug>/report-templates/<uuid:pk>/",
+        ResearchReportTemplateDetailEndpoint.as_view(),
+        name="research-report-template",
+    ),
+    path(
+        "research/workspaces/<str:slug>/audit-events/",
+        ResearchAuditEventListEndpoint.as_view(),
+        name="research-audit-events",
+    ),
     path(
         "research/workspaces/<str:slug>/settings/",
         ResearchSettingsEndpoint.as_view(),

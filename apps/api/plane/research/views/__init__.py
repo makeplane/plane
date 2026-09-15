@@ -2,8 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from .audit import ResearchAuditEventListEndpoint
 from .health import ResearchHealthEndpoint
 from .settings import ResearchSettingsEndpoint
+from .templates import (
+    ResearchReportTemplateDetailEndpoint,
+    ResearchReportTemplateListCreateEndpoint,
+)
 from .identity import (
     ResearchIdentityMappingDetailEndpoint,
     ResearchIdentityMappingListCreateEndpoint,
@@ -22,6 +27,9 @@ from .org import (
 __all__ = [
     "ResearchHealthEndpoint",
     "ResearchSettingsEndpoint",
+    "ResearchAuditEventListEndpoint",
+    "ResearchReportTemplateDetailEndpoint",
+    "ResearchReportTemplateListCreateEndpoint",
     "ResearchIdentityMappingDetailEndpoint",
     "ResearchIdentityMappingListCreateEndpoint",
     "ResearchIdentityMeEndpoint",

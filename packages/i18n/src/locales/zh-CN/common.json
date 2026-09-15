@@ -903,6 +903,7 @@
       "empty": "暂无数据",
       "refresh": "刷新",
       "confirm": "确认",
+      "saved": "已保存",
       "close": "关闭",
       "yes": "是",
       "no": "否"
@@ -997,6 +998,51 @@
     },
     "auth": {
       "sso_with": "使用"
+    },
+    "platform": {
+      "description": "模块开关、上传限制与默认可见级别。",
+      "switches": "模块开关",
+      "module_enabled": "为本工作区启用科研模块",
+      "org_enabled": "组织架构",
+      "report_enabled": "周期报告",
+      "approval_enabled": "办公审批",
+      "allow_multiple_projects": "允许一个责任人存在多个进行中项目",
+      "visibility": "报告默认可见级别",
+      "default_visibility": "默认可见级别",
+      "weekly_visibility": "周报覆盖",
+      "monthly_visibility": "月报覆盖",
+      "inherit": "跟随默认",
+      "timezone": "报告周期时区（留空跟随工作区）",
+      "limits": "上传限制（MB）",
+      "image_max_mb": "图片限制",
+      "pdf_max_mb": "PDF 限制",
+      "markdown_max_mb": "Markdown 限制",
+      "audit_retention_days": "审计保留天数（0 表示永久保留）",
+      "limits_hint": "以上限制仅作用于科研上传，不会改变全局 FILE_SIZE_LIMIT。"
+    },
+    "templates": {
+      "description": "创建报告时可套用的正文模板。",
+      "name_placeholder": "模板名称",
+      "set_default": "设为默认模板",
+      "empty": "暂无模板",
+      "columns": {
+        "name": "名称",
+        "type": "报告类型",
+        "default": "默认"
+      }
+    },
+    "audit": {
+      "description": "只读、只追加的科研审计记录。",
+      "action_placeholder": "按操作筛选",
+      "resource_placeholder": "按资源类型筛选",
+      "empty": "没有符合条件的审计记录",
+      "columns": {
+        "time": "时间",
+        "actor": "操作人",
+        "action": "操作",
+        "resource": "资源",
+        "metadata": "元数据"
+      }
     },
     "identity": {
       "description": "将 AI4MS 单点登录身份绑定到本地账号。",

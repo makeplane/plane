@@ -80,7 +80,7 @@ export type TWorkspaceResearchSetting = {
   image_max_mb: number;
   pdf_max_mb: number;
   markdown_max_mb: number;
-  timezone: string;
+  timezone: string | null;
   audit_retention_days: number;
 };
 

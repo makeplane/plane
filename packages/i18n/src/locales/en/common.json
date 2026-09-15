@@ -903,6 +903,7 @@
       "empty": "Nothing here yet",
       "refresh": "Refresh",
       "confirm": "Confirm",
+      "saved": "Saved",
       "close": "Close",
       "yes": "Yes",
       "no": "No"
@@ -997,6 +998,51 @@
     },
     "auth": {
       "sso_with": "with"
+    },
+    "platform": {
+      "description": "Module switches, upload limits and default visibility.",
+      "switches": "Module switches",
+      "module_enabled": "Enable the research module for this workspace",
+      "org_enabled": "Organisation structure",
+      "report_enabled": "Periodic reports",
+      "approval_enabled": "Office approvals",
+      "allow_multiple_projects": "Allow several active research projects per owner",
+      "visibility": "Default report visibility",
+      "default_visibility": "Default visibility",
+      "weekly_visibility": "Weekly override",
+      "monthly_visibility": "Monthly override",
+      "inherit": "Follow the default",
+      "timezone": "Report period timezone (empty follows the workspace)",
+      "limits": "Upload limits (MB)",
+      "image_max_mb": "Image limit",
+      "pdf_max_mb": "PDF limit",
+      "markdown_max_mb": "Markdown limit",
+      "audit_retention_days": "Audit retention (days, 0 = keep forever)",
+      "limits_hint": "These limits apply to research uploads only and never change the global FILE_SIZE_LIMIT."
+    },
+    "templates": {
+      "description": "Templates used when a report is created.",
+      "name_placeholder": "Template name",
+      "set_default": "Set as default",
+      "empty": "No template yet",
+      "columns": {
+        "name": "Name",
+        "type": "Report type",
+        "default": "Default"
+      }
+    },
+    "audit": {
+      "description": "Read-only, append-only research audit trail.",
+      "action_placeholder": "Filter by action",
+      "resource_placeholder": "Filter by resource type",
+      "empty": "No audit event matches the filters",
+      "columns": {
+        "time": "Time",
+        "actor": "Actor",
+        "action": "Action",
+        "resource": "Resource",
+        "metadata": "Metadata"
+      }
     },
     "identity": {
       "description": "Bind AI4MS single sign-on identities to local accounts.",
