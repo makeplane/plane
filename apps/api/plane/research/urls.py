@@ -73,6 +73,12 @@ from plane.research.views import (
     ResearchStageReviewRevisionEndpoint,
     ResearchStageReviewRevisionListEndpoint,
     ResearchStageReviewSummaryEndpoint,
+    ResearchLiteratureDetailEndpoint,
+    ResearchLiteratureImportEndpoint,
+    ResearchLiteratureListCreateEndpoint,
+    ResearchLiteraturePdfEndpoint,
+    ResearchLiteratureStatusEndpoint,
+    ResearchLiteratureThresholdEndpoint,
 )
 
 urlpatterns = [
@@ -203,6 +209,39 @@ urlpatterns = [
         "research/workspaces/<str:slug>/reviews/<uuid:review_id>/revisions/",
         ResearchStageReviewRevisionListEndpoint.as_view(),
         name="research-stage-review-revisions",
+    ),
+    # ------------------------------------------------------------------
+    # P1 literature collection (§5.4)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/literature/",
+        ResearchLiteratureListCreateEndpoint.as_view(),
+        name="research-literature",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/literature/threshold/",
+        ResearchLiteratureThresholdEndpoint.as_view(),
+        name="research-literature-threshold",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/literature/import/",
+        ResearchLiteratureImportEndpoint.as_view(),
+        name="research-literature-import",
+    ),
+    path(
+        "research/workspaces/<str:slug>/literature/<uuid:entry_id>/",
+        ResearchLiteratureDetailEndpoint.as_view(),
+        name="research-literature-entry",
+    ),
+    path(
+        "research/workspaces/<str:slug>/literature/<uuid:entry_id>/status/",
+        ResearchLiteratureStatusEndpoint.as_view(),
+        name="research-literature-status",
+    ),
+    path(
+        "research/workspaces/<str:slug>/literature/<uuid:entry_id>/pdf/",
+        ResearchLiteraturePdfEndpoint.as_view(),
+        name="research-literature-pdf",
     ),
     # office approvals
     path(

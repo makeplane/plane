@@ -56,6 +56,10 @@ export type {
   TReviewSummary,
   TReviewerRole,
   TToMeReview,
+  TLiteratureCounters,
+  TLiteratureEntry,
+  TLiteratureStatus,
+  TLiteratureThreshold,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -324,7 +328,26 @@ export const stageMaterialLabelKey = (materialType: string) => `research.stages.
 /** Project scoped research navigation (P1-UI-01). Grows stage by stage. */
 export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
   { key: "stages", labelKey: "research.nav.stages", path: "stages", section: "stages" },
+  { key: "literature", labelKey: "research.nav.literature", path: "literature", section: "stages" },
 ] as const;
+
+// ---------------------------------------------------------------------------
+// P1 literature collection (§3.3, §4.4)
+// ---------------------------------------------------------------------------
+
+export const LITERATURE_STATUSES = [
+  "COLLECTED",
+  "SCREENED",
+  "INCLUDED",
+  "EXCLUDED",
+] as const satisfies readonly TLiteratureStatus[];
+
+export const LITERATURE_STATUS_LABELS: Record<TLiteratureStatus, string> = {
+  COLLECTED: "research.literature.status.collected",
+  SCREENED: "research.literature.status.screened",
+  INCLUDED: "research.literature.status.included",
+  EXCLUDED: "research.literature.status.excluded",
+};
 
 // ---------------------------------------------------------------------------
 // P1 multi reviewer flow (§3.2, §4.3)
@@ -442,4 +465,13 @@ export const researchEndpoints = {
   review: (slug: string, reviewId: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/${reviewId}/`,
   reviewRevise: (slug: string, reviewId: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/${reviewId}/revise/`,
   reviewRevisions: (slug: string, reviewId: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/${reviewId}/revisions/`,
+  // ---- P1 literature (§5.4) ----
+  literature: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/literature/`,
+  literatureThreshold: (slug: string, projectId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/literature/threshold/`,
+  literatureImport: (slug: string, projectId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/literature/import/`,
+  literatureEntry: (slug: string, entryId: string) => `${RESEARCH_API_ROOT}/${slug}/literature/${entryId}/`,
+  literatureStatus: (slug: string, entryId: string) => `${RESEARCH_API_ROOT}/${slug}/literature/${entryId}/status/`,
+  literaturePdf: (slug: string, entryId: string) => `${RESEARCH_API_ROOT}/${slug}/literature/${entryId}/pdf/`,
 } as const;

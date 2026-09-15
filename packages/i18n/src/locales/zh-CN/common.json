@@ -878,7 +878,8 @@
       "platform": "平台配置",
       "audit": "审计记录",
       "stages": "科研阶段",
-      "reviews": "待我评审"
+      "reviews": "待我评审",
+      "literature": "文献调研"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1223,7 +1224,13 @@
       "stage_review_assignment_exists": "该评审人已在指派列表中。",
       "stage_review_recommendation_invalid": "评审建议只能是通过、否决或退回修改。",
       "stage_review_score_invalid": "评分必须在 0 到 100 之间。",
-      "stage_review_revision_reason_required": "修改评审必须填写原因。"
+      "stage_review_revision_reason_required": "修改评审必须填写原因。",
+      "literature_not_found": "文献条目不存在。",
+      "literature_duplicate_doi": "该 DOI 已在项目中登记。",
+      "literature_limit_exceeded": "项目文献登记数量已达上限。",
+      "literature_not_annotated": "纳入文献必须同时填写摘要与 gap 笔记。",
+      "literature_status_invalid": "文献状态不合法。",
+      "literature_import_empty": "没有可导入的文献条目。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1416,6 +1423,44 @@
         "auto": "自动指派",
         "manual": "手工指派",
         "delegated": "授权评审"
+      }
+    },
+    "literature": {
+      "description": "登记、筛选并纳入支撑选题的文献。",
+      "create": "登记文献",
+      "import": "批量导入",
+      "empty": "还没有登记文献。",
+      "search_placeholder": "搜索标题",
+      "title_placeholder": "标题",
+      "doi_placeholder": "DOI",
+      "venue_placeholder": "期刊 / 会议",
+      "year_placeholder": "年份",
+      "summary_placeholder": "摘要",
+      "gap_placeholder": "gap 笔记",
+      "needs_notes": "需要摘要与 gap 笔记",
+      "threshold_hint": "已纳入 {included} / 需 {required}",
+      "remaining": "还差 {count} 篇达到门槛",
+      "capacity": "已登记 {total} / 上限 {max}",
+      "quality_hint": "{count} 篇纳入文献缺少说明",
+      "import_result": "成功 {created} 条，跳过 {skipped} 条，失败 {failed} 条",
+      "import_doi_hint": "每行一个 DOI，可在 | 后补充标题",
+      "import_bibtex_hint": "粘贴 BibTeX 内容",
+      "status": {
+        "collected": "已收集",
+        "screened": "已筛选",
+        "included": "已纳入",
+        "excluded": "已排除"
+      },
+      "import_format": {
+        "doi": "DOI 列表",
+        "bibtex": "BibTeX"
+      },
+      "columns": {
+        "title": "标题",
+        "year": "年份",
+        "venue": "期刊 / 会议",
+        "doi": "DOI",
+        "status": "状态"
       }
     }
   }

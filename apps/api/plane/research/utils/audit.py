@@ -68,6 +68,12 @@ class ResearchAuditAction:
     REVIEW_SUBMIT = "stage.review.submit"
     REVIEW_REVISE = "stage.review.revise"
     REVIEW_REMIND = "stage.review.remind"
+    LITERATURE_CREATE = "literature.create"
+    LITERATURE_UPDATE = "literature.update"
+    LITERATURE_DELETE = "literature.delete"
+    LITERATURE_STATUS = "literature.status"
+    LITERATURE_IMPORT = "literature.import"
+    LITERATURE_PDF = "literature.pdf"
 
 
 class ResearchResourceType:
@@ -88,6 +94,7 @@ class ResearchResourceType:
     STAGE_REQUIREMENT = "stage_requirement"
     STAGE_REVIEW = "stage_review"
     STAGE_REVIEW_ASSIGNMENT = "stage_review_assignment"
+    LITERATURE = "literature_entry"
 
 
 def _client_metadata(request):

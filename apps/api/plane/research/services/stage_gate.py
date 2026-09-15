@@ -84,6 +84,14 @@ GATE_SPECS = {
             default_threshold=0,
             direction="max",
         ),
+        GateSpec(
+            code="literature_cited_sources",
+            requirement_type="MANUAL",
+            label="Included literature has a verifiable source",
+            label_key="research.stages.gate.literature_cited_sources",
+            default_threshold=0,
+            direction="max",
+        ),
     ),
     "OPENING": (
         GateSpec(
@@ -307,11 +315,16 @@ def _literature_outcome(instance, key):
     base = {"project_id": instance.project_id, "deleted_at__isnull": True}
     included = model.objects.filter(status="INCLUDED", **base)
     unannotated = included.filter(_blank("summary") | _blank("gap_notes"))
+    # P1-LIT-08: pre-opening citations must be published, verifiable sources,
+    # never experiment records or unpublished data of the project itself
+    unverifiable = included.filter(_blank("doi") & _blank("url") & _blank("venue"))
     detail = {
         "included": included.count(),
         "total": model.objects.filter(**base).count(),
         "unannotated": [str(entry_id) for entry_id in unannotated.values_list("id", flat=True)[:20]],
         "unannotated_count": unannotated.count(),
+        "unverifiable": [str(entry_id) for entry_id in unverifiable.values_list("id", flat=True)[:20]],
+        "unverifiable_count": unverifiable.count(),
     }
     return {"actual": detail[key], "detail": detail}
 
@@ -386,6 +399,7 @@ COUNTERS = {
     "literature_min_included": lambda instance: _literature_outcome(instance, "included"),
     "literature_max_entries": lambda instance: _literature_outcome(instance, "total"),
     "literature_quality": lambda instance: _literature_outcome(instance, "unannotated_count"),
+    "literature_cited_sources": lambda instance: _literature_outcome(instance, "unverifiable_count"),
     "experiment_linked": lambda instance: _experiment_outcome(instance, "linked"),
     "experiment_completed": lambda instance: _experiment_outcome(instance, "completed"),
     "experiment_status_notes": lambda instance: _experiment_outcome(instance, "unexplained_count"),
@@ -457,6 +471,7 @@ def evaluate_stage_gate(instance, phase=SUBMIT_PHASE):
         for key in (
             "missing",
             "unannotated",
+            "unverifiable",
             "unexplained",
             "pending_required_roles",
             "vetoed_by",

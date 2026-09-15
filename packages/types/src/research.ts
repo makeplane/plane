@@ -547,3 +547,52 @@ export type TToMeReview = {
   valid_until: string | null;
   submitted_at: string | null;
 };
+
+export type TLiteratureStatus = "COLLECTED" | "SCREENED" | "INCLUDED" | "EXCLUDED";
+
+export type TLiteratureEntry = {
+  id: string;
+  workspace: string;
+  project: string;
+  owner: string;
+  owner_detail?: TResearchUserLite;
+  title: string;
+  authors: string;
+  year: number | null;
+  venue: string;
+  doi: string;
+  url: string;
+  pdf_asset: string | null;
+  summary: string;
+  method_tags: string[];
+  system_tags: string[];
+  gap_notes: string;
+  relevance_score: string | number | null;
+  status: TLiteratureStatus;
+  visibility: TReportVisibility;
+  stage_instance: string | null;
+  is_annotated: boolean;
+  has_verifiable_source: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TLiteratureCounters = {
+  total: number;
+  included: number;
+  collected: number;
+  screened: number;
+  excluded: number;
+  unannotated: string[];
+  unannotated_count: number;
+  unverifiable: string[];
+  unverifiable_count: number;
+};
+
+export type TLiteratureThreshold = {
+  project: string;
+  threshold: { min_included: number; max_entries: number };
+  counters: TLiteratureCounters;
+  remaining: number;
+  capacity: number;
+};

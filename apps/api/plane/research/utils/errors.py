@@ -104,6 +104,13 @@ class ResearchErrorCode:
     REVIEW_SCORE_INVALID = "stage_review_score_invalid"
     REVIEW_REVISION_REASON_REQUIRED = "stage_review_revision_reason_required"
 
+    LITERATURE_NOT_FOUND = "literature_not_found"
+    LITERATURE_DUPLICATE_DOI = "literature_duplicate_doi"
+    LITERATURE_LIMIT_EXCEEDED = "literature_limit_exceeded"
+    LITERATURE_NOT_ANNOTATED = "literature_not_annotated"
+    LITERATURE_STATUS_INVALID = "literature_status_invalid"
+    LITERATURE_IMPORT_EMPTY = "literature_import_empty"
+
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):
     return Response({"error_code": error_code, "message": message}, status=http_status)

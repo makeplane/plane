@@ -7,6 +7,7 @@ from .attachment import ReportAttachment
 from .approval import ApprovalAction, ApprovalFlow, ApprovalFlowStep, ApprovalRequest
 from .config import ReportVisibility, WorkspaceResearchSetting
 from .identity import IdentityMapping
+from .literature import LiteratureEntry
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .project import ResearchProjectProfile
 from .report import PeriodicReport, ReportAccessGrant, ReportReviewLog
@@ -37,6 +38,7 @@ from .template import ReportTemplate
 
 __all__ = [
     "IdentityMapping",
+    "LiteratureEntry",
     "ReportVisibility",
     "ReportTemplate",
     "PeriodicReport",

@@ -81,6 +81,14 @@ from .reviews import (
     ResearchStageReviewRevisionListEndpoint,
     ResearchStageReviewSummaryEndpoint,
 )
+from .literature import (
+    ResearchLiteratureDetailEndpoint,
+    ResearchLiteratureImportEndpoint,
+    ResearchLiteratureListCreateEndpoint,
+    ResearchLiteraturePdfEndpoint,
+    ResearchLiteratureStatusEndpoint,
+    ResearchLiteratureThresholdEndpoint,
+)
 
 __all__ = [
     "ResearchHealthEndpoint",
@@ -108,6 +116,12 @@ __all__ = [
     "ResearchStageReviewRevisionEndpoint",
     "ResearchStageReviewRevisionListEndpoint",
     "ResearchStageReviewSummaryEndpoint",
+    "ResearchLiteratureDetailEndpoint",
+    "ResearchLiteratureImportEndpoint",
+    "ResearchLiteratureListCreateEndpoint",
+    "ResearchLiteraturePdfEndpoint",
+    "ResearchLiteratureStatusEndpoint",
+    "ResearchLiteratureThresholdEndpoint",
     "ResearchSettingsEndpoint",
     "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",

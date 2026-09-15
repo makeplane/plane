@@ -18,6 +18,7 @@ from .report import (
     ReportReviewLogSerializer,
 )
 from .attachment import ReportAttachmentSerializer
+from .literature import LiteratureEntrySerializer
 from .stage import (
     ResearchStageInstanceSerializer,
     ResearchStageRequirementSerializer,
@@ -45,6 +46,7 @@ __all__ = [
     "ReportAccessGrantSerializer",
     "ReportReviewLogSerializer",
     "ReportAttachmentSerializer",
+    "LiteratureEntrySerializer",
     "ApprovalActionSerializer",
     "ApprovalFlowSerializer",
     "ApprovalFlowStepSerializer",

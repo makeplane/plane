@@ -29,6 +29,9 @@ import type {
   TStageReviewerAssignment,
   TStageReviewRevision,
   TStageTransition,
+  TLiteratureCounters,
+  TLiteratureEntry,
+  TLiteratureThreshold,
   TReviewSummary,
   TToMeReview,
   TWorkspaceResearchSetting,
@@ -50,6 +53,8 @@ import type {
 } from "@/services/research/stage.service";
 import { ResearchReviewService } from "@/services/research/review.service";
 import type { TReviewPayload, TReviewerAssignmentPayload } from "@/services/research/review.service";
+import { ResearchLiteratureService } from "@/services/research/literature.service";
+import type { TLiteratureCreatePayload, TLiteratureListParams } from "@/services/research/literature.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -64,6 +69,7 @@ export interface IResearchStore {
   auditLoader: boolean;
   stageLoader: boolean;
   reviewLoader: boolean;
+  literatureLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
   identityErrorCode: string | null;
@@ -102,6 +108,10 @@ export interface IResearchStore {
   reviewSummary: Record<string, TReviewSummary>;
   toMeReviews: TToMeReview[];
   myReviews: TStageReview[];
+  literatureEntries: Record<string, TLiteratureEntry>;
+  literatureIdsByProject: Record<string, string[]>;
+  literatureCounters: Record<string, TLiteratureCounters>;
+  literatureThreshold: Record<string, TLiteratureThreshold>;
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -259,6 +269,35 @@ export interface IResearchStore {
   fetchReviewSummary: (workspaceSlug: string, stageId: string) => Promise<TReviewSummary>;
   fetchToMeReviews: (workspaceSlug: string) => Promise<TToMeReview[]>;
   fetchMyReviews: (workspaceSlug: string) => Promise<TStageReview[]>;
+  // literature (P1-B1)
+  fetchLiterature: (
+    workspaceSlug: string,
+    projectId: string,
+    params?: TLiteratureListParams
+  ) => Promise<TLiteratureEntry[]>;
+  createLiterature: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TLiteratureCreatePayload
+  ) => Promise<TLiteratureEntry>;
+  updateLiterature: (
+    workspaceSlug: string,
+    entryId: string,
+    payload: Partial<TLiteratureCreatePayload>
+  ) => Promise<TLiteratureEntry>;
+  updateLiteratureStatus: (
+    workspaceSlug: string,
+    entryId: string,
+    payload: { status: string; summary?: string; gap_notes?: string }
+  ) => Promise<TLiteratureEntry>;
+  deleteLiterature: (workspaceSlug: string, entryId: string) => Promise<void>;
+  fetchLiteratureThreshold: (workspaceSlug: string, projectId: string) => Promise<TLiteratureThreshold>;
+  importLiterature: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: { format: string; content: string }
+  ) => Promise<{ created: number; skipped: number; failed: number }>;
+  getLiterature: (workspaceSlug: string, projectId: string) => TLiteratureEntry[];
 }
 
 export class ResearchStore implements IResearchStore {
@@ -271,6 +310,7 @@ export class ResearchStore implements IResearchStore {
   auditLoader = false;
   stageLoader = false;
   reviewLoader = false;
+  literatureLoader = false;
 
   identity: TResearchIdentity | null = null;
   identityErrorCode: string | null = null;
@@ -310,6 +350,10 @@ export class ResearchStore implements IResearchStore {
   reviewSummary: Record<string, TReviewSummary> = {};
   toMeReviews: TToMeReview[] = [];
   myReviews: TStageReview[] = [];
+  literatureEntries: Record<string, TLiteratureEntry> = {};
+  literatureIdsByProject: Record<string, string[]> = {};
+  literatureCounters: Record<string, TLiteratureCounters> = {};
+  literatureThreshold: Record<string, TLiteratureThreshold> = {};
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -318,6 +362,7 @@ export class ResearchStore implements IResearchStore {
   private platformService: ResearchPlatformService;
   private stageService: ResearchStageService;
   private reviewService: ResearchReviewService;
+  private literatureService: ResearchLiteratureService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -331,6 +376,7 @@ export class ResearchStore implements IResearchStore {
       auditLoader: observable,
       stageLoader: observable,
       reviewLoader: observable,
+      literatureLoader: observable,
       // observables
       identity: observable,
       identityErrorCode: observable,
@@ -370,6 +416,10 @@ export class ResearchStore implements IResearchStore {
       reviewSummary: observable,
       toMeReviews: observable,
       myReviews: observable,
+      literatureEntries: observable,
+      literatureIdsByProject: observable,
+      literatureCounters: observable,
+      literatureThreshold: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -453,6 +503,13 @@ export class ResearchStore implements IResearchStore {
       fetchReviewSummary: action,
       fetchToMeReviews: action,
       fetchMyReviews: action,
+      fetchLiterature: action,
+      createLiterature: action,
+      updateLiterature: action,
+      updateLiteratureStatus: action,
+      deleteLiterature: action,
+      fetchLiteratureThreshold: action,
+      importLiterature: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -462,6 +519,7 @@ export class ResearchStore implements IResearchStore {
     this.platformService = new ResearchPlatformService();
     this.stageService = new ResearchStageService();
     this.reviewService = new ResearchReviewService();
+    this.literatureService = new ResearchLiteratureService();
   }
 
   // ---------------------------------------------------------------------
@@ -540,6 +598,11 @@ export class ResearchStore implements IResearchStore {
     (this.materialIdsByStage[stageId] ?? [])
       .map((id) => this.stageMaterials[id])
       .filter((material): material is TStageMaterial => Boolean(material));
+
+  getLiterature = (workspaceSlug: string, projectId: string) =>
+    (this.literatureIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
+      .map((id) => this.literatureEntries[id])
+      .filter((entry): entry is TLiteratureEntry => Boolean(entry));
 
   // ---------------------------------------------------------------------
   // identity
@@ -1302,5 +1365,109 @@ export class ResearchStore implements IResearchStore {
         this.reviewLoader = false;
       });
     }
+  };
+
+  // ---------------------------------------------------------------------
+  // literature (P1-B1)
+  // ---------------------------------------------------------------------
+
+  private applyLiterature = (workspaceSlug: string, projectId: string, entries: TLiteratureEntry[]) => {
+    runInAction(() => {
+      this.literatureIdsByProject[`${workspaceSlug}:${projectId}`] = entries.map((entry) => entry.id);
+      entries.forEach((entry) => {
+        this.literatureEntries[entry.id] = entry;
+      });
+    });
+  };
+
+  fetchLiterature = async (workspaceSlug: string, projectId: string, params: TLiteratureListParams = {}) => {
+    this.literatureLoader = true;
+    try {
+      const response = await this.literatureService.getEntries(workspaceSlug, projectId, params);
+      this.applyLiterature(workspaceSlug, projectId, response.results);
+      runInAction(() => {
+        this.literatureCounters[projectId] = response.counters;
+        this.literatureThreshold[projectId] = {
+          project: projectId,
+          threshold: response.threshold,
+          counters: response.counters,
+          remaining: Math.max(response.threshold.min_included - response.counters.included, 0),
+          capacity: Math.max(response.threshold.max_entries - response.counters.total, 0),
+        };
+      });
+      return response.results;
+    } finally {
+      runInAction(() => {
+        this.literatureLoader = false;
+      });
+    }
+  };
+
+  createLiterature = async (workspaceSlug: string, projectId: string, payload: TLiteratureCreatePayload) => {
+    const entry = await this.literatureService.createEntry(workspaceSlug, projectId, payload);
+    await this.fetchLiteratureThreshold(workspaceSlug, projectId).catch(() => undefined);
+    runInAction(() => {
+      this.literatureEntries[entry.id] = entry;
+      this.literatureIdsByProject[`${workspaceSlug}:${projectId}`] = [
+        entry.id,
+        ...(this.literatureIdsByProject[`${workspaceSlug}:${projectId}`] ?? []),
+      ];
+    });
+    return entry;
+  };
+
+  updateLiterature = async (workspaceSlug: string, entryId: string, payload: Partial<TLiteratureCreatePayload>) => {
+    const entry = await this.literatureService.updateEntry(workspaceSlug, entryId, payload);
+    runInAction(() => {
+      this.literatureEntries[entry.id] = entry;
+    });
+    return entry;
+  };
+
+  updateLiteratureStatus = async (
+    workspaceSlug: string,
+    entryId: string,
+    payload: { status: string; summary?: string; gap_notes?: string }
+  ) => {
+    const response = await this.literatureService.updateStatus(workspaceSlug, entryId, payload);
+    runInAction(() => {
+      this.literatureEntries[response.entry.id] = response.entry;
+      this.literatureCounters[response.entry.project] = response.counters;
+      const threshold = this.literatureThreshold[response.entry.project];
+      if (threshold) {
+        this.literatureThreshold[response.entry.project] = {
+          ...threshold,
+          counters: response.counters,
+          remaining: Math.max(threshold.threshold.min_included - response.counters.included, 0),
+          capacity: Math.max(threshold.threshold.max_entries - response.counters.total, 0),
+        };
+      }
+    });
+    return response.entry;
+  };
+
+  deleteLiterature = async (workspaceSlug: string, entryId: string) => {
+    await this.literatureService.deleteEntry(workspaceSlug, entryId);
+    runInAction(() => {
+      delete this.literatureEntries[entryId];
+      Object.keys(this.literatureIdsByProject).forEach((key) => {
+        this.literatureIdsByProject[key] = this.literatureIdsByProject[key].filter((id) => id !== entryId);
+      });
+    });
+  };
+
+  fetchLiteratureThreshold = async (workspaceSlug: string, projectId: string) => {
+    const threshold = await this.literatureService.getThreshold(workspaceSlug, projectId);
+    runInAction(() => {
+      this.literatureThreshold[projectId] = threshold;
+      this.literatureCounters[projectId] = threshold.counters;
+    });
+    return threshold;
+  };
+
+  importLiterature = async (workspaceSlug: string, projectId: string, payload: { format: string; content: string }) => {
+    const result = await this.literatureService.importEntries(workspaceSlug, projectId, payload);
+    await this.fetchLiterature(workspaceSlug, projectId).catch(() => undefined);
+    return { created: result.created.length, skipped: result.skipped.length, failed: result.failed.length };
   };
 }

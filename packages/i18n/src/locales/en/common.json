@@ -878,7 +878,8 @@
       "platform": "Platform settings",
       "audit": "Audit trail",
       "stages": "Stages",
-      "reviews": "Reviews"
+      "reviews": "Reviews",
+      "literature": "Literature"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1223,7 +1224,13 @@
       "stage_review_assignment_exists": "This reviewer is already assigned.",
       "stage_review_recommendation_invalid": "The recommendation must be pass, reject or revise.",
       "stage_review_score_invalid": "The score must be between 0 and 100.",
-      "stage_review_revision_reason_required": "A reason is required when revising a review."
+      "stage_review_revision_reason_required": "A reason is required when revising a review.",
+      "literature_not_found": "Literature entry not found.",
+      "literature_duplicate_doi": "This DOI is already registered in the project.",
+      "literature_limit_exceeded": "The project reached the literature registration limit.",
+      "literature_not_annotated": "An included entry needs both a summary and gap notes.",
+      "literature_status_invalid": "The literature status is not valid.",
+      "literature_import_empty": "No importable entry was found in the payload."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1416,6 +1423,44 @@
         "auto": "Automatic",
         "manual": "Manual",
         "delegated": "Delegated"
+      }
+    },
+    "literature": {
+      "description": "Collect, screen and include the literature behind the topic.",
+      "create": "Register entry",
+      "import": "Bulk import",
+      "empty": "No literature registered yet.",
+      "search_placeholder": "Search titles",
+      "title_placeholder": "Title",
+      "doi_placeholder": "DOI",
+      "venue_placeholder": "Journal / conference",
+      "year_placeholder": "Year",
+      "summary_placeholder": "Summary",
+      "gap_placeholder": "Gap notes",
+      "needs_notes": "summary and gap notes required",
+      "threshold_hint": "{included} / {required} included",
+      "remaining": "{count} more to reach the threshold",
+      "capacity": "{total} of {max} entries used",
+      "quality_hint": "{count} included entries still need notes",
+      "import_result": "{created} created, {skipped} skipped, {failed} failed",
+      "import_doi_hint": "One DOI per line; an optional title may follow after |",
+      "import_bibtex_hint": "Paste BibTeX entries",
+      "status": {
+        "collected": "Collected",
+        "screened": "Screened",
+        "included": "Included",
+        "excluded": "Excluded"
+      },
+      "import_format": {
+        "doi": "DOI list",
+        "bibtex": "BibTeX"
+      },
+      "columns": {
+        "title": "Title",
+        "year": "Year",
+        "venue": "Venue",
+        "doi": "DOI",
+        "status": "Status"
       }
     }
   }

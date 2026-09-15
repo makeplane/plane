@@ -98,6 +98,7 @@ from .research import (
     STAGE_SEQUENCE,
     STAGE_SORT_ORDER,
     IdentityMapping,
+    LiteratureEntry,
     ApprovalAction,
     ApprovalFlow,
     ApprovalFlowStep,
