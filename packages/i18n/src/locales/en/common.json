@@ -1397,6 +1397,15 @@
         "code_and_snapshot": "Code repositories and snapshots",
         "data_and_attachment_list": "Data and attachment list",
         "advisor_opinion": "Advisor opinion"
+      },
+      "progress": {
+        "title": "Progress summary",
+        "experiments": "Experiments {completed}/{total} completed",
+        "code": "{repositories} repositories, {artifacts} artifacts",
+        "literature": "{count} included references",
+        "reports": "{count} reports in scope",
+        "unexplained": "{count} unfinished experiments still need a status note",
+        "read_only_hint": "The summary only references the source objects; edit them in their own pages."
       }
     },
     "reviews": {

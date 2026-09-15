@@ -14,6 +14,7 @@ import { useTranslation } from "@plane/i18n";
 import { StageActions } from "@/components/research/stages/stage-actions";
 import { StageGateChecklist } from "@/components/research/stages/stage-gate-checklist";
 import { StageMaterialList } from "@/components/research/stages/stage-material-list";
+import { StageProgressPanel } from "@/components/research/stages/stage-progress-panel";
 import { StageTransitionHistory } from "@/components/research/stages/stage-transition-history";
 import { ReviewBoard } from "@/components/research/reviews/review-board";
 import { ReviewForm } from "@/components/research/reviews/review-form";
@@ -174,6 +175,10 @@ export const StageDetail = observer(function StageDetail({ workspaceSlug, projec
           await load();
         }}
       />
+
+      {["MIDTERM", "FINAL"].includes(stage.stage) && (
+        <StageProgressPanel workspaceSlug={workspaceSlug} projectId={projectId} />
+      )}
 
       <div className="flex flex-col gap-2">
         <h3 className="text-13 font-medium text-primary">{t("research.stages.history_title")}</h3>

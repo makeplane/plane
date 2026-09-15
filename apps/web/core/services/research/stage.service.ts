@@ -53,6 +53,39 @@ export type TStageRequirementUpdate = {
   org_unit?: string | null;
 };
 
+export type TStageProgress = {
+  project: string;
+  experiments: {
+    total: number;
+    completed: number;
+    failed: number;
+    unfinished: number;
+    unexplained: { id: string; sequence_no: number; title: string }[];
+    items: {
+      id: string;
+      sequence_no: number;
+      title: string;
+      status: string;
+      source: string;
+      status_note: string;
+      completed_at: string | null;
+    }[];
+  };
+  code: {
+    repositories: { id: string; repository_url: string; provider: string; status: string }[];
+    artifact_count: number;
+    snapshot_count: number;
+    linked_experiment_count: number;
+  };
+  literature: {
+    included: number;
+    total: number;
+    items: { id: string; title: string; year: number | null; status: string }[];
+  };
+  reports: { count: number; items: { id: string; report_type: string; period_key: string; status: string }[] };
+  outcomes: { count: number; items: { id: string; title: string; output_type: string; status: string }[] };
+};
+
 export class ResearchStageService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -193,6 +226,16 @@ export class ResearchStageService extends APIService {
   async getMaterialVersions(workspaceSlug: string, materialId: string) {
     return this.get(researchEndpoints.materialVersions(workspaceSlug, materialId))
       .then((res) => res?.data as { results: TStageMaterialVersion[]; count: number })
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getProgress(workspaceSlug: string, projectId: string, periodKey?: string) {
+    return this.get(researchEndpoints.projectProgress(workspaceSlug, projectId), {
+      params: periodKey ? { period_key: periodKey } : {},
+    })
+      .then((res) => res?.data as TStageProgress)
       .catch((err) => {
         throw err?.response?.data;
       });

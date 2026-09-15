@@ -10,5 +10,6 @@ export * from "./stage-gate-checklist";
 export * from "./stage-material-detail";
 export * from "./stage-material-list";
 export * from "./stage-overview";
+export * from "./stage-progress-panel";
 export * from "./stage-timeline";
 export * from "./stage-transition-history";

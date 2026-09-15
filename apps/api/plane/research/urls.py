@@ -98,6 +98,7 @@ from plane.research.views import (
     ResearchCodeSnapshotEndpoint,
     ResearchCodeSummaryEndpoint,
     ResearchStageMaterialOverrideEndpoint,
+    ResearchProjectProgressEndpoint,
 )
 
 urlpatterns = [
@@ -266,6 +267,11 @@ urlpatterns = [
         "research/workspaces/<str:slug>/materials/<uuid:material_id>/override/",
         ResearchStageMaterialOverrideEndpoint.as_view(),
         name="research-stage-material-override",
+    ),
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/progress/",
+        ResearchProjectProgressEndpoint.as_view(),
+        name="research-project-progress",
     ),
     # ------------------------------------------------------------------
     # P1 experiment records and amendments (§5.5)

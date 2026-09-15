@@ -597,4 +597,5 @@ export const researchEndpoints = {
   codeSnapshots: (slug: string, repositoryId: string) =>
     `${RESEARCH_API_ROOT}/${slug}/code-repositories/${repositoryId}/snapshots/`,
   codeArtifact: (slug: string, artifactId: string) => `${RESEARCH_API_ROOT}/${slug}/code-artifacts/${artifactId}/`,
+  projectProgress: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/progress/`,
 } as const;

@@ -1397,6 +1397,15 @@
         "code_and_snapshot": "代码仓库与快照",
         "data_and_attachment_list": "数据与附件清单",
         "advisor_opinion": "导师评审意见"
+      },
+      "progress": {
+        "title": "进展汇总",
+        "experiments": "实验已完成 {completed}/{total}",
+        "code": "代码仓库 {repositories} 个、制品 {artifacts} 条",
+        "literature": "纳入文献 {count} 篇",
+        "reports": "周期范围内报告 {count} 份",
+        "unexplained": "还有 {count} 条未完成实验缺少状态说明",
+        "read_only_hint": "汇总仅引用源对象，修改请回到对应页面。"
       }
     },
     "reviews": {

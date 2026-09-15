@@ -56,6 +56,7 @@ import { ResearchStageService } from "@/services/research/stage.service";
 import type {
   TStageMaterialCreatePayload,
   TStageMaterialUpdatePayload,
+  TStageProgress,
   TStageRequirementUpdate,
 } from "@/services/research/stage.service";
 import { ResearchReviewService } from "@/services/research/review.service";
@@ -119,6 +120,7 @@ export interface IResearchStore {
   materialIdsByStage: Record<string, string[]>;
   materialVersions: Record<string, TStageMaterialVersion[]>;
   stageRequirements: Record<string, TStageRequirement[]>;
+  projectProgress: Record<string, TStageProgress>;
   reviewAssignments: Record<string, TStageReviewerAssignment[]>;
   stageReviews: Record<string, TStageReview[]>;
   reviewRevisions: Record<string, TStageReviewRevision[]>;
@@ -279,6 +281,7 @@ export interface IResearchStore {
   ) => Promise<TStageMaterial>;
   fetchMaterialVersions: (workspaceSlug: string, materialId: string) => Promise<TStageMaterialVersion[]>;
   fetchStageRequirements: (workspaceSlug: string, stage?: string) => Promise<TStageRequirement[]>;
+  fetchProjectProgress: (workspaceSlug: string, projectId: string) => Promise<TStageProgress>;
   updateStageRequirements: (workspaceSlug: string, items: TStageRequirementUpdate[]) => Promise<void>;
   // review flow (P1-A2)
   fetchReviewers: (workspaceSlug: string, stageId: string) => Promise<TStageReviewerAssignment[]>;
@@ -440,6 +443,7 @@ export class ResearchStore implements IResearchStore {
   materialIdsByStage: Record<string, string[]> = {};
   materialVersions: Record<string, TStageMaterialVersion[]> = {};
   stageRequirements: Record<string, TStageRequirement[]> = {};
+  projectProgress: Record<string, TStageProgress> = {};
   reviewAssignments: Record<string, TStageReviewerAssignment[]> = {};
   stageReviews: Record<string, TStageReview[]> = {};
   reviewRevisions: Record<string, TStageReviewRevision[]> = {};
@@ -519,6 +523,7 @@ export class ResearchStore implements IResearchStore {
       materialIdsByStage: observable,
       materialVersions: observable,
       stageRequirements: observable,
+      projectProgress: observable,
       reviewAssignments: observable,
       stageReviews: observable,
       reviewRevisions: observable,
@@ -610,6 +615,7 @@ export class ResearchStore implements IResearchStore {
       overrideStageMaterial: action,
       fetchMaterialVersions: action,
       fetchStageRequirements: action,
+      fetchProjectProgress: action,
       updateStageRequirements: action,
       fetchReviewers: action,
       assignReviewer: action,
@@ -1410,6 +1416,14 @@ export class ResearchStore implements IResearchStore {
       this.materialVersions[materialId] = response.results;
     });
     return response.results;
+  };
+
+  fetchProjectProgress = async (workspaceSlug: string, projectId: string) => {
+    const progress = await this.stageService.getProgress(workspaceSlug, projectId);
+    runInAction(() => {
+      this.projectProgress[projectId] = progress;
+    });
+    return progress;
   };
 
   fetchStageRequirements = async (workspaceSlug: string, stage?: string) => {

@@ -260,6 +260,14 @@ def submit_stage(instance, actor, request=None):
             gate=gate,
         )
 
+    # the midterm snapshot freezes the aggregated progress next to the gate
+    # result so the reviewers see the same numbers the author submitted (§3.5)
+    progress = {}
+    if instance.stage == STAGE_SEQUENCE[2]:
+        from plane.research.services.progress import build_progress
+
+        progress = build_progress(instance.workspace, instance.project_id, actor)
+
     previous = instance.status
     now = timezone.now()
     with transaction.atomic():
@@ -282,7 +290,7 @@ def submit_stage(instance, actor, request=None):
             to_status=instance.status,
             actor=actor,
             gate_snapshot=gate,
-            metadata={"attempt": instance.attempt_count},
+            metadata={"attempt": instance.attempt_count, "progress": progress},
         )
 
     owner_id = project_owner_id(instance)
