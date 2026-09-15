@@ -162,10 +162,18 @@ export type TReportSummary = {
   period_key: string;
   period_start: string;
   period_end: string;
+  report_type?: TReportType;
   org_unit: string | null;
   org_unit_name: string | null;
   counts: TReportSummaryCounts;
   pending_members: TResearchUserLite[];
+  by_unit?: {
+    org_unit: string;
+    org_unit_name: string;
+    org_unit_type?: string;
+    counts: TReportSummaryCounts;
+    pending_members: Pick<TResearchUserLite, "id" | "email" | "display_name">[];
+  }[];
 };
 
 export type TReportTemplate = {

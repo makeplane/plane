@@ -55,6 +55,7 @@ export interface IResearchStore {
   reportHistory: Record<string, TReportReviewLog[]>;
   reportAttachments: Record<string, TReportAttachment[]>;
   reportSummary: Record<string, TReportSummary>;
+  summaryByWorkspace: Record<string, TReportSummary>;
   reportTemplates: Record<string, TReportTemplate>;
   reportTemplateIdsByWorkspace: Record<string, string[]>;
   researchProjects: Record<string, TResearchProject>;
@@ -193,6 +194,7 @@ export class ResearchStore implements IResearchStore {
   reportHistory: Record<string, TReportReviewLog[]> = {};
   reportAttachments: Record<string, TReportAttachment[]> = {};
   reportSummary: Record<string, TReportSummary> = {};
+  summaryByWorkspace: Record<string, TReportSummary> = {};
   reportTemplates: Record<string, TReportTemplate> = {};
   reportTemplateIdsByWorkspace: Record<string, string[]> = {};
   researchProjects: Record<string, TResearchProject> = {};
@@ -234,6 +236,7 @@ export class ResearchStore implements IResearchStore {
       reportHistory: observable,
       reportAttachments: observable,
       reportSummary: observable,
+      summaryByWorkspace: observable,
       reportTemplates: observable,
       reportTemplateIdsByWorkspace: observable,
       researchProjects: observable,
@@ -649,6 +652,7 @@ export class ResearchStore implements IResearchStore {
     runInAction(() => {
       const key = `${workspaceSlug}:${params.org_unit ?? "all"}`;
       this.reportSummary[key] = summary;
+      this.summaryByWorkspace[workspaceSlug] = summary;
     });
     return summary;
   };

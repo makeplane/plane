@@ -1061,6 +1061,21 @@
         "size": "Size"
       }
     },
+    "summary": {
+      "description": "Submission status grouped by organisation node and period.",
+      "by_unit": "By organisation node",
+      "pending": "Not submitted yet",
+      "no_pending": "Everyone has submitted for this period",
+      "empty": "No organisation node in your scope",
+      "not_submitted": "Not submitted",
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "needs_revision": "Needs revision",
+      "accepted": "Accepted",
+      "columns": {
+        "unit": "Organisation node"
+      }
+    },
     "platform": {
       "description": "Module switches, upload limits and default visibility.",
       "switches": "Module switches",

@@ -11,6 +11,7 @@ from .attachments import (
 )
 from .health import ResearchHealthEndpoint
 from .settings import ResearchSettingsEndpoint
+from .summary import ResearchReportSummaryEndpoint
 from .templates import (
     ResearchReportTemplateDetailEndpoint,
     ResearchReportTemplateListCreateEndpoint,
@@ -48,6 +49,7 @@ from .reports import (
 __all__ = [
     "ResearchHealthEndpoint",
     "ResearchSettingsEndpoint",
+    "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",
     "ResearchReportAttachmentDetailEndpoint",
     "ResearchReportAttachmentListCreateEndpoint",

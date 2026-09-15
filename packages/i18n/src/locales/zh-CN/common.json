@@ -1061,6 +1061,21 @@
         "size": "大小"
       }
     },
+    "summary": {
+      "description": "按组织节点与周期查看提交情况。",
+      "by_unit": "按组织节点统计",
+      "pending": "未提交名单",
+      "no_pending": "该周期已全部提交",
+      "empty": "你的权限范围内暂无组织节点",
+      "not_submitted": "未提交",
+      "draft": "草稿",
+      "submitted": "已提交",
+      "needs_revision": "需修改",
+      "accepted": "已验收",
+      "columns": {
+        "unit": "组织节点"
+      }
+    },
     "platform": {
       "description": "模块开关、上传限制与默认可见级别。",
       "switches": "模块开关",

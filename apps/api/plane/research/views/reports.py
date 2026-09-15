@@ -40,6 +40,11 @@ from plane.research.utils.errors import (
     research_permission_denied,
 )
 from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.notifications import (
+    notify_report_accepted,
+    notify_report_returned,
+    notify_report_submitted,
+)
 from plane.research.utils.periods import InvalidPeriod, current_period, parse_period
 from plane.research.utils.reports import can_transition, is_editable, report_resource
 from plane.research.utils.settings import default_visibility_for, get_workspace_research_settings
@@ -312,6 +317,7 @@ class ResearchReportSubmitEndpoint(ResearchAPIView):
             metadata={"period_key": report.period_key, "report_type": report.report_type},
             request=request,
         )
+        notify_report_submitted(report, request.user)
         return Response(serialize_report(report, request), status=status.HTTP_200_OK)
 
 
@@ -369,6 +375,7 @@ class ResearchReportReturnEndpoint(ResearchAPIView):
             metadata={"period_key": report.period_key, "reason_provided": True},
             request=request,
         )
+        notify_report_returned(report, request.user, comment)
         return Response(serialize_report(report, request), status=status.HTTP_200_OK)
 
 
@@ -419,6 +426,7 @@ class ResearchReportAcceptEndpoint(ResearchAPIView):
             metadata={"period_key": report.period_key, "report_type": report.report_type},
             request=request,
         )
+        notify_report_accepted(report, request.user)
         return Response(serialize_report(report, request), status=status.HTTP_200_OK)
 
 

@@ -209,7 +209,13 @@ def org_unit_scope_ids(org_unit_id, workspace_id):
 
 
 def direct_advisor_ids(owner_id, workspace_id, org_unit_id=None, on_date=None):
-    """Direct advisors of the owner, plus advisors registered on the node."""
+    """Direct advisors of the owner, plus the mentoring roles of the node.
+
+    The node's own principal investigators and unit administrators belong to
+    the DIRECT_ADVISOR scope: they review reports of their group (§1.5) and the
+    P0-UI-05 summary has to agree with that. Ancestor nodes are still governed
+    by the ANCESTRY level.
+    """
     on_date = on_date or timezone.localdate()
     advisors = set(
         MentorBinding.objects.filter(
@@ -227,7 +233,7 @@ def direct_advisor_ids(owner_id, workspace_id, org_unit_id=None, on_date=None):
                 deleted_at__isnull=True,
                 workspace_id=workspace_id,
                 org_unit_id=org_unit_id,
-                org_role="ADVISOR",
+                org_role__in=("ADVISOR", "PI", "OWNER", "UNIT_ADMIN"),
                 effective_from__lte=on_date,
             )
             .filter(models_q_expired(on_date))
