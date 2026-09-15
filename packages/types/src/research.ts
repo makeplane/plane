@@ -445,3 +445,105 @@ export type TStageRequirement = {
   applies_to: TStageGatePhase[];
   material_types: string[];
 };
+
+export type TReviewRecommendation = "PASS" | "REJECT" | "REVISE";
+export type TReviewerRole = "DIRECT_ADVISOR" | "PI" | "REVIEWER" | "UNIT_ADMIN";
+export type TAssignmentKind = "AUTO" | "MANUAL" | "DELEGATED";
+
+export type TStageReviewerAssignment = {
+  id: string;
+  stage_instance: string;
+  reviewer: string;
+  reviewer_detail?: TResearchUserLite;
+  reviewer_role: TReviewerRole;
+  is_required: boolean;
+  assignment_kind: TAssignmentKind;
+  assigned_by: string | null;
+  assigned_by_detail?: TResearchUserLite | null;
+  is_active: boolean;
+  superseded_at: string | null;
+  valid_until: string | null;
+  reviewed?: boolean;
+  recommendation?: TReviewRecommendation | null;
+  review_id?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TStageReview = {
+  id: string;
+  stage_instance: string;
+  reviewer: string;
+  reviewer_detail?: TResearchUserLite;
+  reviewer_role: TReviewerRole;
+  recommendation: TReviewRecommendation;
+  score: string | number | null;
+  comment: string;
+  revision_no: number;
+  is_superseded: boolean;
+  submitted_at: string | null;
+  created_at: string;
+  updated_at: string;
+  revisions?: TStageReviewRevision[];
+};
+
+export type TStageReviewRevision = {
+  id: string;
+  review: string;
+  revision_no: number;
+  recommendation: TReviewRecommendation;
+  score: string | number | null;
+  comment: string;
+  reason: string;
+  created_by: string | null;
+  created_by_detail?: TResearchUserLite | null;
+  created_at: string;
+};
+
+export type TReviewRules = {
+  min_reviewers: number;
+  pass_ratio: number;
+  advisor_required: boolean;
+  pi_branch_required: boolean;
+  advisor_veto: boolean;
+};
+
+export type TReviewDecision = {
+  passed: boolean;
+  actual: number;
+  required: number;
+  detail: {
+    min_reviewers: number;
+    pass_ratio: number;
+    pass_count: number;
+    review_count: number;
+    distribution: Record<TReviewRecommendation, number>;
+    assignment_count: number;
+    pending_required_roles: string[];
+    rule_version: string;
+    vetoed_by?: string;
+  };
+};
+
+export type TReviewSummary = {
+  stage: TStageType;
+  stage_id: string;
+  rules: TReviewRules;
+  rule_sources: Record<string, string>;
+  rule_version: string;
+  decision: TReviewDecision;
+  summary: Record<string, unknown>;
+};
+
+export type TToMeReview = {
+  assignment_id: string;
+  stage_id: string;
+  stage: TStageType;
+  project: string;
+  project_name: string;
+  reviewer_role: TReviewerRole;
+  is_required: boolean;
+  assignment_kind: TAssignmentKind;
+  valid_until: string | null;
+  submitted_at: string | null;
+};

@@ -41,12 +41,21 @@ export type {
   TStageMaterial,
   TStageMaterialStatus,
   TStageMaterialVersion,
+  TStageReview,
+  TStageReviewerAssignment,
+  TStageReviewRevision,
   TStageRequirement,
   TStageRequirementType,
   TStageStatus,
   TStageTransition,
   TStageTransitionAction,
   TStageType,
+  TReviewDecision,
+  TReviewRecommendation,
+  TReviewRules,
+  TReviewSummary,
+  TReviewerRole,
+  TToMeReview,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -182,6 +191,7 @@ export const RESEARCH_NAVIGATION_ITEMS = [
   { key: "reports", labelKey: "research.nav.reports", path: "reports", section: "reports" },
   { key: "summary", labelKey: "research.nav.summary", path: "reports/summary", section: "reports" },
   { key: "projects", labelKey: "research.nav.projects", path: "projects", section: "reports" },
+  { key: "reviews", labelKey: "research.nav.reviews", path: "reviews", section: "stages" },
   { key: "approvals", labelKey: "research.nav.approvals", path: "approvals", section: "approvals" },
 ] as const;
 
@@ -316,6 +326,38 @@ export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
   { key: "stages", labelKey: "research.nav.stages", path: "stages", section: "stages" },
 ] as const;
 
+// ---------------------------------------------------------------------------
+// P1 multi reviewer flow (§3.2, §4.3)
+// ---------------------------------------------------------------------------
+
+export const REVIEW_RECOMMENDATIONS = ["PASS", "REJECT", "REVISE"] as const satisfies readonly TReviewRecommendation[];
+
+export const REVIEW_RECOMMENDATION_LABELS: Record<TReviewRecommendation, string> = {
+  PASS: "research.reviews.recommendation.pass",
+  REJECT: "research.reviews.recommendation.reject",
+  REVISE: "research.reviews.recommendation.revise",
+};
+
+export const REVIEWER_ROLES = [
+  "DIRECT_ADVISOR",
+  "PI",
+  "REVIEWER",
+  "UNIT_ADMIN",
+] as const satisfies readonly TReviewerRole[];
+
+export const REVIEWER_ROLE_LABELS: Record<TReviewerRole, string> = {
+  DIRECT_ADVISOR: "research.reviews.role.direct_advisor",
+  PI: "research.reviews.role.pi",
+  REVIEWER: "research.reviews.role.reviewer",
+  UNIT_ADMIN: "research.reviews.role.unit_admin",
+};
+
+export const ASSIGNMENT_KIND_LABELS: Record<string, string> = {
+  AUTO: "research.reviews.assignment_kind.auto",
+  MANUAL: "research.reviews.assignment_kind.manual",
+  DELEGATED: "research.reviews.assignment_kind.delegated",
+};
+
 export const RESEARCH_SETTINGS_NAVIGATION_ITEMS = [
   { key: "org", labelKey: "research.nav.org_settings", path: "settings/org", section: "org" },
   { key: "templates", labelKey: "research.nav.templates", path: "settings/templates", section: "reports" },
@@ -388,4 +430,16 @@ export const researchEndpoints = {
   stageRequirements: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/stage-requirements/`,
   stageRequirement: (slug: string, requirementId: string) =>
     `${RESEARCH_API_ROOT}/${slug}/stage-requirements/${requirementId}/`,
+  // ---- P1 review flow (§5.3) ----
+  stageReviewers: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/reviewers/`,
+  reviewer: (slug: string, assignmentId: string) => `${RESEARCH_API_ROOT}/${slug}/reviewers/${assignmentId}/`,
+  reviewerRemind: (slug: string, assignmentId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/reviewers/${assignmentId}/remind/`,
+  stageReviews: (slug: string, stageId: string) => `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/reviews/`,
+  stageReviewSummary: (slug: string, stageId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/stages/${stageId}/review-summary/`,
+  reviews: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/`,
+  review: (slug: string, reviewId: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/${reviewId}/`,
+  reviewRevise: (slug: string, reviewId: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/${reviewId}/revise/`,
+  reviewRevisions: (slug: string, reviewId: string) => `${RESEARCH_API_ROOT}/${slug}/reviews/${reviewId}/revisions/`,
 } as const;

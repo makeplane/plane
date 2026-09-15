@@ -6,6 +6,8 @@
 
 import pytest
 
+from django.utils import timezone
+
 from plane.db.models import (
     MATERIAL_TYPES_BY_STAGE,
     Project,
@@ -213,6 +215,30 @@ def test_pass_marks_project_completed_on_final(project_env):
     final = next(item for item in instances if item.stage == StageType.FINAL.value)
     final.status = STATUS.SUBMITTED
     final.save(update_fields=["status"])
+    # the review gate is satisfied through the rule configuration (P1-A2 owns
+    # the rule matrix; this test owns the project status linkage)
+    from plane.db.models import ResearchStageRequirement, StageReview
+
+    for code in ("stage_min_reviewers", "stage_advisor_required", "stage_pi_branch_required"):
+        ResearchStageRequirement.objects.create(
+            workspace=project_env["workspace"],
+            stage=StageType.FINAL.value,
+            code=code,
+            requirement_type=ResearchStageRequirement.RequirementType.REVIEW_RULE,
+            threshold=0,
+        )
+    for user, role in (
+        (project_env["admin"], "DIRECT_ADVISOR"),
+        (make_user(first_name="Pi"), "PI"),
+        (make_user(first_name="Extra"), "REVIEWER"),
+    ):
+        StageReview.objects.create(
+            stage_instance=final,
+            reviewer=user,
+            reviewer_role=role,
+            recommendation="PASS",
+            submitted_at=timezone.now(),
+        )
     pass_stage(final, project_env["admin"])
     final.refresh_from_db()
     project_env["profile"].refresh_from_db()

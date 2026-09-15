@@ -434,7 +434,13 @@ def evaluate_stage_gate(instance, phase=SUBMIT_PHASE):
             )
             continue
         actual = outcome.get("actual") or 0
-        passed = actual <= required if requirement.direction == "max" else actual >= required
+        if outcome.get("required") is not None:
+            required = outcome["required"]
+        if "passed" in outcome:
+            # rules that are not a plain count comparison decide for themselves
+            passed = bool(outcome["passed"])
+        else:
+            passed = actual <= required if requirement.direction == "max" else actual >= required
         item = {
             "code": code,
             "label": requirement.label,
@@ -448,7 +454,17 @@ def evaluate_stage_gate(instance, phase=SUBMIT_PHASE):
             "threshold_source": requirement.source,
         }
         detail = outcome.get("detail") or {}
-        for key in ("missing", "unannotated", "unexplained", "pending_required_roles"):
+        for key in (
+            "missing",
+            "unannotated",
+            "unexplained",
+            "pending_required_roles",
+            "vetoed_by",
+            "distribution",
+            "min_reviewers",
+            "pass_ratio",
+            "review_count",
+        ):
             if key in detail:
                 item[key] = detail[key]
         if not passed:

@@ -10,6 +10,15 @@ from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .project import ResearchProjectProfile
 from .report import PeriodicReport, ReportAccessGrant, ReportReviewLog
+from .review import (
+    DEFAULT_MIN_REVIEWERS,
+    DEFAULT_PASS_RATIO,
+    PI_BRANCH_ROLES,
+    ReviewerRole,
+    StageReview,
+    StageReviewerAssignment,
+    StageReviewRevision,
+)
 from .stage import (
     ALL_MATERIAL_TYPES,
     MATERIAL_SET_COMPLETE_STATES,
@@ -38,6 +47,13 @@ __all__ = [
     "ApprovalFlowStep",
     "ApprovalRequest",
     "ReportReviewLog",
+    "DEFAULT_MIN_REVIEWERS",
+    "DEFAULT_PASS_RATIO",
+    "PI_BRANCH_ROLES",
+    "ReviewerRole",
+    "StageReview",
+    "StageReviewerAssignment",
+    "StageReviewRevision",
     "ResearchProjectProfile",
     "ResearchAuditEvent",
     "WorkspaceResearchSetting",

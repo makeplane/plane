@@ -37,9 +37,7 @@ export const ResearchSidebarItems = observer(function ResearchSidebarItems() {
   if (!workspaceSlug || !research.isEnabled) return null;
 
   const sections = research.identity?.sections;
-  const visibleBusinessItems = RESEARCH_NAVIGATION_ITEMS.filter((item) =>
-    item.section === "approvals" ? sections?.approvals : sections?.reports
-  );
+  const visibleBusinessItems = RESEARCH_NAVIGATION_ITEMS.filter((item) => Boolean(sections?.[item.section]));
   const visibleSettingsItems = research.isWorkspaceAdmin
     ? RESEARCH_SETTINGS_NAVIGATION_ITEMS.filter((item) => (item.section === "org" ? sections?.org : sections?.reports))
     : [];

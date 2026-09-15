@@ -23,6 +23,9 @@ from .stage import (
     ResearchStageRequirementSerializer,
     StageMaterialSerializer,
     StageMaterialVersionSerializer,
+    StageReviewerAssignmentSerializer,
+    StageReviewSerializer,
+    StageReviewRevisionSerializer,
     StageTransitionSerializer,
 )
 from .approval import (
@@ -54,4 +57,7 @@ __all__ = [
     "StageMaterialSerializer",
     "StageMaterialVersionSerializer",
     "StageTransitionSerializer",
+    "StageReviewerAssignmentSerializer",
+    "StageReviewSerializer",
+    "StageReviewRevisionSerializer",
 ]

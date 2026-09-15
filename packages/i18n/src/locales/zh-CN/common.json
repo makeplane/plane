@@ -877,7 +877,8 @@
       "identity": "身份映射",
       "platform": "平台配置",
       "audit": "审计记录",
-      "stages": "科研阶段"
+      "stages": "科研阶段",
+      "reviews": "待我评审"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1212,7 +1213,17 @@
       "stage_material_not_found": "阶段材料不存在。",
       "stage_material_type_invalid": "该材料不属于本阶段材料清单。",
       "stage_material_read_only": "当前阶段状态下材料只读。",
-      "stage_material_version_not_found": "材料版本不存在。"
+      "stage_material_version_not_found": "材料版本不存在。",
+      "stage_review_not_found": "评审不存在。",
+      "stage_review_state_conflict": "当前评审状态不允许该操作。",
+      "stage_review_comment_required": "否决与退回必须填写评审意见。",
+      "stage_review_self_forbidden": "不能评审自己提交的阶段。",
+      "stage_review_not_assigned": "你没有被指派评审该阶段。",
+      "stage_review_assignment_not_found": "评审指派不存在。",
+      "stage_review_assignment_exists": "该评审人已在指派列表中。",
+      "stage_review_recommendation_invalid": "评审建议只能是通过、否决或退回修改。",
+      "stage_review_score_invalid": "评分必须在 0 到 100 之间。",
+      "stage_review_revision_reason_required": "修改评审必须填写原因。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1353,6 +1364,58 @@
         "code_and_snapshot": "代码仓库与快照",
         "data_and_attachment_list": "数据与附件清单",
         "advisor_opinion": "导师评审意见"
+      }
+    },
+    "reviews": {
+      "description": "待你评审的阶段与你已提交的评审。",
+      "section_title": "评审",
+      "reviewers_title": "评审人",
+      "opinions_title": "评审意见",
+      "required": "必评",
+      "optional": "可选",
+      "submitted": "已提交",
+      "remind": "催办",
+      "remove": "移除",
+      "no_reviews": "暂无评审意见。",
+      "own_review_hint": "你可以修改自己的评审，所有版本都会保留。",
+      "summary_title": "评审判定",
+      "decision_pass": "规则已满足",
+      "decision_blocked": "规则未满足",
+      "reviewer_count": "有效评审人数",
+      "pass_ratio": "通过比例",
+      "pending_roles": "尚缺：{roles}",
+      "vetoed": "直接导师已否决该阶段。",
+      "rule_advisor": "直接导师必须评审。",
+      "rule_pi_branch": "主 PI 或授权评审人必须评审。",
+      "rule_veto": "直接导师否决即阶段不通过。",
+      "rule_version": "评审规则版本 {version}。",
+      "score_placeholder": "评分 0-100",
+      "comment_required": "否决与退回必须填写意见",
+      "comment_placeholder": "评审意见（通过时可留空）",
+      "revision_reason": "修改原因（必填）",
+      "reason": "原因",
+      "submit": "提交评审",
+      "revise": "修改评审",
+      "scope_to_me": "待我评审",
+      "scope_mine": "我的评审",
+      "open_stage": "进入阶段",
+      "inbox_empty": "当前没有待你评审的阶段。",
+      "mine_empty": "你还没有提交过评审。",
+      "recommendation": {
+        "pass": "通过",
+        "reject": "否决",
+        "revise": "退回修改"
+      },
+      "role": {
+        "direct_advisor": "直接导师",
+        "pi": "主 PI",
+        "reviewer": "评审人",
+        "unit_admin": "节点管理员"
+      },
+      "assignment_kind": {
+        "auto": "自动指派",
+        "manual": "手工指派",
+        "delegated": "授权评审"
       }
     }
   }

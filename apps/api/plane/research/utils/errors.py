@@ -93,6 +93,17 @@ class ResearchErrorCode:
     MATERIAL_READ_ONLY = "stage_material_read_only"
     MATERIAL_VERSION_NOT_FOUND = "stage_material_version_not_found"
 
+    REVIEW_NOT_FOUND = "stage_review_not_found"
+    REVIEW_STATE_CONFLICT = "stage_review_state_conflict"
+    REVIEW_COMMENT_REQUIRED = "stage_review_comment_required"
+    REVIEW_SELF_FORBIDDEN = "stage_review_self_forbidden"
+    REVIEW_NOT_ASSIGNED = "stage_review_not_assigned"
+    REVIEW_ASSIGNMENT_NOT_FOUND = "stage_review_assignment_not_found"
+    REVIEW_ASSIGNMENT_EXISTS = "stage_review_assignment_exists"
+    REVIEW_RECOMMENDATION_INVALID = "stage_review_recommendation_invalid"
+    REVIEW_SCORE_INVALID = "stage_review_score_invalid"
+    REVIEW_REVISION_REASON_REQUIRED = "stage_review_revision_reason_required"
+
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):
     return Response({"error_code": error_code, "message": message}, status=http_status)

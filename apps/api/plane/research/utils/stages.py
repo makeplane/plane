@@ -40,8 +40,13 @@ def project_owner_id(project_id, workspace_id):
     return profile
 
 
-def stage_resource(instance, *, owner_id=None, visibility=None) -> ResearchResource:
+def stage_resource(instance, *, owner_id=None, visibility=None, with_reviewers=False) -> ResearchResource:
     owner = owner_id or project_owner_id(instance.project_id, instance.workspace_id)
+    reviewer_ids = []
+    if with_reviewers:
+        from plane.research.services.review_rules import effective_assignments
+
+        reviewer_ids = [str(assignment.reviewer_id) for assignment in effective_assignments(instance)]
     return ResearchResource(
         kind=STAGE_RESOURCE_KIND,
         workspace_id=instance.workspace_id,
@@ -49,12 +54,25 @@ def stage_resource(instance, *, owner_id=None, visibility=None) -> ResearchResou
         org_unit_id=instance.org_unit_id,
         visibility=visibility or default_stage_visibility(instance.workspace),
         state=instance.status,
+        reviewer_ids=reviewer_ids,
     )
 
 
-def material_resource(material, *, stage=None, owner_id=None, visibility=None) -> ResearchResource:
+def material_resource(
+    material,
+    *,
+    stage=None,
+    owner_id=None,
+    visibility=None,
+    with_reviewers=False,
+) -> ResearchResource:
     stage = stage or material.stage_instance
     owner = owner_id or project_owner_id(stage.project_id, stage.workspace_id)
+    reviewer_ids = []
+    if with_reviewers:
+        from plane.research.services.review_rules import effective_assignments
+
+        reviewer_ids = [str(assignment.reviewer_id) for assignment in effective_assignments(stage)]
     return ResearchResource(
         kind=MATERIAL_RESOURCE_KIND,
         workspace_id=stage.workspace_id,
@@ -62,4 +80,5 @@ def material_resource(material, *, stage=None, owner_id=None, visibility=None) -
         org_unit_id=stage.org_unit_id,
         visibility=visibility or material.visibility,
         state=material.status,
+        reviewer_ids=reviewer_ids,
     )

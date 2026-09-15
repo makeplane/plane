@@ -89,15 +89,34 @@ def stage_rule_error_response(exc: StageRuleError):
 
 
 def review_payload(instance):
-    """Review reviewers / reviews / summary, empty until P1-A2 ships (T-16)."""
-    try:
-        from plane.research.services.review_rules import review_summary
-        from plane.research.utils.reviews import review_payload as build
-    except ImportError:  # pragma: no cover - arrives with P1-A2
-        return {"reviewers": [], "reviews": [], "summary": {}}
-    payload = build(instance)
-    payload["summary"] = review_summary(instance)
-    return payload
+    """Reviewer state, submitted reviews and the frozen summary (§5.3)."""
+    from plane.research.services.review_rules import reviewer_state, review_summary, valid_reviews
+
+    reviews = valid_reviews(instance)
+    return {
+        "reviewers": reviewer_state(instance),
+        "reviews": [
+            {
+                "id": str(review.id),
+                "reviewer": str(review.reviewer_id),
+                "reviewer_detail": {
+                    "id": str(review.reviewer_id),
+                    "display_name": review.reviewer.display_name,
+                    "email": review.reviewer.email,
+                }
+                if review.reviewer
+                else None,
+                "reviewer_role": review.reviewer_role,
+                "recommendation": review.recommendation,
+                "score": float(review.score) if review.score is not None else None,
+                "comment": review.comment,
+                "revision_no": review.revision_no,
+                "submitted_at": review.submitted_at,
+            }
+            for review in reviews
+        ],
+        "summary": review_summary(instance),
+    }
 
 
 def serialize_material(material, *, actor):
@@ -213,7 +232,9 @@ class ResearchStageEndpointMixin:
         if instance is None:
             return None, research_not_found(ResearchErrorCode.STAGE_NOT_FOUND, "Stage not found.")
         context = build_actor_context(request.user, workspace.id)
-        if not check_access(request.user, action, stage_resource(instance), context=context):
+        if not check_access(
+            request.user, action, stage_resource(instance, with_reviewers=True), context=context
+        ):
             if action == "view":
                 return None, research_not_found(ResearchErrorCode.STAGE_NOT_FOUND, "Stage not found.")
             return None, research_permission_denied()
@@ -231,7 +252,17 @@ class ResearchStageDetailEndpoint(ResearchStageEndpointMixin, ResearchAPIView):
         if error:
             return error
 
-        materials = list(instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner"))
+        context = build_actor_context(request.user, workspace.id)
+        materials = [
+            material
+            for material in instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner")
+            if check_access(
+                request.user,
+                "view",
+                material_resource(material, stage=instance, with_reviewers=True),
+                context=context,
+            )
+        ]
         transitions = list(instance.transitions.select_related("actor")[:50])
         data = serialize_stage(instance, actor=request.user, material_list=materials)
         data["gate"] = evaluate_stage_gate(instance, SUBMIT_PHASE)
@@ -381,7 +412,17 @@ class ResearchStageMaterialListCreateEndpoint(ResearchStageEndpointMixin, Resear
         instance, error = self.resolve_stage(request, workspace, stage_id)
         if error:
             return error
-        materials = list(instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner"))
+        context = build_actor_context(request.user, workspace.id)
+        materials = [
+            material
+            for material in instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner")
+            if check_access(
+                request.user,
+                "view",
+                material_resource(material, stage=instance, with_reviewers=True),
+                context=context,
+            )
+        ]
         return Response(
             {
                 "results": [serialize_material(material, actor=request.user) for material in materials],
@@ -490,7 +531,9 @@ class ResearchStageMaterialDetailEndpoint(ResearchAPIView):
         if error:
             return error
         context = build_actor_context(request.user, workspace.id)
-        if not check_access(request.user, "view", material_resource(material), context=context):
+        if not check_access(
+            request.user, "view", material_resource(material, with_reviewers=True), context=context
+        ):
             return research_not_found(ResearchErrorCode.MATERIAL_NOT_FOUND, "Material not found.")
         data = serialize_material(material, actor=request.user)
         data["stage"] = serialize_stage(material.stage_instance, actor=request.user, include_materials=False)

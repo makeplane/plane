@@ -107,6 +107,53 @@ def material_url(env, material_id, suffix=""):
     return f"/api/research/workspaces/{env['workspace'].slug}/materials/{material_id}/{suffix}"
 
 
+def satisfy_review_gate(env, stage_id, stage_code):
+    """Configure a single-reviewer rule and let the administrator review.
+
+    The review rule matrix itself is covered by test_research_reviews.py; this
+    helper keeps the stage state machine tests focused on the transitions.
+    """
+    response = env["admin_client"].patch(
+        f"/api/research/workspaces/{env['workspace'].slug}/stage-requirements/",
+        {
+            "items": [
+                {
+                    "stage": stage_code,
+                    "code": "stage_min_reviewers",
+                    "requirement_type": "REVIEW_RULE",
+                    "threshold": 1,
+                },
+                {
+                    "stage": stage_code,
+                    "code": "stage_advisor_required",
+                    "requirement_type": "REVIEW_RULE",
+                    "threshold": 0,
+                },
+                {
+                    "stage": stage_code,
+                    "code": "stage_pi_branch_required",
+                    "requirement_type": "REVIEW_RULE",
+                    "threshold": 0,
+                },
+            ]
+        },
+        format="json",
+    )
+    assert response.status_code == 200, response.json()
+    assigned = env["admin_client"].post(
+        stage_url(env, stage_id, "reviewers/"),
+        {"reviewer": str(env["admin"].id), "reviewer_role": "REVIEWER"},
+        format="json",
+    )
+    assert assigned.status_code == 201, assigned.json()
+    reviewed = env["admin_client"].post(
+        stage_url(env, stage_id, "reviews/"),
+        {"recommendation": "PASS"},
+        format="json",
+    )
+    assert reviewed.status_code == 201, reviewed.json()
+
+
 def disable_gate_items(env, stage, codes):
     """Administrators tune the gate through configuration (P1-STG-07)."""
     response = env["admin_client"].patch(
@@ -248,6 +295,7 @@ class TestStageStateMachine:
         env["owner_client"].post(stage_url(env, pre["id"], "enter/"), {}, format="json")
         add_materials(env, pre["id"], "PRE_OPENING")
         env["owner_client"].post(stage_url(env, pre["id"], "submit/"), {}, format="json")
+        satisfy_review_gate(env, pre["id"], "PRE_OPENING")
         assert env["admin_client"].post(stage_url(env, pre["id"], "pass/"), {}, format="json").status_code == 200
 
         forbidden = env["owner_client"].post(
@@ -287,6 +335,7 @@ class TestStageStateMachine:
             add_materials(env, stage["id"], stage_code)
             submitted = env["owner_client"].post(stage_url(env, stage["id"], "submit/"), {}, format="json")
             assert submitted.status_code == 200, (stage_code, submitted.json())
+            satisfy_review_gate(env, stage["id"], stage_code)
             passed = env["admin_client"].post(stage_url(env, stage["id"], "pass/"), {}, format="json")
             assert passed.status_code == 200, (stage_code, passed.json())
             assert passed.json()["status"] == "PASSED"

@@ -7,6 +7,9 @@ from rest_framework import serializers
 from plane.db.models import (
     ResearchStageInstance,
     ResearchStageRequirement,
+    StageReview,
+    StageReviewerAssignment,
+    StageReviewRevision,
     StageMaterial,
     StageMaterialVersion,
     StageTransition,
@@ -120,3 +123,88 @@ class ResearchStageRequirementSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "workspace", "created_at", "updated_at"]
+
+
+class StageReviewerAssignmentSerializer(serializers.ModelSerializer):
+    reviewer_detail = ResearchUserSerializer(source="reviewer", read_only=True)
+    assigned_by_detail = ResearchUserSerializer(source="assigned_by", read_only=True)
+
+    class Meta:
+        model = StageReviewerAssignment
+        fields = [
+            "id",
+            "stage_instance",
+            "reviewer",
+            "reviewer_detail",
+            "reviewer_role",
+            "is_required",
+            "assignment_kind",
+            "assigned_by",
+            "assigned_by_detail",
+            "is_active",
+            "superseded_at",
+            "valid_until",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "stage_instance",
+            "assigned_by",
+            "is_active",
+            "superseded_at",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class StageReviewSerializer(serializers.ModelSerializer):
+    reviewer_detail = ResearchUserSerializer(source="reviewer", read_only=True)
+
+    class Meta:
+        model = StageReview
+        fields = [
+            "id",
+            "stage_instance",
+            "reviewer",
+            "reviewer_detail",
+            "reviewer_role",
+            "recommendation",
+            "score",
+            "comment",
+            "revision_no",
+            "is_superseded",
+            "submitted_at",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "stage_instance",
+            "reviewer",
+            "reviewer_role",
+            "revision_no",
+            "is_superseded",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class StageReviewRevisionSerializer(serializers.ModelSerializer):
+    created_by_detail = ResearchUserSerializer(source="created_by", read_only=True)
+
+    class Meta:
+        model = StageReviewRevision
+        fields = [
+            "id",
+            "review",
+            "revision_no",
+            "recommendation",
+            "score",
+            "comment",
+            "reason",
+            "created_by",
+            "created_by_detail",
+            "created_at",
+        ]
+        read_only_fields = fields

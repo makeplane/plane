@@ -25,7 +25,12 @@ import type {
   TStageMaterial,
   TStageMaterialVersion,
   TStageRequirement,
+  TStageReview,
+  TStageReviewerAssignment,
+  TStageReviewRevision,
   TStageTransition,
+  TReviewSummary,
+  TToMeReview,
   TWorkspaceResearchSetting,
 } from "@plane/types";
 // services
@@ -43,6 +48,8 @@ import type {
   TStageMaterialUpdatePayload,
   TStageRequirementUpdate,
 } from "@/services/research/stage.service";
+import { ResearchReviewService } from "@/services/research/review.service";
+import type { TReviewPayload, TReviewerAssignmentPayload } from "@/services/research/review.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -56,6 +63,7 @@ export interface IResearchStore {
   templatesLoader: boolean;
   auditLoader: boolean;
   stageLoader: boolean;
+  reviewLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
   identityErrorCode: string | null;
@@ -88,6 +96,12 @@ export interface IResearchStore {
   materialIdsByStage: Record<string, string[]>;
   materialVersions: Record<string, TStageMaterialVersion[]>;
   stageRequirements: Record<string, TStageRequirement[]>;
+  reviewAssignments: Record<string, TStageReviewerAssignment[]>;
+  stageReviews: Record<string, TStageReview[]>;
+  reviewRevisions: Record<string, TStageReviewRevision[]>;
+  reviewSummary: Record<string, TReviewSummary>;
+  toMeReviews: TToMeReview[];
+  myReviews: TStageReview[];
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -95,6 +109,7 @@ export interface IResearchStore {
   isReportSectionEnabled: boolean;
   isApprovalSectionEnabled: boolean;
   isStageSectionEnabled: boolean;
+  isReviewSectionEnabled: boolean;
   // lookup helpers (plain methods: reads are tracked in the caller's reactive context)
   getOrgUnits: (workspaceSlug: string) => TOrgUnit[];
   getReports: (workspaceSlug: string) => TPeriodicReport[];
@@ -224,6 +239,26 @@ export interface IResearchStore {
   fetchMaterialVersions: (workspaceSlug: string, materialId: string) => Promise<TStageMaterialVersion[]>;
   fetchStageRequirements: (workspaceSlug: string, stage?: string) => Promise<TStageRequirement[]>;
   updateStageRequirements: (workspaceSlug: string, items: TStageRequirementUpdate[]) => Promise<void>;
+  // review flow (P1-A2)
+  fetchReviewers: (workspaceSlug: string, stageId: string) => Promise<TStageReviewerAssignment[]>;
+  assignReviewer: (
+    workspaceSlug: string,
+    stageId: string,
+    payload: TReviewerAssignmentPayload
+  ) => Promise<TStageReviewerAssignment>;
+  removeReviewer: (workspaceSlug: string, assignmentId: string) => Promise<void>;
+  remindReviewer: (workspaceSlug: string, assignmentId: string, message?: string) => Promise<number>;
+  fetchStageReviews: (workspaceSlug: string, stageId: string) => Promise<TStageReview[]>;
+  submitReview: (workspaceSlug: string, stageId: string, payload: TReviewPayload) => Promise<TStageReview>;
+  reviseReview: (
+    workspaceSlug: string,
+    reviewId: string,
+    payload: TReviewPayload & { reason: string }
+  ) => Promise<TStageReview>;
+  fetchReviewRevisions: (workspaceSlug: string, reviewId: string) => Promise<TStageReviewRevision[]>;
+  fetchReviewSummary: (workspaceSlug: string, stageId: string) => Promise<TReviewSummary>;
+  fetchToMeReviews: (workspaceSlug: string) => Promise<TToMeReview[]>;
+  fetchMyReviews: (workspaceSlug: string) => Promise<TStageReview[]>;
 }
 
 export class ResearchStore implements IResearchStore {
@@ -235,6 +270,7 @@ export class ResearchStore implements IResearchStore {
   templatesLoader = false;
   auditLoader = false;
   stageLoader = false;
+  reviewLoader = false;
 
   identity: TResearchIdentity | null = null;
   identityErrorCode: string | null = null;
@@ -268,6 +304,12 @@ export class ResearchStore implements IResearchStore {
   materialIdsByStage: Record<string, string[]> = {};
   materialVersions: Record<string, TStageMaterialVersion[]> = {};
   stageRequirements: Record<string, TStageRequirement[]> = {};
+  reviewAssignments: Record<string, TStageReviewerAssignment[]> = {};
+  stageReviews: Record<string, TStageReview[]> = {};
+  reviewRevisions: Record<string, TStageReviewRevision[]> = {};
+  reviewSummary: Record<string, TReviewSummary> = {};
+  toMeReviews: TToMeReview[] = [];
+  myReviews: TStageReview[] = [];
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -275,6 +317,7 @@ export class ResearchStore implements IResearchStore {
   private approvalService: ResearchApprovalService;
   private platformService: ResearchPlatformService;
   private stageService: ResearchStageService;
+  private reviewService: ResearchReviewService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -287,6 +330,7 @@ export class ResearchStore implements IResearchStore {
       templatesLoader: observable,
       auditLoader: observable,
       stageLoader: observable,
+      reviewLoader: observable,
       // observables
       identity: observable,
       identityErrorCode: observable,
@@ -320,6 +364,12 @@ export class ResearchStore implements IResearchStore {
       materialIdsByStage: observable,
       materialVersions: observable,
       stageRequirements: observable,
+      reviewAssignments: observable,
+      stageReviews: observable,
+      reviewRevisions: observable,
+      reviewSummary: observable,
+      toMeReviews: observable,
+      myReviews: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -327,6 +377,7 @@ export class ResearchStore implements IResearchStore {
       isReportSectionEnabled: computed,
       isApprovalSectionEnabled: computed,
       isStageSectionEnabled: computed,
+      isReviewSectionEnabled: computed,
       // actions
       fetchIdentity: action,
       fetchOrgUnits: action,
@@ -391,6 +442,17 @@ export class ResearchStore implements IResearchStore {
       fetchMaterialVersions: action,
       fetchStageRequirements: action,
       updateStageRequirements: action,
+      fetchReviewers: action,
+      assignReviewer: action,
+      removeReviewer: action,
+      remindReviewer: action,
+      fetchStageReviews: action,
+      submitReview: action,
+      reviseReview: action,
+      fetchReviewRevisions: action,
+      fetchReviewSummary: action,
+      fetchToMeReviews: action,
+      fetchMyReviews: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -399,6 +461,7 @@ export class ResearchStore implements IResearchStore {
     this.approvalService = new ResearchApprovalService();
     this.platformService = new ResearchPlatformService();
     this.stageService = new ResearchStageService();
+    this.reviewService = new ResearchReviewService();
   }
 
   // ---------------------------------------------------------------------
@@ -426,6 +489,10 @@ export class ResearchStore implements IResearchStore {
   }
 
   get isStageSectionEnabled() {
+    return Boolean(this.isEnabled && this.identity?.sections?.stages);
+  }
+
+  get isReviewSectionEnabled() {
     return Boolean(this.isEnabled && this.identity?.sections?.stages);
   }
 
@@ -1132,5 +1199,108 @@ export class ResearchStore implements IResearchStore {
   updateStageRequirements = async (workspaceSlug: string, items: TStageRequirementUpdate[]) => {
     await this.stageService.updateStageRequirements(workspaceSlug, items);
     await this.fetchStageRequirements(workspaceSlug);
+  };
+
+  // ---------------------------------------------------------------------
+  // review flow (P1-A2)
+  // ---------------------------------------------------------------------
+
+  fetchReviewers = async (workspaceSlug: string, stageId: string) => {
+    const response = await this.reviewService.getReviewers(workspaceSlug, stageId);
+    runInAction(() => {
+      this.reviewAssignments[stageId] = response.results;
+    });
+    return response.results;
+  };
+
+  assignReviewer = async (workspaceSlug: string, stageId: string, payload: TReviewerAssignmentPayload) => {
+    const assignment = await this.reviewService.assignReviewer(workspaceSlug, stageId, payload);
+    await this.fetchReviewers(workspaceSlug, stageId);
+    return assignment;
+  };
+
+  removeReviewer = async (workspaceSlug: string, assignmentId: string) => {
+    await this.reviewService.removeReviewer(workspaceSlug, assignmentId);
+  };
+
+  remindReviewer = async (workspaceSlug: string, assignmentId: string, message = "") => {
+    const response = await this.reviewService.remindReviewer(workspaceSlug, assignmentId, message);
+    return response.notified;
+  };
+
+  fetchStageReviews = async (workspaceSlug: string, stageId: string) => {
+    const response = await this.reviewService.getStageReviews(workspaceSlug, stageId);
+    runInAction(() => {
+      this.stageReviews[stageId] = response.results;
+    });
+    return response.results;
+  };
+
+  submitReview = async (workspaceSlug: string, stageId: string, payload: TReviewPayload) => {
+    const review = await this.reviewService.submitReview(workspaceSlug, stageId, payload);
+    await Promise.all([
+      this.fetchStageReviews(workspaceSlug, stageId).catch(() => undefined),
+      this.fetchReviewers(workspaceSlug, stageId).catch(() => undefined),
+      this.fetchReviewSummary(workspaceSlug, stageId).catch(() => undefined),
+      this.fetchStageGate(workspaceSlug, stageId).catch(() => undefined),
+    ]);
+    return review;
+  };
+
+  reviseReview = async (workspaceSlug: string, reviewId: string, payload: TReviewPayload & { reason: string }) => {
+    const review = await this.reviewService.reviseReview(workspaceSlug, reviewId, payload);
+    await Promise.all([
+      this.fetchStageReviews(workspaceSlug, review.stage_instance).catch(() => undefined),
+      this.fetchReviewSummary(workspaceSlug, review.stage_instance).catch(() => undefined),
+    ]);
+    return review;
+  };
+
+  fetchReviewRevisions = async (workspaceSlug: string, reviewId: string) => {
+    const response = await this.reviewService.getReviewRevisions(workspaceSlug, reviewId);
+    runInAction(() => {
+      this.reviewRevisions[reviewId] = response.results;
+    });
+    return response.results;
+  };
+
+  fetchReviewSummary = async (workspaceSlug: string, stageId: string) => {
+    const summary = await this.reviewService.getReviewSummary(workspaceSlug, stageId);
+    runInAction(() => {
+      this.reviewSummary[stageId] = summary;
+    });
+    return summary;
+  };
+
+  fetchToMeReviews = async (workspaceSlug: string) => {
+    this.reviewLoader = true;
+    try {
+      const response = await this.reviewService.getReviews(workspaceSlug, "to_me");
+      const payload = response as { results: TToMeReview[] };
+      runInAction(() => {
+        this.toMeReviews = payload.results ?? [];
+      });
+      return this.toMeReviews;
+    } finally {
+      runInAction(() => {
+        this.reviewLoader = false;
+      });
+    }
+  };
+
+  fetchMyReviews = async (workspaceSlug: string) => {
+    this.reviewLoader = true;
+    try {
+      const response = await this.reviewService.getReviews(workspaceSlug, "mine");
+      const payload = response as { results: TStageReview[] };
+      runInAction(() => {
+        this.myReviews = payload.results ?? [];
+      });
+      return this.myReviews;
+    } finally {
+      runInAction(() => {
+        this.reviewLoader = false;
+      });
+    }
   };
 }

@@ -877,7 +877,8 @@
       "identity": "Identity mappings",
       "platform": "Platform settings",
       "audit": "Audit trail",
-      "stages": "Stages"
+      "stages": "Stages",
+      "reviews": "Reviews"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1212,7 +1213,17 @@
       "stage_material_not_found": "Stage material not found.",
       "stage_material_type_invalid": "This material is not part of the stage material set.",
       "stage_material_read_only": "The material is read only in the current stage state.",
-      "stage_material_version_not_found": "Material version not found."
+      "stage_material_version_not_found": "Material version not found.",
+      "stage_review_not_found": "Review not found.",
+      "stage_review_state_conflict": "The review state does not allow this action.",
+      "stage_review_comment_required": "A comment is required for reject and revise.",
+      "stage_review_self_forbidden": "You cannot review a stage you submitted.",
+      "stage_review_not_assigned": "You are not assigned to review this stage.",
+      "stage_review_assignment_not_found": "Reviewer assignment not found.",
+      "stage_review_assignment_exists": "This reviewer is already assigned.",
+      "stage_review_recommendation_invalid": "The recommendation must be pass, reject or revise.",
+      "stage_review_score_invalid": "The score must be between 0 and 100.",
+      "stage_review_revision_reason_required": "A reason is required when revising a review."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1353,6 +1364,58 @@
         "code_and_snapshot": "Code repositories and snapshots",
         "data_and_attachment_list": "Data and attachment list",
         "advisor_opinion": "Advisor opinion"
+      }
+    },
+    "reviews": {
+      "description": "Reviews waiting for you and the reviews you submitted.",
+      "section_title": "Review",
+      "reviewers_title": "Reviewers",
+      "opinions_title": "Review opinions",
+      "required": "Required",
+      "optional": "Optional",
+      "submitted": "Submitted",
+      "remind": "Remind",
+      "remove": "Remove",
+      "no_reviews": "No review submitted yet.",
+      "own_review_hint": "You can revise your review; every version is kept.",
+      "summary_title": "Review decision",
+      "decision_pass": "Rules satisfied",
+      "decision_blocked": "Rules not satisfied",
+      "reviewer_count": "Valid reviews",
+      "pass_ratio": "Pass ratio",
+      "pending_roles": "Waiting for: {roles}",
+      "vetoed": "A direct advisor rejected this stage.",
+      "rule_advisor": "The direct advisor must review.",
+      "rule_pi_branch": "The principal investigator or a delegated reviewer must review.",
+      "rule_veto": "A direct advisor rejection vetoes the stage.",
+      "rule_version": "Review rule version {version}.",
+      "score_placeholder": "Score 0-100",
+      "comment_required": "A comment is required for reject and revise",
+      "comment_placeholder": "Review comment (optional when passing)",
+      "revision_reason": "Reason for the revision (required)",
+      "reason": "Reason",
+      "submit": "Submit review",
+      "revise": "Revise review",
+      "scope_to_me": "Waiting for me",
+      "scope_mine": "My reviews",
+      "open_stage": "Open stage",
+      "inbox_empty": "No review is waiting for you.",
+      "mine_empty": "You have not submitted a review yet.",
+      "recommendation": {
+        "pass": "Pass",
+        "reject": "Reject",
+        "revise": "Revise"
+      },
+      "role": {
+        "direct_advisor": "Direct advisor",
+        "pi": "Principal investigator",
+        "reviewer": "Reviewer",
+        "unit_admin": "Unit admin"
+      },
+      "assignment_kind": {
+        "auto": "Automatic",
+        "manual": "Manual",
+        "delegated": "Delegated"
       }
     }
   }

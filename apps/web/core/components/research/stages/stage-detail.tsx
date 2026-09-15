@@ -15,8 +15,12 @@ import { StageActions } from "@/components/research/stages/stage-actions";
 import { StageGateChecklist } from "@/components/research/stages/stage-gate-checklist";
 import { StageMaterialList } from "@/components/research/stages/stage-material-list";
 import { StageTransitionHistory } from "@/components/research/stages/stage-transition-history";
+import { ReviewBoard } from "@/components/research/reviews/review-board";
+import { ReviewForm } from "@/components/research/reviews/review-form";
+import { ReviewSummaryCard } from "@/components/research/reviews/review-summary-card";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   workspaceSlug: string;
@@ -34,12 +38,18 @@ type TErrorLike = { error_code?: string; message?: string; blockers?: TStageGate
 export const StageDetail = observer(function StageDetail({ workspaceSlug, projectId, stage, isWorkspaceAdmin }: Props) {
   const { t } = useTranslation();
   const research = useResearch();
+  const { data: currentUser } = useUser();
   const [blockers, setBlockers] = useState<TStageGateItem[]>([]);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [phase, setPhase] = useState<"submit" | "pass">("submit");
 
   const materials = research.getStageMaterials(stage.id);
   const transitions = research.stageTransitions[stage.id] ?? [];
+  const assignments = research.reviewAssignments[stage.id] ?? [];
+  const reviews = research.stageReviews[stage.id] ?? [];
+  const reviewSummary = research.reviewSummary[stage.id];
+  const myReview = reviews.find((review) => review.reviewer === currentUser?.id) ?? null;
+  const hasAssignment = assignments.some((assignment) => assignment.reviewer === currentUser?.id);
   const gate = phase === "submit" ? research.stageGate[stage.id] : undefined;
   const [passGate, setPassGate] = useState<Awaited<ReturnType<typeof research.fetchStageGate>> | undefined>();
 
@@ -50,6 +60,9 @@ export const StageDetail = observer(function StageDetail({ workspaceSlug, projec
         research.fetchStageGate(workspaceSlug, stage.id, "submit"),
         research.fetchStageTransitions(workspaceSlug, stage.id),
         research.fetchStageMaterials(workspaceSlug, stage.id),
+        research.fetchReviewers(workspaceSlug, stage.id).catch(() => undefined),
+        research.fetchStageReviews(workspaceSlug, stage.id).catch(() => undefined),
+        research.fetchReviewSummary(workspaceSlug, stage.id).catch(() => undefined),
       ]);
       setErrorCode(null);
     } catch (error) {
@@ -165,6 +178,40 @@ export const StageDetail = observer(function StageDetail({ workspaceSlug, projec
       <div className="flex flex-col gap-2">
         <h3 className="text-13 font-medium text-primary">{t("research.stages.history_title")}</h3>
         <StageTransitionHistory transitions={transitions} />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <h3 className="text-13 font-medium text-primary">{t("research.reviews.section_title")}</h3>
+        <ReviewSummaryCard summary={reviewSummary} />
+        <ReviewBoard
+          workspaceSlug={workspaceSlug}
+          assignments={assignments}
+          reviews={reviews}
+          canManage={isWorkspaceAdmin || hasAssignment}
+          currentUserId={currentUser?.id}
+          myReview={myReview}
+          onRemind={(assignmentId) => {
+            void research.remindReviewer(workspaceSlug, assignmentId);
+          }}
+          onRemove={async (assignmentId) => {
+            await research.removeReviewer(workspaceSlug, assignmentId);
+            await load();
+          }}
+        />
+        {stage.status === "SUBMITTED" && (hasAssignment || myReview) && (
+          <ReviewForm
+            review={myReview}
+            onSubmit={async (payload) => {
+              await research.submitReview(workspaceSlug, stage.id, payload);
+              await load();
+            }}
+            onRevise={async (payload) => {
+              if (!myReview) return;
+              await research.reviseReview(workspaceSlug, myReview.id, payload);
+              await load();
+            }}
+          />
+        )}
       </div>
     </div>
   );

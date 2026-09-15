@@ -56,6 +56,9 @@ class ResearchResource:
     visibility: str = "PRIVATE"
     state: str | None = None
     grants: list = field(default_factory=list)
+    # Reviewers assigned to a stage must be able to read and review it even when
+    # their own visibility would not reach it (P1-REV-01).
+    reviewer_ids: list = field(default_factory=list)
 
 
 @dataclass
@@ -253,6 +256,9 @@ def visibility_allows(context: ActorContext, resource: ResearchResource, on_date
     if not context.is_workspace_member:
         return False
 
+    if resource.reviewer_ids and str(context.user_id) in {str(item) for item in resource.reviewer_ids}:
+        return True
+
     visibility = resource.visibility or "PRIVATE"
     owner_id = resource.owner_id
 
@@ -318,6 +324,8 @@ def check_access(actor, action, resource, context: ActorContext | None = None, o
             return True
         if resource.owner_id == context.user_id:
             return False
+        if resource.reviewer_ids and str(context.user_id) in {str(item) for item in resource.reviewer_ids}:
+            return True
         if context.user_id in direct_advisor_ids(
             resource.owner_id, resource.workspace_id, resource.org_unit_id, on_date
         ):

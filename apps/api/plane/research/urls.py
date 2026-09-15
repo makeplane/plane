@@ -64,6 +64,15 @@ from plane.research.views import (
     ResearchStageReturnEndpoint,
     ResearchStageSubmitEndpoint,
     ResearchStageTransitionsEndpoint,
+    ResearchReviewListEndpoint,
+    ResearchStageReviewDetailEndpoint,
+    ResearchStageReviewListCreateEndpoint,
+    ResearchStageReviewerDetailEndpoint,
+    ResearchStageReviewerListCreateEndpoint,
+    ResearchStageReviewerRemindEndpoint,
+    ResearchStageReviewRevisionEndpoint,
+    ResearchStageReviewRevisionListEndpoint,
+    ResearchStageReviewSummaryEndpoint,
 )
 
 urlpatterns = [
@@ -146,6 +155,54 @@ urlpatterns = [
         "research/workspaces/<str:slug>/stage-requirements/<uuid:pk>/",
         ResearchStageRequirementDetailEndpoint.as_view(),
         name="research-stage-requirement",
+    ),
+    # ------------------------------------------------------------------
+    # P1 multi reviewer review flow (§5.3)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/reviewers/",
+        ResearchStageReviewerListCreateEndpoint.as_view(),
+        name="research-stage-reviewers",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reviewers/<uuid:assignment_id>/",
+        ResearchStageReviewerDetailEndpoint.as_view(),
+        name="research-stage-reviewer",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reviewers/<uuid:assignment_id>/remind/",
+        ResearchStageReviewerRemindEndpoint.as_view(),
+        name="research-stage-reviewer-remind",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/reviews/",
+        ResearchStageReviewListCreateEndpoint.as_view(),
+        name="research-stage-reviews",
+    ),
+    path(
+        "research/workspaces/<str:slug>/stages/<uuid:stage_id>/review-summary/",
+        ResearchStageReviewSummaryEndpoint.as_view(),
+        name="research-stage-review-summary",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reviews/",
+        ResearchReviewListEndpoint.as_view(),
+        name="research-reviews",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reviews/<uuid:review_id>/",
+        ResearchStageReviewDetailEndpoint.as_view(),
+        name="research-stage-review",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reviews/<uuid:review_id>/revise/",
+        ResearchStageReviewRevisionEndpoint.as_view(),
+        name="research-stage-review-revise",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reviews/<uuid:review_id>/revisions/",
+        ResearchStageReviewRevisionListEndpoint.as_view(),
+        name="research-stage-review-revisions",
     ),
     # office approvals
     path(

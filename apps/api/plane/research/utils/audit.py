@@ -63,6 +63,11 @@ class ResearchAuditAction:
     STAGE_MATERIAL_SUBMIT = "stage.material.submit"
     STAGE_MATERIAL_OVERRIDE = "stage.material.override"
     STAGE_REQUIREMENT_UPDATE = "stage.requirement.update"
+    REVIEW_ASSIGN = "stage.review.assign"
+    REVIEW_UNASSIGN = "stage.review.unassign"
+    REVIEW_SUBMIT = "stage.review.submit"
+    REVIEW_REVISE = "stage.review.revise"
+    REVIEW_REMIND = "stage.review.remind"
 
 
 class ResearchResourceType:
@@ -81,6 +86,8 @@ class ResearchResourceType:
     STAGE = "stage_instance"
     STAGE_MATERIAL = "stage_material"
     STAGE_REQUIREMENT = "stage_requirement"
+    STAGE_REVIEW = "stage_review"
+    STAGE_REVIEW_ASSIGNMENT = "stage_review_assignment"
 
 
 def _client_metadata(request):
