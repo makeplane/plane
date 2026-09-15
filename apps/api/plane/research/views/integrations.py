@@ -315,6 +315,75 @@ class ResearchRdAnalysisSearchEndpoint(ResearchSystemSearchEndpoint):
     operation = "fetch_analysis_results"
 
 
+class ResearchExternalReferenceSyncEndpoint(ResearchAPIView):
+    """``POST /api/research/workspaces/<slug>/external-references/<ref_id>/sync/``
+
+    Refresh the cached metadata from the source system. The external identity
+    never changes and each refresh appends to ``metadata.history``, so a result
+    that is re-generated keeps every generation (P1-RD-05).
+    """
+
+    def post(self, request, slug, reference_id):
+        workspace, error = self.get_workspace(section=SECTION)
+        if error:
+            return error
+        reference, error = ResearchExternalReferenceDetailEndpoint()._load(
+            request, workspace, reference_id
+        )
+        if error:
+            return error
+        connection = connection_map(workspace).get(reference.system)
+        client = client_for(reference.system, connection)
+        result = client.request(
+            path=f"{client.search_path}{reference.external_id}/",
+            operation="refresh_reference",
+            request=request,
+        )
+        if result.degraded:
+            reference.status = ResearchExternalReference.Status.DEGRADED
+            reference.save(update_fields=["status", "updated_at"])
+            payload = ResearchExternalReferenceSerializer(reference).data
+            payload["degraded"] = True
+            payload["degraded_reason"] = result.degraded_reason
+            return Response(payload, status=status.HTTP_200_OK)
+
+        item = result.items[0] if result.items else {}
+        history = list((reference.metadata or {}).get("history", []))
+        if reference.summary or reference.metadata:
+            history.append(
+                {
+                    "synced_at": reference.synced_at.isoformat() if reference.synced_at else None,
+                    "summary": reference.summary,
+                    "metadata": reference.metadata,
+                }
+            )
+        metadata = dict(item.get("metadata") or {})
+        metadata["history"] = history[-20:]
+        reference.title = str(item.get("title") or reference.title)[:500]
+        reference.summary = str(item.get("summary") or reference.summary)[:2000]
+        reference.metadata = metadata
+        if item.get("source_url"):
+            reference.source_url = str(item["source_url"])[:500]
+        if item.get("acl_hint"):
+            reference.acl_hint = item["acl_hint"]
+        reference.status = ResearchExternalReference.Status.ACTIVE
+        reference.synced_at = timezone.now()
+        reference.save()
+        record_audit_event(
+            workspace=workspace,
+            action=ResearchAuditAction.INTEGRATION_REFERENCE_UPDATE,
+            resource_type=ResearchResourceType.EXTERNAL_REFERENCE,
+            resource_id=reference.id,
+            actor=request.user,
+            metadata={"system": reference.system, "external_id": reference.external_id, "refresh": True},
+            request=request,
+        )
+        payload = ResearchExternalReferenceSerializer(reference).data
+        payload["degraded"] = False
+        payload["history_count"] = len(reference.metadata.get("history", []))
+        return Response(payload, status=status.HTTP_200_OK)
+
+
 class ResearchExternalReferenceListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/external-references/``"""
 

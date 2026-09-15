@@ -108,6 +108,7 @@ from plane.research.views import (
     ResearchExternalReferenceDetailEndpoint,
     ResearchExternalReferenceLinkEndpoint,
     ResearchExternalReferenceListCreateEndpoint,
+    ResearchExternalReferenceSyncEndpoint,
     ResearchIntegrationCallLogEndpoint,
     ResearchIntegrationHealthEndpoint,
     ResearchIntegrationListEndpoint,
@@ -381,6 +382,11 @@ urlpatterns = [
         "research/workspaces/<str:slug>/external-references/<uuid:reference_id>/",
         ResearchExternalReferenceDetailEndpoint.as_view(),
         name="research-external-reference",
+    ),
+    path(
+        "research/workspaces/<str:slug>/external-references/<uuid:reference_id>/sync/",
+        ResearchExternalReferenceSyncEndpoint.as_view(),
+        name="research-external-reference-sync",
     ),
     path(
         "research/workspaces/<str:slug>/external-references/<uuid:reference_id>/links/",
