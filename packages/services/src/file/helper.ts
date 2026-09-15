@@ -11,6 +11,28 @@ import type { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
 import { DANGEROUS_EXTENSIONS } from "@plane/constants";
 
 /**
+ * @description Map of file extensions to MIME types for plain-text formats that
+ * file-type signature detection cannot identify (no magic bytes).
+ */
+const EXTENSION_MIME_TYPE_MAP: Record<string, string> = {
+  md: "text/markdown",
+  markdown: "text/markdown",
+  mdx: "text/markdown",
+};
+
+/**
+ * @description Resolve a MIME type from the file extension for known text formats.
+ * @param {string} filename
+ * @returns {string} MIME type if extension is known, empty string otherwise
+ */
+const detectMimeTypeFromExtension = (filename: string): string => {
+  const parts = filename.split(".");
+  if (parts.length < 2) return "";
+  const extension = parts[parts.length - 1]?.toLowerCase() || "";
+  return EXTENSION_MIME_TYPE_MAP[extension] || "";
+};
+
+/**
  * @description Filename validation - checks for double extensions and dangerous patterns
  * @param {string} filename
  * @returns {string | null} Error message if invalid, null if valid
@@ -32,12 +54,11 @@ const validateFilename = (filename: string): string | null => {
 
   const parts = filename.split(".");
 
-  // Check for double extensions with dangerous patterns
-  if (parts.length >= 3) {
-    const secondLastExt = parts[parts.length - 2]?.toLowerCase() || "";
-    if (DANGEROUS_EXTENSIONS.includes(secondLastExt)) {
-      return "File has suspicious double extension";
-    }
+  // Check for dangerous extensions anywhere before the final extension.
+  // This catches both double and longer disguised chains (e.g. file.exe.safe.md).
+  const intermediateExtensions = parts.slice(1, -1).map((part) => part.toLowerCase());
+  if (intermediateExtensions.some((extension) => DANGEROUS_EXTENSIONS.includes(extension))) {
+    return "File has suspicious extension chain";
   }
 
   // Check if the actual extension is dangerous
@@ -92,6 +113,7 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
   const filenameError = validateFilename(file.name);
   if (filenameError) {
     console.warn(`File validation warning: ${filenameError}`);
+    return "";
   }
 
   try {
@@ -101,6 +123,12 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     }
   } catch (_error) {
     console.warn("Error detecting file type from signature:", _error);
+  }
+
+  // Plain-text formats (markdown, mdx, …) have no magic bytes — fall back to extension.
+  const extensionType = detectMimeTypeFromExtension(file.name);
+  if (extensionType) {
+    return extensionType;
   }
 
   // fallback for unknown files
