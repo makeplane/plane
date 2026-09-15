@@ -351,6 +351,27 @@ CELERY_IMPORTS = (
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+# ---------------------------------------------------------------------------
+# Research module (AI4MS). Everything below defaults to "safe when unset":
+# the module is off, OIDC is unconfigured and local login keeps working.
+# ---------------------------------------------------------------------------
+RESEARCH_MODULE_ENABLED = os.environ.get("RESEARCH_MODULE_ENABLED", "0") == "1"
+
+# SSO / OIDC (backend only - the client secret must never reach the browser)
+OIDC_ISSUER_URL = os.environ.get("OIDC_ISSUER_URL")
+OIDC_CLIENT_ID = os.environ.get("OIDC_CLIENT_ID")
+OIDC_CLIENT_SECRET = os.environ.get("OIDC_CLIENT_SECRET")
+OIDC_REDIRECT_URI = os.environ.get("OIDC_REDIRECT_URI")
+OIDC_SCOPES = os.environ.get("OIDC_SCOPES", "openid profile email")
+OIDC_ENABLE_PKCE = os.environ.get("OIDC_ENABLE_PKCE", "1") == "1"
+OIDC_AUTO_PROVISION_USERS = os.environ.get("OIDC_AUTO_PROVISION_USERS", "0") == "1"
+OIDC_PROVIDER_NAME = os.environ.get("OIDC_PROVIDER_NAME", "ai4ms-oidc")
+
+# Research scoped upload limits (MB). These never alter FILE_SIZE_LIMIT.
+RESEARCH_IMAGE_MAX_MB = int(os.environ.get("RESEARCH_IMAGE_MAX_MB", 20))
+RESEARCH_PDF_MAX_MB = int(os.environ.get("RESEARCH_PDF_MAX_MB", 100))
+RESEARCH_MARKDOWN_MAX_MB = int(os.environ.get("RESEARCH_MARKDOWN_MAX_MB", 5))
+
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 # Github Access Token

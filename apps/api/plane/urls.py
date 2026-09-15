@@ -16,6 +16,9 @@ from drf_spectacular.views import (
 handler404 = "plane.app.views.error_404.custom_404_view"
 
 urlpatterns = [
+    # Research namespace is registered before the upstream includes so the
+    # `/api/research/` prefix can never be shadowed (P0-COMPAT-02).
+    path("api/", include("plane.research.urls")),
     path("api/", include("plane.app.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/instances/", include("plane.license.urls")),

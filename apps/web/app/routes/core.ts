@@ -118,6 +118,15 @@ export const coreRoutes: RouteConfigEntry[] = [
         ]),
 
         // --------------------------------------------------------------------
+        // RESEARCH ROUTES - additive only, existing routes stay untouched
+        // --------------------------------------------------------------------
+        route(":workspaceSlug/research", "./(all)/[workspaceSlug]/(projects)/research/page.tsx"),
+        route(
+          ":workspaceSlug/research/settings/org",
+          "./(all)/[workspaceSlug]/(projects)/research/settings/org/page.tsx"
+        ),
+
+        // --------------------------------------------------------------------
         // PROJECT LEVEL ROUTES
         // --------------------------------------------------------------------
 

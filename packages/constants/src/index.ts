@@ -37,6 +37,8 @@ export * from "./sidebar-favorites";
 export * from "./sidebar";
 export * from "./spreadsheet";
 export * from "./state";
+
+export * from "./research";
 export * from "./stickies";
 export * from "./swr";
 export * from "./tab-indices";

@@ -863,5 +863,172 @@
       "description": "Export work items to a JSON file.",
       "short_description": "Export as json"
     }
+  },
+  "research": {
+    "nav": {
+      "group": "Research",
+      "overview": "Research overview",
+      "reports": "Reports",
+      "summary": "Submission summary",
+      "projects": "Research projects",
+      "approvals": "Office approvals",
+      "org_settings": "Organisation",
+      "templates": "Report templates",
+      "identity": "Identity mappings",
+      "platform": "Platform settings",
+      "audit": "Audit trail"
+    },
+    "overview": {
+      "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
+      "business_sections": "Business sections",
+      "settings_sections": "Administration",
+      "reports_hint": "Create, submit and review weekly or monthly reports.",
+      "summary_hint": "Submission status grouped by organisation node and period.",
+      "projects_hint": "One personal research project per research owner.",
+      "approvals_hint": "Task and purchase approvals built on work items.",
+      "org_hint": "Maintain the organisation tree, members, principal investigators and advisors.",
+      "templates_hint": "Templates used when a report is created.",
+      "identity_hint": "AI4MS SSO identity mappings.",
+      "platform_hint": "Module switches, upload limits and default visibility.",
+      "audit_hint": "Read-only, append-only research audit trail."
+    },
+    "common": {
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "remove": "Remove",
+      "delete": "Delete",
+      "unlimited": "No end date",
+      "loading": "Loading",
+      "empty": "Nothing here yet",
+      "refresh": "Refresh",
+      "confirm": "Confirm",
+      "close": "Close",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "roles": {
+      "owner": "Node owner",
+      "pi": "Principal investigator",
+      "advisor": "Advisor",
+      "reviewer": "Reviewer",
+      "unit_admin": "Unit administrator"
+    },
+    "org_types": {
+      "root": "Root",
+      "institute": "Institute",
+      "lab": "Laboratory",
+      "group": "Research group",
+      "team": "Team"
+    },
+    "report_types": {
+      "weekly": "Weekly report",
+      "monthly": "Monthly report"
+    },
+    "report_status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "needs_revision": "Needs revision",
+      "accepted": "Accepted"
+    },
+    "report_visibility": {
+      "private": "Only me",
+      "direct_advisor": "Direct advisors",
+      "unit": "Organisation node",
+      "ancestry": "Parent node principal investigators",
+      "workspace": "Everyone in the workspace",
+      "custom": "Custom grants"
+    },
+    "project_types": {
+      "phd": "PhD",
+      "master": "Master",
+      "postdoc": "Postdoc",
+      "research_project": "Research project"
+    },
+    "project_status": {
+      "active": "In progress",
+      "archived": "Archived",
+      "completed": "Completed"
+    },
+    "approval_types": {
+      "task": "Task approval",
+      "purchase": "Purchase approval",
+      "custom": "Custom approval"
+    },
+    "approval_status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "cancelled": "Cancelled"
+    },
+    "org": {
+      "title": "Organisation tree",
+      "description": "Maintain the organisation tree, members and roles.",
+      "new_root": "New top level node",
+      "new_child": "New child node",
+      "add_child": "Add child",
+      "no_nodes": "No organisation node yet",
+      "depth": "Depth {depth}",
+      "delete_node": "Delete node",
+      "tab_members": "Members and roles",
+      "tab_mentors": "Direct advisors",
+      "select_hint": "Select an organisation node on the left.",
+      "name_placeholder": "Node name",
+      "member_email_placeholder": "Member email or ID",
+      "add_member": "Add member",
+      "no_members": "No member in this node",
+      "pi_transfer": "Principal investigator transfer",
+      "pi_transfer_hint": "Transferring the role only changes organisation roles. Historical reports and approvals keep their original authors.",
+      "pi_transfer_action": "Transfer",
+      "mentee_email_placeholder": "Research owner email",
+      "mentor_email_placeholder": "Advisor email",
+      "bind_mentor": "Bind advisor",
+      "no_mentor_bindings": "No advisor binding for this node",
+      "columns": {
+        "member": "Member",
+        "role": "Role",
+        "primary": "Primary",
+        "effective_to": "Valid until",
+        "effective_from": "Valid from",
+        "mentee": "Research owner",
+        "mentor": "Direct advisor"
+      }
+    },
+    "errors": {
+      "generic": "The operation failed. Please review the input and try again.",
+      "module_disabled": "The research module is not enabled for this workspace.",
+      "submodule_disabled": "This research sub module is not enabled.",
+      "workspace_not_found": "Workspace not found or you are not a member of it.",
+      "permission_denied": "You do not have permission to perform this action.",
+      "org_unit_not_found": "Organisation node not found.",
+      "org_unit_cycle_detected": "A node cannot be moved under itself or one of its descendants.",
+      "org_unit_duplicate_name": "A node with the same name already exists under this parent.",
+      "org_unit_root_exists": "This workspace already has a top level node.",
+      "org_unit_root_undeletable": "The top level node cannot be deleted.",
+      "org_unit_parent_invalid": "The selected parent node is not available.",
+      "org_unit_type_invalid": "The selected node type is not allowed here.",
+      "org_member_exists": "This member already holds the role in the node.",
+      "org_member_invalid": "The member configuration is not valid.",
+      "org_member_not_found": "Member not found.",
+      "mentor_binding_exists": "This advisor binding already exists.",
+      "mentor_binding_invalid": "The advisor binding is not valid.",
+      "mentor_binding_not_found": "Advisor binding not found.",
+      "user_not_found": "User not found.",
+      "report_period_conflict": "A report already exists for this period.",
+      "report_state_conflict": "The report status does not allow this action.",
+      "report_read_only": "A submitted report is read only. Return it before editing.",
+      "report_return_reason_required": "A reason is required when returning a report.",
+      "report_visibility_exceeds_default": "The visibility cannot be wider than the default policy.",
+      "research_project_exists": "This research owner already has an active research project.",
+      "research_project_not_found": "Research project not found.",
+      "file_type_not_allowed": "This file type is not allowed.",
+      "file_size_exceeded": "The file exceeds the configured limit.",
+      "approval_flow_not_found": "Approval flow not found.",
+      "approval_request_not_found": "Approval request not found.",
+      "approval_state_conflict": "The approval status does not allow this action.",
+      "approval_action_not_allowed": "You cannot act on this approval step.",
+      "approval_comment_required": "A comment is required for this approval action."
+    }
   }
 }

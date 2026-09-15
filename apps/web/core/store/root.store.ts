@@ -58,6 +58,8 @@ import type { IProjectRootStore } from "./project";
 import { ProjectRootStore } from "./project";
 import type { IProjectViewStore } from "./project-view.store";
 import { ProjectViewStore } from "./project-view.store";
+import type { IResearchStore } from "./research";
+import { ResearchStore } from "./research";
 import type { IRouterStore } from "./router.store";
 import { RouterStore } from "./router.store";
 import type { IStickyStore } from "./sticky/sticky.store";
@@ -100,6 +102,7 @@ export class CoreRootStore {
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
   timelineStore: ITimelineStore;
+  research: IResearchStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -131,6 +134,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.timelineStore = new TimeLineStore(this);
+    this.research = new ResearchStore(this);
   }
 
   resetOnSignOut() {
@@ -164,6 +168,7 @@ export class CoreRootStore {
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
     this.timelineStore = new TimeLineStore(this);
+    this.research = new ResearchStore(this);
   }
 }
 
