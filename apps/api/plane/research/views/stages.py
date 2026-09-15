@@ -20,6 +20,7 @@ from plane.db.models import (
     ResearchProjectProfile,
     ResearchStageInstance,
     ResearchStageRequirement,
+    ReportTemplate,
     StageMaterial,
     StageType,
 )
@@ -64,6 +65,7 @@ from plane.research.utils.errors import (
 )
 from plane.research.utils.org import is_workspace_admin
 from plane.research.utils.stages import material_resource, stage_resource
+from plane.research.utils.templates import find_material_template, resolve_variables, template_values
 from plane.research.views.base import ResearchAPIView
 
 MANAGING_SECTION = "stages"
@@ -460,13 +462,49 @@ class ResearchStageMaterialListCreateEndpoint(ResearchStageEndpointMixin, Resear
                 "This material already exists for the stage.",
             )
 
+        template = None
+        if request.data.get("template"):
+            template = ReportTemplate.objects.filter(
+                workspace=workspace,
+                pk=request.data["template"],
+                scope=ReportTemplate.Scope.STAGE_MATERIAL,
+                is_active=True,
+            ).first()
+            if template is None:
+                return research_not_found(
+                    ResearchErrorCode.TEMPLATE_NOT_FOUND,
+                    "Stage material template not found.",
+                )
+        else:
+            template = find_material_template(workspace, instance.stage, material_type)
+
+        description_json = request.data.get("description_json") or {"type": "doc", "content": []}
+        if template is not None:
+            material_profile = profile_for(workspace, instance.project_id)
+            resolved, unresolved = resolve_variables(
+                template.content_json,
+                template_values(
+                    user=request.user,
+                    project=material_profile.project if material_profile else None,
+                    stage=instance.stage,
+                    org_unit=str(instance.org_unit_id or ""),
+                ),
+            )
+            if unresolved:
+                return research_error(
+                    ResearchErrorCode.TEMPLATE_VARIABLES_UNRESOLVED,
+                    f"Unresolved template variables: {', '.join(unresolved)}.",
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                )
+            description_json = resolved
+
         page = None
         try:
             with transaction.atomic():
                 page = Page.objects.create(
                     workspace=workspace,
                     name=str(request.data.get("title") or material_type)[:255],
-                    description_json=request.data.get("description_json") or {"type": "doc", "content": []},
+                    description_json=description_json,
                     description_html=request.data.get("description_html") or "<p></p>",
                     owned_by=request.user,
                     access=Page.PRIVATE_ACCESS,

@@ -178,6 +178,18 @@ export class ResearchStageService extends APIService {
       });
   }
 
+  async overrideMaterial(
+    workspaceSlug: string,
+    materialId: string,
+    payload: { reason: string; title?: string; description_json?: Record<string, unknown> }
+  ) {
+    return this.post(`${researchEndpoints.material(workspaceSlug, materialId)}override/`, payload)
+      .then((res) => res?.data as TStageMaterial)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async getMaterialVersions(workspaceSlug: string, materialId: string) {
     return this.get(researchEndpoints.materialVersions(workspaceSlug, materialId))
       .then((res) => res?.data as { results: TStageMaterialVersion[]; count: number })

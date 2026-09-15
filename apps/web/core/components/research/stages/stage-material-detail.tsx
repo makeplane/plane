@@ -20,6 +20,7 @@ import { Input } from "@plane/ui";
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   workspaceSlug: string;
@@ -41,12 +42,14 @@ export const StageMaterialDetail = observer(function StageMaterialDetail({
 }: Props) {
   const { t } = useTranslation();
   const research = useResearch();
+  const { data: currentUser } = useUser();
   const material = research.stageMaterials[materialId];
   const versions = research.materialVersions[materialId] ?? [];
   const [title, setTitle] = useState("");
   const [reason, setReason] = useState("");
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [overrideReason, setOverrideReason] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -141,6 +144,34 @@ export const StageMaterialDetail = observer(function StageMaterialDetail({
           </Button>
         </div>
         {!material.can_edit && <p className="text-11 text-tertiary">{t("research.stages.materials.read_only_hint")}</p>}
+        {!material.can_edit && research.isWorkspaceAdmin && (
+          <div className="flex flex-col gap-2 rounded border border-subtle p-2">
+            <p className="text-12 text-secondary">{t("research.stages.materials.override_hint")}</p>
+            <Input
+              value={overrideReason}
+              placeholder={t("research.stages.materials.override_reason")}
+              onChange={(event) => setOverrideReason(event.target.value)}
+            />
+            <div>
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={busy || !overrideReason.trim()}
+                onClick={() => {
+                  void run(() =>
+                    research.overrideStageMaterial(workspaceSlug, materialId, {
+                      reason: overrideReason.trim(),
+                      title,
+                    })
+                  );
+                  setOverrideReason("");
+                }}
+              >
+                {t("research.stages.materials.override")}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-1">
@@ -165,6 +196,7 @@ export const StageMaterialDetail = observer(function StageMaterialDetail({
         ))}
       </div>
       <p className="text-11 text-tertiary">{t("research.stages.materials.stage_hint", { stage: stageCode })}</p>
+      {currentUser && <span className="text-11 text-tertiary">{t("research.stages.materials.reviewer_hint")}</span>}
     </div>
   );
 });

@@ -1364,7 +1364,11 @@
         "read_only_hint": "材料提交后只读，阶段退回后可再次编辑。",
         "versions_title": "版本历史",
         "changed_fields": "变更字段",
-        "stage_hint": "该材料属于阶段 {stage}。"
+        "stage_hint": "该材料属于阶段 {stage}。",
+        "override_hint": "管理员紧急代改：改动会留痕并写入审计。",
+        "override_reason": "代改原因（必填）",
+        "override": "代改材料",
+        "reviewer_hint": "阶段材料对被指派的评审人可见。"
       },
       "material": {
         "topic_description": "选题描述",

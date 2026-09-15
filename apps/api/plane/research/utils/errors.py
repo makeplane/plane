@@ -68,6 +68,7 @@ class ResearchErrorCode:
     REPORT_RETURN_REASON_REQUIRED = "report_return_reason_required"
     REPORT_VISIBILITY_EXCEEDS_DEFAULT = "report_visibility_exceeds_default"
     TEMPLATE_NOT_FOUND = "report_template_not_found"
+    TEMPLATE_VARIABLES_UNRESOLVED = "template_variables_unresolved"
     FILE_TYPE_NOT_ALLOWED = "file_type_not_allowed"
     FILE_SIZE_EXCEEDED = "file_size_exceeded"
     ATTACHMENT_NOT_FOUND = "report_attachment_not_found"

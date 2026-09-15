@@ -52,10 +52,13 @@ class ResearchReportTemplateListCreateEndpoint(ResearchAPIView):
             return research_permission_denied()
 
         name = str(request.data.get("name") or "").strip()
+        scope = str(request.data.get("scope") or ReportTemplate.Scope.REPORT).upper()
+        if scope not in ReportTemplate.Scope.values:
+            return research_error(ResearchErrorCode.TEMPLATE_NOT_FOUND, "Unknown template scope.")
         report_type = str(request.data.get("report_type") or "WEEKLY").strip().upper()
         if not name:
             return research_error(ResearchErrorCode.TEMPLATE_NOT_FOUND, "Template name is required.")
-        if report_type not in REPORT_TYPES:
+        if scope == ReportTemplate.Scope.REPORT and report_type not in REPORT_TYPES:
             return research_error(ResearchErrorCode.TEMPLATE_NOT_FOUND, "Unknown report type.")
 
         is_default = truthy(request.data.get("is_default"))
@@ -68,7 +71,11 @@ class ResearchReportTemplateListCreateEndpoint(ResearchAPIView):
                 template = ReportTemplate.objects.create(
                     workspace=workspace,
                     name=name,
+                    scope=scope,
                     report_type=report_type,
+                    stage=str(request.data.get("stage") or "").upper(),
+                    material_type=str(request.data.get("material_type") or "").upper(),
+                    variables=list(request.data.get("variables") or []),
                     content_json=request.data.get("content_json") or {"type": "doc", "content": []},
                     is_default=is_default,
                     is_active=truthy(request.data.get("is_active"), default=True),
@@ -85,7 +92,7 @@ class ResearchReportTemplateListCreateEndpoint(ResearchAPIView):
             resource_type=ResearchResourceType.REPORT_TEMPLATE,
             resource_id=template.id,
             actor=request.user,
-            metadata={"name": name, "report_type": report_type, "is_default": is_default},
+            metadata={"name": name, "scope": scope, "report_type": report_type, "is_default": is_default},
             request=request,
         )
         return Response(ReportTemplateSerializer(template).data, status=status.HTTP_201_CREATED)

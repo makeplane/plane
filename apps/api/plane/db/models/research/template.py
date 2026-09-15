@@ -21,6 +21,15 @@ class ReportTemplate(BaseModel):
 
     REPORT_TYPE_CHOICES = (("WEEKLY", "Weekly"), ("MONTHLY", "Monthly"))
 
+    class Scope(models.TextChoices):
+        REPORT = "REPORT", "Report"
+        STAGE_MATERIAL = "STAGE_MATERIAL", "Stage material"
+        EXPERIMENT = "EXPERIMENT", "Experiment"
+
+    # Variables a template may declare; an unresolved variable blocks the
+    # material from being written into the stage (P1-OPN-08).
+    TEMPLATE_VARIABLES = ("user", "period", "project", "stage", "advisor", "org_unit")
+
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -31,6 +40,10 @@ class ReportTemplate(BaseModel):
     content_json = models.JSONField(default=get_default_template_content, blank=True)
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    scope = models.CharField(max_length=24, choices=Scope.choices, default=Scope.REPORT)
+    material_type = models.CharField(max_length=48, blank=True, default="")
+    stage = models.CharField(max_length=16, blank=True, default="")
+    variables = models.JSONField(default=list, blank=True)
 
     class Meta:
         verbose_name = "Research Report Template"

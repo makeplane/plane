@@ -272,6 +272,11 @@ export interface IResearchStore {
     payload: TStageMaterialUpdatePayload
   ) => Promise<TStageMaterial>;
   submitStageMaterial: (workspaceSlug: string, materialId: string) => Promise<TStageMaterial>;
+  overrideStageMaterial: (
+    workspaceSlug: string,
+    materialId: string,
+    payload: { reason: string; title?: string; description_json?: Record<string, unknown> }
+  ) => Promise<TStageMaterial>;
   fetchMaterialVersions: (workspaceSlug: string, materialId: string) => Promise<TStageMaterialVersion[]>;
   fetchStageRequirements: (workspaceSlug: string, stage?: string) => Promise<TStageRequirement[]>;
   updateStageRequirements: (workspaceSlug: string, items: TStageRequirementUpdate[]) => Promise<void>;
@@ -602,6 +607,7 @@ export class ResearchStore implements IResearchStore {
       fetchStageMaterial: action,
       updateStageMaterial: action,
       submitStageMaterial: action,
+      overrideStageMaterial: action,
       fetchMaterialVersions: action,
       fetchStageRequirements: action,
       updateStageRequirements: action,
@@ -1380,6 +1386,18 @@ export class ResearchStore implements IResearchStore {
 
   submitStageMaterial = async (workspaceSlug: string, materialId: string) => {
     const material = await this.stageService.submitMaterial(workspaceSlug, materialId);
+    runInAction(() => {
+      this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
+    });
+    return material;
+  };
+
+  overrideStageMaterial = async (
+    workspaceSlug: string,
+    materialId: string,
+    payload: { reason: string; title?: string; description_json?: Record<string, unknown> }
+  ) => {
+    const material = await this.stageService.overrideMaterial(workspaceSlug, materialId, payload);
     runInAction(() => {
       this.stageMaterials[material.id] = { ...this.stageMaterials[material.id], ...material };
     });

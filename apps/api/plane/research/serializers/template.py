@@ -12,9 +12,13 @@ class ReportTemplateSerializer(serializers.ModelSerializer):
         model = ReportTemplate
         fields = [
             "id",
+            "scope",
             "report_type",
+            "stage",
+            "material_type",
             "name",
             "content_json",
+            "variables",
             "is_default",
             "is_active",
             "created_at",

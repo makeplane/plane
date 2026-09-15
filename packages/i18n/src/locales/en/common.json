@@ -1364,7 +1364,11 @@
         "read_only_hint": "Submitted material is read only until the stage is returned.",
         "versions_title": "Version history",
         "changed_fields": "Changed fields",
-        "stage_hint": "This material belongs to stage {stage}."
+        "stage_hint": "This material belongs to stage {stage}.",
+        "override_hint": "Administrator emergency override: the change is versioned and audited.",
+        "override_reason": "Reason for the override (required)",
+        "override": "Override material",
+        "reviewer_hint": "Stage materials are visible to the assigned reviewers."
       },
       "material": {
         "topic_description": "Topic description",

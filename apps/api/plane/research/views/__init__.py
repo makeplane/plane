@@ -111,6 +111,7 @@ from .code import (
     ResearchCodeSnapshotEndpoint,
     ResearchCodeSummaryEndpoint,
 )
+from .stage_overrides import ResearchStageMaterialOverrideEndpoint
 
 __all__ = [
     "ResearchHealthEndpoint",
@@ -162,6 +163,7 @@ __all__ = [
     "ResearchCodeRepositorySyncEndpoint",
     "ResearchCodeSnapshotEndpoint",
     "ResearchCodeSummaryEndpoint",
+    "ResearchStageMaterialOverrideEndpoint",
     "ResearchSettingsEndpoint",
     "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",
