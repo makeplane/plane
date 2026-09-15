@@ -16,7 +16,6 @@ from plane.db.models import (
     LiteratureEntry,
     OrgUnit,
     OrgUnitMember,
-    StageMaterial,
 )
 from plane.tests.research_fixtures import (
     add_workspace_member,

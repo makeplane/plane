@@ -9,7 +9,6 @@ import pytest
 from plane.db.models import (
     AMENDABLE_FIELDS,
     LOCKED_FIELDS,
-    ExperimentAmendment,
     ExperimentRecord,
     ExperimentRecordVersion,
     Project,

@@ -112,7 +112,13 @@ def reach_final(env):
     setting.stage_pass_ratio = -1.0
     setting.save(update_fields=["stage_min_reviewers", "stage_pass_ratio"])
     codes = {
-        "PRE_OPENING": ("material_set", "literature_min_included", "literature_max_entries", "literature_quality", "literature_cited_sources"),
+        "PRE_OPENING": (
+            "material_set",
+            "literature_min_included",
+            "literature_max_entries",
+            "literature_quality",
+            "literature_cited_sources",
+        ),
         "OPENING": ("material_set", "experiment_linked", "code_repo"),
         "MIDTERM": ("material_set", "experiment_completed", "experiment_status_notes"),
     }

@@ -1,6 +1,6 @@
 {
   "name": "@plane/ui",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "description": "UI components shared across multiple apps internally",
   "license": "AGPL-3.0",

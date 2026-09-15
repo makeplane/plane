@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import pytest
+from django.core.cache import cache
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 
@@ -14,6 +15,20 @@ from plane.db.models.api import APIToken
 def django_db_setup(django_db_setup):  # noqa: F811
     """Set up the Django database for the test session"""
     pass
+
+
+@pytest.fixture(autouse=True)
+def clear_shared_cache():
+    """Reset the shared cache between tests.
+
+    The suite runs against a real Redis, so DRF throttling counters and the
+    research integration cache would otherwise leak from one test to the next
+    (a later test then sees ``429 Too Many Requests`` for an unrelated
+    endpoint). Clearing the cache keeps every test independent.
+    """
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.fixture

@@ -9,7 +9,6 @@ import pytest
 from rest_framework.test import APIClient
 
 from plane.db.models import (
-    MATERIAL_TYPES_BY_STAGE,
     CodeArtifact,
     ExperimentRecord,
     ExternalReferenceLink,
@@ -23,7 +22,6 @@ from plane.db.models import (
     ResearchStageInstance,
     StageReview,
     StageTransition,
-    WorkspaceResearchSetting,
 )
 from plane.tests.research_fixtures import (
     add_workspace_member,

@@ -9,7 +9,6 @@ from rest_framework.test import APIClient
 
 from plane.db.models import (
     MATERIAL_TYPES_BY_STAGE,
-    CodeArtifact,
     ExperimentRecord,
     OrgUnit,
     OrgUnitMember,
@@ -131,9 +130,24 @@ def pass_pre_opening(env):
                 )
             ]
             + [
-                {"stage": "PRE_OPENING", "code": "stage_min_reviewers", "threshold": 0, "requirement_type": "REVIEW_RULE"},
-                {"stage": "PRE_OPENING", "code": "stage_advisor_required", "threshold": 0, "requirement_type": "REVIEW_RULE"},
-                {"stage": "PRE_OPENING", "code": "stage_pi_branch_required", "threshold": 0, "requirement_type": "REVIEW_RULE"},
+                {
+                    "stage": "PRE_OPENING",
+                    "code": "stage_min_reviewers",
+                    "threshold": 0,
+                    "requirement_type": "REVIEW_RULE",
+                },
+                {
+                    "stage": "PRE_OPENING",
+                    "code": "stage_advisor_required",
+                    "threshold": 0,
+                    "requirement_type": "REVIEW_RULE",
+                },
+                {
+                    "stage": "PRE_OPENING",
+                    "code": "stage_pi_branch_required",
+                    "threshold": 0,
+                    "requirement_type": "REVIEW_RULE",
+                },
             ]
         },
         format="json",

@@ -14,7 +14,6 @@ from plane.db.models import (
     MentorBinding,
     OrgUnit,
     OrgUnitMember,
-    ResearchStageInstance,
     StageReview,
     StageTransition,
     WorkspaceResearchSetting,
@@ -150,11 +149,7 @@ def reach_midterm(env):
             created_by=env["admin"],
         )
         passed = env["admin_client"].post(stage_url(env, stage["id"], "pass/"), {}, format="json")
-        assert passed.status_code == 200, (
-            code,
-            "pass",
-            [{k: v for k, v in item.items() if k in ("code", "actual", "required", "pending_required_roles", "vetoed_by")} for item in passed.json().get("blockers", [])],
-        )
+        assert passed.status_code == 200, (code, "pass", passed.json())
     stages = env["owner_client"].get(stages_url(env)).json()["results"]
     midterm = next(item for item in stages if item["stage"] == "MIDTERM")
     env["owner_client"].post(stage_url(env, midterm["id"], "enter/"), {}, format="json")
@@ -226,7 +221,7 @@ class TestMidtermGate:
 @pytest.mark.django_db
 class TestProgressSummary:
     def test_summary_matches_the_detail_lists(self, env):
-        midterm_id = reach_midterm(env)
+        reach_midterm(env)
         ExperimentRecord.objects.create(
             workspace=env["workspace"],
             project_id=env["project_id"],
@@ -288,7 +283,7 @@ class TestProgressSummary:
 @pytest.mark.django_db
 class TestProgressAcl:
     def test_summary_never_includes_objects_the_caller_cannot_read(self, env):
-        midterm_id = reach_midterm(env)
+        reach_midterm(env)
         ExperimentRecord.objects.create(
             workspace=env["workspace"],
             project_id=env["project_id"],
@@ -307,7 +302,6 @@ class TestProgressAcl:
         assert owner_summary["experiments"]["total"] == 1
 
     def test_advisors_see_their_mentee_progress(self, env):
-        midterm_id = reach_midterm(env)
         ExperimentRecord.objects.create(
             workspace=env["workspace"],
             project_id=env["project_id"],

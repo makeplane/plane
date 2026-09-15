@@ -39,7 +39,7 @@ export const ResearchSidebarItems = observer(function ResearchSidebarItems() {
   const sections = research.identity?.sections;
   const visibleBusinessItems = RESEARCH_NAVIGATION_ITEMS.filter((item) => Boolean(sections?.[item.section]));
   const visibleSettingsItems = research.isWorkspaceAdmin
-    ? RESEARCH_SETTINGS_NAVIGATION_ITEMS.filter((item) => (item.section === "org" ? sections?.org : sections?.reports))
+    ? RESEARCH_SETTINGS_NAVIGATION_ITEMS.filter((item) => Boolean(sections?.[item.section]))
     : [];
 
   const renderItem = (key: string, labelKey: string, path: string) => {
