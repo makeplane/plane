@@ -12,3 +12,4 @@ export * from "./approval.service";
 export * from "./stage.service";
 export * from "./review.service";
 export * from "./literature.service";
+export * from "./experiment.service";

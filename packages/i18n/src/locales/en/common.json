@@ -879,7 +879,8 @@
       "audit": "Audit trail",
       "stages": "Stages",
       "reviews": "Reviews",
-      "literature": "Literature"
+      "literature": "Literature",
+      "experiments": "Experiments"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1230,7 +1231,21 @@
       "literature_limit_exceeded": "The project reached the literature registration limit.",
       "literature_not_annotated": "An included entry needs both a summary and gap notes.",
       "literature_status_invalid": "The literature status is not valid.",
-      "literature_import_empty": "No importable entry was found in the payload."
+      "literature_import_empty": "No importable entry was found in the payload.",
+      "experiment_not_found": "Experiment not found.",
+      "experiment_state_conflict": "The experiment status does not allow this action.",
+      "experiment_read_only": "A submitted experiment is read only. Raise an amendment to change it.",
+      "experiment_locked_field": "Key fields are locked once the experiment runs.",
+      "experiment_archived": "Experiments are never deleted. Archive the record instead.",
+      "experiment_asset_not_found": "Asset link not found.",
+      "experiment_asset_exists": "This asset is already linked to the experiment.",
+      "experiment_amendment_not_found": "Amendment not found.",
+      "experiment_amendment_state_conflict": "The amendment is no longer pending.",
+      "experiment_amendment_reason_required": "An amendment needs a reason.",
+      "experiment_amendment_change_set_required": "An amendment needs at least one field change.",
+      "experiment_amendment_field_not_allowed": "That field cannot be amended.",
+      "experiment_amendment_pending_exists": "An amendment is already pending.",
+      "experiment_amendment_comment_required": "A comment is required to reject an amendment."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1461,6 +1476,66 @@
         "venue": "Venue",
         "doi": "DOI",
         "status": "Status"
+      }
+    },
+    "experiments": {
+      "description": "Register experiments, lock the facts and amend them through review.",
+      "create": "Register",
+      "empty": "No experiment registered yet.",
+      "select_hint": "Select an experiment to see its details.",
+      "title_placeholder": "Experiment title",
+      "all_statuses": "All statuses",
+      "start": "Start run",
+      "complete": "Complete",
+      "fail": "Mark failed",
+      "submit": "Submit",
+      "archive": "Archive",
+      "version": "Version {version}",
+      "read_only_hint": "A submitted experiment is read only; use an amendment.",
+      "amendments_title": "Amendments",
+      "amendment_reason": "Reason for the change",
+      "request_amendment": "Request amendment",
+      "withdraw": "Withdraw",
+      "approve": "Approve",
+      "reject": "Reject",
+      "assets_title": "External data assets",
+      "no_assets": "No external asset linked.",
+      "open_source": "Open source system",
+      "versions_title": "Version history",
+      "no_versions": "No version recorded yet.",
+      "status": {
+        "planned": "Planned",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "archived": "Archived"
+      },
+      "source": {
+        "manual": "Manual",
+        "automated": "Device log"
+      },
+      "amendment_status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Withdrawn"
+      },
+      "asset_system": {
+        "plane": "Plane",
+        "speclabos": "SpecLabOS",
+        "smartaccess": "SmartAccess",
+        "ragportal": "RAGPortal",
+        "poly_agent": "Poly_Agent",
+        "spec_agent": "Spec_Agent",
+        "other": "Other system"
+      },
+      "fields": {
+        "molecular_system": "Molecular system",
+        "method": "Method",
+        "hypothesis": "Hypothesis",
+        "result": "Result",
+        "status_note": "Status note"
       }
     }
   }

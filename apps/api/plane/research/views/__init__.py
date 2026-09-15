@@ -89,6 +89,19 @@ from .literature import (
     ResearchLiteratureStatusEndpoint,
     ResearchLiteratureThresholdEndpoint,
 )
+from .experiments import (
+    ResearchExperimentAmendmentActionEndpoint,
+    ResearchExperimentAmendmentDetailEndpoint,
+    ResearchExperimentAmendmentListCreateEndpoint,
+    ResearchExperimentArchiveEndpoint,
+    ResearchExperimentAssetDetailEndpoint,
+    ResearchExperimentAssetEndpoint,
+    ResearchExperimentDetailEndpoint,
+    ResearchExperimentListCreateEndpoint,
+    ResearchExperimentStatusEndpoint,
+    ResearchExperimentSubmitEndpoint,
+    ResearchExperimentVersionsEndpoint,
+)
 
 __all__ = [
     "ResearchHealthEndpoint",
@@ -122,6 +135,17 @@ __all__ = [
     "ResearchLiteraturePdfEndpoint",
     "ResearchLiteratureStatusEndpoint",
     "ResearchLiteratureThresholdEndpoint",
+    "ResearchExperimentAmendmentActionEndpoint",
+    "ResearchExperimentAmendmentDetailEndpoint",
+    "ResearchExperimentAmendmentListCreateEndpoint",
+    "ResearchExperimentArchiveEndpoint",
+    "ResearchExperimentAssetDetailEndpoint",
+    "ResearchExperimentAssetEndpoint",
+    "ResearchExperimentDetailEndpoint",
+    "ResearchExperimentListCreateEndpoint",
+    "ResearchExperimentStatusEndpoint",
+    "ResearchExperimentSubmitEndpoint",
+    "ResearchExperimentVersionsEndpoint",
     "ResearchSettingsEndpoint",
     "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",

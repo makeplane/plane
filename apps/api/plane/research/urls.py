@@ -79,6 +79,17 @@ from plane.research.views import (
     ResearchLiteraturePdfEndpoint,
     ResearchLiteratureStatusEndpoint,
     ResearchLiteratureThresholdEndpoint,
+    ResearchExperimentAmendmentActionEndpoint,
+    ResearchExperimentAmendmentDetailEndpoint,
+    ResearchExperimentAmendmentListCreateEndpoint,
+    ResearchExperimentArchiveEndpoint,
+    ResearchExperimentAssetDetailEndpoint,
+    ResearchExperimentAssetEndpoint,
+    ResearchExperimentDetailEndpoint,
+    ResearchExperimentListCreateEndpoint,
+    ResearchExperimentStatusEndpoint,
+    ResearchExperimentSubmitEndpoint,
+    ResearchExperimentVersionsEndpoint,
 )
 
 urlpatterns = [
@@ -242,6 +253,64 @@ urlpatterns = [
         "research/workspaces/<str:slug>/literature/<uuid:entry_id>/pdf/",
         ResearchLiteraturePdfEndpoint.as_view(),
         name="research-literature-pdf",
+    ),
+    # ------------------------------------------------------------------
+    # P1 experiment records and amendments (§5.5)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/projects/<uuid:project_id>/experiments/",
+        ResearchExperimentListCreateEndpoint.as_view(),
+        name="research-experiments",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/",
+        ResearchExperimentDetailEndpoint.as_view(),
+        name="research-experiment",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/status/",
+        ResearchExperimentStatusEndpoint.as_view(),
+        name="research-experiment-status",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/submit/",
+        ResearchExperimentSubmitEndpoint.as_view(),
+        name="research-experiment-submit",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/archive/",
+        ResearchExperimentArchiveEndpoint.as_view(),
+        name="research-experiment-archive",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/versions/",
+        ResearchExperimentVersionsEndpoint.as_view(),
+        name="research-experiment-versions",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/assets/",
+        ResearchExperimentAssetEndpoint.as_view(),
+        name="research-experiment-assets",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiments/<uuid:record_id>/amendments/",
+        ResearchExperimentAmendmentListCreateEndpoint.as_view(),
+        name="research-experiment-amendments",
+    ),
+    path(
+        "research/workspaces/<str:slug>/experiment-assets/<uuid:link_id>/",
+        ResearchExperimentAssetDetailEndpoint.as_view(),
+        name="research-experiment-asset",
+    ),
+    path(
+        "research/workspaces/<str:slug>/amendments/<uuid:amendment_id>/",
+        ResearchExperimentAmendmentDetailEndpoint.as_view(),
+        name="research-experiment-amendment",
+    ),
+    path(
+        "research/workspaces/<str:slug>/amendments/<uuid:amendment_id>/<str:action>/",
+        ResearchExperimentAmendmentActionEndpoint.as_view(),
+        name="research-experiment-amendment-action",
     ),
     # office approvals
     path(

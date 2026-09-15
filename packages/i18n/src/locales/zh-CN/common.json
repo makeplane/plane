@@ -879,7 +879,8 @@
       "audit": "审计记录",
       "stages": "科研阶段",
       "reviews": "待我评审",
-      "literature": "文献调研"
+      "literature": "文献调研",
+      "experiments": "实验条目"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1230,7 +1231,21 @@
       "literature_limit_exceeded": "项目文献登记数量已达上限。",
       "literature_not_annotated": "纳入文献必须同时填写摘要与 gap 笔记。",
       "literature_status_invalid": "文献状态不合法。",
-      "literature_import_empty": "没有可导入的文献条目。"
+      "literature_import_empty": "没有可导入的文献条目。",
+      "experiment_not_found": "实验条目不存在。",
+      "experiment_state_conflict": "当前实验状态不允许该操作。",
+      "experiment_read_only": "已提交实验只读，请发起修订。",
+      "experiment_locked_field": "实验开始运行后关键字段已锁定。",
+      "experiment_archived": "实验不会被删除，请改用归档。",
+      "experiment_asset_not_found": "资产引用不存在。",
+      "experiment_asset_exists": "该资产已关联到本条实验。",
+      "experiment_amendment_not_found": "修订申请不存在。",
+      "experiment_amendment_state_conflict": "该修订申请已不再处于待审核状态。",
+      "experiment_amendment_reason_required": "修订必须填写原因。",
+      "experiment_amendment_change_set_required": "修订必须包含至少一处字段变更。",
+      "experiment_amendment_field_not_allowed": "该字段不允许修订。",
+      "experiment_amendment_pending_exists": "已存在待审核的修订申请。",
+      "experiment_amendment_comment_required": "拒绝修订必须填写意见。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1461,6 +1476,66 @@
         "venue": "期刊 / 会议",
         "doi": "DOI",
         "status": "状态"
+      }
+    },
+    "experiments": {
+      "description": "逐条登记实验，锁定关键事实，修改须走修订审批。",
+      "create": "登记实验",
+      "empty": "还没有登记实验。",
+      "select_hint": "选择一条实验查看详情。",
+      "title_placeholder": "实验标题",
+      "all_statuses": "全部状态",
+      "start": "开始运行",
+      "complete": "标记完成",
+      "fail": "标记失败",
+      "submit": "提交",
+      "archive": "归档",
+      "version": "版本 {version}",
+      "read_only_hint": "已提交实验只读，请发起修订。",
+      "amendments_title": "修订申请",
+      "amendment_reason": "修改原因",
+      "request_amendment": "发起修订",
+      "withdraw": "撤回",
+      "approve": "通过",
+      "reject": "拒绝",
+      "assets_title": "外部数据资产",
+      "no_assets": "暂未关联外部资产。",
+      "open_source": "打开源系统",
+      "versions_title": "版本历史",
+      "no_versions": "暂无版本记录。",
+      "status": {
+        "planned": "计划中",
+        "running": "进行中",
+        "completed": "已完成",
+        "failed": "失败",
+        "cancelled": "已取消",
+        "archived": "已归档"
+      },
+      "source": {
+        "manual": "人工填写",
+        "automated": "设备日志"
+      },
+      "amendment_status": {
+        "pending": "待审核",
+        "approved": "已通过",
+        "rejected": "已拒绝",
+        "cancelled": "已撤回"
+      },
+      "asset_system": {
+        "plane": "Plane",
+        "speclabos": "SpecLabOS",
+        "smartaccess": "SmartAccess",
+        "ragportal": "RAGPortal",
+        "poly_agent": "Poly_Agent",
+        "spec_agent": "Spec_Agent",
+        "other": "其他系统"
+      },
+      "fields": {
+        "molecular_system": "分子体系",
+        "method": "实验 / 计算方法",
+        "hypothesis": "实验假设",
+        "result": "实验结果",
+        "status_note": "状态说明"
       }
     }
   }

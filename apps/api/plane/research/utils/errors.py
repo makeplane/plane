@@ -111,6 +111,21 @@ class ResearchErrorCode:
     LITERATURE_STATUS_INVALID = "literature_status_invalid"
     LITERATURE_IMPORT_EMPTY = "literature_import_empty"
 
+    EXPERIMENT_NOT_FOUND = "experiment_not_found"
+    EXPERIMENT_STATE_CONFLICT = "experiment_state_conflict"
+    EXPERIMENT_READ_ONLY = "experiment_read_only"
+    EXPERIMENT_LOCKED_FIELD = "experiment_locked_field"
+    EXPERIMENT_ARCHIVED = "experiment_archived"
+    EXPERIMENT_ASSET_NOT_FOUND = "experiment_asset_not_found"
+    EXPERIMENT_ASSET_EXISTS = "experiment_asset_exists"
+    AMENDMENT_NOT_FOUND = "experiment_amendment_not_found"
+    AMENDMENT_STATE_CONFLICT = "experiment_amendment_state_conflict"
+    AMENDMENT_REASON_REQUIRED = "experiment_amendment_reason_required"
+    AMENDMENT_CHANGE_SET_REQUIRED = "experiment_amendment_change_set_required"
+    AMENDMENT_FIELD_NOT_ALLOWED = "experiment_amendment_field_not_allowed"
+    AMENDMENT_PENDING_EXISTS = "experiment_amendment_pending_exists"
+    AMENDMENT_COMMENT_REQUIRED = "experiment_amendment_comment_required"
+
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):
     return Response({"error_code": error_code, "message": message}, status=http_status)

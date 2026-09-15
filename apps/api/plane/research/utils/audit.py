@@ -74,6 +74,16 @@ class ResearchAuditAction:
     LITERATURE_STATUS = "literature.status"
     LITERATURE_IMPORT = "literature.import"
     LITERATURE_PDF = "literature.pdf"
+    EXPERIMENT_CREATE = "experiment.create"
+    EXPERIMENT_UPDATE = "experiment.update"
+    EXPERIMENT_SUBMIT = "experiment.submit"
+    EXPERIMENT_ARCHIVE = "experiment.archive"
+    EXPERIMENT_AMENDMENT_CREATE = "experiment.amendment.create"
+    EXPERIMENT_AMENDMENT_APPROVE = "experiment.amendment.approve"
+    EXPERIMENT_AMENDMENT_REJECT = "experiment.amendment.reject"
+    EXPERIMENT_AMENDMENT_CANCEL = "experiment.amendment.cancel"
+    EXPERIMENT_ASSET_LINK = "experiment.asset.link"
+    EXPERIMENT_ASSET_UNLINK = "experiment.asset.unlink"
 
 
 class ResearchResourceType:
@@ -95,6 +105,9 @@ class ResearchResourceType:
     STAGE_REVIEW = "stage_review"
     STAGE_REVIEW_ASSIGNMENT = "stage_review_assignment"
     LITERATURE = "literature_entry"
+    EXPERIMENT = "experiment_record"
+    EXPERIMENT_AMENDMENT = "experiment_amendment"
+    EXPERIMENT_ASSET = "experiment_asset_link"
 
 
 def _client_metadata(request):

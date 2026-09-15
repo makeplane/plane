@@ -60,6 +60,13 @@ export type {
   TLiteratureEntry,
   TLiteratureStatus,
   TLiteratureThreshold,
+  TAmendmentStatus,
+  TExperimentAmendment,
+  TExperimentAssetLink,
+  TExperimentRecord,
+  TExperimentSource,
+  TExperimentStatus,
+  TExperimentVersion,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -329,7 +336,52 @@ export const stageMaterialLabelKey = (materialType: string) => `research.stages.
 export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
   { key: "stages", labelKey: "research.nav.stages", path: "stages", section: "stages" },
   { key: "literature", labelKey: "research.nav.literature", path: "literature", section: "stages" },
+  { key: "experiments", labelKey: "research.nav.experiments", path: "experiments", section: "experiments" },
 ] as const;
+
+// ---------------------------------------------------------------------------
+// P1 experiment records (§3.7, §4.5)
+// ---------------------------------------------------------------------------
+
+export const EXPERIMENT_STATUSES = [
+  "PLANNED",
+  "RUNNING",
+  "COMPLETED",
+  "FAILED",
+  "CANCELLED",
+  "ARCHIVED",
+] as const satisfies readonly TExperimentStatus[];
+
+export const EXPERIMENT_STATUS_LABELS: Record<TExperimentStatus, string> = {
+  PLANNED: "research.experiments.status.planned",
+  RUNNING: "research.experiments.status.running",
+  COMPLETED: "research.experiments.status.completed",
+  FAILED: "research.experiments.status.failed",
+  CANCELLED: "research.experiments.status.cancelled",
+  ARCHIVED: "research.experiments.status.archived",
+};
+
+export const EXPERIMENT_SOURCE_LABELS: Record<TExperimentSource, string> = {
+  MANUAL: "research.experiments.source.manual",
+  AUTOMATED: "research.experiments.source.automated",
+};
+
+export const AMENDMENT_STATUS_LABELS: Record<TAmendmentStatus, string> = {
+  PENDING: "research.experiments.amendment_status.pending",
+  APPROVED: "research.experiments.amendment_status.approved",
+  REJECTED: "research.experiments.amendment_status.rejected",
+  CANCELLED: "research.experiments.amendment_status.cancelled",
+};
+
+export const EXPERIMENT_ASSET_SYSTEM_LABELS: Record<string, string> = {
+  PLANE: "research.experiments.asset_system.plane",
+  SPECLABOS: "research.experiments.asset_system.speclabos",
+  SMARTACCESS: "research.experiments.asset_system.smartaccess",
+  RAGPORTAL: "research.experiments.asset_system.ragportal",
+  POLY_AGENT: "research.experiments.asset_system.poly_agent",
+  SPEC_AGENT: "research.experiments.asset_system.spec_agent",
+  OTHER: "research.experiments.asset_system.other",
+};
 
 // ---------------------------------------------------------------------------
 // P1 literature collection (§3.3, §4.4)
@@ -474,4 +526,20 @@ export const researchEndpoints = {
   literatureEntry: (slug: string, entryId: string) => `${RESEARCH_API_ROOT}/${slug}/literature/${entryId}/`,
   literatureStatus: (slug: string, entryId: string) => `${RESEARCH_API_ROOT}/${slug}/literature/${entryId}/status/`,
   literaturePdf: (slug: string, entryId: string) => `${RESEARCH_API_ROOT}/${slug}/literature/${entryId}/pdf/`,
+  // ---- P1 experiment records (§5.5) ----
+  experiments: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/experiments/`,
+  experiment: (slug: string, recordId: string) => `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/`,
+  experimentStatus: (slug: string, recordId: string) => `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/status/`,
+  experimentSubmit: (slug: string, recordId: string) => `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/submit/`,
+  experimentArchive: (slug: string, recordId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/archive/`,
+  experimentVersions: (slug: string, recordId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/versions/`,
+  experimentAssets: (slug: string, recordId: string) => `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/assets/`,
+  experimentAsset: (slug: string, linkId: string) => `${RESEARCH_API_ROOT}/${slug}/experiment-assets/${linkId}/`,
+  experimentAmendments: (slug: string, recordId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/experiments/${recordId}/amendments/`,
+  amendment: (slug: string, amendmentId: string) => `${RESEARCH_API_ROOT}/${slug}/amendments/${amendmentId}/`,
+  amendmentAction: (slug: string, amendmentId: string, action: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/amendments/${amendmentId}/${action}/`,
 } as const;

@@ -596,3 +596,96 @@ export type TLiteratureThreshold = {
   remaining: number;
   capacity: number;
 };
+
+export type TExperimentStatus = "PLANNED" | "RUNNING" | "COMPLETED" | "FAILED" | "CANCELLED" | "ARCHIVED";
+export type TExperimentSource = "MANUAL" | "AUTOMATED";
+export type TAmendmentStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+
+export type TExperimentRecord = {
+  id: string;
+  workspace: string;
+  project: string;
+  sequence_no: number;
+  stage_instance: string | null;
+  title: string;
+  objective: string;
+  hypothesis: string;
+  molecular_system: string;
+  smiles: string;
+  system_composition: string;
+  method: string;
+  parameters: Record<string, unknown>;
+  environment: Record<string, unknown>;
+  result: string;
+  metrics: Record<string, unknown>;
+  conclusion: string;
+  failure_reason: string;
+  status_note: string;
+  status: TExperimentStatus;
+  source: TExperimentSource;
+  owner: string;
+  owner_detail?: TResearchUserLite;
+  started_at: string | null;
+  completed_at: string | null;
+  is_locked: boolean;
+  submitted_at: string | null;
+  current_version_no: number;
+  visibility: TReportVisibility;
+  locked_fields?: string[];
+  amendable_fields?: string[];
+  can_edit?: boolean;
+  can_review?: boolean;
+  versions?: TExperimentVersion[];
+  amendments?: TExperimentAmendment[];
+  assets?: TExperimentAssetLink[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type TExperimentVersion = {
+  id: string;
+  record: string;
+  version_no: number;
+  snapshot: Record<string, unknown>;
+  change_source: "SUBMIT" | "AMENDMENT" | "ADMIN_OVERRIDE";
+  reason: string;
+  created_at: string;
+};
+
+export type TAmendmentChange = { field: string; old?: unknown; new?: unknown };
+
+export type TExperimentAmendment = {
+  id: string;
+  record: string;
+  requested_by: string;
+  requested_by_detail?: TResearchUserLite;
+  reason: string;
+  change_set: TAmendmentChange[];
+  evidence_asset: string | null;
+  status: TAmendmentStatus;
+  reviewed_by: string | null;
+  reviewed_by_detail?: TResearchUserLite | null;
+  reviewed_at: string | null;
+  review_comment: string;
+  result_version: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TExperimentAssetLink = {
+  id: string;
+  record: string;
+  relation: "INPUT" | "OUTPUT" | "REFERENCE";
+  source_system: string;
+  external_asset_id: string;
+  external_file_id: string;
+  external_run_id: string;
+  display_name: string;
+  mime_type: string;
+  size_bytes: number | null;
+  external_url: string;
+  last_verified_at: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};

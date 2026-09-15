@@ -6,6 +6,14 @@ from .audit import ResearchAuditEvent
 from .attachment import ReportAttachment
 from .approval import ApprovalAction, ApprovalFlow, ApprovalFlowStep, ApprovalRequest
 from .config import ReportVisibility, WorkspaceResearchSetting
+from .experiment import (
+    AMENDABLE_FIELDS,
+    LOCKED_FIELDS,
+    ExperimentAmendment,
+    ExperimentAssetLink,
+    ExperimentRecord,
+    ExperimentRecordVersion,
+)
 from .identity import IdentityMapping
 from .literature import LiteratureEntry
 from .org import MentorBinding, OrgUnit, OrgUnitMember
@@ -39,6 +47,12 @@ from .template import ReportTemplate
 __all__ = [
     "IdentityMapping",
     "LiteratureEntry",
+    "AMENDABLE_FIELDS",
+    "LOCKED_FIELDS",
+    "ExperimentAmendment",
+    "ExperimentAssetLink",
+    "ExperimentRecord",
+    "ExperimentRecordVersion",
     "ReportVisibility",
     "ReportTemplate",
     "PeriodicReport",

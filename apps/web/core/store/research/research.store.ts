@@ -32,6 +32,10 @@ import type {
   TLiteratureCounters,
   TLiteratureEntry,
   TLiteratureThreshold,
+  TExperimentAmendment,
+  TExperimentAssetLink,
+  TExperimentRecord,
+  TExperimentVersion,
   TReviewSummary,
   TToMeReview,
   TWorkspaceResearchSetting,
@@ -55,6 +59,12 @@ import { ResearchReviewService } from "@/services/research/review.service";
 import type { TReviewPayload, TReviewerAssignmentPayload } from "@/services/research/review.service";
 import { ResearchLiteratureService } from "@/services/research/literature.service";
 import type { TLiteratureCreatePayload, TLiteratureListParams } from "@/services/research/literature.service";
+import { ResearchExperimentService } from "@/services/research/experiment.service";
+import type {
+  TAssetLinkPayload,
+  TExperimentCreatePayload,
+  TExperimentListParams,
+} from "@/services/research/experiment.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -70,6 +80,7 @@ export interface IResearchStore {
   stageLoader: boolean;
   reviewLoader: boolean;
   literatureLoader: boolean;
+  experimentLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
   identityErrorCode: string | null;
@@ -112,6 +123,11 @@ export interface IResearchStore {
   literatureIdsByProject: Record<string, string[]>;
   literatureCounters: Record<string, TLiteratureCounters>;
   literatureThreshold: Record<string, TLiteratureThreshold>;
+  experiments: Record<string, TExperimentRecord>;
+  experimentIdsByProject: Record<string, string[]>;
+  experimentVersions: Record<string, TExperimentVersion[]>;
+  experimentAmendments: Record<string, TExperimentAmendment[]>;
+  experimentAssets: Record<string, TExperimentAssetLink[]>;
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -298,6 +314,48 @@ export interface IResearchStore {
     payload: { format: string; content: string }
   ) => Promise<{ created: number; skipped: number; failed: number }>;
   getLiterature: (workspaceSlug: string, projectId: string) => TLiteratureEntry[];
+  // experiments (P1-C1)
+  fetchExperiments: (
+    workspaceSlug: string,
+    projectId: string,
+    params?: TExperimentListParams
+  ) => Promise<TExperimentRecord[]>;
+  createExperiment: (
+    workspaceSlug: string,
+    projectId: string,
+    payload: TExperimentCreatePayload
+  ) => Promise<TExperimentRecord>;
+  fetchExperiment: (workspaceSlug: string, recordId: string) => Promise<TExperimentRecord>;
+  updateExperiment: (
+    workspaceSlug: string,
+    recordId: string,
+    payload: Partial<TExperimentCreatePayload>
+  ) => Promise<TExperimentRecord>;
+  updateExperimentStatus: (
+    workspaceSlug: string,
+    recordId: string,
+    payload: { status: string; failure_reason?: string; status_note?: string }
+  ) => Promise<TExperimentRecord>;
+  submitExperiment: (workspaceSlug: string, recordId: string) => Promise<TExperimentRecord>;
+  archiveExperiment: (workspaceSlug: string, recordId: string) => Promise<TExperimentRecord>;
+  linkExperimentAsset: (
+    workspaceSlug: string,
+    recordId: string,
+    payload: TAssetLinkPayload
+  ) => Promise<TExperimentAssetLink>;
+  unlinkExperimentAsset: (workspaceSlug: string, linkId: string) => Promise<void>;
+  createAmendment: (
+    workspaceSlug: string,
+    recordId: string,
+    payload: { reason: string; change_set: { field: string; old?: unknown; new?: unknown }[] }
+  ) => Promise<TExperimentAmendment>;
+  amendExperiment: (
+    workspaceSlug: string,
+    amendmentId: string,
+    action: string,
+    comment?: string
+  ) => Promise<TExperimentAmendment>;
+  getExperiments: (workspaceSlug: string, projectId: string) => TExperimentRecord[];
 }
 
 export class ResearchStore implements IResearchStore {
@@ -311,6 +369,7 @@ export class ResearchStore implements IResearchStore {
   stageLoader = false;
   reviewLoader = false;
   literatureLoader = false;
+  experimentLoader = false;
 
   identity: TResearchIdentity | null = null;
   identityErrorCode: string | null = null;
@@ -354,6 +413,11 @@ export class ResearchStore implements IResearchStore {
   literatureIdsByProject: Record<string, string[]> = {};
   literatureCounters: Record<string, TLiteratureCounters> = {};
   literatureThreshold: Record<string, TLiteratureThreshold> = {};
+  experiments: Record<string, TExperimentRecord> = {};
+  experimentIdsByProject: Record<string, string[]> = {};
+  experimentVersions: Record<string, TExperimentVersion[]> = {};
+  experimentAmendments: Record<string, TExperimentAmendment[]> = {};
+  experimentAssets: Record<string, TExperimentAssetLink[]> = {};
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -363,6 +427,7 @@ export class ResearchStore implements IResearchStore {
   private stageService: ResearchStageService;
   private reviewService: ResearchReviewService;
   private literatureService: ResearchLiteratureService;
+  private experimentService: ResearchExperimentService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -377,6 +442,7 @@ export class ResearchStore implements IResearchStore {
       stageLoader: observable,
       reviewLoader: observable,
       literatureLoader: observable,
+      experimentLoader: observable,
       // observables
       identity: observable,
       identityErrorCode: observable,
@@ -420,6 +486,11 @@ export class ResearchStore implements IResearchStore {
       literatureIdsByProject: observable,
       literatureCounters: observable,
       literatureThreshold: observable,
+      experiments: observable,
+      experimentIdsByProject: observable,
+      experimentVersions: observable,
+      experimentAmendments: observable,
+      experimentAssets: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -510,6 +581,17 @@ export class ResearchStore implements IResearchStore {
       deleteLiterature: action,
       fetchLiteratureThreshold: action,
       importLiterature: action,
+      fetchExperiments: action,
+      createExperiment: action,
+      fetchExperiment: action,
+      updateExperiment: action,
+      updateExperimentStatus: action,
+      submitExperiment: action,
+      archiveExperiment: action,
+      linkExperimentAsset: action,
+      unlinkExperimentAsset: action,
+      createAmendment: action,
+      amendExperiment: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -520,6 +602,7 @@ export class ResearchStore implements IResearchStore {
     this.stageService = new ResearchStageService();
     this.reviewService = new ResearchReviewService();
     this.literatureService = new ResearchLiteratureService();
+    this.experimentService = new ResearchExperimentService();
   }
 
   // ---------------------------------------------------------------------
@@ -603,6 +686,11 @@ export class ResearchStore implements IResearchStore {
     (this.literatureIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
       .map((id) => this.literatureEntries[id])
       .filter((entry): entry is TLiteratureEntry => Boolean(entry));
+
+  getExperiments = (workspaceSlug: string, projectId: string) =>
+    (this.experimentIdsByProject[`${workspaceSlug}:${projectId}`] ?? [])
+      .map((id) => this.experiments[id])
+      .filter((record): record is TExperimentRecord => Boolean(record));
 
   // ---------------------------------------------------------------------
   // identity
@@ -1469,5 +1557,109 @@ export class ResearchStore implements IResearchStore {
     const result = await this.literatureService.importEntries(workspaceSlug, projectId, payload);
     await this.fetchLiterature(workspaceSlug, projectId).catch(() => undefined);
     return { created: result.created.length, skipped: result.skipped.length, failed: result.failed.length };
+  };
+  // ---------------------------------------------------------------------
+  // experiments (P1-C1)
+  // ---------------------------------------------------------------------
+
+  fetchExperiments = async (workspaceSlug: string, projectId: string, params: TExperimentListParams = {}) => {
+    this.experimentLoader = true;
+    try {
+      const response = await this.experimentService.getExperiments(workspaceSlug, projectId, params);
+      runInAction(() => {
+        this.experimentIdsByProject[`${workspaceSlug}:${projectId}`] = response.results.map((record) => record.id);
+        response.results.forEach((record) => {
+          this.experiments[record.id] = { ...this.experiments[record.id], ...record };
+        });
+      });
+      return response.results;
+    } finally {
+      runInAction(() => {
+        this.experimentLoader = false;
+      });
+    }
+  };
+
+  createExperiment = async (workspaceSlug: string, projectId: string, payload: TExperimentCreatePayload) => {
+    const record = await this.experimentService.createExperiment(workspaceSlug, projectId, payload);
+    runInAction(() => {
+      this.experiments[record.id] = record;
+      this.experimentIdsByProject[`${workspaceSlug}:${projectId}`] = [
+        ...(this.experimentIdsByProject[`${workspaceSlug}:${projectId}`] ?? []),
+        record.id,
+      ];
+    });
+    return record;
+  };
+
+  fetchExperiment = async (workspaceSlug: string, recordId: string) => {
+    const record = await this.experimentService.getExperiment(workspaceSlug, recordId);
+    runInAction(() => {
+      this.experiments[record.id] = record;
+      if (record.versions) this.experimentVersions[record.id] = record.versions;
+      if (record.amendments) this.experimentAmendments[record.id] = record.amendments;
+      if (record.assets) this.experimentAssets[record.id] = record.assets;
+    });
+    return record;
+  };
+
+  updateExperiment = async (workspaceSlug: string, recordId: string, payload: Partial<TExperimentCreatePayload>) => {
+    const record = await this.experimentService.updateExperiment(workspaceSlug, recordId, payload);
+    runInAction(() => {
+      this.experiments[record.id] = { ...this.experiments[record.id], ...record };
+    });
+    return record;
+  };
+
+  updateExperimentStatus = async (
+    workspaceSlug: string,
+    recordId: string,
+    payload: { status: string; failure_reason?: string; status_note?: string }
+  ) => {
+    const record = await this.experimentService.updateExperimentStatus(workspaceSlug, recordId, payload);
+    runInAction(() => {
+      this.experiments[record.id] = { ...this.experiments[record.id], ...record };
+    });
+    return record;
+  };
+
+  submitExperiment = async (workspaceSlug: string, recordId: string) => {
+    const record = await this.experimentService.submitExperiment(workspaceSlug, recordId);
+    await this.fetchExperiment(workspaceSlug, recordId).catch(() => undefined);
+    return record;
+  };
+
+  archiveExperiment = async (workspaceSlug: string, recordId: string) => {
+    const record = await this.experimentService.archiveExperiment(workspaceSlug, recordId);
+    runInAction(() => {
+      this.experiments[record.id] = { ...this.experiments[record.id], ...record };
+    });
+    return record;
+  };
+
+  linkExperimentAsset = async (workspaceSlug: string, recordId: string, payload: TAssetLinkPayload) => {
+    const link = await this.experimentService.linkAsset(workspaceSlug, recordId, payload);
+    await this.fetchExperiment(workspaceSlug, recordId).catch(() => undefined);
+    return link;
+  };
+
+  unlinkExperimentAsset = async (workspaceSlug: string, linkId: string) => {
+    await this.experimentService.unlinkAsset(workspaceSlug, linkId);
+  };
+
+  createAmendment = async (
+    workspaceSlug: string,
+    recordId: string,
+    payload: { reason: string; change_set: { field: string; old?: unknown; new?: unknown }[] }
+  ) => {
+    const amendment = await this.experimentService.createAmendment(workspaceSlug, recordId, payload);
+    await this.fetchExperiment(workspaceSlug, recordId).catch(() => undefined);
+    return amendment;
+  };
+
+  amendExperiment = async (workspaceSlug: string, amendmentId: string, amendmentAction: string, comment = "") => {
+    const amendment = await this.experimentService.amendAction(workspaceSlug, amendmentId, amendmentAction, comment);
+    await this.fetchExperiment(workspaceSlug, amendment.record).catch(() => undefined);
+    return amendment;
   };
 }
