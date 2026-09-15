@@ -7,12 +7,16 @@ from .config import ReportVisibility, WorkspaceResearchSetting
 from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .project import ResearchProjectProfile
+from .report import PeriodicReport, ReportAccessGrant, ReportReviewLog
 from .template import ReportTemplate
 
 __all__ = [
     "IdentityMapping",
     "ReportVisibility",
     "ReportTemplate",
+    "PeriodicReport",
+    "ReportAccessGrant",
+    "ReportReviewLog",
     "ResearchProjectProfile",
     "ResearchAuditEvent",
     "WorkspaceResearchSetting",

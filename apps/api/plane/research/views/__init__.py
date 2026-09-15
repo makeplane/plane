@@ -29,6 +29,15 @@ from .projects import (
     ResearchProjectListCreateEndpoint,
     ResearchProjectRestoreEndpoint,
 )
+from .reports import (
+    ResearchReportAcceptEndpoint,
+    ResearchReportAccessEndpoint,
+    ResearchReportDetailEndpoint,
+    ResearchReportHistoryEndpoint,
+    ResearchReportListCreateEndpoint,
+    ResearchReportReturnEndpoint,
+    ResearchReportSubmitEndpoint,
+)
 
 __all__ = [
     "ResearchHealthEndpoint",
@@ -50,4 +59,11 @@ __all__ = [
     "ResearchProjectDetailEndpoint",
     "ResearchProjectListCreateEndpoint",
     "ResearchProjectRestoreEndpoint",
+    "ResearchReportAcceptEndpoint",
+    "ResearchReportAccessEndpoint",
+    "ResearchReportDetailEndpoint",
+    "ResearchReportHistoryEndpoint",
+    "ResearchReportListCreateEndpoint",
+    "ResearchReportReturnEndpoint",
+    "ResearchReportSubmitEndpoint",
 ]

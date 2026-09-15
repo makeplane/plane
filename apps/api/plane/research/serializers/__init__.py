@@ -12,6 +12,11 @@ from .org import (
 )
 from .settings import WorkspaceResearchSettingSerializer
 from .template import ReportTemplateSerializer
+from .report import (
+    PeriodicReportSerializer,
+    ReportAccessGrantSerializer,
+    ReportReviewLogSerializer,
+)
 
 __all__ = [
     "IdentityMappingSerializer",
@@ -19,6 +24,9 @@ __all__ = [
     "OrgUnitMemberSerializer",
     "OrgUnitSerializer",
     "ReportTemplateSerializer",
+    "PeriodicReportSerializer",
+    "ReportAccessGrantSerializer",
+    "ReportReviewLogSerializer",
     "ResearchAuditEventSerializer",
     "ResearchUserSerializer",
     "WorkspaceResearchSettingSerializer",

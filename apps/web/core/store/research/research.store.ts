@@ -112,6 +112,12 @@ export interface IResearchStore {
   returnReport: (workspaceSlug: string, reportId: string, comment: string) => Promise<TPeriodicReport>;
   acceptReport: (workspaceSlug: string, reportId: string) => Promise<TPeriodicReport>;
   fetchReportHistory: (workspaceSlug: string, reportId: string) => Promise<TReportReviewLog[]>;
+  updateReportVisibility: (
+    workspaceSlug: string,
+    reportId: string,
+    visibility: string,
+    grants?: { grantee_user?: string; grantee_org_unit?: string }[]
+  ) => Promise<void>;
   fetchReportSummary: (
     workspaceSlug: string,
     params?: { period_key?: string; report_type?: string; org_unit?: string }
@@ -257,6 +263,7 @@ export class ResearchStore implements IResearchStore {
       returnReport: action,
       acceptReport: action,
       fetchReportHistory: action,
+      updateReportVisibility: action,
       fetchReportSummary: action,
       fetchReportTemplates: action,
       createReportTemplate: action,
@@ -556,6 +563,16 @@ export class ResearchStore implements IResearchStore {
       this.reportHistory[reportId] = response.results;
     });
     return response.results;
+  };
+
+  updateReportVisibility = async (
+    workspaceSlug: string,
+    reportId: string,
+    visibility: string,
+    grants?: { grantee_user?: string; grantee_org_unit?: string }[]
+  ) => {
+    await this.reportService.updateReportAccess(workspaceSlug, reportId, { visibility, grants });
+    await this.fetchReport(workspaceSlug, reportId);
   };
 
   fetchReportSummary = async (

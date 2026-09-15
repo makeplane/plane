@@ -31,6 +31,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
+from plane.research.utils.page_guard import page_mutation_error_code
 from plane.app.serializers import (
     PageSerializer,
     PageDetailSerializer,
@@ -177,6 +178,16 @@ class PageViewSet(BaseViewSet):
 
             if page.is_locked:
                 return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # A page that carries a research report body is read only once the
+            # report is submitted (P0-RPT-07 / P0-ACL-08). Plain pages are not
+            # affected: the guard returns None immediately.
+            guard_error = page_mutation_error_code(page, "update")
+            if guard_error:
+                return Response(
+                    {"error_code": guard_error, "message": "Submitted reports are read only."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
             parent = request.data.get("parent", None)
             if parent:
@@ -387,6 +398,14 @@ class PageViewSet(BaseViewSet):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+
+        # report bodies are removed through the report, never through the page
+        guard_error = page_mutation_error_code(page, "delete")
+        if guard_error:
+            return Response(
+                {"error_code": guard_error, "message": "Submitted reports are read only."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         if page.archived_at is None:
             return Response(

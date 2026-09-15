@@ -28,6 +28,13 @@ from plane.research.views import (
     ResearchProjectDetailEndpoint,
     ResearchProjectListCreateEndpoint,
     ResearchProjectRestoreEndpoint,
+    ResearchReportAcceptEndpoint,
+    ResearchReportAccessEndpoint,
+    ResearchReportDetailEndpoint,
+    ResearchReportHistoryEndpoint,
+    ResearchReportListCreateEndpoint,
+    ResearchReportReturnEndpoint,
+    ResearchReportSubmitEndpoint,
     ResearchReportTemplateDetailEndpoint,
     ResearchReportTemplateListCreateEndpoint,
     ResearchSettingsEndpoint,
@@ -37,6 +44,41 @@ urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
     # identity
+    path(
+        "research/workspaces/<str:slug>/reports/",
+        ResearchReportListCreateEndpoint.as_view(),
+        name="research-reports",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/",
+        ResearchReportDetailEndpoint.as_view(),
+        name="research-report",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/submit/",
+        ResearchReportSubmitEndpoint.as_view(),
+        name="research-report-submit",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/return/",
+        ResearchReportReturnEndpoint.as_view(),
+        name="research-report-return",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/accept/",
+        ResearchReportAcceptEndpoint.as_view(),
+        name="research-report-accept",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/history/",
+        ResearchReportHistoryEndpoint.as_view(),
+        name="research-report-history",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/access/",
+        ResearchReportAccessEndpoint.as_view(),
+        name="research-report-access",
+    ),
     path(
         "research/workspaces/<str:slug>/report-templates/",
         ResearchReportTemplateListCreateEndpoint.as_view(),

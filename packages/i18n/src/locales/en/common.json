@@ -1016,6 +1016,35 @@
         "started_at": "Started"
       }
     },
+    "reports": {
+      "description": "Weekly and monthly reports with review workflow.",
+      "detail_title": "Report",
+      "detail_description": "Status, visibility, review history and actions.",
+      "period_placeholder": "Period, e.g. 2026-W38 / 2026-09",
+      "create": "Create report",
+      "mine_only": "Only mine",
+      "all_statuses": "All statuses",
+      "backfill": "Backfill",
+      "empty": "No report matches the filters",
+      "submit": "Submit",
+      "return": "Return",
+      "accept": "Accept",
+      "open_body": "Open body",
+      "visibility": "Visibility",
+      "visibility_hint": "You can narrow the workspace default, never widen it.",
+      "return_reason": "Return reason",
+      "return_placeholder": "Explain what has to change",
+      "history": "Review history",
+      "no_history": "No review action yet",
+      "columns": {
+        "period": "Period",
+        "type": "Type",
+        "owner": "Owner",
+        "org_unit": "Organisation node",
+        "status": "Status",
+        "visibility": "Visibility"
+      }
+    },
     "platform": {
       "description": "Module switches, upload limits and default visibility.",
       "switches": "Module switches",

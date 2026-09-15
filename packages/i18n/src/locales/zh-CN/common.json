@@ -1016,6 +1016,35 @@
         "started_at": "开始时间"
       }
     },
+    "reports": {
+      "description": "周报与月报的提交与验收。",
+      "detail_title": "报告详情",
+      "detail_description": "状态、可见级别、审核历史与操作。",
+      "period_placeholder": "周期，例如 2026-W38 / 2026-09",
+      "create": "创建报告",
+      "mine_only": "仅看我的",
+      "all_statuses": "全部状态",
+      "backfill": "补交",
+      "empty": "没有符合条件的报告",
+      "submit": "提交",
+      "return": "退回",
+      "accept": "验收",
+      "open_body": "打开正文",
+      "visibility": "可见范围",
+      "visibility_hint": "只能在工作区默认级别基础上收窄，不能扩大。",
+      "return_reason": "退回原因",
+      "return_placeholder": "说明需要修改的内容",
+      "history": "审核历史",
+      "no_history": "暂无审核动作",
+      "columns": {
+        "period": "周期",
+        "type": "类型",
+        "owner": "作者",
+        "org_unit": "组织节点",
+        "status": "状态",
+        "visibility": "可见范围"
+      }
+    },
     "platform": {
       "description": "模块开关、上传限制与默认可见级别。",
       "switches": "模块开关",
