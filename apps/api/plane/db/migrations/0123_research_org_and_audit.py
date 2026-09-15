@@ -110,7 +110,9 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
                 ('actor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='research_audit_events', to=settings.AUTH_USER_MODEL)),
                 ('org_unit', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='research_audit_events', to='db.orgunit')),
-                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='research_audit_events', to='db.workspace')),
+                # nullable: identity events (sign-in, provisioning) may occur before
+                # the user belongs to any workspace (P0-AUD-04)
+                ('workspace', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='research_audit_events', to='db.workspace')),
             ],
             options={
                 'verbose_name': 'Research Audit Event',

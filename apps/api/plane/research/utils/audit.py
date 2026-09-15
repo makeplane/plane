@@ -23,12 +23,20 @@ class ResearchAuditAction:
     ORG_PI_TRANSFER = "org.pi.transfer"
     MENTOR_BINDING_CREATE = "org.mentor.bind"
     MENTOR_BINDING_DELETE = "org.mentor.unbind"
+    IDENTITY_LOGIN = "identity.login"
+    IDENTITY_BIND = "identity.bind"
+    IDENTITY_UNBIND = "identity.unbind"
+    IDENTITY_PROVISION = "identity.provision"
+    IDENTITY_CONFLICT = "identity.conflict"
+    IDENTITY_SUSPENDED = "identity.suspended"
 
 
 class ResearchResourceType:
     ORG_UNIT = "org_unit"
     ORG_UNIT_MEMBER = "org_unit_member"
     MENTOR_BINDING = "mentor_binding"
+    IDENTITY_MAPPING = "identity_mapping"
+    USER = "user"
 
 
 def _client_metadata(request):
@@ -54,9 +62,6 @@ def record_audit_event(
     request=None,
 ):
     """Append a single audit event. Never raises on missing optional context."""
-    if workspace is None:
-        return None
-
     client = _client_metadata(request)
     if actor is None and request is not None:
         user = getattr(request, "user", None)

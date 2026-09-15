@@ -37,6 +37,8 @@ class ResearchAuditEvent(models.Model):
         "db.Workspace",
         on_delete=models.PROTECT,
         related_name="research_audit_events",
+        null=True,
+        blank=True,
     )
     actor = models.ForeignKey(
         "db.User",

@@ -995,6 +995,25 @@
         "mentor": "直接导师"
       }
     },
+    "auth": {
+      "sso_with": "使用"
+    },
+    "identity": {
+      "description": "将 AI4MS 单点登录身份绑定到本地账号。",
+      "user_placeholder": "本地账号邮箱或 ID",
+      "subject_placeholder": "OIDC 主体（sub）",
+      "employee_id_placeholder": "工号（可选）",
+      "bind": "绑定身份",
+      "unbind": "解绑",
+      "empty": "暂无身份映射",
+      "columns": {
+        "user": "账号",
+        "provider": "身份提供方",
+        "subject": "主体",
+        "employee_id": "工号",
+        "last_login": "最近登录"
+      }
+    },
     "errors": {
       "generic": "操作失败，请检查输入或权限后重试。",
       "module_disabled": "本工作区未启用科研模块。",

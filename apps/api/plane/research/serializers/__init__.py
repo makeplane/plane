@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 from .org import (
+    IdentityMappingSerializer,
     MentorBindingSerializer,
     OrgUnitMemberSerializer,
     OrgUnitSerializer,
@@ -10,6 +11,7 @@ from .org import (
 )
 
 __all__ = [
+    "IdentityMappingSerializer",
     "MentorBindingSerializer",
     "OrgUnitMemberSerializer",
     "OrgUnitSerializer",

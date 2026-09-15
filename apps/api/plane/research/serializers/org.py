@@ -4,7 +4,7 @@
 
 from rest_framework import serializers
 
-from plane.db.models import MentorBinding, OrgUnit, OrgUnitMember, User
+from plane.db.models import IdentityMapping, MentorBinding, OrgUnit, OrgUnitMember, User
 
 
 class ResearchUserSerializer(serializers.ModelSerializer):
@@ -80,3 +80,25 @@ class MentorBindingSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "workspace", "created_at", "updated_at"]
+
+
+class IdentityMappingSerializer(serializers.ModelSerializer):
+    user_detail = ResearchUserSerializer(source="user", read_only=True)
+
+    class Meta:
+        model = IdentityMapping
+        fields = [
+            "id",
+            "user",
+            "user_detail",
+            "provider",
+            "subject",
+            "email_snapshot",
+            "employee_id",
+            "status",
+            "last_login_at",
+            "last_login_ip",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]

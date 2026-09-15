@@ -43,6 +43,7 @@ export interface IResearchStore {
   auditLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
+  identityErrorCode: string | null;
   orgUnits: Record<string, TOrgUnit>;
   orgUnitIdsByWorkspace: Record<string, string[]>;
   orgUnitMembers: Record<string, TOrgUnitMember[]>;
@@ -161,6 +162,7 @@ export class ResearchStore implements IResearchStore {
   auditLoader = false;
 
   identity: TResearchIdentity | null = null;
+  identityErrorCode: string | null = null;
   orgUnits: Record<string, TOrgUnit> = {};
   orgUnitIdsByWorkspace: Record<string, string[]> = {};
   orgUnitMembers: Record<string, TOrgUnitMember[]> = {};
@@ -200,6 +202,7 @@ export class ResearchStore implements IResearchStore {
       auditLoader: observable,
       // observables
       identity: observable,
+      identityErrorCode: observable,
       orgUnits: observable,
       orgUnitIdsByWorkspace: observable,
       orgUnitMembers: observable,
@@ -351,8 +354,15 @@ export class ResearchStore implements IResearchStore {
       const identity = await this.platformService.getIdentity(workspaceSlug);
       runInAction(() => {
         this.identity = identity;
+        this.identityErrorCode = null;
       });
       return identity;
+    } catch (error) {
+      runInAction(() => {
+        this.identity = null;
+        this.identityErrorCode = (error as { error_code?: string } | null)?.error_code ?? "generic";
+      });
+      throw error;
     } finally {
       runInAction(() => {
         this.identityLoader = false;

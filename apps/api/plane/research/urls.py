@@ -13,6 +13,9 @@ from django.urls import path
 
 from plane.research.views import (
     ResearchHealthEndpoint,
+    ResearchIdentityMappingDetailEndpoint,
+    ResearchIdentityMappingListCreateEndpoint,
+    ResearchIdentityMeEndpoint,
     ResearchMentorBindingDetailEndpoint,
     ResearchMentorBindingListCreateEndpoint,
     ResearchOrgUnitDetailEndpoint,
@@ -25,6 +28,22 @@ from plane.research.views import (
 urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
+    # identity
+    path(
+        "research/workspaces/<str:slug>/identity/me/",
+        ResearchIdentityMeEndpoint.as_view(),
+        name="research-identity-me",
+    ),
+    path(
+        "research/workspaces/<str:slug>/identity/mappings/",
+        ResearchIdentityMappingListCreateEndpoint.as_view(),
+        name="research-identity-mappings",
+    ),
+    path(
+        "research/workspaces/<str:slug>/identity/mappings/<uuid:pk>/",
+        ResearchIdentityMappingDetailEndpoint.as_view(),
+        name="research-identity-mapping",
+    ),
     # organisation tree
     path(
         "research/workspaces/<str:slug>/org-units/",

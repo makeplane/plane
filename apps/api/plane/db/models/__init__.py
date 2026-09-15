@@ -92,6 +92,7 @@ from .sticky import Sticky
 from .description import Description, DescriptionVersion
 
 from .research import (
+    IdentityMapping,
     MentorBinding,
     OrgUnit,
     OrgUnitMember,

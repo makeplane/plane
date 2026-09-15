@@ -55,6 +55,27 @@ class ResearchErrorCode:
     MENTOR_BINDING_INVALID = "mentor_binding_invalid"
 
     USER_NOT_FOUND = "research_user_not_found"
+    IDENTITY_SUBJECT_REQUIRED = "identity_subject_required"
+    IDENTITY_MAPPING_EXISTS = "identity_mapping_exists"
+    IDENTITY_MAPPING_NOT_FOUND = "identity_mapping_not_found"
+    IDENTITY_CONFLICT = "identity_conflict"
+    PROJECT_NOT_FOUND = "research_project_not_found"
+    PROJECT_ALREADY_EXISTS = "research_project_exists"
+    REPORT_NOT_FOUND = "report_not_found"
+    REPORT_PERIOD_CONFLICT = "report_period_conflict"
+    REPORT_STATE_CONFLICT = "report_state_conflict"
+    REPORT_READ_ONLY = "report_read_only"
+    REPORT_RETURN_REASON_REQUIRED = "report_return_reason_required"
+    REPORT_VISIBILITY_EXCEEDS_DEFAULT = "report_visibility_exceeds_default"
+    TEMPLATE_NOT_FOUND = "report_template_not_found"
+    FILE_TYPE_NOT_ALLOWED = "file_type_not_allowed"
+    FILE_SIZE_EXCEEDED = "file_size_exceeded"
+    ATTACHMENT_NOT_FOUND = "report_attachment_not_found"
+    APPROVAL_FLOW_NOT_FOUND = "approval_flow_not_found"
+    APPROVAL_REQUEST_NOT_FOUND = "approval_request_not_found"
+    APPROVAL_STATE_CONFLICT = "approval_state_conflict"
+    APPROVAL_ACTION_NOT_ALLOWED = "approval_action_not_allowed"
+    APPROVAL_COMMENT_REQUIRED = "approval_comment_required"
 
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):

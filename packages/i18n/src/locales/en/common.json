@@ -995,6 +995,25 @@
         "mentor": "Direct advisor"
       }
     },
+    "auth": {
+      "sso_with": "with"
+    },
+    "identity": {
+      "description": "Bind AI4MS single sign-on identities to local accounts.",
+      "user_placeholder": "Local account email or ID",
+      "subject_placeholder": "OIDC subject (sub)",
+      "employee_id_placeholder": "Employee id (optional)",
+      "bind": "Bind identity",
+      "unbind": "Unbind",
+      "empty": "No identity mapping yet",
+      "columns": {
+        "user": "Account",
+        "provider": "Provider",
+        "subject": "Subject",
+        "employee_id": "Employee id",
+        "last_login": "Last sign-in"
+      }
+    },
     "errors": {
       "generic": "The operation failed. Please review the input and try again.",
       "module_disabled": "The research module is not enabled for this workspace.",

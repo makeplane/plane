@@ -45,6 +45,10 @@ from .views import (
     GiteaCallbackSpaceEndpoint,
     GiteaOauthInitiateSpaceEndpoint,
 )
+from .views.app.oidc import (
+    OIDCOauthCallbackEndpoint,
+    OIDCOauthInitiateEndpoint,
+)
 
 urlpatterns = [
     # credentials
@@ -150,4 +154,7 @@ urlpatterns = [
         GiteaCallbackSpaceEndpoint.as_view(),
         name="space-gitea-callback",
     ),
+    ## AI4MS OIDC
+    path("oidc/", OIDCOauthInitiateEndpoint.as_view(), name="oidc-initiate"),
+    path("oidc/callback/", OIDCOauthCallbackEndpoint.as_view(), name="oidc-callback"),
 ]

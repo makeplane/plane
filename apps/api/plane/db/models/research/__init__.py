@@ -3,9 +3,11 @@
 # See the LICENSE file for details.
 
 from .audit import ResearchAuditEvent
+from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 
 __all__ = [
+    "IdentityMapping",
     "ResearchAuditEvent",
     "MentorBinding",
     "OrgUnit",

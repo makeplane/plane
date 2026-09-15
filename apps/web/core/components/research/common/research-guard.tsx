@@ -27,14 +27,18 @@ type Props = {
 export const ResearchGuard = observer(function ResearchGuard({ section, adminOnly = false }: Props) {
   const { workspaceSlug } = useParams();
   const research = useResearch();
-  const { identity, identityLoader, isEnabled, isWorkspaceAdmin } = research;
+  const { identity, identityLoader, identityErrorCode, isEnabled, isWorkspaceAdmin } = research;
 
   useEffect(() => {
-    if (workspaceSlug && (!identity || identityLoader === false)) void research.fetchIdentity(workspaceSlug);
+    if (workspaceSlug && !identity)
+      void research.fetchIdentity(workspaceSlug).catch(() => {
+        /* handled through identityErrorCode */
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
 
   if (!workspaceSlug) return <Navigate to="/" replace />;
+  if (identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
   if (identityLoader || !identity) {
     return (
       <div className="flex h-full w-full items-center justify-center">

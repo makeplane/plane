@@ -6,7 +6,7 @@
 
 import { type ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Spinner } from "@plane/ui";
@@ -39,12 +39,18 @@ export const ResearchPageShell = observer(function ResearchPageShell({
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const research = useResearch();
-  const { identity, identityLoader } = research;
+  const { identity, identityLoader, identityErrorCode } = research;
 
   useEffect(() => {
-    if (workspaceSlug && !identity) void research.fetchIdentity(workspaceSlug);
+    if (workspaceSlug && !identity)
+      void research.fetchIdentity(workspaceSlug).catch(() => {
+        /* handled through identityErrorCode */
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
+
+  // module off / not a member: fall back to the workspace home (P0-UI-07)
+  if (identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
 
   const sectionEnabled =
     section === "org"
