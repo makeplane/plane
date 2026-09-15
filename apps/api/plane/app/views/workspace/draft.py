@@ -204,7 +204,15 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create_draft_to_issue(self, request, slug, draft_id):
-        draft_issue = self.get_queryset().filter(pk=draft_id).first()
+        # Drafts are personal: every other action on this viewset scopes by creator, and
+        # the decorator's creator check keys off `pk`, which this route does not carry.
+        draft_issue = self.get_queryset().filter(pk=draft_id, created_by=request.user).first()
+
+        if not draft_issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if not draft_issue.project_id:
             return Response(
