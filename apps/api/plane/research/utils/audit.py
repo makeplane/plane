@@ -41,6 +41,7 @@ class ResearchAuditAction:
     REPORT_ATTACHMENT_ADD = "report.attachment.add"
     REPORT_ATTACHMENT_DELETE = "report.attachment.delete"
     REPORT_ATTACHMENT_DENIED = "report.attachment.denied"
+    REPORT_IMPORT_MARKDOWN = "report.import.markdown"
     PROJECT_CREATE = "project.create"
     PROJECT_ARCHIVE = "project.archive"
     PROJECT_RESTORE = "project.restore"

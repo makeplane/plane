@@ -13,6 +13,7 @@ import type {
   TOrgUnit,
   TOrgUnitMember,
   TPeriodicReport,
+  TReportAttachment,
   TReportReviewLog,
   TReportSummary,
   TReportTemplate,
@@ -52,6 +53,7 @@ export interface IResearchStore {
   reports: Record<string, TPeriodicReport>;
   reportIdsByWorkspace: Record<string, string[]>;
   reportHistory: Record<string, TReportReviewLog[]>;
+  reportAttachments: Record<string, TReportAttachment[]>;
   reportSummary: Record<string, TReportSummary>;
   reportTemplates: Record<string, TReportTemplate>;
   reportTemplateIdsByWorkspace: Record<string, string[]>;
@@ -112,6 +114,18 @@ export interface IResearchStore {
   returnReport: (workspaceSlug: string, reportId: string, comment: string) => Promise<TPeriodicReport>;
   acceptReport: (workspaceSlug: string, reportId: string) => Promise<TPeriodicReport>;
   fetchReportHistory: (workspaceSlug: string, reportId: string) => Promise<TReportReviewLog[]>;
+  fetchReportAttachments: (workspaceSlug: string, reportId: string) => Promise<TReportAttachment[]>;
+  uploadReportAttachment: (
+    workspaceSlug: string,
+    reportId: string,
+    file: { file_name: string; content_type: string; size: number; body: Blob }
+  ) => Promise<void>;
+  deleteReportAttachment: (workspaceSlug: string, reportId: string, attachmentId: string) => Promise<void>;
+  importReportMarkdown: (
+    workspaceSlug: string,
+    reportId: string,
+    payload: { content: string; file_name?: string }
+  ) => Promise<string[]>;
   updateReportVisibility: (
     workspaceSlug: string,
     reportId: string,
@@ -177,6 +191,7 @@ export class ResearchStore implements IResearchStore {
   reports: Record<string, TPeriodicReport> = {};
   reportIdsByWorkspace: Record<string, string[]> = {};
   reportHistory: Record<string, TReportReviewLog[]> = {};
+  reportAttachments: Record<string, TReportAttachment[]> = {};
   reportSummary: Record<string, TReportSummary> = {};
   reportTemplates: Record<string, TReportTemplate> = {};
   reportTemplateIdsByWorkspace: Record<string, string[]> = {};
@@ -217,6 +232,7 @@ export class ResearchStore implements IResearchStore {
       reports: observable,
       reportIdsByWorkspace: observable,
       reportHistory: observable,
+      reportAttachments: observable,
       reportSummary: observable,
       reportTemplates: observable,
       reportTemplateIdsByWorkspace: observable,
@@ -263,6 +279,10 @@ export class ResearchStore implements IResearchStore {
       returnReport: action,
       acceptReport: action,
       fetchReportHistory: action,
+      fetchReportAttachments: action,
+      uploadReportAttachment: action,
+      deleteReportAttachment: action,
+      importReportMarkdown: action,
       updateReportVisibility: action,
       fetchReportSummary: action,
       fetchReportTemplates: action,
@@ -563,6 +583,52 @@ export class ResearchStore implements IResearchStore {
       this.reportHistory[reportId] = response.results;
     });
     return response.results;
+  };
+
+  fetchReportAttachments = async (workspaceSlug: string, reportId: string) => {
+    const response = await this.reportService.getReportAttachments(workspaceSlug, reportId);
+    runInAction(() => {
+      this.reportAttachments[reportId] = response.results;
+    });
+    return response.results;
+  };
+
+  uploadReportAttachment = async (
+    workspaceSlug: string,
+    reportId: string,
+    file: { file_name: string; content_type: string; size: number; body: Blob }
+  ) => {
+    const presigned = await this.reportService.presignReportAttachment(workspaceSlug, reportId, {
+      file_name: file.file_name,
+      content_type: file.content_type,
+      size: file.size,
+    });
+    const formData = new FormData();
+    Object.entries(presigned.upload_data.fields ?? {}).forEach(([key, value]) => formData.append(key, value));
+    formData.append("file", file.body);
+    const uploadResponse = await fetch(presigned.upload_data.url, { method: "POST", body: formData });
+    if (!uploadResponse.ok) throw new Error("upload_failed");
+    await this.reportService.registerReportAttachment(workspaceSlug, reportId, {
+      asset_id: presigned.asset_id,
+    });
+    await this.fetchReportAttachments(workspaceSlug, reportId);
+  };
+
+  deleteReportAttachment = async (workspaceSlug: string, reportId: string, attachmentId: string) => {
+    await this.reportService.deleteReportAttachment(workspaceSlug, reportId, attachmentId);
+    await this.fetchReportAttachments(workspaceSlug, reportId);
+  };
+
+  importReportMarkdown = async (
+    workspaceSlug: string,
+    reportId: string,
+    payload: { content: string; file_name?: string }
+  ) => {
+    const result = (await this.reportService.importMarkdown(workspaceSlug, reportId, payload)) as {
+      local_images?: string[];
+    };
+    await this.fetchReport(workspaceSlug, reportId);
+    return result?.local_images ?? [];
   };
 
   updateReportVisibility = async (

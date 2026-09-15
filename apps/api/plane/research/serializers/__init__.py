@@ -17,6 +17,7 @@ from .report import (
     ReportAccessGrantSerializer,
     ReportReviewLogSerializer,
 )
+from .attachment import ReportAttachmentSerializer
 
 __all__ = [
     "IdentityMappingSerializer",
@@ -27,6 +28,7 @@ __all__ = [
     "PeriodicReportSerializer",
     "ReportAccessGrantSerializer",
     "ReportReviewLogSerializer",
+    "ReportAttachmentSerializer",
     "ResearchAuditEventSerializer",
     "ResearchUserSerializer",
     "WorkspaceResearchSettingSerializer",

@@ -1045,6 +1045,22 @@
         "visibility": "Visibility"
       }
     },
+    "attachments": {
+      "title": "Attachments and body import",
+      "upload_pdf": "Upload PDF",
+      "pick_markdown": "Choose .md",
+      "download": "Download",
+      "import": "Import into body",
+      "markdown_hint": "Paste or pick a Markdown file. Headings, lists, code blocks and tables are preserved.",
+      "file_name_placeholder": "Imported file name",
+      "local_images": "{count} local image reference(s) were kept as text - upload them and replace manually.",
+      "empty": "No attachment yet",
+      "columns": {
+        "name": "File",
+        "kind": "Type",
+        "size": "Size"
+      }
+    },
     "platform": {
       "description": "Module switches, upload limits and default visibility.",
       "switches": "Module switches",

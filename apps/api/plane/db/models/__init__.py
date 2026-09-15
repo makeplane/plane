@@ -98,6 +98,7 @@ from .research import (
     OrgUnitMember,
     PeriodicReport,
     ReportAccessGrant,
+    ReportAttachment,
     ReportReviewLog,
     ReportTemplate,
     ReportVisibility,

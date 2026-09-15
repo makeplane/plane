@@ -3,6 +3,12 @@
 # See the LICENSE file for details.
 
 from .audit import ResearchAuditEventListEndpoint
+from .attachments import (
+    ResearchReportAttachmentDetailEndpoint,
+    ResearchReportAttachmentListCreateEndpoint,
+    ResearchReportAttachmentPresignEndpoint,
+    ResearchReportMarkdownImportEndpoint,
+)
 from .health import ResearchHealthEndpoint
 from .settings import ResearchSettingsEndpoint
 from .templates import (
@@ -43,6 +49,10 @@ __all__ = [
     "ResearchHealthEndpoint",
     "ResearchSettingsEndpoint",
     "ResearchAuditEventListEndpoint",
+    "ResearchReportAttachmentDetailEndpoint",
+    "ResearchReportAttachmentListCreateEndpoint",
+    "ResearchReportAttachmentPresignEndpoint",
+    "ResearchReportMarkdownImportEndpoint",
     "ResearchReportTemplateDetailEndpoint",
     "ResearchReportTemplateListCreateEndpoint",
     "ResearchIdentityMappingDetailEndpoint",

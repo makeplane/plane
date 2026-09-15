@@ -1045,6 +1045,22 @@
         "visibility": "可见范围"
       }
     },
+    "attachments": {
+      "title": "附件与正文导入",
+      "upload_pdf": "上传 PDF",
+      "pick_markdown": "选择 .md 文件",
+      "download": "下载",
+      "import": "导入为正文",
+      "markdown_hint": "粘贴或选择 Markdown 文件，标题、列表、代码块与表格结构会被保留。",
+      "file_name_placeholder": "导入文件名",
+      "local_images": "检测到 {count} 个本地图片引用，已保留为文本，请上传后手动替换。",
+      "empty": "暂无附件",
+      "columns": {
+        "name": "文件",
+        "kind": "类型",
+        "size": "大小"
+      }
+    },
     "platform": {
       "description": "模块开关、上传限制与默认可见级别。",
       "switches": "模块开关",

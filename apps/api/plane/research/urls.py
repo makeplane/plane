@@ -13,6 +13,10 @@ from django.urls import path
 
 from plane.research.views import (
     ResearchAuditEventListEndpoint,
+    ResearchReportAttachmentDetailEndpoint,
+    ResearchReportAttachmentListCreateEndpoint,
+    ResearchReportAttachmentPresignEndpoint,
+    ResearchReportMarkdownImportEndpoint,
     ResearchHealthEndpoint,
     ResearchIdentityMappingDetailEndpoint,
     ResearchIdentityMappingListCreateEndpoint,
@@ -78,6 +82,26 @@ urlpatterns = [
         "research/workspaces/<str:slug>/reports/<uuid:report_id>/access/",
         ResearchReportAccessEndpoint.as_view(),
         name="research-report-access",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/attachments/",
+        ResearchReportAttachmentListCreateEndpoint.as_view(),
+        name="research-report-attachments",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/attachments/presign/",
+        ResearchReportAttachmentPresignEndpoint.as_view(),
+        name="research-report-attachment-presign",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/attachments/<uuid:attachment_id>/",
+        ResearchReportAttachmentDetailEndpoint.as_view(),
+        name="research-report-attachment",
+    ),
+    path(
+        "research/workspaces/<str:slug>/reports/<uuid:report_id>/import-markdown/",
+        ResearchReportMarkdownImportEndpoint.as_view(),
+        name="research-report-import-markdown",
     ),
     path(
         "research/workspaces/<str:slug>/report-templates/",

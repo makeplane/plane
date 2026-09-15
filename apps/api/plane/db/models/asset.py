@@ -44,6 +44,7 @@ class FileAsset(BaseModel):
         PROJECT_COVER = "PROJECT_COVER"
         DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
+        REPORT_ATTACHMENT = "REPORT_ATTACHMENT"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)

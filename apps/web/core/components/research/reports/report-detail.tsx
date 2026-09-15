@@ -20,6 +20,7 @@ import { Button } from "@plane/propel/button";
 import { Input } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
+import { ResearchReportAttachments } from "@/components/research/reports/report-attachments";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
 
@@ -202,6 +203,12 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
           {history.length === 0 && <li className="text-12 text-tertiary">{t("research.reports.no_history")}</li>}
         </ol>
       </section>
+
+      <ResearchReportAttachments
+        workspaceSlug={workspaceSlug}
+        reportId={reportId}
+        editable={Boolean(report.can_edit)}
+      />
     </div>
   );
 });

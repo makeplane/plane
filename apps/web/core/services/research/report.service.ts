@@ -140,6 +140,25 @@ export class ResearchReportService extends APIService {
       });
   }
 
+  async presignReportAttachment(
+    workspaceSlug: string,
+    reportId: string,
+    payload: { file_name: string; content_type: string; size: number }
+  ) {
+    return this.post(`${researchEndpoints.reportAttachments(workspaceSlug, reportId)}presign/`, payload)
+      .then(
+        (res) =>
+          res?.data as {
+            asset_id: string;
+            asset_key: string;
+            upload_data: { url: string; fields: Record<string, string> };
+          }
+      )
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async deleteReportAttachment(workspaceSlug: string, reportId: string, attachmentId: string) {
     return this.delete(researchEndpoints.reportAttachment(workspaceSlug, reportId, attachmentId))
       .then((res) => res?.data)

@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 from .audit import ResearchAuditEvent
+from .attachment import ReportAttachment
 from .config import ReportVisibility, WorkspaceResearchSetting
 from .identity import IdentityMapping
 from .org import MentorBinding, OrgUnit, OrgUnitMember
@@ -16,6 +17,7 @@ __all__ = [
     "ReportTemplate",
     "PeriodicReport",
     "ReportAccessGrant",
+    "ReportAttachment",
     "ReportReviewLog",
     "ResearchProjectProfile",
     "ResearchAuditEvent",
