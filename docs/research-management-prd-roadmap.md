@@ -374,6 +374,8 @@ P0 不包含：
 | 研发平台对接   | 引用 Poly_Agent 项目与任务、Spec_Agent 分析结果             |
 | 通用兼容       | 普通 Page、附件、搜索、通知、项目管理继续可用               |
 
+P1 的开发级细化（需求编号、数据模型、接口契约、14 个开发阶段、验收清单）见 [research-p1-development-prd.md](./research-p1-development-prd.md)。
+
 ## 5.3 P2：扩展、治理与发布
 
 目标：补齐高阶汇总与治理能力，完成发布收尾。
