@@ -97,6 +97,13 @@ class ResearchAuditAction:
     OUTCOME_DELETE = "outcome.delete"
     OUTCOME_LINK = "outcome.link"
     CHAIN_EXPORT = "chain.export"
+    INTEGRATION_CONNECTION_UPDATE = "integration.connection.update"
+    INTEGRATION_CALL = "integration.call"
+    INTEGRATION_REFERENCE_CREATE = "integration.reference.create"
+    INTEGRATION_REFERENCE_UPDATE = "integration.reference.update"
+    INTEGRATION_REFERENCE_DELETE = "integration.reference.delete"
+    INTEGRATION_REFERENCE_LINK = "integration.reference.link"
+    INTEGRATION_REFERENCE_UNLINK = "integration.reference.unlink"
 
 
 class ResearchResourceType:
@@ -124,6 +131,8 @@ class ResearchResourceType:
     CODE_REPOSITORY = "code_repository"
     CODE_ARTIFACT = "code_artifact"
     OUTCOME = "research_outcome"
+    INTEGRATION = "integration"
+    EXTERNAL_REFERENCE = "external_reference"
 
 
 def _client_metadata(request):

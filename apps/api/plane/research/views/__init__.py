@@ -113,6 +113,21 @@ from .code import (
 )
 from .stage_overrides import ResearchStageMaterialOverrideEndpoint
 from .progress import ResearchProjectProgressEndpoint
+from .integrations import (
+    ResearchDeviceExecutionSearchEndpoint,
+    ResearchExternalReferenceDetailEndpoint,
+    ResearchExternalReferenceLinkEndpoint,
+    ResearchExternalReferenceListCreateEndpoint,
+    ResearchIntegrationCallLogEndpoint,
+    ResearchIntegrationHealthEndpoint,
+    ResearchIntegrationListEndpoint,
+    ResearchIntegrationSearchEndpoint,
+    ResearchKnowledgeSearchEndpoint,
+    ResearchLabAssetSearchEndpoint,
+    ResearchLabRunSearchEndpoint,
+    ResearchRdAnalysisSearchEndpoint,
+    ResearchRdProjectSearchEndpoint,
+)
 from .outcomes import (
     ResearchChainExportEndpoint,
     ResearchOutcomeDetailEndpoint,
@@ -176,6 +191,19 @@ __all__ = [
     "ResearchOutcomeDetailEndpoint",
     "ResearchOutcomeLinkEndpoint",
     "ResearchOutcomeListCreateEndpoint",
+    "ResearchDeviceExecutionSearchEndpoint",
+    "ResearchExternalReferenceDetailEndpoint",
+    "ResearchExternalReferenceLinkEndpoint",
+    "ResearchExternalReferenceListCreateEndpoint",
+    "ResearchIntegrationCallLogEndpoint",
+    "ResearchIntegrationHealthEndpoint",
+    "ResearchIntegrationListEndpoint",
+    "ResearchIntegrationSearchEndpoint",
+    "ResearchKnowledgeSearchEndpoint",
+    "ResearchLabAssetSearchEndpoint",
+    "ResearchLabRunSearchEndpoint",
+    "ResearchRdAnalysisSearchEndpoint",
+    "ResearchRdProjectSearchEndpoint",
     "ResearchSettingsEndpoint",
     "ResearchReportSummaryEndpoint",
     "ResearchAuditEventListEndpoint",

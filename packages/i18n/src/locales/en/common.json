@@ -882,7 +882,8 @@
       "literature": "Literature",
       "experiments": "Experiments",
       "code": "Code",
-      "outcomes": "Outcomes"
+      "outcomes": "Outcomes",
+      "integrations": "Integrations"
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
@@ -1256,7 +1257,15 @@
       "code_artifact_invalid": "The artifact reference is not valid.",
       "research_outcome_not_found": "Outcome not found.",
       "research_outcome_invalid": "The outcome configuration is not valid.",
-      "research_outcome_target_not_found": "The linked object was not found."
+      "research_outcome_target_not_found": "The linked object was not found.",
+      "integration_not_configured": "The external system is not configured.",
+      "integration_connection_not_found": "Integration connection not found.",
+      "integration_connection_exists": "A connection for this system already exists.",
+      "integration_invalid": "The integration configuration is not valid.",
+      "external_reference_not_found": "External reference not found.",
+      "external_reference_exists": "This external object is already referenced.",
+      "external_reference_invalid": "The external reference is not valid.",
+      "external_reference_link_not_found": "Reference link not found."
     },
     "stages": {
       "description": "Fixed pre-opening, opening, midterm and final stages with configurable gates.",
@@ -1638,6 +1647,60 @@
         "venue": "Venue",
         "status": "Status",
         "links": "Links"
+      }
+    },
+    "integrations": {
+      "description": "Connections to the AI4MS ecosystem: knowledge, lab, device and R&D systems.",
+      "connections_title": "Connections",
+      "references_title": "Search and reference external objects",
+      "call_logs_title": "Integration call log",
+      "display_name": "Display name",
+      "credential_ref": "Credential reference (secret manager)",
+      "credential_hint": "Secrets stay in the backend; only the reference name is stored.",
+      "credential_configured": "A credential is configured; enter a new reference name to replace it.",
+      "enabled": "Enabled",
+      "disabled": "disabled",
+      "search": "Search",
+      "search_placeholder": "Search the source system",
+      "reference": "Add reference",
+      "open_source": "Open in the source system",
+      "managed_by": "Managed by {system}",
+      "degraded_hint": "Degraded",
+      "degraded_banner": "The source system is unavailable ({reason}); showing links only.",
+      "no_logs": "No integration call recorded yet.",
+      "system": {
+        "ragportal": "RAGPortal",
+        "weknora": "WeKnora",
+        "speclabos": "SpecLabOS",
+        "smartaccess": "SmartAccess",
+        "poly_agent": "Poly_Agent",
+        "spec_agent": "Spec_Agent"
+      },
+      "health": {
+        "unknown": "Unconfigured",
+        "ok": "Normal",
+        "degraded": "Degraded",
+        "down": "Unavailable"
+      },
+      "external_type": {
+        "knowledge_entry": "Knowledge entry",
+        "rd_project": "R&D project",
+        "rd_task": "R&D task",
+        "run_record": "Run record",
+        "data_asset": "Data asset",
+        "analysis_result": "Analysis result",
+        "report": "Report"
+      },
+      "columns": {
+        "system": "System",
+        "status": "Status",
+        "last_success": "Last success",
+        "reason": "Reason",
+        "operation": "Operation",
+        "outcome": "Outcome",
+        "latency": "Latency (ms)",
+        "error": "Error",
+        "time": "Time"
       }
     }
   }

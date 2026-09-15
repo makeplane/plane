@@ -16,6 +16,13 @@ from .experiment import (
     ExperimentRecordVersion,
 )
 from .identity import IdentityMapping
+from .integration import (
+    ExternalReferenceLink,
+    ExternalSystemConnection,
+    IntegrationCallLog,
+    IntegrationSystem,
+    ResearchExternalReference,
+)
 from .literature import LiteratureEntry
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .outcome import ResearchOutcome, ResearchOutcomeLink
@@ -51,6 +58,11 @@ __all__ = [
     "CodeArtifact",
     "ProjectCodeRepository",
     "LiteratureEntry",
+    "ExternalReferenceLink",
+    "ExternalSystemConnection",
+    "IntegrationCallLog",
+    "IntegrationSystem",
+    "ResearchExternalReference",
     "AMENDABLE_FIELDS",
     "LOCKED_FIELDS",
     "ExperimentAmendment",

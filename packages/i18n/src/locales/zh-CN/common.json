@@ -882,7 +882,8 @@
       "literature": "文献调研",
       "experiments": "实验条目",
       "code": "代码管理",
-      "outcomes": "论文与成果"
+      "outcomes": "论文与成果",
+      "integrations": "系统集成"
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
@@ -1256,7 +1257,15 @@
       "code_artifact_invalid": "版本引用不合法。",
       "research_outcome_not_found": "成果不存在。",
       "research_outcome_invalid": "成果信息不合法。",
-      "research_outcome_target_not_found": "关联对象不存在。"
+      "research_outcome_target_not_found": "关联对象不存在。",
+      "integration_not_configured": "外部系统尚未配置。",
+      "integration_connection_not_found": "集成连接不存在。",
+      "integration_connection_exists": "该系统的连接已存在。",
+      "integration_invalid": "集成配置不合法。",
+      "external_reference_not_found": "外部引用不存在。",
+      "external_reference_exists": "该外部对象已被引用。",
+      "external_reference_invalid": "外部引用不合法。",
+      "external_reference_link_not_found": "引用关联不存在。"
     },
     "stages": {
       "description": "预开题、开题、中期与结题四个固定阶段，门槛可配置。",
@@ -1638,6 +1647,60 @@
         "venue": "期刊 / 单位",
         "status": "状态",
         "links": "关联"
+      }
+    },
+    "integrations": {
+      "description": "对接 AI4MS 生态：知识库、湿实验、设备与研发平台系统。",
+      "connections_title": "连接配置",
+      "references_title": "检索并引用外部对象",
+      "call_logs_title": "集成调用日志",
+      "display_name": "展示名",
+      "credential_ref": "凭证引用名（密钥管理）",
+      "credential_hint": "凭证只存后端密钥库，配置项仅保存引用名。",
+      "credential_configured": "已配置凭证；填写新的引用名即可替换。",
+      "enabled": "启用",
+      "disabled": "已停用",
+      "search": "检索",
+      "search_placeholder": "在源系统中检索",
+      "reference": "引用该条目",
+      "open_source": "在源系统打开",
+      "managed_by": "由 {system} 管理",
+      "degraded_hint": "降级",
+      "degraded_banner": "源系统不可用（{reason}），当前仅提供链接。",
+      "no_logs": "暂无集成调用记录。",
+      "system": {
+        "ragportal": "RAGPortal",
+        "weknora": "WeKnora",
+        "speclabos": "SpecLabOS",
+        "smartaccess": "SmartAccess",
+        "poly_agent": "Poly_Agent",
+        "spec_agent": "Spec_Agent"
+      },
+      "health": {
+        "unknown": "未配置",
+        "ok": "正常",
+        "degraded": "降级",
+        "down": "不可用"
+      },
+      "external_type": {
+        "knowledge_entry": "知识条目",
+        "rd_project": "研发项目",
+        "rd_task": "研发任务",
+        "run_record": "运行记录",
+        "data_asset": "数据资产",
+        "analysis_result": "分析结果",
+        "report": "报告"
+      },
+      "columns": {
+        "system": "系统",
+        "status": "状态",
+        "last_success": "最近成功",
+        "reason": "原因",
+        "operation": "操作",
+        "outcome": "结果",
+        "latency": "耗时（毫秒）",
+        "error": "错误码",
+        "time": "时间"
       }
     }
   }

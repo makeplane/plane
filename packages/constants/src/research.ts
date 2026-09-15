@@ -77,6 +77,10 @@ export type {
   TOutcomeType,
   TResearchOutcome,
   TResearchOutcomeLink,
+  TExternalReference,
+  TIntegrationCallLog,
+  TIntegrationConnection,
+  TIntegrationSystem,
 } from "@plane/types";
 
 export const ORG_UNIT_TYPES = ["ROOT", "INSTITUTE", "LAB", "GROUP", "TEAM"] as const satisfies readonly TOrgUnitType[];
@@ -352,6 +356,45 @@ export const RESEARCH_PROJECT_NAVIGATION_ITEMS = [
 ] as const;
 
 // ---------------------------------------------------------------------------
+// P1 integrations (§3.9 ~ §3.12, §4.7)
+// ---------------------------------------------------------------------------
+
+export const INTEGRATION_SYSTEMS = [
+  "RAGPORTAL",
+  "WEKNORA",
+  "SPECLABOS",
+  "SMARTACCESS",
+  "POLY_AGENT",
+  "SPEC_AGENT",
+] as const satisfies readonly TIntegrationSystem[];
+
+export const INTEGRATION_SYSTEM_LABELS: Record<TIntegrationSystem, string> = {
+  RAGPORTAL: "research.integrations.system.ragportal",
+  WEKNORA: "research.integrations.system.weknora",
+  SPECLABOS: "research.integrations.system.speclabos",
+  SMARTACCESS: "research.integrations.system.smartaccess",
+  POLY_AGENT: "research.integrations.system.poly_agent",
+  SPEC_AGENT: "research.integrations.system.spec_agent",
+};
+
+export const INTEGRATION_HEALTH_LABELS: Record<string, string> = {
+  UNKNOWN: "research.integrations.health.unknown",
+  OK: "research.integrations.health.ok",
+  DEGRADED: "research.integrations.health.degraded",
+  DOWN: "research.integrations.health.down",
+};
+
+export const EXTERNAL_TYPE_LABELS: Record<string, string> = {
+  KNOWLEDGE_ENTRY: "research.integrations.external_type.knowledge_entry",
+  RD_PROJECT: "research.integrations.external_type.rd_project",
+  RD_TASK: "research.integrations.external_type.rd_task",
+  RUN_RECORD: "research.integrations.external_type.run_record",
+  DATA_ASSET: "research.integrations.external_type.data_asset",
+  ANALYSIS_RESULT: "research.integrations.external_type.analysis_result",
+  REPORT: "research.integrations.external_type.report",
+};
+
+// ---------------------------------------------------------------------------
 // P1 outcomes (§3.6, §4.8)
 // ---------------------------------------------------------------------------
 
@@ -522,6 +565,7 @@ export const RESEARCH_SETTINGS_NAVIGATION_ITEMS = [
   { key: "identity", labelKey: "research.nav.identity", path: "settings/identity", section: "org" },
   { key: "platform", labelKey: "research.nav.platform", path: "settings/platform", section: "org" },
   { key: "audit", labelKey: "research.nav.audit", path: "audit", section: "org" },
+  { key: "integrations", labelKey: "research.nav.integrations", path: "integrations", section: "integrations" },
 ] as const;
 
 const RESEARCH_API_ROOT = "/api/research/workspaces";
@@ -644,4 +688,20 @@ export const researchEndpoints = {
   outcome: (slug: string, outcomeId: string) => `${RESEARCH_API_ROOT}/${slug}/outcomes/${outcomeId}/`,
   outcomeLinks: (slug: string, outcomeId: string) => `${RESEARCH_API_ROOT}/${slug}/outcomes/${outcomeId}/links/`,
   chainExport: (slug: string, projectId: string) => `${RESEARCH_API_ROOT}/${slug}/projects/${projectId}/chain/export/`,
+  // ---- P1 integrations (§5.7) ----
+  integrations: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/integrations/`,
+  integrationHealth: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/integrations/health/`,
+  integrationCallLogs: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/integrations/call-logs/`,
+  integrationSearch: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/integrations/search/`,
+  knowledgeEntries: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/knowledge/entries/`,
+  labRuns: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/lab/runs/`,
+  labAssets: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/lab/assets/`,
+  deviceExecutions: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/lab/device-executions/`,
+  rdProjects: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/rd/projects/`,
+  rdAnalyses: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/rd/analyses/`,
+  externalReferences: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/external-references/`,
+  externalReference: (slug: string, referenceId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/external-references/${referenceId}/`,
+  externalReferenceLinks: (slug: string, referenceId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/external-references/${referenceId}/links/`,
 } as const;

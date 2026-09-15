@@ -103,6 +103,19 @@ from plane.research.views import (
     ResearchOutcomeDetailEndpoint,
     ResearchOutcomeLinkEndpoint,
     ResearchOutcomeListCreateEndpoint,
+    ResearchDeviceExecutionSearchEndpoint,
+    ResearchExternalReferenceDetailEndpoint,
+    ResearchExternalReferenceLinkEndpoint,
+    ResearchExternalReferenceListCreateEndpoint,
+    ResearchIntegrationCallLogEndpoint,
+    ResearchIntegrationHealthEndpoint,
+    ResearchIntegrationListEndpoint,
+    ResearchIntegrationSearchEndpoint,
+    ResearchKnowledgeSearchEndpoint,
+    ResearchLabAssetSearchEndpoint,
+    ResearchLabRunSearchEndpoint,
+    ResearchRdAnalysisSearchEndpoint,
+    ResearchRdProjectSearchEndpoint,
 )
 
 urlpatterns = [
@@ -304,6 +317,79 @@ urlpatterns = [
         "research/workspaces/<str:slug>/outcomes/<uuid:outcome_id>/links/<uuid:link_id>/",
         ResearchOutcomeLinkEndpoint.as_view(),
         name="research-outcome-link",
+    ),
+    # ------------------------------------------------------------------
+    # P1 integration base layer (§5.7)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/integrations/",
+        ResearchIntegrationListEndpoint.as_view(),
+        name="research-integrations",
+    ),
+    path(
+        "research/workspaces/<str:slug>/integrations/health/",
+        ResearchIntegrationHealthEndpoint.as_view(),
+        name="research-integration-health",
+    ),
+    path(
+        "research/workspaces/<str:slug>/integrations/call-logs/",
+        ResearchIntegrationCallLogEndpoint.as_view(),
+        name="research-integration-call-logs",
+    ),
+    path(
+        "research/workspaces/<str:slug>/integrations/search/",
+        ResearchIntegrationSearchEndpoint.as_view(),
+        name="research-integration-search",
+    ),
+    path(
+        "research/workspaces/<str:slug>/knowledge/entries/",
+        ResearchKnowledgeSearchEndpoint.as_view(),
+        name="research-knowledge-entries",
+    ),
+    path(
+        "research/workspaces/<str:slug>/lab/runs/",
+        ResearchLabRunSearchEndpoint.as_view(),
+        name="research-lab-runs",
+    ),
+    path(
+        "research/workspaces/<str:slug>/lab/assets/",
+        ResearchLabAssetSearchEndpoint.as_view(),
+        name="research-lab-assets",
+    ),
+    path(
+        "research/workspaces/<str:slug>/lab/device-executions/",
+        ResearchDeviceExecutionSearchEndpoint.as_view(),
+        name="research-device-executions",
+    ),
+    path(
+        "research/workspaces/<str:slug>/rd/projects/",
+        ResearchRdProjectSearchEndpoint.as_view(),
+        name="research-rd-projects",
+    ),
+    path(
+        "research/workspaces/<str:slug>/rd/analyses/",
+        ResearchRdAnalysisSearchEndpoint.as_view(),
+        name="research-rd-analyses",
+    ),
+    path(
+        "research/workspaces/<str:slug>/external-references/",
+        ResearchExternalReferenceListCreateEndpoint.as_view(),
+        name="research-external-references",
+    ),
+    path(
+        "research/workspaces/<str:slug>/external-references/<uuid:reference_id>/",
+        ResearchExternalReferenceDetailEndpoint.as_view(),
+        name="research-external-reference",
+    ),
+    path(
+        "research/workspaces/<str:slug>/external-references/<uuid:reference_id>/links/",
+        ResearchExternalReferenceLinkEndpoint.as_view(),
+        name="research-external-reference-links",
+    ),
+    path(
+        "research/workspaces/<str:slug>/external-references/<uuid:reference_id>/links/<uuid:link_id>/",
+        ResearchExternalReferenceLinkEndpoint.as_view(),
+        name="research-external-reference-link",
     ),
     # ------------------------------------------------------------------
     # P1 experiment records and amendments (§5.5)

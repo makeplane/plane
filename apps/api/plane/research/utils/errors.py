@@ -136,6 +136,14 @@ class ResearchErrorCode:
     OUTCOME_NOT_FOUND = "research_outcome_not_found"
     OUTCOME_INVALID = "research_outcome_invalid"
     OUTCOME_TARGET_NOT_FOUND = "research_outcome_target_not_found"
+    INTEGRATION_NOT_CONFIGURED = "integration_not_configured"
+    INTEGRATION_CONNECTION_NOT_FOUND = "integration_connection_not_found"
+    INTEGRATION_CONNECTION_EXISTS = "integration_connection_exists"
+    INTEGRATION_INVALID = "integration_invalid"
+    EXTERNAL_REFERENCE_NOT_FOUND = "external_reference_not_found"
+    EXTERNAL_REFERENCE_EXISTS = "external_reference_exists"
+    EXTERNAL_REFERENCE_INVALID = "external_reference_invalid"
+    EXTERNAL_REFERENCE_LINK_NOT_FOUND = "external_reference_link_not_found"
 
 
 def research_error(error_code, message, http_status=status.HTTP_400_BAD_REQUEST):

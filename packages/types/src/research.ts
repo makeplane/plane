@@ -774,3 +774,64 @@ export type TResearchOutcome = {
   created_at: string;
   updated_at: string;
 };
+
+export type TIntegrationSystem = "RAGPORTAL" | "WEKNORA" | "SPECLABOS" | "SMARTACCESS" | "POLY_AGENT" | "SPEC_AGENT";
+
+export type TIntegrationConnection = {
+  id?: string;
+  system: TIntegrationSystem;
+  display_name: string;
+  base_url?: string;
+  auth_mode?: "HMAC" | "BEARER" | "OIDC_CLIENT" | "NONE";
+  credential_ref?: string;
+  has_credential?: boolean;
+  configured?: boolean;
+  timeout_seconds?: number;
+  cache_ttl_seconds?: number;
+  degraded_mode?: "LINK_ONLY" | "HIDDEN";
+  is_enabled: boolean;
+  health_status?: "UNKNOWN" | "OK" | "DEGRADED" | "DOWN";
+  last_health_at?: string | null;
+  last_success_at?: string | null;
+  last_error?: string;
+};
+
+export type TIntegrationCallLog = {
+  id: string;
+  system: TIntegrationSystem;
+  operation: string;
+  request_id: string;
+  outcome: string;
+  status_code: number | null;
+  latency_ms: number | null;
+  error_code: string;
+  created_at: string;
+};
+
+export type TExternalReferenceLink = {
+  id: string;
+  reference: string;
+  target_type: "PROJECT" | "STAGE_MATERIAL" | "LITERATURE_ENTRY" | "EXPERIMENT_RECORD" | "PERIODIC_REPORT" | "OUTCOME";
+  target_id: string;
+  created_at: string;
+};
+
+export type TExternalReference = {
+  id: string;
+  workspace: string;
+  system: TIntegrationSystem;
+  external_type: string;
+  external_id: string;
+  external_parent_id: string;
+  title: string;
+  summary: string;
+  source_url: string;
+  acl_hint: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  content_hash: string;
+  synced_at: string | null;
+  status: "ACTIVE" | "UNAVAILABLE" | "REVOKED" | "DEGRADED";
+  links: TExternalReferenceLink[];
+  created_at: string;
+  updated_at: string;
+};

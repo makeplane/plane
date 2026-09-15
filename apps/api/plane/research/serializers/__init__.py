@@ -27,6 +27,12 @@ from .experiment import (
 )
 from .code import CodeArtifactSerializer, ProjectCodeRepositorySerializer
 from .outcome import ResearchOutcomeLinkSerializer, ResearchOutcomeSerializer
+from .integration import (
+    ExternalReferenceLinkSerializer,
+    ExternalSystemConnectionSerializer,
+    IntegrationCallLogSerializer,
+    ResearchExternalReferenceSerializer,
+)
 from .stage import (
     ResearchStageInstanceSerializer,
     ResearchStageRequirementSerializer,
@@ -63,6 +69,10 @@ __all__ = [
     "ProjectCodeRepositorySerializer",
     "ResearchOutcomeLinkSerializer",
     "ResearchOutcomeSerializer",
+    "ExternalReferenceLinkSerializer",
+    "ExternalSystemConnectionSerializer",
+    "IntegrationCallLogSerializer",
+    "ResearchExternalReferenceSerializer",
     "ApprovalActionSerializer",
     "ApprovalFlowSerializer",
     "ApprovalFlowStepSerializer",

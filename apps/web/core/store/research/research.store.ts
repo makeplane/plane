@@ -40,6 +40,9 @@ import type {
   TCodeRepository,
   TCodeSummary,
   TResearchOutcome,
+  TExternalReference,
+  TIntegrationCallLog,
+  TIntegrationConnection,
   TReviewSummary,
   TToMeReview,
   TWorkspaceResearchSetting,
@@ -74,6 +77,12 @@ import { ResearchCodeService } from "@/services/research/code.service";
 import type { TCodeArtifactPayload, TCodeRepositoryPayload } from "@/services/research/code.service";
 import { ResearchOutcomeService } from "@/services/research/outcome.service";
 import type { TOutcomePayload } from "@/services/research/outcome.service";
+import { ResearchIntegrationService } from "@/services/research/integration.service";
+import type {
+  TExternalReferencePayload,
+  TIntegrationConnectionPayload,
+  TIntegrationSearchResult,
+} from "@/services/research/integration.service";
 // root store
 import type { CoreRootStore } from "../root.store";
 
@@ -145,6 +154,11 @@ export interface IResearchStore {
   codeSummary: Record<string, TCodeSummary>;
   outcomes: Record<string, TResearchOutcome>;
   outcomeIdsByProject: Record<string, string[]>;
+  integrationConnections: TIntegrationConnection[];
+  integrationHealth: Array<Record<string, unknown>>;
+  integrationCallLogs: TIntegrationCallLog[];
+  externalReferences: Record<string, TExternalReference>;
+  externalReferenceIds: string[];
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
@@ -416,6 +430,26 @@ export interface IResearchStore {
   ) => Promise<TResearchOutcome>;
   getOutcomes: (workspaceSlug: string, projectId: string) => TResearchOutcome[];
   chainExportUrl: (workspaceSlug: string, projectId: string) => string;
+  // integrations (P1-D1)
+  fetchIntegrations: (workspaceSlug: string) => Promise<TIntegrationConnection[]>;
+  updateIntegrations: (
+    workspaceSlug: string,
+    items: TIntegrationConnectionPayload[]
+  ) => Promise<TIntegrationConnection[]>;
+  fetchIntegrationHealth: (workspaceSlug: string) => Promise<Array<Record<string, unknown>>>;
+  fetchIntegrationCallLogs: (workspaceSlug: string) => Promise<TIntegrationCallLog[]>;
+  searchIntegration: (workspaceSlug: string, system: string, query: string) => Promise<TIntegrationSearchResult>;
+  searchIntegrationEndpoint: (endpoint: string, query: string) => Promise<TIntegrationSearchResult>;
+  fetchExternalReferences: (workspaceSlug: string) => Promise<TExternalReference[]>;
+  createExternalReference: (workspaceSlug: string, payload: TExternalReferencePayload) => Promise<TExternalReference>;
+  deleteExternalReference: (workspaceSlug: string, referenceId: string) => Promise<void>;
+  linkExternalReference: (
+    workspaceSlug: string,
+    referenceId: string,
+    targetType: string,
+    targetId: string
+  ) => Promise<TExternalReference>;
+  getExternalReferences: () => TExternalReference[];
 }
 
 export class ResearchStore implements IResearchStore {
@@ -486,6 +520,11 @@ export class ResearchStore implements IResearchStore {
   codeSummary: Record<string, TCodeSummary> = {};
   outcomes: Record<string, TResearchOutcome> = {};
   outcomeIdsByProject: Record<string, string[]> = {};
+  integrationConnections: TIntegrationConnection[] = [];
+  integrationHealth: Array<Record<string, unknown>> = [];
+  integrationCallLogs: TIntegrationCallLog[] = [];
+  externalReferences: Record<string, TExternalReference> = {};
+  externalReferenceIds: string[] = [];
 
   private orgService: ResearchOrgService;
   private reportService: ResearchReportService;
@@ -498,6 +537,7 @@ export class ResearchStore implements IResearchStore {
   private experimentService: ResearchExperimentService;
   private codeService: ResearchCodeService;
   private outcomeService: ResearchOutcomeService;
+  private integrationService: ResearchIntegrationService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -569,6 +609,11 @@ export class ResearchStore implements IResearchStore {
       codeSummary: observable,
       outcomes: observable,
       outcomeIdsByProject: observable,
+      integrationConnections: observable,
+      integrationHealth: observable,
+      integrationCallLogs: observable,
+      externalReferences: observable,
+      externalReferenceIds: observable,
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
@@ -684,6 +729,16 @@ export class ResearchStore implements IResearchStore {
       updateOutcome: action,
       deleteOutcome: action,
       linkOutcome: action,
+      fetchIntegrations: action,
+      updateIntegrations: action,
+      fetchIntegrationHealth: action,
+      fetchIntegrationCallLogs: action,
+      searchIntegration: action,
+      searchIntegrationEndpoint: action,
+      fetchExternalReferences: action,
+      createExternalReference: action,
+      deleteExternalReference: action,
+      linkExternalReference: action,
     });
 
     this.orgService = new ResearchOrgService();
@@ -697,6 +752,7 @@ export class ResearchStore implements IResearchStore {
     this.experimentService = new ResearchExperimentService();
     this.codeService = new ResearchCodeService();
     this.outcomeService = new ResearchOutcomeService();
+    this.integrationService = new ResearchIntegrationService();
   }
 
   // ---------------------------------------------------------------------
@@ -798,6 +854,11 @@ export class ResearchStore implements IResearchStore {
 
   chainExportUrl = (workspaceSlug: string, projectId: string) =>
     this.outcomeService.exportChainUrl(workspaceSlug, projectId);
+
+  getExternalReferences = () =>
+    this.externalReferenceIds
+      .map((id) => this.externalReferences[id])
+      .filter((reference): reference is TExternalReference => Boolean(reference));
 
   // ---------------------------------------------------------------------
   // identity
@@ -1929,5 +1990,81 @@ export class ResearchStore implements IResearchStore {
       this.outcomes[outcome.id] = outcome;
     });
     return outcome;
+  };
+  // ---------------------------------------------------------------------
+  // integrations (P1-D1)
+  // ---------------------------------------------------------------------
+
+  fetchIntegrations = async (workspaceSlug: string) => {
+    const response = await this.integrationService.getConnections(workspaceSlug);
+    runInAction(() => {
+      this.integrationConnections = response.results;
+    });
+    return response.results;
+  };
+
+  updateIntegrations = async (workspaceSlug: string, items: TIntegrationConnectionPayload[]) => {
+    const response = await this.integrationService.updateConnections(workspaceSlug, items);
+    await this.fetchIntegrations(workspaceSlug).catch(() => undefined);
+    await this.fetchIntegrationHealth(workspaceSlug).catch(() => undefined);
+    return response.results;
+  };
+
+  fetchIntegrationHealth = async (workspaceSlug: string) => {
+    const response = await this.integrationService.getHealth(workspaceSlug);
+    runInAction(() => {
+      this.integrationHealth = response.results;
+    });
+    return response.results;
+  };
+
+  fetchIntegrationCallLogs = async (workspaceSlug: string) => {
+    const response = await this.integrationService.getCallLogs(workspaceSlug);
+    runInAction(() => {
+      this.integrationCallLogs = response.results;
+    });
+    return response.results;
+  };
+
+  searchIntegration = async (workspaceSlug: string, system: string, query: string) =>
+    this.integrationService.search(workspaceSlug, system, query);
+
+  searchIntegrationEndpoint = async (endpoint: string, query: string) =>
+    this.integrationService.searchSystem(endpoint, query);
+
+  fetchExternalReferences = async (workspaceSlug: string) => {
+    const response = await this.integrationService.getReferences(workspaceSlug);
+    runInAction(() => {
+      this.externalReferenceIds = response.results.map((reference) => reference.id);
+      response.results.forEach((reference) => {
+        this.externalReferences[reference.id] = reference;
+      });
+    });
+    return response.results;
+  };
+
+  createExternalReference = async (workspaceSlug: string, payload: TExternalReferencePayload) => {
+    const reference = await this.integrationService.createReference(workspaceSlug, payload);
+    runInAction(() => {
+      this.externalReferences[reference.id] = reference;
+      this.externalReferenceIds = [reference.id, ...this.externalReferenceIds];
+    });
+    return reference;
+  };
+
+  deleteExternalReference = async (workspaceSlug: string, referenceId: string) => {
+    await this.integrationService.deleteReference(workspaceSlug, referenceId);
+    runInAction(() => {
+      delete this.externalReferences[referenceId];
+      this.externalReferenceIds = this.externalReferenceIds.filter((id) => id !== referenceId);
+    });
+  };
+
+  linkExternalReference = async (workspaceSlug: string, referenceId: string, targetType: string, targetId: string) => {
+    const reference = await this.integrationService.linkReference(workspaceSlug, referenceId, targetType, targetId);
+    runInAction(() => {
+      this.externalReferences[reference.id] = reference;
+    });
+    return reference;
   };
 }
