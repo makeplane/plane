@@ -49,7 +49,7 @@ export function Dropdown(props: ISingleSelectDropdown) {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -142,15 +142,19 @@ export function Dropdown(props: ISingleSelectDropdown) {
         disabled={disabled}
       />
       {isOpen && (
-        <Combobox.Options as="ul" className="fixed z-10" static>
+        <Combobox.Options
+          as="ul"
+          className="fixed z-10"
+          static
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
           <div
             className={cn(
               "my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2 text-11 shadow-raised-200 focus:outline-none",
               optionsContainerClassName
             )}
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
           >
             <DropdownOptions
               isOpen={isOpen}
