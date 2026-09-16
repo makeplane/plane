@@ -4,9 +4,11 @@
 
 """Workspace level research configuration.
 
-Before ``WorkspaceResearchSetting`` exists (introduced with the platform
-configuration stage) the workspace switch falls back to the deployment level
+A workspace without a ``WorkspaceResearchSetting`` row renders the research
+module by default: the workspace switch falls back to the deployment level
 switch, so a partially rolled out installation still behaves predictably.
+The row becomes authoritative as soon as it exists, which is how an
+administrator opts a single workspace back out.
 """
 
 from plane.research.utils.config import (
@@ -46,7 +48,6 @@ def get_workspace_research_settings(workspace):
 
     setting = WorkspaceResearchSetting.objects.filter(workspace=workspace).first()
     if setting is None:
-        defaults["module_enabled"] = False
         return defaults
 
     return {

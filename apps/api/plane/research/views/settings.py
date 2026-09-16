@@ -19,6 +19,7 @@ from plane.research.utils.errors import (
     research_permission_denied,
 )
 from plane.research.utils.org import ensure_root_org_unit, is_workspace_admin
+from plane.research.utils.settings import default_workspace_research_settings
 from plane.research.views.base import ResearchAPIView, truthy
 
 BOOLEAN_FIELDS = (
@@ -41,7 +42,13 @@ LIMIT_FIELDS = ("image_max_mb", "pdf_max_mb", "markdown_max_mb", "audit_retentio
 def get_or_create_setting(workspace, actor=None):
     setting = WorkspaceResearchSetting.objects.filter(workspace=workspace).first()
     if setting is None:
-        setting = WorkspaceResearchSetting.objects.create(workspace=workspace, created_by=actor)
+        setting = WorkspaceResearchSetting.objects.create(
+            workspace=workspace,
+            created_by=actor,
+            # Opening this page must not flip a workspace off unnoticed: a fresh
+            # row inherits the deployment switch instead of the model default.
+            module_enabled=default_workspace_research_settings()["module_enabled"],
+        )
     return setting
 
 

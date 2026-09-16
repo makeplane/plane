@@ -6,6 +6,7 @@ import pytest
 from rest_framework.test import APIClient
 
 from plane.db.models import OrgUnit, ResearchAuditEvent, WorkspaceResearchSetting
+from plane.research.utils.settings import workspace_research_enabled
 from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
@@ -47,16 +48,41 @@ def env(db):
 
 @pytest.mark.django_db
 class TestResearchSettingsEndpoint:
-    def test_defaults_are_safe_when_no_row_exists(self, env):
+    def test_defaults_follow_the_deployment_switch_when_no_row_exists(self, env):
+        # A workspace without a row renders research by default; reading the
+        # page provisions the row without flipping the workspace off.
+        assert not WorkspaceResearchSetting.objects.filter(workspace=env["workspace"]).exists()
         response = env["member_client"].get(env["url"])
         assert response.status_code == 200
         payload = response.json()
-        assert payload["module_enabled"] is False
+        assert payload["module_enabled"] is True
         assert payload["default_report_visibility"] == "DIRECT_ADVISOR"
         assert payload["image_max_mb"] == 20
         assert payload["pdf_max_mb"] == 100
         assert payload["markdown_max_mb"] == 5
         assert payload["audit_retention_days"] == 0
+        assert WorkspaceResearchSetting.objects.filter(workspace=env["workspace"]).exists()
+        assert env["member_client"].get(env["identity_url"]).json()["workspace_enabled"] is True
+
+    def test_workspace_without_row_renders_research_by_default(self, env):
+        assert not WorkspaceResearchSetting.objects.filter(workspace=env["workspace"]).exists()
+        identity = env["member_client"].get(env["identity_url"]).json()
+        assert identity["workspace_enabled"] is True
+        assert identity["sections"] == {
+            "org": True,
+            "reports": True,
+            "approvals": True,
+            "stages": True,
+            "experiments": True,
+            "code": True,
+            "integrations": True,
+        }
+        assert env["member_client"].get(org_units_url(env["workspace"])).status_code == 200
+
+    def test_workspace_without_row_stays_off_when_the_deployment_switch_is_off(self, env, settings):
+        settings.RESEARCH_MODULE_ENABLED = False
+        assert workspace_research_enabled(env["workspace"]) is False
+        assert env["member_client"].get(env["identity_url"]).status_code == 404
 
     def test_workspace_member_cannot_patch_settings(self, env):
         response = env["member_client"].patch(env["url"], {"module_enabled": True}, format="json")
@@ -111,6 +137,7 @@ class TestResearchSettingsEndpoint:
         assert root.unit_type == OrgUnit.UnitType.ROOT
 
     def test_workspace_switch_gates_research_endpoints(self, env):
+        enable_research(env["workspace"], module_enabled=False)
         identity = env["member_client"].get(env["identity_url"]).json()
         assert identity["module_enabled"] is True
         assert identity["workspace_enabled"] is False
