@@ -883,13 +883,144 @@
       "code": "Code",
       "outcomes": "Outcomes",
       "integrations": "Integrations",
-      "timeline": "Timeline"
+      "timeline": "Timeline",
+      "dashboard": "Main PI board",
+      "system": "System management"
+    },
+    "admin_roles": {
+      "dev_admin": "Development administrator",
+      "ops_admin": "Operations administrator",
+      "main_pi": "Main PI"
+    },
+    "system": {
+      "description": "Accounts, invite codes and roster imports for this deployment.",
+      "admin_roles_title": "Your administrator tags",
+      "admin_roles_empty": "No administrator tag",
+      "admin_roles_hint": "Tags are granted by the default instance administrator (admin@ai4ms.local) in the instance console; they open the configuration surfaces but never widen business data visibility.",
+      "workspace_admin": "Workspace administrator"
+    },
+    "invite_codes": {
+      "title": "Invite codes",
+      "empty": "No invite code yet. Create one to let somebody register.",
+      "hint": "Registration is closed: a new account needs an invite code, and it always joins the public workspace.",
+      "fields": {
+        "org_role": "Organisation role",
+        "no_role": "Member only",
+        "max_uses": "Uses",
+        "expires_in_days": "Valid days",
+        "note": "Note"
+      },
+      "columns": {
+        "code": "Code",
+        "org_role": "Role",
+        "usage": "Used",
+        "expires_at": "Expires",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "create": "Create invite code",
+        "enable": "Enable",
+        "disable": "Disable",
+        "delete": "Delete",
+        "copy": "Copy registration link"
+      },
+      "status": {
+        "active": "Active",
+        "disabled": "Disabled",
+        "expired": "Expired",
+        "exhausted": "Used up"
+      },
+      "toast": {
+        "created_title": "Invite code created",
+        "created_message": "Share the code or the registration link with the new member."
+      },
+      "error": {
+        "load": "Could not load the invite codes.",
+        "create": "Could not create the invite code.",
+        "update": "Could not update the invite code.",
+        "delete": "Could not delete the invite code.",
+        "invite_code_org_role_invalid": "Unknown organisation role.",
+        "invite_code_invalid": "The invite code settings are invalid."
+      }
+    },
+    "user_import": {
+      "title": "Roster import",
+      "hint": "Upload the roster (分组 / 姓名 / 学号 / 年级 / 学位 / 负责导师 / 邮件 / 电话) and, optionally, a name-to-mailbox table for the advisors. Rows without an advisor mailbox stay in the pending list.",
+      "fields": {
+        "students": "Student roster",
+        "advisors": "Advisor mailboxes (optional)",
+        "reset_passwords": "Re-issue one-time passwords"
+      },
+      "actions": {
+        "preview": "Dry run",
+        "commit": "Import",
+        "download_report": "Download report"
+      },
+      "columns": {
+        "name": "Name",
+        "email": "Mailbox",
+        "group": "Group",
+        "advisor": "Advisor",
+        "status": "Status",
+        "message": "Note"
+      },
+      "status": {
+        "ok": "Imported",
+        "pending": "Needs input",
+        "error": "Rejected"
+      },
+      "result": {
+        "preview_title": "Dry run",
+        "committed_title": "Import finished",
+        "counts": "{{total}} rows · imported {{ok}} · pending {{pending}} · rejected {{error}}"
+      },
+      "history": {
+        "title": "Recent imports",
+        "empty": "No import yet.",
+        "dry_run": "dry run"
+      },
+      "toast": {
+        "done_title": "Import finished",
+        "done_message": "The report contains the one-time credentials."
+      },
+      "error": {
+        "load": "Could not load the imports.",
+        "run": "The import failed.",
+        "no_file": "Choose the student roster file first.",
+        "user_import_file_required": "A roster file is required.",
+        "user_import_file_invalid": "The roster could not be read. Check the header row and the encoding.",
+        "public_workspace_missing": "The public workspace does not exist yet."
+      }
+    },
+    "pi": {
+      "description": "Own node and subtree across the public workspace.",
+      "scope_summary": "{{units}} organisation node(s) in scope from {{workspace}}.",
+      "generated_at": "Updated",
+      "org_units": "Organisation nodes in scope",
+      "empty_scope": "No organisation node is attached to this account yet, so the board has nothing to aggregate. Ask an administrator to place the account in the organisation tree.",
+      "cards": {
+        "projects": "Research projects",
+        "reports": "Periodic reports",
+        "pending_review": "awaiting review",
+        "stages": "Stage runs",
+        "blocked": "blocked",
+        "reviews": "Stages awaiting review",
+        "open_assignments": "open reviewer slots",
+        "approvals": "Pending approvals",
+        "pending_only": "waiting for a decision"
+      },
+      "error": {
+        "load": "Could not load the aggregate."
+      }
     },
     "overview": {
       "description": "Research management for this workspace: organisation, projects, periodic reports and office approvals.",
       "business_sections": "Business sections",
       "settings_sections": "Administration",
       "reports_hint": "Create, submit and review weekly or monthly reports.",
+      "dashboard_hint": "Main PI board: your node and subtree aggregated across the public workspace.",
+      "system_hint": "Invite codes, roster import and research profiles.",
       "summary_hint": "Submission status grouped by organisation node and period.",
       "projects_hint": "One personal research project per research owner.",
       "approvals_hint": "Task and purchase approvals built on work items.",

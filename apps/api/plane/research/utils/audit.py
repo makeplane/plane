@@ -105,6 +105,12 @@ class ResearchAuditAction:
     INTEGRATION_REFERENCE_DELETE = "integration.reference.delete"
     INTEGRATION_REFERENCE_LINK = "integration.reference.link"
     INTEGRATION_REFERENCE_UNLINK = "integration.reference.unlink"
+    INVITE_CODE_CREATE = "account.invite.create"
+    INVITE_CODE_UPDATE = "account.invite.update"
+    INVITE_CODE_DELETE = "account.invite.delete"
+    INVITE_CODE_REDEEM = "account.invite.redeem"
+    USER_IMPORT = "account.import.run"
+    USER_PROFILE_UPDATE = "account.profile.update"
 
 
 class ResearchResourceType:
@@ -134,6 +140,9 @@ class ResearchResourceType:
     OUTCOME = "research_outcome"
     INTEGRATION = "integration"
     EXTERNAL_REFERENCE = "external_reference"
+    INVITE_CODE = "invite_code"
+    IMPORT_BATCH = "user_import_batch"
+    USER_PROFILE = "research_user_profile"
 
 
 def _client_metadata(request):

@@ -883,13 +883,144 @@
       "code": "代码管理",
       "outcomes": "论文与成果",
       "integrations": "系统集成",
-      "timeline": "时间线"
+      "timeline": "时间线",
+      "dashboard": "主PI看板",
+      "system": "系统管理"
+    },
+    "admin_roles": {
+      "dev_admin": "开发管理员",
+      "ops_admin": "运维管理员",
+      "main_pi": "主PI"
+    },
+    "system": {
+      "description": "本部署的账号、邀请码与批量导入。",
+      "admin_roles_title": "当前账号的管理员标签",
+      "admin_roles_empty": "未持有管理员标签",
+      "admin_roles_hint": "标签由系统默认管理员 admin@ai4ms.local 在实例管理端授予：标签只开放配置能力，不会扩大业务数据可见范围。",
+      "workspace_admin": "工作区管理员"
+    },
+    "invite_codes": {
+      "title": "邀请码",
+      "empty": "暂无邀请码。新建一个邀请码后才能让新成员注册。",
+      "hint": "注册已关闭：新账号必须凭邀请码注册，注册后自动进入公共工作区。",
+      "fields": {
+        "org_role": "组织角色",
+        "no_role": "仅工作区成员",
+        "max_uses": "可用次数",
+        "expires_in_days": "有效天数",
+        "note": "备注"
+      },
+      "columns": {
+        "code": "邀请码",
+        "org_role": "角色",
+        "usage": "已用",
+        "expires_at": "过期时间",
+        "status": "状态",
+        "actions": "操作"
+      },
+      "actions": {
+        "create": "生成邀请码",
+        "enable": "启用",
+        "disable": "停用",
+        "delete": "删除",
+        "copy": "复制注册链接"
+      },
+      "status": {
+        "active": "可用",
+        "disabled": "已停用",
+        "expired": "已过期",
+        "exhausted": "已用尽"
+      },
+      "toast": {
+        "created_title": "邀请码已生成",
+        "created_message": "把邀请码或注册链接发给新成员即可。"
+      },
+      "error": {
+        "load": "邀请码加载失败。",
+        "create": "邀请码创建失败。",
+        "update": "邀请码更新失败。",
+        "delete": "邀请码删除失败。",
+        "invite_code_org_role_invalid": "组织角色不合法。",
+        "invite_code_invalid": "邀请码参数不合法。"
+      }
+    },
+    "user_import": {
+      "title": "批量导入",
+      "hint": "上传二维表（分组 / 姓名 / 学号 / 年级 / 学位 / 负责导师 / 邮件 / 电话），并可另传「导师姓名 → 邮箱」对照表。缺少导师邮箱的行会进入待处理清单，不影响其他行。",
+      "fields": {
+        "students": "学生表",
+        "advisors": "导师邮箱表（可选）",
+        "reset_passwords": "重新生成初始密码"
+      },
+      "actions": {
+        "preview": "预检",
+        "commit": "正式导入",
+        "download_report": "下载导入报告"
+      },
+      "columns": {
+        "name": "姓名",
+        "email": "邮箱",
+        "group": "分组",
+        "advisor": "负责导师",
+        "status": "状态",
+        "message": "说明"
+      },
+      "status": {
+        "ok": "已导入",
+        "pending": "待处理",
+        "error": "已拒绝"
+      },
+      "result": {
+        "preview_title": "预检结果（未写库）",
+        "committed_title": "导入完成",
+        "counts": "共 {{total}} 行 · 成功 {{ok}} · 待处理 {{pending}} · 失败 {{error}}"
+      },
+      "history": {
+        "title": "最近导入",
+        "empty": "暂无导入记录。",
+        "dry_run": "预检"
+      },
+      "toast": {
+        "done_title": "导入完成",
+        "done_message": "导入报告里包含一次性初始密码。"
+      },
+      "error": {
+        "load": "导入记录加载失败。",
+        "run": "导入失败。",
+        "no_file": "请先选择学生表文件。",
+        "user_import_file_required": "请上传学生表文件。",
+        "user_import_file_invalid": "文件无法解析，请检查表头与编码。",
+        "public_workspace_missing": "公共工作区尚未创建。"
+      }
+    },
+    "pi": {
+      "description": "主PI工作区：本节点及其子节点在公共工作区的汇总。",
+      "scope_summary": "统计范围：{{workspace}} 中的 {{units}} 个组织节点。",
+      "generated_at": "更新时间",
+      "org_units": "范围内的组织节点",
+      "empty_scope": "该账号还没有挂到任何组织节点，看板暂无可汇总数据。请联系管理员把账号加入组织架构。",
+      "cards": {
+        "projects": "科研项目",
+        "reports": "周期报告",
+        "pending_review": "待评审",
+        "stages": "阶段流程",
+        "blocked": "被阻塞",
+        "reviews": "待评审阶段",
+        "open_assignments": "未完成评审数",
+        "approvals": "待审批",
+        "pending_only": "等待处理"
+      },
+      "error": {
+        "load": "汇总加载失败。"
+      }
     },
     "overview": {
       "description": "本工作区的科研管理：组织架构、科研项目、周期报告与办公审批。",
       "business_sections": "业务功能",
       "settings_sections": "管理配置",
       "reports_hint": "创建、提交与验收周报 / 月报。",
+      "dashboard_hint": "主PI看板：本节点及子节点在公共工作区的汇总。",
+      "system_hint": "邀请码、批量导入与科研档案。",
       "summary_hint": "按组织节点与周期查看提交情况。",
       "projects_hint": "每个科研责任人一个个人科研项目。",
       "approvals_hint": "基于工作项的任务审批与采购审批。",

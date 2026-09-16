@@ -3,6 +3,13 @@
 # See the LICENSE file for details.
 
 from .audit import ResearchAuditEventSerializer
+from .account import (
+    InviteCodeSerializer,
+    ResearchUserProfileSerializer,
+    UserImportBatchSerializer,
+    UserImportBatchSummarySerializer,
+    UserImportRowSerializer,
+)
 from .org import (
     IdentityMappingSerializer,
     MentorBindingSerializer,
@@ -88,4 +95,9 @@ __all__ = [
     "StageReviewerAssignmentSerializer",
     "StageReviewSerializer",
     "StageReviewRevisionSerializer",
+    "InviteCodeSerializer",
+    "ResearchUserProfileSerializer",
+    "UserImportBatchSerializer",
+    "UserImportBatchSummarySerializer",
+    "UserImportRowSerializer",
 ]

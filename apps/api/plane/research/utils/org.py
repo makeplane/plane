@@ -85,9 +85,16 @@ def managing_unit_ids(user, workspace_id, on_date=None):
 
 
 def user_can_manage_org_unit(user, workspace, unit=None, on_date=None) -> bool:
-    """Workspace admins manage everything; org roles manage their subtree."""
+    """Administrators manage everything; org roles manage their subtree.
+
+    Administrators are either workspace administrators or holders of one of
+    the three instance administrator tags (dev / ops / main PI), so a tag
+    holder can curate the tree without a workspace administrator seat.
+    """
+    from plane.research.utils.roles import is_research_admin
+
     workspace_id = getattr(workspace, "id", workspace)
-    if is_workspace_admin(user, workspace_id):
+    if is_research_admin(user, workspace_id):
         return True
     if unit is None:
         return False

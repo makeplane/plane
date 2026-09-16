@@ -34,6 +34,7 @@ from plane.research.utils.org import (
     move_subtree,
     user_can_manage_org_unit,
 )
+from plane.research.utils.roles import sync_main_pi_workspace_seat
 from plane.research.views.base import (
     ResearchAPIView,
     parse_date,
@@ -71,7 +72,12 @@ def _serialize_units(units):
 
 
 class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
-    """``GET``/``POST /api/research/workspaces/<slug>/org-units/``"""
+    """``GET``/``POST /api/research/workspaces/<slug>/org-units/``
+
+    The tree itself stays readable for every member: the research project list
+    filters by node. Writing the tree needs the "organisation" navigation key
+    on top of the existing node management rights (v2.5.0).
+    """
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="org")
@@ -119,9 +125,9 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
             unit_type = OrgUnit.UnitType.ROOT
             if not self.request.user.is_authenticated:
                 return research_permission_denied()
-            from plane.research.utils.org import is_workspace_admin
+            from plane.research.utils.roles import is_research_admin
 
-            if not is_workspace_admin(request.user, workspace.id):
+            if not is_research_admin(request.user, workspace.id):
                 return research_permission_denied()
             if OrgUnit.objects.filter(workspace=workspace, unit_type=OrgUnit.UnitType.ROOT).exists():
                 return research_error(
@@ -634,6 +640,9 @@ class ResearchOrgUnitPiTransferEndpoint(ResearchAPIView):
             },
             request=request,
         )
+
+        for user in resolved:
+            sync_main_pi_workspace_seat(user, actor=request.user)
 
         members = OrgUnitMember.objects.filter(
             org_unit=unit, org_role=OrgUnitMember.OrgRole.PI

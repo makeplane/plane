@@ -48,7 +48,7 @@ class ResearchReportTemplateListCreateEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section="reports")
         if error:
             return error
-        if not is_workspace_admin(request.user, workspace.id):
+        if not is_research_admin(request.user, workspace.id):
             return research_permission_denied()
 
         name = str(request.data.get("name") or "").strip()
@@ -117,7 +117,7 @@ class ResearchReportTemplateDetailEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section="reports")
         if error:
             return error
-        if not is_workspace_admin(request.user, workspace.id):
+        if not is_research_admin(request.user, workspace.id):
             return research_permission_denied()
         template = self._get_template(workspace, pk)
         if template is None:
@@ -172,7 +172,7 @@ class ResearchReportTemplateDetailEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section="reports")
         if error:
             return error
-        if not is_workspace_admin(request.user, workspace.id):
+        if not is_research_admin(request.user, workspace.id):
             return research_permission_denied()
         template = self._get_template(workspace, pk)
         if template is None:

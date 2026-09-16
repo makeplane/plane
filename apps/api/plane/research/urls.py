@@ -120,6 +120,14 @@ from plane.research.views import (
     ResearchLabRunSearchEndpoint,
     ResearchRdAnalysisSearchEndpoint,
     ResearchRdProjectSearchEndpoint,
+    ResearchInviteCodeDetailEndpoint,
+    ResearchInviteCodeListCreateEndpoint,
+    ResearchInviteCodeToggleEndpoint,
+    ResearchPiAggregateEndpoint,
+    ResearchUserImportDetailEndpoint,
+    ResearchUserImportListCreateEndpoint,
+    ResearchUserImportReportEndpoint,
+    ResearchUserProfileListEndpoint,
 )
 
 urlpatterns = [
@@ -694,5 +702,49 @@ urlpatterns = [
         "research/workspaces/<str:slug>/mentors/<uuid:pk>/",
         ResearchMentorBindingDetailEndpoint.as_view(),
         name="research-mentor",
+    ),
+    # ------------------------------------------------------------------
+    # Account lifecycle: invite codes, roster import, research profiles
+    # and the main PI workspace aggregate (v2.4.0)
+    # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/invite-codes/",
+        ResearchInviteCodeListCreateEndpoint.as_view(),
+        name="research-invite-codes",
+    ),
+    path(
+        "research/workspaces/<str:slug>/invite-codes/<uuid:pk>/",
+        ResearchInviteCodeDetailEndpoint.as_view(),
+        name="research-invite-code",
+    ),
+    path(
+        "research/workspaces/<str:slug>/invite-codes/<uuid:pk>/<str:action>/",
+        ResearchInviteCodeToggleEndpoint.as_view(),
+        name="research-invite-code-toggle",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/",
+        ResearchUserImportListCreateEndpoint.as_view(),
+        name="research-user-imports",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/<uuid:pk>/",
+        ResearchUserImportDetailEndpoint.as_view(),
+        name="research-user-import",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/<uuid:pk>/report/",
+        ResearchUserImportReportEndpoint.as_view(),
+        name="research-user-import-report",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-profiles/",
+        ResearchUserProfileListEndpoint.as_view(),
+        name="research-user-profiles",
+    ),
+    path(
+        "research/workspaces/<str:slug>/aggregate/",
+        ResearchPiAggregateEndpoint.as_view(),
+        name="research-pi-aggregate",
     ),
 ]

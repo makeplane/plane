@@ -71,7 +71,7 @@ class ResearchSettingsEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(require_enabled=False)
         if error:
             return error
-        if not is_workspace_admin(request.user, workspace.id):
+        if not is_research_admin(request.user, workspace.id):
             return research_permission_denied()
 
         setting = get_or_create_setting(workspace, actor=request.user)
