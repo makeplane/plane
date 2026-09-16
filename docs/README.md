@@ -14,9 +14,13 @@
 | [`research-p1-development-prd.md`](./research-p1-development-prd.md)               | P1 开发规格：阶段流程、评审、文献、实验、代码、集成与时间线 | v1.1，已实施（§16 实现回写记录）         |
 | [`research-p1-development-prd-review.md`](./research-p1-development-prd-review.md) | P1 开发规格评审结论与实现复核                               | v1.1，复核通过                           |
 | [`research-p1-release-notes.md`](./research-p1-release-notes.md)                   | P1 发布流程、环境变量、开关、回滚与发布门禁结果             | `2.1.0 → 2.2.0`                          |
+| [`research-p0-p1-architecture.md`](./research-p0-p1-architecture.md)               | P0 / P1 功能清单整理与两期技术架构图                        | v1.0，随实现同步维护                     |
+| [`research-test-fixtures.md`](./research-test-fixtures.md)                         | 科研测试夹具：多身份账号、P0/P1 数据清单与手工验证流程      | 持续维护（`seed_research_demo`）         |
 | [`linting.md`](./linting.md)                                                       | 代码风格、静态检查与提交前检查约定                          | 持续维护                                 |
 
 `ai4ms-plane-integration.png` 与 `ai4ms-plane-enhanced-integration.png` 是生态边界与集成架构的参考图，供产品文档引用。
+`research-p0-architecture.png` 与 `research-p1-architecture.png` 是两期技术架构图的渲染产物，源码见
+[`research-p0-p1-architecture.md`](./research-p0-p1-architecture.md) §2.1 与 §3.1。
 
 ## 2. 阅读顺序
 
@@ -27,6 +31,7 @@
 | 新加入的开发者  | 根 [`README.md`](../README.md) → 本索引 → 路线图 §1–§4 → 对应期次的开发 PRD → 该期发布说明                             |
 | 参与 P0/P1 开发 | 路线图 §5.1 / §5.2 → 开发 PRD 的需求编号与接口契约 → 评审报告的决策项 → PRD §16 实现回写记录 → 验收报告 / 发布门禁结果 |
 | 部署与运维      | 根 README「启用科研模块」→ 各期发布说明的「环境变量清单」「开关层级」「回滚策略」                                      |
+| 手工测试与验收  | [`research-test-fixtures.md`](./research-test-fixtures.md) → 对应期次的开发 PRD 与验收报告                             |
 | 产品与业务方    | 路线图 §1–§3（背景、目标、术语与角色）→ §5 需求优先级 → §6 功能需求 → §11 测试与验收要求                               |
 
 ## 3. 文档关系
@@ -40,6 +45,8 @@ flowchart LR
     P0 --> P0A[P0 验收报告]
     P0 --> P0N[P0 发布说明]
     P1 --> P1N[P1 发布说明]
+    P0 --> ARCH[P0 / P1 技术架构图]
+    P1 --> ARCH
 ```
 
 - 路线图定义需求与分期，不直接修改业务代码。
