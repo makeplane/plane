@@ -19,6 +19,7 @@ type MatrixCellProps = {
     options?: { additive?: boolean; range?: boolean }
   ) => void;
   onDoubleClick?: (cell: MatrixCellData) => void;
+  onDragStart?: (cell: MatrixCellData, dataTransfer: DataTransfer) => void;
   rowLabel: string;
 };
 
@@ -34,6 +35,7 @@ export const MatrixCell = memo(function MatrixCell({
   maxVisibleCount,
   onActivate,
   onDoubleClick,
+  onDragStart,
   rowLabel,
 }: MatrixCellProps) {
   const count = cell?.count ?? 0;
@@ -77,6 +79,7 @@ export const MatrixCell = memo(function MatrixCell({
           onDragStart={(event) => {
             event.stopPropagation();
             writePlaylistTagDragData(event.dataTransfer, cell.sourceRowIds);
+            onDragStart?.(cell, event.dataTransfer);
           }}
           onClick={(event) =>
             onActivate(cell, event.currentTarget, {

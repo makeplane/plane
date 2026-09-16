@@ -35,8 +35,12 @@ type VideoAnnotationPropertiesPanelProps = {
   annotationDurationSeconds: number;
   annotationImageContent: string | null;
   annotationImageHeight: number;
-  annotationImageOpacity: number;
   annotationImageWidth: number;
+  annotationOpacity: number;
+  annotationPositionX: number;
+  annotationPositionY: number;
+  annotationRotation: number;
+  annotationStartTime: number;
   annotationShapeBackgroundEnabled: boolean;
   annotationShapeBackgroundOpacity: number;
   annotationStrokeStyle: TCustomPlaylistAnnotationStrokeStyle;
@@ -47,7 +51,7 @@ type VideoAnnotationPropertiesPanelProps = {
   annotationTool: TCustomPlaylistAnnotationTool;
   isAnnotationColorPickerOpen: boolean;
   isAnnotationMode: boolean;
-  isImageAnnotationSelected: boolean;
+  isVisualAnnotationSelected: boolean;
   onAnnotationColorChange: (colorValue: string) => void;
   onAnnotationColorChannelChange: (channel: "blue" | "green" | "red", colorValue: string) => void;
   onAnnotationColorHueChange: (hueValue: string) => void;
@@ -55,8 +59,11 @@ type VideoAnnotationPropertiesPanelProps = {
   onAnnotationColorInputChange: (colorValue: string) => void;
   onAnnotationColorPickerPointerDown: (event: ReactPointerEvent<HTMLButtonElement>) => void;
   onAnnotationColorPickerPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => void;
-  onAnnotationImageOpacityChange: (value: string) => void;
   onAnnotationImageSizeChange: (dimension: "height" | "width", value: string) => void;
+  onAnnotationOpacityChange: (value: string) => void;
+  onAnnotationPositionChange: (axis: "x" | "y", value: string) => void;
+  onAnnotationRotationChange: (value: string) => void;
+  onAnnotationStartTimeChange: (value: string) => void;
   onDurationChange: (durationSeconds: number) => void;
   onShapeBackgroundOpacityChange: (value: string) => void;
   onShapeBackgroundToggle: (enabled: boolean) => void;
@@ -80,8 +87,12 @@ export const VideoAnnotationPropertiesPanel = ({
   annotationDurationSeconds,
   annotationImageContent,
   annotationImageHeight,
-  annotationImageOpacity,
   annotationImageWidth,
+  annotationOpacity,
+  annotationPositionX,
+  annotationPositionY,
+  annotationRotation,
+  annotationStartTime,
   annotationShapeBackgroundEnabled,
   annotationShapeBackgroundOpacity,
   annotationStrokeStyle,
@@ -92,7 +103,7 @@ export const VideoAnnotationPropertiesPanel = ({
   annotationTool,
   isAnnotationColorPickerOpen,
   isAnnotationMode,
-  isImageAnnotationSelected,
+  isVisualAnnotationSelected,
   onAnnotationColorChange,
   onAnnotationColorChannelChange,
   onAnnotationColorHueChange,
@@ -100,8 +111,11 @@ export const VideoAnnotationPropertiesPanel = ({
   onAnnotationColorInputChange,
   onAnnotationColorPickerPointerDown,
   onAnnotationColorPickerPointerMove,
-  onAnnotationImageOpacityChange,
   onAnnotationImageSizeChange,
+  onAnnotationOpacityChange,
+  onAnnotationPositionChange,
+  onAnnotationRotationChange,
+  onAnnotationStartTimeChange,
   onDurationChange,
   onShapeBackgroundOpacityChange,
   onShapeBackgroundToggle,
@@ -114,12 +128,12 @@ export const VideoAnnotationPropertiesPanel = ({
   setIsAnnotationColorPickerOpen,
 }: VideoAnnotationPropertiesPanelProps) => {
   const SelectedAnnotationToolIcon = selectedAnnotationToolOption?.icon ?? Pencil;
-  const shouldShowImageProperties = isImageAnnotationSelected;
-  const shouldShowDurationProperties = annotationTool !== "image" || shouldShowImageProperties;
+  const shouldShowImageProperties = annotationTool === "image";
+  const shouldShowDurationProperties = true;
   const shouldShowShapeBackgroundProperties = annotationTool === "rectangle" || annotationTool === "ellipse";
 
   return (
-    <div className="flex h-full w-full min-w-0 flex-col gap-3 overflow-y-auto rounded-[7px] border border-custom-border-200 bg-custom-background-100 p-2 shadow-sm">
+    <div className="vertical-scrollbar scrollbar-md flex h-full min-h-0 w-full min-w-0 flex-col gap-3 overflow-x-hidden overflow-y-auto overscroll-contain rounded-[7px] border border-custom-border-200 bg-custom-background-100 p-2 shadow-sm [scrollbar-gutter:stable]">
       <div className="min-w-0">
         <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">Properties</div>
         <div className="flex min-w-0 items-center gap-1.5 text-[12px] font-semibold text-custom-text-100">
@@ -130,7 +144,66 @@ export const VideoAnnotationPropertiesPanel = ({
 
       {isAnnotationMode ? (
         <>
-          {!shouldShowImageProperties && annotationTool !== "image" ? (
+          {isVisualAnnotationSelected ? (
+            <div className="space-y-2 border-b border-custom-border-200 pb-3">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">General</div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <label className="space-y-1">
+                  <span className="text-[10px] font-medium text-custom-text-300">Starts at (sec)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={0.1}
+                    value={Number(annotationStartTime.toFixed(2))}
+                    onChange={(event) => onAnnotationStartTimeChange(event.currentTarget.value)}
+                    className="h-8 w-full rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[11px] font-semibold text-custom-text-100 outline-none transition-colors focus:border-custom-primary-100 focus:ring-2 focus:ring-custom-primary-100/30"
+                    aria-label="Annotation start in seconds"
+                  />
+                </label>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-medium text-custom-text-300">Duration</span>
+                  <div className="flex h-8 items-center rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 font-mono text-[11px] font-semibold text-custom-text-100">
+                    {annotationDurationSeconds}s
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { axis: "x" as const, label: "X (%)", value: annotationPositionX },
+                  { axis: "y" as const, label: "Y (%)", value: annotationPositionY },
+                ].map((position) => (
+                  <label key={position.axis} className="space-y-1">
+                    <span className="text-[10px] font-medium text-custom-text-300">{position.label}</span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={0.1}
+                      value={Number(position.value.toFixed(1))}
+                      onChange={(event) => onAnnotationPositionChange(position.axis, event.currentTarget.value)}
+                      className="h-8 w-full rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[11px] font-semibold text-custom-text-100 outline-none transition-colors focus:border-custom-primary-100 focus:ring-2 focus:ring-custom-primary-100/30"
+                      aria-label={`Annotation ${position.axis.toUpperCase()} position`}
+                    />
+                  </label>
+                ))}
+                <label className="space-y-1">
+                  <span className="text-[10px] font-medium text-custom-text-300">Rotation</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={359}
+                    step={1}
+                    value={Math.round(annotationRotation)}
+                    onChange={(event) => onAnnotationRotationChange(event.currentTarget.value)}
+                    className="h-8 w-full rounded-[5px] border border-custom-border-200 bg-custom-background-90 px-2 text-[11px] font-semibold text-custom-text-100 outline-none transition-colors focus:border-custom-primary-100 focus:ring-2 focus:ring-custom-primary-100/30"
+                    aria-label="Annotation rotation in degrees"
+                  />
+                </label>
+              </div>
+            </div>
+          ) : null}
+
+          {!shouldShowImageProperties ? (
             <div className="space-y-1.5">
               <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">Color</div>
               <div className="space-y-2">
@@ -287,6 +360,26 @@ export const VideoAnnotationPropertiesPanel = ({
             </div>
           ) : null}
 
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">
+                Opacity
+              </span>
+              <span className="font-mono text-[10px] font-semibold text-custom-text-300">
+                {Math.round(annotationOpacity * 100)}%
+              </span>
+            </div>
+            <input
+              type="range"
+              min={10}
+              max={100}
+              value={Math.round(annotationOpacity * 100)}
+              onChange={(event) => onAnnotationOpacityChange(event.currentTarget.value)}
+              className="h-1.5 w-full accent-custom-primary-100"
+              aria-label={`${selectedAnnotationToolOption?.label ?? "Annotation"} opacity`}
+            />
+          </div>
+
           {shouldShowImageProperties ? (
             <div className="space-y-2">
               <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">Image</div>
@@ -296,29 +389,10 @@ export const VideoAnnotationPropertiesPanel = ({
                     src={annotationImageContent}
                     alt=""
                     className="max-h-full max-w-full object-contain"
-                    style={{ opacity: annotationImageOpacity }}
+                    style={{ opacity: annotationOpacity }}
                   />
                 </div>
               ) : null}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">
-                    Opacity
-                  </span>
-                  <span className="font-mono text-[10px] font-semibold text-custom-text-300">
-                    {Math.round(annotationImageOpacity * 100)}%
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={20}
-                  max={100}
-                  value={Math.round(annotationImageOpacity * 100)}
-                  onChange={(event) => onAnnotationImageOpacityChange(event.currentTarget.value)}
-                  className="h-1.5 w-full accent-custom-primary-100"
-                  aria-label="Image annotation opacity"
-                />
-              </div>
               <div className="space-y-1.5">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-custom-text-400">Size</div>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -431,7 +505,7 @@ export const VideoAnnotationPropertiesPanel = ({
                 </div>
               </div>
             </div>
-          ) : annotationTool === "image" ? null : (
+          ) : (
             <>
               {shouldShowShapeBackgroundProperties ? (
                 <div className="space-y-1.5">

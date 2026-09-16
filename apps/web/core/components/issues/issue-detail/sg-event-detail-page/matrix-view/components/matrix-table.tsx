@@ -24,6 +24,7 @@ type MatrixTableProps = {
     options?: { additive?: boolean; range?: boolean }
   ) => void;
   onCellDoubleClick?: (cell: MatrixCell) => void;
+  onCellDragStart?: (cell: MatrixCell, dataTransfer: DataTransfer) => void;
   openCellId?: string | null;
   selectedCellIds: ReadonlySet<string>;
   stickySummaries?: boolean;
@@ -45,6 +46,7 @@ export const MatrixTable = ({
   maxHeightClassName,
   onCellActivate,
   onCellDoubleClick,
+  onCellDragStart,
   openCellId,
   selectedCellIds,
   stickySummaries = true,
@@ -217,6 +219,7 @@ export const MatrixTable = ({
                 maxVisibleCount={maxVisibleCount}
                 onCellActivate={onCellActivate}
                 onCellDoubleClick={onCellDoubleClick}
+                onCellDragStart={onCellDragStart}
                 openCellId={openCellId}
                 previousColumnGroup={previousColumnGroup}
                 row={row}

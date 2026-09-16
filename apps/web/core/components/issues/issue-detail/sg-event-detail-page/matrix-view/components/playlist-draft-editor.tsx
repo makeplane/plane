@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ListPlus, Video, X } from "lucide-react";
+import { ListPlus, MoveDown, X } from "lucide-react";
 import { cn } from "@plane/utils";
 import { getPlaylistDraftRows, PLAYLIST_TAG_DRAG_TYPE, readPlaylistTagDragData } from "../../playlist-draft";
 import type { PlaylistDraft } from "../../playlist-draft";
 import type { SgTagRow } from "../../types";
+import { PlaylistClipThumbnail } from "./playlist-clip-thumbnail";
 
 type PlaylistDraftEditorProps = {
   availableRows: SgTagRow[];
@@ -12,6 +13,19 @@ type PlaylistDraftEditorProps = {
   onChange: (draft: PlaylistDraft | null) => void;
   onSave: (rows: SgTagRow[], name?: string) => Promise<boolean>;
   selectedRows: SgTagRow[];
+};
+
+const cleanTagDetail = (value: string) => (value.trim() === "--" || value.trim() === "-" ? "" : value.trim());
+
+const formatTagDuration = (row: SgTagRow) => {
+  const explicitDuration = Number(row.clipDurationSeconds);
+  const rangeDuration = Number(row.clipEndSeconds) - Number(row.clipStartSeconds);
+  const duration = explicitDuration > 0 ? explicitDuration : rangeDuration > 0 ? rangeDuration : 0;
+  const roundedDuration = Math.max(0, Math.round(duration));
+  const minutes = Math.floor(roundedDuration / 60);
+  const seconds = roundedDuration % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 };
 
 export const PlaylistDraftEditor = ({
@@ -117,35 +131,66 @@ export const PlaylistDraftEditor = ({
         </button>
       </div>
 
-      <p className="py-3 text-center text-[11px] text-[var(--sg-matrix-text-muted)]">
-        {isDragOver ? "Drop clips here" : "Drag clips here to build your playlist"}
-      </p>
+      <div
+        aria-live="polite"
+        className={cn(
+          "my-2 flex min-h-10 items-center justify-center gap-1.5 rounded-[4px] border border-dashed px-2 text-center text-[11px] transition-colors",
+          isDragOver
+            ? "border-custom-primary-100 bg-custom-primary-100/10 font-medium text-custom-primary-100"
+            : "border-[var(--sg-matrix-grid-border)] text-[var(--sg-matrix-text-muted)]"
+        )}
+      >
+        <MoveDown className="h-3.5 w-3.5 shrink-0" />
+        <span>{isDragOver ? "Release to add clips" : "Drag clips here to build your playlist"}</span>
+      </div>
       {draftRows.length > 0 && (
         <ol aria-label="Clips in new playlist" className="mb-2 max-h-40 space-y-1 overflow-y-auto">
-          {draftRows.map((row, index) => (
-            <li
-              key={row.id}
-              className="flex min-w-0 items-center gap-1.5 rounded border border-emerald-400/15 bg-emerald-400/[0.04] px-1.5 py-1"
-            >
-              <Video className="h-3 w-3 shrink-0 text-emerald-400" />
-              <span className="min-w-0 flex-1 truncate text-[10px] text-[var(--sg-matrix-text-secondary)]">
-                {index + 1}. {row.action || row.primaryDetail || "Clip"}
-              </span>
-              <span className="text-[9px] text-[var(--sg-matrix-text-muted)]">{row.timecode}</span>
-              <button
-                type="button"
-                aria-label={`Remove clip ${index + 1} from new playlist`}
-                disabled={isSaving}
-                onClick={() => {
-                  onChange({ ...draft, rowIds: draft.rowIds.filter((id) => id !== row.id) });
-                  setError("");
-                }}
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-[var(--sg-matrix-text-muted)] hover:bg-[var(--sg-matrix-hover)] disabled:opacity-40"
+          {draftRows.map((row, index) => {
+            const subtitle = [row.player, row.groupValue].map(cleanTagDetail).filter(Boolean).join(" · ");
+            const detail = cleanTagDetail(row.primaryDetail);
+
+            return (
+              <li
+                key={row.id}
+                className="flex min-h-[58px] min-w-0 items-center gap-2 rounded-[5px] border border-gray-400/15 border-l-2 border-l-[#A3A39F] bg-gray-400/[0.04] px-1.5 py-1.5"
               >
-                <X className="h-3 w-3" />
-              </button>
-            </li>
-          ))}
+                <PlaylistClipThumbnail thumbnail={row.thumbnailUrl} className="h-11 w-[72px]" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[10px] font-medium uppercase leading-4 text-[var(--sg-matrix-text)]">
+                    {index + 1}. {cleanTagDetail(row.action) || detail || "Clip"}
+                  </span>
+                  <span className="flex min-w-0 items-center gap-1 text-[9px] leading-3">
+                    {subtitle && (
+                      <span className="truncate text-[var(--sg-matrix-text-muted)]" title={subtitle}>
+                        {subtitle}
+                      </span>
+                    )}
+                    {subtitle && detail && <span className="text-[var(--sg-matrix-text-muted)]">·</span>}
+                    {detail && (
+                      <span className="max-w-16 shrink-0 truncate text-[var(--sg-matrix-primary-blue)]" title={detail}>
+                        {detail}
+                      </span>
+                    )}
+                  </span>
+                </span>
+                <span className="shrink-0 text-[9px] tabular-nums text-[var(--sg-matrix-text-muted)]">
+                  {formatTagDuration(row)}
+                </span>
+                <button
+                  type="button"
+                  aria-label={`Remove clip ${index + 1} from new playlist`}
+                  disabled={isSaving}
+                  onClick={() => {
+                    onChange({ ...draft, rowIds: draft.rowIds.filter((id) => id !== row.id) });
+                    setError("");
+                  }}
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-[var(--sg-matrix-text-muted)] hover:bg-[var(--sg-matrix-hover)] disabled:opacity-40"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </li>
+            );
+          })}
         </ol>
       )}
       {error && (

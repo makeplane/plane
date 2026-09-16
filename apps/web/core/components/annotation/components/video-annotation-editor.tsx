@@ -21,6 +21,7 @@ import {
   applyAnnotationCreationStartTimeOffset,
   getAnnotationStartTimeWithCreationOffset,
 } from "../utils/playlist-annotation-creation-time";
+import { getAnnotationRotation, moveAnnotation } from "../utils/playlist-annotation-model";
 import {
   getAnnotationColor,
   getHexColorFromHsv,
@@ -188,6 +189,7 @@ export const VideoAnnotationEditor = ({
   const [baselineAnnotations, setBaselineAnnotations] = useState<TCustomPlaylistAnnotation[]>(savedAnnotations);
   const [isAnnotationMode, setIsAnnotationMode] = useState(canEdit);
   const [annotationTool, setAnnotationTool] = useState<TCustomPlaylistAnnotationTool>("pen");
+  const [annotationOpacity, setAnnotationOpacity] = useState(1);
   const [annotationStrokeWidth, setAnnotationStrokeWidth] = useState(5);
   const [annotationStrokeStyle, setAnnotationStrokeStyle] = useState<TCustomPlaylistAnnotationStrokeStyle>("solid");
   const [annotationShapeBackgroundEnabled, setAnnotationShapeBackgroundEnabled] = useState(false);
@@ -314,6 +316,12 @@ export const VideoAnnotationEditor = ({
     typeof selectedImageAnnotation?.style?.opacity === "number"
       ? clampTimelineValue(selectedImageAnnotation.style.opacity, 0, 1)
       : annotationImageOpacity;
+  const selectedVisualAnnotationOpacity =
+    typeof selectedAnnotation?.style?.opacity === "number"
+      ? clampTimelineValue(selectedAnnotation.style.opacity, 0.1, 1)
+      : annotationTool === "image"
+        ? selectedImageAnnotationOpacity
+        : annotationOpacity;
   const selectedImageAnnotationHeight =
     typeof selectedImageAnnotation?.height === "number"
       ? Math.round(selectedImageAnnotation.height)
@@ -614,6 +622,65 @@ export const VideoAnnotationEditor = ({
     [handleUpdateAnnotation, selectedAnnotation]
   );
 
+  const handleAnnotationStartTimeChange = useCallback(
+    (value: string) => {
+      if (!selectedAnnotation || selectedAnnotation.type === "audio" || value === "") return;
+      const nextStartTime = Math.max(0, Number(value));
+      if (!Number.isFinite(nextStartTime)) return;
+      const annotationDuration = selectedAnnotation.endTime - selectedAnnotation.startTime;
+      handleUpdateAnnotation({
+        ...selectedAnnotation,
+        endTime: nextStartTime + annotationDuration,
+        startTime: nextStartTime,
+      });
+    },
+    [handleUpdateAnnotation, selectedAnnotation]
+  );
+
+  const handleAnnotationOpacityChange = useCallback(
+    (value: string) => {
+      const nextOpacity = clampTimelineValue(Number(value), 10, 100) / 100;
+      if (!Number.isFinite(nextOpacity)) return;
+      if (!selectedAnnotation) {
+        if (annotationTool === "image") {
+          handleDefaultAnnotationImageOpacityChange(value);
+        } else {
+          setAnnotationOpacity(nextOpacity);
+        }
+        return;
+      }
+      if (selectedAnnotation.type === "audio") return;
+      if (selectedAnnotation.type === "image") handleDefaultAnnotationImageOpacityChange(value);
+      handleUpdateAnnotation({
+        ...selectedAnnotation,
+        style: { ...selectedAnnotation.style, opacity: nextOpacity },
+      });
+    },
+    [annotationTool, handleDefaultAnnotationImageOpacityChange, handleUpdateAnnotation, selectedAnnotation]
+  );
+
+  const handleAnnotationPositionChange = useCallback(
+    (axis: "x" | "y", value: string) => {
+      if (!selectedAnnotation || selectedAnnotation.type === "audio" || value === "") return;
+      const nextCoordinate = clampTimelineValue(Number(value), 0, 100) * 10;
+      if (!Number.isFinite(nextCoordinate)) return;
+      const deltaX = axis === "x" ? nextCoordinate - selectedAnnotation.x : 0;
+      const deltaY = axis === "y" ? nextCoordinate - selectedAnnotation.y : 0;
+      handleUpdateAnnotation(moveAnnotation(selectedAnnotation, deltaX, deltaY));
+    },
+    [handleUpdateAnnotation, selectedAnnotation]
+  );
+
+  const handleAnnotationRotationChange = useCallback(
+    (value: string) => {
+      if (!selectedAnnotation || selectedAnnotation.type === "audio" || value === "") return;
+      const rotation = clampTimelineValue(Number(value), 0, 359);
+      if (!Number.isFinite(rotation)) return;
+      handleUpdateAnnotation({ ...selectedAnnotation, rotation });
+    },
+    [handleUpdateAnnotation, selectedAnnotation]
+  );
+
   const handlePanelAnnotationColorChange = useCallback(
     (colorValue: string) => {
       if (!selectedStyleAnnotation) {
@@ -851,24 +918,6 @@ export const VideoAnnotationEditor = ({
     [handleUpdateAnnotation, selectedShapeAnnotation]
   );
 
-  const handleAnnotationImageOpacityChange = useCallback(
-    (value: string) => {
-      handleDefaultAnnotationImageOpacityChange(value);
-
-      const nextOpacity = clampTimelineValue(Number(value), 20, 100) / 100;
-      if (!selectedImageAnnotation || !Number.isFinite(nextOpacity)) return;
-
-      handleUpdateAnnotation({
-        ...selectedImageAnnotation,
-        style: {
-          ...selectedImageAnnotation.style,
-          opacity: nextOpacity,
-        },
-      });
-    },
-    [handleDefaultAnnotationImageOpacityChange, handleUpdateAnnotation, selectedImageAnnotation]
-  );
-
   const handleAnnotationImageSizeChange = useCallback(
     (dimension: "height" | "width", value: string) => {
       if (!selectedImageAnnotation) {
@@ -1078,8 +1127,12 @@ export const VideoAnnotationEditor = ({
         annotationDurationSeconds={effectiveAnnotationDurationSeconds}
         annotationImageContent={selectedImageAnnotation?.content ?? annotationImageContent}
         annotationImageHeight={selectedImageAnnotationHeight}
-        annotationImageOpacity={selectedImageAnnotationOpacity}
         annotationImageWidth={selectedImageAnnotationWidth}
+        annotationOpacity={selectedVisualAnnotationOpacity}
+        annotationPositionX={(selectedAnnotation?.x ?? 0) / 10}
+        annotationPositionY={(selectedAnnotation?.y ?? 0) / 10}
+        annotationRotation={selectedAnnotation ? getAnnotationRotation(selectedAnnotation) : 0}
+        annotationStartTime={selectedAnnotation?.startTime ?? 0}
         annotationShapeBackgroundEnabled={effectiveShapeBackgroundEnabled}
         annotationShapeBackgroundOpacity={effectiveShapeBackgroundOpacity}
         annotationStrokeStyle={effectiveAnnotationStrokeStyle}
@@ -1090,7 +1143,7 @@ export const VideoAnnotationEditor = ({
         annotationTool={propertiesPanelTool}
         isAnnotationColorPickerOpen={isAnnotationColorPickerOpen}
         isAnnotationMode={isAnnotationMode}
-        isImageAnnotationSelected={Boolean(selectedImageAnnotation)}
+        isVisualAnnotationSelected={Boolean(selectedAnnotation && selectedAnnotation.type !== "audio")}
         onAnnotationColorChange={handlePanelAnnotationColorChange}
         onAnnotationColorChannelChange={handlePanelAnnotationColorChannelChange}
         onAnnotationColorHueChange={handlePanelAnnotationColorHueChange}
@@ -1098,8 +1151,11 @@ export const VideoAnnotationEditor = ({
         onAnnotationColorInputChange={handlePanelAnnotationColorInputChange}
         onAnnotationColorPickerPointerDown={handlePanelAnnotationColorPickerPointerDown}
         onAnnotationColorPickerPointerMove={handlePanelAnnotationColorPickerPointerMove}
-        onAnnotationImageOpacityChange={handleAnnotationImageOpacityChange}
         onAnnotationImageSizeChange={handleAnnotationImageSizeChange}
+        onAnnotationOpacityChange={handleAnnotationOpacityChange}
+        onAnnotationPositionChange={handleAnnotationPositionChange}
+        onAnnotationRotationChange={handleAnnotationRotationChange}
+        onAnnotationStartTimeChange={handleAnnotationStartTimeChange}
         onDurationChange={handleAnnotationDurationChange}
         onShapeBackgroundOpacityChange={handleShapeBackgroundOpacityChange}
         onShapeBackgroundToggle={handleShapeBackgroundToggle}
@@ -1172,6 +1228,7 @@ export const VideoAnnotationEditor = ({
         onDeleteAnnotation={handleDeleteAnnotation}
         onSelectedAnnotationIdChange={setSelectedAnnotationId}
         onUpdateAnnotation={handleUpdateAnnotation}
+        opacity={annotationOpacity}
         selectedAnnotationId={annotationTool === "audio" ? null : selectedAnnotationId}
         shapeBackgroundEnabled={annotationShapeBackgroundEnabled}
         shapeBackgroundOpacity={annotationShapeBackgroundOpacity}

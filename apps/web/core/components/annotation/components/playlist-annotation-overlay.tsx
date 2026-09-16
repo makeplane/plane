@@ -152,6 +152,7 @@ export const PlaylistAnnotationOverlay = ({
   imageTitle,
   imageWidth,
   inputEnabled = enabled,
+  opacity,
   onCreateAnnotation,
   onDeleteAnnotation,
   onSelectedAnnotationIdChange,
@@ -523,7 +524,7 @@ export const PlaylistAnnotationOverlay = ({
         ...(shapeBackgroundEnabled && (tool === "rectangle" || tool === "ellipse")
           ? { backgroundColor: color, backgroundOpacity: shapeBackgroundOpacity }
           : {}),
-        ...(tool === "image" ? { opacity: imageOpacity } : {}),
+        opacity: tool === "image" ? imageOpacity : opacity,
         ...(tool === "text" ? { fontFamily: textFontFamily, fontSize: textFontSize, fontWeight: textFontWeight } : {}),
       },
       title: tool === "image" ? imageTitle || "Image" : undefined,
@@ -540,6 +541,7 @@ export const PlaylistAnnotationOverlay = ({
       imageOpacity,
       imageTitle,
       imageWidth,
+      opacity,
       shapeBackgroundEnabled,
       shapeBackgroundOpacity,
       startTime,

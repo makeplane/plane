@@ -19,6 +19,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { SURFACE_CLASS } from "../../constants";
 import { getDraggedPlaylistTagIds, writePlaylistTagDragData } from "../../playlist-draft";
+import { setTagDragPreview } from "../../tags-view/components/tag-drag-preview";
 import type { SgTagRow, SportTableKind } from "../../types";
 import {
   TIMELINE_CANVAS_CONTENT_CLASS,
@@ -74,6 +75,7 @@ import { TimelineTagTypesPanel } from "./timeline-tag-types-panel";
 type SgEventTimelinePanelProps = {
   activePlaybackOverrideId: string | null;
   activeTagRowId: string | null;
+  clipThumbnailUrl?: string;
   isCreatingPlaylist?: boolean;
   isMediaLoading: boolean;
   isPlaylistSelectionMode?: boolean;
@@ -117,6 +119,7 @@ const getTimelineTickLabelClassName = (position: number) =>
 export const SgEventTimelinePanel = ({
   activePlaybackOverrideId,
   activeTagRowId,
+  clipThumbnailUrl = "",
   isCreatingPlaylist = false,
   isMediaLoading,
   isPlaylistSelectionMode = false,
@@ -945,10 +948,14 @@ export const SgEventTimelinePanel = ({
                             draggable
                             onDragStart={(event) => {
                               event.stopPropagation();
-                              writePlaylistTagDragData(
-                                event.dataTransfer,
-                                getDraggedPlaylistTagIds(row.id, rows, selectedTagIds)
-                              );
+                              const draggedTagIds = getDraggedPlaylistTagIds(row.id, rows, selectedTagIds);
+                              writePlaylistTagDragData(event.dataTransfer, draggedTagIds);
+                              setTagDragPreview(event.dataTransfer, {
+                                count: draggedTagIds.length,
+                                row,
+                                sport,
+                                thumbnailUrl: row.thumbnailUrl || clipThumbnailUrl,
+                              });
                             }}
                             onClick={(event) => {
                               event.stopPropagation();

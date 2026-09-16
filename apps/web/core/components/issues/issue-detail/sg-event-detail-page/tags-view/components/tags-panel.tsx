@@ -23,6 +23,7 @@ import {
 } from "../utils/tags-panel-model";
 import type { SgTagColumn } from "../utils/tags-panel-model";
 import { EditTagRowModal } from "./edit-tag-row-modal";
+import { setTagDragPreview } from "./tag-drag-preview";
 import { TagsColumnsPanel } from "./tags-columns-panel";
 import { TagsPanelToolbar } from "./tags-panel-toolbar";
 
@@ -387,10 +388,14 @@ export const SgEventTagsPanel = ({
                   draggable
                   onDragStart={(event) => {
                     event.stopPropagation();
-                    writePlaylistTagDragData(
-                      event.dataTransfer,
-                      getDraggedPlaylistTagIds(row.id, rows, selectedTagIds)
-                    );
+                    const draggedTagIds = getDraggedPlaylistTagIds(row.id, rows, selectedTagIds);
+                    writePlaylistTagDragData(event.dataTransfer, draggedTagIds);
+                    setTagDragPreview(event.dataTransfer, {
+                      count: draggedTagIds.length,
+                      row,
+                      sport: sportTableConfig.sport,
+                      thumbnailUrl: rowThumbnailUrl,
+                    });
                   }}
                   className={cn(
                     "grid w-max min-w-full cursor-pointer items-center gap-3 border-t border-custom-border-200 px-3 py-2 text-xs text-custom-text-200 transition-colors",
