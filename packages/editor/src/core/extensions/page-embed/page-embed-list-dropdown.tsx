@@ -5,6 +5,7 @@
  */
 
 import { FloatingOverlay } from "@floating-ui/react";
+import { FilePlus } from "lucide-react";
 import type { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -23,15 +24,18 @@ import type { TPageEmbedComponentAttributes } from "./types";
 import { EPageEmbedAttributeNames } from "./types";
 
 export type PageEmbedListDropdownProps = SuggestionProps<TPageEmbedSection, TPageEmbedComponentAttributes> &
-  Pick<TPageEmbedHandler, "searchCallback" | "onSelect"> & {
+  Pick<TPageEmbedHandler, "searchCallback" | "onCreate"> & {
     onClose: () => void;
   };
+
+// the "New page" entry, kept in its own section so keyboard navigation reaches it
+const CREATE_PAGE_ITEM_ID = "__create_page__";
 
 export const PageEmbedListDropdown = forwardRef(function PageEmbedListDropdown(
   props: PageEmbedListDropdownProps,
   ref
 ) {
-  const { command, editor, query, searchCallback, onSelect, onClose } = props;
+  const { command, editor, query, searchCallback, onCreate, onClose } = props;
   // states
   const [sections, setSections] = useState<TPageEmbedSection[]>([]);
   const [selectedIndex, setSelectedIndex] = useState({
@@ -43,25 +47,25 @@ export const PageEmbedListDropdown = forwardRef(function PageEmbedListDropdown(
   const dropdownContainer = useRef<HTMLDivElement>(null);
 
   const selectItem = useCallback(
-    (sectionIndex: number, itemIndex: number) => {
+    async (sectionIndex: number, itemIndex: number) => {
       try {
         const item = sections?.[sectionIndex]?.items?.[itemIndex];
-        const transactionId = uuidv4();
-        if (item) {
-          // only pass the node's declared attributes, extra keys (title, icon) make prosemirror reject the node
-          command({
-            [EPageEmbedAttributeNames.ID]: transactionId,
-            [EPageEmbedAttributeNames.ENTITY_IDENTIFIER]: item.entity_identifier,
-            [EPageEmbedAttributeNames.PROJECT_IDENTIFIER]: item.project_identifier ?? null,
-            [EPageEmbedAttributeNames.WORKSPACE_IDENTIFIER]: item.workspace_identifier ?? null,
-          });
-          onSelect?.(item);
-        }
+        if (!item) return;
+        // "New page" creates the page first, then embeds it
+        const pageToEmbed = item.entity_identifier === CREATE_PAGE_ITEM_ID ? await onCreate?.(query.trim()) : item;
+        if (!pageToEmbed) return;
+        // only pass the node's declared attributes, extra keys (title, icon) make prosemirror reject the node
+        command({
+          [EPageEmbedAttributeNames.ID]: uuidv4(),
+          [EPageEmbedAttributeNames.ENTITY_IDENTIFIER]: pageToEmbed.entity_identifier,
+          [EPageEmbedAttributeNames.PROJECT_IDENTIFIER]: pageToEmbed.project_identifier ?? null,
+          [EPageEmbedAttributeNames.WORKSPACE_IDENTIFIER]: pageToEmbed.workspace_identifier ?? null,
+        });
       } catch (error) {
         console.error("Error selecting page:", error);
       }
     },
-    [command, onSelect, sections]
+    [command, onCreate, query, sections]
   );
 
   useImperativeHandle(ref, () => ({
@@ -69,7 +73,7 @@ export const PageEmbedListDropdown = forwardRef(function PageEmbedListDropdown(
       if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
 
       if (event.key === "Enter") {
-        selectItem(selectedIndex.section, selectedIndex.item);
+        void selectItem(selectedIndex.section, selectedIndex.item);
         return true;
       }
 
@@ -106,14 +110,30 @@ export const PageEmbedListDropdown = forwardRef(function PageEmbedListDropdown(
             const pageId = node.attrs?.[EPageEmbedAttributeNames.ENTITY_IDENTIFIER];
             if (node.type.name === CORE_EXTENSIONS.PAGE_EMBED && pageId) embeddedPageIds.add(pageId);
           });
-          setSections(
-            sectionsResponse
-              .map((section) => ({
-                ...section,
-                items: section.items.filter((item) => !embeddedPageIds.has(item.entity_identifier)),
-              }))
-              .filter((section) => section.items.length > 0)
-          );
+          const pageSections = sectionsResponse
+            .map((section) => ({
+              ...section,
+              items: section.items.filter((item) => !embeddedPageIds.has(item.entity_identifier)),
+            }))
+            .filter((section) => section.items.length > 0);
+          const createSection: TPageEmbedSection[] = onCreate
+            ? [
+                {
+                  key: "create-page",
+                  items: [
+                    {
+                      id: CREATE_PAGE_ITEM_ID,
+                      entity_identifier: CREATE_PAGE_ITEM_ID,
+                      project_identifier: undefined,
+                      workspace_identifier: undefined,
+                      title: searchQuery.trim() ? `New page "${searchQuery.trim()}"` : "New page",
+                      icon: <FilePlus className="size-3.5" />,
+                    },
+                  ],
+                },
+              ]
+            : [];
+          setSections([...createSection, ...pageSections]);
         }
       } catch (error) {
         console.error("Failed to fetch page suggestions:", error);
@@ -121,7 +141,7 @@ export const PageEmbedListDropdown = forwardRef(function PageEmbedListDropdown(
         setIsLoading(false);
       }
     }, 300),
-    [searchCallback, editor]
+    [searchCallback, editor, onCreate]
   );
 
   // trigger debounced search when query changes
@@ -207,7 +227,7 @@ export const PageEmbedListDropdown = forwardRef(function PageEmbedListDropdown(
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      selectItem(sectionIndex, itemIndex);
+                      void selectItem(sectionIndex, itemIndex);
                     }}
                     onMouseEnter={() =>
                       setSelectedIndex({

@@ -21,8 +21,8 @@ export type TPageEmbedSection = {
 
 export type TPageEmbedHandler = {
   searchCallback: (query: string) => Promise<TPageEmbedSection[]>;
-  // called after a page has been picked from the dropdown and embedded
-  onSelect?: (item: TPageEmbedSuggestion) => void;
+  // called when "New page" is picked, the created page is then embedded
+  onCreate?: (name: string) => Promise<TPageEmbedSuggestion | undefined>;
   widgetCallback: (props: {
     pageId: string;
     projectId: string | undefined;

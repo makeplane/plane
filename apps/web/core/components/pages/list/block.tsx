@@ -4,7 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, PageIcon } from "@plane/propel/icons";
@@ -27,18 +29,48 @@ type TPageListBlock = {
   hasChildren?: boolean;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  onMovePage?: (draggedPageId: string, targetPageId: string | null) => void;
 };
 
 export const PageListBlock = observer(function PageListBlock(props: TPageListBlock) {
-  const { pageId, storeType, depth, hasChildren = false, isExpanded = false, onToggleExpand } = props;
+  const { pageId, storeType, depth, hasChildren = false, isExpanded = false, onToggleExpand, onMovePage } = props;
   // refs
   const parentRef = useRef(null);
+  const dragRef = useRef<HTMLDivElement | null>(null);
+  // states
+  const [isDraggedOver, setIsDraggedOver] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   // hooks
   const page = usePage({
     pageId,
     storeType,
   });
   const { isMobile } = usePlatformOS();
+
+  // drag a page onto another one to make it a sub-page
+  useEffect(() => {
+    const element = dragRef.current;
+    if (!element || !onMovePage) return;
+    return combine(
+      draggable({
+        element,
+        getInitialData: () => ({ id: pageId, type: "PAGE" }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        element,
+        canDrop: ({ source }) => source.data.type === "PAGE" && source.data.id !== pageId,
+        onDragEnter: () => setIsDraggedOver(true),
+        onDragLeave: () => setIsDraggedOver(false),
+        onDrop: ({ source }) => {
+          setIsDraggedOver(false);
+          if (typeof source.data.id === "string") onMovePage(source.data.id, pageId);
+        },
+      })
+    );
+  }, [onMovePage, pageId]);
+
   // handle page check
   if (!page) return null;
   // derived values
@@ -46,38 +78,46 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
   const isTreeItem = depth !== undefined;
 
   return (
-    <ListItem
-      prependTitleElement={
-        <div className="flex items-center gap-2" style={isTreeItem ? { paddingLeft: `${depth * 20}px` } : undefined}>
-          {isTreeItem && (
-            <button
-              type="button"
-              className={cn("grid size-5 place-items-center rounded-sm text-tertiary hover:bg-layer-1", {
-                invisible: !hasChildren,
-              })}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onToggleExpand?.();
-              }}
-              aria-label={isExpanded ? "Collapse sub-pages" : "Expand sub-pages"}
-              tabIndex={hasChildren ? 0 : -1}
-            >
-              <ChevronRightIcon className={cn("size-3.5 transition-transform", { "rotate-90": isExpanded })} />
-            </button>
-          )}
-          {logo_props?.in_use ? (
-            <Logo logo={logo_props} size={16} type="lucide" />
-          ) : (
-            <PageIcon className="h-4 w-4 text-tertiary" />
-          )}
-        </div>
-      }
-      title={getPageName(name)}
-      itemLink={getRedirectionLink()}
-      actionableItems={<BlockItemAction page={page} parentRef={parentRef} storeType={storeType} />}
-      isMobile={isMobile}
-      parentRef={parentRef}
-    />
+    <div
+      ref={dragRef}
+      className={cn({
+        "bg-layer-1 outline-1 -outline-offset-1 outline-accent-strong": isDraggedOver,
+        "opacity-60": isDragging,
+      })}
+    >
+      <ListItem
+        prependTitleElement={
+          <div className="flex items-center gap-2" style={isTreeItem ? { paddingLeft: `${depth * 20}px` } : undefined}>
+            {isTreeItem && (
+              <button
+                type="button"
+                className={cn("grid size-5 place-items-center rounded-sm text-tertiary hover:bg-layer-1", {
+                  invisible: !hasChildren,
+                })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleExpand?.();
+                }}
+                aria-label={isExpanded ? "Collapse sub-pages" : "Expand sub-pages"}
+                tabIndex={hasChildren ? 0 : -1}
+              >
+                <ChevronRightIcon className={cn("size-3.5 transition-transform", { "rotate-90": isExpanded })} />
+              </button>
+            )}
+            {logo_props?.in_use ? (
+              <Logo logo={logo_props} size={16} type="lucide" />
+            ) : (
+              <PageIcon className="h-4 w-4 text-tertiary" />
+            )}
+          </div>
+        }
+        title={getPageName(name)}
+        itemLink={getRedirectionLink()}
+        actionableItems={<BlockItemAction page={page} parentRef={parentRef} storeType={storeType} />}
+        isMobile={isMobile}
+        parentRef={parentRef}
+      />
+    </div>
   );
 });

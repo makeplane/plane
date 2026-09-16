@@ -6,17 +6,17 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, FilePlus, X } from "lucide-react";
+import { Link } from "react-router";
+import { FilePlus, X } from "lucide-react";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { PageIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, PageIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPage } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectPageService } from "@/services/page";
 // local imports
@@ -25,7 +25,6 @@ import { CreateIssuePageModal } from "./create-page-modal";
 const projectPageService = new ProjectPageService();
 
 // action options rendered above the page list
-const OPEN_PAGE = "__open_page__";
 const CREATE_PAGE = "__create_page__";
 const REMOVE_PAGE = "__remove_page__";
 
@@ -44,8 +43,6 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   // refs
   const isFetchingPages = useRef(false);
-  // router
-  const router = useAppRouter();
   // store hooks
   const {
     issue: { getIssueById },
@@ -56,7 +53,9 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
   const issue = getIssueById(issueId);
   const issuePage = getPageByIssueId(issueId);
   const linkedPageProjectId = issuePage?.page_detail?.project_ids?.[0] ?? projectId;
-  const linkedPageUrl = issuePage ? `/${workspaceSlug}/projects/${linkedPageProjectId}/pages/${issuePage.page}` : undefined;
+  const linkedPageUrl = issuePage
+    ? `/${workspaceSlug}/projects/${linkedPageProjectId}/pages/${issuePage.page}`
+    : undefined;
 
   const fetchProjectPages = () => {
     if (projectPages !== undefined || isFetchingPages.current) return;
@@ -79,7 +78,11 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
   const handleLinkPage = async (pageId: string) => {
     try {
       await linkPage(workspaceSlug, projectId, issueId, pageId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Page linked", message: "The page has been linked to the work item." });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Page linked",
+        message: "The page has been linked to the work item.",
+      });
     } catch {
       setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "The page could not be linked. Please try again." });
     }
@@ -90,7 +93,11 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
     try {
       await removePage(workspaceSlug, projectId, issueId, issuePage.id);
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "The page could not be removed. Please try again." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "The page could not be removed. Please try again.",
+      });
     }
   };
 
@@ -103,16 +110,16 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
       setProjectPages(undefined);
       setToast({ type: TOAST_TYPE.SUCCESS, title: "Page created", message: "The page has been created and linked." });
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "The page could not be created. Please try again." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "The page could not be created. Please try again.",
+      });
       throw error;
     }
   };
 
   const handleChange = (value: string) => {
-    if (value === OPEN_PAGE) {
-      if (linkedPageUrl) router.push(linkedPageUrl);
-      return;
-    }
     if (value === CREATE_PAGE) {
       handleCreateModalToggle(true);
       return;
@@ -125,20 +132,6 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
   };
 
   const actionOptions = [
-    ...(issuePage
-      ? [
-          {
-            value: OPEN_PAGE,
-            query: "open page",
-            content: (
-              <div className="flex items-center gap-2 text-secondary">
-                <ExternalLink className="size-3.5 flex-shrink-0" />
-                Open page
-              </div>
-            ),
-          },
-        ]
-      : []),
     {
       value: CREATE_PAGE,
       query: "create new page",
@@ -176,6 +169,20 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
     ),
   }));
 
+  const pagePicker = (customButton: React.ReactNode, customButtonClassName: string) => (
+    <CustomSearchSelect
+      value={issuePage?.page ?? null}
+      onChange={handleChange}
+      onOpen={fetchProjectPages}
+      options={pageOptions ? [...actionOptions, ...pageOptions] : undefined}
+      disabled={disabled}
+      maxHeight="lg"
+      noResultsMessage="No pages found"
+      customButton={customButton}
+      customButtonClassName={customButtonClassName}
+    />
+  );
+
   return (
     <>
       <CreateIssuePageModal
@@ -184,33 +191,34 @@ export const IssuePageSelect = observer(function IssuePageSelect(props: Props) {
         onClose={() => handleCreateModalToggle(false)}
         onSubmit={handleCreatePage}
       />
-      <CustomSearchSelect
-        className={cn("w-full grow", className)}
-        customButtonClassName="w-full rounded-sm"
-        value={issuePage?.page ?? null}
-        onChange={handleChange}
-        onOpen={fetchProjectPages}
-        options={pageOptions ? [...actionOptions, ...pageOptions] : undefined}
-        disabled={disabled}
-        maxHeight="lg"
-        noResultsMessage="No pages found"
-        customButton={
-          <div
-            className={cn("flex h-7.5 w-full items-center gap-1.5 px-2 text-left text-body-xs-regular", {
-              "text-placeholder": !issuePage,
-            })}
-          >
-            {issuePage ? (
-              <>
-                <PageIcon className="size-3.5 flex-shrink-0 text-tertiary" />
-                <span className="truncate">{getPageName(issuePage.page_detail?.name)}</span>
-              </>
-            ) : (
-              "Add page"
-            )}
-          </div>
-        }
-      />
+      <div className={cn("flex w-full items-center gap-1", className)}>
+        {issuePage && linkedPageUrl ? (
+          <>
+            {/* a single click on the name opens the page, the chevron holds the actions */}
+            <Link
+              to={linkedPageUrl}
+              className="flex h-7.5 min-w-0 flex-1 items-center gap-1.5 rounded-sm px-2 text-body-xs-regular hover:bg-layer-transparent-hover"
+            >
+              <PageIcon className="size-3.5 flex-shrink-0 text-tertiary" />
+              <span className="truncate">{getPageName(issuePage.page_detail?.name)}</span>
+            </Link>
+            {!disabled &&
+              pagePicker(
+                <span className="grid size-6 flex-shrink-0 place-items-center rounded-sm text-tertiary hover:bg-layer-transparent-hover">
+                  <ChevronDownIcon className="size-3.5" />
+                </span>,
+                "w-auto flex-shrink-0"
+              )}
+          </>
+        ) : (
+          pagePicker(
+            <div className="flex h-7.5 w-full items-center gap-1.5 px-2 text-left text-body-xs-regular text-placeholder">
+              Add page
+            </div>,
+            "w-full rounded-sm"
+          )
+        )}
+      </div>
     </>
   );
 });

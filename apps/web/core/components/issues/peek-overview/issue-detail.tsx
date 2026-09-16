@@ -26,6 +26,7 @@ import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import type { TIssueOperations } from "../issue-detail";
+import { IssuePageButton } from "../issue-detail/page-button";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -105,6 +106,8 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         value={issue.name}
         containerClassName="-ml-3"
       />
+
+      <IssuePageButton workspaceSlug={workspaceSlug} projectId={issue.project_id} issueId={issue.id} />
 
       <DescriptionInput
         issueSequenceId={issue.sequence_id}

@@ -19,7 +19,7 @@ export const PAGE_EMBED_TRIGGER_CHAR = "+";
 export const PageEmbedSuggestionPluginKey = new PluginKey("page-embed-suggestion");
 
 export function PageEmbedExtension(props: TPageEmbedHandler) {
-  const { searchCallback, widgetCallback, onSelect } = props;
+  const { searchCallback, widgetCallback, onCreate } = props;
   return PageEmbedExtensionConfig.extend({
     addOptions(this) {
       return {
@@ -37,7 +37,7 @@ export function PageEmbedExtension(props: TPageEmbedHandler) {
     suggestion: {
       char: PAGE_EMBED_TRIGGER_CHAR,
       pluginKey: PageEmbedSuggestionPluginKey,
-      render: renderPageEmbedDropdown({ searchCallback, onSelect }),
+      render: renderPageEmbedDropdown({ searchCallback, onCreate }),
       allowSpaces: true,
     },
   });

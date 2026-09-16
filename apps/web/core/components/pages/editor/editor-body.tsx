@@ -21,10 +21,11 @@ import type {
 } from "@plane/editor";
 import type { TPageEmbedSuggestion } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
-import { cn, generateRandomColor, hslToHex } from "@plane/utils";
+import { cn, generateRandomColor, getPageName, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { EditorPageEmbedRoot } from "@/components/editor/embeds/page-embed";
@@ -125,25 +126,38 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     excludePageId: pageId,
     searchEntity: handlers.fetchEntity,
   });
-  const { getPageById } = usePageStore(storeType);
-  // a page embedded here becomes a sub-page of this page
-  const handlePageEmbedSelect = useCallback(
-    (item: TPageEmbedSuggestion) => {
-      const embeddedPageId = item.entity_identifier;
-      if (!pageId || !projectId || !embeddedPageId || embeddedPageId === pageId) return;
-      if (getPageById(embeddedPageId)?.parent === pageId) return;
-      projectPageService
-        .update(workspaceSlug, projectId, embeddedPageId, { parent: pageId })
-        .then(() => getPageById(embeddedPageId)?.mutateProperties({ parent: pageId }))
-        .catch(() =>
-          setToast({
-            type: TOAST_TYPE.INFO,
-            title: "Page linked",
-            message: `"${item.title}" was linked but couldn't be moved under this page, it may be one of this page's parents.`,
-          })
-        );
+  const { fetchPagesList } = usePageStore(storeType);
+  // "New page" in the embed dropdown creates a sub-page of this page, linking never moves pages on its own
+  const handleCreatePageEmbed = useCallback(
+    async (name: string): Promise<TPageEmbedSuggestion | undefined> => {
+      if (!pageId || !projectId) return undefined;
+      try {
+        const newPage = await projectPageService.create(workspaceSlug, projectId, {
+          name: name || undefined,
+          parent: pageId,
+          access: page.access,
+        });
+        if (!newPage?.id) return undefined;
+        // keep the pages list in sync so the new sub-page shows up in the tree
+        void fetchPagesList(workspaceSlug, projectId);
+        return {
+          id: newPage.id,
+          entity_identifier: newPage.id,
+          project_identifier: projectId,
+          workspace_identifier: workspaceSlug,
+          title: getPageName(newPage.name),
+          icon: <PageIcon className="size-3.5 text-tertiary" />,
+        };
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "The page could not be created. Please try again.",
+        });
+        return undefined;
+      }
     },
-    [getPageById, pageId, projectId, workspaceSlug]
+    [fetchPagesList, page.access, pageId, projectId, workspaceSlug]
   );
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
@@ -329,7 +343,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
             }}
             pageEmbedHandler={{
               searchCallback: fetchPageSuggestions,
-              onSelect: handlePageEmbedSelect,
+              onCreate: handleCreatePageEmbed,
               widgetCallback: (embedProps) => <EditorPageEmbedRoot {...embedProps} />,
             }}
             updatePageProperties={updatePageProperties}

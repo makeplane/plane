@@ -20,9 +20,9 @@ import type { PageEmbedListDropdownProps } from "./page-embed-list-dropdown";
 import { PageEmbedListDropdown } from "./page-embed-list-dropdown";
 
 export const renderPageEmbedDropdown =
-  (args: Pick<TPageEmbedHandler, "searchCallback" | "onSelect">): SuggestionOptions["render"] =>
+  (args: Pick<TPageEmbedHandler, "searchCallback" | "onCreate">): SuggestionOptions["render"] =>
   () => {
-    const { searchCallback, onSelect } = args;
+    const { searchCallback, onCreate } = args;
     let component: ReactRenderer<CommandListInstance, PageEmbedListDropdownProps> | null = null;
     let cleanup: () => void = () => {};
     let editorRef: Editor | null = null;
@@ -42,7 +42,7 @@ export const renderPageEmbedDropdown =
           props: {
             ...props,
             searchCallback,
-            onSelect,
+            onCreate,
             onClose: () => handleClose(props.editor),
           } satisfies PageEmbedListDropdownProps,
           editor: props.editor,
