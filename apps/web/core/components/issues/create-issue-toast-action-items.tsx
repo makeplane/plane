@@ -55,14 +55,14 @@ export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = obs
 
   return (
     <div className="flex items-center gap-1 text-xs text-custom-text-200">
-      <a
+      {/* <a
         href={workItemLink}
         target="_blank"
         rel="noopener noreferrer"
         className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
       >
         {`View ${isEpic ? "epic" : "work item"}`}
-      </a>
+      </a> */}
 
       {copied ? (
         <>
