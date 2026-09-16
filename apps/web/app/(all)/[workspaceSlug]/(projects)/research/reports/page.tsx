@@ -15,7 +15,12 @@ function WorkspaceResearchReportsPage() {
   if (!workspaceSlug) return null;
 
   return (
-    <ResearchPageShell titleKey="research.nav.reports" descriptionKey="research.reports.description" section="reports">
+    <ResearchPageShell
+      titleKey="research.nav.reports"
+      descriptionKey="research.reports.description"
+      section="reports"
+      navKey="reports"
+    >
       <ResearchReportList workspaceSlug={workspaceSlug} />
     </ResearchPageShell>
   );

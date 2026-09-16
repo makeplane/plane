@@ -5,7 +5,7 @@
 import pytest
 from rest_framework.test import APIClient
 
-from plane.db.models import Notification, OrgUnit, OrgUnitMember, PeriodicReport
+from plane.db.models import MentorBinding, Notification, OrgUnit, OrgUnitMember, PeriodicReport
 from plane.tests.research_fixtures import add_workspace_member, enable_research, make_user, make_workspace
 
 pytestmark = pytest.mark.contract
@@ -126,9 +126,18 @@ class TestReportSummary:
         assert {entry["org_unit_name"] for entry in summary["by_unit"]} == {"Root"}
         assert summary["counts"]["not_submitted"] == 2
 
-    def test_analyst_without_org_role_sees_nothing(self, env):
+    def test_analyst_without_scope_sees_nothing(self, env):
+        """A mentor bound to a student still aggregates nothing of their own.
+
+        v2.5.0 puts the summary behind the mentor tier, so the analyst reaches
+        the page through a mentoring relation instead of a node seat while
+        staying outside every aggregation scope.
+        """
         stranger = make_user()
         add_workspace_member(env["workspace"], stranger)
+        MentorBinding.objects.create(
+            workspace=env["workspace"], mentor=stranger, mentee=env["student_one"]
+        )
         summary = client_for(stranger).get(f"{env['summary_url']}?period_key=2026-W38").json()
         assert summary["by_unit"] == []
         assert summary["counts"]["not_submitted"] == 0

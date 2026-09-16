@@ -94,6 +94,12 @@ def env(db):
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=lead, org_role=OrgUnitMember.OrgRole.PI
     )
+    # v2.5.0: acting on an approval needs a research relation. The director owns
+    # the institute above the group, which is exactly the level that reviews a
+    # purchase order of that group.
+    OrgUnitMember.objects.create(
+        workspace=workspace, org_unit=root, user=director, org_role=OrgUnitMember.OrgRole.UNIT_ADMIN
+    )
 
     project, states = bootstrap_project(workspace, admin)
     issue = Issue.objects.create(

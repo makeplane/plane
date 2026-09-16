@@ -32,6 +32,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_REPORTS
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_conflict,
@@ -73,6 +74,8 @@ def report_timezone_for(workspace):
 
 class ResearchReportListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/reports/``"""
+
+    nav_capability = NAV_REPORTS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="reports")
@@ -227,6 +230,8 @@ class ResearchReportListCreateEndpoint(ResearchAPIView):
 class ResearchReportDetailEndpoint(ResearchAPIView):
     """``GET``/``PATCH /api/research/workspaces/<slug>/reports/<report_id>/``"""
 
+    nav_capability = NAV_REPORTS
+
     def _visible_report(self, request, workspace, report_id, action="view"):
         report = report_queryset(workspace).filter(pk=report_id).first()
         if report is None:
@@ -278,6 +283,8 @@ class ResearchReportDetailEndpoint(ResearchAPIView):
 class ResearchReportSubmitEndpoint(ResearchAPIView):
     """``POST /api/research/workspaces/<slug>/reports/<report_id>/submit/``"""
 
+    nav_capability = NAV_REPORTS
+
     def post(self, request, slug, report_id):
         workspace, error = self.get_workspace(section="reports")
         if error:
@@ -323,6 +330,8 @@ class ResearchReportSubmitEndpoint(ResearchAPIView):
 
 class ResearchReportReturnEndpoint(ResearchAPIView):
     """``POST /api/research/workspaces/<slug>/reports/<report_id>/return/``"""
+
+    nav_capability = NAV_REPORTS
 
     def post(self, request, slug, report_id):
         workspace, error = self.get_workspace(section="reports")
@@ -382,6 +391,8 @@ class ResearchReportReturnEndpoint(ResearchAPIView):
 class ResearchReportAcceptEndpoint(ResearchAPIView):
     """``POST /api/research/workspaces/<slug>/reports/<report_id>/accept/``"""
 
+    nav_capability = NAV_REPORTS
+
     def post(self, request, slug, report_id):
         workspace, error = self.get_workspace(section="reports")
         if error:
@@ -433,6 +444,8 @@ class ResearchReportAcceptEndpoint(ResearchAPIView):
 class ResearchReportHistoryEndpoint(ResearchAPIView):
     """``GET /api/research/workspaces/<slug>/reports/<report_id>/history/``"""
 
+    nav_capability = NAV_REPORTS
+
     def get(self, request, slug, report_id):
         workspace, error = self.get_workspace(section="reports")
         if error:
@@ -457,6 +470,8 @@ class ResearchReportAccessEndpoint(ResearchAPIView):
     Authors may only narrow the workspace default and may only grant within that
     boundary (P0-ACL-04, P0-ACL-05).
     """
+
+    nav_capability = NAV_REPORTS
 
     def _load(self, request, workspace, report_id):
         report = report_queryset(workspace).filter(pk=report_id).first()

@@ -41,6 +41,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_REVIEWS
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_conflict,
@@ -406,7 +407,14 @@ class ResearchStageReviewSummaryEndpoint(ResearchAPIView):
 
 
 class ResearchReviewListEndpoint(ResearchAPIView):
-    """``GET /api/research/workspaces/<slug>/reviews/?scope=to_me|mine|completed``"""
+    """``GET /api/research/workspaces/<slug>/reviews/?scope=to_me|mine|completed``
+
+    The inbox is the only review surface the level gates: project scoped stage
+    reviews stay on the project ACL, because a reviewer may sit at any level
+    (v2.5.0).
+    """
+
+    nav_capability = NAV_REVIEWS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section=SECTION)

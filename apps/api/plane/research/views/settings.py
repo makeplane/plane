@@ -13,12 +13,14 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_PLATFORM
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_error,
     research_permission_denied,
 )
-from plane.research.utils.org import ensure_root_org_unit, is_workspace_admin
+from plane.research.utils.org import ensure_root_org_unit
+from plane.research.utils.roles import is_research_admin
 from plane.research.utils.settings import default_workspace_research_settings
 from plane.research.views.base import ResearchAPIView, truthy
 
@@ -59,6 +61,8 @@ class ResearchSettingsEndpoint(ResearchAPIView):
     workspace level switches, upload limits and the default visibility policy
     (P0-CFG-01 ~ P0-CFG-08).
     """
+
+    nav_capability = NAV_PLATFORM
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(require_enabled=False)

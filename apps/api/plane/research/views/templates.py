@@ -14,13 +14,14 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_TEMPLATES
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_error,
     research_not_found,
     research_permission_denied,
 )
-from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.roles import is_research_admin
 from plane.research.views.base import ResearchAPIView, truthy
 
 REPORT_TYPES = ("WEEKLY", "MONTHLY")
@@ -28,6 +29,8 @@ REPORT_TYPES = ("WEEKLY", "MONTHLY")
 
 class ResearchReportTemplateListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/report-templates/``"""
+
+    nav_capability = NAV_TEMPLATES
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="reports")
@@ -100,6 +103,8 @@ class ResearchReportTemplateListCreateEndpoint(ResearchAPIView):
 
 class ResearchReportTemplateDetailEndpoint(ResearchAPIView):
     """``GET``/``PATCH``/``DELETE /api/research/workspaces/<slug>/report-templates/<pk>/``"""
+
+    nav_capability = NAV_TEMPLATES
 
     def _get_template(self, workspace, pk):
         return ReportTemplate.objects.filter(workspace=workspace, pk=pk).first()

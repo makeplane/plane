@@ -22,6 +22,7 @@ function WorkspaceResearchApprovalsPage() {
       titleKey="research.nav.approvals"
       descriptionKey="research.approvals.description"
       section="approvals"
+      navKey="approvals"
     >
       <ResearchApprovalList workspaceSlug={workspaceSlug} isAdmin={research.isWorkspaceAdmin} />
     </ResearchPageShell>

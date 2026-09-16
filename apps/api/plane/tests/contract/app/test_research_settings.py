@@ -50,9 +50,15 @@ def env(db):
 class TestResearchSettingsEndpoint:
     def test_defaults_follow_the_deployment_switch_when_no_row_exists(self, env):
         # A workspace without a row renders research by default; reading the
-        # page provisions the row without flipping the workspace off.
+        # page provisions the row without flipping the workspace off. The page
+        # is an administrator surface since v2.5.0, so the administrator reads
+        # it and a plain member is refused.
         assert not WorkspaceResearchSetting.objects.filter(workspace=env["workspace"]).exists()
-        response = env["member_client"].get(env["url"])
+        refused = env["member_client"].get(env["url"])
+        assert refused.status_code == 403
+        assert refused.json()["error_code"] == "research_permission_denied"
+
+        response = env["admin_client"].get(env["url"])
         assert response.status_code == 200
         payload = response.json()
         assert payload["module_enabled"] is True

@@ -33,6 +33,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_APPROVALS
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_conflict,
@@ -60,6 +61,8 @@ def request_queryset(workspace):
 
 class ResearchApprovalFlowListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/approval-flows/``"""
+
+    nav_capability = NAV_APPROVALS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="approvals")
@@ -159,6 +162,8 @@ class ResearchApprovalFlowDetailEndpoint(ResearchAPIView):
     they were created with (P0-APR-03).
     """
 
+    nav_capability = NAV_APPROVALS
+
     def patch(self, request, slug, pk):
         workspace, error = self.get_workspace(section="approvals")
         if error:
@@ -241,6 +246,8 @@ class ResearchApprovalFlowDetailEndpoint(ResearchAPIView):
 
 class ResearchApprovalRequestListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/approval-requests/``"""
+
+    nav_capability = NAV_APPROVALS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="approvals")
@@ -363,6 +370,8 @@ class ResearchApprovalRequestListCreateEndpoint(ResearchAPIView):
 class ResearchApprovalRequestDetailEndpoint(ResearchAPIView):
     """``GET /api/research/workspaces/<slug>/approval-requests/<pk>/``"""
 
+    nav_capability = NAV_APPROVALS
+
     def get(self, request, slug, pk):
         workspace, error = self.get_workspace(section="approvals")
         if error:
@@ -380,6 +389,8 @@ class ResearchApprovalRequestDetailEndpoint(ResearchAPIView):
 
 class ResearchApprovalRequestActionEndpoint(ResearchAPIView):
     """``POST .../approve/`` · ``.../reject/`` · ``.../withdraw/``"""
+
+    nav_capability = NAV_APPROVALS
 
     def post(self, request, slug, pk, action):
         workspace, error = self.get_workspace(section="approvals")
@@ -502,6 +513,8 @@ class ResearchApprovalRequestActionEndpoint(ResearchAPIView):
 
 class ResearchApprovalRequestHistoryEndpoint(ResearchAPIView):
     """``GET .../approval-requests/<pk>/history/`` (append-only)."""
+
+    nav_capability = NAV_APPROVALS
 
     def get(self, request, slug, pk):
         workspace, error = self.get_workspace(section="approvals")

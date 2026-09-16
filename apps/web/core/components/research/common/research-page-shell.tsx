@@ -19,6 +19,13 @@ type Props = {
   titleKey: string;
   descriptionKey?: string;
   section?: "org" | "reports" | "approvals" | "stages" | "experiments" | "code" | "integrations";
+  /**
+   * Navigation key this page belongs to (v2.5.0). The backend publishes the
+   * keys the caller may reach, so the page guard and the sidebar entry can
+   * never disagree. Project scoped pages omit it: they stay on the project ACL.
+   */
+  navKey?: string;
+  /** Restricts the page to research configuration rights. */
   adminOnly?: boolean;
   /** Platform settings must stay reachable while the workspace switch is off. */
   allowDisabled?: boolean;
@@ -34,6 +41,7 @@ export const ResearchPageShell = observer(function ResearchPageShell({
   titleKey,
   descriptionKey,
   section = "reports",
+  navKey,
   adminOnly = false,
   allowDisabled = false,
   actions,
@@ -65,8 +73,14 @@ export const ResearchPageShell = observer(function ResearchPageShell({
     );
   }
 
-  // switch off or no permission: fall back to the workspace home (P0-UI-07)
-  if ((!allowDisabled && (!research.isEnabled || !sectionEnabled)) || (adminOnly && !research.isWorkspaceAdmin))
+  // Switch off, disabled section or a level that does not open this surface:
+  // fall back to the workspace home (P0-UI-07). Pages that stay reachable while
+  // the module is off keep their own administrator gate, so the capability list
+  // is only enforced while the module is on.
+  const surfaceMissing = !allowDisabled && (!research.isEnabled || !sectionEnabled);
+  const levelDenied = research.isEnabled && navKey !== undefined && !research.canSee(navKey);
+
+  if (surfaceMissing || levelDenied || (adminOnly && !research.isResearchAdmin))
     return <Navigate to={`/${workspaceSlug}/`} replace />;
 
   return (

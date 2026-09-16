@@ -19,6 +19,7 @@ function WorkspaceResearchTemplateSettingsPage() {
       titleKey="research.nav.templates"
       descriptionKey="research.templates.description"
       section="reports"
+      navKey="templates"
       adminOnly
     >
       <ResearchTemplateList workspaceSlug={workspaceSlug} />

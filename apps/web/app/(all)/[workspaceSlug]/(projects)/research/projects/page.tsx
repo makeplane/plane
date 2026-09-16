@@ -22,6 +22,7 @@ function WorkspaceResearchProjectsPage() {
       titleKey="research.nav.projects"
       descriptionKey="research.projects.description"
       section="reports"
+      navKey="projects"
     >
       <ResearchProjectList workspaceSlug={workspaceSlug} currentUserId={currentUser?.id ?? ""} />
     </ResearchPageShell>

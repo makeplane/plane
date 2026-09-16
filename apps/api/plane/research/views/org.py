@@ -19,6 +19,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_ORG
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_conflict,
@@ -94,7 +95,7 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
         return Response(_serialize_units(list(units)), status=status.HTTP_200_OK)
 
     def post(self, request, slug):
-        workspace, error = self.get_workspace(section="org")
+        workspace, error = self.get_workspace(section="org", nav=NAV_ORG)
         if error:
             return error
 
@@ -187,6 +188,8 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
 
 class ResearchOrgUnitDetailEndpoint(ResearchAPIView):
     """``GET``/``PATCH``/``DELETE /api/research/workspaces/<slug>/org-units/<pk>/``"""
+
+    nav_capability = NAV_ORG
 
     def _get_unit(self, workspace, pk):
         return OrgUnit.objects.filter(workspace=workspace, pk=pk).first()
@@ -354,6 +357,8 @@ class ResearchOrgUnitDetailEndpoint(ResearchAPIView):
 class ResearchOrgUnitMemberListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/org-units/<pk>/members/``"""
 
+    nav_capability = NAV_ORG
+
     def _get_unit(self, workspace, pk):
         return OrgUnit.objects.filter(workspace=workspace, pk=pk).first()
 
@@ -449,11 +454,15 @@ class ResearchOrgUnitMemberListCreateEndpoint(ResearchAPIView):
             metadata={"user": str(user.id), "org_role": org_role, "is_primary": is_primary},
             request=request,
         )
+        # An organisation owner / main PI belongs to the main PI workspace too.
+        sync_main_pi_workspace_seat(user, actor=request.user)
         return Response(OrgUnitMemberSerializer(member).data, status=status.HTTP_201_CREATED)
 
 
 class ResearchOrgUnitMemberDetailEndpoint(ResearchAPIView):
     """``PATCH``/``DELETE /api/research/workspaces/<slug>/org-units/<pk>/members/<member_id>/``"""
+
+    nav_capability = NAV_ORG
 
     def _get_member(self, workspace, pk, member_id):
         return (
@@ -578,6 +587,8 @@ class ResearchOrgUnitPiTransferEndpoint(ResearchAPIView):
     author and reviewer.
     """
 
+    nav_capability = NAV_ORG
+
     def post(self, request, slug, pk):
         workspace, error = self.get_workspace(section="org")
         if error:
@@ -656,6 +667,8 @@ class ResearchOrgUnitPiTransferEndpoint(ResearchAPIView):
 
 class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/mentors/``"""
+
+    nav_capability = NAV_ORG
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="org")
@@ -758,6 +771,8 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
 
 class ResearchMentorBindingDetailEndpoint(ResearchAPIView):
     """``DELETE /api/research/workspaces/<slug>/mentors/<pk>/``"""
+
+    nav_capability = NAV_ORG
 
     def delete(self, request, slug, pk):
         workspace, error = self.get_workspace(section="org")

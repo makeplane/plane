@@ -15,7 +15,12 @@ function WorkspaceResearchOrgSettingsPage() {
   if (!workspaceSlug) return null;
 
   return (
-    <ResearchPageShell titleKey="research.nav.org_settings" descriptionKey="research.org.description" section="org">
+    <ResearchPageShell
+      titleKey="research.nav.org_settings"
+      descriptionKey="research.org.description"
+      section="org"
+      navKey="org"
+    >
       <ResearchOrgTreeEditor workspaceSlug={workspaceSlug} />
     </ResearchPageShell>
   );

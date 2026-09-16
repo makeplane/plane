@@ -27,7 +27,7 @@ type Props = {
 export const ResearchGuard = observer(function ResearchGuard({ section, adminOnly = false }: Props) {
   const { workspaceSlug } = useParams();
   const research = useResearch();
-  const { identity, identityLoader, identityErrorCode, isEnabled, isWorkspaceAdmin } = research;
+  const { identity, identityLoader, identityErrorCode, isEnabled, isResearchAdmin } = research;
 
   useEffect(() => {
     if (workspaceSlug && !identity)
@@ -49,7 +49,7 @@ export const ResearchGuard = observer(function ResearchGuard({ section, adminOnl
 
   const sectionEnabled = section ? (identity.sections?.[section] ?? false) : true;
 
-  if (!isEnabled || !sectionEnabled || (adminOnly && !isWorkspaceAdmin)) {
+  if (!isEnabled || !sectionEnabled || (adminOnly && !isResearchAdmin)) {
     return <Navigate to={`/${workspaceSlug}/`} replace />;
   }
 

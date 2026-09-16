@@ -27,7 +27,12 @@ const RESEARCH_MENU_OPEN_KEY = "is_research_menu_open";
  *
  * Purely additive: existing sidebar entries keep their order and behaviour
  * (P0-UI-01, P0-UI-08). When the workspace switch is off or the caller has no
- * research role the block renders nothing (P0-UI-06, P0-UI-07).
+ * research relation the block renders nothing (P0-UI-06, P0-UI-07).
+ *
+ * Two axes decide every entry (v2.5.0): the workspace sub switch says whether
+ * the surface exists here, and ``capabilities`` returned by the identity
+ * endpoint says which level this caller reached. The backend enforces exactly
+ * the same list, so a hidden entry is also a refused request.
  *
  * The group itself collapses and expands like the workspace / projects groups,
  * and the choice is remembered per browser.
@@ -53,13 +58,19 @@ export const ResearchSidebarItems = observer(function ResearchSidebarItems() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
 
-  if (!workspaceSlug || !research.isEnabled) return null;
+  // No research relation at all: nothing to show, not even the overview.
+  if (!workspaceSlug || !research.isEnabled || research.researchLevel === "NONE") return null;
 
   const sections = research.identity?.sections;
-  const visibleBusinessItems = RESEARCH_NAVIGATION_ITEMS.filter((item) => Boolean(sections?.[item.section]));
-  const visibleSettingsItems = research.isWorkspaceAdmin
-    ? RESEARCH_SETTINGS_NAVIGATION_ITEMS.filter((item) => Boolean(sections?.[item.section]))
-    : [];
+  const visibleBusinessItems = RESEARCH_NAVIGATION_ITEMS.filter(
+    (item) => Boolean(sections?.[item.section]) && research.canSee(item.key)
+  );
+  // The configuration entries are not gated by a local administrator check any
+  // more: the backend puts "org" in the list for the main PI tier and the other
+  // keys only for the administrator tier, so ``canSee`` is the whole rule.
+  const visibleSettingsItems = RESEARCH_SETTINGS_NAVIGATION_ITEMS.filter(
+    (item) => Boolean(sections?.[item.section]) && research.canSee(item.key)
+  );
 
   const menuAriaLabel = t(
     isMenuOpen ? "aria_labels.projects_sidebar.close_research_menu" : "aria_labels.projects_sidebar.open_research_menu"
@@ -122,7 +133,7 @@ export const ResearchSidebarItems = observer(function ResearchSidebarItems() {
       >
         {isMenuOpen && (
           <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
-            {renderItem("overview", "research.nav.overview", "")}
+            {research.canSee("overview") && renderItem("overview", "research.nav.overview", "")}
             {visibleBusinessItems.map((item) => renderItem(item.key, item.labelKey, item.path))}
             {visibleSettingsItems.map((item) => renderItem(item.key, item.labelKey, item.path))}
           </Disclosure.Panel>

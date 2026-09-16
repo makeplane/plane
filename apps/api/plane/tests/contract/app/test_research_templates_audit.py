@@ -47,7 +47,7 @@ def env(db):
 
 @pytest.mark.django_db
 class TestReportTemplateApi:
-    def test_members_can_list_templates_and_admins_create_them(self, env):
+    def test_templates_are_an_administrator_surface(self, env):
         created = env["admin_client"].post(
             env["templates_url"],
             {"name": "Standard weekly", "report_type": "WEEKLY", "is_default": True},
@@ -56,9 +56,15 @@ class TestReportTemplateApi:
         assert created.status_code == 201
         assert created.json()["is_default"] is True
 
-        listing = env["member_client"].get(env["templates_url"]).json()
+        listing = env["admin_client"].get(env["templates_url"]).json()
         assert listing["count"] == 1
         assert listing["results"][0]["name"] == "Standard weekly"
+
+        # v2.5.0: a plain member without a research relation is refused, which is
+        # the same rule that hides the 报告模板 menu entry.
+        denied = env["member_client"].get(env["templates_url"])
+        assert denied.status_code == 403
+        assert denied.json()["error_code"] == "research_permission_denied"
 
     def test_member_cannot_create_templates(self, env):
         response = env["member_client"].post(

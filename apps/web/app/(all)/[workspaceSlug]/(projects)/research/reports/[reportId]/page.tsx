@@ -19,6 +19,7 @@ function WorkspaceResearchReportDetailPage() {
       titleKey="research.reports.detail_title"
       descriptionKey="research.reports.detail_description"
       section="reports"
+      navKey="reports"
     >
       <ResearchReportDetail workspaceSlug={workspaceSlug} reportId={reportId} />
     </ResearchPageShell>

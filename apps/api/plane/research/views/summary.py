@@ -19,6 +19,7 @@ from plane.research.utils.acl import (
     check_access,
     org_unit_scope_ids,
 )
+from plane.research.utils.capabilities import NAV_SUMMARY
 from plane.research.utils.org import managing_unit_ids
 from plane.research.utils.errors import ResearchErrorCode, research_error
 from plane.research.utils.org import is_workspace_admin
@@ -53,6 +54,8 @@ class ResearchReportSummaryEndpoint(ResearchAPIView):
     ACL as the report list, so the dashboard and the detail view can never
     disagree (P0-UI-05, P0-ACL-07).
     """
+
+    nav_capability = NAV_SUMMARY
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="reports")
