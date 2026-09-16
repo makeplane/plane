@@ -300,7 +300,7 @@ P1 不新起一套底座：ACL、审计、开关、Page 与 FileAsset 全部沿�
 | 层级         | 位置                                                                               | 关闭后的行为                                          |
 | ------------ | ---------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | 全局总开关   | `RESEARCH_MODULE_ENABLED`（仅 `1` 视为开启）                                       | 科研接口返回 404 `research_module_disabled`，入口隐藏 |
-| Workspace    | `WorkspaceResearchSetting.module_enabled`                                          | 该工作区回到接入前行为                                |
+| Workspace    | `WorkspaceResearchSetting.module_enabled`（未建行时跟随全局总开关，默认渲染）      | 该工作区回到接入前行为                                |
 | P0 子开关    | `org_enabled` 与 `report_enabled` 与 `approval_enabled`                            | 对应功能域入口与接口不可用                            |
 | P1 子开关    | `stage_enabled` 与 `experiment_enabled` 与 `code_enabled` 与 `integration_enabled` | 对应标签页不渲染，数据保留                            |
 | 集成连接开关 | `ExternalSystemConnection.is_enabled`（按系统）                                    | 引用降级为链接，阶段与实验主流程继续可用              |
