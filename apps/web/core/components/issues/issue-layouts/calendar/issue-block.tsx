@@ -27,6 +27,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 // local components
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { CalendarStoreType } from "./base-calendar-root";
+import { formatCalendarIssueDateTime } from "./calendar-time";
 
 type Props = {
   issue: TIssue;
@@ -87,6 +88,7 @@ export const CalendarIssueBlock = observer(
       isEpic,
       isArchived: !!issue?.archived_at,
     });
+    const scheduleLabel = formatCalendarIssueDateTime(issue.start_date, issue.start_time);
 
     return (
       <ControlLink
@@ -105,7 +107,7 @@ export const CalendarIssueBlock = observer(
           <div
             ref={blockRef}
             className={cn(
-              "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 ",
+              "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1",
               {
                 "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
                 "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
@@ -113,24 +115,31 @@ export const CalendarIssueBlock = observer(
               }
             )}
           >
-            <div className="flex h-full items-center gap-1.5 truncate">
+            <div className="flex h-full min-w-0 flex-1 items-center gap-1.5">
               <span
                 className="h-full w-0.5 flex-shrink-0 rounded"
                 style={{
                   backgroundColor: stateColor,
                 }}
               />
-              {issue.project_id && (
-                <IssueIdentifier
-                  issueId={issue.id}
-                  projectId={issue.project_id}
-                  textContainerClassName="text-sm md:text-xs text-custom-text-300"
-                  displayProperties={issuesFilter?.issueFilters?.displayProperties}
-                />
-              )}
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
-              </Tooltip>
+              <div className="flex min-w-0 flex-1 flex-col justify-center">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  {issue.project_id && (
+                    <IssueIdentifier
+                      issueId={issue.id}
+                      projectId={issue.project_id}
+                      textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                      displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                    />
+                  )}
+                  <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+                    <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
+                  </Tooltip>
+                </div>
+                {scheduleLabel && (
+                  <div className="truncate text-[10px] leading-3 text-custom-text-300">{scheduleLabel}</div>
+                )}
+              </div>
             </div>
             <div
               className={cn("flex-shrink-0 size-5", {

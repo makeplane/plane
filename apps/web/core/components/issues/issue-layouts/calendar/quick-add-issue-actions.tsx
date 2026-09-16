@@ -15,14 +15,17 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { QuickAddIssueRoot } from "../quick-add";
+import { openCalendarCreateModal } from "./calendar-create-modal";
 
 type TCalendarQuickAddIssueActions = {
   prePopulatedData?: Partial<TIssue>;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  addIssuesToView?: (issueIds: string[]) => Promise<any>;
+  addIssuesToView?: (issueIds: string[]) => Promise<unknown>;
   onOpen?: () => void;
   isEpic?: boolean;
 };
@@ -33,10 +36,12 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
   // router
   const { workspaceSlug, projectId, moduleId } = useParams();
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [createModalData, setCreateModalData] = useState<Partial<TIssue> | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isExistingIssueModalOpen, setIsExistingIssueModalOpen] = useState(false);
   const { updateIssue } = useIssueDetail();
+  const storeType = useIssueStoreType();
+  const isOpen = createModalData !== null;
   // derived values
   const ExistingIssuesListModalPayload = addIssuesToView
     ? moduleId
@@ -60,14 +65,13 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
       },
       error: {
         title: t("toast.error"),
-        message: (err) => err?.message || t("common.errors.default.message"),
+        message: (err) => (err as { message?: string })?.message || t("common.errors.default.message"),
       },
     });
   };
 
   const handleNewIssue = () => {
-    setIsOpen(true);
-    if (onOpen) onOpen();
+    openCalendarCreateModal(prePopulatedData, setCreateModalData, onOpen);
   };
   const handleExistingIssue = () => {
     setIsExistingIssueModalOpen(true);
@@ -75,8 +79,45 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
 
   if (!projectId) return null;
 
+  const quickAddMenu = (
+    <div
+      className={cn("md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100", {
+        block: isMenuOpen,
+      })}
+    >
+      <CustomMenu
+        placement="bottom-start"
+        menuButtonOnClick={() => setIsMenuOpen(true)}
+        onMenuClose={() => setIsMenuOpen(false)}
+        className="w-full"
+        customButtonClassName="w-full"
+        customButton={
+          <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
+            <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
+            <span className="text-sm font-medium flex-shrink-0">
+              {isEpic ? t("epic.add.label") : t("issue.add.label")}
+            </span>
+          </div>
+        }
+      >
+        <CustomMenu.MenuItem onClick={handleNewIssue}>
+          {isEpic ? t("epic.add.label") : t("issue.add.label")}
+        </CustomMenu.MenuItem>
+        {!isEpic && <CustomMenu.MenuItem onClick={handleExistingIssue}>{t("issue.add.existing")}</CustomMenu.MenuItem>}
+      </CustomMenu>
+    </div>
+  );
+
   return (
     <>
+      {!isEpic && (
+        <CreateUpdateIssueModal
+          isOpen={isOpen}
+          onClose={() => setCreateModalData(null)}
+          data={createModalData ?? undefined}
+          storeType={storeType}
+        />
+      )}
       {workspaceSlug && projectId && (
         <ExistingIssuesListModal
           workspaceSlug={workspaceSlug.toString()}
@@ -96,47 +137,19 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
           }}
         />
       )}
-      <QuickAddIssueRoot
-        isQuickAddOpen={isOpen}
-        setIsQuickAddOpen={(isOpen) => setIsOpen(isOpen)}
-        layout={EIssueLayoutTypes.CALENDAR}
-        prePopulatedData={prePopulatedData}
-        quickAddCallback={quickAddCallback}
-        customQuickAddButton={
-          <div
-            className={cn(
-              "md:opacity-0 rounded md:border-[0.5px] border-custom-border-200 md:group-hover:opacity-100",
-              {
-                block: isMenuOpen,
-              }
-            )}
-          >
-            <CustomMenu
-              placement="bottom-start"
-              menuButtonOnClick={() => setIsMenuOpen(true)}
-              onMenuClose={() => setIsMenuOpen(false)}
-              className="w-full"
-              customButtonClassName="w-full"
-              customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
-                  <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0">
-                    {isEpic ? t("epic.add.label") : t("issue.add.label")}
-                  </span>
-                </div>
-              }
-            >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>
-                {isEpic ? t("epic.add.label") : t("issue.add.label")}
-              </CustomMenu.MenuItem>
-              {!isEpic && (
-                <CustomMenu.MenuItem onClick={handleExistingIssue}>{t("issue.add.existing")}</CustomMenu.MenuItem>
-              )}
-            </CustomMenu>
-          </div>
-        }
-        isEpic={isEpic}
-      />
+      {isEpic ? (
+        <QuickAddIssueRoot
+          isQuickAddOpen={isOpen}
+          setIsQuickAddOpen={(isOpen) => setCreateModalData(isOpen ? { ...(prePopulatedData ?? {}) } : null)}
+          layout={EIssueLayoutTypes.CALENDAR}
+          prePopulatedData={prePopulatedData}
+          quickAddCallback={quickAddCallback}
+          customQuickAddButton={quickAddMenu}
+          isEpic
+        />
+      ) : (
+        quickAddMenu
+      )}
     </>
   );
 });
