@@ -33,15 +33,17 @@ P1 期间未引入任何 AI 能力（评分、辅助写作、智能体调用、�
 
 ## 2. 环境变量清单（默认值即"未配置可安全运行"）
 
+布尔开关在 `settings/common.py` 中按字符串比较，**只有 `1` 视为开启**，`0`、空值与其他写法均按关闭处理。
+
 ```env
 # 科研模块总开关（部署级，默认关闭）
-RESEARCH_MODULE_ENABLED=false
+RESEARCH_MODULE_ENABLED=0
 
 # P1 子开关（Workspace 配置可覆盖）
-RESEARCH_STAGE_ENABLED=true
-RESEARCH_EXPERIMENT_ENABLED=true
-RESEARCH_CODE_ENABLED=true
-RESEARCH_INTEGRATION_ENABLED=true
+RESEARCH_STAGE_ENABLED=1
+RESEARCH_EXPERIMENT_ENABLED=1
+RESEARCH_CODE_ENABLED=1
+RESEARCH_INTEGRATION_ENABLED=1
 
 # P1 门槛默认值（ResearchStageRequirement 与 Workspace 配置优先）
 RESEARCH_LITERATURE_MIN_INCLUDED=20
@@ -55,20 +57,18 @@ RESEARCH_INTEGRATION_TIMEOUT_SECONDS=3
 RESEARCH_INTEGRATION_CACHE_TTL_SECONDS=300
 RESEARCH_INTEGRATION_DEGRADED_MODE=link_only
 
-# 外部系统（仅后端；未配置时对应入口降级为链接或不可用）
-RAGPORTAL_BASE_URL=
+# 外部系统密钥（仅后端）
+# 命名约定：<SYSTEM>_AUTH_SECRET；也可由连接的 credential_ref 指定任意变量名
 RAGPORTAL_AUTH_SECRET=
-WEKNORA_BASE_URL=
 WEKNORA_AUTH_SECRET=
-SPECLABOS_BASE_URL=
 SPECLABOS_AUTH_SECRET=
-SMARTACCESS_BASE_URL=
 SMARTACCESS_AUTH_SECRET=
-POLY_AGENT_BASE_URL=
 POLY_AGENT_AUTH_SECRET=
-SPEC_AGENT_BASE_URL=
 SPEC_AGENT_AUTH_SECRET=
 ```
+
+外部系统的 `base_url`、认证方式（`HMAC` / `BEARER` / `OIDC_CLIENT` / `NONE`）、超时、缓存与降级模式
+按 Workspace 在「科研 → 集成配置」中维护，随连接记录落库；未配置或未启用时，对应入口降级为链接或不可用。
 
 私有仓库与外部系统的凭证只以"引用名"形式进入数据库（`credential_ref`），
 明文仅在环境变量或密钥管理系统中；接口只回显"是否已配置"。
@@ -129,6 +129,29 @@ SPEC_AGENT_AUTH_SECRET=
 
 ## 7. 变更记录
 
-| 版本 | 日期       | 变更内容                                      | 作者 |
-| ---- | ---------- | --------------------------------------------- | ---- |
-| v1.0 | 2026-09-16 | 首版：P1 十四个阶段交付、开关、发布与回滚说明 | —    |
+| 版本 | 日期       | 变更内容                                                                                                           | 作者 |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------ | ---- |
+| v1.0 | 2026-09-16 | 首版：P1 十四个阶段交付、开关、发布与回滚说明                                                                      | —    |
+| v1.1 | 2026-09-16 | 更正 §2：外部系统只由后端保存密钥，`base_url` / 认证方式 / 降级模式按 Workspace 连接维护；开关取值统一为 `0` / `1` | —    |
+
+## 8. 补丁 2.2.1（2026-09-16）
+
+**现象**：用未登记来源访问（例如 Tailscale 地址 `http://100.109.35.2:3000`）时，登录表单提交直接返回
+`CSRF Verification Failed`，密码正确也无法登录；同一浏览器换到局域网地址则正常。
+
+**根因**：Django 对不安全的请求会校验 `Origin` 是否等于请求自身的 host 或落在 `CSRF_TRUSTED_ORIGINS` 内。
+开发态 Vite 代理把 Host 改写成了 `localhost:8001`，于是只有写进 `CORS_ALLOWED_ORIGINS` 的来源才能通过，
+未登记的访问地址必然被拒（`Origin checking failed - ... does not match any trusted origins.`）。
+
+**修复**：
+
+- `apps/web` / `apps/admin` / `apps/space` 的 Vite 代理改为保留浏览器 Host（`changeOrigin: false`），任意 IP / 主机名访问都不再需要逐个登记。
+- `settings/common.py` 支持用环境变量 `CSRF_TRUSTED_ORIGINS` 单独追加可信来源，与 CORS 来源合并去重；`apps/api/.env.example` 已补说明。
+- `csrf_failure` 视图把被拒原因（来源不匹配 / 缺少 cookie / token 失效）写入 `plane.authentication` 日志，便于定位。
+
+**升级步骤**：在 `apps/api/.env` 增加本次使用的访问地址（如
+`CSRF_TRUSTED_ORIGINS="http://100.109.35.2:3000,http://fangyikai-pc:3000"`），随后
+`docker compose -f docker-compose-local.yml -f docker-compose-local.override.yml up -d --no-deps api` 重建 api 容器；
+前端改动需重启 `web` / `admin` / `space` 开发服务器后生效。
+
+**版本号**：`2.2.0` → `2.2.1`（缺陷修复，按补丁号递增），同步根 / `apps/web` / `apps/api` / `packages/ui`。

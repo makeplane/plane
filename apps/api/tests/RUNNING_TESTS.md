@@ -2,7 +2,7 @@
 
 This guide covers running the Django/pytest suite for `apps/api` inside Docker via `docker-compose-test.yml` at the repo root. The compose file boots an isolated stack — Postgres, Valkey (Redis), RabbitMQ, MinIO — with tmpfs-backed data dirs, so every run begins from a clean slate and a single teardown command removes everything.
 
-For background on the test layout, markers, and fixtures, see [`TESTING_GUIDE.md`](./TESTING_GUIDE.md) and [`README.md`](./README.md).
+For background on the test layout, markers, and fixtures, see [`TESTING_GUIDE.md`](../plane/tests/TESTING_GUIDE.md) and [`README.md`](../plane/tests/README.md).
 
 ## Prerequisites
 

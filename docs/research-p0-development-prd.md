@@ -3,11 +3,12 @@
 | 项目     | 内容                                                                                              |
 | -------- | ------------------------------------------------------------------------------------------------- |
 | 文档名称 | Plane for AI4MS 科研管理 P0 开发 PRD                                                              |
-| 文档版本 | v1.0                                                                                              |
-| 文档状态 | Draft / 待评审                                                                                    |
+| 文档版本 | v1.1（实现完成回写，见 §16）                                                                      |
+| 文档状态 | 已评审 / 实现完成（十个阶段全部交付并验收）                                                       |
 | 日期     | 2026-09-15                                                                                        |
 | 上游依据 | [`docs/research-management-prd-roadmap.md`](./research-management-prd-roadmap.md) §5.1（P0 范围） |
 | 代码基线 | `develop` 分支，工作区版本 `2.0.1`，`plane.db` 迁移编号至 `0122`                                  |
+| 交付状态 | 已交付 `v2.1.0`；验收见 [research-p0-acceptance-report.md](./research-p0-acceptance-report.md)    |
 | 文档定位 | 把路线图中的 P0 范围拆解为可排期、可开发、可验收的开发规格                                        |
 | 变更范围 | 本轮仅新增本文档，不修改业务代码、数据库结构与部署配置                                            |
 | 术语约束 | 课题组负责人统一写作 **课题组主 PI**，禁止硬编码任何具体人名                                      |
@@ -1433,7 +1434,7 @@ C1 与 C2 可部分并行：C2 的图片与 PDF 能力需在 C1 报告详情可�
 
 ```env
 # 科研模块全局开关（部署级，默认关闭）
-RESEARCH_MODULE_ENABLED=false
+RESEARCH_MODULE_ENABLED=0
 
 # SSO / OIDC
 OIDC_ISSUER_URL=
@@ -1441,8 +1442,8 @@ OIDC_CLIENT_ID=
 OIDC_CLIENT_SECRET=
 OIDC_REDIRECT_URI=
 OIDC_SCOPES=openid profile email
-OIDC_ENABLE_PKCE=true
-OIDC_AUTO_PROVISION_USERS=false
+OIDC_ENABLE_PKCE=1
+OIDC_AUTO_PROVISION_USERS=0
 
 # 科研附件限制默认值（可被 Workspace 配置覆盖）
 RESEARCH_IMAGE_MAX_MB=20

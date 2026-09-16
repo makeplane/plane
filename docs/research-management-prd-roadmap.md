@@ -2,14 +2,17 @@
 
 | 项目     | 内容                                                                                                           |
 | -------- | -------------------------------------------------------------------------------------------------------------- |
-| 文档状态 | Draft / 待评审                                                                                                 |
-| 文档版本 | v0.2                                                                                                           |
-| 日期     | 2026-09-15                                                                                                     |
+| 文档状态 | 已评审 / 分期实施中：P0 与 P1 已交付，P2 待启动，P3 暂缓                                                       |
+| 文档版本 | v0.3                                                                                                           |
+| 日期     | 2026-09-16                                                                                                     |
 | 定位调整 | 由“科研功能全量规划”调整为“系统管理与项目管理优先，AI 结合功能暂缓”                                            |
 | 生态边界 | 已有系统（RAGPortal / Poly_Agent / SpecLabOS / SmartAccess / Spec_Agent / AI4MS）只做集成，不重复开发，见 §1.4 |
 | 适用范围 | Plane 科研管理增强模块                                                                                         |
 | 变更范围 | 本文档只定义产品需求、分期计划、兼容基线与验收标准，不直接修改业务代码、数据库或配置                           |
 | 命名原则 | 课题组负责人统一使用 **课题组主 PI**，禁止硬编码任何具体人名或固定昵称                                         |
+
+各期实施状态以 §5 为准：P0 见 [research-p0-release-notes.md](./research-p0-release-notes.md)，
+P1 见 [research-p1-release-notes.md](./research-p1-release-notes.md)，文档清单见 [docs/README.md](./README.md)。
 
 ## 1. 背景与目标
 
@@ -344,6 +347,10 @@ sequenceDiagram
 P0 首批（优先完成）：系统管理基础（组织架构、角色权限、账号与 SSO）→ 项目管理（每人一个科研 Project）→ 周报 / 月报（含图片、PDF 上传，Markdown `.md` 解析导入，按组织架构的报告访问分级）。
 
 P0 的开发级细化（需求编号、数据模型、接口契约、10 个开发阶段、验收清单）见 [research-p0-development-prd.md](./research-p0-development-prd.md)。
+
+**实施状态（2026-09-15）**：P0 已按上述 PRD 完成交付，进入 `v2.1.0`；89 条需求编号全部通过验收，
+见 [research-p0-acceptance-report.md](./research-p0-acceptance-report.md)，发布与回滚见
+[research-p0-release-notes.md](./research-p0-release-notes.md)。
 
 P0 不包含：
 
@@ -1597,7 +1604,7 @@ POST         /memory-share-grants/{id}/revoke/
 ## 10.4 环境变量预规划
 
 ```env
-RESEARCH_MODULE_ENABLED=false
+RESEARCH_MODULE_ENABLED=0
 RESEARCH_IMAGE_MAX_MB=20
 RESEARCH_PDF_MAX_MB=100
 RESEARCH_MARKDOWN_MAX_MB=5
@@ -1814,9 +1821,11 @@ RESEARCH_AGENT_TIMEOUT_SECONDS=
 
 ## 16. 附录 B：待确认事项
 
-以下条目本轮未处理，需业务方确认后再动。
+以下条目本轮未处理，需业务方确认后再动；已解决项保留编号以便追溯。
 
-1. 版本号基线：文档仍写 P0 由 `1.4.3` 升至 `1.5.0`，与仓库当前 `2.0.0` 不一致，且无 git tag。
+1. 已解决：版本号基线。§13 改为“以仓库当前实际版本为准”，P0 发布 `2.0.1 → 2.1.0`、
+   P1 发布 `2.1.0 → 2.2.0`，根 `package.json` 与 `apps/web` / `apps/api` / `packages/ui` 同步；
+   原 `1.4.3 → 1.5.0` 建议值作废。仓库当前尚无 git tag，发布打标方式待发布流程统一约定。
 2. 标题层级：§5、§6、§8、§9、§10、§11 下的三级小节使用 `##`，与一级章节平级，大纲错乱。
 3. 重复内容：主 PI 规则、默认拒绝、Feature Flag 等在多处重复，需合并并改为章节引用。
 4. 智能体网关：文档规划的 `RESEARCH_AGENT_*` 与仓库现有私有 OpenAI 兼容网关的关系未定义。

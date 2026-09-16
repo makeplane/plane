@@ -28,9 +28,11 @@ P0 十个开发阶段全部完成：
 
 ## 2. 环境变量清单（默认值即"未配置可安全运行"）
 
+布尔开关在 `settings/common.py` 中按字符串比较，**只有 `1` 视为开启**，`0`、空值与其他写法均按关闭处理。
+
 ```env
 # 科研模块全局开关（部署级，默认关闭）
-RESEARCH_MODULE_ENABLED=false
+RESEARCH_MODULE_ENABLED=0
 
 # AI4MS OIDC（未配置时前端不渲染 SSO 入口，本地登录保持可用）
 OIDC_ISSUER_URL=
@@ -59,7 +61,7 @@ RESEARCH_MARKDOWN_MAX_MB=5
 ```text
 备份数据库
   → 执行迁移 0123 ~ 0130（可回滚）
-  → 部署后端（RESEARCH_MODULE_ENABLED=false）
+  → 部署后端（RESEARCH_MODULE_ENABLED=0）
   → 部署前端（科研入口默认隐藏）
   → 冒烟：通用功能回归 + 科研接口不可用性（应返回 404 research_module_disabled）
   → 打开试点 Workspace 开关（PATCH /api/research/workspaces/<slug>/settings/ {"module_enabled": true}）
@@ -74,7 +76,7 @@ RESEARCH_MARKDOWN_MAX_MB=5
 | 问题类型     | 回滚动作                                                     |
 | ------------ | ------------------------------------------------------------ |
 | 科研功能异常 | 关闭对应 Workspace 或子模块开关，无需回滚代码（立即生效）    |
-| 影响通用功能 | `RESEARCH_MODULE_ENABLED=false` 关闭全局开关，必要时回滚镜像 |
+| 影响通用功能 | `RESEARCH_MODULE_ENABLED=0` 关闭全局开关，必要时回滚镜像     |
 | 迁移升级失败 | `python manage.py migrate db 0122` 回滚到 P0 之前，恢复备份  |
 | 身份登录异常 | 关闭 OIDC（`OIDC_*` 置空）使用本地登录，同时关闭科研入口     |
 | 上传异常     | 关闭科研附件入口；`FILE_SIZE_LIMIT` 未变更，普通上传不受影响 |
