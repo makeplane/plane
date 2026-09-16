@@ -20,8 +20,6 @@ type Props = {
   previewError: string | null;
   dirty: boolean;
   disabled: boolean;
-  conflict: { clip: TCustomPlaylistAnnotation; conflicts: TCustomPlaylistAnnotation[] } | null;
-  onResolveConflict: (action: "replace" | "add" | "cancel") => void;
   onChange: (clip: TCustomPlaylistAnnotation) => void;
   onReplace: (clip: TCustomPlaylistAnnotation) => void;
   onDelete: (id: string) => void;
@@ -39,8 +37,6 @@ export const VoiceNarrationPanel = ({
   previewError,
   dirty,
   disabled,
-  conflict,
-  onResolveConflict,
   onChange,
   onReplace,
   onDelete,
@@ -72,26 +68,7 @@ export const VoiceNarrationPanel = ({
           {previewError}
         </p>
       ) : null}
-      {conflict ? (
-        <div role="alertdialog" aria-label="Overlapping narrations" className="space-y-3">
-          <p className="font-medium text-custom-text-100">
-            Narration overlaps {conflict.conflicts.length} existing recording
-            {conflict.conflicts.length === 1 ? "" : "s"}.
-          </p>
-          <div className="flex flex-col gap-2">
-            <Button size="sm" onClick={() => onResolveConflict("replace")}>
-              Replace existing
-            </Button>
-            <Button size="sm" variant="neutral-primary" onClick={() => onResolveConflict("add")}>
-              Add another narration
-            </Button>
-            <Button size="sm" variant="link-neutral" onClick={() => onResolveConflict("cancel")}>
-              Cancel
-            </Button>
-          </div>
-        </div>
-      ) : null}
-      {showInspector && !conflict ? (
+      {showInspector ? (
         <>
           {state.warning ? (
             <p role="status" className="text-custom-text-300">
@@ -260,11 +237,11 @@ export const VoiceNarrationPanel = ({
             </div>
           </fieldset>
         </>
-      ) : draft && !conflict ? (
+      ) : draft ? (
         <p role="status" className="text-custom-text-300">
           Adding narration...
         </p>
-      ) : !conflict ? (
+      ) : (
         <>
           {controls.replacement ? (
             <p className="text-custom-text-300">
@@ -374,7 +351,7 @@ export const VoiceNarrationPanel = ({
             </Button>
           ) : null}
         </>
-      ) : null}
+      )}
     </section>
   );
 };

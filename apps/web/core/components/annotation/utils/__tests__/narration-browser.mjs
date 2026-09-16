@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const web = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const require = createRequire(path.join(web, "package.json"));
+const { WebmFile } = require("@fix-webm-duration/parser");
 const { build } = require(process.env.ESBUILD_PACKAGE_PATH || "esbuild");
 const { chromium } = require(process.env.PLAYWRIGHT_PACKAGE_PATH || "playwright");
 const styleRequire = createRequire(require.resolve("@plane/tailwind-config"));
@@ -41,9 +42,14 @@ const css = (
   ]).process(root, { from: path.join(web, "styles/globals.css") })
 ).css;
 const video = await readFile(process.env.NARRATION_TEST_VIDEO || "/tmp/kanavio-narration-test.mp4");
+let legacyAudio;
 const html =
   '<!doctype html><html class="dark" data-theme="dark"><head><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/fixture.css"><title>Narration browser test</title></head><body><div id="root"></div><script src="/fixture.js"></script></body></html>';
 const server = createServer((req, res) => {
+  if (req.url === "/legacy-narration.webm" && legacyAudio) {
+    res.writeHead(200, { "Content-Type": "application/octet-stream" }).end(legacyAudio);
+    return;
+  }
   if (req.url === "/fixture.mp4") {
     const range = /^bytes=(\d+)-(\d*)$/.exec(req.headers.range || "");
     const start = range ? Number(range[1]) : 0;
@@ -186,6 +192,20 @@ try {
   assert.ok(clips[0].audio.peaks.length > 0);
   assert.ok(Math.abs(clips[0].startTime - 4) < 0.2);
   assert.ok(clips[0].audio.sourceDuration > 3 && clips[0].audio.sourceDuration < 6);
+  const sourceBytes = Buffer.from(clips[0].content.split(",")[1], "base64");
+  const sourceContainer = new WebmFile(new Uint8Array(sourceBytes));
+  const sourceSegment = sourceContainer.getSectionById(0x8538067);
+  const sourceInfo = sourceSegment.getSectionById(0x549a966);
+  assert.ok(Math.abs(sourceInfo.getSectionById(0x489).getValue() / 1000 - clips[0].audio.sourceDuration) < 0.001);
+  assert.equal(await page.getByTestId("narration-layer-label").count(), 1);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 1);
+  await page.getByRole("button", { name: "Collapse Voice narration", exact: true }).first().click();
+  assert.equal(await page.getByTestId("narration-layer-label").count(), 0);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 0);
+  assert.equal(await page.getByRole("button", { name: /^Narration 01, starts/ }).count(), 0);
+  assert.equal(await page.getByTestId("dirty").innerText(), "Saved");
+  await page.screenshot({ path: `${screenshots}/03-narration-collapsed-desktop.png`, fullPage: true });
+  await page.getByRole("button", { name: "Expand Voice narration", exact: true }).first().press("Enter");
   await page.getByRole("button", { name: /^Narration 01, starts/ }).click();
   await page.getByLabel("Narration name", { exact: true }).fill("Defensive rotation");
   await page.getByLabel("Trim end in seconds", { exact: true }).fill("0.4");
@@ -226,14 +246,59 @@ try {
     true
   );
   await page.screenshot({ path: `${screenshots}/04-actions-menu-desktop.png`, fullPage: true });
+  const downloadEvent = page.waitForEvent("download");
+  await page.getByText("Download original audio", { exact: true }).click();
+  const audioDownload = await downloadEvent;
+  assert.equal(audioDownload.suggestedFilename(), "Defensive rotation.webm");
+  assert.equal(await audioDownload.failure(), null);
+  const exportedBytes = await readFile(await audioDownload.path());
+  assert.deepEqual(exportedBytes, sourceBytes);
+  await audioDownload.saveAs(`${screenshots}/recorded-narration.webm`);
+  const exportedDuration = await page.evaluate(
+    (content) =>
+      new Promise((resolve, reject) => {
+        const audio = new Audio();
+        audio.onloadedmetadata = () => {
+          const duration = audio.duration;
+          audio.removeAttribute("src");
+          audio.load();
+          resolve(duration);
+        };
+        audio.onerror = () => reject(new Error("Exported audio could not be loaded"));
+        audio.src = content;
+      }),
+    `data:audio/webm;base64,${exportedBytes.toString("base64")}`
+  );
+  assert.ok(Number.isFinite(exportedDuration));
+  assert.ok(Math.abs(exportedDuration - clips[0].audio.sourceDuration) < 0.1);
+  assert.equal(await page.getByRole("alert").filter({ hasText: "Download failed" }).count(), 0);
+  await page.getByRole("button", { name: "Narration actions", exact: true }).click();
   await page.getByText("Duplicate", { exact: true }).click();
-  await page.getByRole("alertdialog", { name: "Overlapping narrations" }).waitFor();
-  await page.getByRole("button", { name: "Add another narration", exact: true }).click();
+  assert.equal(await page.getByRole("alertdialog", { name: "Overlapping narrations" }).count(), 0);
   assert.equal(await page.getByRole("button", { name: /Defensive rotation.*starts/ }).count(), 2);
   const trackBoxes = await page
     .getByRole("button", { name: /Defensive rotation.*starts/ })
     .evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().y));
-  assert.ok(Math.abs(trackBoxes[1] - trackBoxes[0]) >= 64);
+  assert.equal(Math.abs(trackBoxes[1] - trackBoxes[0]), 34);
+  assert.equal(await page.getByTestId("narration-layer-label").count(), 2);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 2);
+  assert.equal(
+    await page.evaluate(() => {
+      const labels = [...document.querySelectorAll('[data-testid="narration-layer-label"]')];
+      const tracks = [...document.querySelectorAll('[data-testid="narration-layer-track"]')];
+      return labels.every((label, i) => {
+        const left = label.getBoundingClientRect();
+        const right = tracks[i].getBoundingClientRect();
+        return left.y === right.y && left.height === 34 && right.height === 34;
+      });
+    }),
+    true
+  );
+  await page.getByRole("button", { name: "Collapse Voice narration", exact: true }).last().click();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 0);
+  await page.getByRole("button", { name: "Expand Voice narration", exact: true }).last().click();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 2);
+  await page.screenshot({ path: `${screenshots}/04-narration-layers-desktop.png`, fullPage: true });
   const beforeZoom = await page
     .getByRole("button", { name: /Defensive rotation.*starts/ })
     .first()
@@ -295,8 +360,22 @@ try {
   });
   await page.waitForFunction(() => !document.querySelector("video").seeking);
   await page.getByRole("button", { name: "Check microphone", exact: true }).click();
+  await page.getByRole("button", { name: "Collapse Voice narration", exact: true }).first().click();
   await page.getByRole("button", { name: "Start recording", exact: true }).click();
   await page.getByRole("button", { name: /^Narration 03, starts/ }).waitFor();
+  assert.equal(await page.getByTestId("narration-moment-track").count(), 2);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 1);
+  assert.equal(await page.getByRole("button", { name: "Expand Voice narration", exact: true }).count(), 2);
+  await page.getByRole("button", { name: "Expand Voice narration", exact: true }).first().click();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 3);
+  assert.equal(
+    await page
+      .getByTestId("narration-layer-track")
+      .evaluateAll((tracks) =>
+        tracks.every((track) => track.querySelectorAll('button[aria-label*="starts"]').length === 1)
+      ),
+    true
+  );
   assert.equal(await page.getByRole("button", { name: "Done", exact: true }).count(), 0);
   await page.getByRole("button", { name: "Save editor", exact: true }).click();
   await page.waitForFunction(
@@ -305,6 +384,8 @@ try {
   const endedClips = JSON.parse(await page.getByTestId("saved-json").innerText());
   const last = endedClips.find((clip) => clip.startTime >= 27);
   assert.ok(last && last.endTime <= 30.001 && last.endTime > 29.5);
+  await page.mouse.move(0, 0);
+  await page.getByText("Annotations saved", { exact: true }).waitFor({ state: "hidden", timeout: 15000 });
 
   // A failed replacement retains the existing audio, even when the hardware disappears.
   await page.getByRole("button", { name: /^Narration 03, starts/ }).click();
@@ -326,14 +407,19 @@ try {
     ),
     true
   );
-  // A pending overlap must never commit a clip into another media session.
+  // An overlapping duplicate must not leak into another media session.
   await page.getByRole("button", { name: "Cancel replacement", exact: true }).click();
   await page.getByRole("button", { name: /^Narration 03, starts/ }).click();
   const selectedLastClip = page.getByRole("button", { name: /^Narration 03, starts/ });
   await selectedLastClip.hover();
-  await selectedLastClip.locator("..").getByRole("button", { name: "Narration actions", exact: true }).click();
+  await page
+    .getByTestId("narration-layer-label")
+    .filter({ has: page.getByRole("button", { name: "Select narration layer Narration 03", exact: true }) })
+    .getByRole("button", { name: "Narration actions", exact: true })
+    .click();
   await page.getByText("Duplicate", { exact: true }).click();
-  await page.getByRole("alertdialog", { name: "Overlapping narrations" }).waitFor();
+  await page.getByRole("button", { name: /^Narration 03 copy, starts/ }).waitFor();
+  assert.equal(await page.getByRole("alertdialog", { name: "Overlapping narrations" }).count(), 0);
   await page.getByRole("button", { name: "Switch media", exact: true }).click();
   await page.getByRole("button", { name: "Voice narration (Shift + R)", exact: true }).click();
   await page.getByRole("button", { name: "Start recording", exact: true }).waitFor();
@@ -378,6 +464,154 @@ try {
     ),
     true
   );
+  await page.evaluate(() => {
+    const video = document.querySelector("video");
+    video.src = "/fixture.mp4";
+    video.load();
+  });
+  await page.waitForFunction(() => document.querySelector("video").readyState >= 2);
+  await page.getByRole("button", { name: "Load mixed layers", exact: true }).click();
+  await page.getByRole("button", { name: "Line - Guide line", exact: true }).waitFor();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 1);
+  const assertMomentOrder = async (narrationFirst) => {
+    for (const side of ["label", "track"]) {
+      const order = await page
+        .locator(`[data-testid$="moment-${side}"]`)
+        .evaluateAll((groups) => groups.map((group) => group.getAttribute("data-testid")));
+      assert.deepEqual(
+        order,
+        narrationFirst
+          ? [`narration-moment-${side}`, `annotation-moment-${side}`]
+          : [`annotation-moment-${side}`, `narration-moment-${side}`]
+      );
+    }
+    const label = await page.getByTestId("narration-moment-label").boundingBox();
+    const track = await page.getByTestId("narration-moment-track").boundingBox();
+    assert.equal(label.y, track.y);
+    assert.equal(label.height, track.height);
+  };
+  await assertMomentOrder(true);
+  const drawingLabel = await page.getByRole("button", { name: "Line - Guide line", exact: true }).boundingBox();
+  const drawingClip = await page.getByRole("button", { name: "Guide line", exact: true }).boundingBox();
+  assert.equal(drawingLabel.height, 34);
+  assert.ok(Math.abs(drawingLabel.y + drawingLabel.height / 2 - drawingClip.y - drawingClip.height / 2) <= 1);
+  await page.getByRole("button", { name: "Collapse Voice narration", exact: true }).first().click();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 0);
+  assert.equal(await page.getByRole("button", { name: "Line - Guide line", exact: true }).count(), 1);
+  await page.getByRole("button", { name: "Expand Voice narration", exact: true }).first().click();
+  await page.getByRole("button", { name: "Collapse Draw moment", exact: true }).first().click();
+  assert.equal(await page.getByRole("button", { name: "Line - Guide line", exact: true }).count(), 0);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 1);
+  await page.getByRole("button", { name: "Expand Draw moment", exact: true }).first().press("Enter");
+  await page.getByRole("button", { name: "Line - Guide line", exact: true }).click();
+  await page.waitForFunction(() => Math.abs(document.querySelector("video").currentTime - 14) < 0.1);
+  assert.equal(await page.getByTestId("dirty").innerText(), "Saved");
+  await page.screenshot({ path: `${screenshots}/08-mixed-annotation-layers-desktop.png`, fullPage: true });
+  await page.getByRole("button", { name: "Select narration layer Defensive rotation", exact: true }).click();
+  await page.getByLabel("Narration start in seconds", { exact: true }).fill("20");
+  await assertMomentOrder(false);
+  await page.getByRole("button", { name: "Collapse Voice narration", exact: true }).first().click();
+  await assertMomentOrder(false);
+  await page.getByRole("button", { name: "Expand Voice narration", exact: true }).first().click();
+  await page.screenshot({ path: `${screenshots}/09-chronological-narration-moments-desktop.png`, fullPage: true });
+  await page.getByLabel("Narration start in seconds", { exact: true }).fill("2");
+  await assertMomentOrder(true);
+  await page.getByTestId("narration-layer-label").getByRole("button", { name: "Narration actions" }).click();
+  await page.getByText("Duplicate", { exact: true }).click();
+  assert.equal(await page.getByTestId("narration-moment-label").count(), 1);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 2);
+  await page.getByLabel("Narration start in seconds", { exact: true }).fill("10");
+  assert.equal(await page.getByTestId("narration-moment-label").count(), 2);
+  assert.equal(await page.getByTestId("narration-moment-track").count(), 2);
+  await page
+    .getByTestId("narration-moment-label")
+    .first()
+    .getByRole("button", { name: "Collapse Voice narration" })
+    .click();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 1);
+  assert.equal(await page.getByRole("button", { name: "Line - Guide line", exact: true }).count(), 1);
+  await page.getByRole("button", { name: "Select narration layer Defensive rotation copy", exact: true }).click();
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 1);
+  await page.screenshot({ path: `${screenshots}/10-separate-narration-moments-desktop.png`, fullPage: true });
+  await page.getByLabel("Narration start in seconds", { exact: true }).fill("2.02");
+  await page.getByTestId("narration-layer-track").nth(1).waitFor();
+  assert.equal(await page.getByTestId("narration-moment-label").count(), 1);
+  assert.equal(await page.getByTestId("narration-layer-track").count(), 2);
+  assert.equal(await page.getByTestId("dirty").innerText(), "Unsaved changes");
+  assert.equal(await page.getByRole("alertdialog", { name: "Overlapping narrations" }).count(), 0);
+  await page.getByRole("button", { name: "Save editor", exact: true }).click();
+  const beforeOverlappingTake = JSON.parse(await page.getByTestId("saved-json").innerText());
+  await page.evaluate(() => {
+    document.querySelector("video").currentTime = 2.4;
+  });
+  await page.waitForFunction(() => !document.querySelector("video").seeking);
+  await page.getByRole("button", { name: "New narration", exact: true }).click();
+  await page.getByRole("button", { name: "Start recording", exact: true }).click();
+  await page.getByText("Recording narration", { exact: true }).first().waitFor();
+  await page.waitForTimeout(1100);
+  await page.getByRole("button", { name: "Stop voice narration recording" }).click();
+  await page.getByRole("button", { name: /^Narration 03, starts/ }).waitFor();
+  assert.equal(await page.getByRole("alertdialog", { name: "Overlapping narrations" }).count(), 0);
+  await page.getByRole("button", { name: "Save editor", exact: true }).click();
+  const withOverlappingTake = JSON.parse(await page.getByTestId("saved-json").innerText());
+  assert.equal(withOverlappingTake.length, beforeOverlappingTake.length + 1);
+  // Save may rebalance layers; source audio and editing metadata must remain intact.
+  const withoutTrackIndex = (clip) => {
+    const metadata = { ...clip };
+    delete metadata.trackIndex;
+    return metadata;
+  };
+  for (const original of beforeOverlappingTake) {
+    assert.deepEqual(
+      withoutTrackIndex(withOverlappingTake.find((clip) => clip.id === original.id)),
+      withoutTrackIndex(original)
+    );
+  }
+  const newTake = withOverlappingTake.find((clip) => clip.title === "Narration 03");
+  assert.ok(newTake.startTime < 3 && newTake.endTime > 3);
+  await page.getByRole("button", { name: "Replace", exact: true }).click();
+  await page.getByRole("button", { name: "Start recording", exact: true }).click();
+  await page.getByText("Recording narration", { exact: true }).first().waitFor();
+  await page.waitForTimeout(1200);
+  await page.getByRole("button", { name: "Stop voice narration recording" }).click();
+  await page.getByRole("button", { name: /^Narration 03, starts/ }).waitFor();
+  await page.getByRole("button", { name: "Save editor", exact: true }).click();
+  const afterReplacement = JSON.parse(await page.getByTestId("saved-json").innerText());
+  assert.equal(afterReplacement.length, withOverlappingTake.length);
+  assert.notEqual(afterReplacement.find((clip) => clip.id === newTake.id).content, newTake.content);
+  for (const original of beforeOverlappingTake) {
+    assert.deepEqual(
+      withoutTrackIndex(afterReplacement.find((clip) => clip.id === original.id)),
+      withoutTrackIndex(original)
+    );
+  }
+  assert.equal(await page.getByRole("alertdialog", { name: "Overlapping narrations" }).count(), 0);
+  // Older saved sources omit Duration. Download repairs the container without
+  // altering encoded packets, storage content, or the editor's saved baseline.
+  sourceInfo.data = sourceInfo.data.filter((section) => section.id !== 0x489);
+  sourceInfo.updateByData();
+  sourceSegment.updateByData();
+  sourceContainer.updateByData();
+  legacyAudio = Buffer.from(sourceContainer.source);
+  await page.getByRole("button", { name: "Load legacy narration", exact: true }).click();
+  await page.getByRole("button", { name: "Select narration layer Legacy narration", exact: true }).click();
+  await page.getByRole("button", { name: "Narration actions", exact: true }).click();
+  const legacyDownloadEvent = page.waitForEvent("download");
+  await page.getByText("Download original audio", { exact: true }).click();
+  const legacyDownload = await legacyDownloadEvent;
+  assert.equal(await legacyDownload.failure(), null);
+  assert.equal(legacyDownload.suggestedFilename(), "Legacy narration.webm");
+  const repaired = new WebmFile(new Uint8Array(await readFile(await legacyDownload.path())));
+  const repairedSegment = repaired.getSectionById(0x8538067);
+  assert.ok(
+    Math.abs(
+      repairedSegment.getSectionById(0x549a966).getSectionById(0x489).getValue() / 1000 - clips[0].audio.sourceDuration
+    ) < 0.001
+  );
+  for (const section of [0x654ae6b, 0xf43b675])
+    assert.deepEqual(repairedSegment.getSectionById(section).source, sourceSegment.getSectionById(section).source);
+  assert.equal(await page.getByTestId("dirty").innerText(), "Saved");
+  await legacyDownload.saveAs(`${screenshots}/legacy-narration.webm`);
   assert.deepEqual(errors, []);
   console.log(
     JSON.stringify(

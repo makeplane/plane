@@ -20,6 +20,7 @@ function NarrationFixture() {
   const [session, setSession] = useState(0);
   const [logicalEnd, setLogicalEnd] = useState(false);
   const save = useRef<(() => Promise<boolean>) | null>(null);
+  const narrationExample = useRef<TCustomPlaylistAnnotation | null>(null);
   const registerSave = useCallback((handler: (() => Promise<boolean>) | null) => {
     save.current = handler;
   }, []);
@@ -35,6 +36,49 @@ function NarrationFixture() {
           Fail save
         </label>
         <button onClick={() => setSaved((clips) => [...clips])}>Refresh annotations</button>
+        <button
+          onClick={() => {
+            if (!narrationExample.current) return;
+            setSaved([{ ...narrationExample.current, title: "Legacy narration", content: "/legacy-narration.webm" }]);
+            setSession((value) => value + 1);
+          }}
+        >
+          Load legacy narration
+        </button>
+        <button
+          onClick={() => {
+            const drawings: TCustomPlaylistAnnotation[] = [
+              {
+                id: "guide-line",
+                type: "line",
+                content: "Guide line",
+                title: "Draw moment",
+                x: 10,
+                y: 10,
+                width: 100,
+                height: 40,
+                startTime: 14,
+                endTime: 16,
+              },
+              {
+                id: "movement-arrow",
+                type: "arrow",
+                content: "Movement arrow",
+                title: "Draw moment",
+                x: 30,
+                y: 30,
+                width: 100,
+                height: 40,
+                startTime: 14,
+                endTime: 16,
+              },
+            ];
+            setSaved(narrationExample.current ? [narrationExample.current, ...drawings] : drawings);
+            setSession((value) => value + 1);
+          }}
+        >
+          Load mixed layers
+        </button>
         <label>
           <input type="checkbox" checked={logicalEnd} onChange={(event) => setLogicalEnd(event.target.checked)} />
           Logical timeline at end
@@ -84,6 +128,7 @@ function NarrationFixture() {
             }}
             onSave={async (clips) => {
               if (saveFails) throw new Error("Simulated save failure");
+              narrationExample.current = clips.find((clip) => clip.type === "audio") ?? narrationExample.current;
               setSaved(clips);
               return clips;
             }}

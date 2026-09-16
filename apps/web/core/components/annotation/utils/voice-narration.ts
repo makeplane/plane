@@ -6,6 +6,22 @@ export const isNarrationTimeDiscontinuous = (start: number, elapsed: number, cur
   !Number.isFinite(current) || Math.abs(current - (start + (playVideo ? elapsed : 0))) > 0.3;
 export const MAX_NARRATION_BYTES = 100 * 1024 * 1024;
 export const NARRATION_PEAK_COUNT = 512;
+export const narrationDownloadRequest = (
+  source: string,
+  origin: string
+): { url: string; credentials: "omit" | "same-origin" } => {
+  if (!source.trim()) throw new Error("Missing narration audio");
+  const url = new URL(source, origin);
+  if (url.username || url.password) throw new Error("Unsupported narration audio URL");
+  if (url.protocol === "data:" && source.startsWith("data:audio/")) {
+    return { url: source, credentials: "omit" };
+  }
+  if (url.protocol === "blob:" && url.origin === origin) return { url: source, credentials: "omit" };
+  if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error("Unsupported narration audio URL");
+  if (url.origin === origin) return { url: source, credentials: "same-origin" };
+  // Reuse the existing host-checked media proxy without forwarding session cookies to static storage.
+  return { url: `/api/hls/?url=${encodeURIComponent(url.href)}`, credentials: "omit" };
+};
 const finite = (value: unknown, fallback: number) =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 export const bound = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));

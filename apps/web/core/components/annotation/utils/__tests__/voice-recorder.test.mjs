@@ -57,10 +57,13 @@ const setup = (options = {}) => {
     getStream: options.getStream ?? (async () => stream),
     createContext: () => context,
     createRecorder: () => media,
-    readBlob: async () => {
-      if (options.readFailure) throw new Error("Unable to prepare audio");
-      return "data:audio/webm;base64,YXVkaW8=";
-    },
+    finalizeBlob: options.finalizeBlob ?? (async (blob) => blob),
+    readBlob:
+      options.readBlob ??
+      (async () => {
+        if (options.readFailure) throw new Error("Unable to prepare audio");
+        return "data:audio/webm;base64,YXVkaW8=";
+      }),
   });
   const transitions = [];
   recorder.subscribe(() => transitions.push(recorder.getSnapshot().stage));
@@ -101,6 +104,74 @@ test("prepare never records; start/stop processes a take into review", async () 
   assert.equal(f.isPlaying(), false);
   f.recorder.finishReview();
   assert.equal(f.recorder.getSnapshot().stage, "idle");
+});
+test("processing finalizes source duration before preparing saved audio", async () => {
+  const finalized = new Blob(["finalized audio"], { type: "audio/webm;codecs=opus" });
+  let duration;
+  let savedBlob;
+  const f = setup({
+    duration: 2.48,
+    finalizeBlob: async (blob, sourceDuration) => {
+      assert.equal(await blob.text(), "audio");
+      duration = sourceDuration;
+      return finalized;
+    },
+    readBlob: async (blob) => {
+      savedBlob = blob;
+      return "finalized-content";
+    },
+  });
+  await f.recorder.prepare();
+  await f.start();
+  f.context.currentTime = 3;
+  f.recorder.stop();
+  await flush();
+  assert.equal(duration, 2.48);
+  assert.equal(savedBlob, finalized);
+  assert.equal(f.recorder.getSnapshot().take.content, "finalized-content");
+  assert.equal(f.recorder.getSnapshot().take.fileSize, finalized.size);
+  assert.equal(f.recorder.getSnapshot().take.mimeType, finalized.type);
+});
+test("cancelling during container finalization cannot publish or save a stale take", async () => {
+  let finish;
+  let saved = false;
+  const f = setup({
+    finalizeBlob: (blob) =>
+      new Promise((resolve) => {
+        finish = () => resolve(blob);
+      }),
+    readBlob: async () => {
+      saved = true;
+      return "stale";
+    },
+  });
+  await f.recorder.prepare();
+  await f.start();
+  f.context.currentTime = 2;
+  f.recorder.stop();
+  await flush();
+  f.recorder.cancel();
+  finish();
+  await flush();
+  assert.equal(saved, false);
+  assert.deepEqual(f.recorder.getSnapshot(), { stage: "idle" });
+  assert.equal(f.context.state, "closed");
+});
+test("container finalization failure releases resources without publishing a broken take", async () => {
+  const f = setup({
+    finalizeBlob: async () => {
+      throw new Error("Unable to finalize narration");
+    },
+  });
+  await f.recorder.prepare();
+  await f.start();
+  f.context.currentTime = 2;
+  f.recorder.stop();
+  await flush();
+  assert.equal(f.recorder.getSnapshot().stage, "error");
+  assert.equal(f.recorder.getSnapshot().take, undefined);
+  assert.equal(f.track.stops, 1);
+  assert.equal(f.context.state, "closed");
 });
 test("video-end stop reason survives processing and resets before the next take", async () => {
   const f = setup();

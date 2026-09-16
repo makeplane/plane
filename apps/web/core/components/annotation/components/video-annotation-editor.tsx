@@ -371,7 +371,6 @@ export const VideoAnnotationEditor = ({
   });
   const { stop: stopNarrationPreview } = workflow.preview;
   const { open: openNarration } = workflow;
-  const { clearConflict: clearNarrationConflict } = workflow;
   preserveEditsRef.current = hasAnnotationChanges || narration.locked || workflow.needsReview || isSavingAnnotations;
   const narrationClips = useMemo(() => sortedAnnotations.filter((clip) => clip.type === "audio"), [sortedAnnotations]);
   const playingNarrationsRef = useRef(new Set<string>());
@@ -443,7 +442,6 @@ export const VideoAnnotationEditor = ({
     if (!changedSession && preserveEditsRef.current) return;
     annotationSessionRef.current = annotationKey;
     if (changedSession) {
-      clearNarrationConflict();
       voiceRecorder.cancel();
       setNarrationReplacement(null);
       stopNarrationPreview();
@@ -460,7 +458,6 @@ export const VideoAnnotationEditor = ({
     onModeChange?.(shouldOpenAnnotationMode);
   }, [
     annotationKey,
-    clearNarrationConflict,
     canEdit,
     voiceRecorder,
     setNarrationReplacement,
@@ -952,11 +949,11 @@ export const VideoAnnotationEditor = ({
 
   const handleSaveAnnotations = useCallback(async () => {
     if (isSavingAnnotations) return false;
-    if (isVoiceNarrationRecording || workflow.needsReview || workflow.conflict) {
+    if (isVoiceNarrationRecording || workflow.needsReview) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Narration not ready",
-        message: "Stop recording and resolve any pending narration conflict before saving annotations.",
+        message: "Stop recording and wait for narration processing before saving annotations.",
       });
       return false;
     }
@@ -998,7 +995,6 @@ export const VideoAnnotationEditor = ({
     isSavingAnnotations,
     isVoiceNarrationRecording,
     workflow.needsReview,
-    workflow.conflict,
     minimumVisibleAnnotationDurationSeconds,
     onSave,
   ]);
@@ -1028,6 +1024,7 @@ export const VideoAnnotationEditor = ({
     showTimeline && timelineHostElement ? (
       <fieldset disabled={narration.locked || isSavingAnnotations}>
         <VideoAnnotationTimelinePanel
+          key={annotationKey}
           narrationActions={{
             selectedId: selectedAnnotationId,
             previewId: workflow.preview.previewId,
@@ -1105,8 +1102,6 @@ export const VideoAnnotationEditor = ({
       previewError={workflow.preview.error}
       dirty={hasAnnotationChanges || workflow.needsReview}
       disabled={isSavingAnnotations}
-      conflict={workflow.conflict}
-      onResolveConflict={workflow.resolveConflict}
       onChange={workflow.change}
       onReplace={workflow.replace}
       onDelete={handleDeleteAnnotation}

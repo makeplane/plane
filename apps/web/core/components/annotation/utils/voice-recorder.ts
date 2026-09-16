@@ -1,3 +1,4 @@
+import { finalizeNarrationAudio } from "./narration-audio-container";
 import {
   MAX_NARRATION_BYTES,
   MIN_NARRATION_SECONDS,
@@ -65,6 +66,7 @@ export type RecorderEnvironment = {
   getStream: (deviceId: string) => Promise<MediaStream>;
   createContext: () => AudioContext;
   createRecorder: (stream: MediaStream) => MediaRecorder;
+  finalizeBlob: (blob: Blob, sourceDuration: number) => Promise<Blob>;
   readBlob: (blob: Blob) => Promise<string>;
 };
 const browserEnvironment: RecorderEnvironment = {
@@ -82,6 +84,7 @@ const browserEnvironment: RecorderEnvironment = {
     const mimeType = NARRATION_MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type));
     return new MediaRecorder(stream, { ...(mimeType ? { mimeType } : {}), audioBitsPerSecond: 64000 });
   },
+  finalizeBlob: finalizeNarrationAudio,
   readBlob: (blob) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -304,13 +307,15 @@ export class VoiceRecorder {
       }
       if (generation !== this.generation) return;
       if (sourceDuration < MIN_NARRATION_SECONDS) throw new Error("The recording was too short. Please try again.");
-      const content = await this.environment.readBlob(blob);
+      const finalizedBlob = await this.environment.finalizeBlob(blob, sourceDuration);
+      if (generation !== this.generation) return;
+      const content = await this.environment.readBlob(finalizedBlob);
       if (generation !== this.generation) return;
       this.recorder = null;
       this.releaseInput();
       this.publish({
         stage: "review",
-        take: { content, mimeType: blob.type, fileSize: blob.size, sourceDuration, startTime, peaks },
+        take: { content, mimeType: finalizedBlob.type, fileSize: finalizedBlob.size, sourceDuration, startTime, peaks },
         warning,
         stopReason,
       });

@@ -17,6 +17,35 @@ const clip = (id = "a", startTime = 5, endTime = 15) => ({
   audio: { sourceDuration: 10, trimStart: 0, trimEnd: 0, volume: 1, ducking: 0.35, fadeIn: 0.2, fadeOut: 0.2 },
 });
 
+test("cross-origin narration downloads use the existing media proxy without cookies", () => {
+  const source = "http://192.168.1.55:1437/api/blobs/media/audio/voice.webm?version=2";
+  assert.deepEqual(model.narrationDownloadRequest(source, "http://plane.local:3000"), {
+    url: `/api/hls/?url=${encodeURIComponent(source)}`,
+    credentials: "omit",
+  });
+  assert.deepEqual(model.narrationDownloadRequest("https://cdn.example.com/voice.ogg", "https://sports.kanavio.com"), {
+    url: `/api/hls/?url=${encodeURIComponent("https://cdn.example.com/voice.ogg")}`,
+    credentials: "omit",
+  });
+});
+test("local and same-origin narration downloads retain their existing source", () => {
+  const origin = "http://plane.local:3000";
+  for (const source of ["/sports/api/blobs/media/voice.webm", `${origin}/voice.webm`]) {
+    assert.deepEqual(model.narrationDownloadRequest(source, origin), { url: source, credentials: "same-origin" });
+  }
+  for (const source of ["data:audio/webm;base64,AAAA", `blob:${origin}/audio-id`]) {
+    assert.deepEqual(model.narrationDownloadRequest(source, origin), { url: source, credentials: "omit" });
+  }
+  for (const source of [
+    "",
+    "javascript:alert(1)",
+    "file:///audio.webm",
+    "https://user:secret@example.com/voice.webm",
+  ]) {
+    assert.throws(() => model.narrationDownloadRequest(source, origin));
+  }
+});
+
 test("overlap uses millisecond precision and excludes touching ends and the same clip", () => {
   assert.equal(model.overlapsNarration(clip(), clip("b", 15, 20)), false);
   assert.equal(model.overlapsNarration(clip(), clip("b", 14.99, 20)), true);
@@ -54,6 +83,35 @@ test("multiple narrations share a lane unless their intervals overlap", () => {
     lanes.map((lane) => lane.map((item) => item.id)),
     [["a", "b"], ["c"]]
   );
+});
+test("narration moments reuse rounded start times rather than duration overlap", () => {
+  const moments = buildAnnotationTimelineMoments([
+    clip("a", 10.01, 15),
+    clip("b", 10.04, 16),
+    clip("c", 10.06, 17),
+    clip("d", 11, 18),
+  ]);
+  assert.deepEqual(
+    moments.map((moment) => moment.startTime),
+    [10, 10.1, 11]
+  );
+  assert.deepEqual(
+    moments.map((moment) => moment.annotations.map(({ annotation }) => annotation.id)),
+    [["a", "b"], ["c"], ["d"]]
+  );
+  assert.deepEqual(buildAnnotationTimelineMoments([]), []);
+});
+test("moving narration splits and merges its moment without changing audio", () => {
+  const a = clip("a", 5, 8);
+  const b = clip("b", 5.02, 8.02);
+  assert.equal(buildAnnotationTimelineMoments([a, b]).length, 1);
+  const moved = model.moveNarration(b, 12, 30);
+  assert.deepEqual(
+    buildAnnotationTimelineMoments([moved, a]).map((moment) => moment.startTime),
+    [5, 12]
+  );
+  assert.equal(moved.content, b.content);
+  assert.equal(buildAnnotationTimelineMoments([a, model.moveNarration(moved, 5.01, 30)]).length, 1);
 });
 test("narration uses the same position percentage at every zoom", () => {
   for (const zoom of [50, 100, 300]) {

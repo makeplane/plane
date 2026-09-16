@@ -470,6 +470,12 @@ importers:
       '@bprogress/next':
         specifier: ^3.2.12
         version: 3.2.12(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@fix-webm-duration/fix':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@fix-webm-duration/parser':
+        specifier: 1.0.1
+        version: 1.0.1
       '@headlessui/react':
         specifier: ^1.7.3
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1847,6 +1853,12 @@ packages:
     resolution: {integrity: sha512-jaPvkIef4d6NjsRiw91OZabrfdPH9FtoPGYcY5mpXjYEcdUqIq1aHtLq3SkMVyVysEapTEJ6yS8amy93MyXBEQ==}
     peerDependencies:
       react: ^16.14.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@fix-webm-duration/fix@1.0.1':
+    resolution: {integrity: sha512-rRN4CpWQaXRbCXYqKIxnsUq8OSWSGq/SVlnxxkx0HxMZZ1u0qnB24P766o8QS5YaMMqAOFAzmsMmfZ2OWucOLQ==}
+
+  '@fix-webm-duration/parser@1.0.1':
+    resolution: {integrity: sha512-Z6el7ohBBpym4iOmxDxumN715cHzLcAbtOtYfIbvoyToVtAuxvHt3ELXGff83iAXEU1Yj7g+obQBdiKJYVhbWw==}
 
   '@floating-ui/core@1.7.3':
     resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
@@ -8896,6 +8908,15 @@ snapshots:
       '@figspec/components': 1.0.3
       '@lit-labs/react': 1.2.1
       react: 18.3.1
+
+  '@fix-webm-duration/fix@1.0.1':
+    dependencies:
+      '@fix-webm-duration/parser': 1.0.1
+      tslib: 2.8.1
+
+  '@fix-webm-duration/parser@1.0.1':
+    dependencies:
+      tslib: 2.8.1
 
   '@floating-ui/core@1.7.3':
     dependencies:

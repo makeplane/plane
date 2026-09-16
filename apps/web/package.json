@@ -22,6 +22,8 @@
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
     "@bprogress/next": "^3.2.12",
+    "@fix-webm-duration/fix": "1.0.1",
+    "@fix-webm-duration/parser": "1.0.1",
     "@headlessui/react": "^1.7.3",
     "@intercom/messenger-js-sdk": "^0.0.12",
     "@plane/constants": "workspace:*",

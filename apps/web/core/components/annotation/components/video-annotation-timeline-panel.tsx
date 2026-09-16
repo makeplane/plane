@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
@@ -17,6 +17,7 @@ import {
 } from "../utils/video-annotation-editor-config";
 import type { AnnotationTimelineMoment } from "../utils/video-annotation-timeline";
 import {
+  buildAnnotationTimelineMoments,
   clampTimelineValue,
   formatAnnotationTime,
   getAnnotationTimelineIcon,
@@ -24,8 +25,8 @@ import {
   getAnnotationTimelineToolLabel,
   getTimelinePercent,
 } from "../utils/video-annotation-timeline";
-import { narrationLanes } from "../utils/voice-narration";
 import { VideoAnnotationTimelinePlayhead } from "./video-annotation-timeline-playhead";
+import { VoiceNarrationActions } from "./voice-narration-actions";
 import { VoiceNarrationClip } from "./voice-narration-clip";
 
 type VideoAnnotationTimelinePanelProps = {
@@ -117,10 +118,45 @@ export const VideoAnnotationTimelinePanel = ({
   timelineTicks,
   timelineZoomPercent,
 }: VideoAnnotationTimelinePanelProps) => {
-  const lanes = useMemo(
-    () => narrationLanes(sortedAnnotations.filter((clip) => clip.type === "audio")),
+  const narrationClips = useMemo(
+    () => sortedAnnotations.filter((clip) => clip.type === "audio").sort((a, b) => a.startTime - b.startTime),
     [sortedAnnotations]
   );
+  const narrationMoments = useMemo(() => buildAnnotationTimelineMoments(narrationClips), [narrationClips]);
+  const timelineGroups = useMemo(() => {
+    const groups: { type: "narration" | "moment"; moment: AnnotationTimelineMoment }[] = [
+      ...annotationTimelineMoments.map((moment) => ({ type: "moment" as const, moment })),
+      ...narrationMoments.map((moment) => ({ type: "narration" as const, moment })),
+    ];
+    return groups.sort((a, b) => a.moment.startTime - b.moment.startTime);
+  }, [annotationTimelineMoments, narrationMoments]);
+  const [collapsedNarrationMomentIds, setCollapsedNarrationMomentIds] = useState<Set<string>>(() => new Set());
+  const selectedNarrationMomentId = narrationMoments.find((moment) =>
+    moment.annotations.some(({ annotation }) => annotation.id === narrationActions.selectedId)
+  )?.id;
+  useEffect(() => {
+    if (!selectedNarrationMomentId) return;
+    setCollapsedNarrationMomentIds((previous) => {
+      if (!previous.has(selectedNarrationMomentId)) return previous;
+      const next = new Set(previous);
+      next.delete(selectedNarrationMomentId);
+      return next;
+    });
+  }, [selectedNarrationMomentId, narrationActions.selectedId]);
+  useEffect(() => {
+    setCollapsedNarrationMomentIds((previous) => {
+      const next = new Set([...previous].filter((id) => narrationMoments.some((moment) => moment.id === id)));
+      return next.size === previous.size ? previous : next;
+    });
+  }, [narrationMoments]);
+  const toggleNarrationMoment = (id: string) => {
+    setCollapsedNarrationMomentIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
   const snapTimes = useMemo(
     () => [effectiveCurrentTime, ...sortedAnnotations.flatMap((clip) => [clip.startTime, clip.endTime])],
     [effectiveCurrentTime, sortedAnnotations]
@@ -264,21 +300,73 @@ export const VideoAnnotationTimelinePanel = ({
         }}
       >
         <div className="shrink-0 border-r border-custom-border-200 bg-custom-background-90">
-          {lanes.length > 0 ? (
-            <div
-              className="flex items-start gap-2 border-b border-custom-border-200 px-3 py-5 text-xs font-medium text-custom-text-100"
-              style={{ height: lanes.length * 72 }}
-            >
-              <Mic className="size-4 shrink-0 text-custom-primary-100" />
-              <span>Voice narration</span>
-            </div>
-          ) : null}
-          {annotationTimelineMoments.map((moment) => {
+          {timelineGroups.map((group) => {
+            const { moment } = group;
+            if (group.type === "narration") {
+              const isNarrationOpen = !collapsedNarrationMomentIds.has(moment.id);
+              return (
+                <div key={`narration-label-${moment.id}`} data-testid="narration-moment-label">
+                  <button
+                    type="button"
+                    onClick={() => toggleNarrationMoment(moment.id)}
+                    className={`flex h-11 w-full items-center gap-2 border-b border-custom-border-200 px-3 text-left text-[13px] font-medium text-custom-text-100 transition-colors hover:bg-custom-background-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-custom-primary-100/40 ${isNarrationOpen ? "bg-custom-background-80" : "bg-custom-background-90"}`}
+                    aria-expanded={isNarrationOpen}
+                    aria-label={`${isNarrationOpen ? "Collapse" : "Expand"} Voice narration`}
+                  >
+                    <ChevronRight
+                      className={`size-3.5 shrink-0 transition-transform ${isNarrationOpen ? "rotate-90" : ""}`}
+                    />
+                    <span className="shrink-0 font-mono text-[11px] tabular-nums">
+                      {formatAnnotationTime(moment.startTime)}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">Voice narration</span>
+                    <span className="shrink-0 rounded-full border border-custom-border-200 bg-custom-background-100 px-2 text-[11px] leading-[17px] text-custom-text-300">
+                      {moment.annotations.length}
+                    </span>
+                  </button>
+                  {isNarrationOpen &&
+                    moment.annotations.map(({ annotation: clip }) => (
+                      <div
+                        key={`narration-label-${clip.id}`}
+                        data-testid="narration-layer-label"
+                        className={`group flex h-[34px] w-full items-center border-b border-custom-border-200 pr-1 transition-colors hover:bg-custom-background-80 ${narrationActions.selectedId === clip.id ? "bg-custom-primary-100/10 text-custom-primary-100" : "bg-custom-background-100 text-custom-text-200"}`}
+                      >
+                        <button
+                          type="button"
+                          disabled={narrationActions.disabled}
+                          onClick={() => narrationActions.onSelect(clip)}
+                          aria-label={`Select narration layer ${clip.title || "Narration"}`}
+                          aria-pressed={narrationActions.selectedId === clip.id}
+                          className="flex h-full min-w-0 flex-1 items-center gap-2 pl-10 pr-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-custom-primary-100/40"
+                          title={clip.title || "Narration"}
+                        >
+                          <Mic className="size-3 shrink-0 text-custom-primary-100" />
+                          <span className="min-w-0 truncate text-[12px] font-medium">{clip.title || "Narration"}</span>
+                        </button>
+                        <div
+                          className={`shrink-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 ${narrationActions.selectedId === clip.id ? "opacity-100" : "pointer-events-none opacity-0"}`}
+                        >
+                          <VoiceNarrationActions
+                            clip={clip}
+                            disabled={narrationActions.disabled}
+                            previewing={narrationActions.previewId === clip.id}
+                            onSelect={narrationActions.onSelect}
+                            onPreview={narrationActions.onPreview}
+                            onReplace={narrationActions.onReplace}
+                            onDuplicate={narrationActions.onDuplicate}
+                            onDelete={onDeleteAnnotation}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              );
+            }
             const isMomentOpen = openTimelineMomentIds.has(moment.id);
             const isEditingMomentTitle = editingTimelineMoment?.id === moment.id;
 
             return (
-              <div key={`moment-label-${moment.id}`}>
+              <div key={`moment-label-${moment.id}`} data-testid="annotation-moment-label">
                 <div
                   className={[
                     "flex h-11 w-full items-center gap-2 border-b border-custom-border-200 px-3 text-left transition-colors hover:bg-custom-background-80",
@@ -387,39 +475,59 @@ export const VideoAnnotationTimelinePanel = ({
               progressPercent={timelineProgressPercent}
             />
 
-            {lanes.length > 0 ? (
-              <div
-                style={{ height: lanes.length * 72 }}
-                className="relative border-b border-custom-border-200 bg-custom-primary-100/5"
-              >
-                {lanes.map((lane, index) => (
-                  <div key={index} className="relative h-[72px]">
-                    {lane.map((clip) => (
-                      <VoiceNarrationClip
-                        key={clip.id}
-                        clip={clip}
-                        selected={narrationActions.selectedId === clip.id}
-                        previewing={narrationActions.previewId === clip.id}
-                        disabled={narrationActions.disabled}
-                        duration={timelineDurationSeconds}
-                        snapTimes={snapTimes}
-                        onSelect={narrationActions.onSelect}
-                        onChange={narrationActions.onChange}
-                        onPreview={narrationActions.onPreview}
-                        onReplace={narrationActions.onReplace}
-                        onDuplicate={narrationActions.onDuplicate}
-                        onDelete={onDeleteAnnotation}
-                      />
-                    ))}
+            {timelineGroups.map((group) => {
+              const { moment } = group;
+              if (group.type === "narration") {
+                const isNarrationOpen = !collapsedNarrationMomentIds.has(moment.id);
+                return (
+                  <div key={`narration-track-${moment.id}`} data-testid="narration-moment-track">
+                    <div className="relative h-11 border-b border-custom-border-200 bg-custom-background-100">
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          toggleNarrationMoment(moment.id);
+                        }}
+                        onPointerDown={(event) => event.stopPropagation()}
+                        className={`absolute top-1/2 inline-flex h-[26px] max-w-[280px] -translate-y-1/2 items-center gap-2 rounded-[6px] border px-2 text-[11px] font-medium shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-custom-primary-100/40 ${isNarrationOpen ? "border-custom-text-400 bg-custom-background-80 text-custom-text-100" : "border-custom-border-200 bg-custom-background-90 text-custom-text-200 hover:border-custom-text-400"}`}
+                        style={{ left: `${getTimelinePercent(moment.startTime, timelineDurationSeconds)}%` }}
+                        aria-expanded={isNarrationOpen}
+                        aria-label={`${isNarrationOpen ? "Collapse" : "Expand"} Voice narration`}
+                      >
+                        <ChevronRight
+                          className={`size-3.5 shrink-0 transition-transform ${isNarrationOpen ? "rotate-90" : ""}`}
+                        />
+                        <Mic className="size-3 shrink-0 text-custom-primary-100" />
+                        <span className="min-w-0 truncate">Voice narration</span>
+                        <span className="shrink-0 text-custom-text-300">{moment.annotations.length}</span>
+                      </button>
+                    </div>
+                    {isNarrationOpen &&
+                      moment.annotations.map(({ annotation: clip }) => (
+                        <div
+                          key={`narration-track-${clip.id}`}
+                          data-testid="narration-layer-track"
+                          className="relative h-[34px] border-b border-custom-border-200 bg-custom-background-90"
+                        >
+                          <VoiceNarrationClip
+                            key={clip.id}
+                            clip={clip}
+                            selected={narrationActions.selectedId === clip.id}
+                            disabled={narrationActions.disabled}
+                            duration={timelineDurationSeconds}
+                            snapTimes={snapTimes}
+                            onSelect={narrationActions.onSelect}
+                            onChange={narrationActions.onChange}
+                          />
+                        </div>
+                      ))}
                   </div>
-                ))}
-              </div>
-            ) : null}
-            {annotationTimelineMoments.map((moment) => {
+                );
+              }
               const isMomentOpen = openTimelineMomentIds.has(moment.id);
 
               return (
-                <div key={`moment-track-${moment.id}`}>
+                <div key={`moment-track-${moment.id}`} data-testid="annotation-moment-track">
                   <div className="relative h-11 border-b border-custom-border-200 bg-custom-background-100">
                     <button
                       type="button"
@@ -579,7 +687,7 @@ export const VideoAnnotationTimelinePanel = ({
               );
             })}
 
-            {annotationTimelineMoments.length === 0 && lanes.length === 0 && (
+            {annotationTimelineMoments.length === 0 && narrationClips.length === 0 && (
               <div className="relative h-11 border-b border-custom-border-200 bg-custom-background-100">
                 <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] text-custom-text-400">
                   No annotations yet

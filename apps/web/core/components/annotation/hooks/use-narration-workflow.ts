@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import useKeypress from "@/hooks/use-keypress";
 import type { TCustomPlaylistAnnotation, TCustomPlaylistAnnotationTool } from "../types/annotation.types";
 import { createPlaylistAnnotationId } from "../utils/playlist-annotation-model";
-import { narrationOverlaps, normalizeNarrationAudio } from "../utils/voice-narration";
+import { normalizeNarrationAudio } from "../utils/voice-narration";
 import { useNarrationPreview } from "./use-narration-preview";
 import type { VoiceNarrationControls } from "./use-video-annotation-voice-narration";
 
@@ -43,11 +43,6 @@ export const useNarrationWorkflow = ({
   const preview = useNarrationPreview(onPause);
   const { stop: stopPreview } = preview;
   const { prepare } = controls;
-  const [conflict, setConflict] = useState<{
-    clip: TCustomPlaylistAnnotation;
-    conflicts: TCustomPlaylistAnnotation[];
-  } | null>(null);
-  const clearConflict = useCallback(() => setConflict(null), []);
   const draft = useMemo<TCustomPlaylistAnnotation | null>(() => {
     const take = state.take;
     if (!take) return null;
@@ -83,16 +78,12 @@ export const useNarrationWorkflow = ({
     if (isPlaying) stopPreview();
   }, [isPlaying, stopPreview]);
   const commit = useCallback(
-    (clip: TCustomPlaylistAnnotation, removeIds: string[] = []) => {
+    (clip: TCustomPlaylistAnnotation) => {
       stopPreview();
       const next = { ...clip, audio: normalizeNarrationAudio(clip.audio, clip.endTime - clip.startTime) };
-      setAnnotations((current) => [
-        ...current.filter((item) => item.id !== next.id && !removeIds.includes(item.id)),
-        next,
-      ]);
+      setAnnotations((current) => [...current.filter((item) => item.id !== next.id), next]);
       setSelectedId(next.id);
       setTool("audio");
-      setConflict(null);
       if (state.stage === "review") {
         recorder.finishReview();
         setReplacement(null);
@@ -103,19 +94,9 @@ export const useNarrationWorkflow = ({
   const change = useCallback(
     (clip: TCustomPlaylistAnnotation) => {
       if (!canEdit || locked || saving || state.stage === "review") return;
-      const original = annotations.find((item) => item.id === clip.id);
-      const conflicts = narrationOverlaps(clip, annotations);
-      if (
-        conflicts.length &&
-        (!original || original.startTime !== clip.startTime || original.endTime !== clip.endTime)
-      ) {
-        setConflict({ clip, conflicts });
-        setTool("audio");
-        return;
-      }
       commit(clip);
     },
-    [annotations, canEdit, commit, locked, saving, setTool, state.stage]
+    [canEdit, commit, locked, saving, state.stage]
   );
   const accept = useCallback(() => {
     if (!draft) return;
@@ -127,38 +108,18 @@ export const useNarrationWorkflow = ({
         original?.title ||
         `Narration ${String(annotations.filter((item) => item.type === "audio").length + 1).padStart(2, "0")}`,
     };
-    const conflicts = narrationOverlaps(clip, annotations, original?.id);
-    if (conflicts.length) {
-      setConflict({ clip, conflicts });
-      return;
-    }
     commit(clip);
   }, [annotations, commit, draft, replacement?.id]);
   useEffect(() => {
-    // Stop is the commit intent; only an overlap still requires a user decision.
-    if (state.stage === "review" && draft && !conflict) accept();
-  }, [accept, conflict, draft, state.stage]);
-  const resolveConflict = useCallback(
-    (action: "add" | "replace" | "cancel") => {
-      if (!conflict || !canEdit || locked || saving) return;
-      if (action === "cancel") {
-        setConflict(null);
-        recorder.cancel();
-        setReplacement(null);
-        setSelectedId(replacement?.id || null);
-        return;
-      }
-      commit(conflict.clip, action === "replace" ? conflict.conflicts.map((item) => item.id) : []);
-    },
-    [canEdit, commit, conflict, locked, recorder, replacement?.id, saving, setReplacement, setSelectedId]
-  );
+    // Stop is the commit intent; overlapping recordings are retained automatically.
+    if (state.stage === "review" && draft) accept();
+  }, [accept, draft, state.stage]);
   const select = useCallback(
     (clip: TCustomPlaylistAnnotation) => {
       if (locked || saving || state.stage === "review") return;
       stopPreview();
       recorder.cancel();
       setReplacement(null);
-      setConflict(null);
       setTool("audio");
       setSelectedId(clip.id);
       onPause?.();
@@ -169,7 +130,6 @@ export const useNarrationWorkflow = ({
   const open = useCallback(() => {
     if (locked || saving || state.stage === "review") return;
     stopPreview();
-    setConflict(null);
     setReplacement(null);
     setSelectedId(null);
     setTool("audio");
@@ -181,7 +141,6 @@ export const useNarrationWorkflow = ({
       if (locked || saving) return;
       stopPreview();
       recorder.cancel();
-      setConflict(null);
       setReplacement({ id: replacement?.id ?? (draft?.id === clip.id ? "" : clip.id), startTime: clip.startTime });
       setSelectedId(null);
       setTool("audio");
@@ -238,7 +197,6 @@ export const useNarrationWorkflow = ({
     event.preventDefault();
     stopPreview();
     recorder.cancel();
-    setConflict(null);
     setReplacement(null);
     if (!locked && state.stage !== "review") {
       setTool("pen");
@@ -278,10 +236,7 @@ export const useNarrationWorkflow = ({
   }, [locked, recorder, tool]);
   return {
     draft,
-    conflict,
-    clearConflict,
     change,
-    resolveConflict,
     select,
     open,
     replace,
