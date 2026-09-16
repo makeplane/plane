@@ -56,6 +56,8 @@ export enum EAuthenticationErrorCodes {
   REQUIRED_EMAIL_PASSWORD_SIGN_UP = "5040",
   INVALID_EMAIL_SIGN_UP = "5045",
   INVALID_EMAIL_MAGIC_SIGN_UP = "5050",
+  INVITE_CODE_REQUIRED_SIGN_UP = "5057",
+  INVITE_CODE_INVALID_SIGN_UP = "5058",
   MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED = "5055",
   // Sign In
   USER_DOES_NOT_EXIST = "5060",
@@ -194,6 +196,16 @@ const errorCodeMessages: {
   [EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP]: {
     title: `Invalid email`,
     message: () => `Invalid email. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.INVITE_CODE_REQUIRED_SIGN_UP]: {
+    title: `邀请码必填 / Invite code required`,
+    message: () =>
+      `本系统仅支持邀请注册，请填写管理员提供的邀请码。 Registration is by invitation only: enter the invite code from your administrator.`,
+  },
+  [EAuthenticationErrorCodes.INVITE_CODE_INVALID_SIGN_UP]: {
+    title: `邀请码不可用 / Invite code unusable`,
+    message: () =>
+      `邀请码无效、已过期或已用尽，请联系管理员获取新的邀请码。 The invite code is invalid, expired or used up; ask an administrator for a new one.`,
   },
 
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
@@ -395,6 +407,8 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.INVALID_EMAIL_SIGN_UP,
     EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
     EAuthenticationErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED,
+    EAuthenticationErrorCodes.INVITE_CODE_REQUIRED_SIGN_UP,
+    EAuthenticationErrorCodes.INVITE_CODE_INVALID_SIGN_UP,
     EAuthenticationErrorCodes.USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
     EAuthenticationErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN,

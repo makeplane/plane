@@ -141,6 +141,16 @@ const errorCodeMessages: {
     title: `Invalid email`,
     message: () => `Invalid email. Please try again.`,
   },
+  [EAuthErrorCodes.INVITE_CODE_REQUIRED_SIGN_UP]: {
+    title: `邀请码必填 / Invite code required`,
+    message: () =>
+      `本系统仅支持邀请注册，请填写管理员提供的邀请码。 Registration is by invitation only: enter the invite code from your administrator.`,
+  },
+  [EAuthErrorCodes.INVITE_CODE_INVALID_SIGN_UP]: {
+    title: `邀请码不可用 / Invite code unusable`,
+    message: () =>
+      `邀请码无效、已过期或已用尽，请联系管理员获取新的邀请码。 The invite code is invalid, expired or used up; ask an administrator for a new one.`,
+  },
   // sign in
   [EAuthErrorCodes.BOT_USER_LOGIN_FORBIDDEN]: {
     title: `Sign in not allowed`,
@@ -321,6 +331,8 @@ export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TA
     EAuthErrorCodes.INVALID_EMAIL_SIGN_UP,
     EAuthErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
     EAuthErrorCodes.MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED,
+    EAuthErrorCodes.INVITE_CODE_REQUIRED_SIGN_UP,
+    EAuthErrorCodes.INVITE_CODE_INVALID_SIGN_UP,
     EAuthErrorCodes.USER_DOES_NOT_EXIST,
     EAuthErrorCodes.AUTHENTICATION_FAILED_SIGN_IN,
     EAuthErrorCodes.REQUIRED_EMAIL_PASSWORD_SIGN_IN,

@@ -6,6 +6,7 @@
 
 import { Outlet } from "react-router";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+import { PasswordResetGate } from "@/components/account/password-reset-gate";
 import { WorkspaceContentWrapper } from "@/components/workspace/content-wrapper";
 import { AppRailVisibilityProvider } from "@/lib/app-rail";
 import { GlobalModals } from "@/components/common/modal/global";
@@ -20,6 +21,7 @@ export default function WorkspaceLayout(props: Route.ComponentProps) {
       <WorkspaceAuthWrapper>
         <AppRailVisibilityProvider>
           <WorkspaceContentWrapper>
+            <PasswordResetGate />
             <GlobalModals workspaceSlug={workspaceSlug} />
             <Outlet />
           </WorkspaceContentWrapper>

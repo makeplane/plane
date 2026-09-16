@@ -107,6 +107,9 @@ class ChangePasswordEndpoint(APIView):
         # set_password also hashes the password that the user will get
         user.set_password(new_password)
         user.is_password_autoset = False
+        # Imported accounts start with a one-time credential: changing the
+        # password is what clears the "must change it on first login" flag.
+        user.is_password_reset_required = False
         user.save()
         user_login(user=user, request=request, is_app=True)
         return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)

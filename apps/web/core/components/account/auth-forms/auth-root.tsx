@@ -67,6 +67,18 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           setAuthMode(EAuthModes.SIGN_UP);
           setAuthStep(EAuthSteps.PASSWORD);
         }
+        // A registration refused for a missing/unusable invite code has to send
+        // the user back to the signup form (invite code field included), not to
+        // the email step, or the failure looks like the signup form vanished.
+        if (
+          [
+            EAuthenticationErrorCodes.INVITE_CODE_REQUIRED_SIGN_UP,
+            EAuthenticationErrorCodes.INVITE_CODE_INVALID_SIGN_UP,
+          ].includes(errorhandler.code)
+        ) {
+          setAuthMode(EAuthModes.SIGN_UP);
+          setAuthStep(EAuthSteps.PASSWORD);
+        }
         if ([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN].includes(errorhandler.code)) {
           setAuthMode(EAuthModes.SIGN_IN);
           setAuthStep(EAuthSteps.PASSWORD);

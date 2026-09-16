@@ -16,15 +16,15 @@ import { useInstance } from "@/hooks/store/use-instance";
 
 const authContentMap = {
   [EAuthModes.SIGN_IN]: {
-    pageTitle: "Sign up",
+    pageTitle: "Sign in",
     text: "auth.common.new_to_plane",
-    linkText: "Sign up",
+    linkText: "auth.common.create_account",
     linkHref: "/sign-up",
   },
   [EAuthModes.SIGN_UP]: {
-    pageTitle: "Sign in",
+    pageTitle: "Sign up",
     text: "auth.common.already_have_an_account",
-    linkText: "Sign in",
+    linkText: "auth.common.login",
     linkHref: "/sign-in",
   },
 };
@@ -38,23 +38,25 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
   // store
   const { config } = useInstance();
   // derived values
-  const enableSignUpConfig = config?.enable_signup ?? false;
+  // Turning open registration off only makes this deployment invite-only: the
+  // administrator still hands out invite codes, so the way to the sign-up form
+  // has to stay on screen, otherwise the codes can never be redeemed.
+  const isInviteOnlySignUp = !(config?.enable_signup ?? false);
+  const authContent = authContentMap[type];
 
   return (
     <AuthHeaderBase
-      pageTitle={t(authContentMap[type].pageTitle)}
+      pageTitle={t(authContent.pageTitle)}
       additionalAction={
-        enableSignUpConfig && (
-          <div className="flex flex-col items-end text-center text-13 font-medium text-tertiary sm:flex-row sm:items-center sm:gap-2">
-            <span className="text-body-sm-regular text-tertiary">{t(authContentMap[type].text)}</span>
-            <Link
-              href={authContentMap[type].linkHref}
-              className="text-body-sm-semibold text-accent-primary hover:underline"
-            >
-              {t(authContentMap[type].linkText)}
-            </Link>
-          </div>
-        )
+        <div className="flex flex-col items-end text-center text-13 font-medium text-tertiary sm:flex-row sm:items-center sm:gap-2">
+          <span className="text-body-sm-regular text-tertiary">{t(authContent.text)}</span>
+          <Link href={authContent.linkHref} className="text-body-sm-semibold text-accent-primary hover:underline">
+            {t(authContent.linkText)}
+          </Link>
+          {isInviteOnlySignUp && type === EAuthModes.SIGN_IN && (
+            <span className="text-body-sm-regular text-tertiary">{t("auth.common.invite_only")}</span>
+          )}
+        </div>
       }
     />
   );

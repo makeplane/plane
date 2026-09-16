@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 // icons
 import { CloseCircleOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Banner } from "@makeplane/propel/components/banner";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
@@ -21,10 +22,13 @@ import { checkEmailValidity } from "@plane/utils";
 type TAuthEmailForm = {
   defaultEmail: string;
   onSubmit: (data: IEmailCheckData) => Promise<void>;
+  // Invitation-only instances ask for the invite code on the next step; saying so
+  // up front keeps the requirement visible from the first screen.
+  inviteOnly?: boolean;
 };
 
 export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
-  const { onSubmit, defaultEmail } = props;
+  const { onSubmit, defaultEmail, inviteOnly = false } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
@@ -52,6 +56,14 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
+      {inviteOnly && (
+        <Banner
+          placement="inline"
+          variant="info"
+          title={t("auth.common.invite_code.notice_title")}
+          description={t("auth.common.invite_code.notice")}
+        />
+      )}
       <div className="space-y-1">
         <label htmlFor="email" className="text-13 font-medium text-tertiary">
           {t("auth.common.email.label")}

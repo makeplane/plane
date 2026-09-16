@@ -102,22 +102,48 @@ class Adapter:
     def __check_signup(self, email):
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
-        # Get configuration value
+        # Get configuration value. The fallback here has to match the one the
+        # instance-configuration endpoint uses (`license/api/views/instance.py`)
+        # because that is what drives `enable_signup` in the UI: both read the
+        # same key through `get_configuration_value`. With a mismatched fallback
+        # an unset ENABLE_SIGNUP showed "invitation only" in the UI while the API
+        # still accepted walk-in registrations.
         (ENABLE_SIGNUP,) = get_configuration_value([
-            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
+            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "0")}
         ])
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
-            self.logger.warning("Sign up is disabled and invite is not present")
-            # Raise exception
+            # A valid research invite code is the second (and preferred) way
+            # in: the deployment turns off open registration, and the
+            # administrator decides who may register by handing out a code.
+            code, usable = self.__signup_invite_code_state()
+            if usable:
+                return True
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
-                error_message="SIGNUP_DISABLED",
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "INVITE_CODE_REQUIRED_SIGN_UP" if not code else "INVITE_CODE_INVALID_SIGN_UP"
+                ],
+                error_message=(
+                    "INVITE_CODE_REQUIRED_SIGN_UP" if not code else "INVITE_CODE_INVALID_SIGN_UP"
+                ),
                 payload={"email": email},
             )
-
         return True
+
+    def __signup_invite_code_state(self):
+        """Return ``(code, is_usable)`` for the code carried by the request."""
+        from plane.authentication.utils.user_auth_workflow import signup_invite_code
+
+        code = signup_invite_code(self.request)
+        if not code:
+            return "", False
+        try:
+            from plane.research.services.accounts import invite_code_is_usable
+
+            return code, invite_code_is_usable(code)
+        except Exception:  # noqa: BLE001 - the research module may be absent
+            return code, False
 
     def get_avatar_download_headers(self):
         return {}
