@@ -51,12 +51,19 @@ class UnitSpec:
 ORG_UNITS = (
     UnitSpec("institute", "材料科学与工程学院", "INSTITUTE", ROOT_KEY),
     UnitSpec("lab_energy", "能源材料实验室", "LAB", "institute"),
-    UnitSpec("lab_smart", "智能材料实验室", "LAB", "institute"),
-    UnitSpec("group_zhang", "张伟课题组", "GROUP", "lab_energy"),
-    UnitSpec("group_li", "李明课题组", "GROUP", "lab_energy"),
-    UnitSpec("group_wang", "王芳课题组", "GROUP", "lab_smart"),
-    UnitSpec("group_calc", "AI4MS 计算材料课题组", "GROUP", "lab_smart"),
-    UnitSpec("team_graphite", "石墨负极小组", "TEAM", "group_zhang"),
+    UnitSpec("group_main", "材料课题组", "GROUP", "lab_energy"),
+    UnitSpec("team_graphite", "石墨负极小组", "TEAM", "group_main"),
+)
+
+# Node names produced by earlier versions of this fixture. ``--reset`` deletes
+# them alongside the current tree so an existing development workspace ends up
+# with the single-chain tree instead of keeping the retired branches.
+RETIRED_ORG_UNIT_NAMES = (
+    "张伟课题组",
+    "李明课题组",
+    "王芳课题组",
+    "智能材料实验室",
+    "AI4MS 计算材料课题组",
 )
 
 
@@ -89,8 +96,8 @@ ACCOUNTS = (
         first_name="伟",
         last_name="张",
         email_local="zhangwei.pi",
-        identity="课题组主 PI（张伟课题组）",
-        org_roles=(("group_zhang", "PI", True),),
+        identity="课题组主 PI（材料课题组）",
+        org_roles=(("group_main", "PI", True),),
         employee_id="AI4MS-2026-0101",
         identity_status="ACTIVE",
         sees="本课题组全部报告/阶段/审批；被自动指派为课题组阶段评审人",
@@ -101,11 +108,11 @@ ACCOUNTS = (
         first_name="明",
         last_name="李",
         email_local="liming.pi",
-        identity="课题组主 PI（李明课题组）",
-        org_roles=(("group_li", "PI", True),),
+        identity="实验室 PI（能源材料实验室）",
+        org_roles=(("lab_energy", "PI", True),),
         employee_id="AI4MS-2026-0102",
         identity_status="ACTIVE",
-        sees="自己课题组的数据；看不到张伟课题组的 PRIVATE/导师级记录",
+        sees="实验室层面的 ANCESTRY 级记录；看不到材料课题组的 PRIVATE 级记录",
     ),
     AccountSpec(
         key="wangfang",
@@ -114,7 +121,7 @@ ACCOUNTS = (
         last_name="王",
         email_local="wangfang.lab",
         identity="实验室负责人（能源材料实验室）",
-        org_roles=(("lab_energy", "OWNER", False), ("group_wang", "PI", True)),
+        org_roles=(("lab_energy", "OWNER", True),),
         sees="实验室下所有课题组的 ANCESTRY 级记录（非管理员，用于验证上级节点主 PI）",
     ),
     AccountSpec(
@@ -133,8 +140,8 @@ ACCOUNTS = (
         first_name="静",
         last_name="陈",
         email_local="chenjing.advisor",
-        identity="直接导师（ADVISOR，张伟课题组）",
-        org_roles=(("group_zhang", "ADVISOR", False),),
+        identity="直接导师（ADVISOR，材料课题组）",
+        org_roles=(("group_main", "ADVISOR", False),),
         employee_id="AI4MS-2026-0201",
         identity_status="ACTIVE",
         sees="被绑定学生（刘洋 / 周敏 / 孙浩）的全部报告；阶段必评人",
@@ -146,7 +153,7 @@ ACCOUNTS = (
         last_name="郑",
         email_local="zhengkai.reviewer",
         identity="评审人 + 小组负责人（石墨负极小组）",
-        org_roles=(("group_zhang", "REVIEWER", False), ("team_graphite", "OWNER", False)),
+        org_roles=(("group_main", "REVIEWER", False), ("team_graphite", "OWNER", False)),
         sees="被指派的阶段评审；本小组记录",
     ),
     AccountSpec(
@@ -155,8 +162,8 @@ ACCOUNTS = (
         first_name="洋",
         last_name="刘",
         email_local="liuyang.phd",
-        identity="博士生（PHD，张伟课题组）",
-        org_roles=(("group_zhang", UNIT_MEMBER_ROLE, False),),
+        identity="博士生（PHD，材料课题组）",
+        org_roles=(("group_main", UNIT_MEMBER_ROLE, False),),
         employee_id="AI4MS-2026-0301",
         identity_status="ACTIVE",
         sees="自己的项目全链路数据 + 6 篇不同可见范围的报告（ACL 矩阵所有者）",
@@ -167,8 +174,8 @@ ACCOUNTS = (
         first_name="敏",
         last_name="周",
         email_local="zhoumin.master",
-        identity="硕士生（MASTER，张伟课题组）",
-        org_roles=(("group_zhang", UNIT_MEMBER_ROLE, False),),
+        identity="硕士生（MASTER，材料课题组）",
+        org_roles=(("group_main", UNIT_MEMBER_ROLE, False),),
         sees="被显式授权的 CUSTOM 报告；同课题组 UNIT 级记录",
     ),
     AccountSpec(
@@ -177,8 +184,8 @@ ACCOUNTS = (
         first_name="浩",
         last_name="孙",
         email_local="sunhao.postdoc",
-        identity="博士后（POSTDOC，张伟课题组）",
-        org_roles=(("group_zhang", UNIT_MEMBER_ROLE, False),),
+        identity="博士后（POSTDOC，材料课题组）",
+        org_roles=(("group_main", UNIT_MEMBER_ROLE, False),),
         employee_id="AI4MS-2026-0302",
         identity_status="ACTIVE",
         sees="自己的项目：预开题已通过、开题门槛全绿可现场提交",
@@ -189,8 +196,8 @@ ACCOUNTS = (
         first_name="婷",
         last_name="吴",
         email_local="wuting.project",
-        identity="科研项目人员（AI4MS 计算材料课题组，直接导师=fangyikai）",
-        org_roles=(("group_calc", UNIT_MEMBER_ROLE, False),),
+        identity="科研项目人员（材料课题组，直接导师=fangyikai）",
+        org_roles=(("group_main", UNIT_MEMBER_ROLE, False),),
         sees="自己的项目：预开题被退回（带退回原因），报告直接导师是 fangyikai",
     ),
     AccountSpec(
@@ -222,14 +229,14 @@ ACCOUNT_BY_KEY = {account.key: account for account in ACCOUNTS}
 # Roles attached to the pre-existing owner account (fangyikai).
 OWNER_ORG_ROLES = (
     ("institute", "PI", False),
-    ("group_calc", "PI", True),
+    ("group_main", "PI", True),
 )
 
 MENTOR_BINDINGS = (
-    ("liuyang", "chenjing", "group_zhang"),
-    ("zhoumin", "chenjing", "group_zhang"),
-    ("sunhao", "chenjing", "group_zhang"),
-    ("wuting", OWNER_KEY, "group_calc"),
+    ("liuyang", "chenjing", "group_main"),
+    ("zhoumin", "chenjing", "group_main"),
+    ("sunhao", "chenjing", "group_main"),
+    ("wuting", OWNER_KEY, "group_main"),
 )
 
 
@@ -253,7 +260,7 @@ PROJECTS = (
         owner="liuyang",
         name="石墨负极界面调控机理研究",
         identifier="GRAINTER",
-        org_unit="group_zhang",
+        org_unit="group_main",
         research_type="PHD",
         stage_status={
             "PRE_OPENING": "PASSED",
@@ -268,7 +275,7 @@ PROJECTS = (
         owner="sunhao",
         name="固态电解质界面原位表征方法研究",
         identifier="SSEINSITU",
-        org_unit="group_zhang",
+        org_unit="group_main",
         research_type="POSTDOC",
         stage_status={"PRE_OPENING": "PASSED", "OPENING": "IN_PROGRESS"},
         material_counts={"PRE_OPENING": 2, "OPENING": 10},
@@ -279,7 +286,7 @@ PROJECTS = (
         owner="zhoumin",
         name="高熵合金涂层耐蚀性优化",
         identifier="HEACOAT",
-        org_unit="group_zhang",
+        org_unit="group_main",
         research_type="MASTER",
         stage_status={"PRE_OPENING": "IN_PROGRESS"},
         material_counts={"PRE_OPENING": 1},
@@ -289,7 +296,7 @@ PROJECTS = (
         owner="wuting",
         name="计算材料数据库与特征工程",
         identifier="MATDB",
-        org_unit="group_calc",
+        org_unit="group_main",
         research_type="RESEARCH_PROJECT",
         stage_status={"PRE_OPENING": "NEEDS_REVISION"},
         material_counts={"PRE_OPENING": 2},
@@ -299,7 +306,7 @@ PROJECTS = (
         owner="zhangwei",
         name="锂电材料跨尺度计算平台",
         identifier="LICALC",
-        org_unit="group_zhang",
+        org_unit="group_main",
         research_type="RESEARCH_PROJECT",
         stage_status={"PRE_OPENING": "SUBMITTED"},
         material_counts={"PRE_OPENING": 2},
@@ -310,7 +317,7 @@ PROJECTS = (
         owner="liming",
         name="硅碳复合负极工程化",
         identifier="SICANODE",
-        org_unit="group_li",
+        org_unit="lab_energy",
         research_type="RESEARCH_PROJECT",
     ),
     ProjectSpec(
@@ -318,7 +325,7 @@ PROJECTS = (
         owner="liming",
         name="退役电池回收工艺预研",
         identifier="RECYCLE",
-        org_unit="group_li",
+        org_unit="lab_energy",
         research_type="RESEARCH_PROJECT",
         workflow_status="ARCHIVED",
     ),
@@ -327,7 +334,7 @@ PROJECTS = (
         owner="wangfang",
         name="智能传感材料探索",
         identifier="SMARTMAT",
-        org_unit="group_wang",
+        org_unit="lab_energy",
         research_type="RESEARCH_PROJECT",
     ),
 )
@@ -702,7 +709,7 @@ REPORT_RETURN_COMMENT = (
 REPORT_ACCEPT_COMMENT = "进展清晰、数据完整，同意验收。"
 
 
-# ACL matrix: six reports owned by ``liuyang`` in ``group_zhang``, one per
+# ACL matrix: six reports owned by ``liuyang`` in ``group_main``, one per
 # visibility level. The CUSTOM report grants a single user (``zhoumin``) so the
 # six-by-six decision matrix stays exact - a unit wide grant would also expose
 # it to the group advisor.
@@ -817,7 +824,7 @@ APPROVAL_FLOWS = (
         key="task",
         name="任务审批（课题组主 PI）",
         approval_type="TASK",
-        org_unit="group_zhang",
+        org_unit="group_main",
         steps=(FlowStepSpec(approver_mode="ANY", approver="zhangwei"),),
     ),
     FlowSpec(
@@ -878,7 +885,7 @@ APPROVAL_REQUESTS = (
         project="sunhao",
         requester="sunhao",
         issue_name="实验室安全培训复训申请",
-        org_unit="group_zhang",
+        org_unit="group_main",
         status="APPROVED",
         approvals=(("zhangwei", 1, "同意，按学院要求完成复训。"),),
         state_group="completed",

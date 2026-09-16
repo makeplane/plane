@@ -1722,7 +1722,15 @@ class ResearchSeedBuilder:
 
 
 def seeded_users():
-    return User.objects.filter(email__iendswith=f"@{scenario.EMAIL_DOMAIN}")
+    """Accounts owned by this fixture.
+
+    Scoped to the declared account list on purpose: the ``@ai4ms.local``
+    domain is also used by the system baseline accounts (instance
+    administrator, administrator tags and the acceptance test group), and
+    ``--reset`` must never delete those.
+    """
+    emails = [spec.email for spec in scenario.ACCOUNTS]
+    return User.objects.filter(email__in=emails)
 
 
 def seeded_projects(workspace):
@@ -1854,7 +1862,12 @@ def reset_seed(workspace):
     hard_delete(bindings)
     deleted["org_members"] = OrgUnitMember.objects.filter(workspace=workspace, user_id__in=user_ids).count()
     hard_delete(OrgUnitMember.all_objects.filter(workspace=workspace, user_id__in=user_ids))
-    deleted["org_units"] = _delete_org_units(workspace, names=[spec.name for spec in scenario.ORG_UNITS])
+    # Retired names from earlier fixture versions are cleared too, so an
+    # existing workspace converges on the current single-chain tree.
+    deleted["org_units"] = _delete_org_units(
+        workspace,
+        names=[spec.name for spec in scenario.ORG_UNITS] + list(scenario.RETIRED_ORG_UNIT_NAMES),
+    )
 
     template_names = [spec.name for spec in scenario.TEMPLATES]
     templates = ReportTemplate.all_objects.filter(workspace=workspace, name__in=template_names)
