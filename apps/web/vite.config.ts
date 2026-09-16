@@ -10,6 +10,11 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 // origin lets the app work no matter which host/IP/hostname it is opened from.
 const apiProxyTarget = process.env.API_PROXY_TARGET || "http://localhost:8001";
 const liveProxyTarget = process.env.LIVE_PROXY_TARGET || "http://localhost:3100";
+// Object storage (MinIO/S3) target. Assets are uploaded straight from the
+// browser with a presigned POST, so routing that traffic through this origin
+// means the browser only ever needs to reach the port the app is served on —
+// no second port, no CORS hop, no cross-origin firewall/proxy surprises.
+const storageProxyTarget = process.env.STORAGE_PROXY_TARGET || "http://localhost:9000";
 const proxy = {
   // Keep the Host header the browser used: Django compares the Origin of unsafe
   // requests (login form POSTs) with the request host, so rewriting Host to
@@ -17,6 +22,9 @@ const proxy = {
   // "CSRF Verification Failed".
   "/api": { target: apiProxyTarget, changeOrigin: false },
   "/auth": { target: apiProxyTarget, changeOrigin: false },
+  // Same reason for keeping the Host header: presigned S3 GET urls are signed
+  // against the browser-visible host, so rewriting it invalidates the signature.
+  "/uploads": { target: storageProxyTarget, changeOrigin: false },
   "/live": { target: liveProxyTarget, changeOrigin: true, ws: true },
 };
 

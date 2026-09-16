@@ -34,9 +34,15 @@ export class FileUploadService extends APIService {
       .catch((error) => {
         if (axios.isCancel(error)) {
           console.log(error.message);
-        } else {
-          throw error?.response?.data;
+          return;
         }
+        // A blocked port, an offline client, a CORS failure or an aborted upload
+        // never produces a response payload. Rethrowing `undefined` here leaves
+        // every caller showing a generic "upload failed" message, so surface the
+        // underlying axios reason instead.
+        const responseData = error?.response?.data;
+        if (responseData !== undefined && responseData !== null) throw responseData;
+        throw new Error(error?.message ?? "Upload failed");
       });
   }
 
