@@ -103,6 +103,8 @@ const wait = async (test) => page.waitForFunction(test);
 try {
   await page.goto(url);
   await page.waitForFunction(() => document.querySelector("video")?.readyState >= 2);
+  assert.equal(await page.getByText("Voice narration", { exact: true }).count(), 0);
+  assert.equal(await page.getByText("No narrations", { exact: true }).count(), 0);
   await page.evaluate(() => {
     document.querySelector("video").currentTime = 4;
   });
@@ -148,7 +150,9 @@ try {
   await page.getByText("Recording narration", { exact: true }).first().waitFor();
   await page.waitForTimeout(1800);
   await page.getByRole("button", { name: "Stop voice narration recording" }).click();
-  await page.getByRole("button", { name: "Done", exact: true }).waitFor();
+  await page.getByLabel("Narration name", { exact: true }).waitFor();
+  assert.equal(await page.getByRole("button", { name: "Done", exact: true }).count(), 0);
+  assert.equal(await page.getByLabel("Narration name", { exact: true }).inputValue(), "Narration 01");
   assert.equal(
     await page.evaluate(() =>
       window.narrationTestStreams.every((stream) => stream.getTracks().every((track) => track.readyState === "ended"))
@@ -166,8 +170,7 @@ try {
       ),
     true
   );
-  await page.screenshot({ path: `${screenshots}/03-review-desktop.png`, fullPage: true });
-  await page.getByRole("button", { name: "Done", exact: true }).click();
+  await page.screenshot({ path: `${screenshots}/03-inspector-desktop.png`, fullPage: true });
   assert.equal(await page.getByTestId("dirty").innerText(), "Unsaved changes");
   await page.getByRole("button", { name: "Refresh annotations", exact: true }).click();
   assert.equal(await page.getByLabel("Narration name", { exact: true }).inputValue(), "Narration 01");
@@ -211,6 +214,18 @@ try {
   await page.getByRole("button", { name: /^Defensive rotation, starts/ }).click();
   assert.equal(await page.getByLabel("Narration name", { exact: true }).inputValue(), "Defensive rotation");
   await page.getByRole("button", { name: "Narration actions", exact: true }).click();
+  const narrationMenuButtons = page.getByRole("menu").locator("button");
+  assert.equal(await narrationMenuButtons.count(), 5);
+  assert.equal(
+    await narrationMenuButtons.evaluateAll((buttons) =>
+      buttons.every((button) => {
+        const style = window.getComputedStyle(button);
+        return style.display === "flex" && style.alignItems === "center";
+      })
+    ),
+    true
+  );
+  await page.screenshot({ path: `${screenshots}/04-actions-menu-desktop.png`, fullPage: true });
   await page.getByText("Duplicate", { exact: true }).click();
   await page.getByRole("alertdialog", { name: "Overlapping narrations" }).waitFor();
   await page.getByRole("button", { name: "Add another narration", exact: true }).click();
@@ -281,9 +296,8 @@ try {
   await page.waitForFunction(() => !document.querySelector("video").seeking);
   await page.getByRole("button", { name: "Check microphone", exact: true }).click();
   await page.getByRole("button", { name: "Start recording", exact: true }).click();
-  await page.getByRole("button", { name: "Done", exact: true }).waitFor();
-  await page.getByText("Recording stopped because the video ended.", { exact: true }).waitFor();
-  await page.getByRole("button", { name: "Done", exact: true }).click();
+  await page.getByRole("button", { name: /^Narration 03, starts/ }).waitFor();
+  assert.equal(await page.getByRole("button", { name: "Done", exact: true }).count(), 0);
   await page.getByRole("button", { name: "Save editor", exact: true }).click();
   await page.waitForFunction(
     () => JSON.parse(document.querySelector('[data-testid="saved-json"]').textContent).length === 3
@@ -342,7 +356,7 @@ try {
   await page.waitForTimeout(25000);
   assert.equal(await page.getByText("Recording narration", { exact: true }).count(), 2);
   await page.getByRole("button", { name: "Stop voice narration recording" }).click();
-  await page.getByRole("button", { name: "Done", exact: true }).click();
+  await page.getByRole("button", { name: /^Narration 01, starts/ }).waitFor();
   await page.getByRole("button", { name: "Delete narration", exact: true }).click();
   await page.getByRole("button", { name: "Start recording", exact: true }).click();
   await page.getByText("Recording narration", { exact: true }).first().waitFor();

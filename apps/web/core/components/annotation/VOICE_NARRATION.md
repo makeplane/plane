@@ -23,7 +23,7 @@ The original narration hook began recording from the microphone button, added au
 
 - `VoiceRecorder` owns browser recording resources and explicit lifecycle transitions. Its injected environment makes MediaRecorder and Web Audio testable without hardware.
 - `useVideoAnnotationVoiceNarration` connects the recorder to the actual player clock, microphone devices, permissions, and recording preferences.
-- `useNarrationWorkflow` owns draft review, safe replacement, overlap resolution, selection, shortcuts, and commit into the existing annotation array.
+- `useNarrationWorkflow` owns processed-take commit, safe replacement, overlap resolution, selection, and shortcuts within the existing annotation array.
 - `VoiceNarrationPanel`, `VideoAnnotationRecordingIndicator`, `VoiceNarrationClip`, the waveform, and the input meter provide isolated UI surfaces.
 - `useNarrationPreview`, `VideoAnnotationAudioPlayback`, and `useNarrationDucking` handle trimmed preview, synchronized playback, and restoring video volume.
 
@@ -34,7 +34,7 @@ Buttons and inputs reuse `@plane/propel`; menus, microphone selection, and check
 ```text
 idle -> preparing -> ready -> countdown -> starting -> recording
 recording -> paused -> starting -> recording
-recording/paused -> processing -> review -> idle (Done)
+recording/paused -> processing -> review -> idle (automatic commit)
 active states -> idle (Cancel) or error -> preparing (Check microphone)
 ```
 
@@ -44,11 +44,11 @@ Start records immediately by default, which preserves a coach's precisely positi
 
 The floating bar and side panel use the same recorder snapshot and shared status-label function. The preparation-only Start recording button is hidden during countdown, starting, recording, pause, and processing. With a media element present, only its confirmed `ended` state automatically finalizes capture; logical playlist timestamps alone cannot stop it. Timeline-end fallback is reserved for integrations without a media element.
 
-Stop or video-end finalizes the audio, releases microphone tracks, decodes duration/peaks, and opens review. Done commits the draft. Re-recording keeps the original clip until a new take is processed and accepted; cancel/error leaves the original untouched.
+Stop or video-end finalizes the audio, releases microphone tracks, decodes duration/peaks, and automatically commits and selects the processed clip. The recorder's internal review state is now a short handoff between processing and commit rather than a user confirmation screen. Re-recording keeps the original clip until a new take processes successfully; cancel/error leaves the original untouched.
 
-Review explicitly identifies a video-end stop. Deleting the selected narration reopens microphone preparation through the existing workflow, so another take can start without a separate Check microphone click. Permission/device errors still require recovery; deletion never bypasses browser permissions.
+Deleting the selected narration reopens microphone preparation through the existing workflow, so another take can start without a separate Check microphone click. Permission/device errors still require recovery; deletion never bypasses browser permissions.
 
-Toolbar, timeline seek/zoom, native player controls, save, and editor-close controls are locked during countdown/recording/pause/processing. Unexpected significant seeks abort the take rather than retain misaligned audio. Session changes cancel recording/preview and clear pending overlap decisions. Refreshes of saved annotations do not overwrite local dirty edits or a review draft.
+Toolbar, timeline seek/zoom, native player controls, save, and editor-close controls are locked during countdown/recording/pause/processing. Unexpected significant seeks abort the take rather than retain misaligned audio. Session changes cancel recording/preview and clear pending overlap decisions. Refreshes of saved annotations do not overwrite local dirty edits or a processed take awaiting conflict resolution.
 
 ## Data and Saving
 
@@ -75,7 +75,7 @@ New audio stays in memory as a data URL until the existing Save workflow externa
 
 ## Timeline and Playback
 
-Narrations are removed from generic annotation moments and placed in a dedicated horizontal Voice narration track. Non-overlapping clips share a lane; explicitly accepted overlaps use additional lanes. Coordinates, snapping candidates, duration, scrolling, ruler, and zoom reuse the current timeline implementation.
+Narrations are removed from generic annotation moments and placed in a dedicated horizontal Voice narration track. The track is omitted entirely when no narration clips exist. Non-overlapping clips share a lane; explicitly accepted overlaps use additional lanes. Coordinates, snapping candidates, duration, scrolling, ruler, and zoom reuse the current timeline implementation.
 
 Clips expose selection, waveform, name, duration, trim handles, preview, rename, replace, duplicate, original-audio download, and deletion. Dragging commits once on release. Keyboard trim changes use 0.1 seconds, or 1 second with Shift. The inspector supplies numeric controls when a clip is too narrow to manipulate comfortably.
 
@@ -100,8 +100,8 @@ Verified locally on 2026-09-10 using Node 25.8.1, Chrome, and the existing local
 - 27 narration unit tests pass: transitions, start/stop, stop-reason retention, pause/resume, cancel, countdown, errors, delayed callbacks, limits, waveforms, overlap, trims, moves, placement, metadata/dirty comparison, fades, and ducking restoration.
 - 10 existing annotation-creation and custom-playlist-clock regression tests pass.
 - 7 API media annotation storage tests pass. Ruff lint and format checks pass for the affected Python test.
-- The browser integration suite mounts the real editor in React StrictMode and uses actual Chrome MediaRecorder/Web Audio with a synthetic microphone. It verifies countdown timing, pause/resume, processing/review, microphone cleanup, waveform canvas pixels, selection/inspector, failed/successful save, dirty-edit preservation on refresh, trim controls, playback/ducking restoration, replacement cancel/failure, overlaps/lanes/zoom, mobile bounds, permission failure, seek interruption, video-end, and session isolation.
-- Regression coverage includes recording beyond 25 seconds, deleting a selected take and starting another without Check microphone, ignoring unconfirmed `ended` events/logical timeline-end jumps, and identifying a genuine video-end stop in review.
+- The browser integration suite mounts the real editor in React StrictMode and uses actual Chrome MediaRecorder/Web Audio with a synthetic microphone. It verifies hidden empty narration tracks, countdown timing, pause/resume, automatic post-processing commit, microphone cleanup, waveform canvas pixels, selection/inspector, failed/successful save, dirty-edit preservation on refresh, trim controls, playback/ducking restoration, replacement cancel/failure, overlaps/lanes/zoom, mobile bounds, permission failure, seek interruption, video-end, and session isolation.
+- Regression coverage includes recording beyond 25 seconds, deleting a selected take and starting another without Check microphone, ignoring unconfirmed `ended` events/logical timeline-end jumps, and automatically committing a genuine video-end stop.
 - Read-only playback diagnostics of `efb90b2e.m3u8` found 16 two-second segments without discontinuity markers between non-contiguous source ranges. Video.js played/replayed for approximately 31.7 seconds while its media duration grew from 32 to 48.066 seconds and it skipped three timestamp gaps. The screencast's exact 23.76-second stop was not reproduced in that isolated player test; playlist generation and authenticated editor playback still need investigation if it recurs. No production playlist was modified.
 - Desktop 1440x1000 and mobile 390x844 screenshots are written under `/tmp/kanavio-narration-browser`. A representative recorded take started at 4.000 seconds, lasted 4.2 seconds excluding pauses, and produced 512 peaks. These are fixture measurements, not a production latency benchmark.
 - Web TypeScript checking passes. Annotation-directory ESLint passes with zero warnings. Prettier is run on changed frontend files.

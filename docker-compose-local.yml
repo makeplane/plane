@@ -138,11 +138,14 @@ services:
       - ./apps/api:/code
       - ./apps/api/plane/media-library:/data/media-library
       - ./apps/api/plane/transcode-sources:/data/transcode-sources
+      - ${MEDIA_TRANSCODED_HOST_PATH:-./apps/api/plane/transcoded}:/data/transcoded
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
+      MEDIA_TRANSCODE_OUTPUT_BASE_URL: ${MEDIA_TRANSCODE_OUTPUT_BASE_URL:-http://localhost:1437/api/blobs/media}
+      MEDIA_TRANSCODE_OUTPUT_ROOT: /data/transcoded
       RABBITMQ_HOST: plane-mq
     depends_on:
       - plane-db
@@ -164,11 +167,14 @@ services:
       - ./apps/api:/code
       - ./apps/api/plane/media-library:/data/media-library
       - ./apps/api/plane/transcode-sources:/data/transcode-sources
+      - ${MEDIA_TRANSCODED_HOST_PATH:-./apps/api/plane/transcoded}:/data/transcoded
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
+      MEDIA_TRANSCODE_OUTPUT_BASE_URL: ${MEDIA_TRANSCODE_OUTPUT_BASE_URL:-http://localhost:1437/api/blobs/media}
+      MEDIA_TRANSCODE_OUTPUT_ROOT: /data/transcoded
       RABBITMQ_HOST: plane-mq
     depends_on:
       - api
@@ -188,11 +194,14 @@ services:
       - ./apps/api:/code
       - ./apps/api/plane/media-library:/data/media-library
       - ./apps/api/plane/transcode-sources:/data/transcode-sources
+      - ${MEDIA_TRANSCODED_HOST_PATH:-./apps/api/plane/transcoded}:/data/transcoded
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
+      MEDIA_TRANSCODE_OUTPUT_BASE_URL: ${MEDIA_TRANSCODE_OUTPUT_BASE_URL:-http://localhost:1437/api/blobs/media}
+      MEDIA_TRANSCODE_OUTPUT_ROOT: /data/transcoded
       RABBITMQ_HOST: plane-mq
     depends_on:
       - api
@@ -212,11 +221,14 @@ services:
       - ./apps/api:/code
       - ./apps/api/plane/media-library:/data/media-library
       - ./apps/api/plane/transcode-sources:/data/transcode-sources
+      - ${MEDIA_TRANSCODED_HOST_PATH:-./apps/api/plane/transcoded}:/data/transcoded
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-5368709120}
+      MEDIA_TRANSCODE_OUTPUT_BASE_URL: ${MEDIA_TRANSCODE_OUTPUT_BASE_URL:-http://localhost:1437/api/blobs/media}
+      MEDIA_TRANSCODE_OUTPUT_ROOT: /data/transcoded
       RABBITMQ_HOST: plane-mq
     depends_on:
       - plane-db

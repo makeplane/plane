@@ -955,8 +955,8 @@ export const VideoAnnotationEditor = ({
     if (isVoiceNarrationRecording || workflow.needsReview || workflow.conflict) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Recording in progress",
-        message: "Stop recording and finish the narration review before saving annotations.",
+        title: "Narration not ready",
+        message: "Stop recording and resolve any pending narration conflict before saving annotations.",
       });
       return false;
     }
@@ -1111,7 +1111,6 @@ export const VideoAnnotationEditor = ({
       onReplace={workflow.replace}
       onDelete={handleDeleteAnnotation}
       onPreview={workflow.preview.play}
-      onAccept={workflow.accept}
       onNew={workflow.open}
     />
   );

@@ -134,16 +134,23 @@ export const useNarrationWorkflow = ({
     }
     commit(clip);
   }, [annotations, commit, draft, replacement?.id]);
+  useEffect(() => {
+    // Stop is the commit intent; only an overlap still requires a user decision.
+    if (state.stage === "review" && draft && !conflict) accept();
+  }, [accept, conflict, draft, state.stage]);
   const resolveConflict = useCallback(
     (action: "add" | "replace" | "cancel") => {
       if (!conflict || !canEdit || locked || saving) return;
       if (action === "cancel") {
         setConflict(null);
+        recorder.cancel();
+        setReplacement(null);
+        setSelectedId(replacement?.id || null);
         return;
       }
       commit(conflict.clip, action === "replace" ? conflict.conflicts.map((item) => item.id) : []);
     },
-    [canEdit, commit, conflict, locked, saving]
+    [canEdit, commit, conflict, locked, recorder, replacement?.id, saving, setReplacement, setSelectedId]
   );
   const select = useCallback(
     (clip: TCustomPlaylistAnnotation) => {
@@ -274,7 +281,6 @@ export const useNarrationWorkflow = ({
     conflict,
     clearConflict,
     change,
-    accept,
     resolveConflict,
     select,
     open,

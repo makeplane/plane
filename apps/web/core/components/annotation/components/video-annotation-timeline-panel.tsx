@@ -264,13 +264,15 @@ export const VideoAnnotationTimelinePanel = ({
         }}
       >
         <div className="shrink-0 border-r border-custom-border-200 bg-custom-background-90">
-          <div
-            className="flex items-start gap-2 border-b border-custom-border-200 px-3 py-5 text-xs font-medium text-custom-text-100"
-            style={{ height: Math.max(1, lanes.length) * 72 }}
-          >
-            <Mic className="size-4 shrink-0 text-custom-primary-100" />
-            <span>Voice narration</span>
-          </div>
+          {lanes.length > 0 ? (
+            <div
+              className="flex items-start gap-2 border-b border-custom-border-200 px-3 py-5 text-xs font-medium text-custom-text-100"
+              style={{ height: lanes.length * 72 }}
+            >
+              <Mic className="size-4 shrink-0 text-custom-primary-100" />
+              <span>Voice narration</span>
+            </div>
+          ) : null}
           {annotationTimelineMoments.map((moment) => {
             const isMomentOpen = openTimelineMomentIds.has(moment.id);
             const isEditingMomentTitle = editingTimelineMoment?.id === moment.id;
@@ -385,37 +387,34 @@ export const VideoAnnotationTimelinePanel = ({
               progressPercent={timelineProgressPercent}
             />
 
-            <div
-              style={{ height: Math.max(1, lanes.length) * 72 }}
-              className="relative border-b border-custom-border-200 bg-custom-primary-100/5"
-            >
-              {lanes.map((lane, index) => (
-                <div key={index} className="relative h-[72px]">
-                  {lane.map((clip) => (
-                    <VoiceNarrationClip
-                      key={clip.id}
-                      clip={clip}
-                      selected={narrationActions.selectedId === clip.id}
-                      previewing={narrationActions.previewId === clip.id}
-                      disabled={narrationActions.disabled}
-                      duration={timelineDurationSeconds}
-                      snapTimes={snapTimes}
-                      onSelect={narrationActions.onSelect}
-                      onChange={narrationActions.onChange}
-                      onPreview={narrationActions.onPreview}
-                      onReplace={narrationActions.onReplace}
-                      onDuplicate={narrationActions.onDuplicate}
-                      onDelete={onDeleteAnnotation}
-                    />
-                  ))}
-                </div>
-              ))}
-              {lanes.length === 0 ? (
-                <span className="pointer-events-none absolute left-3 top-6 text-xs text-custom-text-400">
-                  No narrations
-                </span>
-              ) : null}
-            </div>
+            {lanes.length > 0 ? (
+              <div
+                style={{ height: lanes.length * 72 }}
+                className="relative border-b border-custom-border-200 bg-custom-primary-100/5"
+              >
+                {lanes.map((lane, index) => (
+                  <div key={index} className="relative h-[72px]">
+                    {lane.map((clip) => (
+                      <VoiceNarrationClip
+                        key={clip.id}
+                        clip={clip}
+                        selected={narrationActions.selectedId === clip.id}
+                        previewing={narrationActions.previewId === clip.id}
+                        disabled={narrationActions.disabled}
+                        duration={timelineDurationSeconds}
+                        snapTimes={snapTimes}
+                        onSelect={narrationActions.onSelect}
+                        onChange={narrationActions.onChange}
+                        onPreview={narrationActions.onPreview}
+                        onReplace={narrationActions.onReplace}
+                        onDuplicate={narrationActions.onDuplicate}
+                        onDelete={onDeleteAnnotation}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : null}
             {annotationTimelineMoments.map((moment) => {
               const isMomentOpen = openTimelineMomentIds.has(moment.id);
 

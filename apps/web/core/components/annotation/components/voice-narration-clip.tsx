@@ -158,9 +158,13 @@ export const VoiceNarrationClip = memo(function VoiceNarrationClip({
           disabled={disabled}
           closeOnSelect
           buttonClassName="!size-7"
+          maxHeight="lg"
+          menuItemsClassName="!z-[60]"
           placement="bottom-end"
+          portalElement={typeof document !== "undefined" ? document.body : null}
         >
           <CustomMenu.MenuItem
+            className="flex items-center gap-2"
             onClick={() => {
               onSelect(clip);
               requestAnimationFrame(() =>
@@ -168,23 +172,23 @@ export const VoiceNarrationClip = memo(function VoiceNarrationClip({
               );
             }}
           >
-            <Pencil className="size-3.5" />
+            <Pencil className="size-3.5 shrink-0" />
             Rename
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem onClick={() => onReplace(clip)}>
-            <RefreshCw className="size-3.5" />
+          <CustomMenu.MenuItem className="flex items-center gap-2" onClick={() => onReplace(clip)}>
+            <RefreshCw className="size-3.5 shrink-0" />
             Replace recording
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem onClick={() => onDuplicate(clip)}>
-            <Copy className="size-3.5" />
+          <CustomMenu.MenuItem className="flex items-center gap-2" onClick={() => onDuplicate(clip)}>
+            <Copy className="size-3.5 shrink-0" />
             Duplicate
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem onClick={() => void download()}>
-            <Download className="size-3.5" />
+          <CustomMenu.MenuItem className="flex items-center gap-2" onClick={() => void download()}>
+            <Download className="size-3.5 shrink-0" />
             Download original audio
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem onClick={() => onDelete(clip.id)}>
-            <Trash2 className="size-3.5 text-red-500" />
+          <CustomMenu.MenuItem className="flex items-center gap-2" onClick={() => onDelete(clip.id)}>
+            <Trash2 className="size-3.5 shrink-0 text-red-500" />
             Delete
           </CustomMenu.MenuItem>
         </CustomMenu>
