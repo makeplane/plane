@@ -29,8 +29,8 @@ class S3Storage(S3Boto3Storage):
         self.aws_region = os.environ.get("AWS_REGION")
         # Use the AWS_S3_ENDPOINT_URL environment variable for the endpoint URL
         self.aws_s3_endpoint_url = os.environ.get("AWS_S3_ENDPOINT_URL") or os.environ.get("MINIO_ENDPOINT_URL")
-        self.aws_s3_internal_endpoint_url = (
-            os.environ.get("AWS_S3_INTERNAL_ENDPOINT_URL") or os.environ.get("MINIO_INTERNAL_ENDPOINT_URL")
+        self.aws_s3_internal_endpoint_url = os.environ.get("AWS_S3_INTERNAL_ENDPOINT_URL") or os.environ.get(
+            "MINIO_INTERNAL_ENDPOINT_URL"
         )
 
         if os.environ.get("USE_MINIO") == "1":
@@ -40,11 +40,16 @@ class S3Storage(S3Boto3Storage):
             else:
                 endpoint_protocol = request.scheme if request else "http"
             # Create an S3 client for MinIO
-            endpoint_url = (
-                f"{endpoint_protocol}://{request.get_host()}"
-                if request
-                else self.aws_s3_internal_endpoint_url or self.aws_s3_endpoint_url
-            )
+            if request:
+                endpoint_url = (
+                    self.aws_s3_endpoint_url
+                    if self.aws_s3_endpoint_url
+                    and self.aws_s3_internal_endpoint_url
+                    and self.aws_s3_endpoint_url.rstrip("/") != self.aws_s3_internal_endpoint_url.rstrip("/")
+                    else f"{endpoint_protocol}://{request.get_host()}"
+                )
+            else:
+                endpoint_url = self.aws_s3_internal_endpoint_url or self.aws_s3_endpoint_url
             self.s3_client = boto3.client(
                 "s3",
                 aws_access_key_id=self.aws_access_key_id,
@@ -54,7 +59,9 @@ class S3Storage(S3Boto3Storage):
                 config=boto3.session.Config(signature_version="s3v4"),
             )
         else:
-            endpoint_url = self.aws_s3_endpoint_url if request else (self.aws_s3_internal_endpoint_url or self.aws_s3_endpoint_url)
+            endpoint_url = (
+                self.aws_s3_endpoint_url if request else (self.aws_s3_internal_endpoint_url or self.aws_s3_endpoint_url)
+            )
             # Create an S3 client
             self.s3_client = boto3.client(
                 "s3",
