@@ -128,7 +128,9 @@ from .research import (
     ReportTemplate,
     ReportVisibility,
     ResearchAuditEvent,
+    ResearchInviteCode,
     ResearchProjectProfile,
+    ResearchUserProfile,
     ResearchStageInstance,
     ResearchStageRequirement,
     DEFAULT_MIN_REVIEWERS,
@@ -143,5 +145,7 @@ from .research import (
     StageMaterialVersion,
     StageTransition,
     StageType,
+    UserImportBatch,
+    UserImportRow,
     WorkspaceResearchSetting,
 )

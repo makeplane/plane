@@ -3,3 +3,4 @@
 # See the LICENSE file for details.
 
 from .instance import Instance, InstanceAdmin, InstanceConfiguration
+from .role import InstanceRoleAssignment
