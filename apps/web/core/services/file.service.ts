@@ -61,6 +61,22 @@ export class FileService extends APIService {
     this.fileUploadService = new FileUploadService();
   }
 
+  /**
+   * Normalises an upload failure into something the caller can render.
+   *
+   * HTTP failures carry a response payload (`{ error: ... }`, validation errors)
+   * that callers already know how to display. Transport failures — a blocked
+   * port, CORS, an offline client, a timeout — carry nothing but the axios
+   * message, and rethrowing `undefined` for those is what turned every such
+   * failure into a generic "failed to upload" toast.
+   */
+  private getUploadError(error: any): any {
+    if (error instanceof Error) return error;
+    const responseData = error?.response?.data;
+    if (responseData !== undefined && responseData !== null) return responseData;
+    return new Error(error?.message ?? "Failed to upload file");
+  }
+
   private async updateWorkspaceAssetUploadStatus(workspaceSlug: string, assetId: string): Promise<void> {
     return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
       .then((response) => response?.data)
@@ -92,7 +108,7 @@ export class FileService extends APIService {
         return signedURLResponse;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw this.getUploadError(error);
       });
   }
 
@@ -169,7 +185,7 @@ export class FileService extends APIService {
         return signedURLResponse;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw this.getUploadError(error);
       });
   }
 
@@ -195,7 +211,7 @@ export class FileService extends APIService {
         return signedURLResponse;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw this.getUploadError(error);
       });
   }
 

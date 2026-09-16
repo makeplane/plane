@@ -6,6 +6,19 @@
 
 export type TOrgUnitType = "ROOT" | "INSTITUTE" | "LAB" | "GROUP" | "TEAM";
 export type TOrgRole = "OWNER" | "PI" | "ADVISOR" | "REVIEWER" | "UNIT_ADMIN";
+export type TAdminRole = "DEV_ADMIN" | "OPS_ADMIN" | "MAIN_PI";
+export type TInviteCodeStatus = "ACTIVE" | "DISABLED" | "EXPIRED" | "EXHAUSTED";
+export type TUserImportRowStatus = "OK" | "PENDING" | "ERROR";
+export type TUserImportBatchStatus = "PENDING" | "IMPORTED" | "FAILED";
+export type TResearchProfileCategory = "STUDENT" | "POSTDOC" | "ADVISOR" | "PI" | "STAFF" | "OTHER";
+export type TResearchProfileDegree = "MS" | "PHD" | "";
+/**
+ * Research visibility tier derived by the backend from the organisation tree,
+ * mentor bindings, reviewer assignments and administrator tags (v2.5.0).
+ * `NONE` means the account has no research relation yet: the research menu
+ * stays hidden until an administrator assigns one.
+ */
+export type TResearchLevel = "ADMIN" | "PRINCIPAL" | "MENTOR" | "RESEARCHER" | "NONE";
 export type TReportType = "WEEKLY" | "MONTHLY";
 export type TReportStatus = "DRAFT" | "SUBMITTED" | "NEEDS_REVISION" | "ACCEPTED";
 export type TReportVisibility = "PRIVATE" | "DIRECT_ADVISOR" | "UNIT" | "ANCESTRY" | "WORKSPACE" | "CUSTOM";
@@ -227,10 +240,31 @@ export type TResearchIdentity = {
     code?: boolean;
     integrations?: boolean;
   };
+  /**
+   * Which surfaces this caller may reach (v2.5.0). `nav` is already
+   * intersected with `sections` by the backend, so the frontend only has to
+   * filter the navigation constants by it. Older payloads may omit the field.
+   */
+  capabilities?: {
+    level: TResearchLevel;
+    nav: string[];
+    is_mentor: boolean;
+    is_stage_reviewer: boolean;
+  };
   user: {
     id: string;
     is_workspace_admin: boolean;
+    /** Configuration rights: workspace administrator or administrator tag. */
+    is_research_admin?: boolean;
+    is_system_admin?: boolean;
+    /** Visibility tier of this caller in this workspace (v2.5.0). */
+    research_level?: TResearchLevel;
+    admin_roles?: TAdminRole[];
+    admin_role_catalog?: TAdminRole[];
+    workspaces?: string[];
     is_research_owner: boolean;
+    profile?: TResearchProfileCategory | null;
+    student_no?: string | null;
     org_units: {
       org_unit: string;
       org_unit_name: string;
@@ -877,4 +911,94 @@ export type TTimelineFilters = {
   date_from?: string;
   date_to?: string;
   source_system?: string;
+};
+
+// ---------------------------------------------------------------------------
+// System management (v2.4.0): invite codes, roster import, PI aggregate
+// ---------------------------------------------------------------------------
+
+export type TInviteCode = {
+  id: string;
+  code: string;
+  org_role: TOrgRole | "";
+  org_unit: string | null;
+  max_uses: number;
+  used_count: number;
+  expires_at: string | null;
+  status: "ACTIVE" | "DISABLED";
+  effective_status: TInviteCodeStatus;
+  note: string;
+  register_url: string;
+  created_by: string | null;
+  created_by_detail?: TResearchUserLite | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TResearchUserProfile = {
+  id: string;
+  user: string;
+  user_detail?: TResearchUserLite;
+  student_no: string;
+  grade: string;
+  degree: TResearchProfileDegree;
+  degree_label?: string;
+  phone: string;
+  category: TResearchProfileCategory;
+  category_label?: string;
+  group_label: string;
+  source_batch: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TUserImportRow = {
+  id: string;
+  batch: string;
+  row_number: number;
+  status: TUserImportRowStatus;
+  message: string;
+  display_name: string;
+  email: string;
+  student_no: string;
+  group_label: string;
+  advisor_name: string;
+  user: string | null;
+  user_detail?: TResearchUserLite | null;
+  org_unit: string | null;
+  raw: Record<string, string>;
+  created_at: string;
+};
+
+export type TUserImportBatch = {
+  id: string;
+  source_filename: string;
+  dry_run: boolean;
+  status: TUserImportBatchStatus;
+  rows_total: number;
+  rows_ok: number;
+  rows_pending: number;
+  rows_error: number;
+  options: Record<string, unknown>;
+  summary: { dry_run?: boolean; groups?: string[]; credentials_issued?: number };
+  created_by_detail?: TResearchUserLite | null;
+  created_at: string;
+  rows?: TUserImportRow[];
+};
+
+export type TUserImportBatchSummary = Omit<TUserImportBatch, "rows" | "options" | "created_by_detail">;
+
+export type TPiAggregate = {
+  workspace: { slug: string; name: string };
+  source_workspace: { slug: string; name: string };
+  is_system_admin: boolean;
+  scope: { unit_ids: string[]; unit_count: number; is_empty: boolean };
+  projects: { total: number; by_status: Record<string, number> };
+  reports: { total: number; by_status: Record<string, number>; submitted_last_30_days: number };
+  stages: { total: number; by_status: Record<string, number>; blocked_gates: number };
+  reviews: { awaiting_stages: number; open_assignments: number; submitted: number };
+  approvals: { pending: number };
+  members?: { total: number };
+  org_units: { id: string; name: string; depth: number; unit_type: TOrgUnitType }[];
+  generated_at: string;
 };

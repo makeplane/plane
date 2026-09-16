@@ -22,6 +22,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_PROJECTS
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_conflict,
@@ -98,6 +99,8 @@ def serialize_profile(profile):
 
 class ResearchProjectListCreateEndpoint(ResearchAPIView):
     """``GET``/``POST /api/research/workspaces/<slug>/projects/``"""
+
+    nav_capability = NAV_PROJECTS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section="reports")
@@ -263,6 +266,8 @@ class ResearchProjectListCreateEndpoint(ResearchAPIView):
 class ResearchProjectDetailEndpoint(ResearchAPIView):
     """``GET``/``PATCH /api/research/workspaces/<slug>/projects/<project_id>/``"""
 
+    nav_capability = NAV_PROJECTS
+
     def _get_profile(self, workspace, project_id):
         return profile_queryset(workspace).filter(project_id=project_id).first()
 
@@ -345,6 +350,8 @@ class ResearchProjectDetailEndpoint(ResearchAPIView):
 class ResearchProjectArchiveEndpoint(ResearchAPIView):
     """``POST /api/research/workspaces/<slug>/projects/<project_id>/archive/``"""
 
+    nav_capability = NAV_PROJECTS
+
     def post(self, request, slug, project_id):
         workspace, error = self.get_workspace(section="reports")
         if error:
@@ -374,6 +381,8 @@ class ResearchProjectArchiveEndpoint(ResearchAPIView):
 
 class ResearchProjectRestoreEndpoint(ResearchAPIView):
     """``POST /api/research/workspaces/<slug>/projects/<project_id>/restore/``"""
+
+    nav_capability = NAV_PROJECTS
 
     def post(self, request, slug, project_id):
         workspace, error = self.get_workspace(section="reports")

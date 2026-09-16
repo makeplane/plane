@@ -11,8 +11,9 @@ from rest_framework.response import Response
 
 from plane.db.models import ResearchAuditEvent
 from plane.research.serializers import ResearchAuditEventSerializer
+from plane.research.utils.capabilities import NAV_AUDIT
 from plane.research.utils.errors import ResearchErrorCode, research_error, research_permission_denied
-from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.roles import is_research_admin
 from plane.research.views.base import ResearchAPIView
 
 
@@ -35,11 +36,13 @@ class ResearchAuditEventListEndpoint(ResearchAPIView):
     (P0-AUD-02, P0-AUD-05).
     """
 
+    nav_capability = NAV_AUDIT
+
     def get(self, request, slug):
         workspace, error = self.get_workspace(require_enabled=False)
         if error:
             return error
-        if not is_workspace_admin(request.user, workspace.id):
+        if not is_research_admin(request.user, workspace.id):
             return research_permission_denied()
 
         queryset = ResearchAuditEvent.objects.filter(workspace=workspace).select_related("actor", "org_unit")

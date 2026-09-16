@@ -28,6 +28,7 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_INTEGRATIONS
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_conflict,
@@ -69,6 +70,8 @@ def connection_map(workspace, *, enabled_only=False):
 
 class ResearchIntegrationListEndpoint(ResearchAPIView):
     """``GET``/``PATCH /api/research/workspaces/<slug>/integrations/``"""
+
+    nav_capability = NAV_INTEGRATIONS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section=SECTION)
@@ -163,6 +166,8 @@ class ResearchIntegrationListEndpoint(ResearchAPIView):
 class ResearchIntegrationHealthEndpoint(ResearchAPIView):
     """``GET /api/research/workspaces/<slug>/integrations/health/`` (P1-INT-10)"""
 
+    nav_capability = NAV_INTEGRATIONS
+
     def get(self, request, slug):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
@@ -200,6 +205,8 @@ class ResearchIntegrationHealthEndpoint(ResearchAPIView):
 
 class ResearchIntegrationCallLogEndpoint(ResearchAPIView):
     """``GET /api/research/workspaces/<slug>/integrations/call-logs/``"""
+
+    nav_capability = NAV_INTEGRATIONS
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(section=SECTION)

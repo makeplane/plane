@@ -35,6 +35,21 @@ export class SitesFileService extends FileService {
   }
 
   /**
+   * Normalises an upload failure into something the caller can render.
+   *
+   * HTTP failures carry a response payload that callers already know how to
+   * display, while transport failures (blocked port, CORS, offline client,
+   * timeout) carry nothing but the axios message. Rethrowing `undefined` for
+   * those is what turns every such failure into a generic "upload failed" toast.
+   */
+  private getUploadError(error: any): any {
+    if (error instanceof Error) return error;
+    const responseData = error?.response?.data;
+    if (responseData !== undefined && responseData !== null) return responseData;
+    return new Error(error?.message ?? "Failed to upload file");
+  }
+
+  /**
    * Updates the upload status of an asset
    * @param {string} anchor - The anchor identifier
    * @param {string} assetId - The asset identifier
@@ -93,7 +108,7 @@ export class SitesFileService extends FileService {
         return signedURLResponse;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw this.getUploadError(error);
       });
   }
 

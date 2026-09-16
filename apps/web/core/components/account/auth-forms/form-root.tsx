@@ -48,6 +48,9 @@ export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot)
   const { config } = useInstance();
 
   const isSMTPConfigured = config?.is_smtp_configured || false;
+  // Closed sign-up is invitation-only in this deployment, so the registration
+  // form announces the invite code requirement instead of hiding it until submit.
+  const isInviteOnlySignUp = currentAuthMode === EAuthModes.SIGN_UP && !(config?.enable_signup ?? false);
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
@@ -104,7 +107,7 @@ export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot)
   };
 
   if (authStep === EAuthSteps.EMAIL) {
-    return <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />;
+    return <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} inviteOnly={isInviteOnlySignUp} />;
   }
   if (authStep === EAuthSteps.UNIQUE_CODE) {
     return (

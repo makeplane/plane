@@ -19,6 +19,7 @@ function WorkspaceResearchIdentitySettingsPage() {
       titleKey="research.nav.identity"
       descriptionKey="research.identity.description"
       section="org"
+      navKey="identity"
       adminOnly
     >
       <ResearchIdentityMappingTable workspaceSlug={workspaceSlug} />

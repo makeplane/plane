@@ -41,6 +41,7 @@ from plane.research.seed.verify import (
     visible_reports,
 )
 from plane.research.services.stage_gate import evaluate_stage_gate
+from plane.research.utils.org import build_path
 from plane.tests.research_fixtures import make_user, make_workspace
 from plane.tests.unit.research.test_acl import EXPECTED
 
@@ -78,6 +79,53 @@ def test_seed_is_idempotent(seeded):
     second = ResearchSeedBuilder(workspace, seeded["owner"], with_files=False).run()
     assert sum(second.values()) == 0, dict(second)
     assert PeriodicReport.objects.filter(workspace=workspace).count() == before
+
+
+@pytest.mark.django_db
+def test_org_tree_is_a_single_chain(seeded):
+    """One node per category, top down: 学院 -> 实验室 -> 课题组 -> 小组."""
+    workspace = seeded["workspace"]
+    assert [spec.unit_type for spec in scenario.ORG_UNITS] == ["INSTITUTE", "LAB", "GROUP", "TEAM"]
+
+    units = list(
+        OrgUnit.objects.filter(workspace=workspace, deleted_at__isnull=True)
+        .exclude(unit_type=OrgUnit.UnitType.ROOT)
+        .order_by("depth")
+    )
+    assert [unit.unit_type for unit in units] == ["INSTITUTE", "LAB", "GROUP", "TEAM"]
+    assert [unit.depth for unit in units] == [1, 2, 3, 4]
+
+    root = OrgUnit.objects.get(workspace=workspace, unit_type=OrgUnit.UnitType.ROOT, deleted_at__isnull=True)
+    assert OrgUnit.objects.filter(workspace=workspace, parent=root, deleted_at__isnull=True).count() == 1
+    # no siblings anywhere: the tree is a single chain, not a branching tree
+    for unit in units:
+        assert OrgUnit.objects.filter(workspace=workspace, parent=unit, deleted_at__isnull=True).count() <= 1
+
+    # retired fixture nodes never come back
+    assert not OrgUnit.all_objects.filter(
+        workspace=workspace, name__in=scenario.RETIRED_ORG_UNIT_NAMES
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_reset_retires_legacy_nodes(seeded):
+    """``--reset`` also clears the node names older fixture versions created."""
+    workspace = seeded["workspace"]
+    root = OrgUnit.objects.get(workspace=workspace, unit_type=OrgUnit.UnitType.ROOT, deleted_at__isnull=True)
+    legacy = OrgUnit.objects.create(
+        workspace=workspace,
+        parent=root,
+        name=scenario.RETIRED_ORG_UNIT_NAMES[0],
+        unit_type=OrgUnit.UnitType.LAB,
+        depth=1,
+        created_by=seeded["owner"],
+    )
+    legacy.path = build_path(legacy.id, root.path)
+    legacy.save(update_fields=["path"])
+
+    deleted = reset_seed(workspace)
+    assert deleted["org_units"] >= 1
+    assert not OrgUnit.all_objects.filter(pk=legacy.pk).exists()
 
 
 @pytest.mark.django_db

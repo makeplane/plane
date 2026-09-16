@@ -19,6 +19,7 @@ function WorkspaceResearchAuditPage() {
       titleKey="research.nav.audit"
       descriptionKey="research.audit.description"
       section="org"
+      navKey="audit"
       adminOnly
       allowDisabled
     >

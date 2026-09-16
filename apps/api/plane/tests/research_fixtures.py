@@ -7,6 +7,7 @@
 from uuid import uuid4
 
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceResearchSetting
+from plane.license.models import Instance, InstanceAdmin, InstanceRoleAssignment
 
 WORKSPACE_ADMIN_ROLE = 20
 WORKSPACE_MEMBER_ROLE = 15
@@ -69,3 +70,68 @@ def enable_research(workspace, **overrides):
         defaults=defaults,
     )
     return setting
+
+
+def make_instance(name="AI4MS Test Instance"):
+    """Create (or reuse) the singleton instance row."""
+    instance = Instance.objects.first()
+    if instance is not None:
+        return instance
+    return Instance.objects.create(
+        instance_name=name,
+        instance_id=f"test-{uuid4().hex[:8]}",
+        current_version="2.4.0",
+        is_setup_done=True,
+    )
+
+
+def make_instance_admin(user=None, role=20):
+    """Grant the god-mode instance administrator seat."""
+    instance = make_instance()
+    admin_user = user or make_user(email=f"instance-admin-{uuid4().hex[:6]}@example.com")
+    InstanceAdmin.objects.get_or_create(instance=instance, user=admin_user, defaults={"role": role})
+    return admin_user
+
+
+def grant_admin_tag(user, role, actor=None):
+    """Grant one of the three administrator tags."""
+    instance = make_instance()
+    return InstanceRoleAssignment.objects.create(
+        instance=instance,
+        user=user,
+        role=role,
+        assigned_by=actor,
+    )
+
+
+def invite_codes_url(workspace, suffix=""):
+    return f"/api/research/workspaces/{workspace.slug}/invite-codes/{suffix}"
+
+
+def user_imports_url(workspace, suffix=""):
+    return f"/api/research/workspaces/{workspace.slug}/user-imports/{suffix}"
+
+
+def pi_aggregate_url(workspace):
+    return f"/api/research/workspaces/{workspace.slug}/aggregate/"
+
+
+def public_workspace(owner=None, slug="public", name="公共工作区"):
+    """Create the public workspace used by invite codes and imports."""
+    owner = owner or make_user(email=f"public-owner-{uuid4().hex[:6]}@example.com")
+    workspace = Workspace.objects.filter(slug=slug, deleted_at__isnull=True).first()
+    if workspace is not None:
+        return workspace
+    workspace = make_workspace(owner, name=name, slug=slug)
+    enable_research(workspace)
+    return workspace
+
+
+def pi_workspace(owner=None, slug="pi", name="主PI工作区"):
+    owner = owner or make_user(email=f"pi-owner-{uuid4().hex[:6]}@example.com")
+    workspace = Workspace.objects.filter(slug=slug, deleted_at__isnull=True).first()
+    if workspace is not None:
+        return workspace
+    workspace = make_workspace(owner, name=name, slug=slug)
+    enable_research(workspace)
+    return workspace

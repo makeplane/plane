@@ -19,6 +19,7 @@ function WorkspaceResearchPlatformSettingsPage() {
       titleKey="research.nav.platform"
       descriptionKey="research.platform.description"
       section="org"
+      navKey="platform"
       adminOnly
       allowDisabled
     >

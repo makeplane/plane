@@ -8,7 +8,10 @@ import os
 authentication_config_variables = [
     {
         "key": "ENABLE_SIGNUP",
-        "value": os.environ.get("ENABLE_SIGNUP", "1"),
+        # AI4MS deployments are invitation-only by default: a fresh instance is
+        # seeded with registration closed so administrators hand out invite codes
+        # instead of the API defaulting to open self-serve signup.
+        "value": os.environ.get("ENABLE_SIGNUP", "0"),
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },

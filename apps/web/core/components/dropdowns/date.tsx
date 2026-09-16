@@ -79,7 +79,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
   const startOfWeek = data?.start_of_the_week;
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -180,15 +180,20 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
     >
       {isOpen &&
         createPortal(
-          <Combobox.Options as="ul" data-prevent-outside-click static>
+          <Combobox.Options
+            as="ul"
+            data-prevent-outside-click
+            static
+            className="z-30"
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
             <div
               className={cn(
-                "z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200",
+                "my-1 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200",
                 optionsClassName
               )}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
             >
               <Calendar
                 className="rounded-md border border-subtle p-3"

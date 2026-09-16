@@ -13,12 +13,15 @@ from plane.research.utils.audit import (
     ResearchResourceType,
     record_audit_event,
 )
+from plane.research.utils.capabilities import NAV_PLATFORM
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_error,
     research_permission_denied,
 )
-from plane.research.utils.org import ensure_root_org_unit, is_workspace_admin
+from plane.research.utils.org import ensure_root_org_unit
+from plane.research.utils.roles import is_research_admin
+from plane.research.utils.settings import default_workspace_research_settings
 from plane.research.views.base import ResearchAPIView, truthy
 
 BOOLEAN_FIELDS = (
@@ -41,7 +44,13 @@ LIMIT_FIELDS = ("image_max_mb", "pdf_max_mb", "markdown_max_mb", "audit_retentio
 def get_or_create_setting(workspace, actor=None):
     setting = WorkspaceResearchSetting.objects.filter(workspace=workspace).first()
     if setting is None:
-        setting = WorkspaceResearchSetting.objects.create(workspace=workspace, created_by=actor)
+        setting = WorkspaceResearchSetting.objects.create(
+            workspace=workspace,
+            created_by=actor,
+            # Opening this page must not flip a workspace off unnoticed: a fresh
+            # row inherits the deployment switch instead of the model default.
+            module_enabled=default_workspace_research_settings()["module_enabled"],
+        )
     return setting
 
 
@@ -52,6 +61,8 @@ class ResearchSettingsEndpoint(ResearchAPIView):
     workspace level switches, upload limits and the default visibility policy
     (P0-CFG-01 ~ P0-CFG-08).
     """
+
+    nav_capability = NAV_PLATFORM
 
     def get(self, request, slug):
         workspace, error = self.get_workspace(require_enabled=False)
@@ -64,7 +75,7 @@ class ResearchSettingsEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(require_enabled=False)
         if error:
             return error
-        if not is_workspace_admin(request.user, workspace.id):
+        if not is_research_admin(request.user, workspace.id):
             return research_permission_denied()
 
         setting = get_or_create_setting(workspace, actor=request.user)

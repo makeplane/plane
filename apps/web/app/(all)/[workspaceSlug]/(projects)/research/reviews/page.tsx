@@ -15,7 +15,12 @@ function WorkspaceResearchReviewsPage() {
   if (!workspaceSlug) return null;
 
   return (
-    <ResearchPageShell titleKey="research.nav.reviews" descriptionKey="research.reviews.description" section="stages">
+    <ResearchPageShell
+      titleKey="research.nav.reviews"
+      descriptionKey="research.reviews.description"
+      section="stages"
+      navKey="reviews"
+    >
       <ReviewInbox workspaceSlug={workspaceSlug} />
     </ResearchPageShell>
   );

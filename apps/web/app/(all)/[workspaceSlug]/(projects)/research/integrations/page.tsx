@@ -19,6 +19,7 @@ function WorkspaceResearchIntegrationsPage() {
       titleKey="research.nav.integrations"
       descriptionKey="research.integrations.description"
       section="integrations"
+      navKey="integrations"
       adminOnly
     >
       <IntegrationSettings workspaceSlug={workspaceSlug} />

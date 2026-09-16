@@ -45,6 +45,7 @@ import type {
   TIntegrationConnection,
   TResearchTimeline,
   TReviewSummary,
+  TResearchLevel,
   TTimelineFilters,
   TToMeReview,
   TWorkspaceResearchSetting,
@@ -166,6 +167,15 @@ export interface IResearchStore {
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
+  /** Configuration rights: workspace administrator or administrator tag. */
+  isResearchAdmin: boolean;
+  /**
+   * Visibility tier published by the backend (v2.5.0). ``null`` means the
+   * payload predates the capability layer.
+   */
+  researchLevel: TResearchLevel | null;
+  /** Navigation keys this caller may reach; ``null`` when unknown. */
+  visibleNavKeys: string[] | null;
   isOrgSectionEnabled: boolean;
   isReportSectionEnabled: boolean;
   isApprovalSectionEnabled: boolean;
@@ -181,6 +191,8 @@ export interface IResearchStore {
   getAuditEvents: (workspaceSlug: string) => TResearchAuditEvent[];
   getProjectStages: (workspaceSlug: string, projectId: string) => TStageInstance[];
   getStageMaterials: (stageId: string) => TStageMaterial[];
+  /** Whether a research navigation key is reachable for this caller. */
+  canSee: (navKey: string) => boolean;
   // actions
   fetchIdentity: (workspaceSlug: string) => Promise<TResearchIdentity>;
   fetchOrgUnits: (workspaceSlug: string, options?: { includeInactive?: boolean }) => Promise<TOrgUnit[]>;
@@ -628,6 +640,9 @@ export class ResearchStore implements IResearchStore {
       // computed
       isEnabled: computed,
       isWorkspaceAdmin: computed,
+      isResearchAdmin: computed,
+      researchLevel: computed,
+      visibleNavKeys: computed,
       isOrgSectionEnabled: computed,
       isReportSectionEnabled: computed,
       isApprovalSectionEnabled: computed,
@@ -779,6 +794,45 @@ export class ResearchStore implements IResearchStore {
   get isWorkspaceAdmin() {
     return Boolean(this.identity?.user?.is_workspace_admin);
   }
+
+  /**
+   * Administrator surfaces (organisation, templates, identity mappings,
+   * platform configuration, audit and the account pages) open for workspace
+   * administrators and for holders of an instance administrator tag.
+   */
+  get isResearchAdmin() {
+    return Boolean(this.identity?.user?.is_research_admin ?? this.identity?.user?.is_workspace_admin);
+  }
+
+  /**
+   * Research visibility tier of the caller in the active workspace (v2.5.0).
+   * Derived by the backend from the organisation tree, mentor bindings,
+   * reviewer assignments and administrator tags, so it follows an
+   * organisation change without a redeploy.
+   */
+  get researchLevel(): TResearchLevel | null {
+    return this.identity?.capabilities?.level ?? this.identity?.user?.research_level ?? null;
+  }
+
+  /**
+   * Navigation keys the caller may reach. The backend already intersected the
+   * list with the workspace sub switches, so components only need this list.
+   * ``null`` means the payload predates the capability layer.
+   */
+  get visibleNavKeys(): string[] | null {
+    return this.identity?.capabilities?.nav ?? null;
+  }
+
+  /**
+   * Single menu check used by the sidebar, the overview cards and the page
+   * shell. A payload without ``capabilities`` keeps the previous behaviour of
+   * rendering by section switch alone (P0-UI-06 compatibility).
+   */
+  canSee = (navKey: string) => {
+    const nav = this.visibleNavKeys;
+    if (!nav) return true;
+    return nav.includes(navKey);
+  };
 
   get isOrgSectionEnabled() {
     return Boolean(this.isEnabled && this.identity?.sections?.org);
