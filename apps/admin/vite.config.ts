@@ -12,8 +12,12 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 const apiProxyTarget = process.env.API_PROXY_TARGET || "http://localhost:8001";
 const liveProxyTarget = process.env.LIVE_PROXY_TARGET || "http://localhost:3100";
 const proxy = {
-  "/api": { target: apiProxyTarget, changeOrigin: true },
-  "/auth": { target: apiProxyTarget, changeOrigin: true },
+  // Keep the Host header the browser used: Django compares the Origin of unsafe
+  // requests (login form POSTs) with the request host, so rewriting Host to
+  // localhost makes every other IP/hostname the app is opened from fail with
+  // "CSRF Verification Failed".
+  "/api": { target: apiProxyTarget, changeOrigin: false },
+  "/auth": { target: apiProxyTarget, changeOrigin: false },
   "/live": { target: liveProxyTarget, changeOrigin: true, ws: true },
 };
 

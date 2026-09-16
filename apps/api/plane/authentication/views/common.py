@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import logging
+
 # Django imports
 from django.shortcuts import render
 
@@ -24,6 +27,8 @@ from django.middleware.csrf import get_token
 from plane.utils.cache import invalidate_cache
 from plane.authentication.utils.host import base_host
 
+logger = logging.getLogger("plane.authentication")
+
 
 class CSRFTokenEndpoint(APIView):
     permission_classes = [AllowAny]
@@ -37,6 +42,17 @@ class CSRFTokenEndpoint(APIView):
 
 def csrf_failure(request, reason=""):
     """Custom CSRF failure view"""
+    # Surface the rejection reason (origin/host mismatch, missing cookie, stale
+    # token, ...) so operators can diagnose failed form submissions such as login.
+    logger.warning(
+        "CSRF verification failed: %s (method=%s path=%s host=%s origin=%s referer=%s)",
+        reason,
+        request.method,
+        request.path,
+        request.META.get("HTTP_HOST"),
+        request.META.get("HTTP_ORIGIN"),
+        request.META.get("HTTP_REFERER"),
+    )
     return render(
         request,
         "csrf_failure.html",

@@ -420,7 +420,15 @@ ADMIN_SESSION_COOKIE_AGE = int(os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600))
 # CSRF cookies
 CSRF_COOKIE_SECURE = secure_origins
 CSRF_COOKIE_HTTPONLY = True
-CSRF_TRUSTED_ORIGINS = cors_allowed_origins
+# Every CORS origin is trusted for CSRF as well. Additional origins (for example
+# an internal or Tailscale hostname the app is opened from) can be added through
+# the CSRF_TRUSTED_ORIGINS env var without widening the CORS policy.
+csrf_trusted_origins_raw = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
+CSRF_TRUSTED_ORIGINS = list(
+    dict.fromkeys(
+        cors_allowed_origins + [origin.strip() for origin in csrf_trusted_origins_raw.split(",") if origin.strip()]
+    )
+)
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
