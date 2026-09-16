@@ -57,7 +57,12 @@ class TestIssueLayoutFiltering:
             list_response = session_client.get(url, {"layout": "list", "cursor": "100:0:0"})
             coaching_board_response = session_client.get(
                 url,
-                {"layout": "kanban", "coaching_cards": "true", "cursor": "100:0:0"},
+                {
+                    "layout": "kanban",
+                    "coaching_cards": "true",
+                    "group_by": "state_id",
+                    "cursor": "100:0:0",
+                },
             )
 
         assert calendar_response.status_code == status.HTTP_200_OK
@@ -72,7 +77,12 @@ class TestIssueLayoutFiltering:
         assert list_response.data["total_count"] == 2
 
         assert coaching_board_response.status_code == status.HTTP_200_OK
-        assert {str(issue["id"]) for issue in coaching_board_response.data["results"]} == {
-            str(coaching_card.id)
-        }
+        coaching_card_results = [
+            issue
+            for group in coaching_board_response.data["results"].values()
+            for issue in group["results"]
+        ]
+        assert {str(issue["id"]) for issue in coaching_card_results} == {str(coaching_card.id)}
+        assert coaching_card_results[0]["roster_player_id"] is None
+        assert coaching_card_results[0]["coaching_card_data"] == {"kind": "coaching_card"}
         assert coaching_board_response.data["total_count"] == 1

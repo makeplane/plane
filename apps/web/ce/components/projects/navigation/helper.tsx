@@ -14,13 +14,12 @@ export const getProjectFeatureNavigation = (
     issue_views_view: boolean;
     page_view: boolean;
     inbox_view: boolean;
-    sport?: string | null;
   }
 ): TNavigationItem[] => [
   {
     i18n_key: "sidebar.work_items",
     key: EProjectFeatureKey.WORK_ITEMS,
-    name: project.sport ? "Coaching Board" : "Work items",
+    name: "Work items",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     icon: WorkItemsIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],

@@ -56,6 +56,7 @@ interface IssueBlockProps {
 interface IssueDetailsBlockProps {
   cardRef: React.RefObject<HTMLElement>;
   issue: TIssue;
+  projectIdentifier?: string;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
@@ -64,7 +65,16 @@ interface IssueDetailsBlockProps {
 }
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
-  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
+  const {
+    cardRef,
+    issue,
+    projectIdentifier,
+    updateIssue,
+    quickActions,
+    isReadOnly,
+    displayProperties,
+    isEpic = false,
+  } = props;
   // refs
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -122,7 +132,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </div>
 
       {isCoachingCard ? (
-        <CoachingCardKanbanDetails issue={issue} />
+        <CoachingCardKanbanDetails issue={issue} projectIdentifier={projectIdentifier} />
       ) : (
         <>
           <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
@@ -291,7 +301,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           <RenderIfVisible
             classNames={cn("space-y-2 px-3 py-2", isCoachingCardIssue(issue) && "py-3")}
             root={scrollableContainerRef}
-            defaultHeight={isCoachingCardIssue(issue) ? "260px" : "100px"}
+            defaultHeight={isCoachingCardIssue(issue) ? "300px" : "100px"}
             horizontalOffset={100}
             verticalOffset={200}
             defaultValue={shouldRenderByDefault}
@@ -299,6 +309,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             <KanbanIssueDetailsBlock
               cardRef={cardRef}
               issue={issue}
+              projectIdentifier={projectIdentifier}
               displayProperties={displayProperties}
               updateIssue={updateIssue}
               quickActions={quickActions}

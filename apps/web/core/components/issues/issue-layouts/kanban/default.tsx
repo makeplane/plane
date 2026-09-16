@@ -136,7 +136,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const hasCoachingCards = Object.values(issuesMap).some(
     (issue) => issue.category === "Coaching Card" && issue.coaching_card_data?.kind === "coaching_card"
   );
-  const approximateCardHeight = hasCoachingCards ? 280 : getApproximateCardHeight(displayProperties);
+  const approximateCardHeight = hasCoachingCards ? 320 : getApproximateCardHeight(displayProperties);
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (

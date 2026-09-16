@@ -130,6 +130,8 @@ def issue_on_results(
         "year",
         "category",
         "sg_event_id",
+        "roster_player_id",
+        "coaching_card_data",
     ]
 
     if group_by in FIELD_MAPPER:
