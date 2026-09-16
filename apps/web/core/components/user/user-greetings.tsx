@@ -20,38 +20,44 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   // current time hook
   const { currentTime } = useCurrentTime();
   // store hooks
-  const { t } = useTranslation();
+  const { t, currentLocale } = useTranslation();
 
+  const userTimeZone = user?.user_timezone;
+  const displayName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
+
+  // the greeting and the clock below it read the same timezone, so they can never disagree
   const hour = new Intl.DateTimeFormat("en-US", {
-    hour12: false,
-    hour: "numeric",
+    hourCycle: "h23",
+    hour: "2-digit",
+    timeZone: userTimeZone,
   }).format(currentTime);
 
-  const date = new Intl.DateTimeFormat("en-US", {
+  const date = new Intl.DateTimeFormat(currentLocale, {
     month: "short",
     day: "numeric",
+    timeZone: userTimeZone,
   }).format(currentTime);
 
-  const weekDay = new Intl.DateTimeFormat("en-US", {
+  const weekDay = new Intl.DateTimeFormat(currentLocale, {
     weekday: "long",
+    timeZone: userTimeZone,
   }).format(currentTime);
 
-  const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
-    hour12: false, // Use 24-hour format
+  const timeString = new Intl.DateTimeFormat(currentLocale, {
+    timeZone: userTimeZone,
+    hourCycle: "h23",
     hour: "2-digit",
     minute: "2-digit",
   }).format(currentTime);
 
-  const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
+  const hourValue = parseInt(hour, 10);
+  const greeting = hourValue < 12 ? "good_morning" : hourValue < 18 ? "good_afternoon" : "good_evening";
 
   return (
     <div className="my-6 flex flex-col items-center">
-      <h2 className="text-center text-20 font-semibold">
-        {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
-      </h2>
+      <h2 className="text-center text-20 font-semibold">{t(greeting, { name: displayName })}</h2>
       <h5 className="flex items-center gap-2 font-medium text-placeholder">
-        <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
+        <div>{greeting === "good_morning" ? "🌤️" : greeting === "good_afternoon" ? "🌥️" : "🌙️"}</div>
         <div>
           {weekDay}, {date} {timeString}
         </div>
