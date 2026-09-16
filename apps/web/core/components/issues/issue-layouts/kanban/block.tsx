@@ -12,8 +12,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
 import { MoreHorizontal } from "lucide-react";
+import { EIconSize } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightIcon, StateGroupIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -30,6 +31,7 @@ import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifi
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
@@ -80,6 +82,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     subIssues: subIssuesStore,
     issue: { getIssueById },
   } = useIssueDetail();
+  const { getStateById } = useProjectState();
 
   const customActionButton = (
     // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
@@ -98,6 +101,17 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const subIssueIds = isSubIssuesExpanded ? subIssuesStore.subIssuesByIssueId(issue.id) : undefined;
+
+  // only list sub-work items that are still open, and summarize the finished ones
+  const openSubIssues: TIssue[] = [];
+  let finishedSubIssuesCount = 0;
+  for (const subIssueId of subIssueIds ?? []) {
+    const subIssue = getIssueById(subIssueId);
+    if (!subIssue) continue;
+    const stateGroup = getStateById(subIssue.state_id)?.group;
+    if (stateGroup === "completed" || stateGroup === "cancelled") finishedSubIssuesCount++;
+    else openSubIssues.push(subIssue);
+  }
 
   // oxlint-disable-next-line unicorn/consistent-function-scoping
   const handleEventPropagation = (e: React.MouseEvent) => {
@@ -177,32 +191,49 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
               {subIssueIds === undefined ? (
                 <div className="px-1.5 py-1 text-caption-sm-regular text-placeholder">Loading...</div>
               ) : (
-                subIssueIds.map((subIssueId) => {
-                  const subIssue = getIssueById(subIssueId);
-                  if (!subIssue) return null;
-                  return (
-                    <button
-                      key={subIssueId}
-                      type="button"
-                      onClick={(e) => {
-                        handleEventPropagation(e);
-                        onOpenIssue(subIssue);
-                      }}
-                      className="flex w-full items-center gap-2 rounded-sm px-1.5 py-1 text-left hover:bg-layer-1"
-                    >
-                      {subIssue.project_id && (
-                        <IssueIdentifier
-                          issueId={subIssue.id}
-                          projectId={subIssue.project_id}
-                          size="xs"
-                          variant="tertiary"
-                          displayProperties={displayProperties}
-                        />
-                      )}
-                      <span className="truncate text-caption-sm-regular text-secondary">{subIssue.name}</span>
-                    </button>
-                  );
-                })
+                <>
+                  {openSubIssues.map((subIssue) => {
+                    const subIssueState = getStateById(subIssue.state_id);
+                    return (
+                      <button
+                        key={subIssue.id}
+                        type="button"
+                        onClick={(e) => {
+                          handleEventPropagation(e);
+                          onOpenIssue(subIssue);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-sm px-1.5 py-1 text-left hover:bg-layer-1"
+                      >
+                        {subIssueState && (
+                          <Tooltip tooltipContent={subIssueState.name} isMobile={isMobile} renderByDefault={false}>
+                            <span className="flex flex-shrink-0 items-center">
+                              <StateGroupIcon
+                                stateGroup={subIssueState.group}
+                                color={subIssueState.color}
+                                size={EIconSize.SM}
+                              />
+                            </span>
+                          </Tooltip>
+                        )}
+                        {subIssue.project_id && (
+                          <IssueIdentifier
+                            issueId={subIssue.id}
+                            projectId={subIssue.project_id}
+                            size="xs"
+                            variant="tertiary"
+                            displayProperties={displayProperties}
+                          />
+                        )}
+                        <span className="truncate text-caption-sm-regular text-secondary">{subIssue.name}</span>
+                      </button>
+                    );
+                  })}
+                  {finishedSubIssuesCount > 0 && (
+                    <div className="px-1.5 py-1 text-caption-sm-regular text-placeholder">
+                      {finishedSubIssuesCount} {finishedSubIssuesCount === 1 ? "item" : "items"} done or canceled
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

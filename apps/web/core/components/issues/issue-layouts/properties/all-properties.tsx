@@ -58,7 +58,7 @@ export interface IIssueProperties {
 }
 
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
-  const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
+  const { issue, updateIssue, displayProperties, isReadOnly, className, activeLayout, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -407,8 +407,8 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       )}
 
       {/* extra render properties */}
-      {/* sub-issues */}
-      {!isEpic && (
+      {/* sub-issues - hidden in the Kanban layout, where the block has an expandable sub-work item list */}
+      {!isEpic && activeLayout !== "Kanban" && (
         <WithDisplayPropertiesHOC
           displayProperties={displayProperties}
           displayPropertyKey="sub_issue_count"
