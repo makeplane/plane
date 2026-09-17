@@ -21,7 +21,7 @@ import type { Route } from "./+types/page";
 const ADMIN_ROLES: { key: TAdminRole; label: string }[] = [
   { key: "DEV_ADMIN", label: "开发管理员" },
   { key: "OPS_ADMIN", label: "运维管理员" },
-  { key: "MAIN_PI", label: "主PI" },
+  { key: "MAIN_PI", label: "历史主 PI 标签（不等同任命）" },
 ];
 
 const instanceUserService = new InstanceUserService();
@@ -39,7 +39,12 @@ const UserRoleManagementPage = observer(function UserRoleManagementPage(_props: 
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const { data, isLoading } = useSWR(["INSTANCE_USERS", search, roleFilter, refreshKey], () =>
+  const {
+    data,
+    isLoading,
+    error: loadError,
+    mutate,
+  } = useSWR(["INSTANCE_USERS", search, roleFilter, refreshKey], () =>
     instanceUserService.list({ search, role: roleFilter })
   );
 
@@ -70,12 +75,14 @@ const UserRoleManagementPage = observer(function UserRoleManagementPage(_props: 
           <input
             className="rounded border border-subtle bg-transparent px-3 py-1.5 text-12"
             placeholder="搜索邮箱 / 姓名"
+            aria-label="搜索用户邮箱或姓名"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
           <select
             className="rounded border border-subtle bg-transparent px-3 py-1.5 text-12"
             value={roleFilter}
+            aria-label="按身份标签筛选用户"
             onChange={(event) => setRoleFilter(event.target.value as TAdminRole | "")}
           >
             <option value="">全部标签</option>
@@ -90,9 +97,15 @@ const UserRoleManagementPage = observer(function UserRoleManagementPage(_props: 
     >
       <div className="p-6">
         <p className="mb-4 text-12 text-tertiary">
-          管理员标签由系统默认管理员（admin@ai4ms.local）授予：持有任一标签即可进行全域配置（组织架构、报告模板、身份映射、平台配置、审计、邀请码与批量导入），业务数据可见范围仍按组织架构决定。
+          系统管理员可为已有用户配置开发管理员、运维管理员和历史主 PI 标签。唯一主 PI
+          请在工作空间管理中任命；职责标签不会扩大科研资料可见范围或自动授予私有空间席位。
         </p>
-        {isLoading ? (
+        {loadError ? (
+          <div role="alert" className="flex items-center gap-3 text-12 text-danger-primary">
+            <p>用户列表加载失败，请重试。</p>
+            <Button variant="secondary" size="sm" stretch="auto" label="重试" onClick={() => void mutate()} />
+          </div>
+        ) : isLoading ? (
           <div className="flex items-center justify-center py-10">
             <LoaderIcon className="h-4 w-4 animate-spin" />
           </div>
@@ -105,8 +118,8 @@ const UserRoleManagementPage = observer(function UserRoleManagementPage(_props: 
                 <tr>
                   <th className="px-3 py-2 text-left">账号</th>
                   <th className="px-3 py-2 text-left">姓名</th>
-                  <th className="px-3 py-2 text-left">工作区</th>
-                  <th className="px-3 py-2 text-left">管理员标签</th>
+                  <th className="px-3 py-2 text-left">工作空间</th>
+                  <th className="px-3 py-2 text-left">身份标签</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,6 +139,7 @@ const UserRoleManagementPage = observer(function UserRoleManagementPage(_props: 
                             stretch="auto"
                             disabled={busyUserId === user.id}
                             label={role.label}
+                            aria-pressed={active}
                             onClick={() => void toggleRole(user, role.key)}
                           />
                         );

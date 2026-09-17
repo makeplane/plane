@@ -16,7 +16,7 @@ from plane.authentication.provider.credentials.magic_code import MagicCodeProvid
 from plane.authentication.rate_limit import AuthenticationThrottle
 from plane.db.models import User
 from plane.settings.redis import redis_instance
-from plane.license.models import Instance
+from plane.license.models import Instance, InstanceConfiguration
 
 
 def _clear_auth_throttle_keys():
@@ -60,6 +60,10 @@ def setup_instance(db):
             "current_version": "1.0.0",
             "is_setup_done": True,
         },
+    )
+    InstanceConfiguration.objects.update_or_create(
+        key="ENABLE_SIGNUP",
+        defaults={"value": "1", "category": "authentication"},
     )
     return instance
 

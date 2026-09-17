@@ -75,6 +75,7 @@ export const ResearchPlatformSettingsForm = observer(function ResearchPlatformSe
         markdown_max_mb: draft.markdown_max_mb,
         audit_retention_days: draft.audit_retention_days,
         timezone: draft.timezone,
+        ...(research.identity?.user.is_system_admin ? { main_pi: draft.main_pi } : {}),
       };
       const updated = await research.updateSettings(workspaceSlug, payload);
       if (updated) setDraft(updated);
@@ -153,6 +154,19 @@ export const ResearchPlatformSettingsForm = observer(function ResearchPlatformSe
           />
         </label>
       </section>
+
+      {research.identity?.user.is_system_admin && (
+        <section className="rounded-lg border border-subtle bg-surface-1 p-4">
+          <h3 className="text-13 font-medium text-primary">{t("research.platform.main_pi")}</h3>
+          <p className="mt-1 text-11 text-tertiary">{t("research.platform.main_pi_hint")}</p>
+          <Input
+            className="mt-3"
+            value={draft.main_pi ?? ""}
+            placeholder={t("research.platform.main_pi_placeholder")}
+            onChange={(event) => setDraft({ ...draft, main_pi: event.target.value.trim() || null })}
+          />
+        </section>
+      )}
 
       <section className="rounded-lg border border-subtle bg-surface-1 p-4">
         <h3 className="text-13 font-medium text-primary">{t("research.platform.limits")}</h3>

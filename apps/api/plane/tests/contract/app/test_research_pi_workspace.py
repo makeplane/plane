@@ -190,8 +190,8 @@ def test_non_member_cannot_read_the_aggregate(env):
     assert response.status_code == 404
 
 
-def test_org_pi_gets_a_main_pi_workspace_seat(env):
-    """A node owner / PI joins the main PI workspace without any tag."""
+def test_org_pi_does_not_get_a_private_workspace_seat(env):
+    """A direction or mentor-group PI is not the unique main PI."""
     from plane.db.models import WorkspaceMember
     from plane.research.utils.roles import sync_main_pi_workspace_seat
 
@@ -205,16 +205,11 @@ def test_org_pi_gets_a_main_pi_workspace_seat(env):
     )
 
     membership = sync_main_pi_workspace_seat(pi_user, actor=env["admin"])
-    assert membership is not None
-    assert membership.workspace_id == env["pi_area"].id
-    assert membership.role == 15
-    assert WorkspaceMember.objects.filter(
-        workspace=env["pi_area"], member=pi_user, is_active=True
-    ).exists()
+    assert membership is None
+    assert not WorkspaceMember.objects.filter(workspace=env["pi_area"], member=pi_user, is_active=True).exists()
 
 
-def test_org_member_endpoint_grants_the_pi_seat(env):
-    """Appointing a PI through the API also grants the main PI workspace seat."""
+def test_org_member_endpoint_does_not_grant_a_private_pi_seat(env):
     from plane.db.models import WorkspaceMember
 
     admin_client = client_for(env["admin"])
@@ -227,6 +222,19 @@ def test_org_member_endpoint_grants_the_pi_seat(env):
         format="json",
     )
     assert response.status_code == 201
-    assert WorkspaceMember.objects.filter(
-        workspace=env["pi_area"], member=pi_user, is_active=True
-    ).exists()
+    assert not WorkspaceMember.objects.filter(workspace=env["pi_area"], member=pi_user, is_active=True).exists()
+
+
+def test_explicit_main_pi_gets_the_private_workspace_seat(env):
+    from plane.db.models import WorkspaceMember
+    from plane.research.utils.roles import sync_main_pi_workspace_seat
+
+    main_pi = make_user(first_name="ConfiguredMainPI")
+    setting = env["pi_area"].research_setting
+    setting.main_pi = main_pi
+    setting.save(update_fields=["main_pi", "updated_at"])
+
+    membership = sync_main_pi_workspace_seat(main_pi, actor=env["admin"])
+
+    assert membership is not None
+    assert WorkspaceMember.objects.filter(workspace=env["pi_area"], member=main_pi, is_active=True).exists()

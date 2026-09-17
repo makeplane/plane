@@ -22,6 +22,7 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
+import { useInstanceAdmin } from "@/hooks/use-instance-admin";
 
 export const UserMenuRoot = observer(function UserMenuRoot() {
   // states
@@ -34,7 +35,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   const { signOut } = useUser();
   const { toggleProfileSettingsModal } = useCommandPalette();
   // derived values
-  const isUserInstanceAdmin = false;
+  const isUserInstanceAdmin = useInstanceAdmin();
   // translation
   const { t } = useTranslation();
 
@@ -140,8 +141,9 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
       {isUserInstanceAdmin && (
         <CustomMenu.MenuItem
           onClick={() => router.push(GOD_MODE_URL)}
-          className="bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary"
+          className="flex items-center gap-2 bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary"
         >
+          <SettingsOutline className="size-3.5 shrink-0" />
           {t("enter_god_mode")}
         </CustomMenu.MenuItem>
       )}

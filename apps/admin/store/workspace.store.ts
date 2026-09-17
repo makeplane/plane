@@ -27,6 +27,15 @@ export interface IWorkspaceStore {
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  updateResearchConfiguration: (
+    workspaceId: string,
+    data: {
+      purpose?: IWorkspace["research_purpose"];
+      main_pi?: string | null;
+      private_access_users?: string[];
+      module_enabled?: boolean;
+    }
+  ) => Promise<IWorkspace>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -53,6 +62,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       fetchNextWorkspaces: action,
       // curd actions
       createWorkspace: action,
+      updateResearchConfiguration: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
@@ -149,6 +159,17 @@ export class WorkspaceStore implements IWorkspaceStore {
     } catch (error) {
       console.error("Error creating workspace", error);
       throw error;
+    } finally {
+      this.loader = "loaded";
+    }
+  };
+
+  updateResearchConfiguration: IWorkspaceStore["updateResearchConfiguration"] = async (workspaceId, data) => {
+    try {
+      this.loader = "mutation";
+      const workspace = await this.instanceWorkspaceService.updateResearchConfiguration(workspaceId, data);
+      runInAction(() => set(this.workspaces, [workspace.id], workspace));
+      return workspace;
     } finally {
       this.loader = "loaded";
     }
