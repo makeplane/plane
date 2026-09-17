@@ -88,6 +88,21 @@ def parse_date(value, field_name):
     return parsed, None
 
 
+def parse_uuid(value, field_name):
+    """Parse a UUID query value without leaking ORM validation errors."""
+    if value in (None, ""):
+        return None, None
+    import uuid
+
+    try:
+        return uuid.UUID(str(value)), None
+    except (AttributeError, TypeError, ValueError):
+        return None, research_error(
+            ResearchErrorCode.ORG_MEMBER_INVALID,
+            f"{field_name} must be a valid UUID.",
+        )
+
+
 def truthy(value, default=False):
     if value is None:
         return default
@@ -125,6 +140,21 @@ class ResearchAPIView(BaseAPIView):
                 status=exc.status_code,
             )
         return super().handle_exception(exc)
+
+    def paginate(self, request, *args, **kwargs):
+        """Keep Plane cursor metadata and explicitly echo the page size."""
+        per_page = self.get_per_page(
+            request,
+            kwargs.get("default_per_page", 1000),
+            kwargs.get("max_per_page", 1000),
+        )
+        if per_page < 1:
+            from rest_framework.exceptions import ParseError
+
+            raise ParseError(detail="Invalid per_page value. Must be at least 1.")
+        response = super().paginate(request, *args, **kwargs)
+        response.data["per_page"] = per_page
+        return response
 
     @property
     def workspace_slug(self):
@@ -178,9 +208,7 @@ class ResearchAPIView(BaseAPIView):
             from plane.db.models import APIToken
 
             token_workspace_id = (
-                APIToken.objects.filter(token=auth, is_active=True)
-                .values_list("workspace_id", flat=True)
-                .first()
+                APIToken.objects.filter(token=auth, is_active=True).values_list("workspace_id", flat=True).first()
             )
             if token_workspace_id is not None and token_workspace_id != workspace.id:
                 return None, research_not_found(

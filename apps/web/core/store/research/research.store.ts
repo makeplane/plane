@@ -12,6 +12,7 @@ import type {
   TMentorBinding,
   TOrgUnit,
   TOrgUnitMember,
+  TPaginationInfo,
   TPeriodicReport,
   TReportAttachment,
   TReportReviewLog,
@@ -115,6 +116,7 @@ export interface IResearchStore {
   mentorBindingIdsByWorkspace: Record<string, string[]>;
   reports: Record<string, TPeriodicReport>;
   reportIdsByWorkspace: Record<string, string[]>;
+  reportPaginationByWorkspace: Record<string, TPaginationInfo>;
   reportHistory: Record<string, TReportReviewLog[]>;
   reportAttachments: Record<string, TReportAttachment[]>;
   reportSummary: Record<string, TReportSummary>;
@@ -123,6 +125,7 @@ export interface IResearchStore {
   reportTemplateIdsByWorkspace: Record<string, string[]>;
   researchProjects: Record<string, TResearchProject>;
   researchProjectIdsByWorkspace: Record<string, string[]>;
+  projectPaginationByWorkspace: Record<string, TPaginationInfo>;
   approvalFlows: Record<string, TApprovalFlow>;
   approvalFlowIdsByWorkspace: Record<string, string[]>;
   approvalRequests: Record<string, TApprovalRequest>;
@@ -507,6 +510,7 @@ export class ResearchStore implements IResearchStore {
   mentorBindingIdsByWorkspace: Record<string, string[]> = {};
   reports: Record<string, TPeriodicReport> = {};
   reportIdsByWorkspace: Record<string, string[]> = {};
+  reportPaginationByWorkspace: Record<string, TPaginationInfo> = {};
   reportHistory: Record<string, TReportReviewLog[]> = {};
   reportAttachments: Record<string, TReportAttachment[]> = {};
   reportSummary: Record<string, TReportSummary> = {};
@@ -515,6 +519,7 @@ export class ResearchStore implements IResearchStore {
   reportTemplateIdsByWorkspace: Record<string, string[]> = {};
   researchProjects: Record<string, TResearchProject> = {};
   researchProjectIdsByWorkspace: Record<string, string[]> = {};
+  projectPaginationByWorkspace: Record<string, TPaginationInfo> = {};
   approvalFlows: Record<string, TApprovalFlow> = {};
   approvalFlowIdsByWorkspace: Record<string, string[]> = {};
   approvalRequests: Record<string, TApprovalRequest> = {};
@@ -579,7 +584,9 @@ export class ResearchStore implements IResearchStore {
       identityLoader: observable,
       orgLoader: observable,
       reportLoader: observable,
+      reportPaginationByWorkspace: observable,
       projectLoader: observable,
+      projectPaginationByWorkspace: observable,
       approvalLoader: observable,
       templatesLoader: observable,
       auditLoader: observable,
@@ -1113,6 +1120,7 @@ export class ResearchStore implements IResearchStore {
           this.reports[report.id] = report;
         });
         this.reportIdsByWorkspace[workspaceSlug] = response.results.map((report) => report.id);
+        this.reportPaginationByWorkspace[workspaceSlug] = response;
       });
       return response.results;
     } finally {
@@ -1310,6 +1318,7 @@ export class ResearchStore implements IResearchStore {
           this.researchProjects[project.id] = project;
         });
         this.researchProjectIdsByWorkspace[workspaceSlug] = response.results.map((project) => project.id);
+        this.projectPaginationByWorkspace[workspaceSlug] = response;
       });
       return response.results;
     } finally {

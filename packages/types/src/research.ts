@@ -1036,13 +1036,27 @@ export type TPiAggregate = {
   workspace: { slug: string; name: string };
   source_workspace: { slug: string; name: string };
   is_system_admin: boolean;
-  scope: { unit_ids: string[]; unit_count: number; is_empty: boolean };
+  scope: { unit_ids: string[]; unit_count: number; owner_ids?: string[]; is_empty: boolean };
+  filters: { org_unit?: string; owner?: string; date_from?: string; date_to?: string };
+  drilldowns: {
+    projects: { org_unit?: string; owner?: string; date_from?: string; date_to?: string };
+    reports: { org_unit?: string; owner?: string; date_from?: string; date_to?: string };
+  };
   projects: { total: number; by_status: Record<string, number> };
-  reports: { total: number; by_status: Record<string, number>; submitted_last_30_days: number };
+  reports: {
+    total: number;
+    by_status: Record<string, number>;
+    submitted_last_30_days: number;
+    not_submitted: number;
+  };
   stages: { total: number; by_status: Record<string, number>; blocked_gates: number };
   reviews: { awaiting_stages: number; open_assignments: number; submitted: number };
   approvals: { pending: number };
   members?: { total: number };
+  outcomes?: {
+    total: number;
+    recent: { id: string; title: string; published_at: string | null }[];
+  };
   org_units: { id: string; name: string; depth: number; unit_type: TOrgUnitType }[];
   generated_at: string;
 };

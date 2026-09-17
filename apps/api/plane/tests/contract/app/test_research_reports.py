@@ -470,6 +470,37 @@ class TestReportConcurrentStateFlow:
 
 @pytest.mark.django_db
 class TestReportAccessControl:
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {"owner": "not-a-uuid"},
+            {"org_unit": "not-a-uuid"},
+            {"date_from": "not-a-date"},
+            {"date_from": "2026-10-01", "date_to": "2026-09-01"},
+            {"per_page": "0"},
+            {"per_page": "not-an-integer"},
+            {"cursor": "not-a-cursor"},
+        ],
+    )
+    def test_list_rejects_invalid_filter_and_pagination_values(self, env, params):
+        response = env["student_client"].get(env["url"], params)
+        assert response.status_code == 400
+
+    def test_list_filters_visibility_in_sql_before_pagination(self, env, mocker):
+        report = create_report(env, period_key="2026-W09").json()
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+        object_acl = mocker.patch(
+            "plane.research.views.reports.check_access",
+            side_effect=AssertionError("report list must not scan objects through Python ACL"),
+        )
+
+        response = env["advisor_client"].get(env["url"], {"per_page": "1"})
+
+        assert response.status_code == 200
+        assert response.data["per_page"] == 1
+        assert response.data["total_results"] == 1
+        assert object_acl.call_count == 0
+
     def test_visibility_filters_the_list_for_each_subject(self, env):
         private = create_report(env, visibility="PRIVATE", period_key="2026-W10").json()
         advised = create_report(env, visibility="DIRECT_ADVISOR", period_key="2026-W11").json()

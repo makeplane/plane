@@ -5,7 +5,7 @@
  */
 
 import { API_BASE_URL, researchEndpoints } from "@plane/constants";
-import type { TResearchProjectProfile } from "@plane/types";
+import type { TPaginationInfo, TResearchProjectProfile } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -36,7 +36,7 @@ export class ResearchProjectService extends APIService {
 
   async getProjects(workspaceSlug: string, params: Record<string, string> = {}) {
     return this.get(researchEndpoints.projects(workspaceSlug), { params })
-      .then((res) => res?.data as { results: TResearchProject[]; count: number })
+      .then((res) => res?.data as TPaginationInfo & { results: TResearchProject[] })
       .catch((err) => {
         throw err?.response?.data;
       });

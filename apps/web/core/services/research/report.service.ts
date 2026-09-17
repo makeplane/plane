@@ -7,6 +7,7 @@
 import { API_BASE_URL, researchEndpoints } from "@plane/constants";
 import type {
   TPeriodicReport,
+  TPaginationInfo,
   TReportAttachment,
   TReportReviewLog,
   TReportSummary,
@@ -21,6 +22,11 @@ export type TReportListParams = {
   report_type?: string;
   org_unit?: string;
   owner?: string;
+  date_from?: string;
+  date_to?: string;
+  mine?: string;
+  cursor?: string;
+  per_page?: string;
 };
 
 export type TReportCreatePayload = {
@@ -39,7 +45,7 @@ export class ResearchReportService extends APIService {
 
   async getReports(workspaceSlug: string, params: TReportListParams = {}) {
     return this.get(researchEndpoints.reports(workspaceSlug), { params })
-      .then((res) => res?.data as { results: TPeriodicReport[]; count: number })
+      .then((res) => res?.data as TPaginationInfo & { results: TPeriodicReport[] })
       .catch((err) => {
         throw err?.response?.data;
       });

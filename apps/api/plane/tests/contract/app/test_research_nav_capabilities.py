@@ -145,9 +145,9 @@ def test_summary_is_refused_for_the_lowest_level(env):
     assert client_for(env["pi"]).get(env["summary_url"]).status_code == 200
 
 
-def test_board_is_refused_below_the_main_pi_level(env):
+def test_board_is_scoped_to_advisors_and_pi_roles(env):
     assert client_for(env["student"]).get(env["aggregate_url"]).status_code == 403
-    assert client_for(env["advisor"]).get(env["aggregate_url"]).status_code == 403
+    assert client_for(env["advisor"]).get(env["aggregate_url"]).status_code == 200
     assert client_for(env["pi"]).get(env["aggregate_url"]).status_code == 200
 
 

@@ -11,6 +11,7 @@ import { useParams } from "react-router";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ResearchPageShell } from "@/components/research/common/research-page-shell";
+import { ResearchPiAggregateBoard } from "@/components/research/pi/pi-aggregate-board";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
 
@@ -20,7 +21,6 @@ import { useResearch } from "@/hooks/store/use-research";
  * backend navigation keys so one rule drives both surfaces.
  */
 const BUSINESS_CARDS = [
-  { key: "dashboard", path: "dashboard", titleKey: "research.nav.dashboard", section: "reports" },
   { key: "reports", path: "reports", titleKey: "research.nav.reports", section: "reports" },
   { key: "summary", path: "reports/summary", titleKey: "research.nav.summary", section: "reports" },
   { key: "projects", path: "projects", titleKey: "research.nav.projects", section: "reports" },
@@ -55,6 +55,11 @@ function WorkspaceResearchOverviewPage() {
       navKey="overview"
     >
       <div className="h-full overflow-y-auto p-5">
+        {workspaceSlug && research.canSee("dashboard") && (
+          <div className="mb-6 overflow-hidden rounded-lg border border-subtle bg-surface-1">
+            <ResearchPiAggregateBoard workspaceSlug={workspaceSlug} />
+          </div>
+        )}
         <h3 className="text-13 font-medium text-primary">{t("research.overview.business_sections")}</h3>
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {businessCards.map((card) => (

@@ -40,7 +40,7 @@ from plane.research.utils.errors import (
 from plane.research.utils.org import active_membership_q, is_workspace_admin
 from plane.research.utils.roles import configured_main_pi_id
 from plane.research.services.stage_service import ensure_stage_instances
-from plane.research.views.base import ResearchAPIView, parse_date, resolve_user
+from plane.research.views.base import ResearchAPIView, parse_date, parse_uuid, resolve_user
 
 PROJECT_ADMIN_ROLE = 20
 PROJECT_MEMBER_ROLE = 15
@@ -262,10 +262,31 @@ class ResearchProjectListCreateEndpoint(ResearchAPIView):
             return error
 
         queryset = visible_profile_queryset(workspace, request.user)
-        if request.GET.get("owner"):
-            queryset = queryset.filter(owner_id=request.GET["owner"])
-        if request.GET.get("org_unit"):
-            queryset = queryset.filter(org_unit_id=request.GET["org_unit"])
+        owner_id, error = parse_uuid(request.GET.get("owner"), "owner")
+        if error:
+            return error
+        org_unit_id, error = parse_uuid(request.GET.get("org_unit"), "org_unit")
+        if error:
+            return error
+        date_from, error = parse_date(request.GET.get("date_from"), "date_from")
+        if error:
+            return error
+        date_to, error = parse_date(request.GET.get("date_to"), "date_to")
+        if error:
+            return error
+        if date_from and date_to and date_from > date_to:
+            return research_error(
+                ResearchErrorCode.ORG_MEMBER_INVALID,
+                "date_from must not be after date_to.",
+            )
+        if owner_id:
+            queryset = queryset.filter(owner_id=owner_id)
+        if org_unit_id:
+            queryset = queryset.filter(org_unit_id=org_unit_id)
+        if date_from:
+            queryset = queryset.filter(started_at__gte=date_from)
+        if date_to:
+            queryset = queryset.filter(started_at__lte=date_to)
         if request.GET.get("workflow_status"):
             queryset = queryset.filter(workflow_status=str(request.GET["workflow_status"]).upper())
         if request.GET.get("research_type"):
@@ -273,10 +294,12 @@ class ResearchProjectListCreateEndpoint(ResearchAPIView):
         if str(request.GET.get("mine", "")).lower() in ("1", "true"):
             queryset = queryset.filter(owner=request.user)
 
-        profiles = list(queryset)
-        return Response(
-            {"results": [serialize_profile(profile) for profile in profiles], "count": len(profiles)},
-            status=status.HTTP_200_OK,
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            on_results=lambda profiles: [serialize_profile(profile) for profile in profiles],
+            default_per_page=50,
+            max_per_page=100,
         )
 
     def post(self, request, slug):

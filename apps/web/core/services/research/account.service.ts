@@ -126,8 +126,11 @@ export class ResearchAccountService extends APIService {
       });
   }
 
-  async getPiAggregate(workspaceSlug: string) {
-    return this.get(researchEndpoints.piAggregate(workspaceSlug))
+  async getPiAggregate(
+    workspaceSlug: string,
+    params: { org_unit?: string; owner?: string; date_from?: string; date_to?: string } = {}
+  ) {
+    return this.get(researchEndpoints.piAggregate(workspaceSlug), { params })
       .then((res) => res?.data as TPiAggregate)
       .catch((err) => {
         throw err?.response?.data;

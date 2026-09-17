@@ -6,7 +6,7 @@ import pytz
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.db.models import ReportVisibility, WorkspaceResearchSetting
+from plane.db.models import ReportVisibility, ResearchUserProfile, WorkspaceResearchSetting
 from plane.research.serializers import WorkspaceResearchSettingSerializer
 from plane.research.utils.audit import (
     ResearchAuditAction,
@@ -132,6 +132,18 @@ class ResearchSettingsEndpoint(ResearchAPIView):
                 )
             setting.timezone = timezone_value
             changed.append("timezone")
+
+        if "required_reporter_categories" in request.data:
+            categories = request.data.get("required_reporter_categories")
+            if not isinstance(categories, list) or any(
+                item not in ResearchUserProfile.Category.values for item in categories
+            ):
+                return research_error(
+                    ResearchErrorCode.ORG_MEMBER_INVALID,
+                    "required_reporter_categories must contain known member categories.",
+                )
+            setting.required_reporter_categories = list(dict.fromkeys(categories))
+            changed.append("required_reporter_categories")
 
         if "main_pi" in request.data:
             from plane.research.utils.roles import is_system_admin, sync_main_pi_workspace_seat

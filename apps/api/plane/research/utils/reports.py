@@ -4,6 +4,7 @@
 
 """Report state machine and ACL projection."""
 
+from django.db.models import Q
 from django.utils import timezone
 
 from plane.db.models import ReportAccessGrant
@@ -61,3 +62,37 @@ def report_resource(report) -> ResearchResource:
         is_draft=report.submitted_at is None,
         grants=active_grants(report),
     )
+
+
+def visible_reports_queryset(queryset, context):
+    """Apply the complete report visibility matrix in SQL before pagination."""
+    owner_scope = Q(owner_id=context.user_id)
+    formal = Q(submitted_at__isnull=False)
+    if context.is_main_pi:
+        audience = formal
+    else:
+        formal_audience = Q()
+        if context.managing_unit_ids:
+            formal_audience |= Q(org_unit_id__in=context.managing_unit_ids)
+        if context.advises:
+            formal_audience |= Q(
+                visibility="DIRECT_ADVISOR",
+                owner_id__in=context.advises,
+            )
+        if context.unit_ids:
+            formal_audience |= Q(
+                visibility="UNIT",
+                org_unit_id__in=context.unit_ids,
+            )
+        formal_audience |= Q(visibility="WORKSPACE")
+
+        active_grant = Q(
+            visibility="CUSTOM",
+            access_grants__is_revoked=False,
+        ) & (Q(access_grants__expires_at__isnull=True) | Q(access_grants__expires_at__gt=timezone.now()))
+        grant_recipient = Q(access_grants__grantee_user_id=context.user_id)
+        if context.unit_ids:
+            grant_recipient |= Q(access_grants__grantee_org_unit_id__in=context.unit_ids)
+        formal_audience |= active_grant & grant_recipient
+        audience = formal & formal_audience
+    return queryset.filter(owner_scope | audience).distinct()

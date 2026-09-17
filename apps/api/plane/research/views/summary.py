@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -11,6 +12,7 @@ from plane.db.models import (
     OrgUnitMember,
     PeriodicReport,
     ResearchProjectProfile,
+    ResearchUserProfile,
     User,
 )
 from plane.research.utils.acl import (
@@ -23,7 +25,7 @@ from plane.research.utils.capabilities import NAV_SUMMARY
 from plane.research.utils.org import managing_unit_ids
 from plane.research.utils.errors import ResearchErrorCode, research_error
 from plane.research.utils.org import is_workspace_admin
-from plane.research.utils.periods import InvalidPeriod, current_period, parse_period
+from plane.research.utils.periods import InvalidPeriod, parse_period
 from plane.research.utils.reports import report_resource
 from plane.research.views.base import ResearchAPIView
 from plane.research.views.reports import report_timezone_for
@@ -140,6 +142,9 @@ class ResearchReportSummaryEndpoint(ResearchAPIView):
         ]
 
         today = timezone.localdate()
+        required_categories = set(
+            getattr(workspace.research_setting, "required_reporter_categories", ["STUDENT", "POSTDOC"])
+        )
         by_unit = []
         for unit in head_units:
             unit_scope = org_unit_scope_ids(unit.id, workspace.id)
@@ -148,14 +153,22 @@ class ResearchReportSummaryEndpoint(ResearchAPIView):
                 org_unit_id__in=unit_scope,
                 deleted_at__isnull=True,
                 effective_from__lte=today,
-            )
-            # "expected reporter" = member of the node subtree who owns an
-            # active research project (the PRD's 科研责任人 definition)
-            member_ids = set(memberships.values_list("user_id", flat=True))
+            ).filter(Q(effective_to__isnull=True) | Q(effective_to__gte=today))
+            member_ids = set(memberships.values_list("user_id", flat=True).distinct())
             owner_ids = set(
+                ResearchUserProfile.objects.filter(
+                    user_id__in=member_ids,
+                    category__in=required_categories,
+                ).values_list("user_id", flat=True)
+            )
+            # Compatibility for existing accounts whose profile has not yet
+            # been completed: an active cultivation project still marks them
+            # as expected reporters.
+            owner_ids |= set(
                 ResearchProjectProfile.objects.filter(
                     workspace=workspace,
                     owner_id__in=member_ids,
+                    research_type__in=("PHD", "MASTER", "POSTDOC"),
                     is_active=True,
                     workflow_status=ResearchProjectProfile.WorkflowStatus.ACTIVE,
                 ).values_list("owner_id", flat=True)

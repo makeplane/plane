@@ -6,7 +6,13 @@ import pytest
 from rest_framework.test import APIClient
 
 from plane.db.models import MentorBinding, Notification, OrgUnit, OrgUnitMember, PeriodicReport
-from plane.tests.research_fixtures import add_workspace_member, enable_research, make_user, make_workspace
+from plane.tests.research_fixtures import (
+    add_workspace_member,
+    enable_research,
+    make_instance_admin,
+    make_user,
+    make_workspace,
+)
 
 pytestmark = pytest.mark.contract
 
@@ -39,6 +45,7 @@ def create_unit(workspace, name, parent=None, unit_type=OrgUnit.UnitType.GROUP):
 @pytest.fixture
 def env(db):
     admin = make_user(first_name="Admin")
+    make_instance_admin(admin)
     workspace = make_workspace(admin)
     enable_research(workspace)
     pi = make_user(first_name="Pi")
@@ -50,24 +57,38 @@ def env(db):
 
     root = create_unit(workspace, "Root", None, OrgUnit.UnitType.ROOT)
     group = create_unit(workspace, "Group", root, OrgUnit.UnitType.GROUP)
+    OrgUnitMember.objects.create(workspace=workspace, org_unit=group, user=pi, org_role=OrgUnitMember.OrgRole.PI)
     OrgUnitMember.objects.create(
-        workspace=workspace, org_unit=group, user=pi, org_role=OrgUnitMember.OrgRole.PI
+        workspace=workspace,
+        org_unit=group,
+        user=student_one,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+        is_primary=True,
     )
     OrgUnitMember.objects.create(
-        workspace=workspace, org_unit=group, user=student_one, org_role=OrgUnitMember.OrgRole.OWNER
-    )
-    OrgUnitMember.objects.create(
-        workspace=workspace, org_unit=group, user=student_two, org_role=OrgUnitMember.OrgRole.OWNER
+        workspace=workspace,
+        org_unit=group,
+        user=student_two,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+        is_primary=True,
     )
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=advisor, org_role=OrgUnitMember.OrgRole.ADVISOR
     )
+    for student in (student_one, student_two):
+        MentorBinding.objects.create(
+            workspace=workspace,
+            org_unit=group,
+            mentee=student,
+            mentor=advisor,
+            is_primary_advisor=True,
+        )
 
     for student in (student_one, student_two):
         client = client_for(student)
         client.post(
             f"/api/research/workspaces/{workspace.slug}/projects/",
-            {"org_unit": str(group.id)},
+            {"org_unit": str(group.id), "research_type": "PHD"},
             format="json",
         )
 
@@ -135,9 +156,7 @@ class TestReportSummary:
         """
         stranger = make_user()
         add_workspace_member(env["workspace"], stranger)
-        MentorBinding.objects.create(
-            workspace=env["workspace"], mentor=stranger, mentee=env["student_one"]
-        )
+        MentorBinding.objects.create(workspace=env["workspace"], mentor=stranger, mentee=env["student_one"])
         summary = client_for(stranger).get(f"{env['summary_url']}?period_key=2026-W38").json()
         assert summary["by_unit"] == []
         assert summary["counts"]["not_submitted"] == 0
@@ -150,9 +169,7 @@ class TestReportSummary:
             user=make_user(),
             org_role=OrgUnitMember.OrgRole.OWNER,
         )
-        response = env["pi_client"].get(
-            f"{env['summary_url']}?period_key=2026-W38&org_unit={other_root.id}"
-        )
+        response = env["pi_client"].get(f"{env['summary_url']}?period_key=2026-W38&org_unit={other_root.id}")
         assert response.status_code == 403
 
     def test_invalid_period_is_rejected(self, env):
@@ -180,9 +197,7 @@ class TestReportNotifications:
         env["student_one_client"].post(f"{env['reports_url']}{report['id']}/submit/", {}, format="json")
         Notification.objects.all().delete()
 
-        env["pi_client"].post(
-            f"{env['reports_url']}{report['id']}/return/", {"comment": "补充数据"}, format="json"
-        )
+        env["pi_client"].post(f"{env['reports_url']}{report['id']}/return/", {"comment": "补充数据"}, format="json")
         returned = Notification.objects.filter(entity_name="research_report")
         assert returned.count() == 1
         assert returned.first().receiver_id == env["student_one"].id
@@ -191,9 +206,7 @@ class TestReportNotifications:
         Notification.objects.all().delete()
         env["student_one_client"].post(f"{env['reports_url']}{report['id']}/submit/", {}, format="json")
         env["pi_client"].post(f"{env['reports_url']}{report['id']}/accept/", {}, format="json")
-        accepted = Notification.objects.filter(
-            entity_name="research_report", receiver_id=env["student_one"].id
-        )
+        accepted = Notification.objects.filter(entity_name="research_report", receiver_id=env["student_one"].id)
         assert accepted.count() == 1
         assert accepted.first().message["action"] == "accepted"
 

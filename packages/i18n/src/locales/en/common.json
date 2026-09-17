@@ -884,7 +884,7 @@
       "outcomes": "Outcomes",
       "integrations": "Integrations",
       "timeline": "Timeline",
-      "dashboard": "Main PI board",
+      "dashboard": "Research overview",
       "system": "System management"
     },
     "admin_roles": {
@@ -994,15 +994,27 @@
       }
     },
     "pi": {
-      "description": "Own node and subtree across the public workspace.",
+      "title": "Overview for my scope",
+      "description": "Projects, reports and reviews within your authorised research scope.",
       "scope_summary": "{{units}} organisation node(s) in scope from {{workspace}}.",
       "generated_at": "Updated",
       "org_units": "Organisation nodes in scope",
+      "recent_outcomes": "Recent outcomes",
+      "filters": {
+        "org_unit": "Organisation node",
+        "all_org_units": "All organisation nodes",
+        "owner": "Owner",
+        "owner_placeholder": "Owner ID"
+      },
       "empty_scope": "No organisation node is attached to this account yet, so the board has nothing to aggregate. Ask an administrator to place the account in the organisation tree.",
       "cards": {
+        "members": "Research members",
+        "members_hint": "Distinct members in your scope",
         "projects": "Research projects",
         "reports": "Periodic reports",
         "pending_review": "awaiting review",
+        "not_submitted": "{{count}} not submitted",
+        "recent_submissions": "{{count}} submitted in 30 days",
         "stages": "Stage runs",
         "blocked": "blocked",
         "reviews": "Stages awaiting review",
@@ -1019,7 +1031,7 @@
       "business_sections": "Business sections",
       "settings_sections": "Administration",
       "reports_hint": "Create, submit and review weekly or monthly reports.",
-      "dashboard_hint": "Main PI board: your node and subtree aggregated across the public workspace.",
+      "dashboard_hint": "Projects, reports and reviews in your authorised scope.",
       "system_hint": "Invite codes, roster import and research profiles.",
       "summary_hint": "Submission status grouped by organisation node and period.",
       "projects_hint": "One personal research project per research owner.",
@@ -1045,7 +1057,13 @@
       "close": "Close",
       "yes": "Yes",
       "no": "No",
-      "open": "Open"
+      "open": "Open",
+      "previous": "Previous",
+      "next": "Next",
+      "date_from": "Start date",
+      "date_to": "End date",
+      "apply_filters": "Apply filters",
+      "total_results": "{{count}} total"
     },
     "roles": {
       "owner": "Node owner",
@@ -1084,6 +1102,14 @@
       "master": "Master",
       "postdoc": "Postdoc",
       "research_project": "Research project"
+    },
+    "profile_categories": {
+      "student": "Student",
+      "postdoc": "Postdoctoral researcher",
+      "advisor": "Advisor",
+      "pi": "Principal investigator",
+      "staff": "Research staff",
+      "other": "Other"
     },
     "project_status": {
       "active": "In progress",
@@ -1142,13 +1168,32 @@
       "sso_with": "with"
     },
     "projects": {
-      "description": "One personal research project per research owner.",
+      "description": "Personal cultivation projects and shared team research projects.",
+      "create_title": "Create a research project",
+      "create_hint": "Cultivation projects use the stage workflow; team projects use work items, cycles and modules.",
+      "fields": {
+        "name": "Project name",
+        "type": "Project type",
+        "org_unit": "Primary organisation"
+      },
+      "type_groups": {
+        "cultivation": "Cultivation",
+        "team": "Team research"
+      },
+      "name_placeholder": "Enter a clear project name",
+      "org_unit_placeholder": "Select the primary organisation",
+      "missing_primary_org": "Your account has no primary organisation. Select one for this project and ask an administrator to complete your membership.",
+      "team_org_optional": "A team project may start without an organisation. Assign one later to include it in direction-scoped summaries.",
       "owner_placeholder": "Research owner email or ID (empty = me)",
       "create": "Create research project",
+      "open_team_project": "Open project",
       "archive": "Archive",
       "restore": "Restore",
       "empty": "No research project yet",
       "all_statuses": "All statuses",
+      "all_types": "All types",
+      "all_org_units": "All organisation nodes",
+      "owner_filter_placeholder": "Owner ID",
       "columns": {
         "name": "Project",
         "owner": "Research owner",
@@ -1164,14 +1209,23 @@
       "detail_description": "Status, visibility, review history and actions.",
       "period_placeholder": "Period, e.g. 2026-W38 / 2026-09",
       "create": "Create report",
+      "team_projects": "Team projects ({{count}})",
       "mine_only": "Only mine",
       "all_statuses": "All statuses",
+      "all_types": "All types",
+      "all_org_units": "All organisation nodes",
+      "owner_filter_placeholder": "Author ID",
+      "period_filter_placeholder": "Filter by period",
       "backfill": "Backfill",
       "empty": "No report matches the filters",
       "submit": "Submit",
       "return": "Return",
       "accept": "Accept",
       "open_body": "Open body",
+      "draft_content": "Report body",
+      "official_content": "Submitted version",
+      "official_version": "Version {{version}}",
+      "no_official_content": "No submitted version is available yet.",
       "visibility": "Visibility",
       "visibility_hint": "You can narrow the workspace default, never widen it.",
       "return_reason": "Return reason",
@@ -1257,6 +1311,11 @@
       "monthly_visibility": "Monthly override",
       "inherit": "Follow the default",
       "timezone": "Report period timezone (empty follows the workspace)",
+      "reporting_scope": "Required reporters",
+      "reporting_scope_hint": "Selected member categories are included when the system calculates missing weekly and monthly reports.",
+      "main_pi": "Main PI",
+      "main_pi_hint": "Only the system administrator can appoint the unique Main PI. Use an account ID or email address.",
+      "main_pi_placeholder": "Account ID or email (empty = unassigned)",
       "limits": "Upload limits (MB)",
       "image_max_mb": "Image limit",
       "pdf_max_mb": "PDF limit",

@@ -4,25 +4,17 @@
  * See the LICENSE file for details.
  */
 
-import { observer } from "mobx-react";
-import { useParams } from "react-router";
-// components
-import { ResearchPageShell } from "@/components/research/common/research-page-shell";
-import { ResearchPiAggregateBoard } from "@/components/research/pi/pi-aggregate-board";
+import { Navigate, useParams } from "react-router";
 
 /**
- * Main PI workspace board: a read-only aggregate of the caller's subtree in
- * the public workspace (SYS-PI-01 ~ SYS-PI-05).
+ * Compatibility redirect for bookmarked dashboard links. The aggregate now
+ * lives on the single research overview page.
  */
 function WorkspaceResearchDashboardPage() {
   const { workspaceSlug } = useParams();
   if (!workspaceSlug) return null;
 
-  return (
-    <ResearchPageShell titleKey="research.nav.dashboard" descriptionKey="research.pi.description" navKey="dashboard">
-      <ResearchPiAggregateBoard workspaceSlug={workspaceSlug} />
-    </ResearchPageShell>
-  );
+  return <Navigate to={`/${workspaceSlug}/research`} replace />;
 }
 
-export default observer(WorkspaceResearchDashboardPage);
+export default WorkspaceResearchDashboardPage;

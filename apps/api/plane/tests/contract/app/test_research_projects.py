@@ -85,6 +85,22 @@ def env(db):
 
 @pytest.mark.django_db
 class TestResearchProjectCreation:
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {"owner": "not-a-uuid"},
+            {"org_unit": "not-a-uuid"},
+            {"date_from": "not-a-date"},
+            {"date_from": "2026-10-01", "date_to": "2026-09-01"},
+            {"per_page": "0"},
+            {"per_page": "not-an-integer"},
+            {"cursor": "not-a-cursor"},
+        ],
+    )
+    def test_list_rejects_invalid_filter_and_pagination_values(self, env, params):
+        response = env["member_client"].get(env["url"], params)
+        assert response.status_code == 400
+
     def test_admin_can_create_for_a_member(self, env):
         response = env["admin_client"].post(
             env["url"],

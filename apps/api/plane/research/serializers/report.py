@@ -127,11 +127,12 @@ class PeriodicReportSerializer(serializers.ModelSerializer):
     def _official_snapshot(self, obj):
         if not hasattr(obj, "_latest_official_snapshot"):
             prefetched = getattr(obj, "_prefetched_objects_cache", {}).get("official_snapshots")
-            obj._latest_official_snapshot = (
-                max(prefetched, key=lambda snapshot: snapshot.version_no)
-                if prefetched
-                else obj.official_snapshots.order_by("-version_no").first()
-            )
+            if prefetched is not None:
+                obj._latest_official_snapshot = (
+                    max(prefetched, key=lambda snapshot: snapshot.version_no) if prefetched else None
+                )
+            else:
+                obj._latest_official_snapshot = obj.official_snapshots.order_by("-version_no").first()
         return obj._latest_official_snapshot
 
     def get_latest_official_version(self, obj):

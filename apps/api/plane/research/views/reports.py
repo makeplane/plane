@@ -56,9 +56,9 @@ from plane.research.utils.notifications import (
     notify_report_submitted,
 )
 from plane.research.utils.periods import InvalidPeriod, current_period, parse_period
-from plane.research.utils.reports import can_transition, is_editable, report_resource
+from plane.research.utils.reports import can_transition, is_editable, report_resource, visible_reports_queryset
 from plane.research.utils.settings import default_visibility_for, get_workspace_research_settings
-from plane.research.views.base import ResearchAPIView, resolve_user, truthy
+from plane.research.views.base import ResearchAPIView, parse_date, parse_uuid, resolve_user, truthy
 
 
 def report_queryset(workspace):
@@ -144,20 +144,28 @@ def grant_is_within_visibility(report, default_visibility, grantee_user, grantee
         allowed_units = {str(item) for item in org_unit_scope_ids(report.org_unit_id, report.workspace_id)}
         if grantee_unit_id:
             return str(grantee_unit_id) in allowed_units
-        return grantee_user.research_org_memberships.filter(
-            workspace_id=report.workspace_id,
-            org_unit_id__in=allowed_units,
-            deleted_at__isnull=True,
-        ).exists() if grantee_user is not None else False
+        return (
+            grantee_user.research_org_memberships.filter(
+                workspace_id=report.workspace_id,
+                org_unit_id__in=allowed_units,
+                deleted_at__isnull=True,
+            ).exists()
+            if grantee_user is not None
+            else False
+        )
     if default_visibility == "ANCESTRY":
         allowed_units = {str(item) for item in org_unit_ancestry(report.org_unit_id, report.workspace_id)}
         if grantee_unit_id:
             return str(grantee_unit_id) in allowed_units
-        return grantee_user.research_org_memberships.filter(
-            workspace_id=report.workspace_id,
-            org_unit_id__in=allowed_units,
-            deleted_at__isnull=True,
-        ).exists() if grantee_user is not None else False
+        return (
+            grantee_user.research_org_memberships.filter(
+                workspace_id=report.workspace_id,
+                org_unit_id__in=allowed_units,
+                deleted_at__isnull=True,
+            ).exists()
+            if grantee_user is not None
+            else False
+        )
     return False
 
 
@@ -168,48 +176,81 @@ def validate_report_access_update(report, workspace, payload):
     if "visibility" in payload:
         requested_visibility = str(payload.get("visibility") or "").strip().upper()
         if not requested_visibility or not can_narrow(default_visibility, requested_visibility):
-            return None, None, default_visibility, research_error(
-                ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
-                "The visibility cannot be wider than the workspace default.",
-                status.HTTP_422_UNPROCESSABLE_ENTITY,
+            return (
+                None,
+                None,
+                default_visibility,
+                research_error(
+                    ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
+                    "The visibility cannot be wider than the workspace default.",
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                ),
             )
 
     validated_grants = None
     if "grants" in payload:
         if visibility_breadth(requested_visibility) == 0:
-            return None, None, default_visibility, research_error(
-                ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
-                "Custom grants are not available for private reports.",
-                status.HTTP_422_UNPROCESSABLE_ENTITY,
+            return (
+                None,
+                None,
+                default_visibility,
+                research_error(
+                    ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
+                    "Custom grants are not available for private reports.",
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                ),
             )
         raw_grants = payload.get("grants") or []
         if not isinstance(raw_grants, list):
-            return None, None, default_visibility, research_error(
-                ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
-                "grants must be a list.",
+            return (
+                None,
+                None,
+                default_visibility,
+                research_error(
+                    ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
+                    "grants must be a list.",
+                ),
             )
         validated_grants = []
         for entry in raw_grants:
             if not isinstance(entry, dict):
-                return None, None, default_visibility, research_error(
-                    ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
-                    "Each grant must be an object.",
+                return (
+                    None,
+                    None,
+                    default_visibility,
+                    research_error(
+                        ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
+                        "Each grant must be an object.",
+                    ),
                 )
             grantee_user = resolve_user(entry.get("grantee_user")) if entry.get("grantee_user") else None
             grantee_unit_id = entry.get("grantee_org_unit") or None
-            if grantee_unit_id and not OrgUnit.objects.filter(
-                workspace=workspace,
-                pk=grantee_unit_id,
-                deleted_at__isnull=True,
-            ).exists():
-                return None, None, default_visibility, research_error(
-                    ResearchErrorCode.ORG_UNIT_NOT_FOUND,
-                    "Grant organisation not found.",
+            if (
+                grantee_unit_id
+                and not OrgUnit.objects.filter(
+                    workspace=workspace,
+                    pk=grantee_unit_id,
+                    deleted_at__isnull=True,
+                ).exists()
+            ):
+                return (
+                    None,
+                    None,
+                    default_visibility,
+                    research_error(
+                        ResearchErrorCode.ORG_UNIT_NOT_FOUND,
+                        "Grant organisation not found.",
+                    ),
                 )
             if grantee_user is None and not grantee_unit_id:
-                return None, None, default_visibility, research_error(
-                    ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
-                    "Each grant needs a user or an org unit.",
+                return (
+                    None,
+                    None,
+                    default_visibility,
+                    research_error(
+                        ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
+                        "Each grant needs a user or an org unit.",
+                    ),
                 )
             if grantee_user is not None and grantee_user.id == report.owner_id:
                 continue
@@ -219,10 +260,15 @@ def validate_report_access_update(report, workspace, payload):
                 grantee_user,
                 grantee_unit_id,
             ):
-                return None, None, default_visibility, research_error(
-                    ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
-                    "A custom grant must stay within the default audience.",
-                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                return (
+                    None,
+                    None,
+                    default_visibility,
+                    research_error(
+                        ResearchErrorCode.REPORT_VISIBILITY_EXCEEDS_DEFAULT,
+                        "A custom grant must stay within the default audience.",
+                        status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    ),
                 )
             validated_grants.append((grantee_user, grantee_unit_id))
     return requested_visibility, validated_grants, default_visibility, None
@@ -250,25 +296,42 @@ class ResearchReportListCreateEndpoint(ResearchAPIView):
             queryset = queryset.filter(status=str(request.GET["status"]).upper())
         if request.GET.get("report_type"):
             queryset = queryset.filter(report_type=str(request.GET["report_type"]).upper())
-        if request.GET.get("org_unit"):
-            queryset = queryset.filter(org_unit_id=request.GET["org_unit"])
-        if request.GET.get("owner"):
-            queryset = queryset.filter(owner_id=request.GET["owner"])
+        org_unit_id, error = parse_uuid(request.GET.get("org_unit"), "org_unit")
+        if error:
+            return error
+        owner_id, error = parse_uuid(request.GET.get("owner"), "owner")
+        if error:
+            return error
+        date_from, error = parse_date(request.GET.get("date_from"), "date_from")
+        if error:
+            return error
+        date_to, error = parse_date(request.GET.get("date_to"), "date_to")
+        if error:
+            return error
+        if date_from and date_to and date_from > date_to:
+            return research_error(
+                ResearchErrorCode.ORG_MEMBER_INVALID,
+                "date_from must not be after date_to.",
+            )
+        if org_unit_id:
+            queryset = queryset.filter(org_unit_id=org_unit_id)
+        if owner_id:
+            queryset = queryset.filter(owner_id=owner_id)
+        if date_from:
+            queryset = queryset.filter(period_start__gte=date_from)
+        if date_to:
+            queryset = queryset.filter(period_end__lte=date_to)
         if truthy(request.GET.get("mine")):
             queryset = queryset.filter(owner=request.user)
 
         context = build_actor_context(request.user, workspace.id)
-        visible = [
-            report
-            for report in list(queryset)
-            if check_access(request.user, "view", report_resource(report), context=context)
-        ]
-        return Response(
-            {
-                "results": [serialize_report(report, request, context) for report in visible],
-                "count": len(visible),
-            },
-            status=status.HTTP_200_OK,
+        visible_queryset = visible_reports_queryset(queryset, context)
+        return self.paginate(
+            request=request,
+            queryset=visible_queryset,
+            on_results=lambda reports: [serialize_report(report, request, context) for report in reports],
+            default_per_page=50,
+            max_per_page=100,
         )
 
     def post(self, request, slug):
@@ -310,9 +373,7 @@ class ResearchReportListCreateEndpoint(ResearchAPIView):
                 deleted_at__isnull=True,
                 effective_from__lte=timezone.localdate(),
             )
-            .filter(
-                Q(effective_to__isnull=True) | Q(effective_to__gte=timezone.localdate())
-            )
+            .filter(Q(effective_to__isnull=True) | Q(effective_to__gte=timezone.localdate()))
             .select_related("org_unit")
             .first()
         )
@@ -520,12 +581,7 @@ class ResearchReportSubmitEndpoint(ResearchAPIView):
             return error
         target = PeriodicReport.Status.SUBMITTED
         with transaction.atomic():
-            report = (
-                report_queryset(workspace)
-                .select_for_update(of=("self",))
-                .filter(pk=report_id)
-                .first()
-            )
+            report = report_queryset(workspace).select_for_update(of=("self",)).filter(pk=report_id).first()
             if report is None or report.owner_id != request.user.id:
                 return research_not_found(ResearchErrorCode.REPORT_NOT_FOUND, "Report not found.")
             if report.org_unit_id is None:
@@ -603,12 +659,7 @@ class ResearchReportReturnEndpoint(ResearchAPIView):
 
         target = PeriodicReport.Status.NEEDS_REVISION
         with transaction.atomic():
-            report = (
-                report_queryset(workspace)
-                .select_for_update(of=("self",))
-                .filter(pk=report_id)
-                .first()
-            )
+            report = report_queryset(workspace).select_for_update(of=("self",)).filter(pk=report_id).first()
             if report is None:
                 return research_not_found(ResearchErrorCode.REPORT_NOT_FOUND, "Report not found.")
             context = build_actor_context(request.user, workspace.id)
@@ -658,12 +709,7 @@ class ResearchReportAcceptEndpoint(ResearchAPIView):
             return error
         target = PeriodicReport.Status.ACCEPTED
         with transaction.atomic():
-            report = (
-                report_queryset(workspace)
-                .select_for_update(of=("self",))
-                .filter(pk=report_id)
-                .first()
-            )
+            report = report_queryset(workspace).select_for_update(of=("self",)).filter(pk=report_id).first()
             if report is None:
                 return research_not_found(ResearchErrorCode.REPORT_NOT_FOUND, "Report not found.")
             context = build_actor_context(request.user, workspace.id)
@@ -775,8 +821,8 @@ class ResearchReportAccessEndpoint(ResearchAPIView):
             if error:
                 return error
             previous = {"visibility": report.visibility}
-            requested_visibility, validated_grants, default_visibility, error = (
-                validate_report_access_update(report, workspace, request.data)
+            requested_visibility, validated_grants, default_visibility, error = validate_report_access_update(
+                report, workspace, request.data
             )
             if error:
                 return error
