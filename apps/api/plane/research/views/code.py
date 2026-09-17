@@ -19,7 +19,7 @@ from plane.db.models import (
     ResearchProjectProfile,
 )
 from plane.research.serializers import CodeArtifactSerializer, ProjectCodeRepositorySerializer
-from plane.research.utils.acl import ResearchResource, build_actor_context, check_access
+from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.audit import (
     ResearchAuditAction,
     ResearchResourceType,
@@ -32,27 +32,21 @@ from plane.research.utils.errors import (
     research_not_found,
     research_permission_denied,
 )
-from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.projects import (
+    audit_field_snapshot,
+    can_create_research_content,
+    can_manage_authored_team_content,
+    can_manage_team_content,
+    delegated_change_metadata,
+    is_active_team_project_member,
+)
+from plane.research.utils.resource_projections import repository_resource
 from plane.research.utils.settings import get_workspace_research_settings
 from plane.research.views.base import ResearchAPIView
+from plane.research.views.projects import can_read_project_research_metadata
 from plane.settings.storage import S3Storage
 
 SECTION = "code"
-
-
-def repository_resource(repository) -> ResearchResource:
-    return ResearchResource(
-        kind="code_repository",
-        workspace_id=repository.workspace_id,
-        owner_id=ResearchProjectProfile.objects.filter(project_id=repository.project_id)
-        .values_list("owner_id", flat=True)
-        .first(),
-        org_unit_id=ResearchProjectProfile.objects.filter(project_id=repository.project_id)
-        .values_list("org_unit_id", flat=True)
-        .first(),
-        visibility="DIRECT_ADVISOR",
-        state=repository.status,
-    )
 
 
 def research_project(workspace, project_id):
@@ -60,19 +54,33 @@ def research_project(workspace, project_id):
 
 
 def can_manage_code(actor, workspace, profile) -> bool:
-    if is_workspace_admin(actor, workspace):
-        return True
     return bool(profile and profile.owner_id == actor.id)
 
 
-def visible_repository(request, workspace, repository_id):
+def can_manage_repository(actor, workspace, profile, repository) -> bool:
+    return can_manage_code(actor, workspace, profile) or can_manage_team_content(actor, profile, repository)
+
+
+def can_manage_artifact(actor, workspace, profile, artifact) -> bool:
+    return can_manage_code(actor, workspace, profile) or can_manage_team_content(actor, profile, artifact)
+
+
+def visible_repository(request, workspace, repository_id, *, allow_team_member=False):
     repository = ProjectCodeRepository.objects.filter(
         workspace=workspace, pk=repository_id, deleted_at__isnull=True
-    ).first()
+    ).select_related("project__research_profile").first()
     if repository is None:
         return None, research_not_found(ResearchErrorCode.CODE_REPOSITORY_NOT_FOUND, "Repository not found.")
     context = build_actor_context(request.user, workspace.id)
-    if not check_access(request.user, "view", repository_resource(repository), context=context):
+    profile = repository.project.research_profile
+    has_access = check_access(request.user, "view", repository_resource(repository), context=context)
+    if not has_access and can_manage_team_content(request.user, profile, repository):
+        has_access = True
+    if not has_access and can_manage_authored_team_content(request.user, profile, repository):
+        has_access = True
+    if not has_access and allow_team_member and is_active_team_project_member(request.user, profile):
+        has_access = True
+    if not has_access:
         return None, research_not_found(ResearchErrorCode.CODE_REPOSITORY_NOT_FOUND, "Repository not found.")
     return repository, None
 
@@ -88,7 +96,7 @@ class ResearchCodeRepositoryListCreateEndpoint(ResearchAPIView):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
         query = ProjectCodeRepository.objects.filter(
             workspace=workspace, project_id=project_id, deleted_at__isnull=True
-        )
+        ).select_related("project__research_profile")
         if request.GET.get("status"):
             query = query.filter(status=str(request.GET["status"]).upper())
         context = build_actor_context(request.user, workspace.id)
@@ -96,6 +104,9 @@ class ResearchCodeRepositoryListCreateEndpoint(ResearchAPIView):
             repository
             for repository in query.order_by("-created_at")[:200]
             if check_access(request.user, "view", repository_resource(repository), context=context)
+            or can_manage_authored_team_content(
+                request.user, repository.project.research_profile, repository
+            )
         ]
         payload = []
         for repository in repositories:
@@ -109,9 +120,11 @@ class ResearchCodeRepositoryListCreateEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, project_id)
-        if profile is None:
+        if profile is None or not can_read_project_research_metadata(
+            workspace, request.user, profile
+        ):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
 
         repository_url = str(request.data.get("repository_url") or "").strip()
@@ -123,7 +136,7 @@ class ResearchCodeRepositoryListCreateEndpoint(ResearchAPIView):
         provider = str(request.data.get("provider") or "GITHUB").upper()
         if provider not in ProjectCodeRepository.Provider.values:
             return research_error(ResearchErrorCode.CODE_REPOSITORY_INVALID, "Unknown provider.")
-        visibility = str(request.data.get("visibility") or "PRIVATE").upper()
+        visibility = str(request.data.get("visibility") or "INTERNAL").upper()
         if visibility not in ProjectCodeRepository.Visibility.values:
             visibility = ProjectCodeRepository.Visibility.PRIVATE.value
         try:
@@ -182,8 +195,23 @@ class ResearchCodeRepositoryDetailEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_manage_repository(request.user, workspace, profile, repository):
             return research_permission_denied()
+        changed_fields = sorted(
+            {
+                "repository_slug",
+                "default_branch",
+                "visibility",
+                "credential_ref",
+                "status",
+            }.intersection(request.data.keys())
+        )
+        redacted_fields = {"credential_ref"}
+        before = audit_field_snapshot(
+            repository,
+            changed_fields,
+            redacted_fields=redacted_fields,
+        )
         for field in ("repository_slug", "default_branch"):
             if field in request.data:
                 setattr(repository, field, str(request.data.get(field) or ""))
@@ -208,7 +236,14 @@ class ResearchCodeRepositoryDetailEndpoint(ResearchAPIView):
             resource_type=ResearchResourceType.CODE_REPOSITORY,
             resource_id=repository.id,
             actor=request.user,
-            metadata={"fields": sorted(request.data.keys()), "credential_changed": credential_changed},
+            metadata=delegated_change_metadata(
+                request.user,
+                repository,
+                changed_fields,
+                before,
+                redacted_fields=redacted_fields,
+                credential_changed=credential_changed,
+            ),
             request=request,
         )
         return Response(ProjectCodeRepositorySerializer(repository).data, status=status.HTTP_200_OK)
@@ -221,7 +256,7 @@ class ResearchCodeRepositoryDetailEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_manage_repository(request.user, workspace, profile, repository):
             return research_permission_denied()
         repository.status = ProjectCodeRepository.Status.ARCHIVED
         repository.deleted_at = timezone.now()
@@ -253,7 +288,7 @@ class ResearchCodeRepositorySyncEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_manage_repository(request.user, workspace, profile, repository):
             return research_permission_denied()
 
         head = str(request.data.get("head") or "").strip()
@@ -315,13 +350,24 @@ class ResearchCodeArtifactListCreateEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        repository, error = visible_repository(request, workspace, repository_id)
+        repository, error = visible_repository(
+            request, workspace, repository_id, allow_team_member=True
+        )
         if error:
             return error
         query = repository.artifacts.filter(deleted_at__isnull=True).select_related("linked_experiment")
         if request.GET.get("ref_type"):
             query = query.filter(ref_type=str(request.GET["ref_type"]).upper())
-        artifacts = list(query.order_by("-created_at")[:200])
+        profile = repository.project.research_profile
+        context = build_actor_context(request.user, workspace.id)
+        artifacts = [
+            artifact
+            for artifact in query.order_by("-created_at")[:200]
+            if check_access(
+                request.user, "view", repository_resource(repository), context=context
+            )
+            or can_manage_authored_team_content(request.user, profile, artifact)
+        ]
         return Response(
             {"results": CodeArtifactSerializer(artifacts, many=True).data, "count": len(artifacts)},
             status=status.HTTP_200_OK,
@@ -331,11 +377,13 @@ class ResearchCodeArtifactListCreateEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        repository, error = visible_repository(request, workspace, repository_id)
+        repository, error = visible_repository(
+            request, workspace, repository_id, allow_team_member=True
+        )
         if error:
             return error
         profile = research_project(workspace, repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
         ref_type = str(request.data.get("ref_type") or "").upper()
         if ref_type not in CodeArtifact.RefType.values:
@@ -400,11 +448,13 @@ class ResearchCodeSnapshotEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        repository, error = visible_repository(request, workspace, repository_id)
+        repository, error = visible_repository(
+            request, workspace, repository_id, allow_team_member=True
+        )
         if error:
             return error
         profile = research_project(workspace, repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
 
         limits = get_workspace_research_settings(workspace)
@@ -512,13 +562,19 @@ class ResearchCodeArtifactDetailEndpoint(ResearchAPIView):
             CodeArtifact.objects.filter(
                 pk=artifact_id, repository__workspace=workspace, deleted_at__isnull=True
             )
-            .select_related("repository", "linked_experiment")
+            .select_related("repository__project__research_profile", "linked_experiment")
             .first()
         )
         if artifact is None:
             return None, research_not_found(ResearchErrorCode.CODE_ARTIFACT_NOT_FOUND, "Artifact not found.")
         context = build_actor_context(request.user, workspace.id)
-        if not check_access(request.user, "view", repository_resource(artifact.repository), context=context):
+        has_access = check_access(
+            request.user, "view", repository_resource(artifact.repository), context=context
+        )
+        profile = artifact.repository.project.research_profile
+        if not has_access and can_manage_team_content(request.user, profile, artifact):
+            has_access = True
+        if not has_access:
             return None, research_not_found(ResearchErrorCode.CODE_ARTIFACT_NOT_FOUND, "Artifact not found.")
         return artifact, None
 
@@ -539,8 +595,12 @@ class ResearchCodeArtifactDetailEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, artifact.repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_manage_artifact(request.user, workspace, profile, artifact):
             return research_permission_denied()
+        changed_fields = sorted(
+            {"linked_experiment", "description"}.intersection(request.data.keys())
+        )
+        before = audit_field_snapshot(artifact, changed_fields)
         if "linked_experiment" in request.data:
             experiment_id = request.data.get("linked_experiment")
             if not experiment_id:
@@ -561,7 +621,12 @@ class ResearchCodeArtifactDetailEndpoint(ResearchAPIView):
             resource_type=ResearchResourceType.CODE_ARTIFACT,
             resource_id=artifact.id,
             actor=request.user,
-            metadata={"fields": sorted(request.data.keys())},
+            metadata=delegated_change_metadata(
+                request.user,
+                artifact,
+                changed_fields,
+                before,
+            ),
             request=request,
         )
         return Response(CodeArtifactSerializer(artifact).data, status=status.HTTP_200_OK)
@@ -574,7 +639,7 @@ class ResearchCodeArtifactDetailEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, artifact.repository.project_id)
-        if not can_manage_code(request.user, workspace, profile):
+        if not can_manage_artifact(request.user, workspace, profile, artifact):
             return research_permission_denied()
         artifact.deleted_at = timezone.now()
         artifact.save(update_fields=["deleted_at", "updated_at"])

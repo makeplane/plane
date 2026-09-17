@@ -1142,13 +1142,32 @@
       "sso_with": "使用"
     },
     "projects": {
-      "description": "每个科研责任人一个个人科研项目。",
+      "description": "统一管理个人培养项目与团队科研课题。",
+      "create_title": "新建科研项目",
+      "create_hint": "培养项目使用阶段流程；团队课题使用任务、周期和模块推进。",
+      "fields": {
+        "name": "项目名称",
+        "type": "项目类型",
+        "org_unit": "主归属"
+      },
+      "type_groups": {
+        "cultivation": "个人培养",
+        "team": "团队课题"
+      },
+      "name_placeholder": "输入清晰的项目名称",
+      "org_unit_placeholder": "选择主归属",
+      "missing_primary_org": "当前账号还没有主归属。请为本项目选择归属，并联系管理员补全成员关系。",
+      "team_org_optional": "团队课题可以暂不设置组织归属；后续补齐后才会进入对应方向的范围统计。",
       "owner_placeholder": "科研责任人邮箱或 ID（留空表示本人）",
       "create": "创建科研项目",
+      "open_team_project": "打开项目",
       "archive": "归档",
       "restore": "恢复",
       "empty": "暂无科研项目",
       "all_statuses": "全部状态",
+      "all_types": "全部类型",
+      "all_org_units": "全部组织节点",
+      "owner_filter_placeholder": "责任人 ID",
       "columns": {
         "name": "项目",
         "owner": "科研责任人",

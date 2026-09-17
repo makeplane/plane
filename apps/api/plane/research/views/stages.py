@@ -162,7 +162,12 @@ class ResearchProjectStageListCreateEndpoint(ResearchAPIView):
         if profile is None:
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
 
-        instances, created = ensure_stage_instances(workspace, profile, request.user)
+        instances = list(
+            ResearchStageInstance.objects.filter(project_id=project_id, deleted_at__isnull=True)
+            .select_related("project", "org_unit")
+            .prefetch_related("transitions")
+            .order_by("sort_order")
+        )
         context = build_actor_context(request.user, workspace.id)
         visible = [
             item for item in instances if check_access(request.user, "view", stage_resource(item), context=context)
@@ -179,7 +184,7 @@ class ResearchProjectStageListCreateEndpoint(ResearchAPIView):
             {
                 "results": results,
                 "count": len(results),
-                "created": created,
+                "created": False,
                 "current_stage": current.stage if current else None,
                 "project": str(profile.project_id),
                 "workflow_status": profile.workflow_status,

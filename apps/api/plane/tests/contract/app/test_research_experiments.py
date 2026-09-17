@@ -72,7 +72,12 @@ def env(db):
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=owner, org_role=OrgUnitMember.OrgRole.PI
     )
-    MentorBinding.objects.create(workspace=workspace, mentee=owner, mentor=mentor)
+    MentorBinding.objects.create(
+        workspace=workspace,
+        mentee=owner,
+        mentor=mentor,
+        is_primary_advisor=True,
+    )
 
     admin_client = client_for(admin)
     created = admin_client.post(

@@ -39,7 +39,7 @@ from plane.research.services.experiment_service import (
     submit_experiment,
 )
 from plane.research.services.stage_service import StageRuleError
-from plane.research.utils.acl import ResearchResource, build_actor_context, check_access
+from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.audit import (
     ResearchAuditAction,
     ResearchResourceType,
@@ -52,8 +52,16 @@ from plane.research.utils.errors import (
     research_not_found,
     research_permission_denied,
 )
-from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.projects import (
+    audit_field_snapshot,
+    can_create_research_content,
+    can_manage_team_content,
+    delegated_change_metadata,
+    is_team_project,
+)
+from plane.research.utils.resource_projections import experiment_resource
 from plane.research.views.base import ResearchAPIView
+from plane.research.views.projects import can_read_project_research_metadata
 from plane.research.views.stages import stage_rule_error_response
 
 SECTION = "experiments"
@@ -76,29 +84,14 @@ EDITABLE_FIELDS = (
 )
 
 
-def experiment_resource(record) -> ResearchResource:
-    return ResearchResource(
-        kind="experiment_record",
-        workspace_id=record.workspace_id,
-        owner_id=record.owner_id,
-        org_unit_id=record.stage_instance.org_unit_id if record.stage_instance_id else None,
-        visibility=record.visibility,
-        state=record.status,
-    )
-
-
 def can_edit_experiment(actor, workspace, record) -> bool:
-    if is_workspace_admin(actor, workspace):
-        return True
     if record.owner_id == actor.id:
         return True
-    return ResearchProjectProfile.objects.filter(project_id=record.project_id, owner_id=actor.id).exists()
+    return can_manage_team_content(actor, research_project(workspace, record.project_id), record)
 
 
 def can_review_experiment(actor, workspace, record) -> bool:
-    """Approvers: the direct advisor, the PI branch and platform admins (P1-EXP-07)."""
-    if is_workspace_admin(actor, workspace):
-        return True
+    """Approvers are the primary advisor, business PI chain or explicit main PI."""
     if record.owner_id == actor.id:
         return False
     context = build_actor_context(actor, workspace.id)
@@ -109,22 +102,27 @@ def research_project(workspace, project_id):
     return ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
 
 
-def pre_opening_instance(workspace, project_id):
+def content_stage_instance(profile):
+    if is_team_project(profile):
+        return None
     return ResearchStageInstance.objects.filter(
-        workspace=workspace, project_id=project_id, deleted_at__isnull=True
+        workspace=profile.workspace, project_id=profile.project_id, deleted_at__isnull=True
     ).order_by("sort_order").first()
 
 
 def visible_record(request, workspace, record_id, action="view"):
     record = (
         ExperimentRecord.objects.filter(workspace=workspace, pk=record_id, deleted_at__isnull=True)
-        .select_related("owner", "stage_instance")
+        .select_related("owner", "stage_instance", "project__research_profile")
         .first()
     )
     if record is None:
         return None, research_not_found(ResearchErrorCode.EXPERIMENT_NOT_FOUND, "Experiment not found.")
     context = build_actor_context(request.user, workspace.id)
-    if not check_access(request.user, action, experiment_resource(record), context=context):
+    has_access = check_access(
+        request.user, action, experiment_resource(record), context=context
+    ) or can_manage_team_content(request.user, record.project.research_profile, record)
+    if not has_access:
         if action == "view":
             return None, research_not_found(ResearchErrorCode.EXPERIMENT_NOT_FOUND, "Experiment not found.")
         return None, research_permission_denied()
@@ -155,7 +153,7 @@ class ResearchExperimentListCreateEndpoint(ResearchAPIView):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
         query = ExperimentRecord.objects.filter(
             workspace=workspace, project_id=project_id, deleted_at__isnull=True
-        ).select_related("owner")
+        ).select_related("owner", "stage_instance", "project__research_profile")
         if request.GET.get("status"):
             query = query.filter(status=str(request.GET["status"]).upper())
         if request.GET.get("source"):
@@ -186,9 +184,11 @@ class ResearchExperimentListCreateEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, project_id)
-        if profile is None:
+        if profile is None or not can_read_project_research_metadata(
+            workspace, request.user, profile
+        ):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
-        if profile.owner_id != request.user.id and not is_workspace_admin(request.user, workspace):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
         title = str(request.data.get("title") or "").strip()
         if not title:
@@ -201,7 +201,7 @@ class ResearchExperimentListCreateEndpoint(ResearchAPIView):
                 workspace=workspace,
                 project_id=project_id,
                 sequence_no=next_sequence_no(project_id),
-                stage_instance=pre_opening_instance(workspace, project_id),
+                stage_instance=content_stage_instance(profile),
                 title=title,
                 owner=request.user,
                 source=str(request.data.get("source") or ExperimentRecord.Source.MANUAL).upper(),
@@ -270,6 +270,8 @@ class ResearchExperimentDetailEndpoint(ResearchAPIView):
                     ResearchErrorCode.EXPERIMENT_LOCKED_FIELD,
                     f"Key fields are locked once the experiment runs: {', '.join(locked)}.",
                 )
+        changed_fields = sorted(set(EDITABLE_FIELDS).intersection(request.data.keys()))
+        before = audit_field_snapshot(record, changed_fields)
         apply_payload(record, request.data)
         record.save()
         record_audit_event(
@@ -278,7 +280,13 @@ class ResearchExperimentDetailEndpoint(ResearchAPIView):
             resource_type=ResearchResourceType.EXPERIMENT,
             resource_id=record.id,
             actor=request.user,
-            metadata={"sequence_no": record.sequence_no, "fields": sorted(request.data.keys())},
+            metadata=delegated_change_metadata(
+                request.user,
+                record,
+                changed_fields,
+                before,
+                sequence_no=record.sequence_no,
+            ),
             request=request,
         )
         return Response(ExperimentRecordSerializer(record).data, status=status.HTTP_200_OK)
@@ -497,9 +505,11 @@ class ResearchExperimentIngestEndpoint(ResearchAPIView):
         if error:
             return error
         profile = ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
-        if profile is None:
+        if profile is None or not can_read_project_research_metadata(
+            workspace, request.user, profile
+        ):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
-        if profile.owner_id != request.user.id and not is_workspace_admin(request.user, workspace):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
         record, outcome = ingest_run(workspace, project_id, request.user, request.data, request=request)
         if record is None:

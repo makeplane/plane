@@ -27,7 +27,6 @@ const TOGGLES: { field: keyof TWorkspaceResearchSetting; labelKey: string }[] = 
   { field: "org_enabled", labelKey: "research.platform.org_enabled" },
   { field: "report_enabled", labelKey: "research.platform.report_enabled" },
   { field: "approval_enabled", labelKey: "research.platform.approval_enabled" },
-  { field: "allow_multiple_projects", labelKey: "research.platform.allow_multiple_projects" },
 ];
 
 const LIMITS: { field: keyof TWorkspaceResearchSetting; labelKey: string }[] = [
@@ -66,7 +65,6 @@ export const ResearchPlatformSettingsForm = observer(function ResearchPlatformSe
         org_enabled: draft.org_enabled,
         report_enabled: draft.report_enabled,
         approval_enabled: draft.approval_enabled,
-        allow_multiple_projects: draft.allow_multiple_projects,
         default_report_visibility: draft.default_report_visibility,
         weekly_default_visibility: draft.weekly_default_visibility ?? null,
         monthly_default_visibility: draft.monthly_default_visibility ?? null,

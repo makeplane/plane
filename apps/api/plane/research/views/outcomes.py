@@ -21,7 +21,7 @@ from plane.db.models import (
 )
 from plane.research.serializers import ResearchOutcomeSerializer
 from plane.research.services.progress import build_progress
-from plane.research.utils.acl import ResearchResource, build_actor_context, check_access
+from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.audit import (
     ResearchAuditAction,
     ResearchResourceType,
@@ -34,8 +34,16 @@ from plane.research.utils.errors import (
     research_not_found,
     research_permission_denied,
 )
-from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.projects import (
+    audit_field_snapshot,
+    can_create_research_content,
+    can_manage_authored_team_content,
+    can_manage_team_content,
+    delegated_change_metadata,
+)
+from plane.research.utils.resource_projections import outcome_resource
 from plane.research.views.base import ResearchAPIView
+from plane.research.views.projects import can_read_project_research_metadata, profile_queryset
 
 SECTION = "stages"
 LINK_TARGETS = {
@@ -46,36 +54,30 @@ LINK_TARGETS = {
 }
 
 
-def outcome_resource(outcome) -> ResearchResource:
-    profile = ResearchProjectProfile.objects.filter(project_id=outcome.project_id).first()
-    return ResearchResource(
-        kind="research_outcome",
-        workspace_id=outcome.workspace_id,
-        owner_id=profile.owner_id if profile else None,
-        org_unit_id=profile.org_unit_id if profile else None,
-        visibility=outcome.visibility,
-        state=outcome.status,
-    )
-
-
 def research_project(workspace, project_id):
     return ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
 
 
 def can_manage_outcomes(actor, workspace, profile) -> bool:
-    if is_workspace_admin(actor, workspace):
-        return True
     return bool(profile and profile.owner_id == actor.id)
+
+
+def can_manage_outcome(actor, workspace, profile, outcome) -> bool:
+    return can_manage_outcomes(actor, workspace, profile) or can_manage_team_content(actor, profile, outcome)
 
 
 def visible_outcome(request, workspace, outcome_id, action="view"):
     outcome = ResearchOutcome.objects.filter(
         workspace=workspace, pk=outcome_id, deleted_at__isnull=True
-    ).first()
+    ).select_related("project__research_profile").first()
     if outcome is None:
         return None, research_not_found(ResearchErrorCode.OUTCOME_NOT_FOUND, "Outcome not found.")
     context = build_actor_context(request.user, workspace.id)
-    if not check_access(request.user, action, outcome_resource(outcome), context=context):
+    has_access = check_access(request.user, action, outcome_resource(outcome), context=context)
+    profile = outcome.project.research_profile
+    if not has_access and action == "view":
+        has_access = can_manage_team_content(request.user, profile, outcome)
+    if not has_access:
         if action == "view":
             return None, research_not_found(ResearchErrorCode.OUTCOME_NOT_FOUND, "Outcome not found.")
         return None, research_permission_denied()
@@ -93,7 +95,7 @@ class ResearchOutcomeListCreateEndpoint(ResearchAPIView):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
         query = ResearchOutcome.objects.filter(
             workspace=workspace, project_id=project_id, deleted_at__isnull=True
-        ).prefetch_related("links")
+        ).select_related("project__research_profile").prefetch_related("links")
         if request.GET.get("output_type"):
             query = query.filter(output_type=str(request.GET["output_type"]).upper())
         if request.GET.get("status"):
@@ -103,6 +105,9 @@ class ResearchOutcomeListCreateEndpoint(ResearchAPIView):
             outcome
             for outcome in query.order_by("-created_at")[:200]
             if check_access(request.user, "view", outcome_resource(outcome), context=context)
+            or can_manage_authored_team_content(
+                request.user, outcome.project.research_profile, outcome
+            )
         ]
         return Response(
             {
@@ -116,10 +121,10 @@ class ResearchOutcomeListCreateEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        profile = research_project(workspace, project_id)
-        if profile is None:
+        profile = profile_queryset(workspace).filter(project_id=project_id).first()
+        if profile is None or not can_read_project_research_metadata(workspace, request.user, profile):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
-        if not can_manage_outcomes(request.user, workspace, profile):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
         title = str(request.data.get("title") or "").strip()
         output_type = str(request.data.get("output_type") or "PAPER").upper()
@@ -183,8 +188,21 @@ class ResearchOutcomeDetailEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, outcome.project_id)
-        if not can_manage_outcomes(request.user, workspace, profile):
+        if not can_manage_outcome(request.user, workspace, profile, outcome):
             return research_permission_denied()
+        editable_fields = {
+            "title",
+            "venue",
+            "doi",
+            "external_url",
+            "visibility",
+            "authors",
+            "status",
+            "published_at",
+        }
+        changed_fields = sorted(editable_fields.intersection(request.data.keys()))
+
+        before = audit_field_snapshot(outcome, changed_fields)
         for field in ("title", "venue", "doi", "external_url", "visibility"):
             if field in request.data:
                 setattr(outcome, field, str(request.data.get(field) or ""))
@@ -204,7 +222,12 @@ class ResearchOutcomeDetailEndpoint(ResearchAPIView):
             resource_type=ResearchResourceType.OUTCOME,
             resource_id=outcome.id,
             actor=request.user,
-            metadata={"fields": sorted(request.data.keys())},
+            metadata=delegated_change_metadata(
+                request.user,
+                outcome,
+                changed_fields,
+                before,
+            ),
             request=request,
         )
         return Response(ResearchOutcomeSerializer(outcome).data, status=status.HTTP_200_OK)
@@ -217,7 +240,7 @@ class ResearchOutcomeDetailEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, outcome.project_id)
-        if not can_manage_outcomes(request.user, workspace, profile):
+        if not can_manage_outcome(request.user, workspace, profile, outcome):
             return research_permission_denied()
         outcome.deleted_at = timezone.now()
         outcome.save(update_fields=["deleted_at", "updated_at"])
@@ -244,7 +267,7 @@ class ResearchOutcomeLinkEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, outcome.project_id)
-        if not can_manage_outcomes(request.user, workspace, profile):
+        if not can_manage_outcome(request.user, workspace, profile, outcome):
             return research_permission_denied()
         target_type = str(request.data.get("target_type") or "").upper()
         target_id = request.data.get("target_id")
@@ -290,7 +313,7 @@ class ResearchOutcomeLinkEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, outcome.project_id)
-        if not can_manage_outcomes(request.user, workspace, profile):
+        if not can_manage_outcome(request.user, workspace, profile, outcome):
             return research_permission_denied()
         link = ResearchOutcomeLink.objects.filter(pk=link_id, outcome=outcome).first()
         if link is None:
@@ -307,8 +330,8 @@ class ResearchChainExportEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        profile = research_project(workspace, project_id)
-        if profile is None:
+        profile = profile_queryset(workspace).filter(project_id=project_id).first()
+        if profile is None or not can_read_project_research_metadata(workspace, request.user, profile):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
         chain = str(request.GET.get("chain") or "").lower() or None
         if chain and chain not in ("thinking", "development"):

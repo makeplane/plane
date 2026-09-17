@@ -41,9 +41,16 @@ from plane.research.utils.literature import (
     parse_bibtex,
     parse_doi_lines,
 )
-from plane.research.utils.org import is_workspace_admin
+from plane.research.utils.projects import (
+    audit_field_snapshot,
+    can_create_research_content,
+    can_manage_team_content,
+    delegated_change_metadata,
+    is_team_project,
+)
 from plane.research.utils.settings import get_workspace_research_settings
 from plane.research.views.base import ResearchAPIView
+from plane.research.views.projects import can_read_project_research_metadata
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 
@@ -59,23 +66,29 @@ def research_project(workspace, project_id):
 
 
 def can_edit_literature(actor, workspace, entry) -> bool:
-    if is_workspace_admin(actor, workspace):
-        return True
     if entry.owner_id == actor.id:
         return True
-    return ResearchProjectProfile.objects.filter(project_id=entry.project_id, owner_id=actor.id).exists()
+    profile = research_project(workspace, entry.project_id)
+    return can_manage_team_content(actor, profile, entry)
 
 
 def visible_entry(request, workspace, entry_id, action="view"):
-    entry = LiteratureEntry.objects.filter(
-        workspace=workspace,
-        pk=entry_id,
-        deleted_at__isnull=True,
-    ).first()
+    entry = (
+        LiteratureEntry.objects.filter(
+            workspace=workspace,
+            pk=entry_id,
+            deleted_at__isnull=True,
+        )
+        .select_related("project__research_profile")
+        .first()
+    )
     if entry is None:
         return None, research_not_found(ResearchErrorCode.LITERATURE_NOT_FOUND, "Literature entry not found.")
     context = build_actor_context(request.user, workspace.id)
-    if not check_access(request.user, action, literature_resource(entry), context=context):
+    has_access = check_access(
+        request.user, action, literature_resource(entry), context=context
+    ) or can_manage_team_content(request.user, entry.project.research_profile, entry)
+    if not has_access:
         if action == "view":
             return None, research_not_found(ResearchErrorCode.LITERATURE_NOT_FOUND, "Literature entry not found.")
         return None, research_permission_denied()
@@ -115,7 +128,9 @@ def parse_size(value):
         return 0
 
 
-def stage_instance_for(workspace, project_id, stage_code=StageType.PRE_OPENING.value):
+def stage_instance_for(workspace, project_id, stage_code=StageType.PRE_OPENING.value, profile=None):
+    if is_team_project(profile or research_project(workspace, project_id)):
+        return None
     return ResearchStageInstance.objects.filter(
         workspace=workspace,
         project_id=project_id,
@@ -132,7 +147,9 @@ class ResearchLiteratureListCreateEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, project_id)
-        if profile is None:
+        if profile is None or not can_read_project_research_metadata(
+            workspace, request.user, profile
+        ):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
 
         query = LiteratureEntry.objects.filter(
@@ -168,9 +185,11 @@ class ResearchLiteratureListCreateEndpoint(ResearchAPIView):
         if error:
             return error
         profile = research_project(workspace, project_id)
-        if profile is None:
+        if profile is None or not can_read_project_research_metadata(
+            workspace, request.user, profile
+        ):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
-        if profile.owner_id != request.user.id and not is_workspace_admin(request.user, workspace):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
 
         title = str(request.data.get("title") or "").strip()
@@ -217,7 +236,7 @@ class ResearchLiteratureListCreateEndpoint(ResearchAPIView):
                     relevance_score=parse_score(request.data.get("relevance_score")),
                     status=entry_status,
                     visibility=str(request.data.get("visibility") or default_visibility(workspace)).upper(),
-                    stage_instance=stage_instance_for(workspace, project_id),
+                    stage_instance=stage_instance_for(workspace, project_id, profile=profile),
                     created_by=request.user,
                 )
         except IntegrityError:
@@ -263,6 +282,14 @@ class ResearchLiteratureDetailEndpoint(ResearchAPIView):
         if not can_edit_literature(request.user, workspace, entry):
             return research_permission_denied()
 
+        auditable_fields = set(self.EDITABLE_FIELDS) | {
+            "year",
+            "relevance_score",
+            "method_tags",
+            "system_tags",
+        }
+        changed_fields = sorted(auditable_fields.intersection(request.data.keys()))
+        before = audit_field_snapshot(entry, changed_fields)
         for field in self.EDITABLE_FIELDS:
             if field in request.data:
                 value = request.data.get(field)
@@ -297,7 +324,12 @@ class ResearchLiteratureDetailEndpoint(ResearchAPIView):
             resource_type=ResearchResourceType.LITERATURE,
             resource_id=entry.id,
             actor=request.user,
-            metadata={"fields": sorted(request.data.keys())},
+            metadata=delegated_change_metadata(
+                request.user,
+                entry,
+                changed_fields,
+                before,
+            ),
             request=request,
         )
         return Response(LiteratureEntrySerializer(entry).data, status=status.HTTP_200_OK)
@@ -408,7 +440,7 @@ class ResearchLiteratureImportEndpoint(ResearchAPIView):
         profile = research_project(workspace, project_id)
         if profile is None:
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
-        if profile.owner_id != request.user.id and not is_workspace_admin(request.user, workspace):
+        if not can_create_research_content(request.user, workspace, profile):
             return research_permission_denied()
 
         fmt = str(request.data.get("format") or "doi").lower()
@@ -423,7 +455,7 @@ class ResearchLiteratureImportEndpoint(ResearchAPIView):
 
         limits = literature_thresholds(workspace)
         counters = literature_counters(project_id, workspace.id)
-        stage_instance = stage_instance_for(workspace, project_id)
+        stage_instance = stage_instance_for(workspace, project_id, profile=profile)
         created, skipped, failed = [], [], []
         remaining = max(limits["max_entries"] - counters["total"], 0)
 

@@ -21,6 +21,7 @@ from plane.db.models import (
 from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
+    make_instance_admin,
     make_user,
     make_workspace,
 )
@@ -42,8 +43,9 @@ def client_for(user):
 @pytest.fixture
 def env(db):
     admin = make_user(first_name="Admin")
+    make_instance_admin(admin)
     workspace = make_workspace(admin)
-    enable_research(workspace)
+    enable_research(workspace, purpose="PUBLIC_RESEARCH", main_pi=admin)
     owner = make_user(first_name="Owner")
     add_workspace_member(workspace, owner)
     mentor = make_user(first_name="Mentor")
