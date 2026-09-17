@@ -42,6 +42,7 @@ from .identity import (
 from .org import (
     ResearchMentorBindingDetailEndpoint,
     ResearchMentorBindingListCreateEndpoint,
+    ResearchOrgIncompleteEndpoint,
     ResearchOrgUnitDetailEndpoint,
     ResearchOrgUnitListCreateEndpoint,
     ResearchOrgUnitMemberDetailEndpoint,
@@ -241,6 +242,7 @@ __all__ = [
     "ResearchIdentityMeEndpoint",
     "ResearchMentorBindingDetailEndpoint",
     "ResearchMentorBindingListCreateEndpoint",
+    "ResearchOrgIncompleteEndpoint",
     "ResearchOrgUnitDetailEndpoint",
     "ResearchOrgUnitListCreateEndpoint",
     "ResearchOrgUnitMemberDetailEndpoint",

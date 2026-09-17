@@ -62,6 +62,41 @@ def is_system_admin(user) -> bool:
     return is_instance_admin(user)
 
 
+def configured_main_pi_id(workspace):
+    """Return the business principal configured for a research workspace."""
+    workspace_id = _workspace_id(workspace)
+    if workspace_id is None:
+        return None
+    setting = WorkspaceResearchSetting.objects.filter(
+        workspace_id=workspace_id,
+        deleted_at__isnull=True,
+    ).first()
+    if setting is None or setting.purpose == WorkspaceResearchSetting.Purpose.GENERAL:
+        return None
+    if setting.main_pi_id:
+        return setting.main_pi_id
+    paired_purpose = (
+        WorkspaceResearchSetting.Purpose.PI_PRIVATE
+        if setting.purpose == WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH
+        else WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH
+    )
+    return (
+        WorkspaceResearchSetting.objects.filter(
+            purpose=paired_purpose,
+            deleted_at__isnull=True,
+        )
+        .exclude(main_pi__isnull=True)
+        .values_list("main_pi_id", flat=True)
+        .first()
+    )
+
+
+def is_main_pi(user, workspace) -> bool:
+    if user is None or not getattr(user, "is_authenticated", False):
+        return False
+    return configured_main_pi_id(workspace) == user.id
+
+
 def _workspace_id(workspace):
     if workspace is None:
         return None

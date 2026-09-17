@@ -97,13 +97,15 @@ def test_import_creates_accounts_nodes_and_mentors(env):
 
     unit = OrgUnit.objects.get(workspace=workspace, name="器件", deleted_at__isnull=True)
     assert unit.unit_type == OrgUnit.UnitType.GROUP
-    assert OrgUnitMember.objects.filter(
+    student_membership = OrgUnitMember.objects.get(
         workspace=workspace, org_unit=unit, user=student, org_role="REVIEWER"
-    ).exists()
+    )
+    assert student_membership.is_primary is True
 
     advisor = User.objects.get(email="liujunyang@xmu.edu.cn")
     assert ResearchUserProfile.objects.get(user=advisor).category == "ADVISOR"
-    assert MentorBinding.objects.filter(workspace=workspace, mentee=student, mentor=advisor).exists()
+    binding = MentorBinding.objects.get(workspace=workspace, mentee=student, mentor=advisor)
+    assert binding.is_primary_advisor is True
 
     # The blank-group row still becomes an account, parked at the root.
     root = OrgUnit.objects.get(workspace=workspace, unit_type=OrgUnit.UnitType.ROOT)

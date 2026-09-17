@@ -2,13 +2,21 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.db.models import MentorBinding, OrgUnit, OrgUnitMember
+from plane.db.models import (
+    MentorBinding,
+    OrgUnit,
+    OrgUnitMember,
+    ResearchProjectProfile,
+    ResearchUserProfile,
+    User,
+)
 from plane.research.serializers import (
     MentorBindingSerializer,
     OrgUnitMemberSerializer,
@@ -28,14 +36,16 @@ from plane.research.utils.errors import (
     research_permission_denied,
 )
 from plane.research.utils.org import (
+    active_membership_q,
     build_path,
     descendants_queryset,
     ensure_root_org_unit,
     is_descendant_of,
     move_subtree,
+    managing_unit_ids,
     user_can_manage_org_unit,
 )
-from plane.research.utils.roles import sync_main_pi_workspace_seat
+from plane.research.utils.roles import is_main_pi, is_research_admin, sync_main_pi_workspace_seat
 from plane.research.views.base import (
     ResearchAPIView,
     parse_date,
@@ -58,6 +68,8 @@ def _unit_payload(payload):
         data["name"] = str(payload.get("name") or "").strip()
     if "unit_type" in payload:
         data["unit_type"] = str(payload.get("unit_type") or "").strip().upper()
+    if "business_category" in payload:
+        data["business_category"] = str(payload.get("business_category") or "").strip().upper() or None
     if "sort_order" in payload:
         try:
             data["sort_order"] = float(payload.get("sort_order"))
@@ -70,6 +82,143 @@ def _unit_payload(payload):
 
 def _serialize_units(units):
     return {"results": OrgUnitSerializer(units, many=True).data, "count": len(units)}
+
+
+def _effective_primary_memberships(workspace, user_id, today=None):
+    today = today or timezone.localdate()
+    return OrgUnitMember.objects.filter(
+        active_membership_q(today),
+        workspace=workspace,
+        user_id=user_id,
+        is_primary=True,
+        org_unit__is_active=True,
+        org_unit__deleted_at__isnull=True,
+    ).select_related("org_unit")
+
+
+def _can_manage_mentee(user, workspace, mentee_id, today=None):
+    memberships = list(_effective_primary_memberships(workspace, mentee_id, today))
+    allowed = bool(memberships) and any(
+        user_can_manage_org_unit(user, workspace, membership.org_unit_id, today)
+        for membership in memberships
+    )
+    return allowed, memberships
+
+
+class ResearchOrgIncompleteEndpoint(ResearchAPIView):
+    """List research members and nodes that need explicit classification."""
+
+    nav_capability = NAV_ORG
+
+    def get(self, request, slug):
+        workspace, error = self.get_workspace(section="org")
+        if error:
+            return error
+        if not (is_research_admin(request.user, workspace) or is_main_pi(request.user, workspace)):
+            return research_permission_denied()
+
+        today = timezone.localdate()
+        active_memberships = OrgUnitMember.objects.filter(
+            active_membership_q(today),
+            workspace=workspace,
+            org_unit__is_active=True,
+            org_unit__deleted_at__isnull=True,
+        )
+        workspace_user_ids = set(
+            workspace.workspace_member.filter(
+                is_active=True,
+                deleted_at__isnull=True,
+                member__is_active=True,
+            ).values_list("member_id", flat=True)
+        )
+        profile_user_ids = set(
+            ResearchUserProfile.objects.filter(
+                user_id__in=workspace_user_ids,
+                deleted_at__isnull=True,
+            ).values_list("user_id", flat=True)
+        )
+        member_user_ids = set(active_memberships.values_list("user_id", flat=True))
+        candidate_user_ids = profile_user_ids | member_user_ids
+        primary_user_ids = set(
+            active_memberships.filter(is_primary=True).values_list("user_id", flat=True)
+        )
+
+        setting = workspace.research_setting
+        required_categories = set(setting.required_reporter_categories or [])
+        reporter_user_ids = set(
+            ResearchUserProfile.objects.filter(
+                user_id__in=candidate_user_ids,
+                category__in=required_categories,
+                deleted_at__isnull=True,
+            ).values_list("user_id", flat=True)
+        )
+        reporter_user_ids.update(
+            active_memberships.filter(
+                org_role=OrgUnitMember.OrgRole.REVIEWER
+            ).values_list("user_id", flat=True)
+        )
+        reporter_user_ids.update(
+            ResearchProjectProfile.objects.filter(
+                workspace=workspace,
+                owner_id__in=candidate_user_ids,
+                research_type__in=(
+                    ResearchProjectProfile.ResearchType.PHD,
+                    ResearchProjectProfile.ResearchType.MASTER,
+                    ResearchProjectProfile.ResearchType.POSTDOC,
+                ),
+                is_active=True,
+                workflow_status=ResearchProjectProfile.WorkflowStatus.ACTIVE,
+            ).values_list("owner_id", flat=True)
+        )
+        advised_user_ids = set(
+            MentorBinding.objects.filter(
+                active_membership_q(today),
+                workspace=workspace,
+                is_primary_advisor=True,
+            ).values_list("mentee_id", flat=True)
+        )
+
+        def user_rows(user_ids):
+            return [
+                {
+                    "id": str(user.id),
+                    "email": user.email,
+                    "display_name": user.display_name,
+                }
+                for user in User.objects.filter(id__in=user_ids, is_active=True).order_by(
+                    "email", "id"
+                )
+            ]
+
+        missing_primary = user_rows(candidate_user_ids - primary_user_ids)
+        missing_advisor = user_rows(
+            (reporter_user_ids & primary_user_ids) - advised_user_ids
+        )
+        unclassified_units = list(
+            OrgUnit.objects.filter(
+                workspace=workspace,
+                is_active=True,
+                deleted_at__isnull=True,
+                business_category__isnull=True,
+            )
+            .exclude(unit_type=OrgUnit.UnitType.ROOT)
+            .order_by("depth", "name", "id")
+        )
+        return Response(
+            {
+                "missing_primary_org": missing_primary,
+                "missing_primary_advisor": missing_advisor,
+                "unclassified_org_units": OrgUnitSerializer(
+                    unclassified_units, many=True
+                ).data,
+                "counts": {
+                    "missing_primary_org": len(missing_primary),
+                    "missing_primary_advisor": len(missing_advisor),
+                    "unclassified_org_units": len(unclassified_units),
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
@@ -117,6 +266,9 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
                 )
 
         unit_type = data.get("unit_type") or ""
+        business_category = data.get("business_category")
+        if business_category and business_category not in OrgUnit.BusinessCategory.values:
+            return research_error(ResearchErrorCode.ORG_UNIT_TYPE_INVALID, "Unknown business category.")
         if parent is None:
             if unit_type and unit_type != OrgUnit.UnitType.ROOT:
                 return research_error(
@@ -156,6 +308,7 @@ class ResearchOrgUnitListCreateEndpoint(ResearchAPIView):
                     name=name,
                     parent=parent,
                     unit_type=unit_type,
+                    business_category=business_category,
                     sort_order=sort_order,
                     depth=(parent.depth + 1) if parent else 0,
                     path="",
@@ -247,6 +400,12 @@ class ResearchOrgUnitDetailEndpoint(ResearchAPIView):
                 )
             unit.sort_order = data["sort_order"]
             fields.append("sort_order")
+
+        if "business_category" in data:
+            if data["business_category"] and data["business_category"] not in OrgUnit.BusinessCategory.values:
+                return research_error(ResearchErrorCode.ORG_UNIT_TYPE_INVALID, "Unknown business category.")
+            unit.business_category = data["business_category"]
+            fields.append("business_category")
 
         if "is_active" in data:
             unit.is_active = data["is_active"]
@@ -675,6 +834,20 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
         if error:
             return error
         bindings = MentorBinding.objects.filter(workspace=workspace).select_related("mentee", "mentor")
+        if not (is_research_admin(request.user, workspace) or is_main_pi(request.user, workspace)):
+            today = timezone.localdate()
+            scope_ids = managing_unit_ids(request.user, workspace.id, today)
+            bindings = bindings.filter(
+                mentee__research_org_memberships__workspace=workspace,
+                mentee__research_org_memberships__org_unit_id__in=scope_ids,
+                mentee__research_org_memberships__is_primary=True,
+                mentee__research_org_memberships__deleted_at__isnull=True,
+                mentee__research_org_memberships__effective_from__lte=today,
+                mentee__research_org_memberships__org_unit__is_active=True,
+            ).filter(
+                Q(mentee__research_org_memberships__effective_to__isnull=True)
+                | Q(mentee__research_org_memberships__effective_to__gte=today)
+            ).distinct()
         if request.GET.get("mentee"):
             bindings = bindings.filter(mentee_id=request.GET["mentee"])
         if request.GET.get("mentor"):
@@ -716,17 +889,28 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
                     "Org unit not found.",
                 )
 
-        managed = org_unit is not None and user_can_manage_org_unit(request.user, workspace, org_unit)
-        if not managed:
-            mentee_unit_ids = set(
-                OrgUnitMember.objects.filter(
-                    workspace=workspace,
-                    user=mentee,
-                ).values_list("org_unit_id", flat=True)
-            )
-            managed = any(
-                user_can_manage_org_unit(request.user, workspace, unit_id) for unit_id in mentee_unit_ids
-            )
+        today = timezone.localdate()
+        mentee_memberships = OrgUnitMember.objects.filter(
+            active_membership_q(today),
+            workspace=workspace,
+            user=mentee,
+            is_primary=True,
+            org_unit__is_active=True,
+            org_unit__deleted_at__isnull=True,
+        )
+        # The client supplied org unit is only a selector. It never proves the
+        # mentee belongs there: the effective membership is the authority.
+        if org_unit is not None:
+            mentee_memberships = mentee_memberships.filter(org_unit=org_unit)
+        mentee_unit_ids = set(mentee_memberships.values_list("org_unit_id", flat=True))
+        if org_unit is None and len(mentee_unit_ids) == 1:
+            org_unit = OrgUnit.objects.filter(
+                workspace=workspace, pk=next(iter(mentee_unit_ids))
+            ).first()
+        managed = any(
+            user_can_manage_org_unit(request.user, workspace, unit_id, today)
+            for unit_id in mentee_unit_ids
+        )
         if not managed:
             return research_permission_denied()
 
@@ -748,14 +932,28 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
                 "This direct advisor binding already exists.",
             )
 
-        binding = MentorBinding.objects.create(
-            workspace=workspace,
-            mentee=mentee,
-            mentor=mentor,
-            org_unit=org_unit,
-            effective_from=effective_from or timezone.localdate(),
-            effective_to=effective_to,
-        )
+        try:
+            with transaction.atomic():
+                User.objects.select_for_update().get(pk=mentee.pk)
+                managed, current_memberships = _can_manage_mentee(
+                    request.user, workspace, mentee.id, today
+                )
+                if not managed:
+                    return research_permission_denied()
+                current_unit = current_memberships[0].org_unit
+                if org_unit is not None and org_unit.id != current_unit.id:
+                    return research_permission_denied()
+                binding = MentorBinding.objects.create(
+                    workspace=workspace,
+                    mentee=mentee,
+                    mentor=mentor,
+                    org_unit=current_unit,
+                    effective_from=effective_from or today,
+                    effective_to=effective_to,
+                    is_primary_advisor=truthy(request.data.get("is_primary_advisor")),
+                )
+        except ValidationError as exc:
+            return research_error(ResearchErrorCode.MENTOR_BINDING_INVALID, str(exc))
         record_audit_event(
             workspace=workspace,
             action=ResearchAuditAction.MENTOR_BINDING_CREATE,
@@ -770,39 +968,86 @@ class ResearchMentorBindingListCreateEndpoint(ResearchAPIView):
 
 
 class ResearchMentorBindingDetailEndpoint(ResearchAPIView):
-    """``DELETE /api/research/workspaces/<slug>/mentors/<pk>/``"""
+    """``PATCH``/``DELETE /api/research/workspaces/<slug>/mentors/<pk>/``"""
 
     nav_capability = NAV_ORG
+
+    def patch(self, request, slug, pk):
+        workspace, error = self.get_workspace(section="org")
+        if error:
+            return error
+        try:
+            with transaction.atomic():
+                binding = MentorBinding.objects.select_for_update().filter(
+                    workspace=workspace, pk=pk
+                ).first()
+                if binding is None:
+                    return research_not_found(
+                        ResearchErrorCode.MENTOR_BINDING_NOT_FOUND,
+                        "Mentor binding not found.",
+                    )
+                User.objects.select_for_update().get(pk=binding.mentee_id)
+                managed, memberships = _can_manage_mentee(
+                    request.user, workspace, binding.mentee_id
+                )
+                if not managed:
+                    return research_permission_denied()
+                effective_from, error = parse_date(
+                    request.data.get("effective_from"), "effective_from"
+                )
+                if error:
+                    return error
+                effective_to, error = parse_date(
+                    request.data.get("effective_to"), "effective_to"
+                )
+                if error:
+                    return error
+                if "effective_from" in request.data:
+                    binding.effective_from = effective_from
+                if "effective_to" in request.data:
+                    binding.effective_to = effective_to
+                if "is_primary_advisor" in request.data:
+                    binding.is_primary_advisor = truthy(
+                        request.data.get("is_primary_advisor")
+                    )
+                binding.org_unit = memberships[0].org_unit
+                binding.save()
+        except ValidationError as exc:
+            return research_error(ResearchErrorCode.MENTOR_BINDING_INVALID, str(exc))
+        record_audit_event(
+            workspace=workspace,
+            action=ResearchAuditAction.MENTOR_BINDING_UPDATE,
+            resource_type=ResearchResourceType.MENTOR_BINDING,
+            resource_id=binding.id,
+            org_unit=binding.org_unit,
+            actor=request.user,
+            metadata={"fields": sorted(request.data.keys())},
+            request=request,
+        )
+        return Response(MentorBindingSerializer(binding).data, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, pk):
         workspace, error = self.get_workspace(section="org")
         if error:
             return error
-        binding = MentorBinding.objects.filter(workspace=workspace, pk=pk).select_related("mentee").first()
-        if binding is None:
-            return research_not_found(
-                ResearchErrorCode.MENTOR_BINDING_NOT_FOUND,
-                "Mentor binding not found.",
+        with transaction.atomic():
+            binding = MentorBinding.objects.select_for_update().filter(
+                workspace=workspace, pk=pk
+            ).select_related("mentee").first()
+            if binding is None:
+                return research_not_found(
+                    ResearchErrorCode.MENTOR_BINDING_NOT_FOUND,
+                    "Mentor binding not found.",
+                )
+            User.objects.select_for_update().get(pk=binding.mentee_id)
+            managed, memberships = _can_manage_mentee(
+                request.user, workspace, binding.mentee_id
             )
-
-        managed = binding.org_unit_id and user_can_manage_org_unit(
-            request.user, workspace, binding.org_unit_id
-        )
-        if not managed:
-            mentee_unit_ids = set(
-                OrgUnitMember.objects.filter(
-                    workspace=workspace,
-                    user_id=binding.mentee_id,
-                ).values_list("org_unit_id", flat=True)
-            )
-            managed = any(
-                user_can_manage_org_unit(request.user, workspace, unit_id) for unit_id in mentee_unit_ids
-            )
-        if not managed:
-            return research_permission_denied()
-
-        binding.deleted_at = timezone.now()
-        binding.save(update_fields=["deleted_at", "updated_at"])
+            if not managed:
+                return research_permission_denied()
+            binding.org_unit = memberships[0].org_unit
+            binding.deleted_at = timezone.now()
+            binding.save(update_fields=["org_unit", "deleted_at", "updated_at"])
         record_audit_event(
             workspace=workspace,
             action=ResearchAuditAction.MENTOR_BINDING_DELETE,

@@ -22,6 +22,7 @@ class ResearchAuditAction:
     ORG_MEMBER_REMOVE = "org.member.remove"
     ORG_PI_TRANSFER = "org.pi.transfer"
     MENTOR_BINDING_CREATE = "org.mentor.bind"
+    MENTOR_BINDING_UPDATE = "org.mentor.update"
     MENTOR_BINDING_DELETE = "org.mentor.unbind"
     IDENTITY_LOGIN = "identity.login"
     IDENTITY_BIND = "identity.bind"
@@ -111,6 +112,7 @@ class ResearchAuditAction:
     INVITE_CODE_REDEEM = "account.invite.redeem"
     USER_IMPORT = "account.import.run"
     USER_PROFILE_UPDATE = "account.profile.update"
+    CONTEXT_READ = "context.read"
 
 
 class ResearchResourceType:
@@ -143,6 +145,7 @@ class ResearchResourceType:
     INVITE_CODE = "invite_code"
     IMPORT_BATCH = "user_import_batch"
     USER_PROFILE = "research_user_profile"
+    CONTEXT = "research_context"
 
 
 def _client_metadata(request):

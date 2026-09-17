@@ -31,6 +31,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
   const [bindings, setBindings] = useState<TMentorBinding[]>([]);
   const [menteeEmail, setMenteeEmail] = useState("");
   const [mentorEmail, setMentorEmail] = useState("");
+  const [isPrimaryAdvisor, setIsPrimaryAdvisor] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -54,14 +55,16 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
         mentee: menteeEmail.trim(),
         mentor: mentorEmail.trim(),
         org_unit: unit.id,
+        is_primary_advisor: isPrimaryAdvisor,
       });
       setMenteeEmail("");
       setMentorEmail("");
+      setIsPrimaryAdvisor(false);
       await load();
     } catch (error) {
       setErrorKey(getResearchErrorKey(error));
     }
-  }, [load, menteeEmail, mentorEmail, research, unit.id, workspaceSlug]);
+  }, [isPrimaryAdvisor, load, menteeEmail, mentorEmail, research, unit.id, workspaceSlug]);
 
   const handleDelete = useCallback(
     async (bindingId: string) => {
@@ -96,6 +99,14 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           value={mentorEmail}
           onChange={(event) => setMentorEmail(event.target.value)}
         />
+        <label className="flex items-center gap-2 pb-1 text-12 text-secondary">
+          <input
+            type="checkbox"
+            checked={isPrimaryAdvisor}
+            onChange={(event) => setIsPrimaryAdvisor(event.target.checked)}
+          />
+          <span>{t("research.org.primary_advisor")}</span>
+        </label>
         <Button variant="primary" size="sm" onClick={() => void handleCreate()}>
           {t("research.org.bind_mentor")}
         </Button>
@@ -106,6 +117,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           <tr className="border-b border-subtle text-left text-tertiary">
             <th className="font-normal py-2">{t("research.org.columns.mentee")}</th>
             <th className="font-normal py-2">{t("research.org.columns.mentor")}</th>
+            <th className="font-normal py-2">{t("research.org.columns.advisor_kind")}</th>
             <th className="font-normal py-2">{t("research.org.columns.effective_from")}</th>
             <th className="py-2" />
           </tr>
@@ -119,6 +131,9 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
               <td className="py-2 text-secondary">
                 {binding.mentor_detail?.display_name ?? binding.mentor_detail?.email ?? binding.mentor}
               </td>
+              <td className="py-2 text-tertiary">
+                {t(binding.is_primary_advisor ? "research.org.primary_advisor" : "research.org.co_advisor")}
+              </td>
               <td className="py-2 text-tertiary">{binding.effective_from}</td>
               <td className="py-2 text-right">
                 <Button variant="ghost" size="sm" onClick={() => void handleDelete(binding.id)}>
@@ -129,7 +144,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           ))}
           {bindings.length === 0 && (
             <tr>
-              <td colSpan={4} className="py-3 text-center text-tertiary">
+              <td colSpan={5} className="py-3 text-center text-tertiary">
                 {t("research.org.no_mentor_bindings")}
               </td>
             </tr>

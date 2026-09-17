@@ -33,6 +33,7 @@ class OrgUnitSerializer(serializers.ModelSerializer):
             "path",
             "depth",
             "unit_type",
+            "business_category",
             "sort_order",
             "is_active",
             "created_at",
@@ -76,6 +77,7 @@ class MentorBindingSerializer(serializers.ModelSerializer):
             "org_unit",
             "effective_from",
             "effective_to",
+            "is_primary_advisor",
             "created_at",
             "updated_at",
         ]

@@ -1124,6 +1124,8 @@
       "mentee_email_placeholder": "Research owner email",
       "mentor_email_placeholder": "Advisor email",
       "bind_mentor": "Bind advisor",
+      "primary_advisor": "Primary advisor",
+      "co_advisor": "Co-advisor",
       "no_mentor_bindings": "No advisor binding for this node",
       "columns": {
         "member": "Member",
@@ -1132,7 +1134,8 @@
         "effective_to": "Valid until",
         "effective_from": "Valid from",
         "mentee": "Research owner",
-        "mentor": "Direct advisor"
+        "mentor": "Direct advisor",
+        "advisor_kind": "Advisor role"
       }
     },
     "auth": {

@@ -8,15 +8,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ORG_UNIT_CHILD_TYPES, ORG_UNIT_TYPE_LABELS } from "@plane/constants";
-import type { TOrgUnitType } from "@plane/constants";
+import type { TOrgBusinessCategory, TOrgUnitType } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import type { TOrgUnit } from "@plane/types";
+import type { TOrgUnit, TResearchOrgIncomplete } from "@plane/types";
 import { Input } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
+import { ResearchOrgService } from "@/services/research/org.service";
 // local imports
 import { ResearchMentorBindings } from "./mentor-bindings";
 import { ResearchOrgMemberTable } from "./org-member-table";
@@ -26,6 +27,14 @@ type Props = {
 };
 
 type OrgTreeNode = TOrgUnit & { children: OrgTreeNode[] };
+
+const orgService = new ResearchOrgService();
+
+const BUSINESS_CATEGORIES: Array<{ value: TOrgBusinessCategory; label: string }> = [
+  { value: "BASIC_RESEARCH", label: "基础研究" },
+  { value: "INDUSTRIALIZATION", label: "产业化" },
+  { value: "MENTOR_GROUP", label: "导师组" },
+];
 
 const buildTree = (units: TOrgUnit[]): OrgTreeNode[] => {
   const nodes = new Map<string, OrgTreeNode>();
@@ -116,8 +125,10 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
   const [nameDraft, setNameDraft] = useState("");
   const [newUnitName, setNewUnitName] = useState("");
   const [newUnitType, setNewUnitType] = useState<TOrgUnitType>("GROUP");
+  const [newBusinessCategory, setNewBusinessCategory] = useState<TOrgBusinessCategory | "">("");
   const [parentForNewUnit, setParentForNewUnit] = useState<string | null | undefined>(undefined);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [incomplete, setIncomplete] = useState<TResearchOrgIncomplete | null>(null);
 
   const units = research.getOrgUnits(workspaceSlug);
   const tree = useMemo(() => buildTree(units), [units]);
@@ -125,6 +136,10 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
 
   useEffect(() => {
     void research.fetchOrgUnits(workspaceSlug).catch((error) => setErrorKey(getResearchErrorKey(error)));
+    void orgService
+      .getIncomplete(workspaceSlug)
+      .then(setIncomplete)
+      .catch(() => setIncomplete(null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
 
@@ -141,6 +156,7 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
     setParentForNewUnit(parent?.id ?? null);
     setNewUnitName("");
     setNewUnitType(parent ? "GROUP" : "ROOT");
+    setNewBusinessCategory(parent ? "MENTOR_GROUP" : "");
   }, []);
 
   const handleCreate = useCallback(
@@ -150,16 +166,33 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
         const unit = await research.createOrgUnit(workspaceSlug, {
           name: newUnitName.trim(),
           unit_type: newUnitType,
+          business_category: newBusinessCategory || null,
           parent: parentId,
         });
         setSelectedUnitId(unit.id);
         setParentForNewUnit(undefined);
         setErrorKey(null);
+        setIncomplete(await orgService.getIncomplete(workspaceSlug));
       } catch (error) {
         setErrorKey(getResearchErrorKey(error));
       }
     },
-    [newUnitName, newUnitType, research, workspaceSlug]
+    [newBusinessCategory, newUnitName, newUnitType, research, workspaceSlug]
+  );
+
+  const handleBusinessCategory = useCallback(
+    async (unit: TOrgUnit, businessCategory: TOrgBusinessCategory | "") => {
+      try {
+        await research.updateOrgUnit(workspaceSlug, unit.id, {
+          business_category: businessCategory || null,
+        });
+        setIncomplete(await orgService.getIncomplete(workspaceSlug));
+        setErrorKey(null);
+      } catch (error) {
+        setErrorKey(getResearchErrorKey(error));
+      }
+    },
+    [research, workspaceSlug]
   );
 
   const handleRename = useCallback(
@@ -198,6 +231,50 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
             {t("research.org.new_root")}
           </Button>
         </div>
+        {incomplete && Object.values(incomplete.counts).some(Boolean) && (
+          <details className="border-warning-primary/30 rounded-md border bg-warning-subtle p-2 text-11 text-secondary">
+            <summary className="cursor-pointer font-medium">
+              待完善：{Object.values(incomplete.counts).reduce((sum, count) => sum + count, 0)} 项
+            </summary>
+            <div className="mt-2 space-y-2">
+              {incomplete.missing_primary_org.length > 0 && (
+                <div>
+                  <p className="font-medium">缺少主归属</p>
+                  {incomplete.missing_primary_org.map((user) => (
+                    <p key={user.id} className="truncate text-tertiary">
+                      {user.display_name || user.email}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {incomplete.missing_primary_advisor.length > 0 && (
+                <div>
+                  <p className="font-medium">缺少主导师</p>
+                  {incomplete.missing_primary_advisor.map((user) => (
+                    <p key={user.id} className="truncate text-tertiary">
+                      {user.display_name || user.email}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {incomplete.unclassified_org_units.length > 0 && (
+                <div>
+                  <p className="font-medium">待分类节点</p>
+                  {incomplete.unclassified_org_units.map((unit) => (
+                    <button
+                      key={unit.id}
+                      type="button"
+                      className="block truncate text-left text-accent-primary"
+                      onClick={() => setSelectedUnitId(unit.id)}
+                    >
+                      {unit.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </details>
+        )}
         <div className="flex-1 overflow-y-auto">
           {tree.map((node) => (
             <TreeNodeRow
@@ -231,6 +308,22 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
                   onBlur={() => void handleRename(selectedUnit)}
                 />
                 <span className="text-12 text-tertiary">{t("research.org.depth", { depth: selectedUnit.depth })}</span>
+                {selectedUnit.unit_type !== "ROOT" && (
+                  <select
+                    className="rounded border border-subtle bg-surface-1 px-2 py-1 text-12 text-primary"
+                    value={selectedUnit.business_category ?? ""}
+                    onChange={(event) =>
+                      void handleBusinessCategory(selectedUnit, event.target.value as TOrgBusinessCategory | "")
+                    }
+                  >
+                    <option value="">待分类</option>
+                    {BUSINESS_CATEGORIES.map((category) => (
+                      <option key={category.value} value={category.value}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
               <Button
                 variant="error-outline"
@@ -296,6 +389,20 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
                   </option>
                 ))}
               </select>
+              {parentForNewUnit && (
+                <select
+                  className="rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"
+                  value={newBusinessCategory}
+                  onChange={(event) => setNewBusinessCategory(event.target.value as TOrgBusinessCategory | "")}
+                >
+                  <option value="">待分类</option>
+                  {BUSINESS_CATEGORIES.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
             <div className="mt-4 flex justify-end gap-2">
               <Button variant="secondary" size="sm" onClick={() => setParentForNewUnit(undefined)}>

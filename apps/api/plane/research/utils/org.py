@@ -91,10 +91,10 @@ def user_can_manage_org_unit(user, workspace, unit=None, on_date=None) -> bool:
     the three instance administrator tags (dev / ops / main PI), so a tag
     holder can curate the tree without a workspace administrator seat.
     """
-    from plane.research.utils.roles import is_research_admin
+    from plane.research.utils.roles import is_main_pi, is_research_admin
 
     workspace_id = getattr(workspace, "id", workspace)
-    if is_research_admin(user, workspace_id):
+    if is_research_admin(user, workspace_id) or is_main_pi(user, workspace_id):
         return True
     if unit is None:
         return False

@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, models, transaction
 from django.utils import timezone
 
 from plane.db.models import (
@@ -392,12 +392,21 @@ def ensure_org_membership(workspace, unit, user, role, actor):
     ).first()
     if member is not None:
         return member, False
+    has_primary = OrgUnitMember.objects.filter(
+        workspace=workspace,
+        user=user,
+        is_primary=True,
+        deleted_at__isnull=True,
+    ).exists()
     member = OrgUnitMember.objects.create(
         workspace=workspace,
         org_unit=unit,
         user=user,
         org_role=role,
-        is_primary=False,
+        # Preserve the import contract while making a first, unambiguous roster
+        # relation usable by the v3 resolver. Existing non-primary relations are
+        # never rewritten or guessed during idempotent re-imports.
+        is_primary=not has_primary,
         effective_from=timezone.localdate(),
         created_by=actor,
     )
@@ -444,11 +453,24 @@ def ensure_mentor_binding(workspace, unit, mentee, mentor, actor):
     ).first()
     if binding is not None:
         return binding, False
+    today = timezone.localdate()
+    has_primary = (
+        MentorBinding.objects.filter(
+            workspace=workspace,
+            mentee=mentee,
+            is_primary_advisor=True,
+            deleted_at__isnull=True,
+            effective_from__lte=today,
+        )
+        .filter(models.Q(effective_to__isnull=True) | models.Q(effective_to__gte=today))
+        .exists()
+    )
     binding = MentorBinding.objects.create(
         workspace=workspace,
         mentee=mentee,
         mentor=mentor,
         org_unit=unit,
+        is_primary_advisor=not has_primary,
         effective_from=timezone.localdate(),
         created_by=actor,
     )

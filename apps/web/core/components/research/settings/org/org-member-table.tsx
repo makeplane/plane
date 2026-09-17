@@ -114,7 +114,7 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
       const resolved = currentMembers.find(
         (member) => member.member_detail?.email?.toLowerCase() === target.toLowerCase()
       );
-      const nextIds = resolved ? Array.from(new Set([...current, resolved.user])) : current;
+      const nextIds = Array.from(new Set([...current, resolved?.user ?? target]));
       await research.transferPi(workspaceSlug, unit.id, nextIds);
       setPiEmail("");
       setErrorKey(null);

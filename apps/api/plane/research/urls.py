@@ -29,6 +29,7 @@ from plane.research.views import (
     ResearchIdentityMeEndpoint,
     ResearchMentorBindingDetailEndpoint,
     ResearchMentorBindingListCreateEndpoint,
+    ResearchOrgIncompleteEndpoint,
     ResearchOrgUnitDetailEndpoint,
     ResearchOrgUnitListCreateEndpoint,
     ResearchOrgUnitMemberDetailEndpoint,
@@ -133,6 +134,11 @@ from plane.research.views import (
 urlpatterns = [
     # availability probe (works even when the module switch is off)
     path("research/health/", ResearchHealthEndpoint.as_view(), name="research-health"),
+    path(
+        "research/workspaces/<str:slug>/org/incomplete/",
+        ResearchOrgIncompleteEndpoint.as_view(),
+        name="research-org-incomplete",
+    ),
     # ------------------------------------------------------------------
     # P1 stage workflow (§5.2) - additive, nothing below is renumbered
     # ------------------------------------------------------------------
