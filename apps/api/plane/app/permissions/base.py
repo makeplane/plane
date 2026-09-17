@@ -6,6 +6,7 @@ from plane.db.models import WorkspaceMember, ProjectMember
 from functools import wraps
 from rest_framework.response import Response
 from rest_framework import status
+from plane.utils.workspace_access import user_can_access_workspace
 
 from enum import Enum
 
@@ -20,6 +21,12 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
+            if not user_can_access_workspace(request.user, workspace_slug=kwargs.get("slug")):
+                return Response(
+                    {"error": "You don't have the required permissions."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Check for creator if required
             if creator and model:
                 # check if the user is part of the workspace or not

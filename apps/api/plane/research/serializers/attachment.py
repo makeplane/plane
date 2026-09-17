@@ -22,6 +22,7 @@ class ReportAttachmentSerializer(serializers.ModelSerializer):
             "file_size",
             "content_type",
             "uploaded_by",
+            "official_version_no",
             "created_at",
         ]
         read_only_fields = fields

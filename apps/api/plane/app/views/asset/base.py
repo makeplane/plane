@@ -15,6 +15,18 @@ from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
 
 
+def _research_asset_allowed(user, asset, *, mutate=False):
+    if asset.entity_type != FileAsset.EntityTypeContext.REPORT_ATTACHMENT:
+        return True
+    from plane.app.views.asset.v2 import can_download_research_asset, can_mutate_research_asset
+
+    return (
+        can_mutate_research_asset(user, asset)
+        if mutate
+        else can_download_research_asset(user, asset)
+    )
+
+
 class FileAssetEndpoint(BaseAPIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
     permission_classes = [IsAuthenticated, WorkspaceMemberPermission]
@@ -26,7 +38,8 @@ class FileAssetEndpoint(BaseAPIView):
     def get(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         files = FileAsset.objects.filter(asset=asset_key)
-        if files.exists():
+        files = [asset for asset in files if _research_asset_allowed(request.user, asset)]
+        if files:
             serializer = FileAssetSerializer(files, context={"request": request}, many=True)
             return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
         else:
@@ -48,6 +61,8 @@ class FileAssetEndpoint(BaseAPIView):
     def delete(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
+        if not _research_asset_allowed(request.user, file_asset, mutate=True):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         file_asset.is_deleted = True
         file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -59,6 +74,8 @@ class FileAssetViewSet(BaseViewSet):
     def restore(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
+        if not _research_asset_allowed(request.user, file_asset, mutate=True):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         file_asset.is_deleted = False
         file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)

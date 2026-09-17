@@ -40,7 +40,7 @@ from plane.research.utils.errors import (
     research_not_found,
     research_permission_denied,
 )
-from plane.research.utils.roles import is_research_admin
+from plane.research.utils.roles import is_account_compat_admin
 from plane.research.views.base import ResearchAPIView
 
 ACCOUNT_SECTION = "org"
@@ -55,7 +55,7 @@ def _guard(self, request):
     workspace, error = self.get_workspace(section=ACCOUNT_SECTION, nav=NAV_SYSTEM)
     if error:
         return None, error
-    if not is_research_admin(request.user, workspace):
+    if not is_account_compat_admin(request.user, workspace):
         return None, research_permission_denied()
     return workspace, None
 

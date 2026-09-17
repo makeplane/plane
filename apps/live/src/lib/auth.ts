@@ -11,6 +11,7 @@ import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 // services
 import { UserService } from "@/services/user.service";
+import { getPageService } from "@/services/page/handler";
 // types
 import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 
@@ -22,11 +23,13 @@ import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
  * @returns The authenticated user
  */
 export const onAuthenticate = async ({
+  documentName,
   requestHeaders,
   requestParameters,
   context,
   token,
 }: {
+  documentName: string;
   requestHeaders: IncomingHttpHeaders;
   context: HocusPocusServerContext;
   requestParameters: URLSearchParams;
@@ -66,10 +69,19 @@ export const onAuthenticate = async ({
   context.userId = userId;
   context.workspaceSlug = requestParameters.get("workspaceSlug");
 
-  return await handleAuthentication({
+  if (!documentName || !context.documentType || !context.projectId || !context.workspaceSlug) {
+    throw new AppError("Document authorization context is incomplete", { code: "AUTH_DOCUMENT_CONTEXT_MISSING" });
+  }
+
+  const authenticated = await handleAuthentication({
     cookie: context.cookie,
     userId: context.userId,
   });
+  // Authorize every WebSocket connection against the live Page API. This also
+  // re-checks revoked workspace/project access when a document is cached.
+  const pageService = getPageService(context.documentType, context);
+  await pageService.fetchDetails(documentName);
+  return authenticated;
 };
 
 export const handleAuthentication = async ({ cookie, userId }: { cookie: string; userId: string }) => {

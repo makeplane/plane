@@ -35,23 +35,23 @@ EXPECTED = {
         "advisor": False,
         "unit_member": False,
         "ancestor_pi": False,
-        "admin": True,
+        "admin": False,
         "stranger": False,
     },
     "DIRECT_ADVISOR": {
         "owner": True,
         "advisor": True,
         "unit_member": False,
-        "ancestor_pi": False,
-        "admin": True,
+        "ancestor_pi": True,
+        "admin": False,
         "stranger": False,
     },
     "UNIT": {
         "owner": True,
         "advisor": True,
         "unit_member": True,
-        "ancestor_pi": False,
-        "admin": True,
+        "ancestor_pi": True,
+        "admin": False,
         "stranger": False,
     },
     "ANCESTRY": {
@@ -59,7 +59,7 @@ EXPECTED = {
         "advisor": False,
         "unit_member": False,
         "ancestor_pi": True,
-        "admin": True,
+        "admin": False,
         "stranger": False,
     },
     "WORKSPACE": {
@@ -74,8 +74,8 @@ EXPECTED = {
         "owner": True,
         "advisor": False,
         "unit_member": True,
-        "ancestor_pi": False,
-        "admin": True,
+        "ancestor_pi": True,
+        "admin": False,
         "stranger": False,
     },
 }
@@ -211,20 +211,28 @@ class TestActionPermissions:
         resource = self._resource(acl_env)
         assert check_access(acl_env["owner"], "edit", resource) is True
         assert check_access(acl_env["advisor"], "edit", resource) is False
-        assert check_access(acl_env["admin"], "edit", resource) is True
+        assert check_access(acl_env["admin"], "edit", resource) is False
 
     def test_direct_advisor_and_node_manager_can_review(self, acl_env):
         resource = self._resource(acl_env)
+        assert check_access(acl_env["advisor"], "review", resource) is False
+        binding = MentorBinding.objects.get(
+            workspace=acl_env["workspace"],
+            mentor=acl_env["advisor"],
+            mentee=acl_env["owner"],
+        )
+        binding.is_primary_advisor = True
+        binding.save(update_fields=["is_primary_advisor", "updated_at"])
         assert check_access(acl_env["advisor"], "review", resource) is True
         assert check_access(acl_env["ancestor_pi"], "review", resource) is True
         assert check_access(acl_env["unit_member"], "review", resource) is False
         assert check_access(acl_env["owner"], "review", resource) is False
-        assert check_access(acl_env["admin"], "review", resource) is True
+        assert check_access(acl_env["admin"], "review", resource) is False
 
-    def test_manage_access_is_owner_or_admin_only(self, acl_env):
+    def test_manage_access_is_owner_only(self, acl_env):
         resource = self._resource(acl_env)
         assert check_access(acl_env["owner"], "manage_access", resource) is True
-        assert check_access(acl_env["admin"], "manage_access", resource) is True
+        assert check_access(acl_env["admin"], "manage_access", resource) is False
         assert check_access(acl_env["unit_member"], "manage_access", resource) is False
 
     def test_module_switch_off_denies_everything(self, acl_env, settings):

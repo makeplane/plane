@@ -4,6 +4,7 @@
 
 from plane.db.models import ProjectMember, Page
 from plane.app.permissions import ROLE
+from plane.utils.workspace_access import user_can_access_workspace
 
 
 from rest_framework.permissions import BasePermission, SAFE_METHODS
@@ -32,6 +33,9 @@ class ProjectPagePermission(BasePermission):
         slug = view.kwargs.get("slug")
         page_id = view.kwargs.get("page_id")
         project_id = view.kwargs.get("project_id")
+
+        if not user_can_access_workspace(request.user, workspace_slug=slug):
+            return False
 
         # Hook for extended validation
         extended_access, role = self._check_access_and_get_role(request, slug, project_id)

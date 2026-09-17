@@ -22,7 +22,9 @@ from plane.db.models import (
     MentorBinding,
     OrgUnit,
     OrgUnitMember,
+    ProjectMember,
     WorkspaceMember,
+    WorkspaceResearchSetting,
 )
 from plane.research.utils.config import research_module_enabled
 
@@ -59,6 +61,9 @@ class ResearchResource:
     # Reviewers assigned to a stage must be able to read and review it even when
     # their own visibility would not reach it (P1-REV-01).
     reviewer_ids: list = field(default_factory=list)
+    is_draft: bool = False
+    project_id: object = None
+    is_team_content: bool = False
 
 
 @dataclass
@@ -67,10 +72,12 @@ class ActorContext:
     workspace_id: object
     is_workspace_admin: bool = False
     is_workspace_member: bool = False
+    is_main_pi: bool = False
     unit_ids: frozenset = frozenset()
     managing_unit_ids: frozenset = frozenset()
     advises: frozenset = frozenset()
     advised_by: frozenset = frozenset()
+    project_ids: frozenset = frozenset()
 
 
 def visibility_breadth(visibility):
@@ -163,16 +170,39 @@ def build_actor_context(actor, workspace_id, on_date=None) -> ActorContext:
         .filter(models_q_expired(on_date))
         .values_list("mentor_id", flat=True)
     )
+    project_ids = set(
+        ProjectMember.objects.filter(
+            workspace_id=workspace_id,
+            member=actor,
+            is_active=True,
+            deleted_at__isnull=True,
+            role__in=(15, 20),
+        ).values_list("project_id", flat=True)
+    )
+
+    setting = WorkspaceResearchSetting.objects.filter(workspace_id=workspace_id).first()
+    main_pi_id = setting.main_pi_id if setting is not None else None
+    if main_pi_id is None and setting is not None and setting.purpose == setting.Purpose.PUBLIC_RESEARCH:
+        main_pi_id = (
+            WorkspaceResearchSetting.objects.filter(
+                purpose=WorkspaceResearchSetting.Purpose.PI_PRIVATE,
+                deleted_at__isnull=True,
+            )
+            .values_list("main_pi_id", flat=True)
+            .first()
+        )
 
     return ActorContext(
         user_id=actor.id,
         workspace_id=workspace_id,
         is_workspace_admin=bool(membership and membership.role == WORKSPACE_ADMIN_ROLE),
         is_workspace_member=bool(membership),
+        is_main_pi=main_pi_id == actor.id,
         unit_ids=frozenset(active_org_units_for(actor, workspace_id, on_date)),
         managing_unit_ids=frozenset(managing_org_units_for(actor, workspace_id, on_date)),
         advises=frozenset(advises),
         advised_by=frozenset(advised_by),
+        project_ids=frozenset(project_ids),
     )
 
 
@@ -212,12 +242,11 @@ def org_unit_scope_ids(org_unit_id, workspace_id):
 
 
 def direct_advisor_ids(owner_id, workspace_id, org_unit_id=None, on_date=None):
-    """Direct advisors of the owner, plus the mentoring roles of the node.
+    """Effective mentors explicitly bound to the research owner.
 
-    The node's own principal investigators and unit administrators belong to
-    the DIRECT_ADVISOR scope: they review reports of their group (§1.5) and the
-    P0-UI-05 summary has to agree with that. Ancestor nodes are still governed
-    by the ANCESTRY level.
+    An ``ADVISOR`` organisation role is a business identity, not an implicit
+    binding to every member in that node. Management access is resolved through
+    ``managing_unit_ids`` instead.
     """
     on_date = on_date or timezone.localdate()
     advisors = set(
@@ -230,63 +259,71 @@ def direct_advisor_ids(owner_id, workspace_id, org_unit_id=None, on_date=None):
         .filter(models_q_expired(on_date))
         .values_list("mentor_id", flat=True)
     )
-    if org_unit_id:
-        advisors |= set(
-            OrgUnitMember.objects.filter(
-                deleted_at__isnull=True,
-                workspace_id=workspace_id,
-                org_unit_id=org_unit_id,
-                org_role__in=("ADVISOR", "PI", "OWNER", "UNIT_ADMIN"),
-                effective_from__lte=on_date,
-            )
-            .filter(models_q_expired(on_date))
-            .values_list("user_id", flat=True)
-        )
     return advisors
+
+
+def primary_advisor_ids(owner_id, workspace_id, on_date=None):
+    on_date = on_date or timezone.localdate()
+    return set(
+        MentorBinding.objects.filter(
+            deleted_at__isnull=True,
+            workspace_id=workspace_id,
+            mentee_id=owner_id,
+            is_primary_advisor=True,
+            effective_from__lte=on_date,
+        )
+        .filter(models_q_expired(on_date))
+        .values_list("mentor_id", flat=True)
+    )
 
 
 def visibility_allows(context: ActorContext, resource: ResearchResource, on_date=None) -> bool:
     """Pure visibility matrix: six levels by the six subject classes."""
     if resource.workspace_id != context.workspace_id:
         return False
-    if context.is_workspace_admin:
-        # Workspace administrators see every research object (P0-ACL-03 default
-        # policy is a floor for authors, not a restriction on platform admins).
-        return True
     if not context.is_workspace_member:
         return False
 
-    if resource.reviewer_ids and str(context.user_id) in {str(item) for item in resource.reviewer_ids}:
-        return True
-
-    visibility = resource.visibility or "PRIVATE"
     owner_id = resource.owner_id
-
     if owner_id == context.user_id:
         return True
 
+    # Editable research drafts and private notes never inherit technical or
+    # workspace administrator access. Reviewers and the management chain read
+    # the last immutable submitted snapshot through the owning resource API.
+    if resource.is_draft:
+        return False
+
+    visibility = resource.visibility or "PRIVATE"
     if visibility == "PRIVATE":
         return False
 
+    # The formal content audience is additive to the author-selected visibility:
+    # the unique main PI, management chain, assigned reviewers, and active team
+    # members always see formal material in their business scope.
+    if context.is_main_pi:
+        return True
+    if resource.org_unit_id in context.managing_unit_ids:
+        return True
+    if resource.reviewer_ids and str(context.user_id) in {str(item) for item in resource.reviewer_ids}:
+        return True
+    if resource.is_team_content and resource.project_id in context.project_ids:
+        return True
+
     if visibility == "DIRECT_ADVISOR":
-        return context.user_id in direct_advisor_ids(owner_id, resource.workspace_id, resource.org_unit_id, on_date)
+        return owner_id in context.advises
 
     if visibility == "UNIT":
-        return bool(context.unit_ids & org_unit_scope_ids(resource.org_unit_id, resource.workspace_id))
+        return resource.org_unit_id in context.unit_ids
 
     if visibility == "ANCESTRY":
-        ancestors = org_unit_ancestry(resource.org_unit_id, resource.workspace_id)
-        if not ancestors:
-            return False
-        if context.managing_unit_ids & set(ancestors):
-            return True
-        return bool(context.unit_ids & set(ancestors))
+        return resource.org_unit_id in context.managing_unit_ids
 
     if visibility == "WORKSPACE":
         return context.is_workspace_member
 
     if visibility == "CUSTOM":
-        if owner_id == context.user_id or context.is_workspace_admin:
+        if owner_id == context.user_id:
             return True
         for grant in resource.grants or []:
             grantee_user = grant.get("grantee_user")
@@ -317,24 +354,23 @@ def check_access(actor, action, resource, context: ActorContext | None = None, o
         return visibility_allows(context, resource, on_date)
 
     if action in ("edit", "submit", "delete"):
-        return resource.owner_id == context.user_id or context.is_workspace_admin
+        return resource.owner_id == context.user_id
 
     if action in ("review", "accept", "return"):
-        if context.is_workspace_admin:
+        if resource.is_draft:
+            return False
+        if context.is_main_pi:
             return True
         if resource.owner_id == context.user_id:
             return False
         if resource.reviewer_ids and str(context.user_id) in {str(item) for item in resource.reviewer_ids}:
             return True
-        if context.user_id in direct_advisor_ids(
-            resource.owner_id, resource.workspace_id, resource.org_unit_id, on_date
-        ):
+        if context.user_id in primary_advisor_ids(resource.owner_id, resource.workspace_id, on_date):
             return True
-        scope = org_unit_scope_ids(resource.org_unit_id, resource.workspace_id)
-        return bool(context.managing_unit_ids & scope)
+        return resource.org_unit_id in context.managing_unit_ids
 
     if action == "manage_access":
-        return resource.owner_id == context.user_id or context.is_workspace_admin
+        return resource.owner_id == context.user_id
 
     return False
 

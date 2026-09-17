@@ -52,7 +52,17 @@ class ResearchReportAttachmentListCreateEndpoint(ResearchAPIView):
         report, error = self._report(request, workspace, report_id)
         if error:
             return error
-        attachments = list(ReportAttachment.objects.filter(report=report).select_related("asset"))
+        attachments_query = ReportAttachment.all_objects.filter(report=report).select_related("asset")
+        if report.owner_id == request.user.id:
+            attachments_query = attachments_query.filter(deleted_at__isnull=True)
+        else:
+            latest_version = (
+                report.official_snapshots.order_by("-version_no")
+                .values_list("version_no", flat=True)
+                .first()
+            )
+            attachments_query = attachments_query.filter(official_version_no=latest_version)
+        attachments = list(attachments_query)
         return Response(
             {
                 "results": ReportAttachmentSerializer(attachments, many=True).data,
@@ -93,6 +103,17 @@ class ResearchReportAttachmentListCreateEndpoint(ResearchAPIView):
                 ResearchErrorCode.ATTACHMENT_NOT_FOUND,
                 "The uploaded asset could not be found.",
             )
+        if asset.entity_type != FileAsset.EntityTypeContext.REPORT_ATTACHMENT:
+            return research_not_found(
+                ResearchErrorCode.ATTACHMENT_NOT_FOUND,
+                "The uploaded asset could not be found.",
+            )
+        if asset.created_by_id not in (None, request.user.id):
+            return research_permission_denied()
+        if asset.entity_identifier and str(asset.entity_identifier) != str(report.id):
+            return research_permission_denied()
+        if ReportAttachment.all_objects.filter(asset=asset).exists():
+            return research_permission_denied()
 
         if not asset.is_uploaded:
             # the object should exist in S3 after the direct upload
@@ -241,6 +262,7 @@ class ResearchReportAttachmentPresignEndpoint(ResearchAPIView):
             user=request.user,
             created_by=request.user,
             entity_type=FileAsset.EntityTypeContext.REPORT_ATTACHMENT,
+            entity_identifier=str(report.id),
             is_uploaded=False,
         )
         return Response(
@@ -254,7 +276,11 @@ class ResearchReportAttachmentDetailEndpoint(ResearchAPIView):
 
     def _attachment(self, request, workspace, report_id, attachment_id, action="view"):
         attachment = (
-            ReportAttachment.objects.filter(report_id=report_id, report__workspace=workspace, pk=attachment_id)
+            ReportAttachment.all_objects.filter(
+                report_id=report_id,
+                report__workspace=workspace,
+                pk=attachment_id,
+            )
             .select_related("report", "asset")
             .first()
         )
@@ -263,6 +289,14 @@ class ResearchReportAttachmentDetailEndpoint(ResearchAPIView):
                 ResearchErrorCode.ATTACHMENT_NOT_FOUND, "Attachment not found."
             )
         context = build_actor_context(request.user, workspace.id)
+        if attachment.report.owner_id != request.user.id:
+            latest_version = (
+                attachment.report.official_snapshots.order_by("-version_no")
+                .values_list("version_no", flat=True)
+                .first()
+            )
+            if attachment.official_version_no != latest_version:
+                return None, research_permission_denied()
         if not check_access(request.user, action, report_resource(attachment.report), context=context):
             return None, research_permission_denied()
         return attachment, None

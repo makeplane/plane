@@ -8,11 +8,18 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 # Module import
 from plane.db.models import ProjectMember, WorkspaceMember
 from plane.db.models.project import ROLE
+from plane.utils.workspace_access import user_can_access_workspace
+
+
+def _passes_workspace_access_gate(request, view):
+    return user_can_access_workspace(request.user, workspace_slug=view.workspace_slug)
 
 
 class ProjectBasePermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
+            return False
+        if not _passes_workspace_access_gate(request, view):
             return False
 
         ## Safe Methods -> Handle the filtering logic in queryset
@@ -57,6 +64,8 @@ class ProjectMemberPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
+        if not _passes_workspace_access_gate(request, view):
+            return False
 
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
@@ -88,6 +97,8 @@ class ProjectMemberPermission(BasePermission):
 class ProjectEntityPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
+            return False
+        if not _passes_workspace_access_gate(request, view):
             return False
 
         # Handle requests based on project__identifier
@@ -123,6 +134,8 @@ class ProjectAdminPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
+        if not _passes_workspace_access_gate(request, view):
+            return False
 
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
@@ -136,6 +149,8 @@ class ProjectAdminPermission(BasePermission):
 class ProjectLitePermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
+            return False
+        if not _passes_workspace_access_gate(request, view):
             return False
 
         return ProjectMember.objects.filter(

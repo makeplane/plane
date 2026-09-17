@@ -4,6 +4,8 @@
 
 from plane.db.models import ProjectMember, Page
 from plane.app.permissions import ROLE
+from plane.utils.workspace_access import user_can_access_workspace
+from plane.research.utils.page_guard import get_material_for_page, get_report_for_page
 
 
 from rest_framework.permissions import BasePermission, SAFE_METHODS
@@ -33,6 +35,9 @@ class ProjectPagePermission(BasePermission):
         page_id = view.kwargs.get("page_id")
         project_id = view.kwargs.get("project_id")
 
+        if not user_can_access_workspace(request.user, workspace_slug=slug):
+            return False
+
         # Hook for extended validation
         extended_access, role = self._check_access_and_get_role(request, slug, project_id)
         if extended_access is False:
@@ -52,6 +57,16 @@ class ProjectPagePermission(BasePermission):
                 project_pages__deleted_at__isnull=True,
             ).first()
             if page is None:
+                return False
+
+            report = get_report_for_page(page)
+            material = get_material_for_page(page)
+            if report is not None and page.owned_by_id != user_id:
+                # Page APIs only expose the author's editable draft. Reviewers
+                # and the management chain receive immutable official content
+                # through the research report endpoint.
+                return False
+            if material is not None and material.owner_id != user_id:
                 return False
 
             # Allow access if the user is the owner of the page

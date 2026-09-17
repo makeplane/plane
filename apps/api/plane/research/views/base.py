@@ -33,6 +33,7 @@ from plane.research.utils.errors import (
 )
 from plane.research.utils.org import READABLE_WORKSPACE_ROLES
 from plane.research.utils.settings import workspace_research_enabled, workspace_research_sections
+from plane.research.utils.roles import user_can_access_private_workspace
 
 # Sentinel telling ``get_workspace`` to fall back to the class level
 # ``nav_capability`` instead of an explicit per call requirement.
@@ -152,6 +153,16 @@ class ResearchAPIView(BaseAPIView):
                 ResearchErrorCode.WORKSPACE_NOT_FOUND,
                 "Workspace not found.",
             )
+        setting = getattr(workspace, "research_setting", None)
+        if (
+            setting is not None
+            and setting.purpose == setting.Purpose.PI_PRIVATE
+            and not user_can_access_private_workspace(self.request.user, setting)
+        ):
+            return None, research_not_found(
+                ResearchErrorCode.WORKSPACE_NOT_FOUND,
+                "Workspace not found.",
+            )
         membership = WorkspaceMember.objects.filter(
             workspace=workspace,
             member=self.request.user,
@@ -162,6 +173,20 @@ class ResearchAPIView(BaseAPIView):
                 ResearchErrorCode.WORKSPACE_NOT_FOUND,
                 "Workspace not found.",
             )
+        auth = getattr(self.request, "auth", None)
+        if isinstance(auth, str) and auth.startswith("plane_api_"):
+            from plane.db.models import APIToken
+
+            token_workspace_id = (
+                APIToken.objects.filter(token=auth, is_active=True)
+                .values_list("workspace_id", flat=True)
+                .first()
+            )
+            if token_workspace_id is not None and token_workspace_id != workspace.id:
+                return None, research_not_found(
+                    ResearchErrorCode.WORKSPACE_NOT_FOUND,
+                    "Workspace not found.",
+                )
         if roles is not None and membership.role not in roles:
             return None, research_permission_denied()
         required_nav = self.nav_capability if nav is _NAV_FROM_CLASS else nav

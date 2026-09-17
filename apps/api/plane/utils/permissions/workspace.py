@@ -7,6 +7,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 # Module imports
 from plane.db.models import WorkspaceMember
+from plane.utils.workspace_access import user_can_access_workspace
 
 
 # Permission Mappings
@@ -20,6 +21,9 @@ class WorkSpaceBasePermission(BasePermission):
     def has_permission(self, request, view):
         # allow anyone to create a workspace
         if request.user.is_anonymous:
+            return False
+
+        if not user_can_access_workspace(request.user, workspace_slug=view.workspace_slug):
             return False
 
         if request.method == "POST":
@@ -53,6 +57,9 @@ class WorkspaceOwnerPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
+        if not user_can_access_workspace(request.user, workspace_slug=view.workspace_slug):
+            return False
+
         return WorkspaceMember.objects.filter(
             workspace__slug=view.workspace_slug, member=request.user, role=Admin, is_active=True
         ).exists()
@@ -61,6 +68,9 @@ class WorkspaceOwnerPermission(BasePermission):
 class WorkSpaceAdminPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
+            return False
+
+        if not user_can_access_workspace(request.user, workspace_slug=view.workspace_slug):
             return False
 
         return WorkspaceMember.objects.filter(
@@ -74,6 +84,9 @@ class WorkSpaceAdminPermission(BasePermission):
 class WorkspaceEntityPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
+            return False
+
+        if not user_can_access_workspace(request.user, workspace_slug=view.workspace_slug):
             return False
 
         ## Safe Methods -> Handle the filtering logic in queryset
@@ -95,6 +108,9 @@ class WorkspaceViewerPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
+        if not user_can_access_workspace(request.user, workspace_slug=view.workspace_slug):
+            return False
+
         return WorkspaceMember.objects.filter(
             member=request.user, workspace__slug=view.workspace_slug, is_active=True
         ).exists()
@@ -103,6 +119,9 @@ class WorkspaceViewerPermission(BasePermission):
 class WorkspaceUserPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
+            return False
+
+        if not user_can_access_workspace(request.user, workspace_slug=view.workspace_slug):
             return False
 
         return WorkspaceMember.objects.filter(

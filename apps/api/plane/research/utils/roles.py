@@ -2,16 +2,16 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Instance level administrator tags (SYS-ROLE-01 ~ SYS-ROLE-06).
+"""Research administrator duties and PI-private workspace admission.
 
-Three tags are handed out by the default instance administrator:
-``DEV_ADMIN``, ``OPS_ADMIN`` and ``MAIN_PI``. Holding any of them opens the
-whole research configuration surface of every workspace. Business data keeps
-using the organisation ACL, so a tag never widens what a user may read: that
-separation is what keeps "configuration everywhere, data by org tree" true.
+``DEV_ADMIN`` and ``OPS_ADMIN`` describe technical duties in workspaces where
+the account already has a Plane seat. ``MAIN_PI`` is retained only as a legacy
+label. None of these labels grants workspace admission or research content;
+the authoritative system administrator is ``InstanceAdmin`` and the business
+principal is ``WorkspaceResearchSetting.main_pi``.
 """
 
-from plane.db.models import Workspace, WorkspaceMember
+from plane.db.models import WorkspaceMember, WorkspaceResearchSetting
 
 DEV_ADMIN = "DEV_ADMIN"
 OPS_ADMIN = "OPS_ADMIN"
@@ -48,9 +48,18 @@ def admin_roles(user):
     )
 
 
+def is_instance_admin(user) -> bool:
+    """The authoritative platform administrator identity."""
+    if user is None or not getattr(user, "is_authenticated", False):
+        return False
+    from plane.license.models import InstanceAdmin
+
+    return InstanceAdmin.objects.filter(user=user, role__gte=15).exists()
+
+
 def is_system_admin(user) -> bool:
-    """True when the user holds at least one administrator tag."""
-    return bool(admin_roles(user))
+    """Backward-compatible name for the authoritative instance administrator."""
+    return is_instance_admin(user)
 
 
 def _workspace_id(workspace):
@@ -60,7 +69,7 @@ def _workspace_id(workspace):
 
 
 def is_research_admin(user, workspace) -> bool:
-    """Configuration rights: administrator tag or workspace administrator.
+    """Configuration rights: instance or workspace administrator.
 
     This is the gate for the six administrator surfaces (organisation,
     report templates, identity mappings, platform configuration, audit and
@@ -69,7 +78,7 @@ def is_research_admin(user, workspace) -> bool:
     """
     if user is None or not getattr(user, "is_authenticated", False):
         return False
-    if is_system_admin(user):
+    if is_instance_admin(user):
         return True
     workspace_id = _workspace_id(workspace)
     if workspace_id is None:
@@ -82,77 +91,87 @@ def is_research_admin(user, workspace) -> bool:
     ).exists()
 
 
-def admin_workspaces():
-    """The workspaces an administrator tag grants membership to."""
-    return Workspace.objects.filter(slug__in=WORKSPACE_SLUGS)
+def has_admin_duty(user, role) -> bool:
+    return role in admin_roles(user)
+
+
+def can_configure_integrations(user, workspace) -> bool:
+    return is_instance_admin(user) or has_admin_duty(user, DEV_ADMIN) or is_research_admin(user, workspace)
+
+
+def can_operate_workspace(user, workspace) -> bool:
+    return is_instance_admin(user) or has_admin_duty(user, OPS_ADMIN) or is_research_admin(user, workspace)
+
+
+def is_account_compat_admin(user, workspace) -> bool:
+    """Temporary compatibility gate used only by invite/import account flows."""
+    return bool(admin_roles(user)) or is_research_admin(user, workspace)
+
+
+def private_workspace_settings():
+    return WorkspaceResearchSetting.objects.filter(
+        purpose=WorkspaceResearchSetting.Purpose.PI_PRIVATE,
+        deleted_at__isnull=True,
+    ).select_related("workspace", "main_pi")
+
+
+def user_can_access_private_workspace(user, setting):
+    if is_instance_admin(user) or setting.main_pi_id == getattr(user, "id", None):
+        return True
+    from plane.db.models import ResearchWorkspaceAccessGrant
+
+    return ResearchWorkspaceAccessGrant.objects.filter(
+        setting=setting,
+        user=user,
+        deleted_at__isnull=True,
+    ).exists()
 
 
 def sync_admin_workspace_membership(user, actor=None):
-    """Ensure a tagged user is a member of both workspaces.
-
-    Tag holders are plain members (role 15): being a workspace administrator
-    would widen data visibility beyond the organisation ACL.
-    """
+    """Reconcile explicit private workspace admission for one account."""
     memberships = []
-    for workspace in admin_workspaces():
-        member, created = WorkspaceMember.objects.get_or_create(
-            workspace=workspace,
+    for setting in private_workspace_settings():
+        allowed = user_can_access_private_workspace(user, setting)
+        member = WorkspaceMember.objects.filter(
+            workspace=setting.workspace,
             member=user,
-            defaults={
-                "role": WORKSPACE_MEMBER_ROLE,
-                "created_by": actor or user,
-            },
-        )
-        if not created and not member.is_active:
+            deleted_at__isnull=True,
+        ).first()
+        if allowed and member is None:
+            member = WorkspaceMember.objects.create(
+                workspace=setting.workspace,
+                member=user,
+                role=WORKSPACE_MEMBER_ROLE,
+                created_by=actor or user,
+            )
+        elif allowed and not member.is_active:
             member.is_active = True
             member.save(update_fields=["is_active", "updated_at"])
-        memberships.append(member)
+        elif not allowed and member is not None and member.is_active:
+            member.is_active = False
+            member.save(update_fields=["is_active", "updated_at"])
+        if allowed and member is not None:
+            memberships.append(member)
     return memberships
 
 
 def demote_admin_workspace_membership(user):
-    """Drop the main PI workspace seat once the last tag is revoked.
-
-    The public workspace keeps the account: it serves every registered user
-    regardless of tags. Only the main PI workspace seat is tag-driven.
-    """
-    if is_system_admin(user):
-        return 0
-    return WorkspaceMember.objects.filter(
-        workspace__slug=PI_WORKSPACE_SLUG,
+    """Reconcile a private workspace seat after an authority is revoked."""
+    before = WorkspaceMember.objects.filter(
+        workspace__research_setting__purpose=WorkspaceResearchSetting.Purpose.PI_PRIVATE,
         member=user,
         is_active=True,
-    ).update(is_active=False)
+    ).count()
+    sync_admin_workspace_membership(user)
+    after = WorkspaceMember.objects.filter(
+        workspace__research_setting__purpose=WorkspaceResearchSetting.Purpose.PI_PRIVATE,
+        member=user,
+        is_active=True,
+    ).count()
+    return max(before - after, 0)
 
 
 def sync_main_pi_workspace_seat(user, actor=None):
-    """Give organisation owners and main PIs a seat in the main PI workspace.
-
-    The main PI workspace serves the PIs of the institute: whoever owns a node
-    or is its principal investigator belongs there, whether or not they also
-    hold an administrator tag.
-    """
-    from plane.db.models import OrgUnitMember
-
-    if user is None or not getattr(user, "is_authenticated", False):
-        return None
-    is_pi = OrgUnitMember.objects.filter(
-        user=user,
-        deleted_at__isnull=True,
-        org_role__in=(OrgUnitMember.OrgRole.OWNER, OrgUnitMember.OrgRole.PI),
-        workspace__slug=PUBLIC_WORKSPACE_SLUG,
-    ).exists()
-    if not is_pi:
-        return None
-    workspace = Workspace.objects.filter(slug=PI_WORKSPACE_SLUG, deleted_at__isnull=True).first()
-    if workspace is None:
-        return None
-    membership, created = WorkspaceMember.objects.get_or_create(
-        workspace=workspace,
-        member=user,
-        defaults={"role": WORKSPACE_MEMBER_ROLE, "created_by": actor or user},
-    )
-    if not created and not membership.is_active:
-        membership.is_active = True
-        membership.save(update_fields=["is_active", "updated_at"])
-    return membership
+    """Compatibility hook: an organisation PI role never implies admission."""
+    memberships = sync_admin_workspace_membership(user, actor=actor)
+    return memberships[0] if memberships else None
