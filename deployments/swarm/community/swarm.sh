@@ -38,7 +38,12 @@ EOF
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    local release_response latest_release
+    if ! release_response=$(curl -fsSL "https://api.github.com/repos/$GH_REPO/releases/latest"); then
+        echo "Failed to check for the latest release. Exiting..." >&2
+        return 1
+    fi
+    latest_release=$(printf '%s' "$release_response" | tr '\r\n' '  ' | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/"tag_name"[[:space:]]*:[[:space:]]*"//;s/"//g')
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
@@ -220,7 +225,7 @@ function deployStack() {
     if [ ! -f "$DOCKER_FILE_PATH" ] || [ ! -f "$DOCKER_ENV_PATH" ]; then
         echo "Configuration files not found"
         echo "Downloading it now......"
-        APP_RELEASE=$(checkLatestRelease)
+        APP_RELEASE=$(checkLatestRelease) || return 1
         download
     fi
     if [ -z "$stack_name" ]; then
@@ -335,7 +340,8 @@ function upgrade() {
         exit 1
     fi
     
-    local latest_release=$(checkLatestRelease)
+    local latest_release
+    latest_release=$(checkLatestRelease) || return 1
 
     echo ""
     echo "Current release: $APP_RELEASE"
