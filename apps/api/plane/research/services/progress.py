@@ -16,20 +16,10 @@ from plane.db.models import (
     PeriodicReport,
     ProjectCodeRepository,
 )
-from plane.research.utils.acl import ResearchResource, build_actor_context, check_access
+from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.literature import literature_resource
 from plane.research.utils.reports import report_resource
-
-
-def experiment_resource(record) -> ResearchResource:
-    return ResearchResource(
-        kind="experiment_record",
-        workspace_id=record.workspace_id,
-        owner_id=record.owner_id,
-        org_unit_id=record.stage_instance.org_unit_id if record.stage_instance_id else None,
-        visibility=record.visibility,
-        state=record.status,
-    )
+from plane.research.utils.resource_projections import experiment_resource, outcome_resource, repository_resource
 
 
 def build_progress(workspace, project_id, actor, *, period_key=None):
@@ -40,7 +30,7 @@ def build_progress(workspace, project_id, actor, *, period_key=None):
         record
         for record in ExperimentRecord.objects.filter(
             workspace=workspace, project_id=project_id, deleted_at__isnull=True
-        ).select_related("owner", "stage_instance")
+        ).select_related("owner", "stage_instance", "project__research_profile")
         if check_access(actor, "view", experiment_resource(record), context=context)
     ]
     unfinished = [
@@ -49,15 +39,21 @@ def build_progress(workspace, project_id, actor, *, period_key=None):
         if record.status in (ExperimentRecord.Status.PLANNED, ExperimentRecord.Status.RUNNING)
     ]
 
-    repositories = list(
-        ProjectCodeRepository.objects.filter(
+    repositories = [
+        repository
+        for repository in ProjectCodeRepository.objects.filter(
             workspace=workspace, project_id=project_id, deleted_at__isnull=True
-        )
-    )
+        ).select_related("project__research_profile")
+        if check_access(actor, "view", repository_resource(repository), context=context)
+    ]
+    visible_repository_ids = {repository.id for repository in repositories}
     artifacts = list(
-        CodeArtifact.objects.filter(repository__project_id=project_id, deleted_at__isnull=True).select_related(
-            "repository", "linked_experiment"
-        )[:200]
+        CodeArtifact.objects.filter(
+            repository_id__in=visible_repository_ids,
+            repository__workspace=workspace,
+            repository__project_id=project_id,
+            deleted_at__isnull=True,
+        ).select_related("repository", "linked_experiment")[:200]
     )
 
     literature = [
@@ -85,11 +81,13 @@ def build_progress(workspace, project_id, actor, *, period_key=None):
 
     outcome_model = getattr(db_models, "ResearchOutcome", None)
     outcomes = (
-        list(
-            outcome_model.objects.filter(
+        [
+            outcome
+            for outcome in outcome_model.objects.filter(
                 workspace=workspace, project_id=project_id, deleted_at__isnull=True
-            )[:100]
-        )
+            ).select_related("project__research_profile")[:100]
+            if check_access(actor, "view", outcome_resource(outcome), context=context)
+        ]
         if outcome_model is not None
         else []
     )

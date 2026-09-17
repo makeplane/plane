@@ -5,7 +5,12 @@
  */
 
 import { API_BASE_URL, researchEndpoints } from "@plane/constants";
-import type { TPaginationInfo, TResearchProjectProfile } from "@plane/types";
+import type {
+  TPaginationInfo,
+  TResearchContext,
+  TResearchContextResourceBody,
+  TResearchProjectProfile,
+} from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -37,6 +42,22 @@ export class ResearchProjectService extends APIService {
   async getProjects(workspaceSlug: string, params: Record<string, string> = {}) {
     return this.get(researchEndpoints.projects(workspaceSlug), { params })
       .then((res) => res?.data as TPaginationInfo & { results: TResearchProject[] })
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getContext(workspaceSlug: string, params: { project_id?: string; page?: number; page_size?: number } = {}) {
+    return this.get(researchEndpoints.context(workspaceSlug), { params })
+      .then((res) => res?.data as TResearchContext)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getContextResource(workspaceSlug: string, kind: string, resourceId: string, version = "latest") {
+    return this.get(researchEndpoints.contextResource(workspaceSlug, kind, resourceId), { params: { version } })
+      .then((res) => res?.data as TResearchContextResourceBody)
       .catch((err) => {
         throw err?.response?.data;
       });

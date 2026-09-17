@@ -641,6 +641,8 @@ const RESEARCH_API_ROOT = "/api/research/workspaces";
 export const researchEndpoints = {
   health: () => "/api/research/health/",
   context: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/context/`,
+  contextResource: (slug: string, kind: string, id: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/context/resources/${kind}/${id}/`,
   settings: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/settings/`,
   identityMe: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/identity/me/`,
   identityMappings: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/identity/mappings/`,

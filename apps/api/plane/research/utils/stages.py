@@ -66,10 +66,7 @@ def stage_resource(instance, *, owner_id=None, visibility=None, with_reviewers=F
         is_draft=False,
         reviewer_ids=reviewer_ids,
         project_id=instance.project_id,
-        is_team_content=bool(
-            profile
-            and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT
-        ),
+        is_team_content=bool(profile and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT),
     )
 
 
@@ -99,20 +96,14 @@ def material_resource(
         # A draft with a submitted version has a private live revision and a
         # formal snapshot for authorised readers. A never-submitted draft has
         # no audience beyond its author.
-        is_draft=(
-            material.status == "DRAFT"
-            and not any(
-                version.snapshot.get("status") == "SUBMITTED"
-                for version in (
-                    getattr(material, "_prefetched_objects_cache", {}).get("versions")
-                    or material.versions.all()
-                )
-            )
-        ),
+        is_draft=material.status == "DRAFT" and not _has_submitted_material_version(material),
         reviewer_ids=reviewer_ids,
         project_id=stage.project_id,
-        is_team_content=bool(
-            profile
-            and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT
-        ),
+        is_team_content=bool(profile and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT),
     )
+
+
+def _has_submitted_material_version(material):
+    prefetched = getattr(material, "_prefetched_objects_cache", {}).get("versions")
+    versions = prefetched if prefetched is not None else material.versions.all()
+    return any(version.snapshot.get("status") == "SUBMITTED" for version in versions)

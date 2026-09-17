@@ -19,6 +19,8 @@ from plane.research.views import (
     ResearchApprovalRequestHistoryEndpoint,
     ResearchApprovalRequestListCreateEndpoint,
     ResearchAuditEventListEndpoint,
+    ResearchContextEndpoint,
+    ResearchContextResourceEndpoint,
     ResearchReportAttachmentDetailEndpoint,
     ResearchReportAttachmentListCreateEndpoint,
     ResearchReportAttachmentPresignEndpoint,
@@ -138,6 +140,16 @@ urlpatterns = [
         "research/workspaces/<str:slug>/org/incomplete/",
         ResearchOrgIncompleteEndpoint.as_view(),
         name="research-org-incomplete",
+    ),
+    path(
+        "research/workspaces/<str:slug>/context/",
+        ResearchContextEndpoint.as_view(),
+        name="research-context",
+    ),
+    path(
+        "research/workspaces/<str:slug>/context/resources/<str:kind>/<str:resource_id>/",
+        ResearchContextResourceEndpoint.as_view(),
+        name="research-context-resource",
     ),
     # ------------------------------------------------------------------
     # P1 stage workflow (§5.2) - additive, nothing below is renumbered

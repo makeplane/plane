@@ -77,6 +77,13 @@ def env(db):
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=owner, org_role=OrgUnitMember.OrgRole.PI
     )
+    OrgUnitMember.objects.create(
+        workspace=workspace,
+        org_unit=group,
+        user=member,
+        org_role=OrgUnitMember.OrgRole.REVIEWER,
+        is_primary=True,
+    )
     admin_client = client_for(admin)
     created = admin_client.post(
         f"/api/research/workspaces/{workspace.slug}/projects/",
@@ -236,10 +243,34 @@ class TestTimeline:
             owner=env["owner"],
             visibility="PRIVATE",
         )
-        payload = env["member_client"].get(timeline_url(env)).json()
-        assert not [item for item in payload["items"] if "Private run" in item["title"]]
+        repository = ProjectCodeRepository.objects.create(
+            workspace=env["workspace"],
+            project_id=env["project_id"],
+            provider="GITHUB",
+            repository_url="https://github.com/example/private-chain",
+            created_by=env["owner"],
+        )
+        CodeArtifact.objects.create(
+            repository=repository,
+            ref_type="COMMIT",
+            ref_value="private123",
+            created_by=env["owner"],
+        )
+        ResearchOutcome.objects.create(
+            workspace=env["workspace"],
+            project_id=env["project_id"],
+            output_type="PAPER",
+            title="Private outcome",
+            status="DRAFT",
+            visibility="PRIVATE",
+            created_by=env["owner"],
+        )
+        denied = env["member_client"].get(timeline_url(env))
+        assert denied.status_code == 404
         owner_payload = env["owner_client"].get(timeline_url(env)).json()
         assert [item for item in owner_payload["items"] if "Private run" in item["title"]]
+        assert [item for item in owner_payload["items"] if item["kind"] == "code_artifact"]
+        assert [item for item in owner_payload["items"] if item["title"] == "Private outcome"]
 
     def test_linked_external_references_move_the_degraded_flag(self, env):
         ExternalSystemConnection.objects.create(

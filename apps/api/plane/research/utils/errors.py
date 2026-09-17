@@ -145,6 +145,9 @@ class ResearchErrorCode:
     EXTERNAL_REFERENCE_INVALID = "external_reference_invalid"
     EXTERNAL_REFERENCE_LINK_NOT_FOUND = "external_reference_link_not_found"
     CHAIN_INVALID = "research_chain_invalid"
+    CONTEXT_RESOURCE_INVALID = "context_resource_invalid"
+    CONTEXT_RESOURCE_NOT_FOUND = "context_resource_not_found"
+    CONTEXT_VERSION_INVALID = "context_version_invalid"
 
     # Account lifecycle: invite codes, imports and research profiles.
     INVITE_CODE_REQUIRED = "invite_code_required"

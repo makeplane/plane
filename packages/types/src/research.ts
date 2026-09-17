@@ -1092,3 +1092,13 @@ export type TResearchContext = {
   };
   resources: TResearchContextResource[];
 };
+
+export type TResearchContextResourceBody = {
+  schema_version: string;
+  kind: string;
+  id: string;
+  source: string;
+  version: number | "draft" | null;
+  updated_at: string | null;
+  content: Record<string, unknown>;
+};
