@@ -19,9 +19,9 @@
     "start_date": "開始日",
     "end_date": "終了日",
     "in_your_timezone": "あなたのタイムゾーン",
-    "transfer_work_items": "{count}件の作業項目を移行",
+    "transfer_work_items": "{count}件の作業項目を転送",
     "transfer": {
-      "no_cycles_available": "作業項目を移行できる他のサイクルがありません。"
+      "no_cycles_available": "作業項目を転送できる他のサイクルがありません。"
     },
     "date_range": "日付範囲",
     "add_date": "日付を追加",
