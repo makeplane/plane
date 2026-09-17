@@ -26,6 +26,7 @@ export type TReportListParams = {
 export type TReportCreatePayload = {
   report_type: string;
   period_key?: string;
+  team_projects?: string[];
   template?: string | null;
   visibility?: string;
   is_backfill?: boolean;
@@ -60,7 +61,11 @@ export class ResearchReportService extends APIService {
       });
   }
 
-  async updateReport(workspaceSlug: string, reportId: string, payload: Partial<TPeriodicReport>) {
+  async updateReport(
+    workspaceSlug: string,
+    reportId: string,
+    payload: Partial<TPeriodicReport> | { description_json: object; description_html: string }
+  ) {
     return this.patch(researchEndpoints.report(workspaceSlug, reportId), payload)
       .then((res) => res?.data as TPeriodicReport)
       .catch((err) => {
@@ -68,8 +73,12 @@ export class ResearchReportService extends APIService {
       });
   }
 
-  async submitReport(workspaceSlug: string, reportId: string, comment = "") {
-    return this.post(researchEndpoints.reportSubmit(workspaceSlug, reportId), { comment })
+  async submitReport(
+    workspaceSlug: string,
+    reportId: string,
+    payload: { comment?: string; description_json?: object; description_html?: string } = {}
+  ) {
+    return this.post(researchEndpoints.reportSubmit(workspaceSlug, reportId), payload)
       .then((res) => res?.data as TPeriodicReport)
       .catch((err) => {
         throw err?.response?.data;

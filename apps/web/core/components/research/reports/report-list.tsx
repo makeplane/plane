@@ -39,9 +39,14 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
   const [periodKey, setPeriodKey] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [mineOnly, setMineOnly] = useState(true);
+  const [selectedTeamProjects, setSelectedTeamProjects] = useState<string[]>([]);
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
   const reports = research.getReports(workspaceSlug);
+  const canCreateReport = Boolean(research.identity?.user.org_units.length);
+  const teamProjects = research
+    .getResearchProjects(workspaceSlug)
+    .filter((project) => project.research?.research_type === "RESEARCH_PROJECT");
 
   const load = useCallback(async () => {
     const params: Record<string, string> = {};
@@ -60,20 +65,27 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug, statusFilter, mineOnly]);
 
+  useEffect(() => {
+    void research.fetchResearchProjects(workspaceSlug, { research_type: "RESEARCH_PROJECT" }).catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceSlug]);
+
   const handleCreate = useCallback(async () => {
     try {
       const report = await research.createReport(workspaceSlug, {
         report_type: reportType,
         period_key: periodKey.trim() || undefined,
+        team_projects: selectedTeamProjects,
       });
       setPeriodKey("");
+      setSelectedTeamProjects([]);
       setErrorKey(null);
       await load();
       window.location.assign(`/${workspaceSlug}/research/reports/${report.id}`);
     } catch (error) {
       setErrorKey(getResearchErrorKey(error));
     }
-  }, [load, periodKey, reportType, research, workspaceSlug]);
+  }, [load, periodKey, reportType, research, selectedTeamProjects, workspaceSlug]);
 
   return (
     <div className="flex flex-col gap-3 p-5">
@@ -84,26 +96,56 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
       )}
 
       <div className="flex flex-wrap items-end gap-2">
-        <select
-          className="rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"
-          value={reportType}
-          onChange={(event) => setReportType(event.target.value as TReportType)}
-        >
-          {REPORT_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {t(REPORT_TYPE_LABELS[type])}
-            </option>
-          ))}
-        </select>
-        <Input
-          className="!w-40"
-          placeholder={t("research.reports.period_placeholder")}
-          value={periodKey}
-          onChange={(event) => setPeriodKey(event.target.value)}
-        />
-        <Button variant="primary" size="sm" onClick={() => void handleCreate()}>
-          {t("research.reports.create")}
-        </Button>
+        {canCreateReport && (
+          <>
+            <select
+              className="rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"
+              value={reportType}
+              onChange={(event) => setReportType(event.target.value as TReportType)}
+            >
+              {REPORT_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {t(REPORT_TYPE_LABELS[type])}
+                </option>
+              ))}
+            </select>
+            <Input
+              className="!w-40"
+              placeholder={t("research.reports.period_placeholder")}
+              value={periodKey}
+              onChange={(event) => setPeriodKey(event.target.value)}
+            />
+            <Button variant="primary" size="sm" onClick={() => void handleCreate()}>
+              {t("research.reports.create")}
+            </Button>
+
+            {teamProjects.length > 0 && (
+              <details className="relative text-12 text-secondary">
+                <summary className="cursor-pointer rounded-md border border-subtle bg-surface-1 px-2 py-1.5">
+                  {t("research.reports.team_projects", { count: selectedTeamProjects.length })}
+                </summary>
+                <div className="shadow-sm absolute z-10 mt-1 flex max-h-56 min-w-60 flex-col gap-2 overflow-y-auto rounded-md border border-subtle bg-surface-1 p-3">
+                  {teamProjects.map((project) => (
+                    <label key={project.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedTeamProjects.includes(project.id)}
+                        onChange={(event) =>
+                          setSelectedTeamProjects((current) =>
+                            event.target.checked
+                              ? [...current, project.id]
+                              : current.filter((projectId) => projectId !== project.id)
+                          )
+                        }
+                      />
+                      <span className="truncate">{project.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </details>
+            )}
+          </>
+        )}
 
         <select
           className="ml-auto rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"

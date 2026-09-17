@@ -434,6 +434,40 @@ class TestStageMaterials:
         material = StageMaterial.objects.get(pk=materials[0]["id"])
         assert material.status == "SUBMITTED"
 
+    def test_reviewer_reads_submitted_snapshot_while_author_revises(self, env):
+        stages = bootstrap(env)
+        pre = stage_by_code(stages, "PRE_OPENING")
+        disable_gate_items(
+            env,
+            "PRE_OPENING",
+            ["literature_min_included", "literature_max_entries", "literature_quality"],
+        )
+        env["owner_client"].post(stage_url(env, pre["id"], "enter/"), {}, format="json")
+        materials = add_materials(env, pre["id"], "PRE_OPENING")
+        material_id = materials[0]["id"]
+        env["owner_client"].patch(
+            material_url(env, material_id),
+            {"description_html": "<p>Submitted version</p>"},
+            format="json",
+        )
+        env["owner_client"].post(stage_url(env, pre["id"], "submit/"), {}, format="json")
+        env["admin_client"].post(
+            stage_url(env, pre["id"], "return/"),
+            {"reason": "revise"},
+            format="json",
+        )
+        env["owner_client"].patch(
+            material_url(env, material_id),
+            {"description_html": "<p>Private revision</p>"},
+            format="json",
+        )
+
+        detail = env["admin_client"].get(material_url(env, material_id))
+
+        assert detail.status_code == 200
+        assert "Submitted version" in detail.json()["page_detail"]["description_html"]
+        assert "Private revision" not in str(detail.json()["page_detail"])
+
     def test_page_bypass_is_refused_for_submitted_materials(self, env):
         stages = bootstrap(env)
         pre = stage_by_code(stages, "PRE_OPENING")
@@ -450,6 +484,31 @@ class TestStageMaterials:
             {"name": "bypass attempt"},
             format="json",
         )
+        assert response.status_code == 403
+        assert response.json()["error_code"] == "stage_material_read_only"
+
+    def test_material_submit_locks_page_before_the_stage_is_submitted(self, env):
+        stages = bootstrap(env)
+        pre = stage_by_code(stages, "PRE_OPENING")
+        env["owner_client"].post(stage_url(env, pre["id"], "enter/"), {}, format="json")
+        created = env["owner_client"].post(
+            stage_url(env, pre["id"], "materials/"),
+            {"material_type": "TOPIC_DESCRIPTION"},
+            format="json",
+        ).json()
+        submitted = env["owner_client"].post(
+            material_url(env, created["id"], "submit/"),
+            {},
+            format="json",
+        )
+        assert submitted.status_code == 200
+
+        response = env["owner_client"].patch(
+            f"/api/workspaces/{env['workspace'].slug}/projects/{env['project_id']}/pages/{created['page']}/",
+            {"name": "bypass attempt"},
+            format="json",
+        )
+
         assert response.status_code == 403
         assert response.json()["error_code"] == "stage_material_read_only"
 

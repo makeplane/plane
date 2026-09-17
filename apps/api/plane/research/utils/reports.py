@@ -32,7 +32,11 @@ def active_grants(report):
     """Custom grants that are still valid, projected for the ACL service."""
     now = timezone.now()
     grants = []
-    for grant in ReportAccessGrant.objects.filter(report=report, is_revoked=False):
+    prefetched = getattr(report, "_prefetched_objects_cache", {}).get("access_grants")
+    grants_source = prefetched if prefetched is not None else ReportAccessGrant.objects.filter(report=report)
+    for grant in grants_source:
+        if grant.is_revoked:
+            continue
         if grant.expires_at and grant.expires_at <= now:
             continue
         grants.append(
@@ -52,5 +56,8 @@ def report_resource(report) -> ResearchResource:
         org_unit_id=report.org_unit_id,
         visibility=report.visibility,
         state=report.status,
+        # A returned report has a new private revision while readers receive the
+        # last immutable snapshot. Before the first submission it is all draft.
+        is_draft=report.submitted_at is None,
         grants=active_grants(report),
     )

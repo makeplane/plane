@@ -50,6 +50,11 @@ class PeriodicReportSerializer(serializers.ModelSerializer):
     can_edit = serializers.SerializerMethodField()
     can_review = serializers.SerializerMethodField()
     attachment_count = serializers.SerializerMethodField()
+    team_projects = serializers.SerializerMethodField()
+    latest_official_version = serializers.SerializerMethodField()
+    official_content = serializers.SerializerMethodField()
+    draft_content = serializers.SerializerMethodField()
+    page_project = serializers.SerializerMethodField()
 
     class Meta:
         model = PeriodicReport
@@ -57,11 +62,13 @@ class PeriodicReportSerializer(serializers.ModelSerializer):
             "id",
             "workspace",
             "project",
+            "team_projects",
             "owner",
             "owner_detail",
             "org_unit",
             "org_unit_detail",
             "page",
+            "page_project",
             "report_type",
             "period_key",
             "period_start",
@@ -78,6 +85,9 @@ class PeriodicReportSerializer(serializers.ModelSerializer):
             "can_edit",
             "can_review",
             "attachment_count",
+            "latest_official_version",
+            "official_content",
+            "draft_content",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
@@ -105,4 +115,65 @@ class PeriodicReportSerializer(serializers.ModelSerializer):
         return check_access(request.user, "review", report_resource(obj), context=context)
 
     def get_attachment_count(self, obj):
-        return obj.attachments.count() if hasattr(obj, "attachments") else 0
+        prefetched = getattr(obj, "_prefetched_objects_cache", {}).get("attachments")
+        return len(prefetched) if prefetched is not None else obj.attachments.count()
+
+    def get_team_projects(self, obj):
+        prefetched = getattr(obj, "_prefetched_objects_cache", {}).get("team_projects")
+        if prefetched is not None:
+            return [str(project.id) for project in prefetched]
+        return [str(item) for item in obj.team_projects.values_list("id", flat=True)]
+
+    def _official_snapshot(self, obj):
+        if not hasattr(obj, "_latest_official_snapshot"):
+            prefetched = getattr(obj, "_prefetched_objects_cache", {}).get("official_snapshots")
+            obj._latest_official_snapshot = (
+                max(prefetched, key=lambda snapshot: snapshot.version_no)
+                if prefetched
+                else obj.official_snapshots.order_by("-version_no").first()
+            )
+        return obj._latest_official_snapshot
+
+    def get_latest_official_version(self, obj):
+        snapshot = self._official_snapshot(obj)
+        return snapshot.version_no if snapshot else None
+
+    def get_official_content(self, obj):
+        request = self.context.get("request")
+        if request is None or obj.owner_id == request.user.id:
+            return None
+        snapshot = self._official_snapshot(obj)
+        if snapshot is None:
+            return None
+        return {
+            "version_no": snapshot.version_no,
+            "description_json": snapshot.description_json,
+            "description_html": snapshot.description_html,
+            "description_stripped": snapshot.description_stripped,
+        }
+
+    def get_draft_content(self, obj):
+        request = self.context.get("request")
+        if (
+            request is None
+            or obj.owner_id != request.user.id
+            or not self.context.get("include_draft_content", False)
+        ):
+            return None
+        return {
+            "description_json": obj.page.description_json,
+            "description_html": obj.page.description_html,
+            "description_stripped": obj.page.description_stripped,
+        }
+
+    def get_page_project(self, obj):
+        prefetched = getattr(obj.page, "_prefetched_objects_cache", {}).get("project_pages")
+        if prefetched is not None:
+            project_id = next((link.project_id for link in prefetched if link.deleted_at is None), None)
+        else:
+            project_id = (
+                obj.page.project_pages.filter(deleted_at__isnull=True)
+                .values_list("project_id", flat=True)
+                .first()
+            )
+        return str(project_id) if project_id else None

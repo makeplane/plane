@@ -520,11 +520,18 @@ class ResearchSeedBuilder:
             ).first()
             created = binding is None
             if created:
+                has_primary = MentorBinding.objects.filter(
+                    workspace=self.workspace,
+                    mentee=mentee,
+                    is_primary_advisor=True,
+                    deleted_at__isnull=True,
+                ).exists()
                 binding = MentorBinding.objects.create(
                     workspace=self.workspace,
                     mentee=mentee,
                     mentor=mentor,
                     org_unit=self.units[unit_key],
+                    is_primary_advisor=not has_primary,
                     effective_from=self.today,
                     created_by=self.actor,
                 )

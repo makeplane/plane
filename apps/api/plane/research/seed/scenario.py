@@ -722,12 +722,12 @@ class MatrixReportSpec:
 
 
 MATRIX_REPORTS = (
-    MatrixReportSpec("PRIVATE", 11, "DRAFT"),
+    MatrixReportSpec("PRIVATE", 11, "SUBMITTED"),
     MatrixReportSpec("DIRECT_ADVISOR", 10, "SUBMITTED"),
     MatrixReportSpec("UNIT", 9, "ACCEPTED"),
     MatrixReportSpec("ANCESTRY", 8, "SUBMITTED"),
     MatrixReportSpec("WORKSPACE", 7, "ACCEPTED"),
-    MatrixReportSpec("CUSTOM", 6, "DRAFT", grantee="zhoumin"),
+    MatrixReportSpec("CUSTOM", 6, "SUBMITTED", grantee="zhoumin"),
 )
 
 MATRIX_OWNER_PROJECT = "liuyang"
@@ -747,14 +747,14 @@ ACL_MATRIX_EXPECTED = {
         "advisor": False,
         "unit_member": False,
         "ancestor_pi": False,
-        "admin": True,
+        "admin": False,
         "stranger": False,
     },
     "DIRECT_ADVISOR": {
         "owner": True,
         "advisor": True,
         "unit_member": False,
-        "ancestor_pi": False,
+        "ancestor_pi": True,
         "admin": True,
         "stranger": False,
     },
@@ -762,7 +762,7 @@ ACL_MATRIX_EXPECTED = {
         "owner": True,
         "advisor": True,
         "unit_member": True,
-        "ancestor_pi": False,
+        "ancestor_pi": True,
         "admin": True,
         "stranger": False,
     },
@@ -786,7 +786,7 @@ ACL_MATRIX_EXPECTED = {
         "owner": True,
         "advisor": False,
         "unit_member": True,
-        "ancestor_pi": False,
+        "ancestor_pi": True,
         "admin": True,
         "stranger": False,
     },
