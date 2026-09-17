@@ -7,6 +7,11 @@ from django.db import models
 from plane.db.models.base import BaseModel
 
 
+def get_default_required_reporter_categories():
+    """Research member categories expected to submit periodic reports."""
+    return ["STUDENT", "POSTDOC"]
+
+
 class ReportVisibility(models.TextChoices):
     """Report access levels, ordered from the narrowest to the widest scope."""
 
@@ -21,10 +26,39 @@ class ReportVisibility(models.TextChoices):
 class WorkspaceResearchSetting(BaseModel):
     """Per workspace research platform configuration (P0-CFG-01 ~ P0-CFG-08)."""
 
+    class Purpose(models.TextChoices):
+        GENERAL = "GENERAL", "General"
+        PUBLIC_RESEARCH = "PUBLIC_RESEARCH", "Public research"
+        PI_PRIVATE = "PI_PRIVATE", "Principal investigator private"
+
     workspace = models.OneToOneField(
         "db.Workspace",
         on_delete=models.CASCADE,
         related_name="research_setting",
+    )
+    purpose = models.CharField(
+        max_length=24,
+        choices=Purpose.choices,
+        default=Purpose.GENERAL,
+        db_index=True,
+    )
+    main_pi = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="principal_research_workspace_settings",
+        null=True,
+        blank=True,
+    )
+    private_access_users = models.ManyToManyField(
+        "db.User",
+        related_name="private_research_workspace_settings",
+        through="db.ResearchWorkspaceAccessGrant",
+        through_fields=("setting", "user"),
+        blank=True,
+    )
+    required_reporter_categories = models.JSONField(
+        default=get_default_required_reporter_categories,
+        blank=True,
     )
     module_enabled = models.BooleanField(default=False)
     org_enabled = models.BooleanField(default=True)
@@ -73,6 +107,16 @@ class WorkspaceResearchSetting(BaseModel):
         verbose_name_plural = "Workspace Research Settings"
         db_table = "workspace_research_settings"
         ordering = ("-created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["purpose"],
+                condition=models.Q(
+                    purpose="PI_PRIVATE",
+                    deleted_at__isnull=True,
+                ),
+                name="rsch_ws_setting_uq_pi_private",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.workspace_id} <research>"
@@ -83,3 +127,44 @@ class WorkspaceResearchSetting(BaseModel):
         if report_type == "MONTHLY" and self.monthly_default_visibility:
             return self.monthly_default_visibility
         return self.default_report_visibility
+
+
+class ResearchWorkspaceAccessGrant(BaseModel):
+    """An explicit additional seat in a PI-private workspace."""
+
+    setting = models.ForeignKey(
+        WorkspaceResearchSetting,
+        on_delete=models.CASCADE,
+        related_name="private_access_grants",
+    )
+    user = models.ForeignKey(
+        "db.User",
+        on_delete=models.CASCADE,
+        related_name="private_research_workspace_access_grants",
+    )
+    granted_by = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="private_research_workspace_grants_given",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "Research Workspace Access Grant"
+        verbose_name_plural = "Research Workspace Access Grants"
+        db_table = "research_workspace_access_grants"
+        ordering = ("created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["setting", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="rsch_ws_access_uq_user",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["user", "setting"], name="rsch_ws_access_user_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.setting_id} <{self.user_id}>"

@@ -2,18 +2,18 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Seed the two-workspace baseline (SYS-WS-01 ~ SYS-WS-06).
+"""Create the minimum production baseline for the research deployment.
 
-Usage (inside the API container):
-
-    python manage.py seed_system_baseline
-    python manage.py seed_system_baseline --with-demo
-    python manage.py seed_system_baseline --reset-passwords
-
-Creates the public workspace, the main PI workspace, the administrator tag
-accounts, the organisation root and the acceptance test group. It is
-idempotent: running it twice changes nothing.
+The default invocation is deliberately conservative: it creates the
+authoritative instance administrator and the two well-known workspaces, but it
+does not create administrator-tag accounts, acceptance users, or demo data.
+Those fixtures require the explicit ``--with-demo`` switch.
 """
+
+import json
+import os
+import secrets
+from io import StringIO
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -29,31 +29,33 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceResearchSetting,
 )
-from plane.license.models import Instance, InstanceConfiguration, InstanceRoleAssignment
-from plane.research.utils.roles import (
-    DEV_ADMIN,
-    MAIN_PI,
-    OPS_ADMIN,
-    PI_WORKSPACE_SLUG,
-    PUBLIC_WORKSPACE_SLUG,
-    sync_admin_workspace_membership,
-    sync_main_pi_workspace_seat,
-)
+from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration, InstanceRoleAssignment
+from plane.research.utils.roles import DEV_ADMIN, MAIN_PI, OPS_ADMIN, PI_WORKSPACE_SLUG, PUBLIC_WORKSPACE_SLUG
 
 DEFAULT_PASSWORD = "Research@12345"
 ADMIN_EMAIL = "admin@ai4ms.local"
 ROOT_UNIT_NAME = "材料科学与工程学院"
 TEST_GROUP_NAME = "测试组"
 
-WORKSPACE_SPECS = (
-    (PUBLIC_WORKSPACE_SLUG, "公共工作区"),
-    (PI_WORKSPACE_SLUG, "主PI工作区"),
-)
-
 INSTANCE_CONFIG = (
     ("DISABLE_WORKSPACE_CREATION", "1"),
     ("ENABLE_SIGNUP", "0"),
     ("ENABLE_MAGIC_LINK_LOGIN", "0"),
+)
+
+WORKSPACE_SPECS = (
+    (
+        PUBLIC_WORKSPACE_SLUG,
+        "公共工作区",
+        WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH,
+        True,
+    ),
+    (
+        PI_WORKSPACE_SLUG,
+        "主PI工作区",
+        WorkspaceResearchSetting.Purpose.PI_PRIVATE,
+        False,
+    ),
 )
 
 ADMIN_ACCOUNTS = (
@@ -71,43 +73,106 @@ TEST_ACCOUNTS = (
 
 
 class Command(BaseCommand):
-    help = "Create the public / main PI workspaces, administrator tags and test group."
+    help = "Create the minimum public / main PI workspace production baseline."
 
     def add_arguments(self, parser):
-        parser.add_argument("--with-demo", action="store_true", help="also seed the research demo fixture")
+        parser.add_argument(
+            "--with-demo",
+            action="store_true",
+            help="also create administrator-tag/test accounts and seed the demo fixture",
+        )
         parser.add_argument(
             "--reset-passwords",
             action="store_true",
-            help="reset the password of the accounts this command maintains",
+            help="reset passwords only for accounts maintained by this invocation",
         )
         parser.add_argument(
             "--backfill-members",
             action="store_true",
-            help="add every active user to the public workspace",
+            help="explicitly add every active user to the public workspace",
         )
+        parser.add_argument("--json", action="store_true", help="emit one machine-readable JSON document")
 
     def handle(self, *args, **options):
         with transaction.atomic():
-            admin = self._ensure_user(ADMIN_EMAIL, "系统管理员", options["reset_passwords"])
+            instance = self._ensure_instance()
+            admin, admin_created = self._ensure_user(
+                ADMIN_EMAIL,
+                "系统管理员",
+                options["reset_passwords"],
+            )
+            instance_admin_created = self._ensure_instance_admin(instance, admin)
             workspaces = self._ensure_workspaces(admin)
-            configuration = self._ensure_instance_configuration()
-            tags = self._ensure_admin_tags(admin, options["reset_passwords"])
-            self._ensure_root_unit(workspaces[PUBLIC_WORKSPACE_SLUG], admin)
-            self._ensure_test_group(workspaces[PUBLIC_WORKSPACE_SLUG], admin, options["reset_passwords"])
+            self._ensure_instance_configuration()
+
+            demo_tags = []
+            if options["with_demo"]:
+                demo_tags = self._ensure_demo_admin_tags(
+                    instance,
+                    admin,
+                    options["reset_passwords"],
+                )
+                self._ensure_root_unit(workspaces[PUBLIC_WORKSPACE_SLUG], admin)
+                self._ensure_test_group(
+                    workspaces[PUBLIC_WORKSPACE_SLUG],
+                    admin,
+                    options["reset_passwords"],
+                )
             if options["backfill_members"]:
                 self._backfill_public_members(workspaces[PUBLIC_WORKSPACE_SLUG], admin)
 
-        self.stdout.write(self.style.SUCCESS("\nSystem baseline ready."))
-        for slug, name in WORKSPACE_SPECS:
-            self.stdout.write(f"  workspace {slug} ({name})")
-        self.stdout.write(f"  instance configuration updated: {', '.join(configuration)}")
-        self.stdout.write(f"  administrator tags: {', '.join(tags)}")
-
+        demo_output = ""
         if options["with_demo"]:
-            self.stdout.write("\nSeeding the research demo fixture into the public workspace...")
-            call_command("seed_research_demo", workspace=PUBLIC_WORKSPACE_SLUG)
+            captured = StringIO() if options["json"] else self.stdout
+            call_command("seed_research_demo", workspace=PUBLIC_WORKSPACE_SLUG, stdout=captured)
+            if options["json"]:
+                demo_output = captured.getvalue()
 
-    # -- helpers -----------------------------------------------------------
+        result = {
+            "admin": {
+                "email": admin.email,
+                "user_created": admin_created,
+                "instance_admin_created": instance_admin_created,
+            },
+            "demo": {
+                "enabled": bool(options["with_demo"]),
+                "administrator_tags": demo_tags,
+                "output": demo_output,
+            },
+            "workspaces": {
+                slug: {
+                    "id": str(workspace.id),
+                    "name": workspace.name,
+                    "purpose": workspace.research_setting.purpose,
+                    "module_enabled": workspace.research_setting.module_enabled,
+                }
+                for slug, workspace in workspaces.items()
+            },
+        }
+        if options["json"]:
+            self.stdout.write(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+            return
+
+        self.stdout.write(self.style.SUCCESS("System baseline ready."))
+        self.stdout.write(f"  instance administrator: {ADMIN_EMAIL}")
+        for slug, workspace in workspaces.items():
+            setting = workspace.research_setting
+            self.stdout.write(
+                f"  workspace {slug} ({workspace.name}): purpose={setting.purpose}, "
+                f"research={'on' if setting.module_enabled else 'off'}"
+            )
+        if options["with_demo"]:
+            self.stdout.write("  demo fixture: enabled")
+
+    def _ensure_instance(self):
+        instance = Instance.objects.first()
+        if instance is not None:
+            return instance
+        return Instance.objects.create(
+            instance_name=os.environ.get("INSTANCE_NAME", "Plane"),
+            instance_id=secrets.token_hex(12),
+            current_version=os.environ.get("APP_VERSION", "0.0.0"),
+        )
 
     def _ensure_user(self, email, display_name, reset_password=False):
         user = User.objects.filter(email__iexact=email).first()
@@ -126,52 +191,25 @@ class Command(BaseCommand):
             user.set_password(DEFAULT_PASSWORD)
             user.is_password_reset_required = True
             user.save(update_fields=["password", "is_password_reset_required", "updated_at"])
-        self._count("users", created)
-        return user
+        return user, created
 
-    def _ensure_workspaces(self, admin):
-        workspaces = {}
-        for slug, name in WORKSPACE_SPECS:
-            workspace = Workspace.objects.filter(slug=slug, deleted_at__isnull=True).first()
-            created = workspace is None
-            if created:
-                workspace = Workspace.objects.create(
-                    slug=slug,
-                    name=name,
-                    owner=admin,
-                    organization_size="1-10",
-                )
-            self._count("workspaces", created)
-            workspaces[slug] = workspace
-
-            member, member_created = WorkspaceMember.objects.get_or_create(
-                workspace=workspace,
-                member=admin,
-                defaults={"role": 20, "created_by": admin},
-            )
-            if not member_created and (member.role != 20 or not member.is_active):
-                member.role = 20
-                member.is_active = True
-                member.save(update_fields=["role", "is_active", "updated_at"])
-
-            setting, setting_created = WorkspaceResearchSetting.objects.get_or_create(
-                workspace=workspace,
-                defaults={
-                    "module_enabled": True,
-                    "org_enabled": True,
-                    "report_enabled": True,
-                    "approval_enabled": True,
-                    "created_by": admin,
-                },
-            )
-            if not setting_created and not setting.module_enabled:
-                setting.module_enabled = True
-                setting.save(update_fields=["module_enabled", "updated_at"])
-            self._count("workspace_settings", setting_created)
-        return workspaces
+    def _ensure_instance_admin(self, instance, admin):
+        row = InstanceAdmin.all_objects.filter(instance=instance, user=admin).first()
+        if row is None:
+            InstanceAdmin.objects.create(instance=instance, user=admin, role=20)
+            return True
+        changed = []
+        if row.deleted_at is not None:
+            row.deleted_at = None
+            changed.append("deleted_at")
+        if row.role != 20:
+            row.role = 20
+            changed.append("role")
+        if changed:
+            row.save(update_fields=[*changed, "updated_at"])
+        return False
 
     def _ensure_instance_configuration(self):
-        updated = []
         for key, value in INSTANCE_CONFIG:
             row, created = InstanceConfiguration.objects.get_or_create(
                 key=key,
@@ -180,31 +218,80 @@ class Command(BaseCommand):
             if not created and row.value != value:
                 row.value = value
                 row.save(update_fields=["value", "updated_at"])
-            updated.append(key)
-        return updated
 
-    def _ensure_admin_tags(self, admin, reset_passwords=False):
-        instance = Instance.objects.first()
+    def _ensure_workspaces(self, admin):
+        workspaces = {}
+        for slug, name, purpose, new_module_enabled in WORKSPACE_SPECS:
+            workspace = Workspace.objects.filter(slug=slug, deleted_at__isnull=True).first()
+            workspace_created = workspace is None
+            if workspace_created:
+                workspace = Workspace.objects.create(
+                    slug=slug,
+                    name=name,
+                    owner=admin,
+                    organization_size="1-10",
+                )
+                WorkspaceMember.objects.create(
+                    workspace=workspace,
+                    member=admin,
+                    role=20,
+                    created_by=admin,
+                )
+
+            setting = WorkspaceResearchSetting.all_objects.filter(workspace=workspace).first()
+            if setting is None:
+                setting = WorkspaceResearchSetting.objects.create(
+                    workspace=workspace,
+                    purpose=purpose,
+                    module_enabled=new_module_enabled,
+                    org_enabled=True,
+                    report_enabled=True,
+                    approval_enabled=True,
+                    created_by=admin,
+                )
+            else:
+                changed = []
+                if setting.deleted_at is not None:
+                    setting.deleted_at = None
+                    changed.append("deleted_at")
+                if setting.purpose != purpose:
+                    setting.purpose = purpose
+                    changed.append("purpose")
+                # A PI-private workspace must never expose research routes.  An
+                # existing public workspace keeps the operator's on/off choice.
+                if purpose == WorkspaceResearchSetting.Purpose.PI_PRIVATE and setting.module_enabled:
+                    setting.module_enabled = False
+                    changed.append("module_enabled")
+                if changed:
+                    setting.save(update_fields=[*changed, "updated_at"])
+
+            workspace.research_setting = setting
+            workspaces[slug] = workspace
+        return workspaces
+
+    def _ensure_demo_admin_tags(self, instance, admin, reset_passwords=False):
         assigned = []
         for email, display_name, role in ADMIN_ACCOUNTS:
-            user = self._ensure_user(email, display_name, reset_passwords)
-            assignment, created = InstanceRoleAssignment.objects.get_or_create(
-                user=user,
-                role=role,
-                deleted_at__isnull=True,
-                defaults={"instance": instance, "assigned_by": admin},
-            )
-            if assignment.deleted_at is not None:
-                assignment.deleted_at = None
-                assignment.save(update_fields=["deleted_at", "updated_at"])
-            sync_admin_workspace_membership(user, actor=admin)
-            self._count("admin_tags", created)
-            assigned.append(f"{email}:{role}")
+            user, _created = self._ensure_user(email, display_name, reset_passwords)
+            historical = InstanceRoleAssignment.all_objects.filter(user=user, role=role).first()
+            if historical is None:
+                InstanceRoleAssignment.objects.create(
+                    user=user,
+                    role=role,
+                    instance=instance,
+                    assigned_by=admin,
+                )
+                assigned.append(f"{email}:{role}")
+            elif historical.deleted_at is None:
+                assigned.append(f"{email}:{role}")
+            # A revoked tag is deliberately not resurrected by a seed rerun.
         return assigned
 
     def _ensure_root_unit(self, workspace, actor):
         root = OrgUnit.objects.filter(
-            workspace=workspace, unit_type=OrgUnit.UnitType.ROOT, deleted_at__isnull=True
+            workspace=workspace,
+            unit_type=OrgUnit.UnitType.ROOT,
+            deleted_at__isnull=True,
         ).first()
         if root is None:
             root = OrgUnit.objects.create(
@@ -218,13 +305,15 @@ class Command(BaseCommand):
             )
             root.path = f"/{str(root.id).replace('-', '')}/"
             root.save(update_fields=["path", "updated_at"])
-            self._count("org_units", True)
         return root
 
     def _ensure_test_group(self, workspace, actor, reset_passwords=False):
         root = self._ensure_root_unit(workspace, actor)
         group = OrgUnit.objects.filter(
-            workspace=workspace, parent=root, name=TEST_GROUP_NAME, deleted_at__isnull=True
+            workspace=workspace,
+            parent=root,
+            name=TEST_GROUP_NAME,
+            deleted_at__isnull=True,
         ).first()
         if group is None:
             group = OrgUnit(
@@ -238,19 +327,15 @@ class Command(BaseCommand):
             )
             group.path = f"{root.path}{str(group.id).replace('-', '')}/"
             group.save()
-            self._count("org_units", True)
 
         accounts = {}
         for email, display_name, org_role in TEST_ACCOUNTS:
-            user = self._ensure_user(email, display_name, reset_passwords)
-            member, created = WorkspaceMember.objects.get_or_create(
+            user, _created = self._ensure_user(email, display_name, reset_passwords)
+            WorkspaceMember.objects.get_or_create(
                 workspace=workspace,
                 member=user,
                 defaults={"role": 15, "created_by": actor},
             )
-            if not created and not member.is_active:
-                member.is_active = True
-                member.save(update_fields=["is_active", "updated_at"])
             OrgUnitMember.objects.get_or_create(
                 workspace=workspace,
                 org_unit=group,
@@ -263,18 +348,14 @@ class Command(BaseCommand):
                     "created_by": actor,
                 },
             )
-            # Organisation owners / main PIs also belong to the main PI
-            # workspace, whatever their tag set is.
-            sync_main_pi_workspace_seat(user, actor=actor)
             accounts[email] = user
 
         mentee = accounts["test.owner@ai4ms.local"]
         for email in ("test.advisor@ai4ms.local", "test.pi@ai4ms.local"):
-            mentor = accounts[email]
             MentorBinding.objects.get_or_create(
                 workspace=workspace,
                 mentee=mentee,
-                mentor=mentor,
+                mentor=accounts[email],
                 deleted_at__isnull=True,
                 defaults={
                     "org_unit": group,
@@ -285,16 +366,9 @@ class Command(BaseCommand):
         return group
 
     def _backfill_public_members(self, workspace, actor):
-        created = 0
         for user in User.objects.filter(is_bot=False, is_active=True):
-            _member, was_created = WorkspaceMember.objects.get_or_create(
+            WorkspaceMember.objects.get_or_create(
                 workspace=workspace,
                 member=user,
                 defaults={"role": 15, "created_by": actor},
             )
-            created += 1 if was_created else 0
-        self.stdout.write(f"  public workspace members added: {created}")
-
-    def _count(self, key, created):
-        if created:
-            self.stdout.write(f"  + {key}")

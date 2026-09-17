@@ -5,7 +5,7 @@
 from .audit import ResearchAuditEvent
 from .attachment import ReportAttachment
 from .approval import ApprovalAction, ApprovalFlow, ApprovalFlowStep, ApprovalRequest
-from .config import ReportVisibility, WorkspaceResearchSetting
+from .config import ReportVisibility, ResearchWorkspaceAccessGrant, WorkspaceResearchSetting
 from .code import CodeArtifact, ProjectCodeRepository
 from .experiment import (
     AMENDABLE_FIELDS,
@@ -28,7 +28,13 @@ from .membership import ResearchInviteCode, ResearchUserProfile, UserImportBatch
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .outcome import ResearchOutcome, ResearchOutcomeLink
 from .project import ResearchProjectProfile
-from .report import PeriodicReport, ReportAccessGrant, ReportReviewLog
+from .report import (
+    PeriodicReport,
+    PeriodicReportProjectReference,
+    PeriodicReportSnapshot,
+    ReportAccessGrant,
+    ReportReviewLog,
+)
 from .review import (
     DEFAULT_MIN_REVIEWERS,
     DEFAULT_PASS_RATIO,
@@ -77,6 +83,8 @@ __all__ = [
     "ReportVisibility",
     "ReportTemplate",
     "PeriodicReport",
+    "PeriodicReportProjectReference",
+    "PeriodicReportSnapshot",
     "ReportAccessGrant",
     "ReportAttachment",
     "ApprovalAction",
@@ -94,6 +102,7 @@ __all__ = [
     "ResearchProjectProfile",
     "ResearchAuditEvent",
     "WorkspaceResearchSetting",
+    "ResearchWorkspaceAccessGrant",
     "MentorBinding",
     "ResearchOutcome",
     "ResearchOutcomeLink",

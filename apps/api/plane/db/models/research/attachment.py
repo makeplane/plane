@@ -43,6 +43,7 @@ class ReportAttachment(BaseModel):
         related_name="research_report_attachments",
         null=True,
     )
+    official_version_no = models.PositiveIntegerField(null=True, blank=True, db_index=True)
 
     class Meta:
         verbose_name = "Report Attachment"

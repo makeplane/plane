@@ -23,6 +23,9 @@ def default_workspace_research_settings():
     limits = research_file_limits()
     return {
         "module_enabled": research_module_enabled(),
+        "purpose": "GENERAL",
+        "main_pi": None,
+        "required_reporter_categories": ["STUDENT", "POSTDOC"],
         "org_enabled": True,
         "report_enabled": True,
         "approval_enabled": True,
@@ -52,6 +55,9 @@ def get_workspace_research_settings(workspace):
 
     return {
         "module_enabled": bool(setting.module_enabled),
+        "purpose": setting.purpose,
+        "main_pi": setting.main_pi_id,
+        "required_reporter_categories": setting.required_reporter_categories,
         "org_enabled": bool(setting.org_enabled),
         "report_enabled": bool(setting.report_enabled),
         "approval_enabled": bool(setting.approval_enabled),

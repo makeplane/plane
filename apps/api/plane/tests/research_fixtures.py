@@ -123,7 +123,7 @@ def public_workspace(owner=None, slug="public", name="公共工作区"):
     if workspace is not None:
         return workspace
     workspace = make_workspace(owner, name=name, slug=slug)
-    enable_research(workspace)
+    enable_research(workspace, purpose=WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH)
     return workspace
 
 
@@ -133,5 +133,5 @@ def pi_workspace(owner=None, slug="pi", name="主PI工作区"):
     if workspace is not None:
         return workspace
     workspace = make_workspace(owner, name=name, slug=slug)
-    enable_research(workspace)
+    enable_research(workspace, purpose=WorkspaceResearchSetting.Purpose.PI_PRIVATE)
     return workspace

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
@@ -28,6 +29,11 @@ class OrgUnit(BaseModel):
         GROUP = "GROUP", "Group"
         TEAM = "TEAM", "Team"
 
+    class BusinessCategory(models.TextChoices):
+        BASIC_RESEARCH = "BASIC_RESEARCH", "Basic research"
+        INDUSTRIALIZATION = "INDUSTRIALIZATION", "Industrialization"
+        MENTOR_GROUP = "MENTOR_GROUP", "Mentor group"
+
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.PROTECT,
@@ -44,6 +50,12 @@ class OrgUnit(BaseModel):
     path = models.CharField(max_length=1024, default="", db_index=True)
     depth = models.PositiveSmallIntegerField(default=0)
     unit_type = models.CharField(max_length=20, choices=UnitType.choices, default=UnitType.GROUP)
+    business_category = models.CharField(
+        max_length=24,
+        choices=BusinessCategory.choices,
+        null=True,
+        blank=True,
+    )
     sort_order = models.FloatField(default=get_default_org_unit_sort_order)
     is_active = models.BooleanField(default=True)
 
@@ -186,6 +198,7 @@ class MentorBinding(BaseModel):
     )
     effective_from = models.DateField(default=timezone.localdate)
     effective_to = models.DateField(null=True, blank=True)
+    is_primary_advisor = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Research Mentor Binding"
@@ -218,3 +231,29 @@ class MentorBinding(BaseModel):
         if self.effective_to and self.effective_to < on_date:
             return False
         return True
+
+    def clean(self):
+        super().clean()
+        if self.effective_to and self.effective_to < self.effective_from:
+            raise ValidationError({"effective_to": "Effective end date cannot precede the start date."})
+        self._validate_primary_advisor_period()
+
+    def _validate_primary_advisor_period(self):
+        if not self.is_primary_advisor or self.deleted_at is not None:
+            return
+
+        overlapping = MentorBinding.objects.filter(
+            workspace_id=self.workspace_id,
+            mentee_id=self.mentee_id,
+            is_primary_advisor=True,
+            deleted_at__isnull=True,
+        ).exclude(pk=self.pk)
+        overlapping = overlapping.filter(Q(effective_to__isnull=True) | Q(effective_to__gte=self.effective_from))
+        if self.effective_to is not None:
+            overlapping = overlapping.filter(effective_from__lte=self.effective_to)
+        if overlapping.exists():
+            raise ValidationError({"is_primary_advisor": "The primary advisor period overlaps an existing binding."})
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super().save(*args, **kwargs)
