@@ -117,3 +117,6 @@ packages/i18n/src/types/keys.generated.ts
 
 # Local security notes (not for version control)
 /security/
+
+# Local browser-debug artifacts (playwright-cli screenshots / console logs)
+.playwright-cli/
