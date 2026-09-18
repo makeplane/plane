@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-// plane types
+import { DEFAULT_TIMEZONE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// hooks
 import type { IUser } from "@plane/types";
+// hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
 // types
 
@@ -22,7 +22,7 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   // store hooks
   const { t, currentLocale } = useTranslation();
 
-  const userTimeZone = user?.user_timezone;
+  const userTimeZone = user?.user_timezone || DEFAULT_TIMEZONE;
   const displayName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
 
   // the greeting and the clock below it read the same timezone, so they can never disagree

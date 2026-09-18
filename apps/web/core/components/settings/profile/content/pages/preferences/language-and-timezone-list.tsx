@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { DEFAULT_TIMEZONE } from "@plane/constants";
 import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect } from "@plane/ui";
@@ -73,7 +74,7 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         <SettingsControlItem
           title={t("timezone")}
           description={t("timezone_setting")}
-          control={<TimezoneSelect value={user?.user_timezone || "Asia/Kolkata"} onChange={handleTimezoneChange} />}
+          control={<TimezoneSelect value={user?.user_timezone || DEFAULT_TIMEZONE} onChange={handleTimezoneChange} />}
         />
         <SettingsControlItem
           title={t("language")}

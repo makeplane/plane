@@ -5,6 +5,7 @@
  */
 
 import useSWR from "swr";
+import { DEFAULT_TIMEZONE } from "@plane/constants";
 import type { TTimezoneObject } from "@plane/types";
 // services
 import timezoneService from "@/services/timezone.service";
@@ -67,7 +68,8 @@ const useTimezone = () => {
     },
   ];
 
-  const selectedTimezone = (value: string | undefined) => options.find((option) => option.value === value)?.content;
+  const selectedTimezone = (value: string | undefined) =>
+    options.find((option) => option.value === (value || DEFAULT_TIMEZONE))?.content;
 
   return {
     timezones: options,

@@ -5,6 +5,7 @@
 from django.db import models
 
 from plane.db.models.base import BaseModel
+from plane.utils.constants import DEFAULT_TIMEZONE
 
 
 def get_default_required_reporter_categories():
@@ -86,7 +87,7 @@ class WorkspaceResearchSetting(BaseModel):
     image_max_mb = models.PositiveIntegerField(default=20)
     pdf_max_mb = models.PositiveIntegerField(default=100)
     markdown_max_mb = models.PositiveIntegerField(default=5)
-    timezone = models.CharField(max_length=255, null=True, blank=True)
+    timezone = models.CharField(max_length=255, default=DEFAULT_TIMEZONE, null=True, blank=True)
     audit_retention_days = models.PositiveIntegerField(default=0)
     # ------------------------------------------------------------------
     # P1 sub switches and gate defaults (§4.9). All additive and optional:

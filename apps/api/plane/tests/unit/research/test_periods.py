@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import date
+from datetime import date, datetime, timezone
+from unittest.mock import patch
 
 import pytest
 
@@ -72,3 +73,23 @@ class TestTimezoneHandling:
     def test_unknown_report_type_is_rejected(self):
         with pytest.raises(InvalidPeriod):
             current_period("DAILY", reference=date(2026, 9, 15))
+
+    @patch("plane.research.utils.periods.django_timezone.now")
+    def test_monthly_period_uses_shanghai_date_at_utc_boundary(self, now):
+        now.return_value = datetime(2026, 8, 31, 16, 30, tzinfo=timezone.utc)
+
+        key, start, end = current_period("MONTHLY", timezone_name="Asia/Shanghai")
+
+        assert key == "2026-09"
+        assert start == date(2026, 9, 1)
+        assert end == date(2026, 9, 30)
+
+    @patch("plane.research.utils.periods.django_timezone.now")
+    def test_weekly_period_uses_shanghai_date_at_utc_boundary(self, now):
+        now.return_value = datetime(2026, 9, 20, 16, 30, tzinfo=timezone.utc)
+
+        key, start, end = current_period("WEEKLY", timezone_name="Asia/Shanghai")
+
+        assert key == "2026-W39"
+        assert start == date(2026, 9, 21)
+        assert end == date(2026, 9, 27)
