@@ -952,10 +952,10 @@
     },
     "user_import": {
       "title": "批量导入",
-      "hint": "新模板支持人员类别、业务方向、主归属组织、主导师邮箱和用分号分隔的联合导师邮箱；组织与导师必须已存在。旧分组表和导师映射表继续兼容。",
+      "hint": "新模板必须包含姓名、学号、邮件、手机号、年级、人员类别、业务方向、小组、主导师、联合导师1、联合导师2；小组和导师必须已存在，导师表为必传。",
       "fields": {
         "students": "成员名册",
-        "advisors": "导师邮箱表（可选）",
+        "advisors": "导师姓名邮箱表（必传）",
         "reset_passwords": "重新生成初始密码"
       },
       "actions": {
@@ -967,8 +967,8 @@
         "name": "姓名",
         "email": "邮箱",
         "category": "人员类别",
-        "primary_org": "主归属组织",
-        "advisors": "导师",
+        "primary_org": "小组",
+        "advisors": "导师（主+联合）",
         "group": "分组",
         "advisor": "负责导师",
         "status": "状态",
@@ -996,8 +996,8 @@
       "error": {
         "load": "导入记录加载失败。",
         "run": "导入失败。",
-        "no_file": "请先选择学生表文件。",
-        "user_import_file_required": "请上传学生表文件。",
+        "no_file": "请先选择成员名册和导师姓名邮箱表。",
+        "user_import_file_required": "请同时上传成员名册和导师姓名邮箱表。",
         "user_import_file_invalid": "文件无法解析，请检查表头与编码。",
         "public_workspace_missing": "公共工作区尚未创建。"
       }

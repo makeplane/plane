@@ -57,7 +57,8 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
   const runImport = useCallback(
     async (dryRun: boolean) => {
       const students = studentInput.current?.files?.[0];
-      if (!students) {
+      const advisors = advisorInput.current?.files?.[0];
+      if (!students || !advisors) {
         setErrorKey("research.user_import.error.no_file");
         return;
       }
@@ -65,7 +66,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
       try {
         const batch = await accountService.importUsers(workspaceSlug, {
           students,
-          advisors: advisorInput.current?.files?.[0],
+          advisors,
           dry_run: dryRun,
           reset_passwords: resetPasswords,
         });
@@ -109,7 +110,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
         </label>
         <label className="flex flex-col gap-1 text-11 text-tertiary">
           {t("research.user_import.fields.advisors")}
-          <input ref={advisorInput} type="file" accept=".csv,.xlsx" className="text-12 text-secondary" />
+          <input ref={advisorInput} type="file" accept=".csv,.xlsx" required className="text-12 text-secondary" />
         </label>
         <label className="flex items-center gap-2 text-11 text-tertiary">
           <input
@@ -129,7 +130,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
 
       <p className="text-11 text-tertiary">{t("research.user_import.hint")}</p>
       <p className="font-mono rounded border border-subtle bg-surface-2 px-3 py-2 text-11 text-secondary">
-        姓名, 学号, 邮件, 人员类别, 业务方向, 主归属组织, 主导师邮箱, 联合导师邮箱
+        姓名, 学号, 邮件, 手机号, 年级, 人员类别, 业务方向, 小组, 主导师, 联合导师1, 联合导师2
       </p>
       {errorKey && <p className="text-12 text-danger-primary">{t(errorKey)}</p>}
 
@@ -180,9 +181,13 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                     <td className="px-2 py-1 text-primary">{row.display_name}</td>
                     <td className="px-2 py-1 text-secondary">{row.email}</td>
                     <td className="px-2 py-1 text-secondary">{row.raw.category || "STUDENT"}</td>
-                    <td className="px-2 py-1 text-secondary">{row.raw.primary_org_unit || row.group_label || "-"}</td>
+                    <td className="px-2 py-1 text-secondary">{row.raw.group || row.group_label || "-"}</td>
                     <td className="px-2 py-1 text-secondary">
-                      {[row.raw.primary_advisor_email || row.advisor_name, row.raw.co_advisor_emails]
+                      {[
+                        row.raw.primary_advisor_name || row.advisor_name,
+                        row.raw.co_advisor_1_name,
+                        row.raw.co_advisor_2_name,
+                      ]
                         .filter(Boolean)
                         .join("; ") || "-"}
                     </td>

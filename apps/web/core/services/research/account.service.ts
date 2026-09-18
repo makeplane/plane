@@ -100,11 +100,11 @@ export class ResearchAccountService extends APIService {
 
   async importUsers(
     workspaceSlug: string,
-    payload: { students: File; advisors?: File; dry_run?: boolean; reset_passwords?: boolean }
+    payload: { students: File; advisors: File; dry_run?: boolean; reset_passwords?: boolean }
   ) {
     const formData = new FormData();
     formData.append("students", payload.students);
-    if (payload.advisors) formData.append("advisors", payload.advisors);
+    formData.append("advisors", payload.advisors);
     formData.append("dry_run", payload.dry_run ? "true" : "false");
     formData.append("reset_passwords", payload.reset_passwords ? "true" : "false");
 

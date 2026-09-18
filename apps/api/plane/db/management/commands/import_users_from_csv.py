@@ -30,7 +30,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--workspace", default=PUBLIC_WORKSPACE_SLUG, help="workspace slug")
         parser.add_argument("--students", required=True, help="student roster (csv/xlsx)")
-        parser.add_argument("--advisors", help="optional name to mailbox table (csv/xlsx)")
+        parser.add_argument("--advisors", required=True, help="name to mailbox table (csv/xlsx)")
         parser.add_argument("--actor", help="account email recorded as the importer")
         parser.add_argument("--dry-run", action="store_true", help="validate without writing accounts")
         parser.add_argument("--yes", action="store_true", help="confirm the import")
@@ -62,12 +62,10 @@ class Command(BaseCommand):
 
         try:
             students = parse_students(students_path.read_bytes(), students_path.name)
-            advisor_map = {}
-            if options.get("advisors"):
-                advisors_path = Path(options["advisors"])
-                if not advisors_path.exists():
-                    raise CommandError(f"Advisor table not found: {advisors_path}")
-                advisor_map = parse_advisors(advisors_path.read_bytes(), advisors_path.name)
+            advisors_path = Path(options["advisors"])
+            if not advisors_path.exists():
+                raise CommandError(f"Advisor table not found: {advisors_path}")
+            advisor_map = parse_advisors(advisors_path.read_bytes(), advisors_path.name)
         except AccountError as error:
             raise CommandError(f"{error.error_code}: {error.message}")
 

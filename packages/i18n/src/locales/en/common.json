@@ -952,10 +952,10 @@
     },
     "user_import": {
       "title": "Roster import",
-      "hint": "The new roster supports category, business direction, primary organisation, primary advisor email and semicolon-separated co-advisor emails. Organisations and advisors must already exist; legacy roster columns remain supported.",
+      "hint": "The new roster requires name, student number, email, phone, grade, category, business direction, team, primary advisor, co-advisor 1 and co-advisor 2. Teams and advisors must already exist, and the advisor mapping file is required.",
       "fields": {
         "students": "Member roster",
-        "advisors": "Advisor mailboxes (optional)",
+        "advisors": "Advisor name-to-email table (required)",
         "reset_passwords": "Re-issue one-time passwords"
       },
       "actions": {
@@ -967,8 +967,8 @@
         "name": "Name",
         "email": "Mailbox",
         "category": "Category",
-        "primary_org": "Primary organisation",
-        "advisors": "Advisors",
+        "primary_org": "Team",
+        "advisors": "Advisors (primary + co)",
         "group": "Group",
         "advisor": "Advisor",
         "status": "Status",
@@ -996,8 +996,8 @@
       "error": {
         "load": "Could not load the imports.",
         "run": "The import failed.",
-        "no_file": "Choose the student roster file first.",
-        "user_import_file_required": "A roster file is required.",
+        "no_file": "Choose both the member roster and advisor name-to-email table first.",
+        "user_import_file_required": "Both the member roster and advisor mapping files are required.",
         "user_import_file_invalid": "The roster could not be read. Check the header row and the encoding.",
         "public_workspace_missing": "The public workspace does not exist yet."
       }

@@ -396,6 +396,11 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
                 "A student roster file is required.",
             )
         advisors_file = request.FILES.get("advisors")
+        if advisors_file is None:
+            return research_error(
+                ResearchErrorCode.IMPORT_FILE_REQUIRED,
+                "An advisor name-to-email mapping file is required.",
+            )
         dry_run = str(request.data.get("dry_run", "")).strip().lower() in ("1", "true", "yes", "on")
         reset_passwords = str(request.data.get("reset_passwords", "")).strip().lower() in (
             "1",
@@ -406,7 +411,7 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
 
         try:
             students = parse_students(students_file.read(), students_file.name)
-            advisor_map = parse_advisors(advisors_file.read(), advisors_file.name) if advisors_file else {}
+            advisor_map = parse_advisors(advisors_file.read(), advisors_file.name)
         except AccountError as exc:
             return account_error_response(exc)
 
@@ -477,13 +482,14 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                 "姓名",
                 "邮箱",
                 "学号",
+                "手机号",
+                "年级",
                 "人员类别",
                 "业务方向",
-                "主归属组织",
-                "主导师邮箱",
-                "联合导师邮箱",
-                "分组",
-                "负责导师",
+                "小组",
+                "主导师",
+                "联合导师1",
+                "联合导师2",
                 "状态",
                 "说明",
                 "初始密码",
@@ -496,13 +502,14 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                     row.display_name,
                     row.email,
                     row.student_no,
+                    row.raw.get("phone", ""),
+                    row.raw.get("grade", ""),
                     row.raw.get("category", ""),
                     row.raw.get("business_category", ""),
-                    row.raw.get("primary_org_unit", ""),
-                    row.raw.get("primary_advisor_email", ""),
-                    row.raw.get("co_advisor_emails", ""),
-                    row.group_label,
-                    row.advisor_name,
+                    row.raw.get("group", row.group_label),
+                    row.raw.get("primary_advisor_name", row.advisor_name),
+                    row.raw.get("co_advisor_1_name", ""),
+                    row.raw.get("co_advisor_2_name", ""),
                     row.status,
                     row.message,
                     row.initial_password,
