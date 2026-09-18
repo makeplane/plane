@@ -105,7 +105,13 @@
       "open_project_setting": "Deschide o setare a proiectului",
       "nav_project_settings": "Mergi la setările proiectului",
       "nav_workspace_active_cycle": "Mergi la toate ciclurile active",
-      "nav_project_overview": "Mergi la prezentarea generală a proiectului"
+      "nav_project_overview": "Mergi la prezentarea generală a proiectului",
+      "move_down": "Move down in the work item list",
+      "move_up": "Move up in the work item list",
+      "open_work_item": "Open the focused work item",
+      "toggle_selection": "Toggle multi-select on the focused work item",
+      "open_work_item_new_tab": "Open the focused work item in a new tab",
+      "toggle_filters": "Show or hide filters for the current work item list"
     },
     "account_actions": {
       "sign_out": "Deconectează-te",
