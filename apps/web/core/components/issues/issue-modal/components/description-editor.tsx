@@ -119,38 +119,37 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
 
     setIAmFeelingLucky(true);
 
-    aiService
-      .createGptTask(workspaceSlug.toString(), {
+    try {
+      const response = await aiService.createGptTask(workspaceSlug.toString(), {
         prompt: issueName,
         task: "Generate a proper description for this work item.",
-      })
-      .then((res) => {
-        if (res.response === "")
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message:
-              "Work item title isn't informative enough to generate the description. Please try with a different title.",
-          });
-        else handleAiAssistance(res.response_html);
-      })
-      .catch((err) => {
-        const error = err?.data?.error;
+      });
+      if (response.response === "")
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message:
+            "Work item title isn't informative enough to generate the description. Please try with a different title.",
+        });
+      else await handleAiAssistance(response.response_html);
+    } catch (err: any) {
+      const error = err?.data?.error;
 
-        if (err.status === 429)
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
-          });
-        else
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: error || "Some error occurred. Please try again.",
-          });
-      })
-      .finally(() => setIAmFeelingLucky(false));
+      if (err.status === 429)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
+        });
+      else
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: error || "Some error occurred. Please try again.",
+        });
+    } finally {
+      setIAmFeelingLucky(false);
+    }
   };
 
   return (
@@ -222,7 +221,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                     return asset_id;
                   } catch (error) {
                     console.log("Error in uploading issue asset:", error);
-                    throw new Error("Asset upload failed. Please try again later.");
+                    throw new Error("Asset upload failed. Please try again later.", { cause: error });
                   }
                 }}
                 duplicateFile={async (assetId: string) => {
@@ -276,15 +275,10 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                 }}
                 placement="top-end"
                 button={
-                  <button
-                    type="button"
-                    className="flex items-center gap-1 rounded-sm bg-surface-2 px-1.5 py-1 text-caption-sm-regular hover:bg-layer-1"
-                    onClick={() => setGptAssistantModal((prevData) => !prevData)}
-                    tabIndex={-1}
-                  >
+                  <span className="flex items-center gap-1 rounded-sm bg-surface-2 px-1.5 py-1 text-caption-sm-regular hover:bg-layer-1">
                     <AiStar1Outline className="h-4 w-4" />
                     AI
-                  </button>
+                  </span>
                 }
                 workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}

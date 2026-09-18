@@ -64,7 +64,7 @@ export function FavoriteFolder(props: Props) {
   const [folderToRename, setFolderToRename] = useState<string | boolean | null>(null);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
   // refs
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
   // translation
   const { t } = useTranslation();
@@ -76,14 +76,14 @@ export function FavoriteFolder(props: Props) {
   }, [favorite.id, favorite.children, workspaceSlug, fetchGroupedFavorites]);
 
   useEffect(() => {
-    const element = elementRef.current;
+    const dragElement = elementRef.current;
 
-    if (!element) return;
+    if (!dragElement) return;
     const initialData = { id: favorite.id, isGroup: true, isChild: false };
 
     return combine(
       draggable({
-        element,
+        element: dragElement,
         getInitialData: () => initialData,
         onDragStart: () => setIsDragging(true),
         onGenerateDragPreview: ({ nativeSetDragImage }) => {
@@ -109,7 +109,7 @@ export function FavoriteFolder(props: Props) {
         }, // canDrag: () => isDraggable,
       }),
       dropTargetForElements({
-        element,
+        element: dragElement,
         canDrop: ({ source }) => getCanDrop(source, favorite, false),
         getData: ({ input, element }) => {
           const blockedStates: InstructionType[] = [];
@@ -127,8 +127,8 @@ export function FavoriteFolder(props: Props) {
           });
         },
         onDrag: ({ source, self, location }) => {
-          const instruction = getInstructionFromPayload(self, source, location);
-          setInstruction(instruction);
+          const nextInstruction = getInstructionFromPayload(self, source, location);
+          setInstruction(nextInstruction);
         },
         onDragLeave: () => {
           setInstruction(undefined);
@@ -212,14 +212,7 @@ export function FavoriteFolder(props: Props) {
                   </div>
                 </Tooltip>
                 <CustomMenu
-                  customButton={
-                    <span
-                      ref={actionSectionRef}
-                      className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
-                    >
-                      <MoreHorizontalOutline className="size-3" />
-                    </span>
-                  }
+                  customButton={<MoreHorizontalOutline className="size-3" aria-hidden="true" />}
                   menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
                   className={cn(
                     "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
@@ -228,6 +221,7 @@ export function FavoriteFolder(props: Props) {
                     }
                   )}
                   customButtonClassName="grid place-items-center"
+                  customButtonRef={actionSectionRef}
                   placement="bottom-start"
                   ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
                 >

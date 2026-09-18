@@ -56,21 +56,20 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
     <CustomMenu
       className="flex items-center"
       customButton={
-        <AppSidebarItem
-          variant="button"
-          item={{
-            icon: (
-              <Avatar
-                alt={currentUser?.display_name}
-                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
-                src={getFileURL(currentUser?.avatar_url ?? "")}
-                size="xs"
-              />
-            ),
-            isActive: isUserMenuOpen,
-          }}
+        <AppSidebarItem.Icon
+          icon={
+            <Avatar
+              alt={currentUser?.display_name}
+              fallback={currentUser?.display_name?.[0]?.toUpperCase()}
+              src={getFileURL(currentUser?.avatar_url ?? "")}
+              size="xs"
+            />
+          }
+          highlight={isUserMenuOpen}
         />
       }
+      customButtonClassName="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
+      ariaLabel={t("common.profile_settings")}
       menuButtonOnClick={() => !isUserMenuOpen && setIsUserMenuOpen(true)}
       onMenuClose={() => setIsUserMenuOpen(false)}
       placement="bottom-end"

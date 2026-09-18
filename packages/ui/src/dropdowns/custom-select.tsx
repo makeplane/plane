@@ -24,6 +24,7 @@ const DropdownContext = createContext<() => void>(() => {});
 
 function CustomSelect(props: ICustomSelectProps) {
   const {
+    ariaLabel,
     customButtonClassName = "",
     buttonClassName = "",
     placement,
@@ -67,6 +68,8 @@ function CustomSelect(props: ICustomSelectProps) {
 
   return (
     <DropdownContext.Provider value={closeDropdown}>
+      {/* Headless UI supplies the combobox semantics. */}
+      {/* oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
       <Combobox
         as="div"
         ref={dropdownRef}
@@ -90,6 +93,7 @@ function CustomSelect(props: ICustomSelectProps) {
                   disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                 } ${customButtonClassName}`}
                 onClick={toggleDropdown}
+                aria-label={ariaLabel}
               >
                 {customButton}
               </button>
@@ -110,6 +114,7 @@ function CustomSelect(props: ICustomSelectProps) {
                   buttonClassName
                 )}
                 onClick={toggleDropdown}
+                aria-label={ariaLabel}
               >
                 {label}
                 {!noChevron && !disabled && <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />}
@@ -169,6 +174,8 @@ function Option(props: ICustomSelectItemProps) {
   }, [closeDropdown]);
 
   return (
+    // Headless UI supplies the option's keyboard semantics.
+    // oxlint-disable-next-line jsx_a11y/click-events-have-key-events
     <Combobox.Option
       as="li"
       value={value}

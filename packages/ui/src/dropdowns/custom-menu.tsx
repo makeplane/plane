@@ -62,6 +62,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     ariaLabel,
     buttonClassName = "",
     customButtonClassName = "",
+    customButtonRef,
     customButtonTabIndex = 0,
     placement,
     children,
@@ -248,7 +249,11 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
           {customButton ? (
             <Menu.Button as={React.Fragment}>
               <button
-                ref={setReferenceElement}
+                ref={(element) => {
+                  setReferenceElement(element);
+                  if (typeof customButtonRef === "function") customButtonRef(element);
+                  else if (customButtonRef) customButtonRef.current = element;
+                }}
                 type="button"
                 onClick={handleMenuButtonClick}
                 className={customButtonClassName}

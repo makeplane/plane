@@ -33,16 +33,9 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
 
       <CustomMenu
-        customButton={
-          <AppSidebarItem
-            variant="button"
-            item={{
-              icon: <HelpOutline className="size-5" />,
-              isActive: isNeedHelpOpen,
-            }}
-          />
-        }
-        // customButtonClassName="relative grid place-items-center rounded-md p-1.5 outline-none"
+        customButton={<AppSidebarItem.Icon icon={<HelpOutline className="size-5" />} highlight={isNeedHelpOpen} />}
+        customButtonClassName="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
+        ariaLabel="Help"
         menuButtonOnClick={() => !isNeedHelpOpen && setIsNeedHelpOpen(true)}
         onMenuClose={() => setIsNeedHelpOpen(false)}
         placement="bottom-end"
@@ -74,24 +67,18 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           </CustomMenu.MenuItem>
         )}
         <div className="my-1 border-t border-subtle" />
-        <CustomMenu.MenuItem>
-          <button
-            type="button"
-            onClick={() => toggleShortcutsListModal(true)}
-            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
-          >
-            <span className="text-11">{t("keyboard_shortcuts")}</span>
-          </button>
+        <CustomMenu.MenuItem
+          onClick={() => toggleShortcutsListModal(true)}
+          className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
+        >
+          <span className="text-11">{t("keyboard_shortcuts")}</span>
         </CustomMenu.MenuItem>
         {(config?.instance_changelog_url || CHANGELOG_URL) && (
-          <CustomMenu.MenuItem>
-            <button
-              type="button"
-              onClick={() => setProductUpdatesModalOpen(true)}
-              className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
-            >
-              <span className="text-11">{t("whats_new")}</span>
-            </button>
+          <CustomMenu.MenuItem
+            onClick={() => setProductUpdatesModalOpen(true)}
+            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
+          >
+            <span className="text-11">{t("whats_new")}</span>
           </CustomMenu.MenuItem>
         )}
         <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">

@@ -39,6 +39,7 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
   } = props;
   // state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (
     <CustomSearchSelect
@@ -55,53 +56,53 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
           onChange?.(value);
         }
       }}
-      customButton={
-        <>
-          <Tooltip tooltipContent={title} position="bottom">
-            <button
-              onClick={(e) => {
-                if (!isLast) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleOnClick?.();
-                }
-              }}
-              className={cn(
-                "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
-                {
-                  "hover:bg-layer-1 hover:text-primary": !isLast,
-                }
-              )}
+      customButtonPrefix={
+        <Tooltip tooltipContent={title} position="bottom">
+          <button
+            type="button"
+            onClick={() => {
+              if (isLast) dropdownButtonRef.current?.click();
+              else handleOnClick?.();
+            }}
+            className={cn(
+              "group flex h-full cursor-pointer items-center gap-2 rounded-sm rounded-r-none px-1.5 py-1 text-13 font-medium text-tertiary",
+              {
+                "hover:bg-layer-1 hover:text-primary": !isLast,
+              }
+            )}
+          >
+            {shouldTruncate && <div className="flex text-tertiary @4xl:hidden">...</div>}
+            <div
+              className={cn("flex gap-2", {
+                "hidden items-center gap-2 @4xl:flex": shouldTruncate,
+              })}
             >
-              {shouldTruncate && <div className="flex text-tertiary @4xl:hidden">...</div>}
-              <div
-                className={cn("flex gap-2", {
-                  "hidden items-center gap-2 @4xl:flex": shouldTruncate,
-                })}
-              >
-                {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
-                <Breadcrumbs.Label>{title}</Breadcrumbs.Label>
-              </div>
-            </button>
-          </Tooltip>
-          <Breadcrumbs.Separator
-            className={cn("rounded-r-sm", {
-              "bg-layer-1": isDropdownOpen && !isLast,
-              "hover:bg-layer-1": !isLast,
-            })}
-            containerClassName="p-0"
-            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
-              "text-primary": isDropdownOpen,
-              "rotate-90": isDropdownOpen || isLast,
-            })}
-            showDivider={!isLast}
-          />
-        </>
+              {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
+              <Breadcrumbs.Label>{title}</Breadcrumbs.Label>
+            </div>
+          </button>
+        </Tooltip>
       }
+      customButton={
+        <Breadcrumbs.Separator
+          className={cn("rounded-r-sm", {
+            "bg-layer-1": isDropdownOpen && !isLast,
+            "hover:bg-layer-1": !isLast,
+          })}
+          containerClassName="p-0"
+          iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+            "text-primary": isDropdownOpen,
+            "rotate-90": isDropdownOpen || isLast,
+          })}
+          showDivider={!isLast}
+        />
+      }
+      customButtonRef={dropdownButtonRef}
+      ariaLabel={isLast ? title : `${title ?? "Breadcrumb"} options`}
       disabled={navigationDisabled}
       className="h-full rounded-sm"
       customButtonClassName={cn(
-        "group flex h-full cursor-pointer items-center gap-0.5 rounded-sm outline-none hover:bg-surface-2",
+        "group flex h-full w-auto cursor-pointer items-center rounded-r-sm outline-none hover:bg-surface-2",
         {
           "bg-surface-2": isDropdownOpen,
         }

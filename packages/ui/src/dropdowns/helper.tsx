@@ -22,11 +22,14 @@ type Placement =
   | "right-end";
 
 export interface IDropdownProps {
+  ariaLabel?: string;
   customButtonClassName?: string;
+  customButtonRef?: React.Ref<HTMLButtonElement>;
   customButtonTabIndex?: number;
   buttonClassName?: string;
   className?: string;
   customButton?: React.ReactNode;
+  customButtonPrefix?: React.ReactNode;
   disabled?: boolean;
   input?: boolean;
   label?: string | React.ReactNode;
@@ -58,7 +61,6 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   closeOnSelect?: boolean;
   portalElement?: Element | null;
   openOnHover?: boolean;
-  ariaLabel?: string;
 }
 
 export interface ICustomSelectProps extends IDropdownProps {

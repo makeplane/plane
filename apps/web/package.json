@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -10,6 +10,7 @@
     "preview": "react-router build && serve -s build/client -l 3000",
     "start": "serve -s build/client -l 3000",
     "test": "node --test tests/*.test.mjs",
+    "test:components": "vitest run --config vitest.config.ts",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
     "check:lint": "oxlint --max-warnings=11957 .",
     "check:types": "react-router typegen && tsc --noEmit",
@@ -88,6 +89,7 @@
     "dotenv": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
   }
 }

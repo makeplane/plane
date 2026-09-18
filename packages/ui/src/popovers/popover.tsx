@@ -16,6 +16,7 @@ import type { TPopover } from "./types";
 
 export function Popover(props: TPopover) {
   const {
+    ariaLabel,
     popperPosition = "bottom-end",
     popperPadding = 0,
     buttonClassName = "",
@@ -49,6 +50,8 @@ export function Popover(props: TPopover) {
     <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
       <div ref={setReferenceElement} className={cn("w-full", buttonRefClassName)}>
         <HeadlessReactPopover.Button
+          type="button"
+          aria-label={ariaLabel}
           ref={popoverButtonRef as Ref<HTMLButtonElement>}
           className={cn(
             {

@@ -6,7 +6,8 @@
 
 import React from "react";
 // helpers
-import { Button } from "@plane/propel/button";
+import { getButtonStyling } from "@plane/propel/button";
+import { cn } from "@plane/utils";
 
 type Props = {
   icon: React.ReactNode;
@@ -17,9 +18,13 @@ type Props = {
 export function IssueDetailWidgetButton(props: Props) {
   const { icon, title, disabled = false } = props;
   return (
-    <Button variant={"secondary"} disabled={disabled} size="lg">
-      {icon && icon}
+    <span
+      className={cn(getButtonStyling("secondary", "lg"), {
+        "pointer-events-none border-subtle-1 bg-layer-transparent text-disabled": disabled,
+      })}
+    >
+      {icon}
       <span className="text-body-xs-medium">{title}</span>
-    </Button>
+    </span>
   );
 }

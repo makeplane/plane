@@ -15,7 +15,7 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type Props = {
-  ref: React.MutableRefObject<HTMLDivElement | null>;
+  ref: React.MutableRefObject<HTMLButtonElement | null>;
   isMenuActive: boolean;
   favorite: IFavorite;
   onChange: (value: boolean) => void;
@@ -29,11 +29,7 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
 
   return (
     <CustomMenu
-      customButton={
-        <span ref={ref} className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1">
-          <MoreHorizontalOutline className="size-4" />
-        </span>
-      }
+      customButton={<MoreHorizontalOutline className="size-4" aria-hidden="true" />}
       menuButtonOnClick={() => onChange(!isMenuActive)}
       className={cn(
         "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
@@ -42,6 +38,7 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
         }
       )}
       customButtonClassName="grid place-items-center"
+      customButtonRef={ref}
       placement="bottom-start"
       ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
     >

@@ -17,7 +17,6 @@ import {
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -92,7 +91,12 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   if (MENU_ITEMS.length === 0) return null;
 
   return (
-    <CustomMenu customButton={<IconButton icon={MoreHorizontalOutline} variant="ghost" size="sm" />} closeOnSelect>
+    <CustomMenu
+      customButton={<MoreHorizontalOutline className="size-4" aria-hidden="true" />}
+      customButtonClassName="grid place-items-center rounded-sm p-1 text-secondary hover:bg-layer-transparent-hover"
+      ariaLabel="More comment actions"
+      closeOnSelect
+    >
       {MENU_ITEMS.map((item) => (
         <CustomMenu.MenuItem
           key={item.key}
