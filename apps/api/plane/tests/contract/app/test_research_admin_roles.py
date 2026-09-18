@@ -13,6 +13,7 @@ from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
     grant_admin_tag,
+    invite_codes_url,
     make_instance_admin,
     make_user,
     make_workspace,
@@ -77,8 +78,7 @@ def test_instance_admin_grants_and_revokes_tag(env):
     )
 
 
-def test_tag_grants_configuration_surface_only(env):
-    """The tag opens the configuration pages, not other people's data."""
+def test_ops_tag_does_not_grant_research_configuration_or_content(env):
     workspace = env["workspace"]
     enable_research(workspace)
     tag_holder = make_user(first_name="TagHolder")
@@ -91,10 +91,10 @@ def test_tag_grants_configuration_surface_only(env):
         {"report_enabled": True},
         format="json",
     )
-    assert settings_response.status_code == 200
+    assert settings_response.status_code == 403
 
     audit_response = client.get(f"/api/research/workspaces/{workspace.slug}/audit-events/")
-    assert audit_response.status_code == 200
+    assert audit_response.status_code == 403
 
     member_client = client_for(env["member"])
     member_settings = member_client.patch(
@@ -107,8 +107,7 @@ def test_tag_grants_configuration_surface_only(env):
     # Data surfaces keep the organisation boundary: the tag holder is not a
     # workspace administrator, so the report list stays scoped to them.
     reports = client.get(f"/api/research/workspaces/{workspace.slug}/reports/")
-    assert reports.status_code == 200
-    assert reports.data.get("count", len(reports.data.get("results", []))) == 0
+    assert reports.status_code == 403
 
 
 def test_identity_me_exposes_tags(env, settings):
@@ -122,27 +121,46 @@ def test_identity_me_exposes_tags(env, settings):
     response = client_for(tag_holder).get(f"/api/research/workspaces/{workspace.slug}/identity/me/")
     assert response.status_code == 200
     user_payload = response.data["user"]
-    assert user_payload["is_system_admin"] is True
+    assert user_payload["is_system_admin"] is False
     assert user_payload["admin_roles"] == ["MAIN_PI"]
-    assert user_payload["is_research_admin"] is True
+    assert user_payload["is_research_admin"] is False
     assert user_payload["is_workspace_admin"] is False
+    assert response.data["capabilities"]["management"]["accounts"] is True
+    assert "system" in response.data["capabilities"]["nav"]
 
 
-def test_tag_assignment_syncs_workspace_seats(env):
-    """Tag holders join both workspaces; revoking drops the main PI seat."""
+def test_tag_holder_only_opens_account_lifecycle_surface(env):
+    workspace = env["workspace"]
+    enable_research(workspace)
+    tag_holder = make_user(first_name="TagHolder")
+    add_workspace_member(workspace, tag_holder)
+    grant_admin_tag(tag_holder, "OPS_ADMIN", actor=env["instance_admin"])
+
+    client = client_for(tag_holder)
+    assert client.get(invite_codes_url(workspace)).status_code == 200
+    assert client.get(f"/api/research/workspaces/{workspace.slug}/org-units/").status_code == 200
+    assert (
+        client.post(
+            f"/api/research/workspaces/{workspace.slug}/org-units/",
+            {"name": "Forbidden", "unit_type": "GROUP"},
+            format="json",
+        ).status_code
+        == 403
+    )
+    assert client.get(f"/api/research/workspaces/{workspace.slug}/audit-events/").status_code == 403
+
+
+def test_tag_assignment_does_not_create_workspace_seats(env):
     public = public_workspace(owner=env["instance_admin"])
     pi = pi_workspace(owner=env["instance_admin"])
     target = make_user(first_name="Target")
     client = client_for(env["instance_admin"])
 
     client.post(users_url(f"{target.id}/roles/"), {"role": "MAIN_PI"}, format="json")
-    assert WorkspaceMember.objects.filter(
-        workspace=public, member=target, role=15, is_active=True
-    ).exists()
-    assert WorkspaceMember.objects.filter(workspace=pi, member=target, role=15, is_active=True).exists()
+    assert not WorkspaceMember.objects.filter(workspace=public, member=target, is_active=True).exists()
+    assert not WorkspaceMember.objects.filter(workspace=pi, member=target, is_active=True).exists()
 
     client.delete(users_url(f"{target.id}/roles/"), {"role": "MAIN_PI"}, format="json")
-    assert WorkspaceMember.objects.filter(workspace=public, member=target, is_active=True).exists()
     assert not WorkspaceMember.objects.filter(workspace=pi, member=target, is_active=True).exists()
 
 

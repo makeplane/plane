@@ -53,7 +53,7 @@ export const ResearchPageShell = observer(function ResearchPageShell({
   const { identity, identityLoader, identityErrorCode } = research;
 
   useEffect(() => {
-    if (workspaceSlug && !identity)
+    if (workspaceSlug && (research.identityWorkspaceSlug !== workspaceSlug || !identity))
       void research.fetchIdentity(workspaceSlug).catch(() => {
         /* handled through identityErrorCode */
       });
@@ -61,11 +61,13 @@ export const ResearchPageShell = observer(function ResearchPageShell({
   }, [workspaceSlug]);
 
   // module off / not a member: fall back to the workspace home (P0-UI-07)
-  if (identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
+  const isCurrentWorkspaceIdentity = Boolean(workspaceSlug && research.identityWorkspaceSlug === workspaceSlug);
+
+  if (isCurrentWorkspaceIdentity && identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
 
   const sectionEnabled = identity?.sections?.[section] ?? identity?.sections?.reports;
 
-  if (identityLoader || !identity) {
+  if (identityLoader || !isCurrentWorkspaceIdentity || !identity) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Spinner />

@@ -4,6 +4,7 @@
 
 """Report state machine and ACL projection."""
 
+from django.db.models import Q
 from django.utils import timezone
 
 from plane.db.models import ReportAccessGrant
@@ -32,7 +33,11 @@ def active_grants(report):
     """Custom grants that are still valid, projected for the ACL service."""
     now = timezone.now()
     grants = []
-    for grant in ReportAccessGrant.objects.filter(report=report, is_revoked=False):
+    prefetched = getattr(report, "_prefetched_objects_cache", {}).get("access_grants")
+    grants_source = prefetched if prefetched is not None else ReportAccessGrant.objects.filter(report=report)
+    for grant in grants_source:
+        if grant.is_revoked:
+            continue
         if grant.expires_at and grant.expires_at <= now:
             continue
         grants.append(
@@ -52,5 +57,42 @@ def report_resource(report) -> ResearchResource:
         org_unit_id=report.org_unit_id,
         visibility=report.visibility,
         state=report.status,
+        # A returned report has a new private revision while readers receive the
+        # last immutable snapshot. Before the first submission it is all draft.
+        is_draft=report.submitted_at is None,
         grants=active_grants(report),
     )
+
+
+def visible_reports_queryset(queryset, context):
+    """Apply the complete report visibility matrix in SQL before pagination."""
+    owner_scope = Q(owner_id=context.user_id)
+    formal = Q(submitted_at__isnull=False)
+    if context.is_main_pi:
+        audience = formal
+    else:
+        formal_audience = Q()
+        if context.managing_unit_ids:
+            formal_audience |= Q(org_unit_id__in=context.managing_unit_ids)
+        if context.advises:
+            formal_audience |= Q(
+                visibility="DIRECT_ADVISOR",
+                owner_id__in=context.advises,
+            )
+        if context.unit_ids:
+            formal_audience |= Q(
+                visibility="UNIT",
+                org_unit_id__in=context.unit_ids,
+            )
+        formal_audience |= Q(visibility="WORKSPACE")
+
+        active_grant = Q(
+            visibility="CUSTOM",
+            access_grants__is_revoked=False,
+        ) & (Q(access_grants__expires_at__isnull=True) | Q(access_grants__expires_at__gt=timezone.now()))
+        grant_recipient = Q(access_grants__grantee_user_id=context.user_id)
+        if context.unit_ids:
+            grant_recipient |= Q(access_grants__grantee_org_unit_id__in=context.unit_ids)
+        formal_audience |= active_grant & grant_recipient
+        audience = formal & formal_audience
+    return queryset.filter(owner_scope | audience).distinct()

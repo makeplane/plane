@@ -8,6 +8,7 @@ from rest_framework import status
 from unittest.mock import patch
 
 from plane.db.models import Workspace, WorkspaceMember
+from plane.tests.research_fixtures import make_instance_admin
 
 
 @pytest.mark.contract
@@ -15,8 +16,9 @@ class TestWorkspaceAPI:
     """Test workspace CRUD operations"""
 
     @pytest.mark.django_db
-    def test_create_workspace_empty_data(self, session_client):
+    def test_create_workspace_empty_data(self, session_client, create_user):
         """Test creating a workspace with empty data"""
+        make_instance_admin(create_user)
         url = reverse("workspace")
 
         # Test with empty data
@@ -27,6 +29,7 @@ class TestWorkspaceAPI:
     @patch("plane.bgtasks.workspace_seed_task.workspace_seed.delay")
     def test_create_workspace_valid_data(self, mock_workspace_seed, session_client, create_user):
         """Test creating a workspace with valid data"""
+        make_instance_admin(create_user)
         url = reverse("workspace")
         user = create_user  # Use the create_user fixture directly as it returns a user object
 
@@ -60,8 +63,9 @@ class TestWorkspaceAPI:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.workspace_seed_task.workspace_seed.delay")
-    def test_create_duplicate_workspace(self, mock_workspace_seed, session_client):
+    def test_create_duplicate_workspace(self, mock_workspace_seed, session_client, create_user):
         """Test creating a duplicate workspace"""
+        make_instance_admin(create_user)
         url = reverse("workspace")
 
         # Create first workspace

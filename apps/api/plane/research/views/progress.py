@@ -7,10 +7,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.db.models import ResearchProjectProfile
 from plane.research.services.progress import build_progress
 from plane.research.utils.errors import ResearchErrorCode, research_not_found
 from plane.research.views.base import ResearchAPIView
+from plane.research.views.projects import can_read_project_research_metadata, profile_queryset
 
 SECTION = "stages"
 
@@ -22,8 +22,8 @@ class ResearchProjectProgressEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        profile = ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
-        if profile is None:
+        profile = profile_queryset(workspace).filter(project_id=project_id).first()
+        if profile is None or not can_read_project_research_metadata(workspace, request.user, profile):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
         period_key = request.GET.get("period_key") or None
         return Response(

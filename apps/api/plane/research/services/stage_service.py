@@ -278,10 +278,20 @@ def submit_stage(instance, actor, request=None):
         instance.save(
             update_fields=["status", "submitted_at", "attempt_count", "gate_result", "updated_at"]
         )
-        StageMaterial.objects.filter(
+        materials_to_submit = list(StageMaterial.objects.select_for_update().filter(
             stage_instance=instance,
             deleted_at__isnull=True,
-        ).exclude(status=StageMaterial.Status.SUBMITTED).update(status=StageMaterial.Status.SUBMITTED, submitted_at=now)
+        ).exclude(status=StageMaterial.Status.SUBMITTED))
+        for material in materials_to_submit:
+            material.status = StageMaterial.Status.SUBMITTED
+            material.submitted_at = now
+            material.save(update_fields=["status", "submitted_at", "updated_at"])
+            snapshot_material(
+                material,
+                actor,
+                change_source=StageMaterialVersion.ChangeSource.MANUAL,
+                reason="stage submitted",
+            )
         _supersede_reviews(instance, actor)
         record_transition(
             instance,
@@ -502,6 +512,7 @@ def material_snapshot(material):
         "page_id": str(material.page_id) if material.page_id else None,
         "name": page.name if page is not None else "",
         "description_json": page.description_json if page is not None else {},
+        "description_html": page.description_html if page is not None else "",
         "description_stripped": (page.description_stripped or "") if page is not None else "",
         "attachment_ids": attachments,
     }

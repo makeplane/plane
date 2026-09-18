@@ -176,6 +176,8 @@ class GlobalSearchEndpoint(BaseAPIView):
                 projects__archived_at__isnull=True,
                 workspace__slug=slug,
             )
+            .exclude(research_report__isnull=False)
+            .exclude(research_stage_materials__isnull=False)
             .annotate(
                 project_ids=Coalesce(
                     ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
@@ -514,6 +516,8 @@ class SearchEndpoint(BaseAPIView):
                             workspace__slug=slug,
                             access=0,
                         )
+                        .exclude(research_report__isnull=False)
+                        .exclude(research_stage_materials__isnull=False)
                         .order_by("-created_at")
                         .distinct()
                         .values(
@@ -716,6 +720,8 @@ class SearchEndpoint(BaseAPIView):
                             access=0,
                             is_global=True,
                         )
+                        .exclude(research_report__isnull=False)
+                        .exclude(research_stage_materials__isnull=False)
                         .order_by("-created_at")
                         .distinct()
                         .values(

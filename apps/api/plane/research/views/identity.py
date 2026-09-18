@@ -22,9 +22,10 @@ from plane.research.utils.errors import (
     research_permission_denied,
 )
 from plane.research.utils.org import effective_mentee_ids, effective_mentor_ids, is_workspace_admin
-from plane.research.utils.roles import ADMIN_ROLES, admin_roles, is_research_admin
+from plane.research.utils.roles import ADMIN_ROLES, admin_roles, is_main_pi, is_research_admin, is_system_admin
 from plane.research.utils.settings import workspace_research_enabled, workspace_research_sections
 from plane.research.views.base import ResearchAPIView, resolve_user
+from plane.utils.workspace_access import filter_workspaces_for_private_access
 
 
 class ResearchIdentityMeEndpoint(ResearchAPIView):
@@ -64,12 +65,13 @@ class ResearchIdentityMeEndpoint(ResearchAPIView):
         roles_held = admin_roles(request.user)
         profile = getattr(request.user, "research_profile", None)
         capabilities = build_research_capabilities(request.user, workspace)
-        workspaces = list(
-            Workspace.objects.filter(
+        workspace_queryset = Workspace.objects.filter(
                 workspace_member__member=request.user,
                 workspace_member__is_active=True,
                 workspace_member__deleted_at__isnull=True,
             )
+        workspaces = list(
+            filter_workspaces_for_private_access(workspace_queryset, request.user)
             .order_by("slug")
             .values_list("slug", flat=True)
         )
@@ -84,7 +86,8 @@ class ResearchIdentityMeEndpoint(ResearchAPIView):
                     "id": str(request.user.id),
                     "is_workspace_admin": is_workspace_admin(request.user, workspace.id),
                     "is_research_admin": is_research_admin(request.user, workspace.id),
-                    "is_system_admin": bool(roles_held),
+                    "is_system_admin": is_system_admin(request.user),
+                    "is_main_pi": is_main_pi(request.user, workspace),
                     "research_level": capabilities["level"],
                     "admin_roles": roles_held,
                     "admin_role_catalog": list(ADMIN_ROLES),

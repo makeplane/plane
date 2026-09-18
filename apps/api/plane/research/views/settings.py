@@ -6,7 +6,7 @@ import pytz
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.db.models import ReportVisibility, WorkspaceResearchSetting
+from plane.db.models import ReportVisibility, ResearchUserProfile, WorkspaceResearchSetting
 from plane.research.serializers import WorkspaceResearchSettingSerializer
 from plane.research.utils.audit import (
     ResearchAuditAction,
@@ -132,6 +132,60 @@ class ResearchSettingsEndpoint(ResearchAPIView):
                 )
             setting.timezone = timezone_value
             changed.append("timezone")
+
+        if "required_reporter_categories" in request.data:
+            categories = request.data.get("required_reporter_categories")
+            if not isinstance(categories, list) or any(
+                item not in ResearchUserProfile.Category.values for item in categories
+            ):
+                return research_error(
+                    ResearchErrorCode.ORG_MEMBER_INVALID,
+                    "required_reporter_categories must contain known member categories.",
+                )
+            setting.required_reporter_categories = list(dict.fromkeys(categories))
+            changed.append("required_reporter_categories")
+
+        if "main_pi" in request.data:
+            from plane.research.utils.roles import is_system_admin, sync_main_pi_workspace_seat
+            from plane.research.views.base import resolve_user
+
+            if not is_system_admin(request.user):
+                return research_permission_denied()
+            if setting.purpose not in (
+                WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH,
+                WorkspaceResearchSetting.Purpose.PI_PRIVATE,
+            ):
+                return research_error(
+                    ResearchErrorCode.PERMISSION_DENIED,
+                    "Main PI can only be appointed for the paired public and private research workspaces.",
+                    status.HTTP_422_UNPROCESSABLE_ENTITY,
+                )
+            main_pi = resolve_user(request.data.get("main_pi")) if request.data.get("main_pi") else None
+            if request.data.get("main_pi") and main_pi is None:
+                return research_error(ResearchErrorCode.USER_NOT_FOUND, "Main PI user not found.")
+            previous_main_pi = setting.main_pi
+            setting.main_pi = main_pi
+            changed.append("main_pi")
+            setting.save(update_fields=["main_pi", "updated_at"])
+            # The appointment is unique across the paired public/private
+            # workspaces. Keep both settings in sync while preserving stable
+            # workspace URLs and the private-space admission hook below.
+            paired_purpose = (
+                WorkspaceResearchSetting.Purpose.PI_PRIVATE
+                if setting.purpose == WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH
+                else WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH
+            )
+            paired = WorkspaceResearchSetting.objects.filter(
+                purpose=paired_purpose,
+                deleted_at__isnull=True,
+            ).first()
+            if paired is not None:
+                paired.main_pi = main_pi
+                paired.save(update_fields=["main_pi", "updated_at"])
+            if previous_main_pi is not None:
+                sync_main_pi_workspace_seat(previous_main_pi, actor=request.user)
+            if main_pi is not None:
+                sync_main_pi_workspace_seat(main_pi, actor=request.user)
 
         if not changed:
             return Response(WorkspaceResearchSettingSerializer(setting).data, status=status.HTTP_200_OK)

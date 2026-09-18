@@ -2,16 +2,22 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import date, timedelta
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+from time import sleep
+from unittest.mock import patch
 
 import pytest
+from django.db import close_old_connections
 from rest_framework.test import APIClient
 
 from plane.db.models import (
+    MentorBinding,
     OrgUnit,
     OrgUnitMember,
     Page,
     PeriodicReport,
+    PeriodicReportSnapshot,
     ReportAccessGrant,
     ReportReviewLog,
 )
@@ -64,10 +70,21 @@ def env(db):
     root = create_unit(workspace, "Root", None, OrgUnit.UnitType.ROOT)
     group = create_unit(workspace, "Group", root, OrgUnit.UnitType.GROUP)
     OrgUnitMember.objects.create(
-        workspace=workspace, org_unit=group, user=student, org_role=OrgUnitMember.OrgRole.OWNER
+        workspace=workspace,
+        org_unit=group,
+        user=student,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+        is_primary=True,
     )
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=advisor, org_role=OrgUnitMember.OrgRole.ADVISOR
+    )
+    MentorBinding.objects.create(
+        workspace=workspace,
+        org_unit=group,
+        mentee=student,
+        mentor=advisor,
+        is_primary_advisor=True,
     )
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=colleague, org_role=OrgUnitMember.OrgRole.REVIEWER
@@ -77,7 +94,7 @@ def env(db):
     # every research owner needs an active project before creating reports
     student_client.post(
         f"/api/research/workspaces/{workspace.slug}/projects/",
-        {"org_unit": str(group.id)},
+        {"org_unit": str(group.id), "research_type": "PHD"},
         format="json",
     )
     return {
@@ -147,13 +164,68 @@ class TestReportCreation:
         assert response.status_code == 201
         assert response.json()["visibility"] == "PRIVATE"
 
-    def test_creation_requires_an_active_research_project(self, env):
-        # the admin has no research project of their own
+    def test_creation_requires_an_effective_primary_org_assignment(self, env):
+        # the admin has neither a cultivation project nor a primary org assignment
         response = env["admin_client"].post(
             env["url"], {"report_type": "WEEKLY", "period_key": "2026-W39"}, format="json"
         )
         assert response.status_code == 400
         assert response.json()["error_code"] == "research_project_not_found"
+
+    def test_primary_org_member_can_create_and_edit_a_report_without_any_project(self, env):
+        member = make_user(first_name="Standalone", email="standalone@example.com")
+        add_workspace_member(env["workspace"], member)
+        OrgUnitMember.objects.create(
+            workspace=env["workspace"],
+            org_unit=env["group"],
+            user=member,
+            org_role=OrgUnitMember.OrgRole.REVIEWER,
+            is_primary=True,
+        )
+        client = client_for(member)
+
+        created = client.post(
+            env["url"],
+            {"report_type": "WEEKLY", "period_key": "2026-W39"},
+            format="json",
+        )
+
+        assert created.status_code == 201
+        payload = created.json()
+        assert payload["project"] is None
+        assert payload["page_project"] is None
+        assert payload["org_unit"] == str(env["group"].id)
+        page = Page.objects.get(pk=payload["page"])
+        assert page.project_pages.filter(deleted_at__isnull=True).count() == 0
+
+        updated = client.patch(
+            f"{env['url']}{payload['id']}/",
+            {
+                "description_json": {
+                    "type": "doc",
+                    "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Progress"}]}],
+                },
+                "description_html": "<p>Progress</p>",
+            },
+            format="json",
+        )
+
+        assert updated.status_code == 200
+        assert updated.json()["draft_content"]["description_html"] == "<p>Progress</p>"
+        page.refresh_from_db()
+        assert page.description_html == "<p>Progress</p>"
+
+        submitted = client.post(f"{env['url']}{payload['id']}/submit/", {}, format="json")
+        assert submitted.status_code == 200
+        assert submitted.json()["project"] is None
+        assert PeriodicReportSnapshot.objects.get(report_id=payload["id"]).description_html == "<p>Progress</p>"
+
+        duplicate = client.post(
+            env["url"],
+            {"report_type": "WEEKLY", "period_key": "2026-W39"},
+            format="json",
+        )
+        assert duplicate.status_code == 409
 
 
 @pytest.mark.django_db
@@ -194,25 +266,67 @@ class TestReportStateMachine:
     def test_return_requires_a_reason(self, env):
         report = create_report(env).json()
         env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
-        response = env["advisor_client"].post(
-            f"{env['url']}{report['id']}/return/", {"comment": ""}, format="json"
-        )
+        response = env["advisor_client"].post(f"{env['url']}{report['id']}/return/", {"comment": ""}, format="json")
         assert response.status_code == 422
         assert response.json()["error_code"] == "report_return_reason_required"
 
     def test_only_the_owner_can_submit(self, env):
         report = create_report(env).json()
-        response = env["advisor_client"].post(
-            f"{env['url']}{report['id']}/submit/", {}, format="json"
+        response = env["advisor_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+        assert response.status_code == 404
+
+    def test_submit_captures_an_immutable_official_snapshot(self, env):
+        report = create_report(env).json()
+        page = Page.objects.get(pk=report["page"])
+        page.description_json = {"type": "doc", "content": [{"type": "paragraph"}]}
+        page.description_html = "<p>Official version</p>"
+        page.save()
+
+        submitted = env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+
+        assert submitted.status_code == 200
+        snapshot = PeriodicReportSnapshot.objects.get(report_id=report["id"], version_no=1)
+        assert snapshot.description_html == "<p>Official version</p>"
+        assert submitted.json()["latest_official_version"] == 1
+
+    def test_report_without_org_assignment_cannot_be_submitted(self, env):
+        report = create_report(env).json()
+        PeriodicReport.objects.filter(pk=report["id"]).update(org_unit=None)
+
+        response = env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+
+        assert response.status_code == 422
+        assert response.json()["error_code"] == "org_unit_not_found"
+
+    def test_reviewer_keeps_reading_last_snapshot_while_author_revises(self, env):
+        report = create_report(env).json()
+        page = Page.objects.get(pk=report["page"])
+        page.description_html = "<p>Submitted v1</p>"
+        page.save()
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+        env["advisor_client"].post(
+            f"{env['url']}{report['id']}/return/",
+            {"comment": "revise"},
+            format="json",
         )
+        page.description_html = "<p>Private revision</p>"
+        page.save()
+
+        advisor_detail = env["advisor_client"].get(f"{env['url']}{report['id']}/")
+
+        assert advisor_detail.status_code == 200
+        assert advisor_detail.json()["official_content"]["description_html"] == "<p>Submitted v1</p>"
+        assert advisor_detail.json()["draft_content"] is None
+
+    def test_admin_cannot_read_another_members_draft(self, env):
+        report = create_report(env).json()
+        response = env["admin_client"].get(f"{env['url']}{report['id']}/")
         assert response.status_code == 404
 
     def test_colleague_cannot_review(self, env):
         report = create_report(env).json()
         env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
-        response = env["colleague_client"].post(
-            f"{env['url']}{report['id']}/accept/", {}, format="json"
-        )
+        response = env["colleague_client"].post(f"{env['url']}{report['id']}/accept/", {}, format="json")
         assert response.status_code == 403
 
     def test_accepted_report_is_terminal(self, env):
@@ -231,9 +345,7 @@ class TestReportStateMachine:
         project_id = str(project_pages.projects.first().id)
         page_url = f"/api/workspaces/{env['workspace'].slug}/projects/{project_id}/pages/{page_id}/"
 
-        editable = env["student_client"].patch(
-            page_url, {"description_html": "<p>Draft body</p>"}, format="json"
-        )
+        editable = env["student_client"].patch(page_url, {"description_html": "<p>Draft body</p>"}, format="json")
         assert editable.status_code == 200
 
         env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
@@ -243,19 +355,152 @@ class TestReportStateMachine:
         assert blocked.status_code == 403
         assert blocked.json()["error_code"] == "report_read_only"
 
+    def test_author_can_open_draft_page_but_advisor_cannot(self, env):
+        report = create_report(env).json()
+        page = Page.objects.get(pk=report["page"])
+        project_id = str(page.projects.first().id)
+        page_url = f"/api/workspaces/{env['workspace'].slug}/projects/{project_id}/pages/{report['page']}/"
+
+        assert env["student_client"].get(page_url).status_code == 200
+        assert env["advisor_client"].get(page_url).status_code == 403
+
+    def test_submitted_report_binary_description_is_read_only(self, env):
+        report = create_report(env).json()
+        page_id = report["page"]
+        page = Page.objects.get(pk=page_id)
+        project_id = str(page.projects.first().id)
+        description_url = f"/api/workspaces/{env['workspace'].slug}/projects/{project_id}/pages/{page_id}/description/"
+
+        editable = env["student_client"].patch(
+            description_url, {"description_html": "<p>Draft body</p>"}, format="json"
+        )
+        assert editable.status_code == 200
+
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+        blocked = env["student_client"].patch(
+            description_url,
+            {"description_html": "<p>Edited after submit</p>"},
+            format="json",
+        )
+
+        assert blocked.status_code == 403
+        assert blocked.json()["error_code"] == "report_read_only"
+
     def test_reported_page_cannot_be_deleted_directly(self, env):
         report = create_report(env).json()
         page = Page.objects.get(pk=report["page"])
         project_id = str(page.projects.first().id)
-        page_url = (
-            f"/api/workspaces/{env['workspace'].slug}/projects/{project_id}/pages/{report['page']}/"
-        )
+        page_url = f"/api/workspaces/{env['workspace'].slug}/projects/{project_id}/pages/{report['page']}/"
         response = env["student_client"].delete(page_url)
         assert response.status_code == 403
 
 
+@pytest.mark.django_db(transaction=True)
+class TestReportConcurrentStateFlow:
+    @staticmethod
+    def _run_together(*operations):
+        barrier = Barrier(len(operations))
+
+        def execute(operation):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=5)
+                return operation().status_code
+            finally:
+                close_old_connections()
+
+        with ThreadPoolExecutor(max_workers=len(operations)) as executor:
+            return list(executor.map(execute, operations))
+
+    def test_concurrent_submit_creates_one_official_version(self, env):
+        from plane.research.views import reports as report_views
+
+        report = create_report(env).json()
+        submit_url = f"{env['url']}{report['id']}/submit/"
+        create_snapshot = report_views.create_report_snapshot
+
+        def delayed_snapshot(*args, **kwargs):
+            sleep(0.15)
+            return create_snapshot(*args, **kwargs)
+
+        with patch.object(report_views, "create_report_snapshot", side_effect=delayed_snapshot):
+            statuses = self._run_together(
+                lambda: client_for(env["student"]).post(submit_url, {}, format="json"),
+                lambda: client_for(env["student"]).post(submit_url, {}, format="json"),
+            )
+
+        assert sorted(statuses) == [200, 409]
+        assert PeriodicReportSnapshot.objects.filter(report_id=report["id"]).count() == 1
+        assert ReportReviewLog.objects.filter(report_id=report["id"], action=ReportReviewLog.Action.SUBMIT).count() == 1
+
+    def test_return_and_accept_compete_on_one_submitted_state(self, env):
+        from plane.research.views import reports as report_views
+
+        report = create_report(env).json()
+        report_url = f"{env['url']}{report['id']}/"
+        submitted = env["student_client"].post(f"{report_url}submit/", {}, format="json")
+        assert submitted.status_code == 200
+        transition_allowed = report_views.can_transition
+
+        def delayed_transition(current, target):
+            result = transition_allowed(current, target)
+            if current == PeriodicReport.Status.SUBMITTED:
+                sleep(0.15)
+            return result
+
+        with patch.object(report_views, "can_transition", side_effect=delayed_transition):
+            statuses = self._run_together(
+                lambda: client_for(env["advisor"]).post(
+                    f"{report_url}return/",
+                    {"comment": "revise"},
+                    format="json",
+                ),
+                lambda: client_for(env["advisor"]).post(f"{report_url}accept/", {}, format="json"),
+            )
+
+        assert sorted(statuses) == [200, 409]
+        assert (
+            ReportReviewLog.objects.filter(
+                report_id=report["id"],
+                action__in=(ReportReviewLog.Action.RETURN, ReportReviewLog.Action.ACCEPT),
+            ).count()
+            == 1
+        )
+
+
 @pytest.mark.django_db
 class TestReportAccessControl:
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {"owner": "not-a-uuid"},
+            {"org_unit": "not-a-uuid"},
+            {"date_from": "not-a-date"},
+            {"date_from": "2026-10-01", "date_to": "2026-09-01"},
+            {"per_page": "0"},
+            {"per_page": "not-an-integer"},
+            {"cursor": "not-a-cursor"},
+        ],
+    )
+    def test_list_rejects_invalid_filter_and_pagination_values(self, env, params):
+        response = env["student_client"].get(env["url"], params)
+        assert response.status_code == 400
+
+    def test_list_filters_visibility_in_sql_before_pagination(self, env, mocker):
+        report = create_report(env, period_key="2026-W09").json()
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+        object_acl = mocker.patch(
+            "plane.research.views.reports.check_access",
+            side_effect=AssertionError("report list must not scan objects through Python ACL"),
+        )
+
+        response = env["advisor_client"].get(env["url"], {"per_page": "1"})
+
+        assert response.status_code == 200
+        assert response.data["per_page"] == 1
+        assert response.data["total_results"] == 1
+        assert object_acl.call_count == 0
+
     def test_visibility_filters_the_list_for_each_subject(self, env):
         private = create_report(env, visibility="PRIVATE", period_key="2026-W10").json()
         advised = create_report(env, visibility="DIRECT_ADVISOR", period_key="2026-W11").json()
@@ -265,6 +510,7 @@ class TestReportAccessControl:
         owner_list = env["student_client"].get(env["url"]).json()
         assert owner_list["count"] == 2
 
+        env["student_client"].post(f"{env['url']}{advised['id']}/submit/", {}, format="json")
         advisor_list = env["advisor_client"].get(env["url"]).json()
         assert {item["id"] for item in advisor_list["results"]} == {advised["id"]}
 
@@ -272,7 +518,7 @@ class TestReportAccessControl:
         assert colleague_list["count"] == 0
 
         admin_list = env["admin_client"].get(env["url"]).json()
-        assert admin_list["count"] == 2
+        assert admin_list["count"] == 0
 
     def test_unit_visibility_is_available_when_the_policy_allows_it(self, env):
         env["admin_client"].patch(
@@ -282,14 +528,53 @@ class TestReportAccessControl:
         )
         unit = create_report(env, visibility="UNIT", period_key="2026-W12").json()
         assert unit["visibility"] == "UNIT"
+        env["student_client"].post(f"{env['url']}{unit['id']}/submit/", {}, format="json")
         # a member of the same organisation node now sees the report
         colleague_list = env["colleague_client"].get(env["url"]).json()
         assert {item["id"] for item in colleague_list["results"]} == {unit["id"]}
 
     def test_direct_advisor_scope_default(self, env):
         report = create_report(env).json()
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
         advisor_list = env["advisor_client"].get(env["url"]).json()
         assert {item["id"] for item in advisor_list["results"]} == {report["id"]}
+
+    def test_joint_advisor_reads_formal_report_but_cannot_review_it(self, env):
+        joint = make_user(first_name="JointAdvisor", email="joint@example.com")
+        add_workspace_member(env["workspace"], joint)
+        MentorBinding.objects.create(
+            workspace=env["workspace"],
+            org_unit=env["group"],
+            mentee=env["student"],
+            mentor=joint,
+            is_primary_advisor=False,
+        )
+        report = create_report(env, period_key="2026-W13").json()
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+
+        detail = client_for(joint).get(f"{env['url']}{report['id']}/")
+        assert detail.status_code == 200
+        assert detail.json()["can_review"] is False
+        denied = client_for(joint).post(
+            f"{env['url']}{report['id']}/return/",
+            {"comment": "joint advisor cannot return"},
+            format="json",
+        )
+        assert denied.status_code == 403
+
+    def test_same_unit_advisor_without_binding_cannot_read_formal_report(self, env):
+        unbound = make_user(first_name="UnboundAdvisor", email="unbound@example.com")
+        add_workspace_member(env["workspace"], unbound)
+        OrgUnitMember.objects.create(
+            workspace=env["workspace"],
+            org_unit=env["group"],
+            user=unbound,
+            org_role=OrgUnitMember.OrgRole.ADVISOR,
+        )
+        report = create_report(env, period_key="2026-W14").json()
+        env["student_client"].post(f"{env['url']}{report['id']}/submit/", {}, format="json")
+
+        assert client_for(unbound).get(f"{env['url']}{report['id']}/").status_code == 404
 
     def test_detail_is_hidden_from_unauthorised_member(self, env):
         private = create_report(env, visibility="PRIVATE").json()
@@ -308,7 +593,7 @@ class TestReportAccessControl:
         assert narrowed.json()["visibility"] == "PRIVATE"
         assert narrowed.json()["can_widen"] is False
 
-    def test_custom_grants_extend_within_the_default_boundary(self, env):
+    def test_custom_grants_cannot_expand_a_direct_advisor_policy_to_a_colleague(self, env):
         report = create_report(env).json()
         access_url = f"{env['url']}{report['id']}/access/"
         response = env["student_client"].patch(
@@ -316,12 +601,18 @@ class TestReportAccessControl:
             {"grants": [{"grantee_user": str(env["colleague"].id)}]},
             format="json",
         )
+        assert response.status_code == 422
+        assert ReportAccessGrant.objects.filter(report_id=report["id"], is_revoked=False).count() == 0
+
+    def test_custom_grant_can_select_an_existing_direct_advisor(self, env):
+        report = create_report(env).json()
+        response = env["student_client"].patch(
+            f"{env['url']}{report['id']}/access/",
+            {"grants": [{"grantee_user": str(env["advisor"].id)}]},
+            format="json",
+        )
         assert response.status_code == 200
         assert response.json()["visibility"] == "CUSTOM"
-        assert ReportAccessGrant.objects.filter(report_id=report["id"], is_revoked=False).count() == 1
-
-        colleague_list = env["colleague_client"].get(env["url"]).json()
-        assert {item["id"] for item in colleague_list["results"]} == {report["id"]}
 
     def test_private_reports_reject_custom_grants(self, env):
         report = create_report(env, visibility="PRIVATE").json()

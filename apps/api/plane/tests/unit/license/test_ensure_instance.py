@@ -13,15 +13,24 @@ from plane.license.models import Instance
 class TestEnsureInstance:
     def test_creates_a_single_local_instance(self, db, monkeypatch):
         monkeypatch.setenv("APP_VERSION", "2.0.0")
-        monkeypatch.setenv("INSTANCE_NAME", "AI4MS Test Workspace")
+        monkeypatch.setenv("INSTANCE_NAME", "PiLab Test Workspace")
 
         call_command("ensure_instance")
 
         instance = Instance.objects.get()
-        assert instance.instance_name == "AI4MS Test Workspace"
+        assert instance.instance_name == "PiLab Test Workspace"
         assert instance.current_version == "2.0.0"
         assert instance.instance_id
         assert instance.is_setup_done is False
+
+    def test_uses_pilab_as_the_default_instance_name(self, db, monkeypatch):
+        monkeypatch.setenv("APP_VERSION", "2.0.0")
+        monkeypatch.delenv("INSTANCE_NAME", raising=False)
+
+        call_command("ensure_instance")
+
+        instance = Instance.objects.get()
+        assert instance.instance_name == "PiLab"
 
     def test_refresh_reuses_the_existing_instance(self, db, monkeypatch):
         instance = Instance.objects.create(

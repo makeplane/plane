@@ -52,14 +52,20 @@ export const ResearchSidebarItems = observer(function ResearchSidebarItems() {
   const isMenuOpen = storedIsMenuOpen ?? true;
 
   useEffect(() => {
-    if (workspaceSlug && !research.identity) {
+    if (workspaceSlug && (research.identityWorkspaceSlug !== workspaceSlug || !research.identity)) {
       void research.fetchIdentity(workspaceSlug).catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
 
   // No research relation at all: nothing to show, not even the overview.
-  if (!workspaceSlug || !research.isEnabled || research.researchLevel === "NONE") return null;
+  if (
+    !workspaceSlug ||
+    research.identityWorkspaceSlug !== workspaceSlug ||
+    !research.isEnabled ||
+    (research.researchLevel === "NONE" && (research.visibleNavKeys?.length ?? 0) === 0)
+  )
+    return null;
 
   const sections = research.identity?.sections;
   const visibleBusinessItems = RESEARCH_NAVIGATION_ITEMS.filter(

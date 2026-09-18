@@ -29,7 +29,6 @@ function WorkspaceResearchSystemSettingsPage() {
       descriptionKey="research.system.description"
       section="org"
       navKey="system"
-      adminOnly
     >
       <div className="flex h-full flex-col gap-6 overflow-y-auto p-5">
         <ResearchAdminRoleSummary />

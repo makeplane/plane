@@ -17,12 +17,15 @@ import {
 import type { TReportVisibility } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import type { JSONContent } from "@plane/types";
 import { Input } from "@plane/ui";
 // components
+import { DocumentEditor } from "@/components/editor/document/editor";
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
 import { ResearchReportAttachments } from "@/components/research/reports/report-attachments";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   workspaceSlug: string;
@@ -37,12 +40,24 @@ type Props = {
 export const ResearchReportDetail = observer(function ResearchReportDetail({ workspaceSlug, reportId }: Props) {
   const { t } = useTranslation();
   const research = useResearch();
+  const { getWorkspaceBySlug } = useWorkspace();
   const [returnReason, setReturnReason] = useState("");
   const [showReturn, setShowReturn] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [draftContent, setDraftContent] = useState<{ description_json: object; description_html: string } | null>(null);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
 
   const report = research.reports[reportId];
   const history = research.reportHistory[reportId] ?? [];
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
+
+  useEffect(() => {
+    if (!report?.draft_content) return;
+    setDraftContent({
+      description_json: report.draft_content.description_json,
+      description_html: report.draft_content.description_html,
+    });
+  }, [report?.draft_content]);
 
   useEffect(() => {
     void (async () => {
@@ -58,12 +73,16 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
 
   const handleSubmit = useCallback(async () => {
     try {
-      await research.submitReport(workspaceSlug, reportId);
+      await research.submitReport(
+        workspaceSlug,
+        reportId,
+        report && !report.page_project && !report.project && draftContent ? draftContent : undefined
+      );
       setErrorKey(null);
     } catch (error) {
       setErrorKey(getResearchErrorKey(error));
     }
-  }, [reportId, research, workspaceSlug]);
+  }, [draftContent, report, reportId, research, workspaceSlug]);
 
   const handleReturn = useCallback(async () => {
     try {
@@ -85,6 +104,19 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
     }
   }, [reportId, research, workspaceSlug]);
 
+  const handleSaveDraft = useCallback(async () => {
+    if (!draftContent) return;
+    setIsSavingDraft(true);
+    try {
+      await research.saveReportDraft(workspaceSlug, reportId, draftContent);
+      setErrorKey(null);
+    } catch (error) {
+      setErrorKey(getResearchErrorKey(error));
+    } finally {
+      setIsSavingDraft(false);
+    }
+  }, [draftContent, reportId, research, workspaceSlug]);
+
   const handleVisibility = useCallback(
     async (visibility: TReportVisibility) => {
       try {
@@ -100,6 +132,21 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
   if (!report) {
     return <p className="p-5 text-13 text-tertiary">{t("research.common.loading")}</p>;
   }
+
+  const isAuthor = report.owner === research.identity?.user.id;
+  const pageProject = report.page_project ?? report.project;
+  const canOpenDraft = isAuthor && Boolean(pageProject && report.page);
+  const officialContent = !isAuthor ? report.official_content : null;
+  const officialDocument = officialContent
+    ? Object.keys(officialContent.description_json).length > 0
+      ? (officialContent.description_json as JSONContent)
+      : officialContent.description_html || "<p></p>"
+    : null;
+  const standaloneDraftDocument = draftContent
+    ? Object.keys(draftContent.description_json).length > 0
+      ? (draftContent.description_json as JSONContent)
+      : draftContent.description_html || "<p></p>"
+    : null;
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-y-auto p-5">
@@ -119,12 +166,14 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            href={`/${workspaceSlug}/projects/${report.project}/pages/${report.page}`}
-            className="rounded-md border border-strong px-2 py-1 text-12 text-secondary hover:bg-surface-2"
-          >
-            {t("research.reports.open_body")}
-          </Link>
+          {canOpenDraft && pageProject && (
+            <Link
+              href={`/${workspaceSlug}/projects/${pageProject}/pages/${report.page}`}
+              className="rounded-md border border-strong px-2 py-1 text-12 text-secondary hover:bg-surface-2"
+            >
+              {t("research.reports.open_body")}
+            </Link>
+          )}
           {report.can_edit && (
             <Button variant="primary" size="sm" onClick={() => void handleSubmit()}>
               {t("research.reports.submit")}
@@ -143,6 +192,89 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
         </div>
       </div>
 
+      {isAuthor && !pageProject && standaloneDraftDocument && workspaceId && (
+        <section className="rounded-lg border border-subtle bg-surface-1 p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h3 className="text-13 font-medium text-primary">{t("research.reports.draft_content")}</h3>
+            {report.can_edit && (
+              <Button variant="secondary" size="sm" disabled={isSavingDraft} onClick={() => void handleSaveDraft()}>
+                {isSavingDraft ? t("saving") : t("research.common.save")}
+              </Button>
+            )}
+          </div>
+          {report.can_edit ? (
+            <DocumentEditor
+              key={`${report.id}:${report.status}`}
+              editable
+              containerClassName="min-h-64 border-none !p-0"
+              editorClassName="pl-0"
+              id={`${report.id}-draft`}
+              value={standaloneDraftDocument}
+              workspaceId={workspaceId}
+              workspaceSlug={workspaceSlug}
+              disabledExtensions={["image", "issue-embed"]}
+              searchMentionCallback={async () => ({})}
+              uploadFile={async () => {
+                throw new Error("Use report attachments for files.");
+              }}
+              duplicateFile={async () => {
+                throw new Error("Use report attachments for files.");
+              }}
+              onChange={(descriptionJson: object, descriptionHtml: string) =>
+                setDraftContent({
+                  description_json: descriptionJson,
+                  description_html: descriptionHtml,
+                })
+              }
+            />
+          ) : (
+            <DocumentEditor
+              key={`${report.id}:${report.status}`}
+              editable={false}
+              containerClassName="min-h-64 border-none !p-0"
+              editorClassName="pl-0"
+              id={`${report.id}-draft`}
+              value={standaloneDraftDocument}
+              workspaceId={workspaceId}
+              workspaceSlug={workspaceSlug}
+              disabledExtensions={["image", "issue-embed"]}
+            />
+          )}
+        </section>
+      )}
+
+      {!isAuthor && (
+        <section className="rounded-lg border border-subtle bg-surface-1 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-13 font-medium text-primary">{t("research.reports.official_content")}</h3>
+            {officialContent && (
+              <span className="text-11 text-tertiary">
+                {t("research.reports.official_version", { version: officialContent.version_no })}
+              </span>
+            )}
+          </div>
+          {officialContent && officialDocument ? (
+            workspaceId ? (
+              <DocumentEditor
+                key={`${report.id}:${officialContent.version_no}`}
+                editable={false}
+                containerClassName="mt-3 border-none !p-0"
+                editorClassName="pl-0"
+                id={`${report.id}-official-${officialContent.version_no}`}
+                value={officialDocument}
+                projectId={pageProject ?? undefined}
+                workspaceId={workspaceId}
+                workspaceSlug={workspaceSlug}
+              />
+            ) : (
+              <p className="mt-3 text-12 whitespace-pre-wrap text-secondary">{officialContent.description_stripped}</p>
+            )
+          ) : (
+            <p className="mt-3 text-12 text-tertiary">{t("research.reports.no_official_content")}</p>
+          )}
+        </section>
+      )}
+
       <section className="rounded-lg border border-subtle bg-surface-1 p-4">
         <h3 className="text-13 font-medium text-primary">{t("research.reports.visibility")}</h3>
         <div className="mt-2 flex flex-wrap gap-2">
@@ -150,8 +282,8 @@ export const ResearchReportDetail = observer(function ResearchReportDetail({ wor
             <button
               key={visibility}
               type="button"
-              disabled={!report.can_edit && !report.can_review}
-              className={`rounded-md border px-2 py-1 text-12 ${
+              disabled={!report.can_edit}
+              className={`rounded-md border px-2 py-1 text-12 disabled:cursor-not-allowed disabled:opacity-50 ${
                 report.visibility === visibility
                   ? "border-accent-primary text-accent-primary"
                   : "border-subtle text-tertiary hover:text-secondary"

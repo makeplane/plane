@@ -17,6 +17,7 @@ from django.db.models import F
 from django.utils import timezone
 
 from plane.db.models import (
+    MentorBinding,
     OrgUnit,
     OrgUnitMember,
     ResearchInviteCode,
@@ -70,6 +71,9 @@ def issue_invite_code(
     expires_in_days=DEFAULT_INVITE_DAYS,
     expires_at=None,
     note="",
+    provisioning_version=1,
+    profile_category="",
+    primary_advisor=None,
 ):
     """Create an invite code scoped to a workspace (the public one in practice)."""
     org_role = str(org_role or "").strip().upper()
@@ -103,8 +107,11 @@ def issue_invite_code(
 
     code = ResearchInviteCode.objects.create(
         workspace=workspace,
+        provisioning_version=provisioning_version,
         org_role=org_role,
         org_unit=org_unit,
+        profile_category=profile_category,
+        primary_advisor=primary_advisor,
         max_uses=max_uses,
         expires_at=expires_at,
         note=str(note or "")[:255],
@@ -196,6 +203,7 @@ def attach_invite_bindings(user, invite, actor=None, request=None):
     org_member = None
     org_unit = invite.org_unit if invite is not None and invite.org_unit_id else None
     org_role = (invite.org_role if invite is not None else "") or ""
+    is_v2 = invite is not None and invite.provisioning_version >= 2
     if org_unit is None and org_role:
         # Fall back to the root node so the account is never left outside the
         # organisation tree when a code carries a role but no explicit node.
@@ -211,7 +219,7 @@ def attach_invite_bindings(user, invite, actor=None, request=None):
                 org_unit=org_unit,
                 user=user,
                 org_role=org_role,
-                is_primary=False,
+                is_primary=is_v2,
                 effective_from=timezone.localdate(),
                 created_by=actor or user,
             )
@@ -232,20 +240,38 @@ def attach_invite_bindings(user, invite, actor=None, request=None):
         except IntegrityError:
             org_member = OrgUnitMember.objects.filter(org_unit=org_unit, user=user, org_role=org_role).first()
 
+    profile_category = (
+        invite.profile_category
+        if is_v2 and invite.profile_category in ResearchUserProfile.Category.values
+        else (
+            ResearchUserProfile.Category.ADVISOR
+            if org_role == OrgUnitMember.OrgRole.ADVISOR
+            else ResearchUserProfile.Category.STUDENT
+        )
+    )
     ResearchUserProfile.objects.get_or_create(
         user=user,
         defaults={
-            "category": (
-                ResearchUserProfile.Category.ADVISOR
-                if org_role == OrgUnitMember.OrgRole.ADVISOR
-                else ResearchUserProfile.Category.STUDENT
-            ),
+            "category": profile_category,
             "created_by": actor or user,
         },
     )
+    if is_v2 and invite.primary_advisor_id:
+        MentorBinding.objects.get_or_create(
+            workspace=invite.workspace,
+            mentee=user,
+            mentor=invite.primary_advisor,
+            defaults={
+                "org_unit": org_unit,
+                "is_primary_advisor": True,
+                "effective_from": timezone.localdate(),
+                "created_by": actor or user,
+            },
+        )
     return org_member
 
 
+@transaction.atomic
 def redeem_invite_code(user, code, actor=None, request=None):
     """Consume ``code`` and place ``user`` inside the public workspace."""
     invite = consume_invite_code(code)

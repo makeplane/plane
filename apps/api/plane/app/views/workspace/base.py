@@ -45,9 +45,11 @@ from plane.db.models import (
 from plane.app.permissions import ROLE, allow_permission
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
+from plane.license.models import InstanceAdmin
 from plane.bgtasks.workspace_seed_task import workspace_seed
 from plane.utils.url import contains_url
 from plane.utils.csv_utils import sanitize_csv_row
+from plane.utils.workspace_access import filter_workspaces_for_private_access
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -68,7 +70,7 @@ class WorkSpaceViewSet(BaseViewSet):
             .values("count")
         )
 
-        return (
+        workspaces = (
             self.filter_queryset(super().get_queryset().select_related("owner"))
             .order_by("name")
             .filter(
@@ -77,9 +79,16 @@ class WorkSpaceViewSet(BaseViewSet):
             )
             .annotate(total_members=member_count)
         )
+        return filter_workspaces_for_private_access(workspaces, self.request.user)
 
     def create(self, request):
         try:
+            if not InstanceAdmin.objects.filter(user=request.user, role__gte=15).exists():
+                return Response(
+                    {"error": "Only an instance administrator can create workspaces"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
                 [
                     {
@@ -201,6 +210,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .filter(workspace_member__member=request.user, workspace_member__is_active=True)
             .distinct()
         )
+        workspace = filter_workspaces_for_private_access(workspace, request.user)
 
         workspaces = WorkSpaceSerializer(
             self.filter_queryset(workspace),

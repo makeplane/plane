@@ -29,7 +29,7 @@ class ExternalSystemConnection(BaseModel):
     """One configured connection per workspace and system (P1-INT-01, P1-INT-02)."""
 
     class AuthMode(models.TextChoices):
-        HMAC = "HMAC", "AI4MS HMAC"
+        HMAC = "HMAC", "PiLab HMAC"
         BEARER = "BEARER", "Bearer token"
         OIDC_CLIENT = "OIDC_CLIENT", "OIDC client credentials"
         NONE = "NONE", "None"

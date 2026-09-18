@@ -36,6 +36,9 @@ ROSTER_ROWS = (
 )
 
 ADVISOR_TABLE = "姓名,邮箱\n刘俊扬,liujunyang@xmu.edu.cn\n"
+V3_ROSTER_HEADER = (
+    "姓名,学号,邮件,人员类别,业务方向,主归属组织,主导师邮箱,联合导师邮箱\n"
+)
 
 
 @pytest.fixture(autouse=True)
@@ -97,13 +100,15 @@ def test_import_creates_accounts_nodes_and_mentors(env):
 
     unit = OrgUnit.objects.get(workspace=workspace, name="器件", deleted_at__isnull=True)
     assert unit.unit_type == OrgUnit.UnitType.GROUP
-    assert OrgUnitMember.objects.filter(
+    student_membership = OrgUnitMember.objects.get(
         workspace=workspace, org_unit=unit, user=student, org_role="REVIEWER"
-    ).exists()
+    )
+    assert student_membership.is_primary is True
 
     advisor = User.objects.get(email="liujunyang@xmu.edu.cn")
     assert ResearchUserProfile.objects.get(user=advisor).category == "ADVISOR"
-    assert MentorBinding.objects.filter(workspace=workspace, mentee=student, mentor=advisor).exists()
+    binding = MentorBinding.objects.get(workspace=workspace, mentee=student, mentor=advisor)
+    assert binding.is_primary_advisor is True
 
     # The blank-group row still becomes an account, parked at the root.
     root = OrgUnit.objects.get(workspace=workspace, unit_type=OrgUnit.UnitType.ROOT)
@@ -168,3 +173,112 @@ def test_import_requires_roster_file(env):
     response = client.post(user_imports_url(env["workspace"]), {}, format="multipart")
     assert response.status_code == 400
     assert response.data["error_code"] == "user_import_file_required"
+
+
+def test_v3_single_roster_binds_existing_org_and_multiple_advisors(env):
+    workspace = env["workspace"]
+    root = OrgUnit.objects.create(
+        workspace=workspace,
+        name="主PI",
+        unit_type=OrgUnit.UnitType.ROOT,
+        path="root",
+        depth=0,
+    )
+    direction = OrgUnit.objects.create(
+        workspace=workspace,
+        parent=root,
+        name="基础研究",
+        unit_type=OrgUnit.UnitType.INSTITUTE,
+        business_category=OrgUnit.BusinessCategory.BASIC_RESEARCH,
+        path=f"{root.path}/direction",
+        depth=1,
+    )
+    mentor_group = OrgUnit.objects.create(
+        workspace=workspace,
+        parent=direction,
+        name="王老师导师组",
+        unit_type=OrgUnit.UnitType.GROUP,
+        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP,
+        path=f"{direction.path}/group",
+        depth=2,
+    )
+    primary_advisor = make_user(email="primary@example.com", first_name="Primary")
+    co_advisor = make_user(email="co@example.com", first_name="Co")
+    add_workspace_member(workspace, primary_advisor)
+    add_workspace_member(workspace, co_advisor)
+    roster = (
+        V3_ROSTER_HEADER
+        + "新博士后,P2026001,new.postdoc@example.com,POSTDOC,BASIC_RESEARCH,"
+        + f"{mentor_group.id},primary@example.com,co@example.com\n"
+    )
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(workspace),
+        {"students": upload("v3-roster.csv", roster)},
+        format="multipart",
+    )
+
+    assert response.status_code == 201
+    assert response.data["rows_ok"] == 1
+    newcomer = User.objects.get(email="new.postdoc@example.com")
+    assert ResearchUserProfile.objects.get(user=newcomer).category == "POSTDOC"
+    membership = OrgUnitMember.objects.get(workspace=workspace, user=newcomer, org_unit=mentor_group)
+    assert membership.org_role == OrgUnitMember.OrgRole.REVIEWER
+    assert membership.is_primary is True
+    bindings = MentorBinding.objects.filter(workspace=workspace, mentee=newcomer)
+    assert set(bindings.values_list("mentor__email", flat=True)) == {"primary@example.com", "co@example.com"}
+    assert bindings.get(mentor=primary_advisor).is_primary_advisor is True
+    assert bindings.get(mentor=co_advisor).is_primary_advisor is False
+
+
+def test_v3_import_preserves_existing_primary_org_on_conflict(env):
+    workspace = env["workspace"]
+    root = OrgUnit.objects.create(
+        workspace=workspace, name="主PI", unit_type=OrgUnit.UnitType.ROOT, path="root", depth=0
+    )
+    first = OrgUnit.objects.create(
+        workspace=workspace, parent=root, name="一组", unit_type=OrgUnit.UnitType.GROUP,
+        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP, path="root/one", depth=1,
+    )
+    second = OrgUnit.objects.create(
+        workspace=workspace, parent=root, name="二组", unit_type=OrgUnit.UnitType.GROUP,
+        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP, path="root/two", depth=1,
+    )
+    existing = make_user(email="existing@example.com", first_name="Existing")
+    add_workspace_member(workspace, existing)
+    OrgUnitMember.objects.create(
+        workspace=workspace, org_unit=first, user=existing, org_role="REVIEWER", is_primary=True
+    )
+    roster = V3_ROSTER_HEADER + f"已有成员,S001,existing@example.com,STUDENT,,{second.id},,,\n"
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(workspace), {"students": upload("conflict.csv", roster)}, format="multipart"
+    )
+
+    assert response.status_code == 201
+    assert response.data["rows_pending"] == 1
+    assert "主归属" in response.data["rows"][0]["message"]
+    primary = OrgUnitMember.objects.get(workspace=workspace, user=existing, is_primary=True)
+    assert primary.org_unit == first
+    assert not OrgUnitMember.objects.filter(workspace=workspace, user=existing, org_unit=second).exists()
+
+
+def test_v3_dry_run_does_not_create_accounts_or_org_units(env):
+    workspace = env["workspace"]
+    roster = (
+        V3_ROSTER_HEADER
+        + "预检成员,S002,preview@example.com,STUDENT,BASIC_RESEARCH,不存在的导师组,,,\n"
+    )
+    units_before = OrgUnit.objects.filter(workspace=workspace).count()
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(workspace),
+        {"students": upload("preview.csv", roster), "dry_run": "true"},
+        format="multipart",
+    )
+
+    assert response.status_code == 201
+    assert response.data["rows_pending"] == 1
+    assert "主归属组织不存在" in response.data["rows"][0]["message"]
+    assert not User.objects.filter(email="preview@example.com").exists()
+    assert OrgUnit.objects.filter(workspace=workspace).count() == units_before

@@ -206,7 +206,7 @@ class TestLiteratureCrud:
         created = create_entry(env, 1)
         entry_id = created.json()["id"]
         assert env["stranger_client"].get(entry_url(env, entry_id)).status_code == 404
-        assert env["stranger_client"].get(literature_url(env)).json()["count"] == 0
+        assert env["stranger_client"].get(literature_url(env)).status_code == 404
 
 
 @pytest.mark.django_db

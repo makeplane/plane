@@ -137,7 +137,7 @@
   "stay_ahead_of_blockers_description": "发现从一个项目到另一个项目的挑战，并查看从其他视图中不易发现的周期间依赖关系。",
   "analytics": "分析",
   "workspace_invites": "工作区邀请",
-  "enter_god_mode": "进入管理员模式",
+  "enter_god_mode": "系统管理",
   "workspace_logo": "工作区标志",
   "new_issue": "新工作项",
   "your_work": "我的工作",
@@ -815,7 +815,7 @@
     "edited_by": "编辑者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS 未能启动。这可能是因为一个或多个 AI4MS 服务启动失败。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLab 未能启动。这可能是因为一个或多个 PiLab 服务启动失败。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
   },
   "customize_navigation": "自定义导航",
@@ -884,7 +884,7 @@
       "outcomes": "论文与成果",
       "integrations": "系统集成",
       "timeline": "时间线",
-      "dashboard": "主PI看板",
+      "dashboard": "科研概览",
       "system": "系统管理"
     },
     "admin_roles": {
@@ -904,15 +904,19 @@
       "empty": "暂无邀请码。新建一个邀请码后才能让新成员注册。",
       "hint": "注册已关闭：新账号必须凭邀请码注册，注册后自动进入公共工作区。",
       "fields": {
-        "org_role": "组织角色",
-        "no_role": "仅工作区成员",
+        "profile_category": "人员类别",
+        "primary_org_unit": "主归属组织",
+        "primary_advisor": "主导师",
+        "unassigned": "暂不指定",
         "max_uses": "可用次数",
         "expires_in_days": "有效天数",
         "note": "备注"
       },
       "columns": {
         "code": "邀请码",
-        "org_role": "角色",
+        "profile_category": "人员类别",
+        "primary_org_unit": "主归属",
+        "primary_advisor": "主导师",
         "usage": "已用",
         "expires_at": "过期时间",
         "status": "状态",
@@ -946,9 +950,9 @@
     },
     "user_import": {
       "title": "批量导入",
-      "hint": "上传二维表（分组 / 姓名 / 学号 / 年级 / 学位 / 负责导师 / 邮件 / 电话），并可另传「导师姓名 → 邮箱」对照表。缺少导师邮箱的行会进入待处理清单，不影响其他行。",
+      "hint": "新模板支持人员类别、业务方向、主归属组织、主导师邮箱和用分号分隔的联合导师邮箱；组织与导师必须已存在。旧分组表和导师映射表继续兼容。",
       "fields": {
-        "students": "学生表",
+        "students": "成员名册",
         "advisors": "导师邮箱表（可选）",
         "reset_passwords": "重新生成初始密码"
       },
@@ -960,6 +964,9 @@
       "columns": {
         "name": "姓名",
         "email": "邮箱",
+        "category": "人员类别",
+        "primary_org": "主归属组织",
+        "advisors": "导师",
         "group": "分组",
         "advisor": "负责导师",
         "status": "状态",
@@ -994,15 +1001,27 @@
       }
     },
     "pi": {
-      "description": "主PI工作区：本节点及其子节点在公共工作区的汇总。",
+      "title": "我的科研范围概览",
+      "description": "查看当前授权范围内的项目、报告与评审。",
       "scope_summary": "统计范围：{{workspace}} 中的 {{units}} 个组织节点。",
       "generated_at": "更新时间",
       "org_units": "范围内的组织节点",
+      "recent_outcomes": "近期成果",
+      "filters": {
+        "org_unit": "组织节点",
+        "all_org_units": "全部组织节点",
+        "owner": "负责人",
+        "owner_placeholder": "负责人 ID"
+      },
       "empty_scope": "该账号还没有挂到任何组织节点，看板暂无可汇总数据。请联系管理员把账号加入组织架构。",
       "cards": {
+        "members": "科研成员",
+        "members_hint": "当前范围内去重后的成员数",
         "projects": "科研项目",
         "reports": "周期报告",
         "pending_review": "待评审",
+        "not_submitted": "未提交 {{count}} 人",
+        "recent_submissions": "近 30 天提交 {{count}} 份",
         "stages": "阶段流程",
         "blocked": "被阻塞",
         "reviews": "待评审阶段",
@@ -1019,14 +1038,14 @@
       "business_sections": "业务功能",
       "settings_sections": "管理配置",
       "reports_hint": "创建、提交与验收周报 / 月报。",
-      "dashboard_hint": "主PI看板：本节点及子节点在公共工作区的汇总。",
+      "dashboard_hint": "查看当前授权范围内的项目、报告与评审。",
       "system_hint": "邀请码、批量导入与科研档案。",
       "summary_hint": "按组织节点与周期查看提交情况。",
       "projects_hint": "每个科研责任人一个个人科研项目。",
       "approvals_hint": "基于工作项的任务审批与采购审批。",
       "org_hint": "维护组织树、成员角色、课题组主 PI 与直接导师。",
       "templates_hint": "创建报告时可套用的正文模板。",
-      "identity_hint": "AI4MS 单点登录身份映射。",
+      "identity_hint": "PiLab 单点登录身份映射。",
       "platform_hint": "模块开关、上传限制与默认可见级别。",
       "audit_hint": "只读、只追加的科研审计记录。"
     },
@@ -1045,7 +1064,13 @@
       "close": "关闭",
       "yes": "是",
       "no": "否",
-      "open": "打开"
+      "open": "打开",
+      "previous": "上一页",
+      "next": "下一页",
+      "date_from": "开始日期",
+      "date_to": "结束日期",
+      "apply_filters": "应用筛选",
+      "total_results": "共 {{count}} 条"
     },
     "roles": {
       "owner": "节点负责人",
@@ -1084,6 +1109,14 @@
       "master": "硕士",
       "postdoc": "博士后",
       "research_project": "科研项目"
+    },
+    "profile_categories": {
+      "student": "学生",
+      "postdoc": "博士后",
+      "advisor": "导师",
+      "pi": "主 PI",
+      "staff": "科研助理",
+      "other": "其他"
     },
     "project_status": {
       "active": "进行中",
@@ -1124,6 +1157,8 @@
       "mentee_email_placeholder": "科研责任人邮箱",
       "mentor_email_placeholder": "导师邮箱",
       "bind_mentor": "绑定导师",
+      "primary_advisor": "主导师",
+      "co_advisor": "联合导师",
       "no_mentor_bindings": "该节点暂无导师绑定",
       "columns": {
         "member": "成员",
@@ -1132,20 +1167,40 @@
         "effective_to": "有效期至",
         "effective_from": "生效日期",
         "mentee": "科研责任人",
-        "mentor": "直接导师"
+        "mentor": "直接导师",
+        "advisor_kind": "导师类型"
       }
     },
     "auth": {
       "sso_with": "使用"
     },
     "projects": {
-      "description": "每个科研责任人一个个人科研项目。",
+      "description": "统一管理个人培养项目与团队科研课题。",
+      "create_title": "新建科研项目",
+      "create_hint": "培养项目使用阶段流程；团队课题使用任务、周期和模块推进。",
+      "fields": {
+        "name": "项目名称",
+        "type": "项目类型",
+        "org_unit": "主归属"
+      },
+      "type_groups": {
+        "cultivation": "个人培养",
+        "team": "团队课题"
+      },
+      "name_placeholder": "输入清晰的项目名称",
+      "org_unit_placeholder": "选择主归属",
+      "missing_primary_org": "当前账号还没有主归属。请为本项目选择归属，并联系管理员补全成员关系。",
+      "team_org_optional": "团队课题可以暂不设置组织归属；后续补齐后才会进入对应方向的范围统计。",
       "owner_placeholder": "科研责任人邮箱或 ID（留空表示本人）",
       "create": "创建科研项目",
+      "open_team_project": "打开项目",
       "archive": "归档",
       "restore": "恢复",
       "empty": "暂无科研项目",
       "all_statuses": "全部状态",
+      "all_types": "全部类型",
+      "all_org_units": "全部组织节点",
+      "owner_filter_placeholder": "责任人 ID",
       "columns": {
         "name": "项目",
         "owner": "科研责任人",
@@ -1161,14 +1216,23 @@
       "detail_description": "状态、可见级别、审核历史与操作。",
       "period_placeholder": "周期，例如 2026-W38 / 2026-09",
       "create": "创建报告",
+      "team_projects": "关联团队课题（{{count}}）",
       "mine_only": "仅看我的",
       "all_statuses": "全部状态",
+      "all_types": "全部类型",
+      "all_org_units": "全部组织节点",
+      "owner_filter_placeholder": "作者 ID",
+      "period_filter_placeholder": "筛选周期",
       "backfill": "补交",
       "empty": "没有符合条件的报告",
       "submit": "提交",
       "return": "退回",
       "accept": "验收",
       "open_body": "打开正文",
+      "draft_content": "报告正文",
+      "official_content": "已提交正式版本",
+      "official_version": "第 {{version}} 版",
+      "no_official_content": "尚无可查看的正式提交版本。",
       "visibility": "可见范围",
       "visibility_hint": "只能在工作区默认级别基础上收窄，不能扩大。",
       "return_reason": "退回原因",
@@ -1254,6 +1318,11 @@
       "monthly_visibility": "月报覆盖",
       "inherit": "跟随默认",
       "timezone": "报告周期时区（留空跟随工作区）",
+      "reporting_scope": "应提交报告成员",
+      "reporting_scope_hint": "系统按所选成员类别计算周报、月报的未提交名单。",
+      "main_pi": "主 PI",
+      "main_pi_hint": "仅系统管理员可任命唯一主 PI，请填写账号 ID 或邮箱。",
+      "main_pi_placeholder": "账号 ID 或邮箱（留空表示暂不指定）",
       "limits": "上传限制（MB）",
       "image_max_mb": "图片限制",
       "pdf_max_mb": "PDF 限制",
@@ -1286,7 +1355,7 @@
       }
     },
     "identity": {
-      "description": "将 AI4MS 单点登录身份绑定到本地账号。",
+      "description": "将 PiLab 单点登录身份绑定到本地账号。",
       "user_placeholder": "本地账号邮箱或 ID",
       "subject_placeholder": "OIDC 主体（sub）",
       "employee_id_placeholder": "工号（可选）",
@@ -1687,7 +1756,7 @@
         "cancelled": "已撤回"
       },
       "asset_system": {
-        "plane": "Plane",
+        "plane": "PiLab",
         "speclabos": "SpecLabOS",
         "smartaccess": "SmartAccess",
         "ragportal": "RAGPortal",
@@ -1783,7 +1852,7 @@
       }
     },
     "integrations": {
-      "description": "对接 AI4MS 生态：知识库、湿实验、设备与研发平台系统。",
+      "description": "对接 PiLab 生态：知识库、湿实验、设备与研发平台系统。",
       "connections_title": "连接配置",
       "references_title": "检索并引用外部对象",
       "call_logs_title": "集成调用日志",

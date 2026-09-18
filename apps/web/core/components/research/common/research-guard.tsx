@@ -30,7 +30,7 @@ export const ResearchGuard = observer(function ResearchGuard({ section, adminOnl
   const { identity, identityLoader, identityErrorCode, isEnabled, isResearchAdmin } = research;
 
   useEffect(() => {
-    if (workspaceSlug && !identity)
+    if (workspaceSlug && (research.identityWorkspaceSlug !== workspaceSlug || !identity))
       void research.fetchIdentity(workspaceSlug).catch(() => {
         /* handled through identityErrorCode */
       });
@@ -38,8 +38,9 @@ export const ResearchGuard = observer(function ResearchGuard({ section, adminOnl
   }, [workspaceSlug]);
 
   if (!workspaceSlug) return <Navigate to="/" replace />;
-  if (identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
-  if (identityLoader || !identity) {
+  const isCurrentWorkspaceIdentity = research.identityWorkspaceSlug === workspaceSlug;
+  if (isCurrentWorkspaceIdentity && identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
+  if (identityLoader || !isCurrentWorkspaceIdentity || !identity) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Spinner />

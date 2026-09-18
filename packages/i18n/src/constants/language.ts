@@ -6,6 +6,7 @@
 
 import type { TLanguage, ILanguageOption } from "../types";
 
+export const DEFAULT_LANGUAGE: TLanguage = "zh-CN";
 export const FALLBACK_LANGUAGE: TLanguage = "en";
 
 export const SUPPORTED_LANGUAGES: ILanguageOption[] = [

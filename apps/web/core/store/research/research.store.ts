@@ -12,6 +12,7 @@ import type {
   TMentorBinding,
   TOrgUnit,
   TOrgUnitMember,
+  TPaginationInfo,
   TPeriodicReport,
   TReportAttachment,
   TReportReviewLog,
@@ -106,6 +107,7 @@ export interface IResearchStore {
   codeLoader: boolean;
   // observables
   identity: TResearchIdentity | null;
+  identityWorkspaceSlug: string | null;
   identityErrorCode: string | null;
   orgUnits: Record<string, TOrgUnit>;
   orgUnitIdsByWorkspace: Record<string, string[]>;
@@ -114,6 +116,7 @@ export interface IResearchStore {
   mentorBindingIdsByWorkspace: Record<string, string[]>;
   reports: Record<string, TPeriodicReport>;
   reportIdsByWorkspace: Record<string, string[]>;
+  reportPaginationByWorkspace: Record<string, TPaginationInfo>;
   reportHistory: Record<string, TReportReviewLog[]>;
   reportAttachments: Record<string, TReportAttachment[]>;
   reportSummary: Record<string, TReportSummary>;
@@ -122,6 +125,7 @@ export interface IResearchStore {
   reportTemplateIdsByWorkspace: Record<string, string[]>;
   researchProjects: Record<string, TResearchProject>;
   researchProjectIdsByWorkspace: Record<string, string[]>;
+  projectPaginationByWorkspace: Record<string, TPaginationInfo>;
   approvalFlows: Record<string, TApprovalFlow>;
   approvalFlowIdsByWorkspace: Record<string, string[]>;
   approvalRequests: Record<string, TApprovalRequest>;
@@ -219,13 +223,22 @@ export interface IResearchStore {
   ) => Promise<TMentorBinding[]>;
   createMentorBinding: (
     workspaceSlug: string,
-    payload: { mentee: string; mentor: string; org_unit?: string | null }
+    payload: { mentee: string; mentor: string; org_unit?: string | null; is_primary_advisor?: boolean }
   ) => Promise<void>;
   deleteMentorBinding: (workspaceSlug: string, bindingId: string) => Promise<void>;
   fetchReports: (workspaceSlug: string, params?: TReportListParams) => Promise<TPeriodicReport[]>;
   createReport: (workspaceSlug: string, payload: TReportCreatePayload) => Promise<TPeriodicReport>;
   fetchReport: (workspaceSlug: string, reportId: string) => Promise<TPeriodicReport>;
-  submitReport: (workspaceSlug: string, reportId: string) => Promise<TPeriodicReport>;
+  saveReportDraft: (
+    workspaceSlug: string,
+    reportId: string,
+    payload: { description_json: object; description_html: string }
+  ) => Promise<TPeriodicReport>;
+  submitReport: (
+    workspaceSlug: string,
+    reportId: string,
+    payload?: { description_json?: object; description_html?: string }
+  ) => Promise<TPeriodicReport>;
   returnReport: (workspaceSlug: string, reportId: string, comment: string) => Promise<TPeriodicReport>;
   acceptReport: (workspaceSlug: string, reportId: string) => Promise<TPeriodicReport>;
   fetchReportHistory: (workspaceSlug: string, reportId: string) => Promise<TReportReviewLog[]>;
@@ -487,7 +500,9 @@ export class ResearchStore implements IResearchStore {
   codeLoader = false;
 
   identity: TResearchIdentity | null = null;
+  identityWorkspaceSlug: string | null = null;
   identityErrorCode: string | null = null;
+  private identityRequestSequence = 0;
   orgUnits: Record<string, TOrgUnit> = {};
   orgUnitIdsByWorkspace: Record<string, string[]> = {};
   orgUnitMembers: Record<string, TOrgUnitMember[]> = {};
@@ -495,6 +510,7 @@ export class ResearchStore implements IResearchStore {
   mentorBindingIdsByWorkspace: Record<string, string[]> = {};
   reports: Record<string, TPeriodicReport> = {};
   reportIdsByWorkspace: Record<string, string[]> = {};
+  reportPaginationByWorkspace: Record<string, TPaginationInfo> = {};
   reportHistory: Record<string, TReportReviewLog[]> = {};
   reportAttachments: Record<string, TReportAttachment[]> = {};
   reportSummary: Record<string, TReportSummary> = {};
@@ -503,6 +519,7 @@ export class ResearchStore implements IResearchStore {
   reportTemplateIdsByWorkspace: Record<string, string[]> = {};
   researchProjects: Record<string, TResearchProject> = {};
   researchProjectIdsByWorkspace: Record<string, string[]> = {};
+  projectPaginationByWorkspace: Record<string, TPaginationInfo> = {};
   approvalFlows: Record<string, TApprovalFlow> = {};
   approvalFlowIdsByWorkspace: Record<string, string[]> = {};
   approvalRequests: Record<string, TApprovalRequest> = {};
@@ -567,7 +584,9 @@ export class ResearchStore implements IResearchStore {
       identityLoader: observable,
       orgLoader: observable,
       reportLoader: observable,
+      reportPaginationByWorkspace: observable,
       projectLoader: observable,
+      projectPaginationByWorkspace: observable,
       approvalLoader: observable,
       templatesLoader: observable,
       auditLoader: observable,
@@ -578,6 +597,7 @@ export class ResearchStore implements IResearchStore {
       codeLoader: observable,
       // observables
       identity: observable,
+      identityWorkspaceSlug: observable,
       identityErrorCode: observable,
       orgUnits: observable,
       orgUnitIdsByWorkspace: observable,
@@ -665,6 +685,7 @@ export class ResearchStore implements IResearchStore {
       fetchReports: action,
       createReport: action,
       fetchReport: action,
+      saveReportDraft: action,
       submitReport: action,
       returnReport: action,
       acceptReport: action,
@@ -937,24 +958,38 @@ export class ResearchStore implements IResearchStore {
   // ---------------------------------------------------------------------
 
   fetchIdentity = async (workspaceSlug: string) => {
-    this.identityLoader = true;
+    const requestSequence = ++this.identityRequestSequence;
+    runInAction(() => {
+      this.identityLoader = true;
+      this.identityErrorCode = null;
+      if (this.identityWorkspaceSlug !== workspaceSlug) {
+        this.identity = null;
+        this.identityWorkspaceSlug = null;
+      }
+    });
     try {
       const identity = await this.platformService.getIdentity(workspaceSlug);
+      if (requestSequence !== this.identityRequestSequence) return identity;
       runInAction(() => {
         this.identity = identity;
+        this.identityWorkspaceSlug = workspaceSlug;
         this.identityErrorCode = null;
       });
       return identity;
     } catch (error) {
+      if (requestSequence !== this.identityRequestSequence) throw error;
       runInAction(() => {
         this.identity = null;
+        this.identityWorkspaceSlug = workspaceSlug;
         this.identityErrorCode = (error as { error_code?: string } | null)?.error_code ?? "generic";
       });
       throw error;
     } finally {
-      runInAction(() => {
-        this.identityLoader = false;
-      });
+      if (requestSequence === this.identityRequestSequence) {
+        runInAction(() => {
+          this.identityLoader = false;
+        });
+      }
     }
   };
 
@@ -1061,7 +1096,7 @@ export class ResearchStore implements IResearchStore {
 
   createMentorBinding = async (
     workspaceSlug: string,
-    payload: { mentee: string; mentor: string; org_unit?: string | null }
+    payload: { mentee: string; mentor: string; org_unit?: string | null; is_primary_advisor?: boolean }
   ) => {
     await this.orgService.createMentorBinding(workspaceSlug, payload);
     await this.fetchMentorBindings(workspaceSlug);
@@ -1085,6 +1120,7 @@ export class ResearchStore implements IResearchStore {
           this.reports[report.id] = report;
         });
         this.reportIdsByWorkspace[workspaceSlug] = response.results.map((report) => report.id);
+        this.reportPaginationByWorkspace[workspaceSlug] = response;
       });
       return response.results;
     } finally {
@@ -1111,8 +1147,24 @@ export class ResearchStore implements IResearchStore {
     return report;
   };
 
-  submitReport = async (workspaceSlug: string, reportId: string) => {
-    const report = await this.reportService.submitReport(workspaceSlug, reportId);
+  saveReportDraft = async (
+    workspaceSlug: string,
+    reportId: string,
+    payload: { description_json: object; description_html: string }
+  ) => {
+    const report = await this.reportService.updateReport(workspaceSlug, reportId, payload);
+    runInAction(() => {
+      this.reports[report.id] = report;
+    });
+    return report;
+  };
+
+  submitReport = async (
+    workspaceSlug: string,
+    reportId: string,
+    payload: { description_json?: object; description_html?: string } = {}
+  ) => {
+    const report = await this.reportService.submitReport(workspaceSlug, reportId, payload);
     runInAction(() => {
       this.reports[report.id] = report;
     });
@@ -1266,6 +1318,7 @@ export class ResearchStore implements IResearchStore {
           this.researchProjects[project.id] = project;
         });
         this.researchProjectIdsByWorkspace[workspaceSlug] = response.results.map((project) => project.id);
+        this.projectPaginationByWorkspace[workspaceSlug] = response;
       });
       return response.results;
     } finally {

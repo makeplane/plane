@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Tên công ty",
-            "placeholder": "AI4MS",
+            "placeholder": "PiLab",
             "validation": {
               "required": "Tên công ty là bắt buộc",
               "maxLength": "Tên công ty không nên vượt quá 255 ký tự"

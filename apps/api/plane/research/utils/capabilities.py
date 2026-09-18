@@ -50,7 +50,15 @@ from plane.db.models import (
     Workspace,
 )
 from plane.research.utils.org import active_membership_q
-from plane.research.utils.roles import PI_WORKSPACE_SLUG, PUBLIC_WORKSPACE_SLUG, is_research_admin
+from plane.research.utils.roles import (
+    PI_WORKSPACE_SLUG,
+    PUBLIC_WORKSPACE_SLUG,
+    can_configure_integrations,
+    can_operate_workspace,
+    is_account_compat_admin,
+    is_main_pi,
+    is_research_admin,
+)
 from plane.research.utils.settings import workspace_research_sections
 
 
@@ -158,6 +166,7 @@ LEVEL_NAV_KEYS = {
     ResearchLevel.MENTOR: frozenset(
         (
             NAV_OVERVIEW,
+            NAV_DASHBOARD,
             NAV_REPORTS,
             NAV_SUMMARY,
             NAV_PROJECTS,
@@ -182,11 +191,15 @@ class ResearchSignals:
     """Raw relations behind the level decision, resolved once per request."""
 
     is_admin: bool = False
+    is_main_pi: bool = False
     is_principal: bool = False
     is_mentor: bool = False
     is_stage_reviewer: bool = False
     has_org_relation: bool = False
     has_profile: bool = False
+    can_configure_integrations: bool = False
+    can_operate_workspace: bool = False
+    can_manage_accounts: bool = False
 
     @property
     def level(self):
@@ -273,11 +286,15 @@ def research_signals(user, workspace, on_date=None, now=None) -> ResearchSignals
         # Administrators are always resolved against the workspace in the URL:
         # a tag or a workspace seat is what opens the configuration surfaces.
         is_admin=is_research_admin(user, workspace.id),
+        is_main_pi=is_main_pi(user, workspace),
         is_principal=is_principal,
         is_mentor=is_mentor,
         is_stage_reviewer=is_stage_reviewer,
         has_org_relation=bool(roles),
         has_profile=_has_profile(user),
+        can_configure_integrations=can_configure_integrations(user, workspace),
+        can_operate_workspace=can_operate_workspace(user, workspace),
+        can_manage_accounts=is_account_compat_admin(user, workspace),
     )
 
 
@@ -285,7 +302,7 @@ def research_level_from_signals(signals: ResearchSignals) -> str:
     """Pure mapping from relations to the level (highest match wins)."""
     if signals.is_admin:
         return ResearchLevel.ADMIN
-    if signals.is_principal:
+    if signals.is_main_pi or signals.is_principal:
         return ResearchLevel.PRINCIPAL
     # An assigned stage reviewer sits on the mentor tier: the assignment is what
     # opens the review surface, whatever the rest of the relations say.
@@ -311,6 +328,17 @@ def level_nav_keys(level, is_stage_reviewer=False) -> set:
     return keys
 
 
+def signal_nav_keys(signals: ResearchSignals) -> set:
+    keys = level_nav_keys(signals.level, is_stage_reviewer=signals.is_stage_reviewer)
+    if signals.can_configure_integrations:
+        keys.add(NAV_INTEGRATIONS)
+    if signals.can_operate_workspace:
+        keys.update((NAV_PLATFORM, NAV_AUDIT))
+    if signals.can_manage_accounts:
+        keys.add(NAV_SYSTEM)
+    return keys
+
+
 def section_allows(sections, key) -> bool:
     section = NAV_SECTION_KEYS.get(key)
     if section is None:
@@ -326,19 +354,26 @@ def nav_allowed(user, workspace, key, on_date=None, signals=None) -> bool:
     while the module is off must keep behaving that way (configuration pages).
     """
     signals = signals or research_signals(user, workspace, on_date)
-    level = research_level_from_signals(signals)
-    return key in level_nav_keys(level, is_stage_reviewer=signals.is_stage_reviewer)
+    return key in signal_nav_keys(signals)
 
 
 def build_research_capabilities(user, workspace, on_date=None, signals=None) -> dict:
     """The payload published by ``identity/me`` and rendered by the frontend."""
     signals = signals or research_signals(user, workspace, on_date)
     level = research_level_from_signals(signals)
-    keys = level_nav_keys(level, is_stage_reviewer=signals.is_stage_reviewer)
+    keys = signal_nav_keys(signals)
     sections = workspace_research_sections(workspace) if workspace is not None else {}
     return {
         "level": level,
         "nav": [key for key in NAV_KEYS if key in keys and section_allows(sections, key)],
         "is_mentor": signals.is_mentor,
+        "is_main_pi": signals.is_main_pi,
         "is_stage_reviewer": signals.is_stage_reviewer,
+        "management": {
+            "workspace": signals.is_admin,
+            "organization": signals.is_admin or signals.is_main_pi or signals.is_principal,
+            "integrations": signals.can_configure_integrations,
+            "operations": signals.can_operate_workspace,
+            "accounts": signals.can_manage_accounts,
+        },
     }

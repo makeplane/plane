@@ -3,6 +3,8 @@
 面向「科研目录为什么对不同的人显示不一样的菜单」这一问题的实现说明。规则只有一份，写在后端
 `apps/api/plane/research/utils/capabilities.py`，前端与接口都读它。
 
+> **v3 取代说明（2026-09-17）**：本文 §1–§8 保留 v2.5.0 的已交付历史。`3.0.0` 起，管理员标签、导师概览、独立看板入口和 `PI_PRIVATE` 行为以本文 §9 及 [`research-workspace-v3.md`](./research-workspace-v3.md) 为准。
+
 ## 1. 两条独立的判定轴
 
 科研目录的每一项都由两个条件同时决定：
@@ -88,3 +90,36 @@ docker compose -f docker-compose-test.yml run --rm api-tests pytest plane/tests/
 | 版本            | 日期       | 变更摘要                                                               |
 | --------------- | ---------- | ---------------------------------------------------------------------- |
 | v1.0（`2.5.0`） | 2026-09-16 | 建立科研目录分级可见：四档级别、菜单矩阵、前后端一致的强制点与验收方式 |
+
+## 9. v3 supersedes：当前导航与强制规则
+
+v3 仍保留“工作空间开关 × 用户能力”的双轴模型，但替换了以下输入和入口：
+
+- `ADMIN` 只来自 `InstanceAdmin` 或当前工作空间 role `20`；`DEV_ADMIN`、`OPS_ADMIN` 和旧 `MAIN_PI` 标签不会提升科研级别。
+- `MENTOR` 也获得 `dashboard` 能力，用于在统一的科研概览页中显示本人及有效指导成员的聚合。
+- 侧栏不再显示独立“主 PI 看板”。`/<slug>/research/dashboard` 仅兼容跳转到 `/<slug>/research`，聚合卡片按 `capabilities.nav` 中的 `dashboard` 能力嵌入科研概览。
+- `PI_PRIVATE` 的科研模块强制关闭，因此不渲染科研目录，也不能通过直连科研 API 绕过；该空间只使用标准 Plane 导航。
+- `identity/me.user.is_system_admin` 表示 `InstanceAdmin`，`admin_roles` 单独返回职责标签，前端不能把二者合并判断。
+- 邀请码和用户导入保留独立的旧标签兼容 guard，但仍先经过工作空间成员和 `system` 导航门槛；该例外不适用于其它科研配置或内容接口。
+
+v3 当前菜单/聚合差异如下，其余菜单沿用 §3：
+
+| 能力或入口               | ADMIN | PRINCIPAL | MENTOR | RESEARCHER |
+| ------------------------ | ----- | --------- | ------ | ---------- |
+| `overview` 统一科研概览  | ✅    | ✅        | ✅     | ✅         |
+| `dashboard` 概览聚合卡片 | ✅    | ✅        | ✅     | ❌         |
+| 独立 dashboard 侧栏项    | ❌    | ❌        | ❌     | ❌         |
+| `system` 等科研配置      | ✅    | ❌        | ❌     | ❌         |
+| `PI_PRIVATE` 科研目录    | ❌    | ❌        | ❌     | ❌         |
+
+导航只决定入口是否存在。概览聚合、报告、阶段和项目内资源仍逐对象执行 ACL：主 PI 看全公共范围，组织负责人看管理子树，导师看本人及有效指导成员，纯技术职责标签不增加科研内容范围。
+
+v3 导航和准入重点回归：
+
+```bash
+docker compose -f docker-compose-test.yml run --rm api-tests pytest -q \
+  plane/tests/unit/research/test_capabilities.py \
+  plane/tests/contract/app/test_research_nav_capabilities.py \
+  plane/tests/contract/app/test_research_admin_roles.py \
+  plane/tests/contract/app/test_pi_private_plane_access.py
+```

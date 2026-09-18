@@ -28,16 +28,16 @@ type TAuthHeader = {
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "Work in all dimensions.",
-      subHeader: `Welcome back to ${BRAND_NAME}.`,
+      header: "科研协作，从这里开始。",
+      subHeader: `欢迎回到 ${BRAND_NAME}。`,
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Work in all dimensions.",
-      subHeader: `Welcome back to ${BRAND_NAME}.`,
+      header: "科研协作，从这里开始。",
+      subHeader: `欢迎回到 ${BRAND_NAME}。`,
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Work in all dimensions.",
-      subHeader: `Welcome back to ${BRAND_NAME}.`,
+      header: "科研协作，从这里开始。",
+      subHeader: `欢迎回到 ${BRAND_NAME}。`,
     },
   },
   [EAuthModes.SIGN_UP]: {

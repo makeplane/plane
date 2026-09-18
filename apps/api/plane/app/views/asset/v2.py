@@ -19,13 +19,137 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from ..base import BaseAPIView
-from plane.db.models import FileAsset, Workspace, Project, User, WorkspaceMember, ProjectMember
+from plane.db.models import (
+    CodeArtifact,
+    ExperimentAmendment,
+    FileAsset,
+    LiteratureEntry,
+    Project,
+    ProjectMember,
+    ReportAttachment,
+    ResearchOutcome,
+    User,
+    Workspace,
+    WorkspaceMember,
+)
+from plane.research.utils.acl import build_actor_context, check_access
+from plane.research.utils.reports import report_resource
+from plane.research.utils.literature import literature_resource
+from plane.research.utils.resource_projections import experiment_resource, outcome_resource, repository_resource
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.utils.path_validator import sanitize_filename
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.throttles.asset import AssetRateThrottle
+
+
+def can_download_research_asset(user, asset):
+    """Apply the owning research report ACL before signing an asset URL.
+
+    ``REPORT_ATTACHMENT`` assets may be addressed through Plane's generic
+    workspace and project download routes. Those routes only establish Plane
+    membership, so resolve every active report registration and require the
+    same ``download`` decision as the research attachment endpoint. An upload
+    that has not been registered to a report fails closed.
+    """
+    research_refs = _research_asset_refs(asset)
+    if not research_refs:
+        return asset.entity_type != FileAsset.EntityTypeContext.REPORT_ATTACHMENT
+
+    attachments = research_refs["attachments"]
+    context = build_actor_context(user, asset.workspace_id)
+    for attachment in attachments:
+        if not check_access(user, "download", report_resource(attachment.report), context=context):
+            continue
+        if attachment.report.owner_id == getattr(user, "id", None):
+            if attachment.deleted_at is None:
+                return True
+            continue
+        latest_version = (
+            attachment.report.official_snapshots.order_by("-version_no")
+            .values_list("version_no", flat=True)
+            .first()
+        )
+        if attachment.official_version_no == latest_version:
+            return True
+    context = build_actor_context(user, asset.workspace_id)
+    for entry in research_refs["literature"]:
+        if check_access(user, "download", literature_resource(entry), context=context):
+            return True
+    for artifact in research_refs["code"]:
+        if check_access(user, "download", repository_resource(artifact.repository), context=context):
+            return True
+    for outcome in research_refs["outcomes"]:
+        if check_access(user, "download", outcome_resource(outcome), context=context):
+            return True
+    for amendment in research_refs["amendments"]:
+        if check_access(user, "download", experiment_resource(amendment.record), context=context):
+            return True
+    return False
+
+
+def can_mutate_research_asset(user, asset):
+    """Only pending, unregistered research uploads use generic mutation APIs.
+
+    Once an asset is linked to a report or another research object, changes
+    must go through that object's endpoint. This prevents a former project
+    member (or an author editing a frozen formal record) from deleting the
+    underlying file through Plane's generic asset route.
+    """
+    research_refs = _research_asset_refs(asset)
+    if not research_refs:
+        if asset.entity_type == FileAsset.EntityTypeContext.REPORT_ATTACHMENT:
+            return is_unregistered_research_asset_owner(user, asset)
+        return True
+    return False
+
+
+def _research_asset_refs(asset):
+    attachments = list(
+        ReportAttachment.all_objects.filter(
+            asset_id=asset.id,
+            report__workspace_id=asset.workspace_id,
+            report__deleted_at__isnull=True,
+        ).select_related("report")
+    )
+    literature = list(
+        LiteratureEntry.objects.filter(pdf_asset_id=asset.id, workspace_id=asset.workspace_id)
+        .select_related("project__research_profile")
+    )
+    code = list(
+        CodeArtifact.objects.filter(
+            snapshot_asset_id=asset.id,
+            repository__workspace_id=asset.workspace_id,
+        ).select_related("repository__project__research_profile")
+    )
+    outcomes = list(
+        ResearchOutcome.objects.filter(file_asset_id=asset.id, workspace_id=asset.workspace_id)
+        .select_related("project__research_profile")
+    )
+    amendments = list(
+        ExperimentAmendment.objects.filter(
+            evidence_asset_id=asset.id,
+            record__workspace_id=asset.workspace_id,
+        ).select_related("record__stage_instance", "record__project__research_profile")
+    )
+    if not any((attachments, literature, code, outcomes, amendments)):
+        return None
+    return {
+        "attachments": attachments,
+        "literature": literature,
+        "code": code,
+        "outcomes": outcomes,
+        "amendments": amendments,
+    }
+
+
+def is_unregistered_research_asset_owner(user, asset):
+    return bool(
+        asset.entity_type == FileAsset.EntityTypeContext.REPORT_ATTACHMENT
+        and not ReportAttachment.all_objects.filter(asset_id=asset.id).exists()
+        and asset.created_by_id == getattr(user, "id", None)
+    )
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -424,6 +548,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        if not can_mutate_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -451,6 +577,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        if not can_mutate_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
@@ -468,6 +596,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 {"error": "You don't have access to this asset."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        if not can_download_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -539,6 +669,8 @@ class AssetRestoreEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
+        if not can_mutate_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
@@ -648,6 +780,8 @@ class ProjectAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, project_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        if not can_mutate_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -664,6 +798,8 @@ class ProjectAssetEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, pk):
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        if not can_mutate_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -675,6 +811,8 @@ class ProjectAssetEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        if not can_download_research_asset(request.user, asset):
+            return Response({"error": "You don't have access to this asset."}, status=status.HTTP_403_FORBIDDEN)
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -772,7 +910,8 @@ class AssetCheckEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, asset_id):
-        asset = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).exists()
+        row = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).first()
+        asset = bool(row and can_download_research_asset(request.user, row))
         return Response({"exists": asset}, status=status.HTTP_200_OK)
 
 
@@ -840,6 +979,8 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         if not original_asset:
             return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
+        if not can_download_research_asset(request.user, original_asset):
+            return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
 
         sanitized_name = sanitize_filename(original_asset.attributes.get("name")) or "unnamed"
         destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{sanitized_name}"
@@ -882,6 +1023,12 @@ class WorkspaceAssetDownloadEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        if not can_download_research_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         storage = S3Storage(request=request)
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
@@ -908,6 +1055,12 @@ class ProjectAssetDownloadEndpoint(BaseAPIView):
             return Response(
                 {"error": "The requested asset could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not can_download_research_asset(request.user, asset):
+            return Response(
+                {"error": "You don't have access to this asset."},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         storage = S3Storage(request=request)

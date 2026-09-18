@@ -11,6 +11,7 @@ import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { TLoginMediums } from "./instance";
 import type { IWorkspaceViewProps } from "./view-props";
+import type { TWorkspaceResearchPurpose } from "./research";
 
 export enum EUserWorkspaceRoles {
   ADMIN = 20,
@@ -34,6 +35,10 @@ export interface IWorkspace {
   total_projects?: number;
   role: number;
   timezone: string;
+  research_purpose?: TWorkspaceResearchPurpose;
+  research_enabled?: boolean;
+  main_pi?: string | null;
+  private_access_users?: string[];
 }
 
 export interface IWorkspaceLite {

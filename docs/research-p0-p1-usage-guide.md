@@ -1,4 +1,4 @@
-# Plane for AI4MS 科研管理 P0 / P1 使用说明
+# PiLab 科研管理 P0 / P1 使用说明
 
 面向使用者的操作手册，覆盖 P0（组织与报告）与 P1（阶段、评审、实验、代码、集成）全部已交付功能。
 实现依据见 [`research-p0-development-prd.md`](./research-p0-development-prd.md) 与

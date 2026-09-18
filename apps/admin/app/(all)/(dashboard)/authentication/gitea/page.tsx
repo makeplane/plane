@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane internal packages
+import { BRAND_NAME } from "@plane/constants";
 import { Switch } from "@makeplane/propel/components/switch";
 // assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
@@ -70,7 +71,7 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
       customHeader={
         <AuthenticationMethodCard
           name="Gitea"
-          description="Allow members to login or sign up to plane with their Gitea accounts."
+          description={`Allow members to log in or sign up to ${BRAND_NAME} with their Gitea accounts.`}
           icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
           config={
             <Switch

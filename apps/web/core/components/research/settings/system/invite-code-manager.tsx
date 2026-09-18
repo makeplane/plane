@@ -7,8 +7,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { INVITE_CODE_STATUS_LABELS, ORG_ROLES, ORGANISATION_ROLE_LABELS } from "@plane/constants";
-import type { TInviteCode, TOrgRole } from "@plane/constants";
+import { INVITE_CODE_STATUS_LABELS } from "@plane/constants";
+import type { TAccountProvisioningOptions, TInviteCode, TResearchProfileCategory } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -32,21 +32,28 @@ type Props = {
 export const ResearchInviteCodeManager = observer(function ResearchInviteCodeManager({ workspaceSlug }: Props) {
   const { t } = useTranslation();
   const [codes, setCodes] = useState<TInviteCode[]>([]);
+  const [options, setOptions] = useState<TAccountProvisioningOptions | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [draft, setDraft] = useState<{
-    org_role: TOrgRole | "";
+    profile_category: TResearchProfileCategory;
+    org_unit: string | null;
+    primary_advisor: string | null;
     max_uses: number;
     expires_in_days: number;
     note: string;
-  }>({ org_role: "REVIEWER", max_uses: 1, expires_in_days: 7, note: "" });
+  }>({ profile_category: "STUDENT", org_unit: null, primary_advisor: null, max_uses: 1, expires_in_days: 7, note: "" });
 
   const load = useCallback(async () => {
     try {
       setErrorKey(null);
-      const data = await accountService.getInviteCodes(workspaceSlug);
+      const [data, provisioningOptions] = await Promise.all([
+        accountService.getInviteCodes(workspaceSlug),
+        accountService.getAccountProvisioningOptions(workspaceSlug),
+      ]);
       setCodes(data?.results ?? []);
+      setOptions(provisioningOptions);
     } catch {
       setErrorKey("research.invite_codes.error.load");
     } finally {
@@ -105,16 +112,47 @@ export const ResearchInviteCodeManager = observer(function ResearchInviteCodeMan
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end gap-3 rounded-md border border-subtle p-3">
         <label className="flex flex-col gap-1 text-11 text-tertiary">
-          {t("research.invite_codes.fields.org_role")}
+          {t("research.invite_codes.fields.profile_category")}
           <select
             className="rounded border border-subtle bg-transparent px-2 py-1.5 text-12 text-primary"
-            value={draft.org_role}
-            onChange={(event) => setDraft((prev) => ({ ...prev, org_role: event.target.value as TOrgRole | "" }))}
+            value={draft.profile_category}
+            onChange={(event) =>
+              setDraft((prev) => ({ ...prev, profile_category: event.target.value as TResearchProfileCategory }))
+            }
           >
-            <option value="">{t("research.invite_codes.fields.no_role")}</option>
-            {ORG_ROLES.map((role) => (
-              <option key={role} value={role}>
-                {t(ORGANISATION_ROLE_LABELS[role])}
+            {(options?.profile_categories ?? []).map((category) => (
+              <option key={category.value} value={category.value}>
+                {category.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-11 text-tertiary">
+          {t("research.invite_codes.fields.primary_org_unit")}
+          <select
+            className="max-w-72 rounded border border-subtle bg-transparent px-2 py-1.5 text-12 text-primary"
+            value={draft.org_unit ?? ""}
+            onChange={(event) => setDraft((prev) => ({ ...prev, org_unit: event.target.value || null }))}
+          >
+            <option value="">{t("research.invite_codes.fields.unassigned")}</option>
+            {(options?.org_units ?? []).map((unit) => (
+              <option key={unit.id} value={unit.id}>
+                {unit.display_path}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-11 text-tertiary">
+          {t("research.invite_codes.fields.primary_advisor")}
+          <select
+            className="max-w-64 rounded border border-subtle bg-transparent px-2 py-1.5 text-12 text-primary"
+            value={draft.primary_advisor ?? ""}
+            onChange={(event) => setDraft((prev) => ({ ...prev, primary_advisor: event.target.value || null }))}
+          >
+            <option value="">{t("research.invite_codes.fields.unassigned")}</option>
+            {(options?.advisors ?? []).map((advisor) => (
+              <option key={advisor.id} value={advisor.id}>
+                {advisor.display_name || advisor.email}
               </option>
             ))}
           </select>
@@ -166,7 +204,9 @@ export const ResearchInviteCodeManager = observer(function ResearchInviteCodeMan
             <thead className="bg-surface-2 text-11 text-tertiary">
               <tr>
                 <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.code")}</th>
-                <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.org_role")}</th>
+                <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.profile_category")}</th>
+                <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.primary_org_unit")}</th>
+                <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.primary_advisor")}</th>
                 <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.usage")}</th>
                 <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.expires_at")}</th>
                 <th className="px-3 py-2 text-left">{t("research.invite_codes.columns.status")}</th>
@@ -186,7 +226,13 @@ export const ResearchInviteCodeManager = observer(function ResearchInviteCodeMan
                     </button>
                   </td>
                   <td className="px-3 py-2 text-secondary">
-                    {code.org_role ? t(ORGANISATION_ROLE_LABELS[code.org_role as TOrgRole]) : "-"}
+                    {code.profile_category || (code.provisioning_version === 1 ? "Legacy v1" : "-")}
+                  </td>
+                  <td className="px-3 py-2 text-secondary">
+                    {options?.org_units.find((unit) => unit.id === code.org_unit)?.display_path ?? "-"}
+                  </td>
+                  <td className="px-3 py-2 text-secondary">
+                    {options?.advisors.find((advisor) => advisor.id === code.primary_advisor)?.display_name ?? "-"}
                   </td>
                   <td className="px-3 py-2 text-secondary">
                     {code.used_count} / {code.max_uses}

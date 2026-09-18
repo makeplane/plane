@@ -6,15 +6,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 // plane helpers
+import { GOD_MODE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { PreferencesOutline } from "@makeplane/propel/icons";
+import { PreferencesOutline, SettingsOutline } from "@makeplane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
 // components
 import { CustomizeNavigationDialog } from "@/components/navigation/customize-navigation-dialog";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import useSize from "@/hooks/use-window-size";
+import { useInstanceAdmin } from "@/hooks/use-instance-admin";
 // plane web components
 import { WorkspaceEditionBadge } from "@/components/workspace/edition-badge";
 import { AppSidebarToggleButton } from "./sidebar-toggle-button";
@@ -32,6 +36,8 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   const [isCustomizeNavDialogOpen, setIsCustomizeNavDialogOpen] = useState(false);
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
+  const isInstanceAdmin = useInstanceAdmin();
+  const { t } = useTranslation();
   const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
@@ -81,6 +87,15 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
         >
           {children}
         </ScrollArea>
+        {isInstanceAdmin && (
+          <Link
+            href={GOD_MODE_URL}
+            className="mx-3 my-2 flex items-center gap-2 rounded-md border border-subtle px-3 py-2 text-13 font-medium text-primary hover:bg-layer-transparent-hover focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <SettingsOutline className="size-4 shrink-0" />
+            {t("enter_god_mode")}
+          </Link>
+        )}
         {/* Help Section */}
         <div className="flex h-12 items-center justify-between border-t border-subtle bg-surface-1 p-3">
           <WorkspaceEditionBadge />

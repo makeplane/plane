@@ -815,7 +815,7 @@
     "edited_by": "Modifié par"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS n’a pas démarré. Cela pourrait être dû au fait qu’un ou plusieurs services AI4MS ont échoué à démarrer.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLab n’a pas démarré. Cela pourrait être dû au fait qu’un ou plusieurs services PiLab ont échoué à démarrer.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
   },
   "customize_navigation": "Personnaliser la navigation",
@@ -827,7 +827,7 @@
   "pin": "Épingler",
   "unpin": "Désépingler",
   "workspace_dashboards": "Tableaux de bord",
-  "pi_chat": "AI4MS AI",
+  "pi_chat": "PiLab AI",
   "in_app": "Dans l'application",
   "forms": "Formulaires",
   "milestones": "Jalons",

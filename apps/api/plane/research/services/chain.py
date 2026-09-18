@@ -23,11 +23,11 @@ from plane.db.models import (
     ResearchOutcome,
     ResearchStageInstance,
 )
-from plane.research.services.progress import experiment_resource
 from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.integrations import reference_allowed
 from plane.research.utils.literature import literature_resource
 from plane.research.utils.reports import report_resource
+from plane.research.utils.resource_projections import experiment_resource, outcome_resource, repository_resource
 from plane.research.utils.stages import stage_resource
 
 THINKING_CHAIN = "thinking"
@@ -159,7 +159,7 @@ def build_timeline(
 
     for record in ExperimentRecord.objects.filter(
         workspace=workspace, project_id=project_id, deleted_at__isnull=True
-    ):
+    ).select_related("stage_instance", "project__research_profile"):
         if not within(record.completed_at or record.created_at):
             continue
         if not check_access(actor, "view", experiment_resource(record), context=context):
@@ -180,8 +180,14 @@ def build_timeline(
 
     for artifact in CodeArtifact.objects.filter(
         repository__project_id=project_id, deleted_at__isnull=True
-    ).select_related("repository"):
+    ).select_related("repository", "repository__project__research_profile"):
         if not within(artifact.committed_at or artifact.created_at):
+            continue
+        # Artifacts inherit their repository's object ACL, exactly like the
+        # artifact list/detail surface which first resolves visible_repository.
+        if not check_access(
+            actor, "view", repository_resource(artifact.repository), context=context
+        ):
             continue
         items.append(
             TimelineItem(
@@ -217,8 +223,10 @@ def build_timeline(
 
     for outcome in ResearchOutcome.objects.filter(
         workspace=workspace, project_id=project_id, deleted_at__isnull=True
-    ):
+    ).select_related("project__research_profile"):
         if not within(outcome.published_at or outcome.created_at):
+            continue
+        if not check_access(actor, "view", outcome_resource(outcome), context=context):
             continue
         items.append(
             TimelineItem(

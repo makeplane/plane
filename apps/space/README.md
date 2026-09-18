@@ -6,5 +6,5 @@
 </a>
 </p>
 
-<h3 align="center"><b>Plane Space</b></h3>
+<h3 align="center"><b>PiLab Publish</b></h3>
 <p align="center"><b>Open-source, self-hosted project planning tool</b></p>

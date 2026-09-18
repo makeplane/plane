@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nazwa firmy",
-            "placeholder": "AI4MS",
+            "placeholder": "PiLab",
             "validation": {
               "required": "Nazwa firmy jest wymagana",
               "maxLength": "Nazwa firmy powinna mieć mniej niż 255 znaków"

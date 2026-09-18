@@ -8,10 +8,10 @@ from django.utils.dateparse import parse_date
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.db.models import ResearchProjectProfile
 from plane.research.services.chain import CHAINS, build_timeline, chain_groups
 from plane.research.utils.errors import ResearchErrorCode, research_error, research_not_found
 from plane.research.views.base import ResearchAPIView
+from plane.research.views.projects import can_read_project_research_metadata, profile_queryset
 
 SECTION = "stages"
 
@@ -23,8 +23,8 @@ class ResearchProjectTimelineEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        profile = ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
-        if profile is None:
+        profile = profile_queryset(workspace).filter(project_id=project_id).first()
+        if profile is None or not can_read_project_research_metadata(workspace, request.user, profile):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
 
         chain = str(request.GET.get("chain") or "").lower() or None
@@ -57,8 +57,8 @@ class ResearchProjectChainEndpoint(ResearchAPIView):
         workspace, error = self.get_workspace(section=SECTION)
         if error:
             return error
-        profile = ResearchProjectProfile.objects.filter(workspace=workspace, project_id=project_id).first()
-        if profile is None:
+        profile = profile_queryset(workspace).filter(project_id=project_id).first()
+        if profile is None or not can_read_project_research_metadata(workspace, request.user, profile):
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
         chain = str(request.GET.get("chain") or "").lower() or None
         if chain and chain not in CHAINS:

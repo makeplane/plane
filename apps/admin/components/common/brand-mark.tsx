@@ -14,8 +14,13 @@ type TBrandMark = {
 export function BrandMark({ className }: TBrandMark) {
   return (
     <span className={cn("inline-flex items-center gap-1 font-semibold tracking-tight", className)}>
-      <span aria-hidden="true">◆</span>
-      {BRAND_SHORT_NAME}
+      <img
+        alt=""
+        aria-hidden="true"
+        className="h-full min-h-[1em] w-auto shrink-0 rounded-sm bg-white object-contain p-px"
+        src="/pilogo.svg"
+      />
+      <span>{BRAND_SHORT_NAME}</span>
     </span>
   );
 }

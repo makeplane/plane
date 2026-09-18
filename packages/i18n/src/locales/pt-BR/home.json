@@ -5,7 +5,7 @@
       "not_right_now": "Agora não",
       "create_project": {
         "title": "Criar um projeto",
-        "description": "A maioria das coisas começa com um projeto no AI4MS.",
+        "description": "A maioria das coisas começa com um projeto no PiLab.",
         "cta": "Começar"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Configurar este espaço de trabalho"
       },
       "personalize_account": {
-        "title": "Personalize o AI4MS.",
+        "title": "Personalize o PiLab.",
         "description": "Escolha sua foto, cores e muito mais.",
         "cta": "Personalizar agora"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Novidades no AI4MS"
+      "title": "Novidades no PiLab"
     },
     "quick_tutorial": {
       "title": "Tutorial rápido"

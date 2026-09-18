@@ -4,6 +4,8 @@
 
 """Main PI workspace: a scoped, read-only aggregate over the public workspace."""
 
+from datetime import date
+
 import pytest
 from rest_framework.test import APIClient
 
@@ -11,6 +13,7 @@ from plane.db.models import (
     OrgUnit,
     OrgUnitMember,
     Project,
+    ResearchOutcome,
     ResearchProjectProfile,
     ResearchStageInstance,
 )
@@ -52,7 +55,7 @@ def make_group(workspace, root, name):
     return unit
 
 
-def make_project(workspace, owner, unit, identifier, status="ACTIVE"):
+def make_project(workspace, owner, unit, identifier, status="ACTIVE", started_at=None):
     project = Project.objects.create(
         workspace=workspace,
         name=f"Project {identifier}",
@@ -66,6 +69,7 @@ def make_project(workspace, owner, unit, identifier, status="ACTIVE"):
         org_unit=unit,
         research_type=ResearchProjectProfile.ResearchType.PHD,
         workflow_status=status,
+        started_at=started_at,
         created_by=owner,
     )
     return project
@@ -112,7 +116,7 @@ def test_aggregate_is_scoped_to_the_callers_subtree(env):
     make_project(env["public"], pi_user, env["own_group"], "OWN1")
     make_project(env["public"], pi_user, env["other_group"], "OTHER1")
 
-    response = client_for(pi_user).get(pi_aggregate_url(env["pi_area"]))
+    response = client_for(pi_user).get(pi_aggregate_url(env["public"]))
     assert response.status_code == 200
     assert response.data["source_workspace"]["slug"] == env["public"].slug
     assert response.data["scope"]["unit_count"] == 1
@@ -134,7 +138,7 @@ def test_aggregate_covers_descendant_nodes(env):
     make_project(env["public"], pi_user, env["own_group"], "OWN2")
     make_project(env["public"], pi_user, env["other_group"], "OTHER2")
 
-    response = client_for(pi_user).get(pi_aggregate_url(env["pi_area"]))
+    response = client_for(pi_user).get(pi_aggregate_url(env["public"]))
     assert response.status_code == 200
     assert response.data["projects"]["total"] == 2
     assert response.data["scope"]["unit_count"] == 3
@@ -152,7 +156,7 @@ def test_aggregate_is_refused_without_a_managing_role(env):
     add_workspace_member(env["pi_area"], bystander)
     make_project(env["public"], env["admin"], env["own_group"], "ANY")
 
-    response = client_for(bystander).get(pi_aggregate_url(env["pi_area"]))
+    response = client_for(bystander).get(pi_aggregate_url(env["public"]))
     assert response.status_code == 403
     assert response.data["error_code"] == "research_permission_denied"
 
@@ -178,10 +182,109 @@ def test_aggregate_counts_stage_blockers(env):
         org_unit=env["own_group"],
     )
 
-    response = client_for(pi_user).get(pi_aggregate_url(env["pi_area"]))
+    response = client_for(pi_user).get(pi_aggregate_url(env["public"]))
     assert response.data["stages"]["by_status"] == {"SUBMITTED": 1}
     assert response.data["stages"]["blocked_gates"] == 1
     assert response.data["reviews"]["awaiting_stages"] == 1
+
+
+def test_aggregate_filters_echo_and_drilldowns_reuse_the_normalized_values(env):
+    pi_user = make_user(first_name="FilteredPI")
+    add_workspace_member(env["public"], pi_user)
+    OrgUnitMember.objects.create(
+        workspace=env["public"],
+        org_unit=env["root"],
+        user=pi_user,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+    )
+    OrgUnitMember.objects.create(
+        workspace=env["public"],
+        org_unit=env["own_group"],
+        user=pi_user,
+        org_role=OrgUnitMember.OrgRole.REVIEWER,
+    )
+    included = make_project(
+        env["public"],
+        pi_user,
+        env["own_group"],
+        "FILTER1",
+        started_at=date(2026, 9, 10),
+    )
+    make_project(
+        env["public"],
+        pi_user,
+        env["own_group"],
+        "FILTER2",
+        started_at=date(2026, 8, 10),
+    )
+    ResearchOutcome.objects.create(
+        workspace=env["public"],
+        project=included,
+        title="Recent filtered result",
+        status=ResearchOutcome.Status.PUBLISHED,
+        published_at=date(2026, 9, 12),
+    )
+
+    params = {
+        "org_unit": str(env["own_group"].id),
+        "owner": str(pi_user.id),
+        "date_from": "2026-09-01",
+        "date_to": "2026-09-30",
+    }
+    response = client_for(pi_user).get(pi_aggregate_url(env["public"]), params)
+
+    assert response.status_code == 200
+    assert response.data["filters"] == params
+    assert response.data["drilldowns"]["projects"] == params
+    assert response.data["drilldowns"]["reports"] == params
+    assert response.data["projects"]["total"] == 1
+    assert response.data["reports"]["not_submitted"] == 1
+    assert response.data["outcomes"]["total"] == 1
+    assert response.data["outcomes"]["recent"][0]["title"] == "Recent filtered result"
+
+
+@pytest.mark.parametrize(
+    ("params", "message"),
+    [
+        ({"org_unit": "not-a-uuid"}, "org_unit"),
+        ({"owner": "not-a-uuid"}, "owner"),
+        ({"date_from": "17-09-2026"}, "date_from"),
+        ({"date_from": "2026-10-01", "date_to": "2026-09-01"}, "date_from"),
+    ],
+)
+def test_aggregate_rejects_invalid_filter_values(env, params, message):
+    pi_user = make_user(first_name="ValidatingPI")
+    add_workspace_member(env["public"], pi_user)
+    OrgUnitMember.objects.create(
+        workspace=env["public"],
+        org_unit=env["root"],
+        user=pi_user,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+    )
+
+    response = client_for(pi_user).get(pi_aggregate_url(env["public"]), params)
+
+    assert response.status_code == 400
+    assert message in response.data["message"]
+
+
+def test_aggregate_hides_an_org_unit_outside_the_callers_scope(env):
+    pi_user = make_user(first_name="ScopedPI")
+    add_workspace_member(env["public"], pi_user)
+    OrgUnitMember.objects.create(
+        workspace=env["public"],
+        org_unit=env["own_group"],
+        user=pi_user,
+        org_role=OrgUnitMember.OrgRole.PI,
+    )
+
+    response = client_for(pi_user).get(
+        pi_aggregate_url(env["public"]),
+        {"org_unit": str(env["other_group"].id)},
+    )
+
+    assert response.status_code == 404
+    assert response.data["error_code"] == "org_unit_not_found"
 
 
 def test_non_member_cannot_read_the_aggregate(env):
@@ -190,8 +293,8 @@ def test_non_member_cannot_read_the_aggregate(env):
     assert response.status_code == 404
 
 
-def test_org_pi_gets_a_main_pi_workspace_seat(env):
-    """A node owner / PI joins the main PI workspace without any tag."""
+def test_org_pi_does_not_get_a_private_workspace_seat(env):
+    """A direction or mentor-group PI is not the unique main PI."""
     from plane.db.models import WorkspaceMember
     from plane.research.utils.roles import sync_main_pi_workspace_seat
 
@@ -205,16 +308,11 @@ def test_org_pi_gets_a_main_pi_workspace_seat(env):
     )
 
     membership = sync_main_pi_workspace_seat(pi_user, actor=env["admin"])
-    assert membership is not None
-    assert membership.workspace_id == env["pi_area"].id
-    assert membership.role == 15
-    assert WorkspaceMember.objects.filter(
-        workspace=env["pi_area"], member=pi_user, is_active=True
-    ).exists()
+    assert membership is None
+    assert not WorkspaceMember.objects.filter(workspace=env["pi_area"], member=pi_user, is_active=True).exists()
 
 
-def test_org_member_endpoint_grants_the_pi_seat(env):
-    """Appointing a PI through the API also grants the main PI workspace seat."""
+def test_org_member_endpoint_does_not_grant_a_private_pi_seat(env):
     from plane.db.models import WorkspaceMember
 
     admin_client = client_for(env["admin"])
@@ -227,6 +325,19 @@ def test_org_member_endpoint_grants_the_pi_seat(env):
         format="json",
     )
     assert response.status_code == 201
-    assert WorkspaceMember.objects.filter(
-        workspace=env["pi_area"], member=pi_user, is_active=True
-    ).exists()
+    assert not WorkspaceMember.objects.filter(workspace=env["pi_area"], member=pi_user, is_active=True).exists()
+
+
+def test_explicit_main_pi_gets_the_private_workspace_seat(env):
+    from plane.db.models import WorkspaceMember
+    from plane.research.utils.roles import sync_main_pi_workspace_seat
+
+    main_pi = make_user(first_name="ConfiguredMainPI")
+    setting = env["pi_area"].research_setting
+    setting.main_pi = main_pi
+    setting.save(update_fields=["main_pi", "updated_at"])
+
+    membership = sync_main_pi_workspace_seat(main_pi, actor=env["admin"])
+
+    assert membership is not None
+    assert WorkspaceMember.objects.filter(workspace=env["pi_area"], member=main_pi, is_active=True).exists()

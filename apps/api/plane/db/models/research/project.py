@@ -69,9 +69,6 @@ class ResearchProjectProfile(BaseModel):
         verbose_name_plural = "Research Project Profiles"
         db_table = "research_project_profiles"
         ordering = ("-created_at",)
-        # "one active research project per owner" (P0-PRJ-02) is enforced in the
-        # application layer inside a transaction: a database constraint would
-        # also block the documented "allow multiple projects" relaxation.
         indexes = [
             models.Index(fields=["workspace", "workflow_status"], name="rsch_project_ws_status_idx"),
             models.Index(fields=["org_unit"], name="rsch_project_org_unit_idx"),

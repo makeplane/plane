@@ -173,14 +173,13 @@ class TestRunIngestion:
 
     def test_same_run_id_in_another_project_is_a_new_record(self, env):
         enable_speclabos(env)
-        from plane.db.models import WorkspaceResearchSetting
-
-        setting = WorkspaceResearchSetting.objects.get(workspace=env["workspace"])
-        setting.allow_multiple_projects = True
-        setting.save(update_fields=["allow_multiple_projects"])
         second_project = env["admin_client"].post(
             f"/api/research/workspaces/{env['workspace'].slug}/projects/",
-            {"owner": str(env["owner"].id), "research_type": "MASTER", "create_project": True},
+            {
+                "owner": str(env["owner"].id),
+                "name": "Owner team project",
+                "research_type": "RESEARCH_PROJECT",
+            },
             format="json",
         ).json()["id"]
         with patch("httpx.get", return_value=FakeResponse(200, RUN_PAYLOAD)):
@@ -250,4 +249,4 @@ class TestIngestionDegradation:
         response = env["member_client"].post(
             ingest_url(env), {"external_run_id": "run-1", "title": "x"}, format="json"
         )
-        assert response.status_code == 403
+        assert response.status_code == 404

@@ -36,7 +36,7 @@ export const CustomThemeDownloadConfigButton = observer(function CustomThemeDown
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `plane-theme-${Date.now()}.json`;
+      link.download = `pilab-theme-${Date.now()}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

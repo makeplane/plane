@@ -122,6 +122,8 @@ from .research import (
     OrgUnit,
     OrgUnitMember,
     PeriodicReport,
+    PeriodicReportProjectReference,
+    PeriodicReportSnapshot,
     ReportAccessGrant,
     ReportAttachment,
     ReportReviewLog,
@@ -148,4 +150,5 @@ from .research import (
     UserImportBatch,
     UserImportRow,
     WorkspaceResearchSetting,
+    ResearchWorkspaceAccessGrant,
 )

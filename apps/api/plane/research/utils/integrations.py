@@ -24,10 +24,11 @@ def actor_acl_dimension(actor, workspace_id):
     context = build_actor_context(actor, workspace_id)
     parts = [
         str(context.user_id),
-        "admin" if context.is_workspace_admin else "member",
+        "main-pi" if context.is_main_pi else "member",
         ",".join(sorted(str(unit) for unit in context.unit_ids)),
         ",".join(sorted(str(unit) for unit in context.managing_unit_ids)),
         ",".join(sorted(str(mentee) for mentee in context.advises)),
+        ",".join(sorted(str(project) for project in context.project_ids)),
     ]
     digest = hashlib.sha256("|".join(parts).encode()).hexdigest()
     return digest[:16]
@@ -49,12 +50,15 @@ def set_cached(key, value, *, degraded=False, ttl=None):
     return value
 
 
-def reference_allowed(reference, actor, workspace_id) -> bool:
+def reference_allowed(reference, actor, workspace_id, *, context=None) -> bool:
     """Source side of the visibility intersection."""
+    reference_workspace_id = getattr(reference, "workspace_id", None)
+    if reference_workspace_id is not None and reference_workspace_id != workspace_id:
+        return False
     hint = reference.acl_hint or {}
     if hint.get("public") is True:
         return True
-    context = build_actor_context(actor, workspace_id)
+    context = context or build_actor_context(actor, workspace_id)
     users = {str(user) for user in hint.get("users", [])}
     units = {str(unit) for unit in hint.get("org_units", [])}
     if not users and not units:

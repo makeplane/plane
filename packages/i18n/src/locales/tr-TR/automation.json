@@ -14,7 +14,7 @@
       "sidebar_header": "Tetikleyici yapılandırması",
       "input_label": "Bu otomasyon için tetikleyici nedir?",
       "input_placeholder": "Bir seçenek seçin",
-      "section_plane_events": "AI4MS olayları",
+      "section_plane_events": "PiLab olayları",
       "section_time_based": "Zamana dayalı",
       "fixed_schedule": "Sabit zamanlama",
       "schedule": {

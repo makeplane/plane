@@ -1,7 +1,7 @@
 {
-  "name": "Plane God Mode",
-  "short_name": "Plane God Mode",
-  "description": "Plane helps you plan your issues, cycles, and product modules.",
+  "name": "PiLab Admin",
+  "short_name": "PiLab Admin",
+  "description": "PiLab administration console.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",

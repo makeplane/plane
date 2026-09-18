@@ -32,13 +32,25 @@ def project_org_unit(project_id, workspace_id):
 
 
 def literature_resource(entry) -> ResearchResource:
+    profile = getattr(entry.project, "research_profile", None)
+    if profile is None:
+        profile = ResearchProjectProfile.objects.filter(
+            project_id=entry.project_id,
+            workspace_id=entry.workspace_id,
+        ).first()
     return ResearchResource(
         kind=LITERATURE_RESOURCE_KIND,
         workspace_id=entry.workspace_id,
         owner_id=entry.owner_id,
-        org_unit_id=project_org_unit(entry.project_id, entry.workspace_id),
+        org_unit_id=profile.org_unit_id if profile else None,
         visibility=entry.visibility,
         state=entry.status,
+        is_draft=entry.status != LiteratureEntry.Status.INCLUDED,
+        project_id=entry.project_id,
+        is_team_content=bool(
+            profile
+            and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT
+        ),
     )
 
 

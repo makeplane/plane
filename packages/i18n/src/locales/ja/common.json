@@ -815,7 +815,7 @@
     "edited_by": "編集者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MSが起動しませんでした。これは1つまたは複数のAI4MSサービスの起動に失敗したことが原因である可能性があります。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLabが起動しませんでした。これは1つまたは複数のPiLabサービスの起動に失敗したことが原因である可能性があります。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   },
   "customize_navigation": "ナビゲーションをカスタマイズ",

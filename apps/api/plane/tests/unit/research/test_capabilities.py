@@ -16,10 +16,13 @@ from plane.db.models import (
     ResearchUserProfile,
     StageReviewerAssignment,
     StageType,
+    WorkspaceResearchSetting,
 )
 from plane.research.utils.capabilities import (
     NAV_APPROVALS,
+    NAV_AUDIT,
     NAV_DASHBOARD,
+    NAV_INTEGRATIONS,
     NAV_KEYS,
     NAV_ORG,
     NAV_OVERVIEW,
@@ -27,6 +30,8 @@ from plane.research.utils.capabilities import (
     NAV_REPORTS,
     NAV_REVIEWS,
     NAV_SUMMARY,
+    NAV_SYSTEM,
+    NAV_PLATFORM,
     ResearchLevel,
     build_research_capabilities,
     nav_allowed,
@@ -81,12 +86,58 @@ def member_of(env, user, unit=None, org_role=OrgUnitMember.OrgRole.REVIEWER):
     )
 
 
-def test_administrator_tag_is_the_highest_level(env):
+def test_technical_administrator_tag_does_not_create_a_research_level(env):
     admin = make_user(first_name="OpsAdmin")
     add_workspace_member(env["workspace"], admin)
     grant_admin_tag(admin, "OPS_ADMIN", actor=env["owner"])
 
-    assert research_level(admin, env["workspace"]) == ResearchLevel.ADMIN
+    assert research_level(admin, env["workspace"]) == ResearchLevel.NONE
+    capabilities = build_research_capabilities(admin, env["workspace"])
+    assert NAV_PLATFORM in capabilities["nav"]
+    assert NAV_AUDIT in capabilities["nav"]
+    assert NAV_ORG not in capabilities["nav"]
+
+
+def test_development_duty_only_opens_integrations(env):
+    developer = make_user(first_name="DevAdmin")
+    add_workspace_member(env["workspace"], developer)
+    grant_admin_tag(developer, "DEV_ADMIN", actor=env["owner"])
+
+    capabilities = build_research_capabilities(developer, env["workspace"])
+
+    assert capabilities["level"] == ResearchLevel.NONE
+    assert capabilities["nav"] == [NAV_SYSTEM, NAV_INTEGRATIONS]
+    assert capabilities["management"]["accounts"] is True
+    assert capabilities["management"]["integrations"] is True
+
+
+def test_configured_main_pi_is_a_principal_without_becoming_an_administrator(env):
+    main_pi = make_user(first_name="ConfiguredMainPI")
+    add_workspace_member(env["workspace"], main_pi)
+    setting = WorkspaceResearchSetting.objects.get(workspace=env["workspace"])
+    setting.purpose = WorkspaceResearchSetting.Purpose.PUBLIC_RESEARCH
+    setting.main_pi = main_pi
+    setting.save(update_fields=["purpose", "main_pi", "updated_at"])
+
+    capabilities = build_research_capabilities(main_pi, env["workspace"])
+
+    assert capabilities["level"] == ResearchLevel.PRINCIPAL
+    assert capabilities["is_main_pi"] is True
+    assert capabilities["management"]["organization"] is True
+    assert capabilities["management"]["workspace"] is False
+    assert NAV_ORG in capabilities["nav"]
+
+
+def test_legacy_main_pi_label_does_not_grant_business_or_admin_access(env):
+    legacy = make_user(first_name="LegacyMainPI")
+    add_workspace_member(env["workspace"], legacy)
+    grant_admin_tag(legacy, "MAIN_PI", actor=env["owner"])
+
+    capabilities = build_research_capabilities(legacy, env["workspace"])
+
+    assert capabilities["level"] == ResearchLevel.NONE
+    assert capabilities["nav"] == [NAV_SYSTEM]
+    assert capabilities["management"]["accounts"] is True
 
 
 def test_workspace_administrator_is_an_administrator(env):
@@ -234,7 +285,7 @@ def test_expired_org_relation_drops_the_level(env):
     assert research_level(student, env["workspace"]) == ResearchLevel.NONE
 
 
-def test_mentor_menu_keeps_the_summary_but_not_the_board(env):
+def test_mentor_menu_includes_the_scoped_overview(env):
     mentor = make_user(first_name="Advisor")
     member_of(env, mentor, org_role=OrgUnitMember.OrgRole.ADVISOR)
 
@@ -242,7 +293,7 @@ def test_mentor_menu_keeps_the_summary_but_not_the_board(env):
 
     assert capabilities["level"] == ResearchLevel.MENTOR
     assert NAV_SUMMARY in capabilities["nav"]
-    assert NAV_DASHBOARD not in capabilities["nav"]
+    assert NAV_DASHBOARD in capabilities["nav"]
     assert NAV_ORG not in capabilities["nav"]
 
 

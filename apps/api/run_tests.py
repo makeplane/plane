@@ -9,7 +9,7 @@ import sys
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run Plane tests")
+    parser = argparse.ArgumentParser(description="Run PiLab tests")
     parser.add_argument("-u", "--unit", action="store_true", help="Run unit tests only")
     parser.add_argument("-c", "--contract", action="store_true", help="Run contract tests only")
     parser.add_argument("-s", "--smoke", action="store_true", help="Run smoke tests only")

@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "会社名",
-            "placeholder": "AI4MS",
+            "placeholder": "PiLab",
             "validation": {
               "required": "会社名は必須です",
               "maxLength": "会社名は255文字未満にしてください"

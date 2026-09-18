@@ -8,9 +8,15 @@ The budgets are deliberately generous: they catch a回归 into an N+1 query or a
 unbounded aggregation, not micro-optimisation.
 """
 
+from collections import Counter
+from datetime import date, timedelta
+import re
 import time
+from uuid import uuid4
 
 import pytest
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -20,11 +26,14 @@ from plane.db.models import (
     LiteratureEntry,
     OrgUnit,
     OrgUnitMember,
+    Page,
+    PeriodicReport,
     ProjectCodeRepository,
     ResearchOutcome,
     ResearchStageInstance,
     StageMaterial,
     StageTransition,
+    User,
 )
 from plane.tests.research_fixtures import (
     add_workspace_member,
@@ -37,6 +46,8 @@ pytestmark = [pytest.mark.contract, pytest.mark.slow]
 
 GATE_BUDGET_SECONDS = 2.0
 TIMELINE_BUDGET_SECONDS = 5.0
+REPORT_PEOPLE = 300
+REPORTS_PER_PERSON = 52
 
 
 @pytest.fixture(autouse=True)
@@ -62,9 +73,7 @@ def env(db):
     )
     root.path = f"/{str(root.id).replace('-', '')}/"
     root.save(update_fields=["path"])
-    OrgUnitMember.objects.create(
-        workspace=workspace, org_unit=root, user=owner, org_role=OrgUnitMember.OrgRole.PI
-    )
+    OrgUnitMember.objects.create(workspace=workspace, org_unit=root, user=owner, org_role=OrgUnitMember.OrgRole.PI)
     admin_client = APIClient()
     admin_client.force_authenticate(user=admin)
     created = admin_client.post(
@@ -75,9 +84,7 @@ def env(db):
     client = APIClient()
     client.force_authenticate(user=owner)
     project_id = created.json()["id"]
-    stages = client.get(
-        f"/api/research/workspaces/{workspace.slug}/projects/{project_id}/stages/"
-    ).json()["results"]
+    stages = client.get(f"/api/research/workspaces/{workspace.slug}/projects/{project_id}/stages/").json()["results"]
     return {
         "workspace": workspace,
         "owner": owner,
@@ -180,9 +187,7 @@ def seed_large_project(env, *, experiments=120, literature=120):
 def test_gate_and_timeline_stay_within_budget(env):
     instance = seed_large_project(env)
     started = time.monotonic()
-    gate = env["client"].get(
-        f"/api/research/workspaces/{env['workspace'].slug}/stages/{instance.id}/gate/"
-    )
+    gate = env["client"].get(f"/api/research/workspaces/{env['workspace'].slug}/stages/{instance.id}/gate/")
     gate_seconds = time.monotonic() - started
     assert gate.status_code == 200
     assert gate_seconds < GATE_BUDGET_SECONDS, f"gate took {gate_seconds:.2f}s"
@@ -208,3 +213,92 @@ def test_progress_aggregation_stays_within_budget(env):
     assert response.status_code == 200
     assert response.json()["experiments"]["total"] == 120
     assert seconds < TIMELINE_BUDGET_SECONDS, f"progress took {seconds:.2f}s"
+
+
+@pytest.mark.django_db
+def test_report_pagination_query_count_is_flat_at_15600_rows(env):
+    """The visible report list must paginate in SQL before serialisation."""
+    workspace = env["workspace"]
+    setting = workspace.research_setting
+    setting.main_pi = env["owner"]
+    setting.save(update_fields=["main_pi", "updated_at"])
+
+    users = [
+        User(
+            id=uuid4(),
+            email=f"perf-report-{index}@example.com",
+            username=f"perf-report-{index}@example.com",
+            first_name="Reporter",
+            last_name=str(index),
+            is_active=True,
+        )
+        for index in range(REPORT_PEOPLE)
+    ]
+    User.objects.bulk_create(users, batch_size=300)
+    org_unit_id = OrgUnit.objects.filter(workspace=workspace).values_list("id", flat=True).first()
+
+    def create_report_rows(pairs):
+        pages = [
+            Page(
+                id=uuid4(),
+                workspace=workspace,
+                owned_by=user,
+                name=f"Report {user.last_name}-{week}",
+                access=Page.PRIVATE_ACCESS,
+            )
+            for user, week in pairs
+        ]
+        Page.objects.bulk_create(pages, batch_size=1000)
+        submitted_at = timezone.now()
+        PeriodicReport.objects.bulk_create(
+            [
+                PeriodicReport(
+                    workspace=workspace,
+                    page=page,
+                    owner=user,
+                    org_unit_id=org_unit_id,
+                    report_type=PeriodicReport.ReportType.WEEKLY,
+                    period_key=f"2026-W{week + 1:02d}",
+                    period_start=date(2026, 1, 1) + timedelta(days=week * 7),
+                    period_end=date(2026, 1, 7) + timedelta(days=week * 7),
+                    status=PeriodicReport.Status.SUBMITTED,
+                    visibility="PRIVATE",
+                    submitted_at=submitted_at,
+                )
+                for page, (user, week) in zip(pages, pairs)
+            ],
+            batch_size=1000,
+        )
+
+    all_pairs = [(user, week) for user in users for week in range(REPORTS_PER_PERSON)]
+    create_report_rows(all_pairs[:10])
+    report_url = f"/api/research/workspaces/{workspace.slug}/reports/"
+
+    with CaptureQueriesContext(connection) as small_queries:
+        small = env["client"].get(report_url, {"per_page": 50})
+    assert small.status_code == 200
+
+    create_report_rows(all_pairs[10:])
+    with CaptureQueriesContext(connection) as large_queries:
+        first_page = env["client"].get(report_url, {"per_page": 50})
+
+    assert first_page.status_code == 200
+    assert first_page.data["total_results"] == REPORT_PEOPLE * REPORTS_PER_PERSON
+    assert len(first_page.data["results"]) == 50
+    first_ids = {row["id"] for row in first_page.data["results"]}
+    assert len(first_ids) == 50
+    table_counts = Counter(
+        re.findall(r'FROM "([^"]+)"', query["sql"])[0]
+        for query in large_queries.captured_queries
+        if re.findall(r'FROM "([^"]+)"', query["sql"])
+    )
+    assert len(large_queries) - len(small_queries) <= 5, table_counts
+
+    second_page = env["client"].get(
+        report_url,
+        {"per_page": 50, "cursor": first_page.data["next_cursor"]},
+    )
+    assert second_page.status_code == 200
+    second_ids = {row["id"] for row in second_page.data["results"]}
+    assert len(second_ids) == 50
+    assert first_ids.isdisjoint(second_ids)

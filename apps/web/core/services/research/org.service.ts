@@ -5,11 +5,13 @@
  */
 
 import { API_BASE_URL, researchEndpoints } from "@plane/constants";
-import type { TMentorBinding, TOrgUnit, TOrgUnitMember } from "@plane/types";
+import type { TMentorBinding, TOrgUnit, TOrgUnitMember, TResearchOrgIncomplete } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
-export type TOrgUnitPayload = Partial<Pick<TOrgUnit, "name" | "unit_type" | "sort_order" | "is_active">> & {
+export type TOrgUnitPayload = Partial<
+  Pick<TOrgUnit, "name" | "unit_type" | "business_category" | "sort_order" | "is_active">
+> & {
   parent?: string | null;
 };
 
@@ -29,6 +31,14 @@ export class ResearchOrgService extends APIService {
   async getOrgUnits(workspaceSlug: string, params: { include_inactive?: boolean } = {}) {
     return this.get(researchEndpoints.orgUnits(workspaceSlug), { params })
       .then((res) => res?.data as { results: TOrgUnit[]; count: number })
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getIncomplete(workspaceSlug: string) {
+    return this.get(researchEndpoints.orgIncomplete(workspaceSlug))
+      .then((res) => res?.data as TResearchOrgIncomplete)
       .catch((err) => {
         throw err?.response?.data;
       });
@@ -124,7 +134,13 @@ export class ResearchOrgService extends APIService {
 
   async createMentorBinding(
     workspaceSlug: string,
-    payload: { mentee: string; mentor: string; org_unit?: string | null; effective_to?: string | null }
+    payload: {
+      mentee: string;
+      mentor: string;
+      org_unit?: string | null;
+      is_primary_advisor?: boolean;
+      effective_to?: string | null;
+    }
   ) {
     return this.post(researchEndpoints.mentors(workspaceSlug), payload)
       .then((res) => res?.data as TMentorBinding)

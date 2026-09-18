@@ -135,6 +135,26 @@ class TestResearchSettingsEndpoint:
         response = env["admin_client"].patch(env["url"], {"timezone": "Mars/Olympus"}, format="json")
         assert response.status_code == 400
 
+    def test_admin_configures_required_reporter_categories(self, env):
+        response = env["admin_client"].patch(
+            env["url"],
+            {"required_reporter_categories": ["STUDENT", "POSTDOC", "STUDENT"]},
+            format="json",
+        )
+
+        assert response.status_code == 200
+        assert response.data["required_reporter_categories"] == ["STUDENT", "POSTDOC"]
+
+    def test_unknown_required_reporter_category_is_rejected(self, env):
+        response = env["admin_client"].patch(
+            env["url"],
+            {"required_reporter_categories": ["STUDENT", "UNKNOWN"]},
+            format="json",
+        )
+
+        assert response.status_code == 400
+        assert response.data["error_code"] == "org_member_invalid"
+
     def test_enabling_the_module_provisions_the_root_node(self, env):
         assert OrgUnit.objects.filter(workspace=env["workspace"]).count() == 0
         env["admin_client"].patch(env["url"], {"module_enabled": True}, format="json")

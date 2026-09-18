@@ -26,6 +26,7 @@ def stage_queryset(workspace):
     return (
         ResearchStageInstance.objects.filter(workspace=workspace, deleted_at__isnull=True)
         .select_related("project", "org_unit")
+        .prefetch_related("transitions")
         .order_by("project_id", "sort_order")
     )
 
@@ -47,6 +48,12 @@ def stage_resource(instance, *, owner_id=None, visibility=None, with_reviewers=F
         from plane.research.services.review_rules import effective_assignments
 
         reviewer_ids = [str(assignment.reviewer_id) for assignment in effective_assignments(instance)]
+    profile = getattr(instance.project, "research_profile", None)
+    if profile is None:
+        profile = ResearchProjectProfile.objects.filter(
+            project_id=instance.project_id,
+            workspace_id=instance.workspace_id,
+        ).first()
     return ResearchResource(
         kind=STAGE_RESOURCE_KIND,
         workspace_id=instance.workspace_id,
@@ -54,7 +61,12 @@ def stage_resource(instance, *, owner_id=None, visibility=None, with_reviewers=F
         org_unit_id=instance.org_unit_id,
         visibility=visibility or default_stage_visibility(instance.workspace),
         state=instance.status,
+        # Stage metadata itself is not a private note. Draft protection applies
+        # to each material Page through ``material_resource`` and Page guards.
+        is_draft=False,
         reviewer_ids=reviewer_ids,
+        project_id=instance.project_id,
+        is_team_content=bool(profile and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT),
     )
 
 
@@ -73,6 +85,7 @@ def material_resource(
         from plane.research.services.review_rules import effective_assignments
 
         reviewer_ids = [str(assignment.reviewer_id) for assignment in effective_assignments(stage)]
+    profile = getattr(stage.project, "research_profile", None)
     return ResearchResource(
         kind=MATERIAL_RESOURCE_KIND,
         workspace_id=stage.workspace_id,
@@ -80,5 +93,17 @@ def material_resource(
         org_unit_id=stage.org_unit_id,
         visibility=visibility or material.visibility,
         state=material.status,
+        # A draft with a submitted version has a private live revision and a
+        # formal snapshot for authorised readers. A never-submitted draft has
+        # no audience beyond its author.
+        is_draft=material.status == "DRAFT" and not _has_submitted_material_version(material),
         reviewer_ids=reviewer_ids,
+        project_id=stage.project_id,
+        is_team_content=bool(profile and profile.research_type == ResearchProjectProfile.ResearchType.RESEARCH_PROJECT),
     )
+
+
+def _has_submitted_material_version(material):
+    prefetched = getattr(material, "_prefetched_objects_cache", {}).get("versions")
+    versions = prefetched if prefetched is not None else material.versions.all()
+    return any(version.snapshot.get("status") == "SUBMITTED" for version in versions)

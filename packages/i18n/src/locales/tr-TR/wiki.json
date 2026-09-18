@@ -88,7 +88,7 @@
   "wiki": {
     "upgrade_flow": {
       "title": "Wiki'yi açmak için yükseltin",
-      "description": "AI4MS Pro ile genel sayfaları, sürüm geçmişini, paylaşılan sayfaları, gerçek zamanlı işbirliğini ve wiki'ler, şirket içi belgeler ve bilgi tabanları için çalışma alanı sayfalarını açın.",
+      "description": "PiLab Pro ile genel sayfaları, sürüm geçmişini, paylaşılan sayfaları, gerçek zamanlı işbirliğini ve wiki'ler, şirket içi belgeler ve bilgi tabanları için çalışma alanı sayfalarını açın.",
       "upgrade_button": {
         "text": "Yükselt"
       },

@@ -24,7 +24,7 @@ def get_report_for_page(page):
 
     from plane.db.models import PeriodicReport
 
-    report = PeriodicReport.objects.filter(page_id=page.id).first()
+    report = PeriodicReport.all_objects.filter(page_id=page.id).first()
     page._research_report_cache = report if report is not None else "none"
     return report
 
@@ -47,6 +47,8 @@ def page_mutation_error_code(page, action):
     if material is not None:
         if action == "delete":
             return "stage_material_read_only"
+        if material.status not in ("DRAFT", "REJECTED"):
+            return "stage_material_read_only"
         if material.stage_instance.status not in EDITABLE_STAGE_STATUSES:
             return "stage_material_read_only"
     return None
@@ -63,7 +65,7 @@ def get_material_for_page(page):
     from plane.db.models import StageMaterial
 
     material = (
-        StageMaterial.objects.filter(page_id=page.id, deleted_at__isnull=True)
+        StageMaterial.all_objects.filter(page_id=page.id)
         .select_related("stage_instance")
         .first()
     )

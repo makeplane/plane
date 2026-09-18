@@ -21,6 +21,7 @@ from plane.db.models import (
 from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.literature import literature_resource
 from plane.research.utils.reports import report_resource
+from plane.research.utils.resource_projections import outcome_resource
 from plane.research.utils.stages import material_resource
 
 TARGET_MODELS = {
@@ -34,15 +35,9 @@ TARGET_MODELS = {
 
 
 def _experiment_resource(record):
-    from plane.research.services.progress import experiment_resource
+    from plane.research.utils.resource_projections import experiment_resource
 
     return experiment_resource(record)
-
-
-def _outcome_resource(outcome):
-    from plane.research.views.outcomes import outcome_resource
-
-    return outcome_resource(outcome)
 
 
 def resolve_target(actor, workspace, target_type, target_id):
@@ -56,7 +51,10 @@ def resolve_target(actor, workspace, target_type, target_id):
         if target_type == "STAGE_MATERIAL"
         else {"workspace": workspace}
     )
-    target = model.objects.filter(pk=target_id, deleted_at__isnull=True, **lookup).first()
+    query = model.objects.filter(pk=target_id, deleted_at__isnull=True, **lookup)
+    if target_type == "OUTCOME":
+        query = query.select_related("project__research_profile")
+    target = query.first()
     if target is None:
         return None, "external_reference_not_found"
     if target_type == "PROJECT":
@@ -72,7 +70,7 @@ def resolve_target(actor, workspace, target_type, target_id):
     elif target_type == "EXPERIMENT_RECORD":
         resource = _experiment_resource(target)
     else:
-        resource = _outcome_resource(target)
+        resource = outcome_resource(target)
     if not check_access(actor, "view", resource, context=context):
         return None, "external_reference_not_found"
     return target, None

@@ -1,8 +1,8 @@
 {
   "name": "live",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "A realtime collaborative server powers Plane's rich text editor",
+  "description": "A realtime collaborative server powers PiLab's rich text editor",
   "license": "AGPL-3.0",
   "author": "Plane Software Inc.",
   "type": "module",

@@ -1,4 +1,4 @@
-# Plane for AI4MS 测试账号与身份速查（v2.5.1）
+# PiLab 测试账号与身份速查（v2.5.1）
 
 面向「我要用哪个账号登录，才能测到某个身份」。本文只回答账号与身份映射，数据清单与
 业务链路验证步骤见 [`research-test-fixtures.md`](./research-test-fixtures.md)，

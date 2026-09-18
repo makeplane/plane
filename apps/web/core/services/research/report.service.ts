@@ -7,6 +7,7 @@
 import { API_BASE_URL, researchEndpoints } from "@plane/constants";
 import type {
   TPeriodicReport,
+  TPaginationInfo,
   TReportAttachment,
   TReportReviewLog,
   TReportSummary,
@@ -21,11 +22,17 @@ export type TReportListParams = {
   report_type?: string;
   org_unit?: string;
   owner?: string;
+  date_from?: string;
+  date_to?: string;
+  mine?: string;
+  cursor?: string;
+  per_page?: string;
 };
 
 export type TReportCreatePayload = {
   report_type: string;
   period_key?: string;
+  team_projects?: string[];
   template?: string | null;
   visibility?: string;
   is_backfill?: boolean;
@@ -38,7 +45,7 @@ export class ResearchReportService extends APIService {
 
   async getReports(workspaceSlug: string, params: TReportListParams = {}) {
     return this.get(researchEndpoints.reports(workspaceSlug), { params })
-      .then((res) => res?.data as { results: TPeriodicReport[]; count: number })
+      .then((res) => res?.data as TPaginationInfo & { results: TPeriodicReport[] })
       .catch((err) => {
         throw err?.response?.data;
       });
@@ -60,7 +67,11 @@ export class ResearchReportService extends APIService {
       });
   }
 
-  async updateReport(workspaceSlug: string, reportId: string, payload: Partial<TPeriodicReport>) {
+  async updateReport(
+    workspaceSlug: string,
+    reportId: string,
+    payload: Partial<TPeriodicReport> | { description_json: object; description_html: string }
+  ) {
     return this.patch(researchEndpoints.report(workspaceSlug, reportId), payload)
       .then((res) => res?.data as TPeriodicReport)
       .catch((err) => {
@@ -68,8 +79,12 @@ export class ResearchReportService extends APIService {
       });
   }
 
-  async submitReport(workspaceSlug: string, reportId: string, comment = "") {
-    return this.post(researchEndpoints.reportSubmit(workspaceSlug, reportId), { comment })
+  async submitReport(
+    workspaceSlug: string,
+    reportId: string,
+    payload: { comment?: string; description_json?: object; description_html?: string } = {}
+  ) {
+    return this.post(researchEndpoints.reportSubmit(workspaceSlug, reportId), payload)
       .then((res) => res?.data as TPeriodicReport)
       .catch((err) => {
         throw err?.response?.data;

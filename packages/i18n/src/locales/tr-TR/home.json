@@ -5,7 +5,7 @@
       "not_right_now": "Şimdi değil",
       "create_project": {
         "title": "Proje oluştur",
-        "description": "Çoğu şey AI4MS'de bir projeyle başlar.",
+        "description": "Çoğu şey PiLab'de bir projeyle başlar.",
         "cta": "Başla"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Yapılandır"
       },
       "personalize_account": {
-        "title": "AI4MS'yi kendinize özelleştirin.",
+        "title": "PiLab'yi kendinize özelleştirin.",
         "description": "Resminizi, renklerinizi ve daha fazlasını seçin.",
         "cta": "Kişiselleştir"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "AI4MS'de Yenilikler"
+      "title": "PiLab'de Yenilikler"
     },
     "quick_tutorial": {
       "title": "Hızlı eğitim"

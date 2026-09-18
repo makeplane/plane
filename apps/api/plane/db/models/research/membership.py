@@ -48,11 +48,20 @@ class ResearchInviteCode(BaseModel):
         related_name="research_invite_codes",
     )
     code = models.CharField(max_length=64, unique=True, default=generate_invite_code)
+    provisioning_version = models.PositiveSmallIntegerField(default=1)
     org_role = models.CharField(max_length=20, blank=True, default="")
     org_unit = models.ForeignKey(
         "db.OrgUnit",
         on_delete=models.SET_NULL,
         related_name="invite_codes",
+        null=True,
+        blank=True,
+    )
+    profile_category = models.CharField(max_length=16, blank=True, default="")
+    primary_advisor = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="research_invite_codes_as_primary_advisor",
         null=True,
         blank=True,
     )

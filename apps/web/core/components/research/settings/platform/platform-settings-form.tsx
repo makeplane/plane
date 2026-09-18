@@ -11,7 +11,7 @@ import { REPORT_VISIBILITIES, REPORT_VISIBILITY_LABELS } from "@plane/constants"
 import type { TReportVisibility } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import type { TWorkspaceResearchSetting } from "@plane/types";
+import type { TResearchProfileCategory, TWorkspaceResearchSetting } from "@plane/types";
 import { Input } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
@@ -27,7 +27,6 @@ const TOGGLES: { field: keyof TWorkspaceResearchSetting; labelKey: string }[] = 
   { field: "org_enabled", labelKey: "research.platform.org_enabled" },
   { field: "report_enabled", labelKey: "research.platform.report_enabled" },
   { field: "approval_enabled", labelKey: "research.platform.approval_enabled" },
-  { field: "allow_multiple_projects", labelKey: "research.platform.allow_multiple_projects" },
 ];
 
 const LIMITS: { field: keyof TWorkspaceResearchSetting; labelKey: string }[] = [
@@ -36,6 +35,15 @@ const LIMITS: { field: keyof TWorkspaceResearchSetting; labelKey: string }[] = [
   { field: "markdown_max_mb", labelKey: "research.platform.markdown_max_mb" },
   { field: "audit_retention_days", labelKey: "research.platform.audit_retention_days" },
 ];
+
+const REPORTER_CATEGORIES = [
+  "STUDENT",
+  "POSTDOC",
+  "ADVISOR",
+  "PI",
+  "STAFF",
+  "OTHER",
+] as const satisfies readonly TResearchProfileCategory[];
 
 /**
  * Research platform configuration: module switches, upload limits and the
@@ -66,7 +74,6 @@ export const ResearchPlatformSettingsForm = observer(function ResearchPlatformSe
         org_enabled: draft.org_enabled,
         report_enabled: draft.report_enabled,
         approval_enabled: draft.approval_enabled,
-        allow_multiple_projects: draft.allow_multiple_projects,
         default_report_visibility: draft.default_report_visibility,
         weekly_default_visibility: draft.weekly_default_visibility ?? null,
         monthly_default_visibility: draft.monthly_default_visibility ?? null,
@@ -75,6 +82,8 @@ export const ResearchPlatformSettingsForm = observer(function ResearchPlatformSe
         markdown_max_mb: draft.markdown_max_mb,
         audit_retention_days: draft.audit_retention_days,
         timezone: draft.timezone,
+        required_reporter_categories: draft.required_reporter_categories,
+        ...(research.identity?.user.is_system_admin ? { main_pi: draft.main_pi } : {}),
       };
       const updated = await research.updateSettings(workspaceSlug, payload);
       if (updated) setDraft(updated);
@@ -153,6 +162,43 @@ export const ResearchPlatformSettingsForm = observer(function ResearchPlatformSe
           />
         </label>
       </section>
+
+      <section className="rounded-lg border border-subtle bg-surface-1 p-4">
+        <h3 className="text-13 font-medium text-primary">{t("research.platform.reporting_scope")}</h3>
+        <p className="mt-1 text-11 text-tertiary">{t("research.platform.reporting_scope_hint")}</p>
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+          {REPORTER_CATEGORIES.map((category) => (
+            <label key={category} className="flex items-center gap-2 text-12 text-secondary">
+              <input
+                type="checkbox"
+                checked={draft.required_reporter_categories.includes(category)}
+                onChange={(event) =>
+                  setDraft({
+                    ...draft,
+                    required_reporter_categories: event.target.checked
+                      ? [...draft.required_reporter_categories, category]
+                      : draft.required_reporter_categories.filter((item) => item !== category),
+                  })
+                }
+              />
+              <span>{t(`research.profile_categories.${category.toLowerCase()}`)}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {research.identity?.user.is_system_admin && (
+        <section className="rounded-lg border border-subtle bg-surface-1 p-4">
+          <h3 className="text-13 font-medium text-primary">{t("research.platform.main_pi")}</h3>
+          <p className="mt-1 text-11 text-tertiary">{t("research.platform.main_pi_hint")}</p>
+          <Input
+            className="mt-3"
+            value={draft.main_pi ?? ""}
+            placeholder={t("research.platform.main_pi_placeholder")}
+            onChange={(event) => setDraft({ ...draft, main_pi: event.target.value.trim() || null })}
+          />
+        </section>
+      )}
 
       <section className="rounded-lg border border-subtle bg-surface-1 p-4">
         <h3 className="text-13 font-medium text-primary">{t("research.platform.limits")}</h3>

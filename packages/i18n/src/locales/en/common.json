@@ -137,7 +137,7 @@
   "stay_ahead_of_blockers_description": "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
   "analytics": "Analytics",
   "workspace_invites": "Workspace invites",
-  "enter_god_mode": "Enter god mode",
+  "enter_god_mode": "System administration",
   "workspace_logo": "Workspace logo",
   "new_issue": "New work item",
   "your_work": "Your work",
@@ -815,7 +815,7 @@
     "edited_by": "Edited by"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS didn't start up. This could be because one or more AI4MS services failed to start.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLab didn't start up. This could be because one or more PiLab services failed to start.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   },
   "customize_navigation": "Customize navigation",
@@ -827,7 +827,7 @@
   "pin": "Pin",
   "unpin": "Unpin",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "AI4MS AI",
+  "pi_chat": "PiLab AI",
   "in_app": "In-app",
   "forms": "Forms",
   "milestones": "Milestones",
@@ -884,7 +884,7 @@
       "outcomes": "Outcomes",
       "integrations": "Integrations",
       "timeline": "Timeline",
-      "dashboard": "Main PI board",
+      "dashboard": "Research overview",
       "system": "System management"
     },
     "admin_roles": {
@@ -904,15 +904,19 @@
       "empty": "No invite code yet. Create one to let somebody register.",
       "hint": "Registration is closed: a new account needs an invite code, and it always joins the public workspace.",
       "fields": {
-        "org_role": "Organisation role",
-        "no_role": "Member only",
+        "profile_category": "Member category",
+        "primary_org_unit": "Primary organisation",
+        "primary_advisor": "Primary advisor",
+        "unassigned": "Not assigned yet",
         "max_uses": "Uses",
         "expires_in_days": "Valid days",
         "note": "Note"
       },
       "columns": {
         "code": "Code",
-        "org_role": "Role",
+        "profile_category": "Category",
+        "primary_org_unit": "Primary organisation",
+        "primary_advisor": "Primary advisor",
         "usage": "Used",
         "expires_at": "Expires",
         "status": "Status",
@@ -946,9 +950,9 @@
     },
     "user_import": {
       "title": "Roster import",
-      "hint": "Upload the roster (分组 / 姓名 / 学号 / 年级 / 学位 / 负责导师 / 邮件 / 电话) and, optionally, a name-to-mailbox table for the advisors. Rows without an advisor mailbox stay in the pending list.",
+      "hint": "The new roster supports category, business direction, primary organisation, primary advisor email and semicolon-separated co-advisor emails. Organisations and advisors must already exist; legacy roster columns remain supported.",
       "fields": {
-        "students": "Student roster",
+        "students": "Member roster",
         "advisors": "Advisor mailboxes (optional)",
         "reset_passwords": "Re-issue one-time passwords"
       },
@@ -960,6 +964,9 @@
       "columns": {
         "name": "Name",
         "email": "Mailbox",
+        "category": "Category",
+        "primary_org": "Primary organisation",
+        "advisors": "Advisors",
         "group": "Group",
         "advisor": "Advisor",
         "status": "Status",
@@ -994,15 +1001,27 @@
       }
     },
     "pi": {
-      "description": "Own node and subtree across the public workspace.",
+      "title": "Overview for my scope",
+      "description": "Projects, reports and reviews within your authorised research scope.",
       "scope_summary": "{{units}} organisation node(s) in scope from {{workspace}}.",
       "generated_at": "Updated",
       "org_units": "Organisation nodes in scope",
+      "recent_outcomes": "Recent outcomes",
+      "filters": {
+        "org_unit": "Organisation node",
+        "all_org_units": "All organisation nodes",
+        "owner": "Owner",
+        "owner_placeholder": "Owner ID"
+      },
       "empty_scope": "No organisation node is attached to this account yet, so the board has nothing to aggregate. Ask an administrator to place the account in the organisation tree.",
       "cards": {
+        "members": "Research members",
+        "members_hint": "Distinct members in your scope",
         "projects": "Research projects",
         "reports": "Periodic reports",
         "pending_review": "awaiting review",
+        "not_submitted": "{{count}} not submitted",
+        "recent_submissions": "{{count}} submitted in 30 days",
         "stages": "Stage runs",
         "blocked": "blocked",
         "reviews": "Stages awaiting review",
@@ -1019,14 +1038,14 @@
       "business_sections": "Business sections",
       "settings_sections": "Administration",
       "reports_hint": "Create, submit and review weekly or monthly reports.",
-      "dashboard_hint": "Main PI board: your node and subtree aggregated across the public workspace.",
+      "dashboard_hint": "Projects, reports and reviews in your authorised scope.",
       "system_hint": "Invite codes, roster import and research profiles.",
       "summary_hint": "Submission status grouped by organisation node and period.",
       "projects_hint": "One personal research project per research owner.",
       "approvals_hint": "Task and purchase approvals built on work items.",
       "org_hint": "Maintain the organisation tree, members, principal investigators and advisors.",
       "templates_hint": "Templates used when a report is created.",
-      "identity_hint": "AI4MS SSO identity mappings.",
+      "identity_hint": "PiLab SSO identity mappings.",
       "platform_hint": "Module switches, upload limits and default visibility.",
       "audit_hint": "Read-only, append-only research audit trail."
     },
@@ -1045,7 +1064,13 @@
       "close": "Close",
       "yes": "Yes",
       "no": "No",
-      "open": "Open"
+      "open": "Open",
+      "previous": "Previous",
+      "next": "Next",
+      "date_from": "Start date",
+      "date_to": "End date",
+      "apply_filters": "Apply filters",
+      "total_results": "{{count}} total"
     },
     "roles": {
       "owner": "Node owner",
@@ -1084,6 +1109,14 @@
       "master": "Master",
       "postdoc": "Postdoc",
       "research_project": "Research project"
+    },
+    "profile_categories": {
+      "student": "Student",
+      "postdoc": "Postdoctoral researcher",
+      "advisor": "Advisor",
+      "pi": "Principal investigator",
+      "staff": "Research staff",
+      "other": "Other"
     },
     "project_status": {
       "active": "In progress",
@@ -1124,6 +1157,8 @@
       "mentee_email_placeholder": "Research owner email",
       "mentor_email_placeholder": "Advisor email",
       "bind_mentor": "Bind advisor",
+      "primary_advisor": "Primary advisor",
+      "co_advisor": "Co-advisor",
       "no_mentor_bindings": "No advisor binding for this node",
       "columns": {
         "member": "Member",
@@ -1132,20 +1167,40 @@
         "effective_to": "Valid until",
         "effective_from": "Valid from",
         "mentee": "Research owner",
-        "mentor": "Direct advisor"
+        "mentor": "Direct advisor",
+        "advisor_kind": "Advisor role"
       }
     },
     "auth": {
       "sso_with": "with"
     },
     "projects": {
-      "description": "One personal research project per research owner.",
+      "description": "Personal cultivation projects and shared team research projects.",
+      "create_title": "Create a research project",
+      "create_hint": "Cultivation projects use the stage workflow; team projects use work items, cycles and modules.",
+      "fields": {
+        "name": "Project name",
+        "type": "Project type",
+        "org_unit": "Primary organisation"
+      },
+      "type_groups": {
+        "cultivation": "Cultivation",
+        "team": "Team research"
+      },
+      "name_placeholder": "Enter a clear project name",
+      "org_unit_placeholder": "Select the primary organisation",
+      "missing_primary_org": "Your account has no primary organisation. Select one for this project and ask an administrator to complete your membership.",
+      "team_org_optional": "A team project may start without an organisation. Assign one later to include it in direction-scoped summaries.",
       "owner_placeholder": "Research owner email or ID (empty = me)",
       "create": "Create research project",
+      "open_team_project": "Open project",
       "archive": "Archive",
       "restore": "Restore",
       "empty": "No research project yet",
       "all_statuses": "All statuses",
+      "all_types": "All types",
+      "all_org_units": "All organisation nodes",
+      "owner_filter_placeholder": "Owner ID",
       "columns": {
         "name": "Project",
         "owner": "Research owner",
@@ -1161,14 +1216,23 @@
       "detail_description": "Status, visibility, review history and actions.",
       "period_placeholder": "Period, e.g. 2026-W38 / 2026-09",
       "create": "Create report",
+      "team_projects": "Team projects ({{count}})",
       "mine_only": "Only mine",
       "all_statuses": "All statuses",
+      "all_types": "All types",
+      "all_org_units": "All organisation nodes",
+      "owner_filter_placeholder": "Author ID",
+      "period_filter_placeholder": "Filter by period",
       "backfill": "Backfill",
       "empty": "No report matches the filters",
       "submit": "Submit",
       "return": "Return",
       "accept": "Accept",
       "open_body": "Open body",
+      "draft_content": "Report body",
+      "official_content": "Submitted version",
+      "official_version": "Version {{version}}",
+      "no_official_content": "No submitted version is available yet.",
       "visibility": "Visibility",
       "visibility_hint": "You can narrow the workspace default, never widen it.",
       "return_reason": "Return reason",
@@ -1254,6 +1318,11 @@
       "monthly_visibility": "Monthly override",
       "inherit": "Follow the default",
       "timezone": "Report period timezone (empty follows the workspace)",
+      "reporting_scope": "Required reporters",
+      "reporting_scope_hint": "Selected member categories are included when the system calculates missing weekly and monthly reports.",
+      "main_pi": "Main PI",
+      "main_pi_hint": "Only the system administrator can appoint the unique Main PI. Use an account ID or email address.",
+      "main_pi_placeholder": "Account ID or email (empty = unassigned)",
       "limits": "Upload limits (MB)",
       "image_max_mb": "Image limit",
       "pdf_max_mb": "PDF limit",
@@ -1286,7 +1355,7 @@
       }
     },
     "identity": {
-      "description": "Bind AI4MS single sign-on identities to local accounts.",
+      "description": "Bind PiLab single sign-on identities to local accounts.",
       "user_placeholder": "Local account email or ID",
       "subject_placeholder": "OIDC subject (sub)",
       "employee_id_placeholder": "Employee id (optional)",
@@ -1687,7 +1756,7 @@
         "cancelled": "Withdrawn"
       },
       "asset_system": {
-        "plane": "Plane",
+        "plane": "PiLab",
         "speclabos": "SpecLabOS",
         "smartaccess": "SmartAccess",
         "ragportal": "RAGPortal",
@@ -1783,7 +1852,7 @@
       }
     },
     "integrations": {
-      "description": "Connections to the AI4MS ecosystem: knowledge, lab, device and R&D systems.",
+      "description": "Connections to the PiLab ecosystem: knowledge, lab, device and R&D systems.",
       "connections_title": "Connections",
       "references_title": "Search and reference external objects",
       "call_logs_title": "Integration call log",

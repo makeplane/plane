@@ -68,4 +68,20 @@ export class InstanceWorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async updateResearchConfiguration(
+    workspaceId: string,
+    data: {
+      purpose?: IWorkspace["research_purpose"];
+      main_pi?: string | null;
+      private_access_users?: string[];
+      module_enabled?: boolean;
+    }
+  ): Promise<IWorkspace> {
+    return this.patch(`/api/instances/workspaces/${workspaceId}/research/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

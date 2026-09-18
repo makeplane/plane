@@ -123,9 +123,10 @@ def review_payload(instance):
 
 def serialize_material(material, *, actor):
     data = StageMaterialSerializer(material).data
-    data["can_edit"] = material_is_editable(material)
+    is_author = material.owner_id == actor.id
+    data["can_edit"] = is_author and material_is_editable(material)
     page = material.page
-    data["page_detail"] = (
+    page_detail = (
         {
             "id": str(page.id),
             "name": page.name,
@@ -135,6 +136,27 @@ def serialize_material(material, *, actor):
         if page is not None
         else None
     )
+    # A returned stage turns the live Page back into an author-only draft.
+    # Reviewers and the management chain keep reading the last submitted
+    # immutable version until the author submits again.
+    if not is_author:
+        submitted_version = next(
+            (
+                version
+                for version in material.versions.all()
+                if version.snapshot.get("status") == StageMaterial.Status.SUBMITTED
+            ),
+            None,
+        )
+        if submitted_version is not None:
+            snapshot = submitted_version.snapshot
+            page_detail = {
+                "id": snapshot.get("page_id"),
+                "name": snapshot.get("name", ""),
+                "description_json": snapshot.get("description_json", {}),
+                "description_html": snapshot.get("description_html", ""),
+            }
+    data["page_detail"] = page_detail
     return data
 
 
@@ -145,7 +167,9 @@ def serialize_stage(instance, *, actor, material_list=None, include_materials=Tr
         materials = material_list
         if materials is None:
             materials = list(
-                instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner")
+                instance.materials.filter(deleted_at__isnull=True)
+                .select_related("page", "owner")
+                .prefetch_related("versions")
             )
         data["materials"] = [serialize_material(material, actor=actor) for material in materials]
     return data
@@ -162,7 +186,12 @@ class ResearchProjectStageListCreateEndpoint(ResearchAPIView):
         if profile is None:
             return research_not_found(ResearchErrorCode.PROJECT_NOT_FOUND, "Research project not found.")
 
-        instances, created = ensure_stage_instances(workspace, profile, request.user)
+        instances = list(
+            ResearchStageInstance.objects.filter(project_id=project_id, deleted_at__isnull=True)
+            .select_related("project", "org_unit")
+            .prefetch_related("transitions")
+            .order_by("sort_order")
+        )
         context = build_actor_context(request.user, workspace.id)
         visible = [
             item for item in instances if check_access(request.user, "view", stage_resource(item), context=context)
@@ -179,7 +208,7 @@ class ResearchProjectStageListCreateEndpoint(ResearchAPIView):
             {
                 "results": results,
                 "count": len(results),
-                "created": created,
+                "created": False,
                 "current_stage": current.stage if current else None,
                 "project": str(profile.project_id),
                 "workflow_status": profile.workflow_status,
@@ -229,6 +258,7 @@ class ResearchStageEndpointMixin:
                 deleted_at__isnull=True,
             )
             .select_related("project", "org_unit")
+            .prefetch_related("transitions")
             .first()
         )
         if instance is None:
@@ -255,9 +285,14 @@ class ResearchStageDetailEndpoint(ResearchStageEndpointMixin, ResearchAPIView):
             return error
 
         context = build_actor_context(request.user, workspace.id)
+        material_queryset = (
+            instance.materials.filter(deleted_at__isnull=True)
+            .select_related("page", "owner")
+            .prefetch_related("versions")
+        )
         materials = [
             material
-            for material in instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner")
+            for material in material_queryset
             if check_access(
                 request.user,
                 "view",
@@ -415,9 +450,14 @@ class ResearchStageMaterialListCreateEndpoint(ResearchStageEndpointMixin, Resear
         if error:
             return error
         context = build_actor_context(request.user, workspace.id)
+        material_queryset = (
+            instance.materials.filter(deleted_at__isnull=True)
+            .select_related("page", "owner")
+            .prefetch_related("versions")
+        )
         materials = [
             material
-            for material in instance.materials.filter(deleted_at__isnull=True).select_related("page", "owner")
+            for material in material_queryset
             if check_access(
                 request.user,
                 "view",
@@ -555,6 +595,7 @@ class ResearchStageMaterialDetailEndpoint(ResearchAPIView):
                 stage_instance__workspace=workspace, pk=material_id, deleted_at__isnull=True
             )
             .select_related("page", "owner", "stage_instance")
+            .prefetch_related("versions")
             .first()
         )
         if material is None:
@@ -632,17 +673,8 @@ class ResearchStageMaterialDetailEndpoint(ResearchAPIView):
 
 
 def can_edit_material(actor, workspace, material) -> bool:
-    """Material editors: the material owner, the project research owner, admins."""
-    if is_workspace_admin(actor, workspace):
-        return True
-    if material.owner_id == actor.id:
-        return True
-    return (
-        ResearchProjectProfile.objects.filter(
-            project_id=material.stage_instance.project_id,
-            owner_id=actor.id,
-        ).exists()
-    )
+    """A material draft is maintained by its explicit author."""
+    return material.owner_id == actor.id
 
 
 class ResearchStageMaterialSubmitEndpoint(ResearchAPIView):
@@ -707,6 +739,12 @@ class ResearchStageMaterialVersionsEndpoint(ResearchAPIView):
         if not check_access(request.user, "view", material_resource(material), context=context):
             return research_not_found(ResearchErrorCode.MATERIAL_NOT_FOUND, "Material not found.")
         versions = list(material.versions.select_related("created_by"))
+        if material.owner_id != request.user.id:
+            versions = [
+                version
+                for version in versions
+                if version.snapshot.get("status") == StageMaterial.Status.SUBMITTED
+            ]
         return Response(
             {
                 "results": StageMaterialVersionSerializer(versions, many=True).data,

@@ -77,7 +77,7 @@ export const getCoreAuthenticationModesMap: (
   gitlab: {
     key: "gitlab",
     name: "GitLab",
-    description: "Allow members to log in or sign up to plane with their GitLab accounts.",
+    description: `Allow members to log in or sign up to ${BRAND_NAME} with their GitLab accounts.`,
     icon: <img src={gitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITLAB_ENABLED",
@@ -85,7 +85,7 @@ export const getCoreAuthenticationModesMap: (
   gitea: {
     key: "gitea",
     name: "Gitea",
-    description: "Allow members to log in or sign up to plane with their Gitea accounts.",
+    description: `Allow members to log in or sign up to ${BRAND_NAME} with their Gitea accounts.`,
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITEA_ENABLED",

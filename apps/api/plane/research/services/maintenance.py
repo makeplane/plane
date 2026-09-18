@@ -49,9 +49,12 @@ def _workspace_condition(model, workspace, seen=None):
         parent = field.related_model
         if parent is None or parent is model:
             continue
-        # Only walk research tables: every other relation (users, file assets,
-        # ...) would produce a condition that does not describe this workspace.
-        if not parent._meta.db_table.startswith(RESEARCH_TABLE_PREFIX):
+        # Workspace research settings are stored outside the research_ prefix
+        # for backwards compatibility, but are still a valid ownership root.
+        if not (
+            parent._meta.db_table.startswith(RESEARCH_TABLE_PREFIX)
+            or parent._meta.db_table == "workspace_research_settings"
+        ):
             continue
         parent_condition = _workspace_condition(parent, workspace, seen)
         if parent_condition is None:

@@ -21,6 +21,7 @@ from plane.utils.path_validator import sanitize_filename
 from plane.db.models import FileAsset, User, Workspace
 from plane.app.permissions import WorkspaceUserPermission
 from plane.api.views.base import BaseAPIView
+from plane.app.views.asset.v2 import can_download_research_asset, can_mutate_research_asset
 from plane.api.serializers import (
     UserAssetUploadSerializer,
     AssetUpdateSerializer,
@@ -436,6 +437,8 @@ class GenericAssetEndpoint(BaseAPIView):
 
             # Get the asset
             asset = FileAsset.objects.get(id=asset_id, workspace_id=workspace.id, is_deleted=False)
+            if not can_download_research_asset(request.user, asset):
+                return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Check if the asset exists and is uploaded
             if not asset.is_uploaded:
@@ -619,6 +622,8 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         try:
             asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, is_deleted=False)
+            if not can_mutate_research_asset(request.user, asset):
+                return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Update is_uploaded status
             asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)

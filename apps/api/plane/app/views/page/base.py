@@ -103,6 +103,8 @@ class PageViewSet(BaseViewSet):
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
             .prefetch_related("labels")
+            .exclude(research_report__isnull=False)
+            .exclude(research_stage_materials__isnull=False)
             # Sanitize the user-supplied order_by against an allowlist: Django
             # resolves the field at call time, so an unknown field raises
             # FieldError (500 DoS) and a relation path (e.g. owned_by__password)
@@ -226,7 +228,21 @@ class PageViewSet(BaseViewSet):
             )
 
     def retrieve(self, request, slug, project_id, page_id=None):
-        page = self.get_queryset().filter(pk=page_id).first()
+        # Research-owned pages stay out of ordinary lists/search, while their
+        # author still needs the direct detail route for the editor and live
+        # collaboration. ProjectPagePermission has already scoped and authorised
+        # this exact project/page pair.
+        page = (
+            Page.objects.filter(
+                pk=page_id,
+                workspace__slug=slug,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
+            .select_related("owned_by", "workspace")
+            .prefetch_related("projects", "labels")
+            .first()
+        )
         project = Project.objects.get(pk=project_id)
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
@@ -244,6 +260,7 @@ class PageViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
+            and page is not None
             and not page.owned_by == request.user
         ):
             return Response(
@@ -276,6 +293,9 @@ class PageViewSet(BaseViewSet):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+        guard_error = page_mutation_error_code(page, "update")
+        if guard_error:
+            return Response({"error_code": guard_error}, status=status.HTTP_403_FORBIDDEN)
 
         page.is_locked = True
         page.save()
@@ -288,6 +308,9 @@ class PageViewSet(BaseViewSet):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+        guard_error = page_mutation_error_code(page, "update")
+        if guard_error:
+            return Response({"error_code": guard_error}, status=status.HTTP_403_FORBIDDEN)
 
         page.is_locked = False
         page.save()
@@ -302,6 +325,8 @@ class PageViewSet(BaseViewSet):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+        if page_mutation_error_code(page, "delete"):
+            return Response({"error": "Research-owned page access is managed by research ACL."}, status=status.HTTP_403_FORBIDDEN)
 
         # Only update access if the page owner is the requesting user
         if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
@@ -338,6 +363,8 @@ class PageViewSet(BaseViewSet):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+        if page_mutation_error_code(page, "delete"):
+            return Response({"error": "Research-owned pages cannot be archived directly."}, status=status.HTTP_403_FORBIDDEN)
 
         # only the owner or admin can archive the page
         if (
@@ -369,6 +396,8 @@ class PageViewSet(BaseViewSet):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+        if page_mutation_error_code(page, "delete"):
+            return Response({"error": "Research-owned pages cannot be unarchived directly."}, status=status.HTTP_403_FORBIDDEN)
 
         # only the owner or admin can un archive the page
         if (
@@ -468,6 +497,8 @@ class PageViewSet(BaseViewSet):
                 )
             )
             .filter(project=True)
+            .exclude(research_report__isnull=False)
+            .exclude(research_stage_materials__isnull=False)
             .distinct()
         )
 
@@ -561,6 +592,13 @@ class PagesDescriptionViewSet(BaseViewSet):
             project_pages__deleted_at__isnull=True,
         )
 
+        guard_error = page_mutation_error_code(page, "update")
+        if guard_error:
+            return Response(
+                {"error_code": guard_error, "message": page_mutation_error_message(guard_error)},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if page.is_locked:
             return Response(
                 {
@@ -619,6 +657,12 @@ class PageDuplicateEndpoint(BaseAPIView):
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
         )
+
+        if page_mutation_error_code(page, "delete"):
+            return Response(
+                {"error": "Research-owned pages cannot be duplicated through the Page API."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:

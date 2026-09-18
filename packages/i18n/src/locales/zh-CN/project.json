@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "创建您的第一个工作项",
           "comic": {
-            "title": "工作项是 AI4MS 中的基本构建块。",
-            "description": "重新设计 AI4MS 界面、重塑公司品牌或启动新的燃料喷射系统都是可能包含子工作项的工作项示例。"
+            "title": "工作项是 PiLab 中的基本构建块。",
+            "description": "重新设计 PiLab 界面、重塑公司品牌或启动新的燃料喷射系统都是可能包含子工作项的工作项示例。"
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "写笔记、文档或完整的知识库。让 AI4MS 的 AI 助手 Galileo 帮助您开始",
-        "description": "页面是 AI4MS 中的思维记录空间。记录会议笔记，轻松格式化，嵌入工作项，使用组件库进行布局，并将它们全部保存在项目上下文中。要快速完成任何文档，可以通过快捷键或点击按钮调用 AI4MS 的 AI Galileo。",
+        "title": "写笔记、文档或完整的知识库。让 PiLab 的 AI 助手 Galileo 帮助您开始",
+        "description": "页面是 PiLab 中的思维记录空间。记录会议笔记，轻松格式化，嵌入工作项，使用组件库进行布局，并将它们全部保存在项目上下文中。要快速完成任何文档，可以通过快捷键或点击按钮调用 PiLab 的 AI Galileo。",
         "primary_button": {
           "text": "创建您的第一个页面"
         }

@@ -241,7 +241,6 @@ export const APPROVAL_FLOW_STEP_ROLES = ["PI", "OWNER", "UNIT_ADMIN", "ADVISOR",
 
 /** Research navigation tree - rendered only when the workspace switch is on. */
 export const RESEARCH_NAVIGATION_ITEMS = [
-  { key: "dashboard", labelKey: "research.nav.dashboard", path: "dashboard", section: "reports" },
   { key: "reports", labelKey: "research.nav.reports", path: "reports", section: "reports" },
   { key: "summary", labelKey: "research.nav.summary", path: "reports/summary", section: "reports" },
   { key: "projects", labelKey: "research.nav.projects", path: "projects", section: "reports" },
@@ -641,11 +640,15 @@ const RESEARCH_API_ROOT = "/api/research/workspaces";
 
 export const researchEndpoints = {
   health: () => "/api/research/health/",
+  context: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/context/`,
+  contextResource: (slug: string, kind: string, id: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/context/resources/${kind}/${id}/`,
   settings: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/settings/`,
   identityMe: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/identity/me/`,
   identityMappings: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/identity/mappings/`,
   identityMapping: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/identity/mappings/${id}/`,
   orgUnits: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/org-units/`,
+  orgIncomplete: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/org/incomplete/`,
   orgUnit: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/org-units/${id}/`,
   orgUnitMembers: (slug: string, unitId: string) => `${RESEARCH_API_ROOT}/${slug}/org-units/${unitId}/members/`,
   orgUnitMember: (slug: string, unitId: string, memberId: string) =>
@@ -685,6 +688,7 @@ export const researchEndpoints = {
   auditEvents: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/audit-events/`,
   // ---- account lifecycle (v2.4.0) ----
   inviteCodes: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/invite-codes/`,
+  accountProvisioningOptions: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/account-provisioning/options/`,
   inviteCode: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/invite-codes/${id}/`,
   inviteCodeAction: (slug: string, id: string, action: "enable" | "disable") =>
     `${RESEARCH_API_ROOT}/${slug}/invite-codes/${id}/${action}/`,

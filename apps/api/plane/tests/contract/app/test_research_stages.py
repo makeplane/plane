@@ -73,6 +73,13 @@ def env(db):
         user=owner,
         org_role=OrgUnitMember.OrgRole.PI,
     )
+    OrgUnitMember.objects.create(
+        workspace=workspace,
+        org_unit=root,
+        user=admin,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+        is_primary=True,
+    )
 
     admin_client = client_for(admin)
     owner_client = client_for(owner)
@@ -190,14 +197,17 @@ def add_materials(env, stage_id, stage_code):
 
 @pytest.mark.django_db
 class TestStageBootstrap:
-    def test_first_read_creates_the_four_instances(self, env):
+    def test_creation_initializes_the_four_instances_and_reads_are_side_effect_free(self, env):
+        before = ResearchStageInstance.objects.filter(project_id=env["project_id"]).count()
         stages = bootstrap(env)
         assert [item["stage"] for item in stages] == ["PRE_OPENING", "OPENING", "MIDTERM", "FINAL"]
         assert [item["sort_order"] for item in stages] == [1, 2, 3, 4]
         assert all(item["status"] == "NOT_STARTED" for item in stages)
         assert ResearchStageInstance.objects.filter(project_id=env["project_id"]).count() == 4
+        assert before == 4
 
     def test_explicit_creation_activates_the_first_stage(self, env):
+        ResearchStageInstance.objects.filter(project_id=env["project_id"]).delete(soft=False)
         response = env["admin_client"].post(stages_url(env), {}, format="json")
         assert response.status_code == 201
         first = stage_by_code(response.json()["results"], "PRE_OPENING")
@@ -207,7 +217,6 @@ class TestStageBootstrap:
         assert profile.current_stage == "PRE_OPENING"
 
     def test_duplicate_creation_returns_409(self, env):
-        assert env["admin_client"].post(stages_url(env), {}, format="json").status_code == 201
         duplicate = env["admin_client"].post(stages_url(env), {}, format="json")
         assert duplicate.status_code == 409
         assert duplicate.json()["error_code"] == "stage_instances_exist"
@@ -425,6 +434,40 @@ class TestStageMaterials:
         material = StageMaterial.objects.get(pk=materials[0]["id"])
         assert material.status == "SUBMITTED"
 
+    def test_reviewer_reads_submitted_snapshot_while_author_revises(self, env):
+        stages = bootstrap(env)
+        pre = stage_by_code(stages, "PRE_OPENING")
+        disable_gate_items(
+            env,
+            "PRE_OPENING",
+            ["literature_min_included", "literature_max_entries", "literature_quality"],
+        )
+        env["owner_client"].post(stage_url(env, pre["id"], "enter/"), {}, format="json")
+        materials = add_materials(env, pre["id"], "PRE_OPENING")
+        material_id = materials[0]["id"]
+        env["owner_client"].patch(
+            material_url(env, material_id),
+            {"description_html": "<p>Submitted version</p>"},
+            format="json",
+        )
+        env["owner_client"].post(stage_url(env, pre["id"], "submit/"), {}, format="json")
+        env["admin_client"].post(
+            stage_url(env, pre["id"], "return/"),
+            {"reason": "revise"},
+            format="json",
+        )
+        env["owner_client"].patch(
+            material_url(env, material_id),
+            {"description_html": "<p>Private revision</p>"},
+            format="json",
+        )
+
+        detail = env["admin_client"].get(material_url(env, material_id))
+
+        assert detail.status_code == 200
+        assert "Submitted version" in detail.json()["page_detail"]["description_html"]
+        assert "Private revision" not in str(detail.json()["page_detail"])
+
     def test_page_bypass_is_refused_for_submitted_materials(self, env):
         stages = bootstrap(env)
         pre = stage_by_code(stages, "PRE_OPENING")
@@ -441,6 +484,31 @@ class TestStageMaterials:
             {"name": "bypass attempt"},
             format="json",
         )
+        assert response.status_code == 403
+        assert response.json()["error_code"] == "stage_material_read_only"
+
+    def test_material_submit_locks_page_before_the_stage_is_submitted(self, env):
+        stages = bootstrap(env)
+        pre = stage_by_code(stages, "PRE_OPENING")
+        env["owner_client"].post(stage_url(env, pre["id"], "enter/"), {}, format="json")
+        created = env["owner_client"].post(
+            stage_url(env, pre["id"], "materials/"),
+            {"material_type": "TOPIC_DESCRIPTION"},
+            format="json",
+        ).json()
+        submitted = env["owner_client"].post(
+            material_url(env, created["id"], "submit/"),
+            {},
+            format="json",
+        )
+        assert submitted.status_code == 200
+
+        response = env["owner_client"].patch(
+            f"/api/workspaces/{env['workspace'].slug}/projects/{env['project_id']}/pages/{created['page']}/",
+            {"name": "bypass attempt"},
+            format="json",
+        )
+
         assert response.status_code == 403
         assert response.json()["error_code"] == "stage_material_read_only"
 

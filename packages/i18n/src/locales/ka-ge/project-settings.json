@@ -182,18 +182,18 @@
       "description": "დააკონფიგურირეთ ავტომატიზებული მოქმედებები თქვენი პროექტის მართვის ნაკადის გასამარტივებლად და ხელით დავალებების შესამცირებლად.",
       "auto-archive": {
         "title": "დახურული სამუშაო ელემენტების ავტო-არქივირება",
-        "description": "AI4MS ავტომატურად დაარქივებს სამუშაო ელემენტებს, რომლებიც დასრულებული ან გაუქმებულია.",
+        "description": "PiLab ავტომატურად დაარქივებს სამუშაო ელემენტებს, რომლებიც დასრულებული ან გაუქმებულია.",
         "duration": "დახურული სამუშაო ელემენტების ავტო-არქივირება"
       },
       "auto-close": {
         "title": "სამუშაო ელემენტების ავტო-დახურვა",
-        "description": "AI4MS ავტომატურად დახურავს სამუშაო ელემენტებს, რომლებიც არ არის დასრულებული ან გაუქმებული.",
+        "description": "PiLab ავტომატურად დახურავს სამუშაო ელემენტებს, რომლებიც არ არის დასრულებული ან გაუქმებული.",
         "duration": "არააქტიური სამუშაო ელემენტების ავტო-დახურვა",
         "auto_close_status": "ავტო-დახურვის სტატუსი"
       },
       "auto-remind": {
         "title": "Auto-reminders",
-        "description": "AI4MS will automatically send reminders via email and in-app notifications to keep your team on track with deadlines.",
+        "description": "PiLab will automatically send reminders via email and in-app notifications to keep your team on track with deadlines.",
         "duration": "Send reminder before"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "Email",
-          "description": "Collect new work items from anyone who sends an email to a AI4MS email address.",
+          "description": "Collect new work items from anyone who sends an email to a PiLab email address.",
           "fieldName": "Email ID"
         },
         "form": {

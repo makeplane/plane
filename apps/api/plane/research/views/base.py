@@ -33,6 +33,7 @@ from plane.research.utils.errors import (
 )
 from plane.research.utils.org import READABLE_WORKSPACE_ROLES
 from plane.research.utils.settings import workspace_research_enabled, workspace_research_sections
+from plane.research.utils.roles import user_can_access_private_workspace
 
 # Sentinel telling ``get_workspace`` to fall back to the class level
 # ``nav_capability`` instead of an explicit per call requirement.
@@ -87,6 +88,21 @@ def parse_date(value, field_name):
     return parsed, None
 
 
+def parse_uuid(value, field_name):
+    """Parse a UUID query value without leaking ORM validation errors."""
+    if value in (None, ""):
+        return None, None
+    import uuid
+
+    try:
+        return uuid.UUID(str(value)), None
+    except (AttributeError, TypeError, ValueError):
+        return None, research_error(
+            ResearchErrorCode.ORG_MEMBER_INVALID,
+            f"{field_name} must be a valid UUID.",
+        )
+
+
 def truthy(value, default=False):
     if value is None:
         return default
@@ -125,6 +141,21 @@ class ResearchAPIView(BaseAPIView):
             )
         return super().handle_exception(exc)
 
+    def paginate(self, request, *args, **kwargs):
+        """Keep Plane cursor metadata and explicitly echo the page size."""
+        per_page = self.get_per_page(
+            request,
+            kwargs.get("default_per_page", 1000),
+            kwargs.get("max_per_page", 1000),
+        )
+        if per_page < 1:
+            from rest_framework.exceptions import ParseError
+
+            raise ParseError(detail="Invalid per_page value. Must be at least 1.")
+        response = super().paginate(request, *args, **kwargs)
+        response.data["per_page"] = per_page
+        return response
+
     @property
     def workspace_slug(self):
         return self.kwargs.get("slug")
@@ -152,6 +183,16 @@ class ResearchAPIView(BaseAPIView):
                 ResearchErrorCode.WORKSPACE_NOT_FOUND,
                 "Workspace not found.",
             )
+        setting = getattr(workspace, "research_setting", None)
+        if (
+            setting is not None
+            and setting.purpose == setting.Purpose.PI_PRIVATE
+            and not user_can_access_private_workspace(self.request.user, setting)
+        ):
+            return None, research_not_found(
+                ResearchErrorCode.WORKSPACE_NOT_FOUND,
+                "Workspace not found.",
+            )
         membership = WorkspaceMember.objects.filter(
             workspace=workspace,
             member=self.request.user,
@@ -162,6 +203,18 @@ class ResearchAPIView(BaseAPIView):
                 ResearchErrorCode.WORKSPACE_NOT_FOUND,
                 "Workspace not found.",
             )
+        auth = getattr(self.request, "auth", None)
+        if isinstance(auth, str) and auth.startswith("plane_api_"):
+            from plane.db.models import APIToken
+
+            token_workspace_id = (
+                APIToken.objects.filter(token=auth, is_active=True).values_list("workspace_id", flat=True).first()
+            )
+            if token_workspace_id is not None and token_workspace_id != workspace.id:
+                return None, research_not_found(
+                    ResearchErrorCode.WORKSPACE_NOT_FOUND,
+                    "Workspace not found.",
+                )
         if roles is not None and membership.role not in roles:
             return None, research_permission_denied()
         required_nav = self.nav_capability if nav is _NAV_FROM_CLASS else nav

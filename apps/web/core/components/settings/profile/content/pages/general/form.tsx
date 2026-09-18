@@ -11,7 +11,7 @@ import { UserOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { useTranslation } from "@plane/i18n";
+import { DEFAULT_LANGUAGE, useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -78,7 +78,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       display_name: user.display_name || "",
       email: user.email || "",
       role: profile.role || "Product / Project Manager",
-      language: profile.language || "en",
+      language: profile.language || DEFAULT_LANGUAGE,
       user_timezone: user.user_timezone || "Asia/Kolkata",
     },
   });

@@ -19,6 +19,16 @@ class WorkspaceSerializer(BaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     total_projects = serializers.IntegerField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
+    research_purpose = serializers.CharField(source="research_setting.purpose", read_only=True)
+    research_enabled = serializers.BooleanField(source="research_setting.module_enabled", read_only=True)
+    main_pi = serializers.UUIDField(source="research_setting.main_pi_id", read_only=True)
+    private_access_users = serializers.SerializerMethodField()
+
+    def get_private_access_users(self, obj):
+        setting = getattr(obj, "research_setting", None)
+        if setting is None:
+            return []
+        return sorted(str(grant.user_id) for grant in setting.private_access_grants.all())
 
     def validate_name(self, value):
         # Check if the name contains a URL (kept consistent with the app-level

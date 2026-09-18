@@ -5,8 +5,10 @@
  */
 
 export type TOrgUnitType = "ROOT" | "INSTITUTE" | "LAB" | "GROUP" | "TEAM";
+export type TOrgBusinessCategory = "BASIC_RESEARCH" | "INDUSTRIALIZATION" | "MENTOR_GROUP";
 export type TOrgRole = "OWNER" | "PI" | "ADVISOR" | "REVIEWER" | "UNIT_ADMIN";
 export type TAdminRole = "DEV_ADMIN" | "OPS_ADMIN" | "MAIN_PI";
+export type TWorkspaceResearchPurpose = "GENERAL" | "PUBLIC_RESEARCH" | "PI_PRIVATE";
 export type TInviteCodeStatus = "ACTIVE" | "DISABLED" | "EXPIRED" | "EXHAUSTED";
 export type TUserImportRowStatus = "OK" | "PENDING" | "ERROR";
 export type TUserImportBatchStatus = "PENDING" | "IMPORTED" | "FAILED";
@@ -60,6 +62,7 @@ export type TOrgUnit = {
   path: string;
   depth: number;
   unit_type: TOrgUnitType;
+  business_category: TOrgBusinessCategory | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -88,15 +91,30 @@ export type TMentorBinding = {
   mentee_detail?: TResearchUserLite;
   mentor_detail?: TResearchUserLite;
   org_unit: string | null;
+  is_primary_advisor: boolean;
   effective_from: string;
   effective_to: string | null;
   created_at: string;
   updated_at: string;
 };
 
+export type TResearchOrgIncomplete = {
+  missing_primary_org: TResearchUserLite[];
+  missing_primary_advisor: TResearchUserLite[];
+  unclassified_org_units: TOrgUnit[];
+  counts: {
+    missing_primary_org: number;
+    missing_primary_advisor: number;
+    unclassified_org_units: number;
+  };
+};
+
 export type TWorkspaceResearchSetting = {
   id?: string;
   workspace?: string;
+  purpose: TWorkspaceResearchPurpose;
+  main_pi: string | null;
+  required_reporter_categories: TResearchProfileCategory[];
   module_enabled: boolean;
   org_enabled: boolean;
   report_enabled: boolean;
@@ -116,24 +134,37 @@ export type TResearchProjectProfile = {
   id: string;
   project: string;
   owner: string;
+  owner_detail?: TResearchUserLite;
   org_unit: string | null;
-  research_type: string;
-  workflow_status: string;
+  research_type: TResearchProjectType;
+  workflow_status: TResearchProjectStatus;
   started_at: string | null;
   expected_end_at: string | null;
   completed_at: string | null;
   is_active: boolean;
 };
 
+export type TReportOfficialContent = {
+  version_no: number;
+  description_json: Record<string, unknown>;
+  description_html: string;
+  description_stripped: string | null;
+};
+
+export type TReportDraftContent = Omit<TReportOfficialContent, "version_no">;
+
 export type TPeriodicReport = {
   id: string;
   workspace: string;
-  project: string;
+  project: string | null;
+  team_projects: string[];
   owner: string;
   owner_detail?: TResearchUserLite;
   org_unit: string | null;
   org_unit_detail?: Pick<TOrgUnit, "id" | "name" | "unit_type"> | null;
   page: string;
+  /** Project that owns the Plane Page; null when the report is edited only in the research flow. */
+  page_project: string | null;
   report_type: TReportType;
   period_key: string;
   period_start: string;
@@ -150,6 +181,11 @@ export type TPeriodicReport = {
   can_edit?: boolean;
   can_review?: boolean;
   attachment_count?: number;
+  latest_official_version: number | null;
+  /** Frozen submitted body returned to readers other than the author. */
+  official_content: TReportOfficialContent | null;
+  /** Current mutable Page body, returned only on the author's report detail. */
+  draft_content: TReportDraftContent | null;
 };
 
 export type TReportReviewLog = {
@@ -249,7 +285,15 @@ export type TResearchIdentity = {
     level: TResearchLevel;
     nav: string[];
     is_mentor: boolean;
+    is_main_pi: boolean;
     is_stage_reviewer: boolean;
+    management: {
+      workspace: boolean;
+      organization: boolean;
+      integrations: boolean;
+      operations: boolean;
+      accounts: boolean;
+    };
   };
   user: {
     id: string;
@@ -257,6 +301,7 @@ export type TResearchIdentity = {
     /** Configuration rights: workspace administrator or administrator tag. */
     is_research_admin?: boolean;
     is_system_admin?: boolean;
+    is_main_pi?: boolean;
     /** Visibility tier of this caller in this workspace (v2.5.0). */
     research_level?: TResearchLevel;
     admin_roles?: TAdminRole[];
@@ -920,8 +965,11 @@ export type TTimelineFilters = {
 export type TInviteCode = {
   id: string;
   code: string;
+  provisioning_version: number;
   org_role: TOrgRole | "";
   org_unit: string | null;
+  profile_category: TResearchProfileCategory | "";
+  primary_advisor: string | null;
   max_uses: number;
   used_count: number;
   expires_at: string | null;
@@ -933,6 +981,17 @@ export type TInviteCode = {
   created_by_detail?: TResearchUserLite | null;
   created_at: string;
   updated_at: string;
+};
+
+export type TAccountProvisioningOptions = {
+  profile_categories: { value: TResearchProfileCategory; label: string }[];
+  org_units: {
+    id: string;
+    name: string;
+    display_path: string;
+    business_category: TOrgBusinessCategory | null;
+  }[];
+  advisors: TResearchUserLite[];
 };
 
 export type TResearchUserProfile = {
@@ -992,13 +1051,69 @@ export type TPiAggregate = {
   workspace: { slug: string; name: string };
   source_workspace: { slug: string; name: string };
   is_system_admin: boolean;
-  scope: { unit_ids: string[]; unit_count: number; is_empty: boolean };
+  scope: { unit_ids: string[]; unit_count: number; owner_ids?: string[]; is_empty: boolean };
+  filters: { org_unit?: string; owner?: string; date_from?: string; date_to?: string };
+  drilldowns: {
+    projects: { org_unit?: string; owner?: string; date_from?: string; date_to?: string };
+    reports: { org_unit?: string; owner?: string; date_from?: string; date_to?: string };
+  };
   projects: { total: number; by_status: Record<string, number> };
-  reports: { total: number; by_status: Record<string, number>; submitted_last_30_days: number };
+  reports: {
+    total: number;
+    by_status: Record<string, number>;
+    submitted_last_30_days: number;
+    not_submitted: number;
+  };
   stages: { total: number; by_status: Record<string, number>; blocked_gates: number };
   reviews: { awaiting_stages: number; open_assignments: number; submitted: number };
   approvals: { pending: number };
   members?: { total: number };
+  outcomes?: {
+    total: number;
+    recent: { id: string; title: string; published_at: string | null }[];
+  };
   org_units: { id: string; name: string; depth: number; unit_type: TOrgUnitType }[];
   generated_at: string;
+};
+
+export type TResearchContextResource = {
+  kind: string;
+  id: string | null;
+  title: string;
+  status: string | null;
+  owner: string | null;
+  project: string;
+  source: string;
+  updated_at: string | null;
+  version: number | null;
+  link: string;
+};
+
+export type TResearchContext = {
+  schema_version: string;
+  generated_at: string;
+  workspace: { id: string; slug: string; name: string };
+  scope: {
+    actor: string;
+    project_id: string | null;
+    business_records_mutated: false;
+  };
+  pagination: {
+    /** Project-level pagination; resources also contain authorised children of each project. */
+    page: number;
+    page_size: number;
+    total: number;
+    has_more: boolean;
+  };
+  resources: TResearchContextResource[];
+};
+
+export type TResearchContextResourceBody = {
+  schema_version: string;
+  kind: string;
+  id: string;
+  source: string;
+  version: number | "draft" | null;
+  updated_at: string | null;
+  content: Record<string, unknown>;
 };

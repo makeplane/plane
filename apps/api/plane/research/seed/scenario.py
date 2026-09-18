@@ -63,7 +63,7 @@ RETIRED_ORG_UNIT_NAMES = (
     "李明课题组",
     "王芳课题组",
     "智能材料实验室",
-    "AI4MS 计算材料课题组",
+    "PiLab 计算材料课题组",
 )
 
 
@@ -597,7 +597,7 @@ OUTCOMES = {
         OutcomeSpec(
             "DATASET",
             "石墨负极界面 SEI 表征数据集 v1",
-            "AI4MS 数据门户（demo）",
+            "PiLab 数据门户（demo）",
             "10.9999/ai4ms.demo.outcome.003",
             "ACCEPTED",
             10,
@@ -615,7 +615,7 @@ OUTCOMES = {
         OutcomeSpec(
             "SOFTWARE",
             "材料特征工程工具包（demo）",
-            "AI4MS 开源仓库（demo）",
+            "PiLab 开源仓库（demo）",
             "10.9999/ai4ms.demo.outcome.005",
             "SUBMITTED",
         ),
@@ -722,12 +722,12 @@ class MatrixReportSpec:
 
 
 MATRIX_REPORTS = (
-    MatrixReportSpec("PRIVATE", 11, "DRAFT"),
+    MatrixReportSpec("PRIVATE", 11, "SUBMITTED"),
     MatrixReportSpec("DIRECT_ADVISOR", 10, "SUBMITTED"),
     MatrixReportSpec("UNIT", 9, "ACCEPTED"),
     MatrixReportSpec("ANCESTRY", 8, "SUBMITTED"),
     MatrixReportSpec("WORKSPACE", 7, "ACCEPTED"),
-    MatrixReportSpec("CUSTOM", 6, "DRAFT", grantee="zhoumin"),
+    MatrixReportSpec("CUSTOM", 6, "SUBMITTED", grantee="zhoumin"),
 )
 
 MATRIX_OWNER_PROJECT = "liuyang"
@@ -747,14 +747,14 @@ ACL_MATRIX_EXPECTED = {
         "advisor": False,
         "unit_member": False,
         "ancestor_pi": False,
-        "admin": True,
+        "admin": False,
         "stranger": False,
     },
     "DIRECT_ADVISOR": {
         "owner": True,
         "advisor": True,
         "unit_member": False,
-        "ancestor_pi": False,
+        "ancestor_pi": True,
         "admin": True,
         "stranger": False,
     },
@@ -762,7 +762,7 @@ ACL_MATRIX_EXPECTED = {
         "owner": True,
         "advisor": True,
         "unit_member": True,
-        "ancestor_pi": False,
+        "ancestor_pi": True,
         "admin": True,
         "stranger": False,
     },
@@ -786,7 +786,7 @@ ACL_MATRIX_EXPECTED = {
         "owner": True,
         "advisor": False,
         "unit_member": True,
-        "ancestor_pi": False,
+        "ancestor_pi": True,
         "admin": True,
         "stranger": False,
     },

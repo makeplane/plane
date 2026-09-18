@@ -19,6 +19,7 @@ from plane.db.models import (
 from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
+    make_instance_admin,
     make_user,
     make_workspace,
 )
@@ -40,8 +41,9 @@ def client_for(user):
 @pytest.fixture
 def env(db):
     admin = make_user(first_name="Admin")
+    make_instance_admin(admin)
     workspace = make_workspace(admin)
-    enable_research(workspace)
+    enable_research(workspace, purpose="PUBLIC_RESEARCH", main_pi=admin)
     owner = make_user(first_name="Owner")
     add_workspace_member(workspace, owner)
 
@@ -296,7 +298,24 @@ class TestAdminOverride:
         env["owner_client"].post(stage_url(env, opening_id, "enter/"), {}, format="json")
         materials = add_opening_materials(env, opening_id)
         material_id = materials[0]["id"]
-        env["owner_client"].post(stage_url(env, opening_id, "submit/"), {}, format="json")
+        ExperimentRecord.objects.create(
+            workspace=env["workspace"],
+            project_id=env["project_id"],
+            sequence_no=1,
+            title="Submitted evidence",
+            owner=env["owner"],
+        )
+        ProjectCodeRepository.objects.create(
+            workspace=env["workspace"],
+            project_id=env["project_id"],
+            provider="GITHUB",
+            repository_url="https://github.com/example/submitted-evidence",
+            created_by=env["owner"],
+        )
+        submitted = env["owner_client"].post(
+            stage_url(env, opening_id, "submit/"), {}, format="json"
+        )
+        assert submitted.status_code == 200, submitted.json()
 
         no_reason = env["admin_client"].post(material_url(env, material_id, "override/"), {}, format="json")
         assert no_reason.status_code == 422

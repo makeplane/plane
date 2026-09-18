@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Názov spoločnosti",
-            "placeholder": "AI4MS",
+            "placeholder": "PiLab",
             "validation": {
               "required": "Názov spoločnosti je povinný",
               "maxLength": "Názov spoločnosti by nemal presiahnuť 255 znakov"

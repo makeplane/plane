@@ -9,6 +9,7 @@ from django.db.models import Q
 
 from plane.db.models.base import BaseModel
 
+from .append_only import AppendOnlyModel
 from .config import ReportVisibility
 
 
@@ -36,8 +37,10 @@ class PeriodicReport(BaseModel):
     )
     project = models.ForeignKey(
         "db.Project",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="research_reports",
+        null=True,
+        blank=True,
     )
     owner = models.ForeignKey(
         "db.User",
@@ -77,6 +80,12 @@ class PeriodicReport(BaseModel):
         null=True,
         blank=True,
     )
+    team_projects = models.ManyToManyField(
+        "db.Project",
+        related_name="referenced_by_research_reports",
+        through="db.PeriodicReportProjectReference",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Periodic Report"
@@ -99,6 +108,79 @@ class PeriodicReport(BaseModel):
 
     def __str__(self):
         return f"{self.report_type} <{self.period_key}>"
+
+
+class PeriodicReportProjectReference(BaseModel):
+    """A team project whose progress is referenced by a personal report."""
+
+    report = models.ForeignKey(
+        PeriodicReport,
+        on_delete=models.CASCADE,
+        related_name="team_project_references",
+    )
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="research_report_references",
+    )
+
+    class Meta:
+        verbose_name = "Periodic Report Project Reference"
+        verbose_name_plural = "Periodic Report Project References"
+        db_table = "research_periodic_report_project_refs"
+        ordering = ("created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["report", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="rsch_report_project_ref_uq",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["project", "report"], name="rsch_report_project_ref_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.report_id} <{self.project_id}>"
+
+
+class PeriodicReportSnapshot(AppendOnlyModel):
+    """Immutable body captured each time a periodic report is submitted."""
+
+    report = models.ForeignKey(
+        PeriodicReport,
+        on_delete=models.PROTECT,
+        related_name="official_snapshots",
+    )
+    version_no = models.PositiveIntegerField()
+    snapshot_status = models.CharField(max_length=16, choices=PeriodicReport.Status.choices)
+    description_json = models.JSONField(default=dict, blank=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_binary = models.BinaryField(null=True, blank=True)
+    attachment_manifest = models.JSONField(default=list, blank=True)
+    submitted_by = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="research_periodic_report_snapshots",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "Periodic Report Snapshot"
+        verbose_name_plural = "Periodic Report Snapshots"
+        db_table = "research_periodic_report_snapshots"
+        ordering = ("-version_no",)
+        constraints = [
+            models.UniqueConstraint(fields=["report", "version_no"], name="rsch_report_snapshot_uq"),
+        ]
+        indexes = [
+            models.Index(fields=["report", "version_no"], name="rsch_report_snapshot_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.report_id} v{self.version_no}"
 
 
 class ReportReviewLog(models.Model):

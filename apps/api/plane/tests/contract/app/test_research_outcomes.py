@@ -72,6 +72,13 @@ def env(db):
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=owner, org_role=OrgUnitMember.OrgRole.PI
     )
+    OrgUnitMember.objects.create(
+        workspace=workspace,
+        org_unit=root,
+        user=admin,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+        is_primary=True,
+    )
     admin_client = client_for(admin)
     created = admin_client.post(
         f"/api/research/workspaces/{workspace.slug}/projects/",

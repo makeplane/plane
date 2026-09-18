@@ -195,8 +195,8 @@
         "primary_button": {
           "text": "Tạo mục công việc đầu tiên của bạn",
           "comic": {
-            "title": "Mục công việc là khối xây dựng cơ bản trong AI4MS.",
-            "description": "Thiết kế lại giao diện AI4MS, định vị lại thương hiệu công ty hoặc ra mắt hệ thống phun nhiên liệu mới đều là ví dụ về mục công việc có thể chứa các mục công việc con."
+            "title": "Mục công việc là khối xây dựng cơ bản trong PiLab.",
+            "description": "Thiết kế lại giao diện PiLab, định vị lại thương hiệu công ty hoặc ra mắt hệ thống phun nhiên liệu mới đều là ví dụ về mục công việc có thể chứa các mục công việc con."
           }
         }
       },
@@ -271,8 +271,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Viết ghi chú, tài liệu hoặc cơ sở kiến thức đầy đủ. Để trợ lý AI Galileo của AI4MS giúp bạn bắt đầu",
-        "description": "Trang là không gian ghi lại suy nghĩ trong AI4MS. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của AI4MS thông qua phím tắt hoặc nhấp nút.",
+        "title": "Viết ghi chú, tài liệu hoặc cơ sở kiến thức đầy đủ. Để trợ lý AI Galileo của PiLab giúp bạn bắt đầu",
+        "description": "Trang là không gian ghi lại suy nghĩ trong PiLab. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của PiLab thông qua phím tắt hoặc nhấp nút.",
         "primary_button": {
           "text": "Tạo trang đầu tiên của bạn"
         }

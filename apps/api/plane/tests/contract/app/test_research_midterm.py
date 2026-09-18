@@ -10,10 +10,13 @@ from rest_framework.test import APIClient
 
 from plane.db.models import (
     MATERIAL_TYPES_BY_STAGE,
+    CodeArtifact,
     ExperimentRecord,
     MentorBinding,
     OrgUnit,
     OrgUnitMember,
+    ProjectCodeRepository,
+    ResearchOutcome,
     StageReview,
     StageTransition,
     WorkspaceResearchSetting,
@@ -69,6 +72,13 @@ def env(db):
     group.save(update_fields=["path"])
     OrgUnitMember.objects.create(
         workspace=workspace, org_unit=group, user=owner, org_role=OrgUnitMember.OrgRole.PI
+    )
+    OrgUnitMember.objects.create(
+        workspace=workspace,
+        org_unit=root,
+        user=admin,
+        org_role=OrgUnitMember.OrgRole.OWNER,
+        is_primary=True,
     )
     admin_client = client_for(admin)
     created = admin_client.post(
@@ -182,6 +192,7 @@ class TestMidtermGate:
             title="Finished run",
             status="COMPLETED",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         passed = env["owner_client"].post(stage_url(env, midterm_id, "submit/"), {}, format="json")
         assert passed.status_code == 200, passed.json()
@@ -196,6 +207,7 @@ class TestMidtermGate:
             title="Finished run",
             status="COMPLETED",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         ExperimentRecord.objects.create(
             workspace=env["workspace"],
@@ -204,6 +216,7 @@ class TestMidtermGate:
             title="Still running",
             status="RUNNING",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         blocked = env["owner_client"].post(stage_url(env, midterm_id, "submit/"), {}, format="json")
         assert blocked.status_code == 422
@@ -229,6 +242,7 @@ class TestProgressSummary:
             title="Finished run",
             status="COMPLETED",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         ExperimentRecord.objects.create(
             workspace=env["workspace"],
@@ -238,6 +252,7 @@ class TestProgressSummary:
             status="RUNNING",
             owner=env["owner"],
             status_note="",
+            submitted_at=timezone.now(),
         )
         summary = env["owner_client"].get(progress_url(env)).json()
         assert summary["experiments"]["total"] == 2
@@ -256,6 +271,7 @@ class TestProgressSummary:
             title="Finished run",
             status="COMPLETED",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         assert env["owner_client"].post(stage_url(env, midterm_id, "submit/"), {}, format="json").status_code == 200
         transition = StageTransition.objects.get(stage_instance_id=midterm_id, action="SUBMIT")
@@ -268,6 +284,7 @@ class TestProgressSummary:
             title="Later run",
             status="COMPLETED",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         transition.refresh_from_db()
         assert transition.metadata["progress"]["experiments"]["completed"] == 1
@@ -292,14 +309,56 @@ class TestProgressAcl:
             status="COMPLETED",
             owner=env["owner"],
             visibility="PRIVATE",
+            submitted_at=timezone.now(),
+        )
+        repository = ProjectCodeRepository.objects.create(
+            workspace=env["workspace"],
+            project_id=env["project_id"],
+            provider="GITHUB",
+            repository_url="https://github.com/example/private-progress",
+            created_by=env["owner"],
+        )
+        CodeArtifact.objects.create(
+            repository=repository,
+            ref_type="COMMIT",
+            ref_value="private123",
+            created_by=env["owner"],
+        )
+        ResearchOutcome.objects.create(
+            workspace=env["workspace"],
+            project_id=env["project_id"],
+            output_type="PAPER",
+            title="Private outcome",
+            status="DRAFT",
+            visibility="PRIVATE",
+            created_by=env["owner"],
         )
         member = make_user(first_name="Member")
         add_workspace_member(env["workspace"], member)
-        summary = client_for(member).get(progress_url(env)).json()
-        assert summary["experiments"]["total"] == 0
-        assert summary["experiments"]["items"] == []
+        other_group = OrgUnit.objects.create(
+            workspace=env["workspace"],
+            name="Other group",
+            parent=OrgUnit.objects.get(workspace=env["workspace"], unit_type=OrgUnit.UnitType.ROOT),
+            unit_type=OrgUnit.UnitType.GROUP,
+            depth=1,
+            path="",
+        )
+        other_group.path = f"{other_group.parent.path}{str(other_group.id).replace('-', '')}/"
+        other_group.save(update_fields=["path"])
+        OrgUnitMember.objects.create(
+            workspace=env["workspace"],
+            org_unit=other_group,
+            user=member,
+            org_role=OrgUnitMember.OrgRole.REVIEWER,
+            is_primary=True,
+        )
+        denied = client_for(member).get(progress_url(env))
+        assert denied.status_code == 404
         owner_summary = env["owner_client"].get(progress_url(env)).json()
         assert owner_summary["experiments"]["total"] == 1
+        assert len(owner_summary["code"]["repositories"]) == 1
+        assert owner_summary["code"]["artifact_count"] == 1
+        assert owner_summary["outcomes"]["count"] == 1
 
     def test_advisors_see_their_mentee_progress(self, env):
         ExperimentRecord.objects.create(
@@ -309,6 +368,7 @@ class TestProgressAcl:
             title="Supervised run",
             status="COMPLETED",
             owner=env["owner"],
+            submitted_at=timezone.now(),
         )
         mentor = make_user(first_name="Mentor")
         add_workspace_member(env["workspace"], mentor)

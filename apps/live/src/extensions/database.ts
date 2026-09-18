@@ -97,7 +97,10 @@ const storeDocument = async ({
     const isContentTooLarge = appError.statusCode === 413;
 
     // Determine if we should disconnect and unload
-    const shouldDisconnect = isContentTooLarge;
+    // Authorisation and workflow conflicts (403/409) mean the document changed
+    // state or access was revoked while the socket was open. Close and unload
+    // it so a cached Y.Doc cannot continue accepting edits after submission.
+    const shouldDisconnect = isContentTooLarge || appError.statusCode === 403 || appError.statusCode === 409;
 
     // Determine error message and code
     let errorMessage: string;
