@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         if instance is None:
             Instance.objects.create(
-                instance_name=os.environ.get("INSTANCE_NAME", "AI4MS Research Workspace"),
+                instance_name=os.environ.get("INSTANCE_NAME", "PiLab"),
                 instance_id=secrets.token_hex(12),
                 current_version=current_version,
             )

@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "公司名称",
-            "placeholder": "AI4MS",
+            "placeholder": "PiLab",
             "validation": {
               "required": "公司名称是必填项",
               "maxLength": "公司名称应少于255个字符"

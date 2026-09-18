@@ -5,7 +5,7 @@
       "not_right_now": "Teraz nie",
       "create_project": {
         "title": "Vytvoriť projekt",
-        "description": "Väčšina vecí začína projektom v AI4MS.",
+        "description": "Väčšina vecí začína projektom v PiLab.",
         "cta": "Začať"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Konfigurovať tento priestor"
       },
       "personalize_account": {
-        "title": "Prispôsobte si AI4MS.",
+        "title": "Prispôsobte si PiLab.",
         "description": "Vyberte si obrázok, farby a ďalšie.",
         "cta": "Prispôsobiť teraz"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Novinky v AI4MS"
+      "title": "Novinky v PiLab"
     },
     "quick_tutorial": {
       "title": "Rýchly tutoriál"

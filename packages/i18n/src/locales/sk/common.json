@@ -815,7 +815,7 @@
     "edited_by": "Upravené používateľom"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb AI4MS nepodarilo spustiť.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLab sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb PiLab nepodarilo spustiť.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logov, aby ste si boli istí."
   },
   "customize_navigation": "Prispôsobiť navigáciu",

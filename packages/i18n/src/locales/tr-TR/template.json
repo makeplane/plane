@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Şirket adı",
-            "placeholder": "AI4MS",
+            "placeholder": "PiLab",
             "validation": {
               "required": "Şirket adı gereklidir",
               "maxLength": "Şirket adı 255 karakterden az olmalıdır"

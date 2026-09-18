@@ -137,7 +137,7 @@
   "stay_ahead_of_blockers_description": "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
   "analytics": "Analytics",
   "workspace_invites": "Workspace invites",
-  "enter_god_mode": "Enter god mode",
+  "enter_god_mode": "System administration",
   "workspace_logo": "Workspace logo",
   "new_issue": "New work item",
   "your_work": "Your work",
@@ -815,7 +815,7 @@
     "edited_by": "Edited by"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS didn't start up. This could be because one or more AI4MS services failed to start.",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLab didn't start up. This could be because one or more PiLab services failed to start.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   },
   "customize_navigation": "Customize navigation",
@@ -827,7 +827,7 @@
   "pin": "Pin",
   "unpin": "Unpin",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "AI4MS AI",
+  "pi_chat": "PiLab AI",
   "in_app": "In-app",
   "forms": "Forms",
   "milestones": "Milestones",
@@ -1038,7 +1038,7 @@
       "approvals_hint": "Task and purchase approvals built on work items.",
       "org_hint": "Maintain the organisation tree, members, principal investigators and advisors.",
       "templates_hint": "Templates used when a report is created.",
-      "identity_hint": "AI4MS SSO identity mappings.",
+      "identity_hint": "PiLab SSO identity mappings.",
       "platform_hint": "Module switches, upload limits and default visibility.",
       "audit_hint": "Read-only, append-only research audit trail."
     },
@@ -1348,7 +1348,7 @@
       }
     },
     "identity": {
-      "description": "Bind AI4MS single sign-on identities to local accounts.",
+      "description": "Bind PiLab single sign-on identities to local accounts.",
       "user_placeholder": "Local account email or ID",
       "subject_placeholder": "OIDC subject (sub)",
       "employee_id_placeholder": "Employee id (optional)",
@@ -1749,7 +1749,7 @@
         "cancelled": "Withdrawn"
       },
       "asset_system": {
-        "plane": "Plane",
+        "plane": "PiLab",
         "speclabos": "SpecLabOS",
         "smartaccess": "SmartAccess",
         "ragportal": "RAGPortal",
@@ -1845,7 +1845,7 @@
       }
     },
     "integrations": {
-      "description": "Connections to the AI4MS ecosystem: knowledge, lab, device and R&D systems.",
+      "description": "Connections to the PiLab ecosystem: knowledge, lab, device and R&D systems.",
       "connections_title": "Connections",
       "references_title": "Search and reference external objects",
       "call_logs_title": "Integration call log",

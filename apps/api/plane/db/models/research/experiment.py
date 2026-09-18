@@ -246,7 +246,7 @@ class ExperimentAssetLink(BaseModel):
     """Reference to an external data asset; no bytes are stored here (§4.5)."""
 
     class SourceSystem(models.TextChoices):
-        PLANE = "PLANE", "Plane"
+        PLANE = "PLANE", "PiLab"
         SPECLABOS = "SPECLABOS", "SpecLabOS"
         SMARTACCESS = "SMARTACCESS", "SmartAccess"
         RAGPORTAL = "RAGPORTAL", "RAGPortal"

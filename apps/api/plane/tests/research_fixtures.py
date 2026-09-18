@@ -72,7 +72,7 @@ def enable_research(workspace, **overrides):
     return setting
 
 
-def make_instance(name="AI4MS Test Instance"):
+def make_instance(name="PiLab Test Instance"):
     """Create (or reuse) the singleton instance row."""
     instance = Instance.objects.first()
     if instance is not None:

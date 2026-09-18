@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Plane | Accelerate software development with peace.",
-  "short_name": "Plane",
-  "description": "Plane accelerated the software development by order of magnitude for agencies and product companies.",
+  "name": "PiLab | Research and office collaboration workspace",
+  "short_name": "PiLab",
+  "description": "PiLab supports research and office collaboration.",
   "icons": [
     {
       "src": "/icon-192x192.png",

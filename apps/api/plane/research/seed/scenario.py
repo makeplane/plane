@@ -63,7 +63,7 @@ RETIRED_ORG_UNIT_NAMES = (
     "李明课题组",
     "王芳课题组",
     "智能材料实验室",
-    "AI4MS 计算材料课题组",
+    "PiLab 计算材料课题组",
 )
 
 
@@ -597,7 +597,7 @@ OUTCOMES = {
         OutcomeSpec(
             "DATASET",
             "石墨负极界面 SEI 表征数据集 v1",
-            "AI4MS 数据门户（demo）",
+            "PiLab 数据门户（demo）",
             "10.9999/ai4ms.demo.outcome.003",
             "ACCEPTED",
             10,
@@ -615,7 +615,7 @@ OUTCOMES = {
         OutcomeSpec(
             "SOFTWARE",
             "材料特征工程工具包（demo）",
-            "AI4MS 开源仓库（demo）",
+            "PiLab 开源仓库（demo）",
             "10.9999/ai4ms.demo.outcome.005",
             "SUBMITTED",
         ),

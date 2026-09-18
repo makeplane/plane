@@ -56,7 +56,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
           onClick={handleThemeSwitch}
         >
           <PaletteOutline className="h-4 w-4 stroke-[1.5]" />
-          Switch to {resolvedTheme === "dark" ? "light" : "dark"} mode
+          切换为{resolvedTheme === "dark" ? "浅色" : "深色"}模式
         </Menu.Item>
       </div>
       <div className="py-2">
@@ -68,7 +68,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
             className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
           >
             <LogOutOutline className="h-4 w-4 stroke-[1.5]" />
-            Sign out
+            退出登录
           </Menu.Item>
         </form>
       </div>
@@ -115,7 +115,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-body-md-medium text-primary">Instance admin</h4>
+              <h4 className="grow truncate text-body-md-medium text-primary">系统管理</h4>
             </div>
           )}
         </div>
@@ -125,7 +125,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
             <WorkspaceAvatar
-              alt={currentUser.display_name ?? "Admin user"}
+              alt={currentUser.display_name ?? "管理员"}
               fallback={currentUser.display_name?.[0]?.toUpperCase()}
               src={getFileURL(currentUser.avatar_url)}
               size="sm"

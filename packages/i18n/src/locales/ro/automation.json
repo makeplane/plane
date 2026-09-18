@@ -14,7 +14,7 @@
       "sidebar_header": "Configurarea declanșatorului",
       "input_label": "Care este declanșatorul pentru această automatizare?",
       "input_placeholder": "Selectează o opțiune",
-      "section_plane_events": "Evenimente AI4MS",
+      "section_plane_events": "Evenimente PiLab",
       "section_time_based": "Bazat pe timp",
       "fixed_schedule": "Program fix",
       "schedule": {

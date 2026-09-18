@@ -15,7 +15,7 @@ import { useResearchHealth } from "@/hooks/use-research-health";
 /**
  * Extended (installation specific) sign-in providers.
  *
- * AI4MS single sign-on is rendered only when the backend reports a usable OIDC
+ * PiLab single sign-on is rendered only when the backend reports a usable OIDC
  * configuration; the local form is never removed (P0-ID-06).
  */
 export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
@@ -28,7 +28,7 @@ export const useExtendedOAuthConfig = (oauthActionText: string): TOAuthConfigs =
     return { isOAuthEnabled: false, oAuthOptions: [] };
   }
 
-  const label = oidcProvider ?? "AI4MS";
+  const label = oidcProvider ?? "PiLab";
 
   return {
     isOAuthEnabled: true,

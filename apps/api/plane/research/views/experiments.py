@@ -439,7 +439,7 @@ class ResearchExperimentAssetEndpoint(ResearchAPIView):
         if request.FILES:
             return research_error(
                 ResearchErrorCode.EXPERIMENT_ASSET_EXISTS,
-                "Plane does not store experiment data files. Register an external asset reference.",
+                "PiLab does not store experiment data files. Register an external asset reference.",
                 status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         external_asset_id = str(request.data.get("external_asset_id") or "").strip()

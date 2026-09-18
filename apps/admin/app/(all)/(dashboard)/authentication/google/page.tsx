@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { BRAND_NAME } from "@plane/constants";
 import { Switch } from "@makeplane/propel/components/switch";
 // assets
 import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
@@ -69,8 +70,7 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
       customHeader={
         <AuthenticationMethodCard
           name="Google"
-          description="Allow members to login or sign up to plane with their Google
-            accounts."
+          description={`Allow members to log in or sign up to ${BRAND_NAME} with their Google accounts.`}
           icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
           config={
             <Switch

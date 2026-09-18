@@ -137,7 +137,7 @@
   "stay_ahead_of_blockers_description": "发现从一个项目到另一个项目的挑战，并查看从其他视图中不易发现的周期间依赖关系。",
   "analytics": "分析",
   "workspace_invites": "工作区邀请",
-  "enter_god_mode": "进入管理员模式",
+  "enter_god_mode": "系统管理",
   "workspace_logo": "工作区标志",
   "new_issue": "新工作项",
   "your_work": "我的工作",
@@ -815,7 +815,7 @@
     "edited_by": "编辑者"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "AI4MS 未能启动。这可能是因为一个或多个 AI4MS 服务启动失败。",
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "PiLab 未能启动。这可能是因为一个或多个 PiLab 服务启动失败。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
   },
   "customize_navigation": "自定义导航",
@@ -1038,7 +1038,7 @@
       "approvals_hint": "基于工作项的任务审批与采购审批。",
       "org_hint": "维护组织树、成员角色、课题组主 PI 与直接导师。",
       "templates_hint": "创建报告时可套用的正文模板。",
-      "identity_hint": "AI4MS 单点登录身份映射。",
+      "identity_hint": "PiLab 单点登录身份映射。",
       "platform_hint": "模块开关、上传限制与默认可见级别。",
       "audit_hint": "只读、只追加的科研审计记录。"
     },
@@ -1348,7 +1348,7 @@
       }
     },
     "identity": {
-      "description": "将 AI4MS 单点登录身份绑定到本地账号。",
+      "description": "将 PiLab 单点登录身份绑定到本地账号。",
       "user_placeholder": "本地账号邮箱或 ID",
       "subject_placeholder": "OIDC 主体（sub）",
       "employee_id_placeholder": "工号（可选）",
@@ -1749,7 +1749,7 @@
         "cancelled": "已撤回"
       },
       "asset_system": {
-        "plane": "Plane",
+        "plane": "PiLab",
         "speclabos": "SpecLabOS",
         "smartaccess": "SmartAccess",
         "ragportal": "RAGPortal",
@@ -1845,7 +1845,7 @@
       }
     },
     "integrations": {
-      "description": "对接 AI4MS 生态：知识库、湿实验、设备与研发平台系统。",
+      "description": "对接 PiLab 生态：知识库、湿实验、设备与研发平台系统。",
       "connections_title": "连接配置",
       "references_title": "检索并引用外部对象",
       "call_logs_title": "集成调用日志",

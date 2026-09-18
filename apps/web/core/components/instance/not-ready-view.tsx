@@ -5,8 +5,6 @@
  */
 
 import { BRAND_NAME, GOD_MODE_URL } from "@plane/constants";
-// assets
-import GradientBgLogo from "@/app/assets/auth/gradient-bg-logo.webp?url";
 import DefaultLayout from "@/layouts/default-layout";
 import { BrandMark } from "@/components/common/brand-mark";
 import { Button } from "@plane/propel/button";
@@ -17,13 +15,13 @@ export function InstanceNotReady() {
       <div className="relative z-10 flex h-screen w-screen overflow-hidden">
         {/* Background decorations */}
         <img
-          src={GradientBgLogo}
+          src="/pilogo.svg"
           className="pointer-events-none absolute -top-24 -left-32 h-56 w-96 opacity-15"
           alt=""
           aria-hidden="true"
         />
         <img
-          src={GradientBgLogo}
+          src="/pilogo.svg"
           className="pointer-events-none absolute -right-20 -bottom-16 h-56 w-96 opacity-15"
           alt=""
           aria-hidden="true"

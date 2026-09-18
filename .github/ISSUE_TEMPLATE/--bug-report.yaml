@@ -1,5 +1,5 @@
 name: Bug report
-description: Create a bug report to help us improve Plane
+description: Create a bug report to help us improve PiLab
 title: "[bug]: "
 type: Bug
 labels: [🐛bug, plane]
@@ -59,7 +59,7 @@ body:
   id: edition
   attributes:
     label: Edition
-    description: Which edition of Plane are you using?
+    description: Which edition of PiLab are you using?
     options:
       - Community
       - Commercial
@@ -70,7 +70,7 @@ body:
   id: version
   attributes:
     label: Version
-    description: Which version of Plane are you using? If Cloud, mention it as latest
+    description: Which version of PiLab are you using? If Cloud, mention it as latest
     placeholder: v0.17.0-dev
   validations:
     required: true

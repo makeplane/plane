@@ -169,7 +169,7 @@ class Command(BaseCommand):
         if instance is not None:
             return instance
         return Instance.objects.create(
-            instance_name=os.environ.get("INSTANCE_NAME", "Plane"),
+            instance_name=os.environ.get("INSTANCE_NAME", "PiLab"),
             instance_id=secrets.token_hex(12),
             current_version=os.environ.get("APP_VERSION", "0.0.0"),
         )
