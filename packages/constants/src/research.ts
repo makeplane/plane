@@ -693,6 +693,12 @@ export const researchEndpoints = {
   inviteCodeAction: (slug: string, id: string, action: "enable" | "disable") =>
     `${RESEARCH_API_ROOT}/${slug}/invite-codes/${id}/${action}/`,
   userImports: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/`,
+  userImportRow: (slug: string, batchId: string, rowId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/rows/${rowId}/`,
+  userImportApprove: (slug: string, batchId: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/approve/`,
+  userImportBulkExclude: (slug: string, batchId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/rows/bulk-exclude/`,
+  userImportReject: (slug: string, batchId: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/reject/`,
   userImport: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${id}/`,
   userImportReport: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${id}/report/`,
   userProfiles: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/user-profiles/`,

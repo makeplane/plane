@@ -952,13 +952,19 @@
     },
     "user_import": {
       "title": "批量导入",
-      "hint": "使用 π-Lab学生-导入信息表.xlsx 和 导师信息表.xlsx 模板。电话兼容“手机号”；MS、Ph.D 按学生导入并保存学位；备注为可选列。导师表包含“导师姓名、邮箱”，必须上传；小组和导师需已存在。",
+      "hint": "使用 π-Lab学生-导入信息表.xlsx 和 导师信息表.xlsx 模板。电话兼容“手机号”；MS、Ph.D 按学生导入并保存学位；备注为可选列。学生表或导师表包含当前工作区已有成员时整批拒绝；已有成员资料请通过成员管理修改。",
       "fields": {
         "students": "成员名册",
         "advisors": "导师姓名邮箱表（必传）",
         "reset_passwords": "重新生成初始密码"
       },
       "actions": {
+        "upload": "上传并预览",
+        "approve": "审批导入",
+        "include": "纳入",
+        "exclude": "排除",
+        "bulk_exclude": "批量排除",
+        "reject": "驳回批次",
         "preview": "预检",
         "commit": "正式导入",
         "download_report": "下载导入报告"
@@ -980,9 +986,14 @@
         "error": "已拒绝"
       },
       "result": {
+        "review_title": "待审批批次",
         "preview_title": "预检结果（未写库）",
         "committed_title": "导入完成",
         "counts": "共 {total} 行 · 成功 {ok} · 待处理 {pending} · 失败 {error}"
+      },
+      "confirm": {
+        "approve": "确认审批并创建所有已纳入行的账号与关系吗？",
+        "reject": "请输入驳回原因"
       },
       "history": {
         "title": "最近导入",
@@ -999,6 +1010,9 @@
         "no_file": "请先选择成员名册和导师姓名邮箱表。",
         "user_import_file_required": "请同时上传成员名册和导师姓名邮箱表。",
         "user_import_file_invalid": "文件无法解析，请检查表头与编码。",
+        "user_import_existing_member": "导入已拒绝：文件中包含当前工作区已有成员。请通过成员管理修改已有成员资料。",
+        "user_import_in_progress": "当前工作区正在导入，请稍后重试。",
+        "user_import_duplicate_identity": "导入已拒绝：文件内存在重复邮箱或学号。",
         "public_workspace_missing": "公共工作区尚未创建。"
       }
     },

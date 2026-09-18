@@ -117,6 +117,38 @@ export class ResearchAccountService extends APIService {
       });
   }
 
+  async updateUserImportRow(workspaceSlug: string, batchId: string, rowId: string, payload: Record<string, unknown>) {
+    return this.patch(researchEndpoints.userImportRow(workspaceSlug, batchId, rowId), payload)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async approveUserImport(workspaceSlug: string, batchId: string) {
+    return this.post(researchEndpoints.userImportApprove(workspaceSlug, batchId), {})
+      .then((res) => res?.data as TUserImportBatch)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkExcludeUserImportRows(workspaceSlug: string, batchId: string, rowIds: string[], note = "") {
+    return this.post(researchEndpoints.userImportBulkExclude(workspaceSlug, batchId), { row_ids: rowIds, note })
+      .then((res) => res?.data as { updated: number })
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async rejectUserImport(workspaceSlug: string, batchId: string, reason: string) {
+    return this.post(researchEndpoints.userImportReject(workspaceSlug, batchId), { reason })
+      .then((res) => res?.data as TUserImportBatch)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   getUserImportReportUrl(workspaceSlug: string, batchId: string) {
     return researchEndpoints.userImportReport(workspaceSlug, batchId);
   }

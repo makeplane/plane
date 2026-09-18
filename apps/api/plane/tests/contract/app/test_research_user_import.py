@@ -12,7 +12,16 @@ from rest_framework.test import APIClient
 
 import pytest
 
-from plane.db.models import MentorBinding, OrgUnit, OrgUnitMember, ResearchUserProfile, User, UserImportBatch
+from plane.db.models import (
+    MentorBinding,
+    OrgUnit,
+    OrgUnitMember,
+    ResearchUserProfile,
+    User,
+    UserImportBatch,
+    UserImportAccountSource,
+    WorkspaceMember,
+)
 from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
@@ -82,7 +91,6 @@ def env(db):
         ("赵老师", "co3@example.com"),
     ):
         user = make_user(email=email, first_name=name)
-        add_workspace_member(workspace, user)
         advisors[name] = user
     return {
         "admin": admin,
@@ -137,11 +145,30 @@ def post_import(env, row=None, *, advisors=None, dry_run=False):
     return client_for(env["admin"]).post(user_imports_url(env["workspace"]), payload, format="multipart")
 
 
-def test_import_creates_profile_team_membership_and_three_advisor_bindings(env):
+def test_upload_persists_review_without_creating_accounts_or_memberships(env):
     response = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
 
     assert response.status_code == 201
+    assert response.data["status"] == "PENDING_REVIEW"
     assert response.data["rows_ok"] == 1
+    assert not User.objects.filter(email="student@example.com").exists()
+    assert UserImportBatch.objects.filter(workspace=env["workspace"]).count() == 1
+
+
+def test_reviewed_row_is_approved_and_creates_complete_relations(env):
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+    client = client_for(env["admin"])
+    included = client.patch(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"),
+        {"review_decision": "INCLUDED"},
+        format="json",
+    )
+    assert included.status_code == 200
+    approved = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    assert approved.status_code == 200
+    assert approved.data["status"] == "IMPORTED"
     student = User.objects.get(email="student@example.com")
     profile = ResearchUserProfile.objects.get(user=student)
     assert (profile.student_no, profile.phone, profile.grade, profile.category) == (
@@ -159,6 +186,70 @@ def test_import_creates_profile_team_membership_and_three_advisor_bindings(env):
         "co2@example.com",
     }
     assert bindings.get(mentor=env["advisors"]["刘俊扬"]).is_primary_advisor is True
+    assert str(UserImportAccountSource.objects.get(user=student).batch_id) == batch_id
+
+
+def test_approval_is_idempotent_and_existing_accounts_are_not_marked_as_import_created(env):
+    existing = make_user(email="student@example.com", first_name="Existing")
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    client = client_for(env["admin"])
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+    client.patch(user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"), {"review_decision": "INCLUDED"}, format="json")
+    first = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    second = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    assert first.status_code == second.status_code == 200
+    assert User.objects.filter(email="student@example.com").count() == 1
+    assert not UserImportAccountSource.objects.filter(user=existing).exists()
+
+
+def test_invalid_row_can_be_excluded_and_creates_no_account(env):
+    uploaded = post_import(env, row=roster_row(student_no=""), advisors=advisor_table("刘俊扬"))
+    client = client_for(env["admin"])
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+    excluded = client.patch(user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"), {"review_decision": "EXCLUDED"}, format="json")
+    assert excluded.status_code == 200
+    approved = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    assert approved.status_code == 200
+    assert approved.data["summary"]["excluded"] == 1
+    assert not User.objects.filter(email="student@example.com").exists()
+
+
+def test_pending_review_decision_blocks_approval(env):
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬"))
+    response = client_for(env["admin"]).post(
+        user_imports_url(env["workspace"], f"{uploaded.data['id']}/approve/"), {}, format="json"
+    )
+    assert response.status_code == 409
+    assert response.data["error_code"] == "user_import_review_incomplete"
+
+
+def test_clearing_row_advisor_email_overrides_uploaded_mapping(env):
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬"))
+    row = uploaded.data["rows"][0]
+    response = client_for(env["admin"]).patch(
+        user_imports_url(env["workspace"], f"{uploaded.data['id']}/rows/{row['id']}/"),
+        {"primary_advisor_email": ""},
+        format="json",
+    )
+    assert response.status_code == 200
+    assert response.data["status"] == "PENDING"
+    assert "缺少主导师邮箱映射" in response.data["message"]
+
+
+def test_rejected_batch_cannot_be_approved(env):
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬"))
+    client = client_for(env["admin"])
+    rejected = client.post(
+        user_imports_url(env["workspace"], f"{uploaded.data['id']}/reject/"),
+        {"reason": "需要更正名册"},
+        format="json",
+    )
+    assert rejected.status_code == 200
+    assert rejected.data["status"] == "REJECTED"
+    approved = client.post(user_imports_url(env["workspace"], f"{uploaded.data['id']}/approve/"), {}, format="json")
+    assert approved.status_code == 409
 
 
 def test_full_team_path_is_supported(env):
@@ -172,7 +263,7 @@ def test_full_team_path_is_supported(env):
     assert response.data["rows_ok"] == 1
 
 
-def test_ambiguous_team_name_is_pending_but_profile_is_created(env):
+def test_ambiguous_team_name_is_pending_without_creating_profile(env):
     other_group = OrgUnit.objects.create(
         workspace=env["workspace"], parent=env["basic"], name="另一课题组",
         unit_type=OrgUnit.UnitType.GROUP, path="root/basic/other", depth=2,
@@ -188,7 +279,7 @@ def test_ambiguous_team_name_is_pending_but_profile_is_created(env):
     )
     assert response.data["rows_pending"] == 1
     assert "小组名称不唯一" in response.data["rows"][0]["message"]
-    assert User.objects.filter(email="student@example.com").exists()
+    assert not User.objects.filter(email="student@example.com").exists()
     assert not OrgUnitMember.objects.filter(user__email="student@example.com").exists()
 
 
@@ -215,7 +306,7 @@ def test_advisor_table_is_required(env):
     assert response.data["error_code"] == "user_import_file_required"
 
 
-def test_missing_mapping_and_non_member_advisor_are_pending_without_auto_provisioning(env):
+def test_mapped_advisor_is_not_provisioned_before_review(env):
     response = post_import(
         env,
         row=roster_row(co1="不存在导师", co2="未映射导师"),
@@ -223,7 +314,6 @@ def test_missing_mapping_and_non_member_advisor_are_pending_without_auto_provisi
     )
     assert response.data["rows_pending"] == 1
     message = response.data["rows"][0]["message"]
-    assert "不是当前工作空间有效成员" in message
     assert "缺少联合导师2邮箱映射" in message
     assert not User.objects.filter(email="missing@example.com").exists()
 
@@ -239,7 +329,7 @@ def test_required_values_are_row_errors(env):
     assert not User.objects.filter(email="student@example.com").exists()
 
 
-def test_reimport_preserves_primary_team_and_advisor_but_adds_non_conflicting_coadvisor(env):
+def test_existing_member_upload_is_reviewable_without_writes(env):
     existing = make_user(email="existing@example.com", first_name="Existing")
     add_workspace_member(env["workspace"], existing)
     OrgUnitMember.objects.create(
@@ -250,27 +340,22 @@ def test_reimport_preserves_primary_team_and_advisor_but_adds_non_conflicting_co
         workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["刘俊扬"],
         org_unit=env["team"], is_primary_advisor=True,
     )
-    other_team = OrgUnit.objects.create(
-        workspace=env["workspace"], parent=env["group"], name="另一小组",
-        unit_type=OrgUnit.UnitType.TEAM, path="root/basic/group/other-team", depth=3,
-    )
     response = post_import(
         env,
         row=roster_row(
-            student_no="EXISTING", email="existing@example.com", team=other_team.name,
+            student_no="EXISTING", email="existing@example.com", team=env["team"].name,
             primary="陈志昕", co1="白杰", co2="",
         ),
         advisors=advisor_table("陈志昕", "白杰"),
     )
-    assert response.data["rows_pending"] == 1
-    assert "已有主归属" in response.data["rows"][0]["message"]
-    assert "已有主导师" in response.data["rows"][0]["message"]
+    assert response.status_code == 201
+    assert response.data["status"] == "PENDING_REVIEW"
     assert OrgUnitMember.objects.get(workspace=env["workspace"], user=existing, is_primary=True).org_unit == env["team"]
     assert MentorBinding.objects.get(workspace=env["workspace"], mentee=existing, is_primary_advisor=True).mentor == env["advisors"]["刘俊扬"]
-    assert MentorBinding.objects.filter(workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["白杰"]).exists()
+    assert not MentorBinding.objects.filter(workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["白杰"]).exists()
 
 
-def test_effective_advisor_total_is_capped_at_three(env):
+def test_existing_member_row_is_validated_without_mutation(env):
     existing = make_user(email="capped@example.com", first_name="Capped")
     add_workspace_member(env["workspace"], existing)
     OrgUnitMember.objects.create(
@@ -289,49 +374,44 @@ def test_effective_advisor_total_is_capped_at_three(env):
         ),
         advisors=advisor_table("刘俊扬", "白杰", "赵老师"),
     )
-    assert response.data["rows_pending"] == 1
-    assert "最多为3人" in response.data["rows"][0]["message"]
+    assert response.status_code == 201
     bindings = MentorBinding.objects.filter(workspace=env["workspace"], mentee=existing)
-    assert bindings.count() == 3
-    assert bindings.filter(mentor=env["advisors"]["白杰"]).exists()
+    assert bindings.count() == 2
+    assert not bindings.filter(mentor=env["advisors"]["白杰"]).exists()
     assert not bindings.filter(mentor=env["advisors"]["赵老师"]).exists()
 
 
-def test_import_is_idempotent(env):
+def test_repeated_upload_creates_independent_review_batches_without_accounts(env):
     advisors = advisor_table("刘俊扬", "陈志昕", "白杰")
     first = post_import(env, advisors=advisors)
     second = post_import(env, advisors=advisors)
-    assert first.status_code == second.status_code == 201
-    assert User.objects.filter(email="student@example.com").count() == 1
-    assert MentorBinding.objects.filter(workspace=env["workspace"], mentee__email="student@example.com").count() == 3
-    assert second.data["summary"]["credentials_issued"] == 0
+    assert first.status_code == 201
+    assert second.status_code == 201
+    assert User.objects.filter(email="student@example.com").count() == 0
     assert UserImportBatch.objects.filter(workspace=env["workspace"]).count() == 2
 
 
-def test_dry_run_writes_nothing(env):
+def test_dry_run_flag_still_persists_review_batch(env):
     response = post_import(
         env,
         advisors=advisor_table("刘俊扬", "陈志昕", "白杰"),
         dry_run=True,
     )
-    assert response.status_code == 200
-    assert response.data["id"] is None
+    assert response.status_code == 201
+    assert response.data["id"] is not None
     assert response.data["rows_ok"] == 1
     assert not User.objects.filter(email="student@example.com").exists()
-    assert not UserImportBatch.objects.filter(workspace=env["workspace"]).exists()
+    assert UserImportBatch.objects.filter(workspace=env["workspace"]).exists()
 
 
 @pytest.mark.parametrize(("category", "degree"), [("Ph.D", "PHD"), ("MS", "MS")])
-def test_template_category_saves_degree_and_reimport_preserves_it(env, category, degree):
+def test_template_category_persists_normalized_degree_for_review(env, category, degree):
     response = post_import(env, row=roster_row(category=category), advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
     assert response.status_code == 201
     assert response.data["rows_ok"] == 1
-    profile = ResearchUserProfile.objects.get(user__email="student@example.com")
-    assert profile.category == "STUDENT"
-    assert profile.degree == degree
-    post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
-    profile.refresh_from_db()
-    assert profile.degree == degree
+    assert response.data["rows"][0]["category"] == "STUDENT"
+    assert response.data["rows"][0]["degree"] == degree
+    assert not ResearchUserProfile.objects.filter(user__email="student@example.com").exists()
 
 
 def test_unknown_template_category_is_a_row_error(env):
@@ -371,17 +451,20 @@ def test_fixed_excel_templates_upload_through_api(env, dry_run):
     response = client_for(env["admin"]).post(user_imports_url(env["workspace"]), {
         "students": students, "advisors": advisors, "dry_run": str(dry_run).lower(),
     }, format="multipart")
-    assert response.status_code == (200 if dry_run else 201)
+    assert response.status_code == 201
     assert response.data["rows_total"] == response.data["rows_ok"] == 1
     assert response.data["rows"][0]["row_number"] == 2
-    assert User.objects.filter(email="student@example.com").exists() is not dry_run
-    if not dry_run:
-        assert ResearchUserProfile.objects.get(user__email="student@example.com").degree == "MS"
+    assert not User.objects.filter(email="student@example.com").exists()
 
 
 def test_report_uses_new_template_columns(env):
-    batch_id = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰")).data["id"]
-    report = client_for(env["admin"]).get(user_imports_url(env["workspace"], f"{batch_id}/report/"))
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    client = client_for(env["admin"])
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+    client.patch(user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"), {"review_decision": "INCLUDED"}, format="json")
+    client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    report = client.get(user_imports_url(env["workspace"], f"{batch_id}/report/"))
     body = report.content.decode("utf-8")
     assert report.status_code == 200
     for header in ("手机号", "年级", "小组", "主导师", "联合导师1", "联合导师2", "初始密码"):

@@ -15,6 +15,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.db.models import User, WorkspaceMember
+from plane.license.services.imported_accounts import (
+    ImportedAccountError,
+    clear_imported_accounts,
+    deactivate_imported_account,
+    deactivate_imported_accounts,
+    reactivate_imported_account,
+)
 from plane.license.api.serializers import InstanceRoleAssignmentSerializer, InstanceUserSerializer
 from plane.license.models import Instance, InstanceRoleAssignment
 
@@ -49,7 +56,7 @@ class InstanceUserListEndpoint(BaseAPIView):
     def get(self, request):
         queryset = (
             User.objects.filter(is_bot=False)
-            .select_related("research_profile")
+            .select_related("research_profile", "import_account_source")
             .order_by("-date_joined")
         )
 
@@ -68,6 +75,16 @@ class InstanceUserListEndpoint(BaseAPIView):
                 instance_role_assignments__role=role,
                 instance_role_assignments__deleted_at__isnull=True,
             ).distinct()
+
+        active = str(request.query_params.get("is_active") or "").lower()
+        if active in ("true", "false"):
+            queryset = queryset.filter(is_active=active == "true")
+
+        imported = str(request.query_params.get("imported") or "").lower()
+        if imported == "true":
+            queryset = queryset.filter(import_account_source__isnull=False)
+        elif imported == "false":
+            queryset = queryset.filter(import_account_source__isnull=True)
 
         user_ids = list(queryset.values_list("id", flat=True)[:2000])
         role_map = {}
@@ -98,6 +115,46 @@ def _annotated(user, role_map, membership_map):
     user.active_role_assignments = sorted(role_map.get(user.id, []))
     user.active_workspace_memberships = sorted(membership_map.get(user.id, []))
     return user
+
+
+class InstanceUserLifecycleEndpoint(BaseAPIView):
+    """Soft-deactivate one import-created account."""
+
+    def delete(self, request, pk):
+        try:
+            result = deactivate_imported_account(pk, request.user)
+        except ImportedAccountError as exc:
+            http_status = status.HTTP_404_NOT_FOUND if exc.code == "NOT_FOUND" else status.HTTP_409_CONFLICT
+            return Response({"error": exc.message, "code": exc.code}, status=http_status)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class InstanceUserReactivateEndpoint(BaseAPIView):
+    def post(self, request, pk):
+        try:
+            result = reactivate_imported_account(pk, request.user)
+        except ImportedAccountError as exc:
+            http_status = status.HTTP_404_NOT_FOUND if exc.code == "NOT_FOUND" else status.HTTP_409_CONFLICT
+            return Response({"error": exc.message, "code": exc.code}, status=http_status)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class InstanceUserBulkDeactivateEndpoint(BaseAPIView):
+    def post(self, request):
+        user_ids = request.data.get("user_ids")
+        if not isinstance(user_ids, list) or len(user_ids) > 1000:
+            return Response({"error": "user_ids must be an array with at most 1000 items"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(deactivate_imported_accounts(user_ids, request.user), status=status.HTTP_200_OK)
+
+
+class InstanceUserClearImportedEndpoint(BaseAPIView):
+    def post(self, request):
+        batch_id = request.data.get("batch_id") or None
+        try:
+            result = clear_imported_accounts(request.user, batch_id=batch_id)
+        except ImportedAccountError as exc:
+            return Response({"error": exc.message, "code": exc.code}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class InstanceUserRoleEndpoint(BaseAPIView):

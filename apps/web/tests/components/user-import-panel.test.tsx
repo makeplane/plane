@@ -7,11 +7,21 @@ import translations from "../../../../packages/i18n/src/locales/zh-CN/common.jso
 const service = vi.hoisted(() => ({
   getUserImports: vi.fn().mockResolvedValue({ results: [] }),
   importUsers: vi.fn(),
+  updateUserImportRow: vi.fn(),
+  approveUserImport: vi.fn(),
+  rejectUserImport: vi.fn(),
+  bulkExcludeUserImportRows: vi.fn(),
+  getUserImport: vi.fn(),
 }));
 vi.mock("@/services/research/account.service", () => ({
   ResearchAccountService: class {
     getUserImports = service.getUserImports;
     importUsers = service.importUsers;
+    updateUserImportRow = service.updateUserImportRow;
+    approveUserImport = service.approveUserImport;
+    rejectUserImport = service.rejectUserImport;
+    bulkExcludeUserImportRows = service.bulkExcludeUserImportRows;
+    getUserImport = service.getUserImport;
   },
 }));
 vi.mock("mobx-react", () => ({ observer: (component: unknown) => component }));
@@ -41,7 +51,7 @@ afterEach(async () => {
   vi.clearAllMocks();
 });
 
-async function preview() {
+async function upload() {
   root = createRoot(container);
   await act(async () => root.render(<ResearchUserImportPanel workspaceSlug="lab" />));
   container.querySelectorAll('input[type="file"]').forEach((input, index) => {
@@ -49,7 +59,7 @@ async function preview() {
       value: [new File(["xlsx"], index === 0 ? "π-Lab学生-导入信息表.xlsx" : "导师信息表.xlsx")],
     });
   });
-  const button = Array.from(container.querySelectorAll("button")).find((item) => item.textContent === "预检");
+  const button = Array.from(container.querySelectorAll("button")).find((item) => item.textContent === "上传并预览");
   await act(async () => button!.click());
 }
 
@@ -59,16 +69,16 @@ describe("member import errors", () => {
       error_code: "user_import_file_invalid",
       message: "学生表缺少列：电话。",
     });
-    await preview();
+    await upload();
     expect(container.querySelector('[role="alert"]')?.textContent).toBe(
       "文件无法解析，请检查表头与编码。 学生表缺少列：电话。"
     );
-    expect(service.importUsers).toHaveBeenCalledWith("lab", expect.objectContaining({ dry_run: true }));
+    expect(service.importUsers).toHaveBeenCalledWith("lab", expect.not.objectContaining({ dry_run: true }));
   });
 
   it("uses a readable fallback for unknown error codes", async () => {
     service.importUsers.mockRejectedValueOnce({ error_code: "unexpected_error" });
-    await preview();
+    await upload();
     expect(container.querySelector('[role="alert"]')?.textContent).toBe("导入失败。");
   });
 });

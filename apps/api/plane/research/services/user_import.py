@@ -12,6 +12,7 @@ the rest of the batch.
 """
 
 import csv
+import hashlib
 import io
 import re
 import secrets
@@ -21,6 +22,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, models, transaction
+from django.db import connection
 from django.utils import timezone
 
 from plane.db.models import (
@@ -29,6 +31,7 @@ from plane.db.models import (
     OrgUnitMember,
     ResearchUserProfile,
     User,
+    UserImportAccountSource,
     UserImportBatch,
     UserImportRow,
     WorkspaceMember,
@@ -242,6 +245,9 @@ def _map_exact_headers(header_row, headers):
 
 def _map_advisor_headers(header_row):
     normalised = [_normalise_header(cell) for cell in header_row]
+    non_empty = [value for value in normalised if value]
+    if len(non_empty) != len(set(non_empty)):
+        raise AccountError(ResearchErrorCode.IMPORT_FILE_INVALID, "导师表头存在重复列，请检查列名。")
     mapping = {}
     for field_name, aliases in ADVISOR_HEADERS.items():
         for alias in aliases:
@@ -469,8 +475,13 @@ def resolve_existing_advisor(workspace, email):
     ).first()
 
 
-def resolve_row_advisors(workspace, row, advisor_map):
-    """Resolve roster advisor names without provisioning advisor accounts."""
+def resolve_row_advisors(workspace, row, advisor_map, *, allow_unprovisioned=False):
+    """Resolve roster advisor names from the mapping and workspace members.
+
+    During preview, mapped advisors that are not members yet are treated as
+    provisionable. The commit path provisions them before resolving rows, so
+    both paths use the same mapping without writing during a dry run.
+    """
     primary_advisor = None
     co_advisors = []
     reasons = []
@@ -486,6 +497,11 @@ def resolve_row_advisors(workspace, row, advisor_map):
             continue
         advisor = resolve_existing_advisor(workspace, email)
         if advisor is None:
+            if allow_unprovisioned:
+                # A valid mapped mailbox will be provisioned on commit. Keep
+                # preview optimistic while still reporting unmapped/invalid
+                # entries above.
+                continue
             reasons.append(f"{label}不是当前工作空间有效成员：{name}")
             continue
         if label == "主导师":
@@ -493,6 +509,508 @@ def resolve_row_advisors(workspace, row, advisor_map):
         else:
             co_advisors.append(advisor)
     return primary_advisor, co_advisors, reasons
+
+
+def _upsert_import_advisor(workspace, actor, name, email, batch=None, *, return_details=False):
+    """Create the account and workspace seat represented by an advisor row.
+
+    Advisor spreadsheets are the source of truth for the people referenced by
+    the roster. Provisioning is idempotent by email and deliberately does not
+    invent an organisation node; mentor bindings can point at any workspace
+    member and the administrator can classify the advisor later.
+    """
+    user = User.objects.filter(email__iexact=email).first()
+    created = user is None
+    password = ""
+    if user is None:
+        password = generate_password()
+        user = User(
+            email=email,
+            username=email,
+            first_name=name,
+            display_name=name,
+            is_active=True,
+            is_password_reset_required=True,
+        )
+        user.set_password(password)
+        user.save()
+    else:
+        changed = set()
+        if name and not user.display_name:
+            user.display_name = name
+            changed.add("display_name")
+        if name and not user.first_name:
+            user.first_name = name
+            changed.add("first_name")
+        if not user.is_active:
+            user.is_active = True
+            changed.add("is_active")
+        if changed:
+            user.save(update_fields=sorted(changed | {"updated_at"}))
+
+    ensure_workspace_membership(workspace, user, actor)
+    ResearchUserProfile.objects.get_or_create(
+        user=user,
+        defaults={
+            "category": ResearchUserProfile.Category.ADVISOR,
+            "source_batch": batch,
+            "created_by": actor,
+        },
+    )
+    if return_details:
+        return user, created, password
+    return user
+
+
+def provision_import_advisors(workspace, actor, advisor_map, batch=None):
+    """Provision every valid advisor row, even if no student references it yet."""
+    for name, email in advisor_map.items():
+        if name and _valid_email(email):
+            _upsert_import_advisor(workspace, actor, name, email, batch=batch)
+
+
+def _student_row_from_import_row(row):
+    return StudentRow(
+        row_number=row.row_number,
+        name=row.display_name,
+        email=row.email,
+        student_no=row.student_no,
+        grade=row.grade,
+        phone=row.phone,
+        group=row.group_label,
+        category=row.category,
+        degree=row.degree,
+        business_category=row.business_category,
+        primary_advisor_name=row.advisor_name,
+        co_advisor_1_name=row.co_advisor_1_name,
+        co_advisor_2_name=row.co_advisor_2_name,
+        raw=row.raw,
+    )
+
+
+def _advisor_mapping_for_row(row):
+    return {
+        _normalise_header(name): email.strip().lower()
+        for name, email in (
+            (row.advisor_name, row.primary_advisor_email),
+            (row.co_advisor_1_name, row.co_advisor_1_email),
+            (row.co_advisor_2_name, row.co_advisor_2_email),
+        )
+        if name
+    }
+
+
+def validate_review_row(workspace, row):
+    """Recompute the persisted validation result after an edit."""
+    student = _student_row_from_import_row(row)
+    advisor_map = {**row.batch.advisor_mapping, **_advisor_mapping_for_row(row)}
+    outcome = _import_row(
+        workspace,
+        None,
+        student,
+        None,
+        advisor_map,
+        dry_run=True,
+    )
+    row.status = outcome["status"]
+    row.message = outcome.get("message", "")[:255]
+    row.org_unit = outcome.get("unit")
+    if row.status != UserImportRow.Status.OK and row.review_decision == UserImportRow.ReviewDecision.INCLUDED:
+        row.review_decision = UserImportRow.ReviewDecision.PENDING
+    return row
+
+
+@transaction.atomic
+def create_review_batch(
+    workspace,
+    actor,
+    rows,
+    *,
+    advisor_map=None,
+    source_filename="",
+    reset_passwords=False,
+):
+    """Persist an upload for review without creating accounts or relations."""
+    advisor_map = {
+        _normalise_header(key): _identity_email(value)
+        for key, value in (advisor_map or {}).items()
+    }
+    _acquire_import_lock(workspace)
+    batch = UserImportBatch.objects.create(
+        workspace=workspace,
+        source_filename=str(source_filename or "")[:255],
+        dry_run=False,
+        status=UserImportBatch.Status.PENDING_REVIEW,
+        options={"advisor_mapping_size": len(advisor_map), "reset_passwords": bool(reset_passwords)},
+        advisor_mapping=advisor_map,
+        created_by=actor,
+    )
+    counts = {"ok": 0, "pending": 0, "error": 0}
+    for student in rows:
+        outcome = _import_row(
+            workspace,
+            None,
+            student,
+            None,
+            advisor_map,
+            dry_run=True,
+            reset_passwords=reset_passwords,
+        )
+        counts[outcome["status"].lower()] += 1
+        UserImportRow.objects.create(
+            batch=batch,
+            row_number=student.row_number,
+            raw=student.raw,
+            status=outcome["status"],
+            message=outcome.get("message", "")[:255],
+            display_name=student.name,
+            email=student.email,
+            student_no=student.student_no,
+            phone=student.phone,
+            grade=student.grade,
+            category=student.category,
+            degree=student.degree,
+            business_category=student.business_category,
+            group_label=student.group,
+            advisor_name=student.primary_advisor_name,
+            primary_advisor_email=advisor_map.get(_normalise_header(student.primary_advisor_name), ""),
+            co_advisor_1_name=student.co_advisor_1_name,
+            co_advisor_1_email=advisor_map.get(_normalise_header(student.co_advisor_1_name), ""),
+            co_advisor_2_name=student.co_advisor_2_name,
+            co_advisor_2_email=advisor_map.get(_normalise_header(student.co_advisor_2_name), ""),
+            review_decision=UserImportRow.ReviewDecision.PENDING,
+            org_unit=outcome.get("unit"),
+            created_by=actor,
+        )
+    batch.rows_total = len(rows)
+    batch.rows_ok = counts["ok"]
+    batch.rows_pending = counts["pending"]
+    batch.rows_error = counts["error"]
+    batch.summary = {"dry_run": False, "credentials_issued": 0}
+    batch.save()
+    return batch
+
+
+@transaction.atomic
+def update_review_row(workspace, batch_id, row_id, payload):
+    batch = UserImportBatch.objects.select_for_update().filter(
+        workspace=workspace,
+        pk=batch_id,
+    ).first()
+    if batch is None:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_FOUND, "Import batch not found.")
+    if batch.status != UserImportBatch.Status.PENDING_REVIEW:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_REVIEWABLE, "Import batch is no longer reviewable.")
+    row = batch.rows.filter(pk=row_id).first()
+    if row is None:
+        raise AccountError(ResearchErrorCode.IMPORT_ROW_NOT_FOUND, "Import row not found.")
+
+    editable = {
+        "display_name", "email", "student_no", "phone", "grade", "category",
+        "degree", "business_category", "group_label", "advisor_name",
+        "primary_advisor_email", "co_advisor_1_name", "co_advisor_1_email",
+        "co_advisor_2_name", "co_advisor_2_email", "review_note",
+    }
+    for field_name in editable:
+        if field_name in payload:
+            value = str(payload[field_name] or "").strip()
+            if field_name.endswith("email") or field_name == "email":
+                value = value.lower()
+            setattr(row, field_name, value)
+    row.edited_at = timezone.now()
+    validate_review_row(workspace, row)
+    decision = payload.get("review_decision")
+    if decision is not None:
+        decision = str(decision).upper()
+        if decision not in UserImportRow.ReviewDecision.values:
+            raise AccountError(ResearchErrorCode.IMPORT_ROW_INVALID, "Unknown review decision.")
+        if decision == UserImportRow.ReviewDecision.INCLUDED and row.status != UserImportRow.Status.OK:
+            raise AccountError(ResearchErrorCode.IMPORT_ROW_INVALID, "Only valid rows can be included.")
+        row.review_decision = decision
+    row.save()
+    _refresh_batch_counts(batch)
+    return row
+
+
+@transaction.atomic
+def bulk_exclude_review_rows(workspace, batch_id, row_ids, note=""):
+    batch = UserImportBatch.objects.select_for_update().filter(workspace=workspace, pk=batch_id).first()
+    if batch is None:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_FOUND, "Import batch not found.")
+    if batch.status != UserImportBatch.Status.PENDING_REVIEW:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_REVIEWABLE, "Import batch is no longer reviewable.")
+    rows = batch.rows.filter(pk__in=row_ids)
+    updated = rows.update(
+        review_decision=UserImportRow.ReviewDecision.EXCLUDED,
+        review_note=str(note or "")[:500],
+        edited_at=timezone.now(),
+    )
+    return updated
+
+
+def _refresh_batch_counts(batch):
+    counts = {
+        status: batch.rows.filter(status=status).count()
+        for status in UserImportRow.Status.values
+    }
+    batch.rows_total = sum(counts.values())
+    batch.rows_ok = counts[UserImportRow.Status.OK]
+    batch.rows_pending = counts[UserImportRow.Status.PENDING]
+    batch.rows_error = counts[UserImportRow.Status.ERROR]
+    batch.save(update_fields=["rows_total", "rows_ok", "rows_pending", "rows_error", "updated_at"])
+
+
+def _provision_review_advisors(workspace, actor, batch, advisor_map):
+    credentials = 0
+    for name, email in advisor_map.items():
+        if not name or not _valid_email(email):
+            continue
+        user, created, password = _upsert_import_advisor(
+            workspace,
+            actor,
+            name,
+            email,
+            batch=batch,
+            return_details=True,
+        )
+        if created:
+            UserImportAccountSource.objects.create(
+                user=user,
+                batch=batch,
+                kind=UserImportAccountSource.Kind.ADVISOR,
+                initial_password=password,
+                created_by=actor,
+            )
+            credentials += 1
+    return credentials
+
+
+@transaction.atomic
+def approve_review_batch(workspace, actor, batch_id, *, request=None):
+    """Import all explicitly included valid rows exactly once."""
+    _acquire_import_lock(workspace)
+    batch = UserImportBatch.objects.select_for_update().filter(workspace=workspace, pk=batch_id).first()
+    if batch is None:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_FOUND, "Import batch not found.")
+    if batch.status == UserImportBatch.Status.IMPORTED:
+        return batch
+    if batch.status != UserImportBatch.Status.PENDING_REVIEW:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_REVIEWABLE, "Import batch cannot be approved.")
+    rows = list(batch.rows.select_for_update().order_by("row_number"))
+    if any(row.review_decision == UserImportRow.ReviewDecision.PENDING for row in rows):
+        raise AccountError(ResearchErrorCode.IMPORT_REVIEW_INCOMPLETE, "Every row must be included or excluded.")
+
+    included = [row for row in rows if row.review_decision == UserImportRow.ReviewDecision.INCLUDED]
+    for row in included:
+        validate_review_row(workspace, row)
+        if row.status != UserImportRow.Status.OK:
+            raise AccountError(ResearchErrorCode.IMPORT_ROW_INVALID, f"Row {row.row_number} is not valid.")
+
+    advisor_map = {}
+    for row in included:
+        student = _student_row_from_import_row(row)
+        row_mapping = _advisor_mapping_for_row(row)
+        for name in student.advisor_names:
+            if not name:
+                continue
+            key = _normalise_header(name)
+            email = row_mapping.get(key, batch.advisor_mapping.get(key, ""))
+            if email:
+                advisor_map[key] = email
+    inactive_emails = list(
+        User.objects.filter(
+            email__in={row.email for row in included} | set(advisor_map.values()),
+            is_active=False,
+        ).values_list("email", flat=True)
+    )
+    if inactive_emails:
+        raise AccountError(
+            ResearchErrorCode.IMPORT_ROW_INVALID,
+            f"Inactive accounts must be reactivated in God-mode first: {', '.join(sorted(inactive_emails))}",
+        )
+    validate_import_identities(
+        workspace,
+        [_student_row_from_import_row(row) for row in included],
+        advisor_map,
+        allow_existing=True,
+    )
+    credentials = _provision_review_advisors(workspace, actor, batch, advisor_map)
+    imported = 0
+    for row in included:
+        student = _student_row_from_import_row(row)
+        existed = find_user_for_row(student) is not None
+        outcome = _import_row(
+            workspace,
+            actor,
+            student,
+            batch,
+            advisor_map,
+            reset_passwords=bool(batch.options.get("reset_passwords")),
+        )
+        if outcome["status"] != UserImportRow.Status.OK:
+            raise AccountError(ResearchErrorCode.IMPORT_ROW_INVALID, outcome.get("message") or "Import failed.")
+        row.status = outcome["status"]
+        row.message = outcome.get("message", "")[:255]
+        row.user = outcome.get("user")
+        row.org_unit = outcome.get("unit")
+        row.initial_password = outcome.get("password", "")
+        row.save()
+        if not existed and row.user_id:
+            UserImportAccountSource.objects.get_or_create(
+                user_id=row.user_id,
+                defaults={
+                    "batch": batch,
+                    "row": row,
+                    "kind": UserImportAccountSource.Kind.ROSTER,
+                    "initial_password": row.initial_password,
+                    "created_by": actor,
+                },
+            )
+            credentials += 1
+        imported += 1
+
+    batch.status = UserImportBatch.Status.IMPORTED
+    batch.reviewed_by = actor
+    batch.reviewed_at = timezone.now()
+    batch.rows_ok = imported
+    batch.rows_pending = 0
+    batch.rows_error = 0
+    batch.summary = {
+        "dry_run": False,
+        "included": imported,
+        "excluded": len(rows) - imported,
+        "credentials_issued": credentials,
+    }
+    batch.save()
+    record_audit_event(
+        workspace=workspace,
+        action=ResearchAuditAction.USER_IMPORT,
+        resource_type=ResearchResourceType.IMPORT_BATCH,
+        resource_id=batch.id,
+        actor=actor,
+        metadata=batch.summary,
+        request=request,
+    )
+    return batch
+
+
+@transaction.atomic
+def reject_review_batch(workspace, actor, batch_id, reason, *, request=None):
+    batch = UserImportBatch.objects.select_for_update().filter(workspace=workspace, pk=batch_id).first()
+    if batch is None:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_FOUND, "Import batch not found.")
+    if batch.status != UserImportBatch.Status.PENDING_REVIEW:
+        raise AccountError(ResearchErrorCode.IMPORT_BATCH_NOT_REVIEWABLE, "Import batch cannot be rejected.")
+    batch.status = UserImportBatch.Status.REJECTED
+    batch.reviewed_by = actor
+    batch.reviewed_at = timezone.now()
+    batch.rejection_reason = str(reason or "").strip()
+    batch.save()
+    record_audit_event(
+        workspace=workspace,
+        action=ResearchAuditAction.USER_IMPORT_REJECT,
+        resource_type=ResearchResourceType.IMPORT_BATCH,
+        resource_id=batch.id,
+        actor=actor,
+        metadata={"reason": batch.rejection_reason},
+        request=request,
+    )
+    return batch
+
+
+def _identity_email(value):
+    return str(value or "").strip().lower()
+
+
+def _identity_conflict_message(conflicts):
+    details = ", ".join(conflicts[:20])
+    extra = f"；另有 {len(conflicts) - 20} 项未列出" if len(conflicts) > 20 else ""
+    return f"发现 {len(conflicts)} 个身份冲突：{details}{extra}"
+
+
+def validate_import_identities(workspace, rows, advisor_map, *, allow_existing=False):
+    """Reject duplicate file identities and members already in this workspace."""
+    rows = list(rows)
+    advisor_map = {_normalise_header(key): _identity_email(value) for key, value in (advisor_map or {}).items()}
+    conflicts = []
+    seen_emails = {}
+    seen_student_numbers = {}
+    for row in rows:
+        email = _identity_email(row.email)
+        if email:
+            source = f"学生表第{row.row_number}行邮箱 {email}"
+            if email in seen_emails:
+                conflicts.append(f"{source}（重复于第{seen_emails[email]}行）")
+            else:
+                seen_emails[email] = row.row_number
+        student_no = str(row.student_no or "").strip()
+        if student_no:
+            source = f"学生表第{row.row_number}行学号 {student_no}"
+            if student_no in seen_student_numbers:
+                conflicts.append(f"{source}（重复于第{seen_student_numbers[student_no]}行）")
+            else:
+                seen_student_numbers[student_no] = row.row_number
+
+    advisor_emails = {}
+    advisor_duplicate_emails = set()
+    for name, email in advisor_map.items():
+        if email:
+            if email in advisor_emails and advisor_emails[email] != name:
+                advisor_duplicate_emails.add(email)
+            advisor_emails.setdefault(email, name)
+            if email in seen_emails:
+                conflicts.append(f"导师表 {name} 邮箱 {email} 与学生表重复")
+    for email in advisor_duplicate_emails:
+        conflicts.append(f"导师表邮箱 {email} 对应多个导师")
+
+    if allow_existing:
+        if conflicts:
+            raise AccountError(ResearchErrorCode.IMPORT_DUPLICATE_IDENTITY, _identity_conflict_message(conflicts))
+        return
+
+    members = WorkspaceMember.objects.filter(
+        workspace=workspace, deleted_at__isnull=True
+    ).select_related("member")
+    existing_emails = {_identity_email(item.member.email): item.member for item in members if item.member.email}
+    member_user_ids = {item.member_id for item in members}
+    existing_student_numbers = set(
+        ResearchUserProfile.objects.filter(
+            user_id__in=member_user_ids,
+        ).exclude(student_no="").values_list("student_no", flat=True)
+    )
+    for row in rows:
+        email = _identity_email(row.email)
+        if email in existing_emails:
+            conflicts.append(f"学生表第{row.row_number}行邮箱 {email} 已是当前工作区成员")
+        student_no = str(row.student_no or "").strip()
+        if student_no and student_no in existing_student_numbers:
+            conflicts.append(f"学生表第{row.row_number}行学号 {student_no} 已是当前工作区成员")
+    for email, name in advisor_emails.items():
+        if email in existing_emails:
+            conflicts.append(f"导师表 {name} 邮箱 {email} 已是当前工作区成员")
+
+    if conflicts:
+        duplicate_markers = ("重复", "与学生表重复", "对应多个导师")
+        code = ResearchErrorCode.IMPORT_DUPLICATE_IDENTITY if any(
+            any(marker in item for marker in duplicate_markers) for item in conflicts
+        ) else ResearchErrorCode.IMPORT_EXISTING_MEMBER
+        raise AccountError(code, _identity_conflict_message(conflicts))
+
+
+def _acquire_import_lock(workspace):
+    """Take a non-blocking transaction advisory lock on PostgreSQL."""
+    if connection.vendor != "postgresql":
+        return
+    digest = hashlib.blake2b(str(workspace.pk).encode(), digest_size=8).digest()
+    lock_key = int.from_bytes(digest, "big", signed=False) & ((1 << 63) - 1)
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT pg_try_advisory_xact_lock(%s)", [lock_key])
+        acquired = cursor.fetchone()[0]
+    if not acquired:
+        raise AccountError(
+            ResearchErrorCode.IMPORT_IN_PROGRESS,
+            "当前工作区正在导入，请稍后重试。",
+        )
 
 
 def find_user_for_row(row):
@@ -704,6 +1222,7 @@ def ensure_mentor_binding(workspace, unit, mentee, mentor, actor):
     return binding, True
 
 
+@transaction.atomic
 def run_import(
     workspace,
     actor,
@@ -717,6 +1236,7 @@ def run_import(
 ):
     """Import ``rows`` and return the persisted :class:`UserImportBatch`."""
     advisor_map = {_normalise_header(key): value for key, value in (advisor_map or {}).items()}
+    validate_import_identities(workspace, rows, advisor_map)
     if dry_run:
         return preview_import(
             workspace,
@@ -725,6 +1245,10 @@ def run_import(
             source_filename=source_filename,
             reset_passwords=reset_passwords,
         )
+    _acquire_import_lock(workspace)
+    # Re-check after taking the workspace lock so a concurrent import cannot
+    # slip through the initial read and create a partial batch.
+    validate_import_identities(workspace, rows, advisor_map)
     batch = UserImportBatch.objects.create(
         workspace=workspace,
         source_filename=str(source_filename or "")[:255],
@@ -733,6 +1257,10 @@ def run_import(
         options={"advisor_mapping_size": len(advisor_map), "reset_passwords": bool(reset_passwords)},
         created_by=actor,
     )
+    # The advisor workbook is an import source, not only a lookup table. Make
+    # every valid mapped advisor an idempotent workspace member before rows are
+    # resolved, otherwise every student would be reported as missing a mentor.
+    provision_import_advisors(workspace, actor, advisor_map, batch=batch)
 
     counts = {"ok": 0, "pending": 0, "error": 0}
     groups = set()
@@ -889,7 +1417,12 @@ def _import_roster_row(
 ):
     unit, unit_reason = resolve_team_unit(workspace, row.group, row.business_category)
     mentor_unit = unit
-    primary_advisor, co_advisors, pending_reasons = resolve_row_advisors(workspace, row, advisor_map)
+    primary_advisor, co_advisors, pending_reasons = resolve_row_advisors(
+        workspace,
+        row,
+        advisor_map,
+        allow_unprovisioned=dry_run,
+    )
     if unit_reason:
         pending_reasons.append(unit_reason)
 

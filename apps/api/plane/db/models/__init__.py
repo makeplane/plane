@@ -148,6 +148,7 @@ from .research import (
     StageTransition,
     StageType,
     UserImportBatch,
+    UserImportAccountSource,
     UserImportRow,
     WorkspaceResearchSetting,
     ResearchWorkspaceAccessGrant,

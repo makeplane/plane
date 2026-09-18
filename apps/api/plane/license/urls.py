@@ -20,6 +20,10 @@ from plane.license.api.views import (
     InstanceWorkSpaceEndpoint,
     InstanceWorkspaceResearchEndpoint,
     InstanceUserListEndpoint,
+    InstanceUserBulkDeactivateEndpoint,
+    InstanceUserClearImportedEndpoint,
+    InstanceUserLifecycleEndpoint,
+    InstanceUserReactivateEndpoint,
     InstanceUserRoleEndpoint,
 )
 
@@ -80,6 +84,26 @@ urlpatterns = [
         name="instance-workspace-research",
     ),
     path("users/", InstanceUserListEndpoint.as_view(), name="instance-users"),
+    path(
+        "users/bulk-deactivate/",
+        InstanceUserBulkDeactivateEndpoint.as_view(),
+        name="instance-users-bulk-deactivate",
+    ),
+    path(
+        "users/clear-imported/",
+        InstanceUserClearImportedEndpoint.as_view(),
+        name="instance-users-clear-imported",
+    ),
+    path(
+        "users/<uuid:pk>/",
+        InstanceUserLifecycleEndpoint.as_view(),
+        name="instance-user-lifecycle",
+    ),
+    path(
+        "users/<uuid:pk>/reactivate/",
+        InstanceUserReactivateEndpoint.as_view(),
+        name="instance-user-reactivate",
+    ),
     path(
         "users/<uuid:pk>/roles/",
         InstanceUserRoleEndpoint.as_view(),

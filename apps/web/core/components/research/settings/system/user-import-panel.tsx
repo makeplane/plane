@@ -31,6 +31,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
   const { t } = useTranslation();
   const studentInput = useRef<HTMLInputElement>(null);
   const advisorInput = useRef<HTMLInputElement>(null);
+  const submitting = useRef(false);
   const [batches, setBatches] = useState<TUserImportBatchSummary[]>([]);
   const [activeBatch, setActiveBatch] = useState<TUserImportBatch | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,6 +39,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [resetPasswords, setResetPasswords] = useState(false);
+  const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     try {
@@ -56,50 +58,110 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
     void load();
   }, [load]);
 
-  const runImport = useCallback(
-    async (dryRun: boolean) => {
-      setErrorMessage(null);
+  const runImport = useCallback(async () => {
+    setErrorMessage(null);
+    setErrorKey(null);
+    setActiveBatch(null);
+    const students = studentInput.current?.files?.[0];
+    const advisors = advisorInput.current?.files?.[0];
+    if (!students || !advisors) {
+      setErrorKey("research.user_import.error.no_file");
+      return;
+    }
+    if (submitting.current) return;
+    submitting.current = true;
+    setBusy(true);
+    try {
+      const batch = await accountService.importUsers(workspaceSlug, {
+        students,
+        advisors,
+        reset_passwords: resetPasswords,
+      });
+      setActiveBatch(batch);
       setErrorKey(null);
-      setActiveBatch(null);
-      const students = studentInput.current?.files?.[0];
-      const advisors = advisorInput.current?.files?.[0];
-      if (!students || !advisors) {
-        setErrorKey("research.user_import.error.no_file");
-        return;
-      }
-      setBusy(true);
+      await load();
+    } catch (error) {
+      const payload = error as { error_code?: string; message?: string } | undefined;
+      const knownCodes = [
+        "user_import_file_required",
+        "user_import_file_invalid",
+        "public_workspace_missing",
+        "user_import_existing_member",
+        "user_import_in_progress",
+        "user_import_duplicate_identity",
+      ];
+      setErrorKey(
+        payload?.error_code && knownCodes.includes(payload.error_code)
+          ? `research.user_import.error.${payload.error_code}`
+          : "research.user_import.error.run"
+      );
+      setErrorMessage(typeof payload?.message === "string" ? payload.message : null);
+    } finally {
+      submitting.current = false;
+      setBusy(false);
+    }
+  }, [load, resetPasswords, workspaceSlug]);
+
+  const updateRow = useCallback(
+    async (rowId: string, payload: Record<string, unknown>) => {
+      if (!activeBatch?.id) return;
       try {
-        const batch = await accountService.importUsers(workspaceSlug, {
-          students,
-          advisors,
-          dry_run: dryRun,
-          reset_passwords: resetPasswords,
-        });
-        setActiveBatch(batch);
-        setErrorKey(null);
-        if (!dryRun) {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("research.user_import.toast.done_title"),
-            message: t("research.user_import.toast.done_message"),
-          });
-          await load();
-        }
-      } catch (error) {
-        const payload = error as { error_code?: string; message?: string } | undefined;
-        const knownCodes = ["user_import_file_required", "user_import_file_invalid", "public_workspace_missing"];
-        setErrorKey(
-          payload?.error_code && knownCodes.includes(payload.error_code)
-            ? `research.user_import.error.${payload.error_code}`
-            : "research.user_import.error.run"
+        const row = await accountService.updateUserImportRow(workspaceSlug, activeBatch.id, rowId, payload);
+        setActiveBatch((batch) =>
+          batch ? { ...batch, rows: batch.rows?.map((item) => (item.id === rowId ? row : item)) } : batch
         );
-        setErrorMessage(typeof payload?.message === "string" ? payload.message : null);
-      } finally {
-        setBusy(false);
+      } catch {
+        setErrorKey("research.user_import.error.run");
       }
     },
-    [load, resetPasswords, t, workspaceSlug]
+    [activeBatch?.id, workspaceSlug]
   );
+
+  const approve = useCallback(async () => {
+    if (!activeBatch?.id || !window.confirm(t("research.user_import.confirm.approve"))) return;
+    setBusy(true);
+    try {
+      const batch = await accountService.approveUserImport(workspaceSlug, activeBatch.id);
+      setActiveBatch(batch);
+      await load();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("research.user_import.toast.done_title"),
+        message: t("research.user_import.toast.done_message"),
+      });
+    } catch (error) {
+      const payload = error as { message?: string } | undefined;
+      setErrorMessage(payload?.message ?? null);
+      setErrorKey("research.user_import.error.run");
+    } finally {
+      setBusy(false);
+    }
+  }, [activeBatch?.id, load, t, workspaceSlug]);
+
+  const bulkExclude = useCallback(async () => {
+    if (!activeBatch?.id || !selectedRowIds.length) return;
+    setBusy(true);
+    try {
+      await accountService.bulkExcludeUserImportRows(workspaceSlug, activeBatch.id, selectedRowIds);
+      setActiveBatch(await accountService.getUserImport(workspaceSlug, activeBatch.id));
+      setSelectedRowIds([]);
+    } finally {
+      setBusy(false);
+    }
+  }, [activeBatch?.id, selectedRowIds, workspaceSlug]);
+
+  const reject = useCallback(async () => {
+    if (!activeBatch?.id) return;
+    const reason = window.prompt(t("research.user_import.confirm.reject"));
+    if (!reason) return;
+    setBusy(true);
+    try {
+      setActiveBatch(await accountService.rejectUserImport(workspaceSlug, activeBatch.id, reason));
+      await load();
+    } finally {
+      setBusy(false);
+    }
+  }, [activeBatch?.id, load, t, workspaceSlug]);
 
   const openBatch = useCallback(
     async (batchId: string) => {
@@ -117,25 +179,36 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
       <div className="flex flex-wrap items-end gap-3 rounded-md border border-subtle p-3">
         <label className="flex flex-col gap-1 text-11 text-tertiary">
           {t("research.user_import.fields.students")}
-          <input ref={studentInput} type="file" accept=".csv,.xlsx" className="text-12 text-secondary" />
+          <input
+            ref={studentInput}
+            type="file"
+            accept=".csv,.xlsx"
+            disabled={busy}
+            className="text-12 text-secondary"
+          />
         </label>
         <label className="flex flex-col gap-1 text-11 text-tertiary">
           {t("research.user_import.fields.advisors")}
-          <input ref={advisorInput} type="file" accept=".csv,.xlsx" required className="text-12 text-secondary" />
+          <input
+            ref={advisorInput}
+            type="file"
+            accept=".csv,.xlsx"
+            required
+            disabled={busy}
+            className="text-12 text-secondary"
+          />
         </label>
         <label className="flex items-center gap-2 text-11 text-tertiary">
           <input
             type="checkbox"
             checked={resetPasswords}
+            disabled={busy}
             onChange={(event) => setResetPasswords(event.target.checked)}
           />
           {t("research.user_import.fields.reset_passwords")}
         </label>
-        <Button variant="secondary" size="sm" loading={busy} onClick={() => void runImport(true)}>
-          {t("research.user_import.actions.preview")}
-        </Button>
-        <Button variant="primary" size="sm" loading={busy} onClick={() => void runImport(false)}>
-          {t("research.user_import.actions.commit")}
+        <Button variant="primary" size="sm" loading={busy} disabled={busy} onClick={() => void runImport()}>
+          {t("research.user_import.actions.upload")}
         </Button>
       </div>
 
@@ -154,9 +227,9 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
         <div className="flex flex-col gap-2 rounded-md border border-subtle p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-12 text-primary">
-              {activeBatch.dry_run
-                ? t("research.user_import.result.preview_title")
-                : t("research.user_import.result.committed_title")}{" "}
+              {activeBatch.status === "IMPORTED"
+                ? t("research.user_import.result.committed_title")
+                : t("research.user_import.result.review_title")}{" "}
               ·{" "}
               {t("research.user_import.result.counts", {
                 total: activeBatch.rows_total,
@@ -165,7 +238,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                 error: activeBatch.rows_error,
               })}
             </div>
-            {!activeBatch.dry_run && (
+            {activeBatch.status === "IMPORTED" && (
               <a
                 className="text-12 text-accent-primary"
                 href={accountService.getUserImportReportUrl(workspaceSlug, activeBatch.id!)}
@@ -180,10 +253,13 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
             <table className="w-full text-11">
               <thead className="bg-surface-2 text-tertiary">
                 <tr>
+                  <th className="px-2 py-1 text-left">选择</th>
                   <th className="px-2 py-1 text-left">#</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.name")}</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.email")}</th>
+                  <th className="px-2 py-1 text-left">学号 / 电话 / 年级</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.category")}</th>
+                  <th className="px-2 py-1 text-left">业务方向</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.primary_org")}</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.advisors")}</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.status")}</th>
@@ -193,22 +269,125 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
               <tbody>
                 {(activeBatch.rows ?? []).map((row) => (
                   <tr key={row.id ?? row.row_number} className="border-t border-subtle">
+                    <td className="px-2 py-1">
+                      <input
+                        type="checkbox"
+                        aria-label={`选择第 ${row.row_number} 行`}
+                        disabled={activeBatch.status !== "PENDING_REVIEW"}
+                        checked={Boolean(row.id && selectedRowIds.includes(row.id))}
+                        onChange={(event) =>
+                          row.id &&
+                          setSelectedRowIds((ids) =>
+                            event.target.checked ? [...ids, row.id!] : ids.filter((id) => id !== row.id)
+                          )
+                        }
+                      />
+                    </td>
                     <td className="px-2 py-1 text-tertiary">{row.row_number}</td>
-                    <td className="px-2 py-1 text-primary">{row.display_name}</td>
-                    <td className="px-2 py-1 text-secondary">{row.email}</td>
-                    <td className="px-2 py-1 text-secondary">{row.raw.category || "STUDENT"}</td>
-                    <td className="px-2 py-1 text-secondary">{row.raw.group || row.group_label || "-"}</td>
-                    <td className="px-2 py-1 text-secondary">
-                      {[
-                        row.raw.primary_advisor_name || row.advisor_name,
-                        row.raw.co_advisor_1_name,
-                        row.raw.co_advisor_2_name,
-                      ]
-                        .filter(Boolean)
-                        .join("; ") || "-"}
+                    <td className="px-2 py-1 text-primary">
+                      <input
+                        aria-label={`${row.row_number} name`}
+                        className="w-24 rounded border border-subtle bg-transparent px-1"
+                        defaultValue={row.display_name}
+                        onBlur={(event) => void updateRow(row.id!, { display_name: event.target.value })}
+                      />
                     </td>
                     <td className="px-2 py-1 text-secondary">
-                      {t(USER_IMPORT_ROW_STATUS_LABELS[row.status] ?? "research.user_import.status.ok")}
+                      <input
+                        type="email"
+                        aria-label={`${row.row_number} email`}
+                        className="w-44 rounded border border-subtle bg-transparent px-1"
+                        defaultValue={row.email}
+                        onBlur={(event) => void updateRow(row.id!, { email: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-1 text-secondary">
+                      <div className="grid min-w-32 gap-1">
+                        {(["student_no", "phone", "grade"] as const).map((field) => (
+                          <input
+                            key={field}
+                            aria-label={`${row.row_number} ${field}`}
+                            className="rounded border border-subtle bg-transparent px-1"
+                            defaultValue={row[field]}
+                            onBlur={(event) => void updateRow(row.id!, { [field]: event.target.value })}
+                          />
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-2 py-1 text-secondary">
+                      <input
+                        aria-label={`${row.row_number} category`}
+                        className="w-24 rounded border border-subtle bg-transparent px-1"
+                        defaultValue={row.category || ""}
+                        onBlur={(event) => void updateRow(row.id!, { category: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-1 text-secondary">
+                      <input
+                        aria-label={`${row.row_number} business category`}
+                        className="w-24 rounded border border-subtle bg-transparent px-1"
+                        defaultValue={row.business_category}
+                        onBlur={(event) => void updateRow(row.id!, { business_category: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-1 text-secondary">
+                      <input
+                        aria-label={`${row.row_number} group`}
+                        className="w-32 rounded border border-subtle bg-transparent px-1"
+                        defaultValue={row.group_label || ""}
+                        onBlur={(event) => void updateRow(row.id!, { group_label: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-1 text-secondary">
+                      <div className="grid min-w-72 grid-cols-2 gap-1">
+                        {(
+                          [
+                            ["advisor_name", "primary_advisor_email"],
+                            ["co_advisor_1_name", "co_advisor_1_email"],
+                            ["co_advisor_2_name", "co_advisor_2_email"],
+                          ] as const
+                        ).map(([nameField, emailField]) => (
+                          <div key={nameField} className="contents">
+                            <input
+                              aria-label={`${row.row_number} ${nameField}`}
+                              className="rounded border border-subtle bg-transparent px-1"
+                              defaultValue={row[nameField]}
+                              onBlur={(event) => void updateRow(row.id!, { [nameField]: event.target.value })}
+                            />
+                            <input
+                              type="email"
+                              aria-label={`${row.row_number} ${emailField}`}
+                              className="rounded border border-subtle bg-transparent px-1"
+                              defaultValue={row[emailField]}
+                              onBlur={(event) => void updateRow(row.id!, { [emailField]: event.target.value })}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-2 py-1 text-secondary">
+                      <div className="flex items-center gap-1">
+                        {t(USER_IMPORT_ROW_STATUS_LABELS[row.status] ?? "research.user_import.status.ok")}
+                        {activeBatch.status === "PENDING_REVIEW" && (
+                          <>
+                            <Button
+                              variant={row.review_decision === "INCLUDED" ? "primary" : "secondary"}
+                              size="sm"
+                              disabled={row.status !== "OK"}
+                              onClick={() => void updateRow(row.id!, { review_decision: "INCLUDED" })}
+                            >
+                              {t("research.user_import.actions.include")}
+                            </Button>
+                            <Button
+                              variant={row.review_decision === "EXCLUDED" ? "primary" : "secondary"}
+                              size="sm"
+                              onClick={() => void updateRow(row.id!, { review_decision: "EXCLUDED" })}
+                            >
+                              {t("research.user_import.actions.exclude")}
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </td>
                     <td className="px-2 py-1 text-tertiary">{row.message}</td>
                   </tr>
@@ -216,6 +395,30 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
               </tbody>
             </table>
           </div>
+          {activeBatch.status === "PENDING_REVIEW" && (
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={busy || !selectedRowIds.length}
+                onClick={() => void bulkExclude()}
+              >
+                {t("research.user_import.actions.bulk_exclude")}
+              </Button>
+              <Button variant="secondary" size="sm" disabled={busy} onClick={() => void reject()}>
+                {t("research.user_import.actions.reject")}
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                loading={busy}
+                disabled={busy || (activeBatch.rows ?? []).some((row) => row.review_decision === "PENDING")}
+                onClick={() => void approve()}
+              >
+                {t("research.user_import.actions.approve")}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 

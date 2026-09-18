@@ -129,8 +129,12 @@ from plane.research.views import (
     ResearchInviteCodeToggleEndpoint,
     ResearchPiAggregateEndpoint,
     ResearchUserImportDetailEndpoint,
+    ResearchUserImportApproveEndpoint,
+    ResearchUserImportBulkExcludeEndpoint,
     ResearchUserImportListCreateEndpoint,
+    ResearchUserImportRejectEndpoint,
     ResearchUserImportReportEndpoint,
+    ResearchUserImportRowEndpoint,
     ResearchUserProfileListEndpoint,
 )
 
@@ -755,6 +759,26 @@ urlpatterns = [
         "research/workspaces/<str:slug>/user-imports/<uuid:pk>/",
         ResearchUserImportDetailEndpoint.as_view(),
         name="research-user-import",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/<uuid:pk>/rows/<uuid:row_id>/",
+        ResearchUserImportRowEndpoint.as_view(),
+        name="research-user-import-row",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/<uuid:pk>/approve/",
+        ResearchUserImportApproveEndpoint.as_view(),
+        name="research-user-import-approve",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/<uuid:pk>/rows/bulk-exclude/",
+        ResearchUserImportBulkExcludeEndpoint.as_view(),
+        name="research-user-import-rows-bulk-exclude",
+    ),
+    path(
+        "research/workspaces/<str:slug>/user-imports/<uuid:pk>/reject/",
+        ResearchUserImportRejectEndpoint.as_view(),
+        name="research-user-import-reject",
     ),
     path(
         "research/workspaces/<str:slug>/user-imports/<uuid:pk>/report/",
