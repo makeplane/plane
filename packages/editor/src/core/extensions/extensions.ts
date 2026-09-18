@@ -7,7 +7,6 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
-import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Underline } from "@tiptap/extension-underline";
@@ -23,6 +22,7 @@ import {
   CustomLinkExtension,
   CustomMentionExtension,
   CustomQuoteExtension,
+  CustomTaskItemExtension,
   CustomTextAlignExtension,
   CustomTypographyExtension,
   ImageExtension,
@@ -100,7 +100,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         class: "not-prose pl-2 space-y-2",
       },
     }),
-    TaskItem.configure({
+    CustomTaskItemExtension.configure({
       HTMLAttributes: {
         class: "relative",
       },

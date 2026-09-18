@@ -14,6 +14,7 @@ export * from "./mentions";
 export * from "./page-embed";
 export * from "./slash-commands";
 export * from "./table";
+export * from "./task-item";
 export * from "./typography";
 export * from "./work-item-embed";
 export * from "./core-without-props";

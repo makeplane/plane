@@ -200,6 +200,72 @@ ul[data-type="taskList"] li[data-checked="true"] {
     transition: opacity 0.2s ease;
   }
 }
+/* to-do list collapsing */
+ul[data-type="taskList"] li > .task-item-collapse-toggle {
+  @apply text-tertiary;
+  position: absolute;
+  left: -5px;
+  top: 0.2rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 0.9rem;
+  height: 0.9rem;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+}
+
+ul[data-type="taskList"] li[data-has-sub-tasks="true"] > .task-item-collapse-toggle {
+  display: flex;
+}
+
+/* every to-do item reserves the chevron slot, whether or not it can fold, so
+   checkboxes stay in one column instead of an item jumping sideways the moment
+   it gains or loses sub-items */
+ul[data-type="taskList"] li > label {
+  left: 11px;
+}
+
+ul[data-type="taskList"] li > div {
+  margin-left: 2.15rem;
+}
+
+/* a fold stays visible while collapsed, otherwise it is revealed on hover */
+ul[data-type="taskList"] li[data-has-sub-tasks="true"]:hover > .task-item-collapse-toggle,
+ul[data-type="taskList"] li[data-collapsed="true"] > .task-item-collapse-toggle,
+ul[data-type="taskList"] li > .task-item-collapse-toggle:focus-visible {
+  opacity: 1;
+}
+
+ul[data-type="taskList"] li > .task-item-collapse-toggle:hover {
+  background-color: var(--background-color-layer-1);
+}
+
+ul[data-type="taskList"] li > .task-item-collapse-toggle svg {
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+
+ul[data-type="taskList"] li[data-collapsed="false"] > .task-item-collapse-toggle svg {
+  transform: rotate(90deg);
+}
+
+ul[data-type="taskList"] li[data-collapsed="true"] > div > ul[data-type="taskList"] {
+  display: none;
+}
+
+/* folding is a reading affordance, so it stays clickable in read-only content */
+.ProseMirror[contenteditable="false"] .task-item-collapse-toggle {
+  pointer-events: auto;
+}
 /* end to-do list */
 
 /* Overwrite tippy-box original max-width */
