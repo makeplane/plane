@@ -420,6 +420,8 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
             request=request,
             reset_passwords=reset_passwords,
         )
+        if dry_run:
+            return Response(batch.as_dict(), status=status.HTTP_200_OK)
         batch.prefetched_rows = list(batch.rows.all())
         return Response(
             UserImportBatchSerializer(batch).data,
@@ -516,7 +518,16 @@ class ResearchUserProfileListEndpoint(ResearchAPIView):
         workspace, error = _guard(self, request)
         if error:
             return error
-        profiles = ResearchUserProfile.objects.select_related("user").order_by("created_at")
+        profiles = (
+            ResearchUserProfile.objects.select_related("user")
+            .filter(
+                user__member_workspace__workspace=workspace,
+                user__member_workspace__is_active=True,
+                user__member_workspace__deleted_at__isnull=True,
+            )
+            .distinct()
+            .order_by("created_at")
+        )
         search = request.GET.get("search")
         if search:
             profiles = profiles.filter(
@@ -537,13 +548,22 @@ class ResearchUserProfileListEndpoint(ResearchAPIView):
         workspace, error = _guard(self, request)
         if error:
             return error
+        user_queryset = User.objects.filter(
+            member_workspace__workspace=workspace,
+            member_workspace__is_active=True,
+            member_workspace__deleted_at__isnull=True,
+        ).distinct()
         user = (
-            User.objects.filter(pk=request.data.get("user")).first()
+            user_queryset.filter(pk=request.data.get("user")).first()
             if request.data.get("user")
-            else User.objects.filter(email__iexact=str(request.data.get("email") or "")).first()
+            else user_queryset.filter(email__iexact=str(request.data.get("email") or "")).first()
         )
         if user is None:
-            return research_error(ResearchErrorCode.USER_NOT_FOUND, "User not found.")
+            return research_error(
+                ResearchErrorCode.USER_NOT_FOUND,
+                "User not found in this workspace.",
+                status.HTTP_404_NOT_FOUND,
+            )
         profile, _created = ResearchUserProfile.objects.get_or_create(user=user)
         changed = []
         for field_name in ("student_no", "grade", "degree", "phone", "group_label"):

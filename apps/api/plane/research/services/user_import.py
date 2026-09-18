@@ -126,6 +126,78 @@ class StudentRow:
         )
 
 
+@dataclass
+class ImportPreviewRow:
+    """Transient row result returned by a dry run without database writes."""
+
+    row_number: int
+    raw: dict
+    status: str
+    message: str
+    display_name: str
+    email: str
+    student_no: str
+    group_label: str
+    advisor_name: str
+    user: None = None
+    org_unit: object = None
+
+    def as_dict(self):
+        return {
+            "id": None,
+            "batch": None,
+            "row_number": self.row_number,
+            "status": self.status,
+            "message": self.message,
+            "display_name": self.display_name,
+            "email": self.email,
+            "student_no": self.student_no,
+            "group_label": self.group_label,
+            "advisor_name": self.advisor_name,
+            "user": None,
+            "user_detail": None,
+            "org_unit": str(self.org_unit.id) if self.org_unit is not None else None,
+            "raw": self.raw,
+            "created_at": None,
+        }
+
+
+@dataclass
+class ImportPreview:
+    """In-memory import report used by API, CLI and acceptance checks."""
+
+    source_filename: str
+    rows: list[ImportPreviewRow]
+    rows_total: int
+    rows_ok: int
+    rows_pending: int
+    rows_error: int
+    summary: dict
+    dry_run: bool = True
+    status: str = UserImportBatch.Status.PENDING
+    id: None = None
+    options: dict = field(default_factory=dict)
+    created_by_detail: None = None
+    created_at: None = None
+
+    def as_dict(self):
+        return {
+            "id": None,
+            "source_filename": self.source_filename,
+            "dry_run": True,
+            "status": self.status,
+            "rows_total": self.rows_total,
+            "rows_ok": self.rows_ok,
+            "rows_pending": self.rows_pending,
+            "rows_error": self.rows_error,
+            "options": self.options,
+            "summary": self.summary,
+            "created_by_detail": None,
+            "created_at": None,
+            "rows": [row.as_dict() for row in self.rows],
+        }
+
+
 def _normalise_header(value):
     return str(value or "").strip().lower().replace(" ", "").replace("　", "")
 
@@ -656,6 +728,14 @@ def run_import(
 ):
     """Import ``rows`` and return the persisted :class:`UserImportBatch`."""
     advisor_map = {_normalise_header(key): value for key, value in (advisor_map or {}).items()}
+    if dry_run:
+        return preview_import(
+            workspace,
+            rows,
+            advisor_map=advisor_map,
+            source_filename=source_filename,
+            reset_passwords=reset_passwords,
+        )
     batch = UserImportBatch.objects.create(
         workspace=workspace,
         source_filename=str(source_filename or "")[:255],
@@ -736,6 +816,51 @@ def run_import(
     return batch
 
 
+def preview_import(workspace, rows, *, advisor_map=None, source_filename="", reset_passwords=False):
+    """Validate an import entirely in memory and return a transient report."""
+    advisor_map = {_normalise_header(key): value for key, value in (advisor_map or {}).items()}
+    counts = {"ok": 0, "pending": 0, "error": 0}
+    groups = set()
+    preview_rows = []
+    for row in rows:
+        outcome = _import_row(
+            workspace,
+            None,
+            row,
+            None,
+            advisor_map,
+            dry_run=True,
+            reset_passwords=reset_passwords,
+        )
+        counts[outcome["status"].lower()] += 1
+        if outcome.get("group"):
+            groups.add(outcome["group"])
+        preview_rows.append(
+            ImportPreviewRow(
+                row_number=row.row_number,
+                raw=row.raw,
+                status=outcome["status"],
+                message=outcome.get("message", ""),
+                display_name=row.name,
+                email=row.email,
+                student_no=row.student_no,
+                group_label=row.group,
+                advisor_name=row.advisor,
+                org_unit=outcome.get("unit"),
+            )
+        )
+    return ImportPreview(
+        source_filename=str(source_filename or "")[:255],
+        rows=preview_rows,
+        rows_total=len(rows),
+        rows_ok=counts["ok"],
+        rows_pending=counts["pending"],
+        rows_error=counts["error"],
+        options={"advisor_mapping_size": len(advisor_map), "reset_passwords": bool(reset_passwords)},
+        summary={"dry_run": True, "groups": sorted(groups), "credentials_issued": 0},
+    )
+
+
 def _import_row(workspace, actor, row, batch, advisor_map, *, dry_run=False, reset_passwords=False):
     """Import one roster row and describe the outcome."""
     error_code, message = validate_row(row)
@@ -753,20 +878,38 @@ def _import_row(workspace, actor, row, batch, advisor_map, *, dry_run=False, res
         )
 
     if dry_run:
-        unit, _created = ensure_group_unit(workspace, row.group, actor=actor, dry_run=True)
+        root = OrgUnit.objects.filter(
+            workspace=workspace,
+            unit_type=OrgUnit.UnitType.ROOT,
+            deleted_at__isnull=True,
+        ).first()
+        unit = None
+        if root is not None:
+            unit = (
+                OrgUnit.objects.filter(
+                    workspace=workspace,
+                    parent=root,
+                    name=row.group,
+                    deleted_at__isnull=True,
+                ).first()
+                if row.group
+                else root
+            )
         if row.advisor and _normalise_header(row.advisor) not in advisor_map:
             return {
                 "status": ROW_PENDING,
                 "message": f"缺少导师邮箱映射：{row.advisor}",
+                "group": row.group,
                 "unit": unit,
             }
         if not row.group:
             return {
                 "status": ROW_PENDING,
                 "message": "分组为空，将挂到根节点",
+                "group": row.group,
                 "unit": unit,
             }
-        return {"status": ROW_OK, "message": "预检通过（未写库）", "unit": unit}
+        return {"status": ROW_OK, "message": "预检通过（未写库）", "group": row.group, "unit": unit}
 
     try:
         with transaction.atomic():

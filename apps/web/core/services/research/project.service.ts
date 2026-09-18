@@ -8,7 +8,7 @@ import { API_BASE_URL, researchEndpoints } from "@plane/constants";
 import type {
   TPaginationInfo,
   TResearchContext,
-  TResearchContextResourceBody,
+  TResearchContextResourceMetadata,
   TResearchProjectProfile,
 } from "@plane/types";
 // services
@@ -57,7 +57,7 @@ export class ResearchProjectService extends APIService {
 
   async getContextResource(workspaceSlug: string, kind: string, resourceId: string, version = "latest") {
     return this.get(researchEndpoints.contextResource(workspaceSlug, kind, resourceId), { params: { version } })
-      .then((res) => res?.data as TResearchContextResourceBody)
+      .then((res) => res?.data as TResearchContextResourceMetadata)
       .catch((err) => {
         throw err?.response?.data;
       });

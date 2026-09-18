@@ -151,7 +151,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
             {!activeBatch.dry_run && (
               <a
                 className="text-12 text-accent-primary"
-                href={accountService.getUserImportReportUrl(workspaceSlug, activeBatch.id)}
+                href={accountService.getUserImportReportUrl(workspaceSlug, activeBatch.id!)}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -175,7 +175,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
               </thead>
               <tbody>
                 {(activeBatch.rows ?? []).map((row) => (
-                  <tr key={row.id} className="border-t border-subtle">
+                  <tr key={row.id ?? row.row_number} className="border-t border-subtle">
                     <td className="px-2 py-1 text-tertiary">{row.row_number}</td>
                     <td className="px-2 py-1 text-primary">{row.display_name}</td>
                     <td className="px-2 py-1 text-secondary">{row.email}</td>
@@ -213,7 +213,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                 <button
                   type="button"
                   className="text-left text-12 text-primary hover:text-accent-primary"
-                  onClick={() => void openBatch(batch.id)}
+                  onClick={() => batch.id && void openBatch(batch.id)}
                 >
                   {batch.source_filename || batch.id}
                   <span className="ml-2 text-11 text-tertiary">
@@ -226,7 +226,9 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                     })}
                   </span>
                 </button>
-                <span className="text-11 text-tertiary">{new Date(batch.created_at).toLocaleString()}</span>
+                <span className="text-11 text-tertiary">
+                  {batch.created_at ? new Date(batch.created_at).toLocaleString() : ""}
+                </span>
               </li>
             ))}
           </ul>

@@ -149,10 +149,60 @@ def test_dry_run_writes_no_accounts(env):
     client = client_for(env["admin"])
     response = post_import(client, workspace, dry_run=True)
 
-    assert response.status_code == 201
+    assert response.status_code == 200
+    assert response.data["id"] is None
     assert response.data["dry_run"] is True
+    assert response.data["rows_total"] == 4
+    assert len(response.data["rows"]) == 4
     assert not User.objects.filter(email="qiuzhixin@stu.xmu.edu.cn").exists()
     assert not OrgUnit.objects.filter(workspace=workspace, name="器件").exists()
+    assert not UserImportBatch.objects.filter(workspace=workspace).exists()
+
+
+def test_user_profiles_are_scoped_to_active_workspace_members(env):
+    workspace = env["workspace"]
+    other_workspace = public_workspace(owner=make_user(first_name="Other owner"), slug="other-profile-space")
+    foreign_user = make_user(email="foreign-profile@example.com")
+    add_workspace_member(other_workspace, foreign_user)
+    foreign_profile = ResearchUserProfile.objects.create(
+        user=foreign_user,
+        student_no="FOREIGN-001",
+        category=ResearchUserProfile.Category.STUDENT,
+    )
+
+    response = client_for(env["admin"]).get(f"/api/research/workspaces/{workspace.slug}/user-profiles/")
+
+    assert response.status_code == 200
+    assert foreign_profile.id not in {item["id"] for item in response.data["results"]}
+
+
+def test_user_profiles_reject_cross_workspace_patch_and_revoked_members(env):
+    workspace = env["workspace"]
+    other_workspace = public_workspace(owner=make_user(first_name="Other owner"), slug="other-patch-space")
+    add_workspace_member(other_workspace, env["admin"], role=20)
+    foreign_user = make_user(email="foreign-patch@example.com")
+    foreign_membership = add_workspace_member(other_workspace, foreign_user)
+    profile = ResearchUserProfile.objects.create(
+        user=foreign_user,
+        student_no="FOREIGN-002",
+        category=ResearchUserProfile.Category.STUDENT,
+    )
+    client = client_for(env["admin"])
+
+    response = client.patch(
+        f"/api/research/workspaces/{workspace.slug}/user-profiles/",
+        {"user": str(foreign_user.id), "student_no": "MUST-NOT-CHANGE"},
+        format="json",
+    )
+    assert response.status_code == 404
+    profile.refresh_from_db()
+    assert profile.student_no == "FOREIGN-002"
+
+    foreign_membership.is_active = False
+    foreign_membership.save(update_fields=["is_active", "updated_at"])
+    response = client.get(f"/api/research/workspaces/{other_workspace.slug}/user-profiles/")
+    assert response.status_code == 200
+    assert response.data["results"] == []
 
 
 def test_report_download_contains_credentials(env):
@@ -277,7 +327,8 @@ def test_v3_dry_run_does_not_create_accounts_or_org_units(env):
         format="multipart",
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
+    assert response.data["id"] is None
     assert response.data["rows_pending"] == 1
     assert "主归属组织不存在" in response.data["rows"][0]["message"]
     assert not User.objects.filter(email="preview@example.com").exists()

@@ -82,8 +82,9 @@ class Command(BaseCommand):
             reset_passwords=bool(options["reset_passwords"]),
         )
 
+        batch_label = "preview" if batch.id is None else str(batch.id)
         self.stdout.write(
-            f"\nBatch {batch.id} ({'dry run' if batch.dry_run else 'committed'})\n"
+            f"\nBatch {batch_label} ({'dry run' if batch.dry_run else 'committed'})\n"
             f"  rows={batch.rows_total} ok={batch.rows_ok} "
             f"pending={batch.rows_pending} error={batch.rows_error}"
         )
@@ -92,7 +93,12 @@ class Command(BaseCommand):
         if batch.summary.get("credentials_issued"):
             self.stdout.write(f"  one-time credentials issued: {batch.summary['credentials_issued']}")
 
-        for row in batch.rows.exclude(status=UserImportRow.Status.OK).order_by("row_number")[:50]:
+        report_rows = (
+            [row for row in batch.rows if row.status != UserImportRow.Status.OK]
+            if dry_run
+            else list(batch.rows.exclude(status=UserImportRow.Status.OK).order_by("row_number")[:50])
+        )
+        for row in report_rows[:50]:
             self.stdout.write(f"  [{row.status}] row {row.row_number} {row.email}: {row.message}")
 
         if dry_run:

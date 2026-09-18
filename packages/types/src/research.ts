@@ -1012,8 +1012,8 @@ export type TResearchUserProfile = {
 };
 
 export type TUserImportRow = {
-  id: string;
-  batch: string;
+  id: string | null;
+  batch: string | null;
   row_number: number;
   status: TUserImportRowStatus;
   message: string;
@@ -1026,11 +1026,11 @@ export type TUserImportRow = {
   user_detail?: TResearchUserLite | null;
   org_unit: string | null;
   raw: Record<string, string>;
-  created_at: string;
+  created_at: string | null;
 };
 
 export type TUserImportBatch = {
-  id: string;
+  id: string | null;
   source_filename: string;
   dry_run: boolean;
   status: TUserImportBatchStatus;
@@ -1041,7 +1041,7 @@ export type TUserImportBatch = {
   options: Record<string, unknown>;
   summary: { dry_run?: boolean; groups?: string[]; credentials_issued?: number };
   created_by_detail?: TResearchUserLite | null;
-  created_at: string;
+  created_at: string | null;
   rows?: TUserImportRow[];
 };
 
@@ -1108,12 +1108,13 @@ export type TResearchContext = {
   resources: TResearchContextResource[];
 };
 
-export type TResearchContextResourceBody = {
+export type TResearchContextResourceMetadata = {
   schema_version: string;
   kind: string;
   id: string;
   source: string;
-  version: number | "draft" | null;
+  version: number | null;
+  status: string | null;
   updated_at: string | null;
-  content: Record<string, unknown>;
+  link: string | null;
 };

@@ -244,7 +244,7 @@ def resource_url(workspace, kind, resource_id, version=None):
     return f"{url}?version={version}" if version is not None else url
 
 
-def test_report_resource_defaults_to_latest_official_version_and_draft_is_author_only(env):
+def test_report_resource_returns_only_latest_official_metadata_and_hides_drafts(env):
     owner, workspace, _project = env
     advisor = make_user(first_name="Advisor")
     add_workspace_member(workspace, advisor)
@@ -290,17 +290,18 @@ def test_report_resource_defaults_to_latest_official_version_and_draft_is_author
 
     assert latest.status_code == 200
     assert latest.data["version"] == 1
-    assert latest.data["content"]["description_html"] == "<p>Official v1</p>"
-    assert draft.status_code == 200
-    assert draft.data["version"] == "draft"
-    assert draft.data["content"]["description_html"] == "<p>Private draft</p>"
+    assert latest.data["status"] == "SUBMITTED"
+    assert "content" not in latest.data
+    assert "Official v1" not in str(latest.data)
+    assert draft.status_code == 404
+    assert "Private draft" not in str(draft.data)
     assert advisor_draft.status_code == 404
     audits = ResearchAuditEvent.objects.filter(action="context.read", resource_id=report["id"])
-    assert audits.count() == 2
+    assert audits.count() == 1
     assert all("content" not in event.metadata for event in audits)
 
 
-def test_material_and_experiment_resources_resolve_requested_immutable_versions(env):
+def test_material_and_experiment_resources_resolve_requested_version_metadata_only(env):
     owner, workspace, project = env
     stage = ResearchStageInstance.objects.filter(project_id=project["id"]).first()
     material_page = Page.objects.create(
@@ -363,10 +364,14 @@ def test_material_and_experiment_resources_resolve_requested_immutable_versions(
 
     assert material_v1.status_code == 200
     assert material_v1.data["version"] == 1
-    assert material_v1.data["content"]["description_html"] == "<p>Material v1</p>"
+    assert material_v1.data["status"] == "SUBMITTED"
+    assert "content" not in material_v1.data
+    assert "Material v1" not in str(material_v1.data)
     assert experiment_latest.status_code == 200
     assert experiment_latest.data["version"] == 2
-    assert experiment_latest.data["content"]["title"] == "Experiment v2"
+    assert experiment_latest.data["status"] == "COMPLETED"
+    assert "content" not in experiment_latest.data
+    assert "Experiment v2" not in str(experiment_latest.data)
 
 
 def test_external_reference_body_is_never_returned_even_when_source_acl_is_public(env):
