@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IWebhook } from "@plane/types";
+import type { IWebhook, TWebhookEventTypes } from "@plane/types";
 // ui
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -47,18 +47,33 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
     isAdmin ? () => fetchWebhookById(workspaceSlug, webhookId) : null
   );
 
-  const handleUpdateWebhook = async (formData: IWebhook) => {
+  const handleUpdateWebhook = async (formData: IWebhook, webhookEventType: TWebhookEventTypes) => {
     if (!formData || !formData.id) return;
 
-    const payload = {
+    let payload: Partial<IWebhook> = {
       url: formData.url,
       is_active: formData.is_active,
-      project: formData.project,
-      cycle: formData.cycle,
-      module: formData.module,
-      issue: formData.issue,
-      issue_comment: formData.issue_comment,
     };
+
+    if (webhookEventType === "all") {
+      payload = {
+        ...payload,
+        project: true,
+        cycle: true,
+        module: true,
+        issue: true,
+        issue_comment: true,
+      };
+    } else {
+      payload = {
+        ...payload,
+        project: formData.project ?? false,
+        cycle: formData.cycle ?? false,
+        module: formData.module ?? false,
+        issue: formData.issue ?? false,
+        issue_comment: formData.issue_comment ?? false,
+      };
+    }
 
     try {
       await updateWebhook(workspaceSlug, formData.id, payload);
