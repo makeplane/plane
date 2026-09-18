@@ -123,6 +123,7 @@ catalog:
   "is-emoji-supported": "^0.0.5"
   "isbot": "^5.1.31"
   "jscodeshift": "^17.3.0"
+  jsdom: 26.1.0
   "jsx-dom-cjs": "^8.0.3"
   "linkifyjs": "^4.3.2"
   "lint-staged": "16.2.7"

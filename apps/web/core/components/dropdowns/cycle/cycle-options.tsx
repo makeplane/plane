@@ -126,6 +126,8 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
 
   return (
     <Combobox.Options
+      // The search input is inside the panel; modal isolation would make its sibling options inert.
+      modal={false}
       as="ul"
       className="fixed z-10"
       static

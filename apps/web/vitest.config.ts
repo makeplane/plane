@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./core"),
+      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
     },
   },
 });
