@@ -85,6 +85,8 @@ from plane.utils.order_queryset import (
     ISSUE_ORDER_BY_ALLOWLIST,
     sanitize_order_by,
 )
+from plane.utils.grouper import issue_group_values, issue_on_results, issue_queryset_grouper
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
@@ -419,6 +421,67 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             ).order_by("-max_values" if order_by_param.startswith("-") else "max_values")
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
+
+        group_by = {"state": "state_id"}.get(request.GET.get("group_by"), request.GET.get("group_by"))
+        sub_group_by = {"state": "state_id"}.get(
+            request.GET.get("sub_group_by"), request.GET.get("sub_group_by")
+        )
+
+        if group_by:
+            issue_queryset = issue_queryset_grouper(
+                queryset=issue_queryset,
+                group_by=group_by,
+                sub_group_by=sub_group_by,
+            )
+            grouping_kwargs = {
+                "request": request,
+                "order_by": order_by_param,
+                "queryset": issue_queryset,
+                "total_count_queryset": total_issue_queryset,
+                "on_results": lambda issues: issue_on_results(
+                    group_by=group_by,
+                    issues=issues,
+                    sub_group_by=sub_group_by,
+                ),
+                "group_by_fields": issue_group_values(
+                    field=group_by,
+                    slug=slug,
+                    project_id=project_id,
+                    queryset=issue_queryset,
+                ),
+                "group_by_field_name": group_by,
+                "count_filter": Q(
+                    Q(issue_intake__status=1)
+                    | Q(issue_intake__status=-1)
+                    | Q(issue_intake__status=2)
+                    | Q(issue_intake__isnull=True),
+                    archived_at__isnull=True,
+                    is_draft=False,
+                ),
+            }
+
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {"error": "Group by and sub group by cannot have same parameters"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                grouping_kwargs.update(
+                    {
+                        "paginator_cls": SubGroupedOffsetPaginator,
+                        "sub_group_by_fields": issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            project_id=project_id,
+                            queryset=issue_queryset,
+                        ),
+                        "sub_group_by_field_name": sub_group_by,
+                    }
+                )
+            else:
+                grouping_kwargs["paginator_cls"] = GroupedOffsetPaginator
+
+            return self.paginate(**grouping_kwargs)
 
         return self.paginate(
             request=request,
