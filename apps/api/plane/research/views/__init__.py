@@ -4,6 +4,7 @@
 
 from .audit import ResearchAuditEventListEndpoint
 from .accounts import (
+    ResearchAccountProvisioningOptionsEndpoint,
     ResearchInviteCodeDetailEndpoint,
     ResearchInviteCodeListCreateEndpoint,
     ResearchInviteCodeToggleEndpoint,

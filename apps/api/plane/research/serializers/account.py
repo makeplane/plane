@@ -19,8 +19,11 @@ class InviteCodeSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "code",
+            "provisioning_version",
             "org_role",
             "org_unit",
+            "profile_category",
+            "primary_advisor",
             "max_uses",
             "used_count",
             "expires_at",
@@ -33,7 +36,15 @@ class InviteCodeSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "code", "used_count", "created_at", "updated_at", "created_by"]
+        read_only_fields = [
+            "id",
+            "code",
+            "provisioning_version",
+            "used_count",
+            "created_at",
+            "updated_at",
+            "created_by",
+        ]
 
     def get_effective_status(self, obj):
         return obj.effective_status

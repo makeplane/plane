@@ -12,6 +12,7 @@ upstream route (P0-COMPAT-02).
 from django.urls import path
 
 from plane.research.views import (
+    ResearchAccountProvisioningOptionsEndpoint,
     ResearchApprovalFlowDetailEndpoint,
     ResearchApprovalFlowListCreateEndpoint,
     ResearchApprovalRequestActionEndpoint,
@@ -154,6 +155,11 @@ urlpatterns = [
     # ------------------------------------------------------------------
     # P1 stage workflow (§5.2) - additive, nothing below is renumbered
     # ------------------------------------------------------------------
+    path(
+        "research/workspaces/<str:slug>/account-provisioning/options/",
+        ResearchAccountProvisioningOptionsEndpoint.as_view(),
+        name="research-account-provisioning-options",
+    ),
     path(
         "research/workspaces/<str:slug>/projects/<uuid:project_id>/stages/",
         ResearchProjectStageListCreateEndpoint.as_view(),

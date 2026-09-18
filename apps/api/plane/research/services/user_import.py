@@ -13,7 +13,9 @@ the rest of the batch.
 
 import csv
 import io
+import re
 import secrets
+import uuid
 from dataclasses import dataclass, field
 
 from django.contrib.auth.hashers import make_password
@@ -51,6 +53,32 @@ HEADER_ALIASES = {
     "advisor": ("负责导师", "导师", "指导老师", "advisor", "mentor", "supervisor"),
     "email": ("邮件", "邮箱", "电子邮箱", "email", "e-mail", "mail"),
     "phone": ("电话", "手机", "手机号", "phone", "mobile", "tel"),
+    "category": ("人员类别", "身份类别", "category", "profile_category"),
+    "business_category": ("业务方向", "方向类别", "business_category", "business category"),
+    "primary_org_unit": ("主归属组织", "主归属", "primary_org_unit", "primary org unit"),
+    "primary_advisor_email": ("主导师邮箱", "primary_advisor_email", "primary advisor email"),
+    "co_advisor_emails": ("联合导师邮箱", "co_advisor_emails", "co advisor emails"),
+}
+
+CATEGORY_ALIASES = {
+    "学生": ResearchUserProfile.Category.STUDENT,
+    "student": ResearchUserProfile.Category.STUDENT,
+    "博士后": ResearchUserProfile.Category.POSTDOC,
+    "postdoc": ResearchUserProfile.Category.POSTDOC,
+    "导师": ResearchUserProfile.Category.ADVISOR,
+    "advisor": ResearchUserProfile.Category.ADVISOR,
+    "pi": ResearchUserProfile.Category.PI,
+    "员工": ResearchUserProfile.Category.STAFF,
+    "staff": ResearchUserProfile.Category.STAFF,
+    "其他": ResearchUserProfile.Category.OTHER,
+    "other": ResearchUserProfile.Category.OTHER,
+}
+
+BUSINESS_CATEGORY_ALIASES = {
+    "基础研究": OrgUnit.BusinessCategory.BASIC_RESEARCH,
+    "basicresearch": OrgUnit.BusinessCategory.BASIC_RESEARCH,
+    "产业化": OrgUnit.BusinessCategory.INDUSTRIALIZATION,
+    "industrialization": OrgUnit.BusinessCategory.INDUSTRIALIZATION,
 }
 
 DEGREE_ALIASES = {
@@ -84,7 +112,18 @@ class StudentRow:
     phone: str = ""
     group: str = ""
     advisor: str = ""
+    category: str = ""
+    business_category: str = ""
+    primary_org_unit: str = ""
+    primary_advisor_email: str = ""
+    co_advisor_emails: tuple[str, ...] = ()
     raw: dict = field(default_factory=dict)
+
+    @property
+    def is_v3(self):
+        return any(
+            (self.category, self.business_category, self.primary_org_unit, self.primary_advisor_email, self.co_advisor_emails)
+        )
 
 
 def _normalise_header(value):
@@ -157,6 +196,26 @@ def normalise_degree(value):
     return DEGREE_ALIASES.get(_normalise_header(value), "")
 
 
+def normalise_category(value):
+    raw = str(value or "").strip()
+    upper = raw.upper()
+    if upper in ResearchUserProfile.Category.values:
+        return upper
+    return CATEGORY_ALIASES.get(_normalise_header(raw), "")
+
+
+def normalise_business_category(value):
+    raw = str(value or "").strip()
+    upper = raw.upper()
+    if upper in (OrgUnit.BusinessCategory.BASIC_RESEARCH, OrgUnit.BusinessCategory.INDUSTRIALIZATION):
+        return upper
+    return BUSINESS_CATEGORY_ALIASES.get(_normalise_header(raw), "")
+
+
+def split_emails(value):
+    return tuple(dict.fromkeys(item.strip().lower() for item in re.split(r"[;,；，]", str(value or "")) if item.strip()))
+
+
 def parse_students(payload, filename=""):
     """Parse the student roster into :class:`StudentRow` objects."""
     rows = sheet_rows(payload, filename)
@@ -192,6 +251,12 @@ def parse_students(payload, filename=""):
                 phone=cell(row, "phone"),
                 group=cell(row, "group"),
                 advisor=cell(row, "advisor"),
+                category=normalise_category(cell(row, "category")) or cell(row, "category"),
+                business_category=normalise_business_category(cell(row, "business_category"))
+                or cell(row, "business_category"),
+                primary_org_unit=cell(row, "primary_org_unit"),
+                primary_advisor_email=cell(row, "primary_advisor_email").lower(),
+                co_advisor_emails=split_emails(cell(row, "co_advisor_emails")),
                 raw={field_name: cell(row, field_name) for field_name in HEADER_ALIASES},
             )
         )
@@ -273,6 +338,72 @@ def ensure_group_unit(workspace, label, actor=None, dry_run=False):
     return unit, True
 
 
+def resolve_existing_org_unit(workspace, reference):
+    """Resolve a v3 primary organisation by UUID or its full display path."""
+    reference = str(reference or "").strip()
+    if not reference:
+        return None
+    try:
+        unit_id = uuid.UUID(reference)
+    except (TypeError, ValueError):
+        unit_id = None
+    queryset = OrgUnit.objects.filter(workspace=workspace, is_active=True, deleted_at__isnull=True)
+    if unit_id is not None:
+        return queryset.filter(pk=unit_id).first()
+    parts = [item.strip() for item in re.split(r"\s*(?:/|>|＞)\s*", reference) if item.strip()]
+    candidates = list(queryset.filter(name=parts[-1]).select_related("parent")) if parts else []
+    for candidate in candidates:
+        names = []
+        current = candidate
+        while current is not None:
+            names.append(current.name)
+            current = current.parent
+        if list(reversed(names)) == parts:
+            return candidate
+    return None
+
+
+def resolve_existing_advisor(workspace, email):
+    return User.objects.filter(
+        email__iexact=email,
+        is_active=True,
+        member_workspace__workspace=workspace,
+        member_workspace__is_active=True,
+        member_workspace__deleted_at__isnull=True,
+    ).first()
+
+
+def v3_row_context(workspace, row):
+    """Return resolved v3 relations and human-readable pending reasons."""
+    unit = resolve_existing_org_unit(workspace, row.primary_org_unit)
+    reasons = []
+    if row.primary_org_unit and unit is None:
+        reasons.append(f"主归属组织不存在：{row.primary_org_unit}")
+    if unit is not None and row.business_category:
+        lineage_categories = set()
+        current = unit
+        while current is not None:
+            if current.business_category:
+                lineage_categories.add(current.business_category)
+            current = current.parent
+        if row.business_category not in lineage_categories:
+            reasons.append("业务方向与主归属组织不一致")
+
+    primary_advisor = None
+    if row.primary_advisor_email:
+        primary_advisor = resolve_existing_advisor(workspace, row.primary_advisor_email)
+        if primary_advisor is None:
+            reasons.append(f"主导师不是当前工作空间有效成员：{row.primary_advisor_email}")
+    co_advisors = []
+    for email in row.co_advisor_emails:
+        advisor = resolve_existing_advisor(workspace, email)
+        if advisor is None:
+            reasons.append(f"联合导师不是当前工作空间有效成员：{email}")
+        else:
+            co_advisors.append(advisor)
+    return unit, primary_advisor, co_advisors, reasons
+
+
 def find_user_for_row(row):
     """Locate an existing account by mailbox, then by student number."""
     if row.email:
@@ -303,6 +434,16 @@ def validate_row(row):
                 ResearchErrorCode.IMPORT_ROW_INVALID,
                 f"学号 {row.student_no} already belongs to {owner.user.email}.",
             )
+    if row.category and row.category not in ResearchUserProfile.Category.values:
+        return ResearchErrorCode.IMPORT_ROW_INVALID, f"Unknown category '{row.category}'."
+    if row.business_category and row.business_category not in (
+        OrgUnit.BusinessCategory.BASIC_RESEARCH,
+        OrgUnit.BusinessCategory.INDUSTRIALIZATION,
+    ):
+        return ResearchErrorCode.IMPORT_ROW_INVALID, f"Unknown business category '{row.business_category}'."
+    for advisor_email in (row.primary_advisor_email, *row.co_advisor_emails):
+        if advisor_email and not _valid_email(advisor_email):
+            return ResearchErrorCode.IMPORT_ROW_INVALID, f"{advisor_email} is not a valid advisor mailbox."
     return None, None
 
 
@@ -355,7 +496,7 @@ def _upsert_profile(user, row, group_label, batch, actor):
             grade=row.grade,
             degree=row.degree,
             phone=row.phone,
-            category=ResearchUserProfile.Category.STUDENT,
+            category=row.category or ResearchUserProfile.Category.STUDENT,
             group_label=group_label,
             source_batch=batch,
             created_by=actor,
@@ -367,6 +508,7 @@ def _upsert_profile(user, row, group_label, batch, actor):
         "phone": row.phone or profile.phone,
         "group_label": group_label or profile.group_label,
         "source_batch": batch or profile.source_batch,
+        "category": row.category or profile.category,
     }
     for field_name, value in updates.items():
         setattr(profile, field_name, value)
@@ -410,6 +552,30 @@ def ensure_org_membership(workspace, unit, user, role, actor):
         effective_from=timezone.localdate(),
         created_by=actor,
     )
+    return member, True
+
+
+def ensure_v3_primary_membership(workspace, unit, user, actor):
+    current = OrgUnitMember.objects.filter(
+        workspace=workspace, user=user, is_primary=True, deleted_at__isnull=True
+    ).first()
+    if current is not None:
+        return current, current.org_unit_id == unit.id
+    member, _created = OrgUnitMember.objects.get_or_create(
+        workspace=workspace,
+        org_unit=unit,
+        user=user,
+        org_role=STUDENT_ORG_ROLE,
+        deleted_at__isnull=True,
+        defaults={
+            "is_primary": True,
+            "effective_from": timezone.localdate(),
+            "created_by": actor,
+        },
+    )
+    if not member.is_primary:
+        member.is_primary = True
+        member.save(update_fields=["is_primary", "updated_at"])
     return member, True
 
 
@@ -576,6 +742,16 @@ def _import_row(workspace, actor, row, batch, advisor_map, *, dry_run=False, res
     if error_code:
         return {"status": ROW_ERROR, "message": message}
 
+    if row.is_v3:
+        return _import_v3_row(
+            workspace,
+            actor,
+            row,
+            batch,
+            dry_run=dry_run,
+            reset_passwords=reset_passwords,
+        )
+
     if dry_run:
         unit, _created = ensure_group_unit(workspace, row.group, actor=actor, dry_run=True)
         if row.advisor and _normalise_header(row.advisor) not in advisor_map:
@@ -622,6 +798,79 @@ def _import_row(workspace, actor, row, batch, advisor_map, *, dry_run=False, res
         "status": ROW_PENDING if pending_reasons else ROW_OK,
         "message": "；".join(pending_reasons),
         "group": row.group,
+        "password": password,
+        "user": user,
+        "unit": unit,
+    }
+
+
+def _import_v3_row(workspace, actor, row, batch, *, dry_run=False, reset_passwords=False):
+    unit, primary_advisor, co_advisors, pending_reasons = v3_row_context(workspace, row)
+    existing_user = find_user_for_row(row)
+    if unit is None and not row.primary_org_unit:
+        pending_reasons.append("未指定主归属组织")
+
+    if existing_user is not None and unit is not None:
+        current_primary = OrgUnitMember.objects.filter(
+            workspace=workspace,
+            user=existing_user,
+            is_primary=True,
+            deleted_at__isnull=True,
+        ).first()
+        if current_primary is not None and current_primary.org_unit_id != unit.id:
+            pending_reasons.append("已有主归属，未覆盖为导入值")
+            unit = None
+
+    if existing_user is not None and primary_advisor is not None:
+        today = timezone.localdate()
+        current_primary_advisor = (
+            MentorBinding.objects.filter(
+                workspace=workspace,
+                mentee=existing_user,
+                is_primary_advisor=True,
+                deleted_at__isnull=True,
+                effective_from__lte=today,
+            )
+            .filter(models.Q(effective_to__isnull=True) | models.Q(effective_to__gte=today))
+            .first()
+        )
+        if current_primary_advisor is not None and current_primary_advisor.mentor_id != primary_advisor.id:
+            pending_reasons.append("已有主导师，未覆盖为导入值")
+            primary_advisor = None
+
+    if dry_run:
+        return {
+            "status": ROW_PENDING if pending_reasons else ROW_OK,
+            "message": "；".join(pending_reasons) or "预检通过（未写库）",
+            "group": unit.name if unit else "",
+            "unit": unit,
+        }
+
+    try:
+        with transaction.atomic():
+            user, _account_created, password = _upsert_user(row, reset_passwords=reset_passwords)
+            ensure_workspace_membership(workspace, user, actor)
+            if unit is not None:
+                _membership, accepted = ensure_v3_primary_membership(workspace, unit, user, actor)
+                if not accepted:
+                    pending_reasons.append("已有主归属，未覆盖为导入值")
+                    unit = None
+            _upsert_profile(user, row, unit.name if unit else "", batch, actor)
+            if primary_advisor is not None:
+                binding, _created = ensure_mentor_binding(workspace, unit, user, primary_advisor, actor)
+                if not binding.is_primary_advisor:
+                    pending_reasons.append("已有主导师，导入导师保留为联合导师")
+            for co_advisor in co_advisors:
+                ensure_mentor_binding(workspace, unit, user, co_advisor, actor)
+    except (IntegrityError, AccountError) as exc:
+        return {"status": ROW_ERROR, "message": str(exc)[:255]}
+    except Exception as exc:  # noqa: BLE001 - keep per-row isolation
+        return {"status": ROW_ERROR, "message": f"{type(exc).__name__}: {exc}"[:255]}
+
+    return {
+        "status": ROW_PENDING if pending_reasons else ROW_OK,
+        "message": "；".join(dict.fromkeys(pending_reasons)),
+        "group": unit.name if unit else "",
         "password": password,
         "user": user,
         "unit": unit,

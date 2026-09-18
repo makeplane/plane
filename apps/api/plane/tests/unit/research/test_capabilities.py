@@ -30,6 +30,7 @@ from plane.research.utils.capabilities import (
     NAV_REPORTS,
     NAV_REVIEWS,
     NAV_SUMMARY,
+    NAV_SYSTEM,
     NAV_PLATFORM,
     ResearchLevel,
     build_research_capabilities,
@@ -105,7 +106,8 @@ def test_development_duty_only_opens_integrations(env):
     capabilities = build_research_capabilities(developer, env["workspace"])
 
     assert capabilities["level"] == ResearchLevel.NONE
-    assert capabilities["nav"] == [NAV_INTEGRATIONS]
+    assert capabilities["nav"] == [NAV_SYSTEM, NAV_INTEGRATIONS]
+    assert capabilities["management"]["accounts"] is True
     assert capabilities["management"]["integrations"] is True
 
 
@@ -134,7 +136,8 @@ def test_legacy_main_pi_label_does_not_grant_business_or_admin_access(env):
     capabilities = build_research_capabilities(legacy, env["workspace"])
 
     assert capabilities["level"] == ResearchLevel.NONE
-    assert capabilities["nav"] == []
+    assert capabilities["nav"] == [NAV_SYSTEM]
+    assert capabilities["management"]["accounts"] is True
 
 
 def test_workspace_administrator_is_an_administrator(env):

@@ -55,6 +55,7 @@ from plane.research.utils.roles import (
     PUBLIC_WORKSPACE_SLUG,
     can_configure_integrations,
     can_operate_workspace,
+    is_account_compat_admin,
     is_main_pi,
     is_research_admin,
 )
@@ -198,6 +199,7 @@ class ResearchSignals:
     has_profile: bool = False
     can_configure_integrations: bool = False
     can_operate_workspace: bool = False
+    can_manage_accounts: bool = False
 
     @property
     def level(self):
@@ -292,6 +294,7 @@ def research_signals(user, workspace, on_date=None, now=None) -> ResearchSignals
         has_profile=_has_profile(user),
         can_configure_integrations=can_configure_integrations(user, workspace),
         can_operate_workspace=can_operate_workspace(user, workspace),
+        can_manage_accounts=is_account_compat_admin(user, workspace),
     )
 
 
@@ -331,6 +334,8 @@ def signal_nav_keys(signals: ResearchSignals) -> set:
         keys.add(NAV_INTEGRATIONS)
     if signals.can_operate_workspace:
         keys.update((NAV_PLATFORM, NAV_AUDIT))
+    if signals.can_manage_accounts:
+        keys.add(NAV_SYSTEM)
     return keys
 
 
@@ -369,5 +374,6 @@ def build_research_capabilities(user, workspace, on_date=None, signals=None) -> 
             "organization": signals.is_admin or signals.is_main_pi or signals.is_principal,
             "integrations": signals.can_configure_integrations,
             "operations": signals.can_operate_workspace,
+            "accounts": signals.can_manage_accounts,
         },
     }

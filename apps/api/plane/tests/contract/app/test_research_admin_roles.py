@@ -13,6 +13,7 @@ from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
     grant_admin_tag,
+    invite_codes_url,
     make_instance_admin,
     make_user,
     make_workspace,
@@ -124,6 +125,29 @@ def test_identity_me_exposes_tags(env, settings):
     assert user_payload["admin_roles"] == ["MAIN_PI"]
     assert user_payload["is_research_admin"] is False
     assert user_payload["is_workspace_admin"] is False
+    assert response.data["capabilities"]["management"]["accounts"] is True
+    assert "system" in response.data["capabilities"]["nav"]
+
+
+def test_tag_holder_only_opens_account_lifecycle_surface(env):
+    workspace = env["workspace"]
+    enable_research(workspace)
+    tag_holder = make_user(first_name="TagHolder")
+    add_workspace_member(workspace, tag_holder)
+    grant_admin_tag(tag_holder, "OPS_ADMIN", actor=env["instance_admin"])
+
+    client = client_for(tag_holder)
+    assert client.get(invite_codes_url(workspace)).status_code == 200
+    assert client.get(f"/api/research/workspaces/{workspace.slug}/org-units/").status_code == 200
+    assert (
+        client.post(
+            f"/api/research/workspaces/{workspace.slug}/org-units/",
+            {"name": "Forbidden", "unit_type": "GROUP"},
+            format="json",
+        ).status_code
+        == 403
+    )
+    assert client.get(f"/api/research/workspaces/{workspace.slug}/audit-events/").status_code == 403
 
 
 def test_tag_assignment_does_not_create_workspace_seats(env):

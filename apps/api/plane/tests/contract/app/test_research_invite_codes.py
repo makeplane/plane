@@ -14,6 +14,7 @@ from rest_framework.test import APIClient
 from plane.authentication.adapter.error import AUTHENTICATION_ERROR_CODES, AuthenticationException
 from plane.authentication.provider.credentials.email import EmailProvider
 from plane.db.models import (
+    MentorBinding,
     OrgUnit,
     OrgUnitMember,
     ResearchInviteCode,
@@ -66,11 +67,12 @@ def test_admin_issues_and_lists_codes(env):
     client = client_for(env["admin"])
     created = client.post(
         invite_codes_url(env["workspace"]),
-        {"org_role": "ADVISOR", "max_uses": 3, "expires_in_days": 5, "note": "新生"},
+        {"profile_category": "ADVISOR", "max_uses": 3, "expires_in_days": 5, "note": "新生"},
         format="json",
     )
     assert created.status_code == 201
-    assert created.data["org_role"] == "ADVISOR"
+    assert created.data["org_role"] == "REVIEWER"
+    assert created.data["profile_category"] == "ADVISOR"
     assert created.data["max_uses"] == 3
     assert created.data["effective_status"] == "ACTIVE"
     assert created.data["register_url"].endswith(created.data["code"])
@@ -167,6 +169,96 @@ def test_redeem_places_the_account_in_the_public_workspace(env):
 
     code.refresh_from_db()
     assert code.used_count == 1
+
+
+def test_v2_invite_provisions_plain_member_primary_org_and_advisor(env):
+    public = public_workspace(owner=env["admin"])
+    root = OrgUnit.objects.create(
+        workspace=public,
+        name="材料科学与工程学院",
+        unit_type=OrgUnit.UnitType.ROOT,
+        path="",
+        depth=0,
+    )
+    root.path = build_path(root.id, None)
+    root.save(update_fields=["path"])
+    mentor_group = OrgUnit.objects.create(
+        workspace=public,
+        parent=root,
+        name="王老师导师组",
+        unit_type=OrgUnit.UnitType.GROUP,
+        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP,
+        path=build_path(None, root.path),
+        depth=1,
+    )
+    advisor = make_user(email="advisor@example.com", first_name="Advisor")
+    add_workspace_member(public, advisor)
+
+    created = client_for(env["admin"]).post(
+        invite_codes_url(public),
+        {
+            "profile_category": "POSTDOC",
+            "org_unit": str(mentor_group.id),
+            "primary_advisor": str(advisor.id),
+            "max_uses": 1,
+        },
+        format="json",
+    )
+
+    assert created.status_code == 201
+    assert created.data["provisioning_version"] == 2
+    assert created.data["org_role"] == "REVIEWER"
+    assert created.data["profile_category"] == "POSTDOC"
+    assert str(created.data["primary_advisor"]) == str(advisor.id)
+
+    newcomer = make_user(email="postdoc@example.com", first_name="Postdoc")
+    redeem_invite_code(newcomer, created.data["code"])
+
+    membership = OrgUnitMember.objects.get(workspace=public, org_unit=mentor_group, user=newcomer)
+    assert membership.org_role == OrgUnitMember.OrgRole.REVIEWER
+    assert membership.is_primary is True
+    assert ResearchUserProfile.objects.get(user=newcomer).category == "POSTDOC"
+    binding = MentorBinding.objects.get(workspace=public, mentee=newcomer, mentor=advisor)
+    assert binding.org_unit == mentor_group
+    assert binding.is_primary_advisor is True
+
+
+def test_new_invite_api_rejects_management_roles(env):
+    response = client_for(env["admin"]).post(
+        invite_codes_url(env["workspace"]),
+        {"org_role": "PI", "max_uses": 1},
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert response.data["error_code"] == "invite_code_org_role_invalid"
+
+
+def test_account_provisioning_options_are_workspace_scoped(env):
+    workspace = env["workspace"]
+    root = OrgUnit.objects.create(
+        workspace=workspace, name="Root", unit_type=OrgUnit.UnitType.ROOT, path="root", depth=0
+    )
+    advisor = make_user(email="scoped.advisor@example.com", first_name="Scoped Advisor")
+    add_workspace_member(workspace, advisor)
+
+    response = client_for(env["admin"]).get(
+        f"/api/research/workspaces/{workspace.slug}/account-provisioning/options/"
+    )
+
+    assert response.status_code == 200
+    assert response.data["org_units"] == [
+        {
+            "id": str(root.id),
+            "name": "Root",
+            "display_path": "Root",
+            "business_category": None,
+        }
+    ]
+    assert any(item["email"] == advisor.email for item in response.data["advisors"])
+    assert {item["value"] for item in response.data["profile_categories"]} == {
+        "STUDENT", "POSTDOC", "ADVISOR", "PI", "STAFF", "OTHER"
+    }
 
 
 def test_signup_gate_accepts_only_usable_codes(db, settings):

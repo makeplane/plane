@@ -23,6 +23,7 @@ from plane.db.models import (
     ResearchUserProfile,
     User,
     UserImportBatch,
+    WorkspaceMember,
 )
 from plane.research.serializers import (
     InviteCodeSerializer,
@@ -33,7 +34,6 @@ from plane.research.serializers import (
 from plane.research.services.accounts import AccountError, issue_invite_code
 from plane.research.services.user_import import parse_advisors, parse_students, run_import
 from plane.research.utils.audit import ResearchAuditAction, ResearchResourceType, record_audit_event
-from plane.research.utils.capabilities import NAV_SYSTEM
 from plane.research.utils.errors import (
     ResearchErrorCode,
     research_error,
@@ -52,7 +52,7 @@ def _guard(self, request):
     The account lifecycle pages sit behind the "system management" navigation
     key as well, so the menu and the endpoints agree (v2.5.0).
     """
-    workspace, error = self.get_workspace(section=ACCOUNT_SECTION, nav=NAV_SYSTEM)
+    workspace, error = self.get_workspace(section=ACCOUNT_SECTION, nav=None)
     if error:
         return None, error
     if not is_account_compat_admin(request.user, workspace):
@@ -98,12 +98,42 @@ class ResearchInviteCodeListCreateEndpoint(ResearchAPIView):
                     "The org unit does not exist in this workspace.",
                 )
 
+        profile_category = str(request.data.get("profile_category") or "STUDENT").strip().upper()
+        if profile_category not in ResearchUserProfile.Category.values:
+            return research_error(
+                ResearchErrorCode.INVITE_CODE_INVALID,
+                "Unknown research profile category.",
+            )
+        primary_advisor = None
+        primary_advisor_id = request.data.get("primary_advisor")
+        if primary_advisor_id:
+            primary_advisor = User.objects.filter(
+                pk=primary_advisor_id,
+                member_workspace__workspace=workspace,
+                member_workspace__is_active=True,
+                member_workspace__deleted_at__isnull=True,
+            ).first()
+            if primary_advisor is None:
+                return research_error(
+                    ResearchErrorCode.INVITE_CODE_INVALID,
+                    "The primary advisor must be an active member of this workspace.",
+                )
+        requested_role = str(request.data.get("org_role") or "").strip().upper()
+        if requested_role not in ("", OrgUnitMember.OrgRole.REVIEWER):
+            return research_error(
+                ResearchErrorCode.INVITE_CODE_ORG_ROLE_INVALID,
+                "New invite codes can only provision ordinary research members.",
+            )
+
         try:
             code = issue_invite_code(
                 workspace,
                 request.user,
-                org_role=request.data.get("org_role") or "",
+                org_role=OrgUnitMember.OrgRole.REVIEWER,
                 org_unit=org_unit,
+                provisioning_version=2,
+                profile_category=profile_category,
+                primary_advisor=primary_advisor,
                 max_uses=request.data.get("max_uses") or 1,
                 expires_in_days=request.data.get("expires_in_days", 7),
                 note=request.data.get("note") or "",
@@ -111,6 +141,67 @@ class ResearchInviteCodeListCreateEndpoint(ResearchAPIView):
         except AccountError as exc:
             return account_error_response(exc)
         return Response(InviteCodeSerializer(code).data, status=status.HTTP_201_CREATED)
+
+
+class ResearchAccountProvisioningOptionsEndpoint(ResearchAPIView):
+    """Existing organisations and members usable by account provisioning flows."""
+
+    def get(self, request, slug):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+
+        units = list(
+            OrgUnit.objects.filter(workspace=workspace, is_active=True, deleted_at__isnull=True)
+            .select_related("parent")
+            .order_by("depth", "sort_order", "name")
+        )
+        units_by_id = {unit.id: unit for unit in units}
+
+        def display_path(unit):
+            names = []
+            current = unit
+            while current is not None:
+                names.append(current.name)
+                current = units_by_id.get(current.parent_id)
+            return " / ".join(reversed(names))
+
+        memberships = (
+            WorkspaceMember.objects.filter(
+                workspace=workspace,
+                is_active=True,
+                deleted_at__isnull=True,
+                member__is_active=True,
+            )
+            .select_related("member")
+            .order_by("member__display_name", "member__email")
+        )
+        return Response(
+            {
+                "profile_categories": [
+                    {"value": value, "label": label}
+                    for value, label in ResearchUserProfile.Category.choices
+                ],
+                "org_units": [
+                    {
+                        "id": str(unit.id),
+                        "name": unit.name,
+                        "display_path": display_path(unit),
+                        "business_category": unit.business_category,
+                    }
+                    for unit in units
+                ],
+                "advisors": [
+                    {
+                        "id": str(membership.member_id),
+                        "email": membership.member.email,
+                        "display_name": membership.member.display_name,
+                    }
+                    for membership in memberships
+                ],
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class ResearchInviteCodeDetailEndpoint(ResearchAPIView):
@@ -163,13 +254,15 @@ class ResearchInviteCodeDetailEndpoint(ResearchAPIView):
             changed.append("max_uses")
         if "org_role" in request.data:
             org_role = str(request.data.get("org_role") or "").upper()
-            if org_role and org_role not in OrgUnitMember.OrgRole.values:
+            if org_role not in ("", OrgUnitMember.OrgRole.REVIEWER):
                 return research_error(
                     ResearchErrorCode.INVITE_CODE_ORG_ROLE_INVALID,
-                    "Unknown organisation role.",
+                    "Invite codes can only provision ordinary research members.",
                 )
-            code.org_role = org_role
+            code.org_role = OrgUnitMember.OrgRole.REVIEWER
+            code.provisioning_version = 2
             changed.append("org_role")
+            changed.append("provisioning_version")
         if "org_unit" in request.data:
             unit_id = request.data.get("org_unit")
             if unit_id:
@@ -183,6 +276,34 @@ class ResearchInviteCodeDetailEndpoint(ResearchAPIView):
             else:
                 code.org_unit = None
             changed.append("org_unit")
+        if "profile_category" in request.data:
+            profile_category = str(request.data.get("profile_category") or "STUDENT").upper()
+            if profile_category not in ResearchUserProfile.Category.values:
+                return research_error(ResearchErrorCode.INVITE_CODE_INVALID, "Unknown research profile category.")
+            code.profile_category = profile_category
+            code.org_role = OrgUnitMember.OrgRole.REVIEWER
+            code.provisioning_version = 2
+            changed.extend(("profile_category", "org_role", "provisioning_version"))
+        if "primary_advisor" in request.data:
+            advisor_id = request.data.get("primary_advisor")
+            advisor = None
+            if advisor_id:
+                advisor = User.objects.filter(
+                    pk=advisor_id,
+                    is_active=True,
+                    member_workspace__workspace=workspace,
+                    member_workspace__is_active=True,
+                    member_workspace__deleted_at__isnull=True,
+                ).first()
+                if advisor is None:
+                    return research_error(
+                        ResearchErrorCode.INVITE_CODE_INVALID,
+                        "The primary advisor must be an active member of this workspace.",
+                    )
+            code.primary_advisor = advisor
+            code.org_role = OrgUnitMember.OrgRole.REVIEWER
+            code.provisioning_version = 2
+            changed.extend(("primary_advisor", "org_role", "provisioning_version"))
 
         if changed:
             code.save(update_fields=sorted(set(changed) | {"updated_at"}))
@@ -349,7 +470,22 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
         response.write("\ufeff")
         writer = csv.writer(response)
         writer.writerow(
-            ["行号", "姓名", "邮箱", "学号", "分组", "负责导师", "状态", "说明", "初始密码"]
+            [
+                "行号",
+                "姓名",
+                "邮箱",
+                "学号",
+                "人员类别",
+                "业务方向",
+                "主归属组织",
+                "主导师邮箱",
+                "联合导师邮箱",
+                "分组",
+                "负责导师",
+                "状态",
+                "说明",
+                "初始密码",
+            ]
         )
         for row in batch.rows.select_related("user").order_by("row_number"):
             writer.writerow(
@@ -358,6 +494,11 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                     row.display_name,
                     row.email,
                     row.student_no,
+                    row.raw.get("category", ""),
+                    row.raw.get("business_category", ""),
+                    row.raw.get("primary_org_unit", ""),
+                    row.raw.get("primary_advisor_email", ""),
+                    row.raw.get("co_advisor_emails", ""),
                     row.group_label,
                     row.advisor_name,
                     row.status,
