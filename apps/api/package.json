@@ -1,6 +1,6 @@
 {
   "name": "plane-api",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": true,
   "description": "API server powering PiLab's backend",
   "license": "AGPL-3.0"

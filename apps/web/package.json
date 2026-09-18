@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -87,6 +87,7 @@
     "@types/react-color": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",

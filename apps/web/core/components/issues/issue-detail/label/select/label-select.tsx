@@ -139,6 +139,8 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
         </Combobox.Button>
 
         <Combobox.Options
+          // The search input is inside the panel; modal isolation would make its sibling options inert.
+          modal={false}
           as="ul"
           className="fixed z-10"
           ref={setPopperElement}
