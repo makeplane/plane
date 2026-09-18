@@ -4,10 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { BRAND_NAME, GOD_MODE_URL } from "@plane/constants";
+import { BRAND_NAME } from "@plane/constants";
 import DefaultLayout from "@/layouts/default-layout";
 import { BrandMark } from "@/components/common/brand-mark";
 import { Button } from "@plane/propel/button";
+import { getGodModeUrl } from "@/helpers/admin-url.helper";
 
 export function InstanceNotReady() {
   return (
@@ -41,7 +42,7 @@ export function InstanceNotReady() {
                 </p>
               </div>
             </div>
-            <a href={GOD_MODE_URL} className="w-72">
+            <a href={getGodModeUrl()} className="w-72">
               <Button variant="primary" className="w-full" size="xl">
                 Get started
               </Button>
