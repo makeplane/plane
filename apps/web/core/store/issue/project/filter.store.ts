@@ -135,7 +135,19 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
-    const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
+    // `getProjectUserProperties` rejects with `error?.response?.data`, which resolves to
+    // `undefined` for non-Axios errors (e.g. network failures, aborted requests). Awaiting
+    // it directly surfaced as an "Uncaught (in promise) undefined" error because the
+    // `useSWR` fetcher in `ProjectLayoutRoot` doesn't attach a `.catch()`. Catch and log
+    // here instead so a failed filters fetch doesn't crash the layout with an opaque
+    // unhandled rejection.
+    let _filters;
+    try {
+      _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
+    } catch (error) {
+      console.error("Failed to fetch project issue filters:", error);
+      return;
+    }
 
     const richFilters = _filters?.rich_filters;
     const displayFilters = this.computedDisplayFilters(_filters?.display_filters);

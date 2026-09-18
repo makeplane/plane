@@ -5,10 +5,21 @@
  */
 
 import React from "react";
-import { AttachOutline, LinkOutline, RelationsOutline, ViewsOutline } from "@makeplane/propel/icons";
+import { observer } from "mobx-react";
+import {
+  AttachOutline,
+  LinkOutline,
+  RelationsOutline,
+  UserMinusOutline,
+  UserPlusOutline,
+  ViewsOutline,
+} from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUser } from "@/hooks/store/user";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
@@ -25,13 +36,49 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export function IssueDetailWidgetActionButtons(props: Props) {
+export const IssueDetailWidgetActionButtons = observer(function IssueDetailWidgetActionButtons(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // translation
   const { t } = useTranslation();
+  // store hooks
+  const {
+    issue: { getIssueById },
+    updateIssue,
+  } = useIssueDetail(issueServiceType);
+  const { data: currentUser } = useUser();
+  // derived values
+  const issue = getIssueById(issueId);
+  const isCurrentUserAssigned = !!currentUser && !!issue?.assignee_ids?.includes(currentUser.id);
+
+  // handlers
+  const handleAssignToMe = () => {
+    if (!currentUser || !issue) return;
+
+    const updatedAssigneeIds = [...(issue.assignee_ids ?? [])];
+    if (isCurrentUserAssigned) {
+      updatedAssigneeIds.splice(updatedAssigneeIds.indexOf(currentUser.id), 1);
+    } else {
+      updatedAssigneeIds.push(currentUser.id);
+    }
+
+    updateIssue(workspaceSlug, projectId, issueId, { assignee_ids: updatedAssigneeIds });
+  };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <button type="button" onClick={handleAssignToMe} disabled={disabled}>
+        <IssueDetailWidgetButton
+          title={isCurrentUserAssigned ? t("common.actions.unassign_from_me") : t("common.actions.assign_to_me")}
+          icon={
+            isCurrentUserAssigned ? (
+              <UserMinusOutline className="h-3.5 w-3.5 flex-shrink-0" />
+            ) : (
+              <UserPlusOutline className="h-3.5 w-3.5 flex-shrink-0" />
+            )
+          }
+          disabled={disabled}
+        />
+      </button>
       {!hideWidgets?.includes("sub-work-items") && (
         <SubIssuesActionButton
           issueId={issueId}
@@ -91,4 +138,4 @@ export function IssueDetailWidgetActionButtons(props: Props) {
       )}
     </div>
   );
-}
+});

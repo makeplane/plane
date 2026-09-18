@@ -109,6 +109,7 @@ export interface IBaseIssuesStore {
     removeModuleIds: string[]
   ): Promise<void>;
   updateIssueDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[], projectId?: string): Promise<void>;
+  bulkUpdateState(workspaceSlug: string, projectId: string, issueIds: string[], stateId: string): Promise<void>;
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
@@ -246,6 +247,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       addIssuesToModule: action.bound,
       removeIssuesFromModule: action.bound,
       changeModulesInIssue: action.bound,
+      bulkUpdateState: action.bound,
     });
     this.rootIssueStore = _rootStore;
     this.issueFilterStore = issueFilterStore;
@@ -796,6 +798,35 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         }
       });
       console.error("error while updating Timeline dependencies");
+      throw e;
+    }
+  }
+
+  async bulkUpdateState(workspaceSlug: string, projectId: string, issueIds: string[], stateId: string) {
+    if (!projectId || issueIds.length === 0) return;
+    const getIssueById = this.rootIssueStore.issues.getIssueById;
+    const previousStateByIssueId: Record<string, string | undefined> = {};
+
+    try {
+      runInAction(() => {
+        for (const issueId of issueIds) {
+          const currIssue = getIssueById(issueId);
+          if (!currIssue) continue;
+          previousStateByIssueId[issueId] = currIssue.state_id ?? undefined;
+          this.issueUpdate(workspaceSlug, projectId, issueId, { state_id: stateId }, false);
+        }
+      });
+
+      await this.issueService.bulkUpdateState(workspaceSlug, projectId, issueIds, stateId);
+    } catch (e) {
+      runInAction(() => {
+        for (const issueId of Object.keys(previousStateByIssueId)) {
+          const previousStateId = previousStateByIssueId[issueId];
+          if (previousStateId === undefined) continue;
+          this.issueUpdate(workspaceSlug, projectId, issueId, { state_id: previousStateId }, false);
+        }
+      });
+      console.error("error while bulk updating work item state");
       throw e;
     }
   }

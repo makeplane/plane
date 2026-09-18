@@ -4,4 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export const useBulkOperationStatus = () => false;
+export const useBulkOperationStatus = () => true;
