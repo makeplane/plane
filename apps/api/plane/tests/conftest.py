@@ -9,6 +9,33 @@ from pytest_django.fixtures import django_db_setup
 from plane.db.models import User, Workspace, WorkspaceMember
 from plane.db.models.api import APIToken
 
+# Every external-API test authenticates with this one token, so they all share a
+# single ``ApiKeyRateThrottle`` bucket keyed on it.
+TEST_API_TOKEN = "test-api-token-12345"
+
+
+@pytest.fixture(autouse=True)
+def reset_api_key_throttle():
+    """Give each test the full external-API rate limit.
+
+    ``ApiKeyRateThrottle`` keys its bucket on the API token and stores the
+    request history in the Django cache, which is a real Redis in CI and is not
+    rolled back with the database. Because every test reuses ``TEST_API_TOKEN``,
+    the history accumulates across the session until the suite crosses
+    ``API_KEY_RATE_LIMIT`` (60/minute) and later tests start failing with 429s
+    that have nothing to do with what they assert.
+
+    That makes the suite order- and size-dependent: adding tests anywhere can
+    break unrelated ones further down. Clearing the bucket around each test
+    keeps the limit per-test, which is what these tests assume.
+    """
+    from django.core.cache import cache
+
+    key = f"api_key:{TEST_API_TOKEN}"
+    cache.delete(key)
+    yield
+    cache.delete(key)
+
 
 @pytest.fixture(scope="session")
 def django_db_setup(django_db_setup):  # noqa: F811
@@ -52,7 +79,7 @@ def api_token(db, create_user):
     token = APIToken.objects.create(
         user=create_user,
         label="Test API Token",
-        token="test-api-token-12345",
+        token=TEST_API_TOKEN,
     )
     return token
 
