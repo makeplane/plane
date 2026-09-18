@@ -35,6 +35,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+// helpers
+import { updateIssueStateWithPropagation } from "@/helpers/issue-state-update";
 // components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
@@ -59,6 +61,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const {
     issue: { getIssueById },
+    subIssues: { fetchSubIssues },
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
@@ -77,6 +80,18 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  const handleStateChange = async (stateId: string) => {
+    await updateIssueStateWithPropagation({
+      currentStateId: issue.state_id,
+      newStateId: stateId,
+      subIssuesCount: issue.sub_issues_count ?? 0,
+      onUpdate: async (data) => issueOperations.update(workspaceSlug, projectId, issueId, data),
+      afterPropagate: async () => {
+        await fetchSubIssues(workspaceSlug, projectId, issueId);
+      },
+    });
+  };
+
   return (
     <>
       <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
@@ -86,7 +101,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             <SidebarPropertyListItem icon={StateOutline} label={t("common.state")}>
               <StateDropdown
                 value={issue?.state_id}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                onChange={handleStateChange}
                 projectId={projectId?.toString() ?? ""}
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"

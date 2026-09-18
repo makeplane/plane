@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { EIssueLayoutTypes } from "@plane/types";
 // components
 import { LayoutErrorBoundary } from "@/components/common/layout-error-boundary";
+import { PropagateStateModalRoot } from "@/components/issues/propagate-state-modal";
 import { CalendarLayoutLoader } from "@/components/ui/loader/layouts/calendar-layout-loader";
 import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
@@ -59,5 +60,10 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
     return <IssueLayoutEmptyState storeType={storeType} />;
   }
 
-  return <LayoutErrorBoundary key={layout}>{props.children}</LayoutErrorBoundary>;
+  return (
+    <LayoutErrorBoundary key={layout}>
+      {props.children}
+      <PropagateStateModalRoot />
+    </LayoutErrorBoundary>
+  );
 });
