@@ -42,9 +42,7 @@ def project(db, workspace, create_user):
         workspace=workspace,
         created_by=create_user,
     )
-    ProjectMember.objects.create(
-        project=project, member=create_user, workspace=workspace, role=20
-    )
+    ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20)
     return project
 
 
