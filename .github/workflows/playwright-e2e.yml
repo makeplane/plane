@@ -101,4 +101,3 @@ jobs:
       - name: Stop Docker services
         if: always()
         run: docker compose -f docker-compose-local.yml down -v
-``
