@@ -202,6 +202,7 @@ export const openEmojiPicker = (editor: Editor, range?: Range) => {
 
 export const openPageEmbedSuggestion = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).run();
-  // insert as a text node: a bare "+" string goes through the markdown parser and becomes an empty list item
+  // insert as a text node so the trigger reaches the suggestion plugin as plain text
+  // instead of being handed to the markdown parser, which would rewrite it
   editor.chain().focus().insertContent({ type: "text", text: PAGE_EMBED_TRIGGER_CHAR }).run();
 };

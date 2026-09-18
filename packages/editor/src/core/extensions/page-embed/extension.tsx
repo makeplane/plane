@@ -14,7 +14,12 @@ import type { PageEmbedNodeViewProps } from "./node-view";
 import { PageEmbedNodeView } from "./node-view";
 import { renderPageEmbedDropdown } from "./utils";
 
-export const PAGE_EMBED_TRIGGER_CHAR = "+";
+// the suggestion plugin fires whenever the trigger follows a space, so a single
+// everyday character opens this dropdown mid-sentence - "2 + 2" used to do it.
+// this sequence is deliberately one nobody types by accident. it also avoids the
+// neighbouring shortcuts: "#" only starts a heading when followed by a space, and
+// the trailing "@" cannot start a mention because it does not follow a space.
+export const PAGE_EMBED_TRIGGER_CHAR = "#]@";
 // must differ from the mention extension's default "mention" key, otherwise the two suggestion plugins collide
 export const PageEmbedSuggestionPluginKey = new PluginKey("page-embed-suggestion");
 

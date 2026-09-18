@@ -13,7 +13,7 @@ type TArgs = {
 };
 
 // tiptap also runs input rules on Enter (as "\n"), so the default `^\s*([-+*])\s$` turns a lone "+" into a list.
-// "+" is the page embed trigger, so it only starts a bullet list when followed by a real space.
+// "+" therefore only starts a bullet list when followed by a real space.
 const BULLET_LIST_INPUT_REGEX = /^\s*(?:[-*]\s|\+ )$/;
 
 const CustomBulletList = BulletList.extend({
