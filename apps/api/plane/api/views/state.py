@@ -4,6 +4,7 @@
 
 # Django imports
 from django.db import IntegrityError
+from django.db.models import Exists, OuterRef
 
 # Third party imports
 from rest_framework import status
@@ -13,7 +14,7 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 # Module imports
 from plane.api.serializers import StateSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Issue, State
+from plane.db.models import Issue, ProjectMember, State
 from .base import BaseAPIView
 from plane.utils.openapi import (
     state_docs,
@@ -45,18 +46,20 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return non-triage states for the project, scoped to active members."""
+        member_check = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+            deleted_at__isnull=True,
+        )
         return (
             State.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(Exists(member_check))
             .filter(is_triage=False)
             .filter(project__archived_at__isnull=True)
-            .select_related("project")
-            .select_related("workspace")
-            .distinct()
+            .select_related("project", "workspace")
         )
 
     @state_docs(
@@ -168,18 +171,20 @@ class StateDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     def get_queryset(self):
+        """Return non-triage states for the project, scoped to active members."""
+        member_check = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+            deleted_at__isnull=True,
+        )
         return (
             State.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(Exists(member_check))
             .filter(is_triage=False)
             .filter(project__archived_at__isnull=True)
-            .select_related("project")
-            .select_related("workspace")
-            .distinct()
+            .select_related("project", "workspace")
         )
 
     @state_docs(
