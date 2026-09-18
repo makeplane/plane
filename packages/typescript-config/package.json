@@ -7,6 +7,7 @@
     "base.json",
     "nextjs.json",
     "react-library.json",
+    "react-router.json",
     "node-library.json"
   ]
 }
