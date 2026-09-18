@@ -33,6 +33,8 @@ export type TSelectionHelper = {
   getIsEntityActive: (entityID: string) => boolean;
   handleGroupClick: (groupID: string) => void;
   isGroupSelected: (groupID: string) => "empty" | "partial" | "complete";
+  handleSelectAll: () => void;
+  isAllSelected: boolean;
   isSelectionDisabled: boolean;
 };
 
@@ -71,14 +73,12 @@ export const useMultipleSelect = (props: Props) => {
 
   const entitiesList: TEntityDetails[] = useMemo(
     () =>
-      groups
-        ?.map((groupID) =>
-          entities?.[groupID]?.map((entityID) => ({
-            entityID,
-            groupID,
-          }))
-        )
-        .flat(1),
+      groups?.flatMap((groupID) =>
+        entities?.[groupID]?.map((entityID) => ({
+          entityID,
+          groupID,
+        }))
+      ),
     [entities, groups]
   );
 
@@ -287,6 +287,22 @@ export const useMultipleSelect = (props: Props) => {
     [disabled, entitiesList, handleEntitySelection, isGroupSelected]
   );
 
+  /**
+   * @description whether every currently listed entity is selected
+   */
+  const isAllSelected = useMemo(
+    () => entitiesList.length > 0 && entitiesList.every((entity) => getIsEntitySelected(entity.entityID)),
+    [entitiesList, getIsEntitySelected]
+  );
+
+  /**
+   * @description select every currently listed entity, or clear selection if all are already selected
+   */
+  const handleSelectAll = useCallback(() => {
+    if (disabled) return;
+    handleEntitySelection(entitiesList, false, isAllSelected ? "force-remove" : "force-add");
+  }, [disabled, entitiesList, handleEntitySelection, isAllSelected]);
+
   // select entities on shift + arrow up/down key press
   useEffect(() => {
     if (disabled) return;
@@ -394,6 +410,8 @@ export const useMultipleSelect = (props: Props) => {
       getIsEntityActive,
       handleGroupClick,
       isGroupSelected,
+      handleSelectAll,
+      isAllSelected,
       isSelectionDisabled: disabled,
     }),
     [
@@ -404,6 +422,8 @@ export const useMultipleSelect = (props: Props) => {
       handleEntityClick,
       handleGroupClick,
       isGroupSelected,
+      handleSelectAll,
+      isAllSelected,
     ]
   );
 

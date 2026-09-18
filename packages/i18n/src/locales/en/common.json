@@ -619,7 +619,9 @@
       "enable": "Enable",
       "disable": "Disable",
       "copy_markdown": "Copy markdown",
-      "reply": "Reply"
+      "reply": "Reply",
+      "assign_to_me": "Assign to me",
+      "unassign_from_me": "Un-assign from me"
     },
     "name": "Name",
     "discard": "Discard",

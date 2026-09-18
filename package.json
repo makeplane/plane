@@ -21,6 +21,7 @@
     "doctor": "npx react-doctor@latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "husky": "catalog:",
     "lint-staged": "catalog:",
     "oxfmt": "catalog:",

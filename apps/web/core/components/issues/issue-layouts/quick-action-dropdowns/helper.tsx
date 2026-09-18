@@ -14,6 +14,8 @@ import {
   LinkOutline,
   NewTabOutline,
   RestoreOutline,
+  UserMinusOutline,
+  UserPlusOutline,
 } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -21,6 +23,8 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+// hooks
+import { useUser } from "@/hooks/store/user";
 import { createCopyMenuWithDuplication } from "./copy-menu-helper";
 
 // Generic helper function to handle optional function calls gracefully
@@ -148,6 +152,7 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
 export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const { t } = useTranslation();
   const actionHandlers = useIssueActionHandlers(props);
+  const { data: currentUser } = useUser();
 
   const {
     issue,
@@ -164,7 +169,10 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     setArchiveIssueModal,
     setDuplicateWorkItemModal,
     handleRemoveFromView,
+    handleUpdate,
   } = props;
+
+  const isCurrentUserAssigned = !!currentUser && !!issue.assignee_ids?.includes(currentUser.id);
 
   const createEditMenuItem = (customEditAction?: () => void): TContextMenuItem => ({
     key: "edit",
@@ -176,6 +184,25 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
       }),
+    shouldRender: isEditingAllowed,
+  });
+
+  const createAssignToMeMenuItem = (): TContextMenuItem => ({
+    key: "assign-to-me",
+    title: isCurrentUserAssigned ? t("common.actions.unassign_from_me") : t("common.actions.assign_to_me"),
+    icon: isCurrentUserAssigned ? UserMinusOutline : UserPlusOutline,
+    action: () => {
+      if (!currentUser || !handleUpdate) return;
+
+      const updatedAssigneeIds = [...(issue.assignee_ids ?? [])];
+      if (isCurrentUserAssigned) {
+        updatedAssigneeIds.splice(updatedAssigneeIds.indexOf(currentUser.id), 1);
+      } else {
+        updatedAssigneeIds.push(currentUser.id);
+      }
+
+      handleUpdate({ ...issue, assignee_ids: updatedAssigneeIds });
+    },
     shouldRender: isEditingAllowed,
   });
 
@@ -262,6 +289,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   return {
     ...actionHandlers,
     createEditMenuItem,
+    createAssignToMeMenuItem,
     createCopyMenuItem,
     createOpenInNewTabMenuItem,
     createCopyLinkMenuItem,
@@ -280,6 +308,7 @@ export const useProjectIssueMenuItems = (props: MenuItemFactoryProps): TContextM
   return useMemo(
     () => [
       factory.createEditMenuItem(),
+      factory.createAssignToMeMenuItem(),
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
@@ -295,6 +324,7 @@ export const useWorkItemDetailMenuItems = (props: MenuItemFactoryProps): TContex
 
   return useMemo(
     () => [
+      factory.createAssignToMeMenuItem(),
       factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createArchiveMenuItem(),
@@ -312,6 +342,7 @@ export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuI
   return useMemo(
     () => [
       factory.createEditMenuItem(),
+      factory.createAssignToMeMenuItem(),
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
@@ -336,6 +367,7 @@ export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMen
   return useMemo(
     () => [
       factory.createEditMenuItem(customEditAction),
+      factory.createAssignToMeMenuItem(),
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
@@ -362,6 +394,7 @@ export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMe
   return useMemo(
     () => [
       factory.createEditMenuItem(customEditAction),
+      factory.createAssignToMeMenuItem(),
       factory.createCopyMenuItem(),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
