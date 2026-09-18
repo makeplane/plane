@@ -93,19 +93,34 @@ class UserImportRowSerializer(serializers.ModelSerializer):
             "display_name",
             "email",
             "student_no",
+            "phone",
+            "grade",
+            "category",
+            "degree",
+            "business_category",
             "group_label",
             "advisor_name",
+            "primary_advisor_email",
+            "co_advisor_1_name",
+            "co_advisor_1_email",
+            "co_advisor_2_name",
+            "co_advisor_2_email",
+            "review_decision",
+            "review_note",
+            "edited_at",
             "user",
             "user_detail",
             "org_unit",
             "raw",
             "created_at",
+            "updated_at",
         ]
         read_only_fields = fields
 
 
 class UserImportBatchSerializer(serializers.ModelSerializer):
     created_by_detail = ResearchUserSerializer(source="created_by", read_only=True)
+    reviewed_by_detail = ResearchUserSerializer(source="reviewed_by", read_only=True)
     rows = serializers.SerializerMethodField()
 
     class Meta:
@@ -121,6 +136,10 @@ class UserImportBatchSerializer(serializers.ModelSerializer):
             "rows_error",
             "options",
             "summary",
+            "reviewed_by",
+            "reviewed_by_detail",
+            "reviewed_at",
+            "rejection_reason",
             "created_by_detail",
             "created_at",
             "rows",
@@ -147,6 +166,9 @@ class UserImportBatchSummarySerializer(serializers.ModelSerializer):
             "rows_pending",
             "rows_error",
             "summary",
+            "reviewed_by",
+            "reviewed_at",
+            "rejection_reason",
             "created_at",
         ]
         read_only_fields = fields

@@ -30,6 +30,7 @@ class InstanceUserSerializer(BaseSerializer):
     admin_roles = serializers.SerializerMethodField()
     research_profile = serializers.SerializerMethodField()
     workspace_memberships = serializers.SerializerMethodField()
+    import_source = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -47,6 +48,7 @@ class InstanceUserSerializer(BaseSerializer):
             "admin_roles",
             "research_profile",
             "workspace_memberships",
+            "import_source",
         ]
         read_only_fields = fields
 
@@ -82,3 +84,13 @@ class InstanceUserSerializer(BaseSerializer):
                 .values_list("workspace__slug", flat=True)
             )
         return list(memberships)
+
+    def get_import_source(self, obj):
+        source = getattr(obj, "import_account_source", None)
+        if source is None:
+            return None
+        return {
+            "batch_id": str(source.batch_id),
+            "kind": source.kind,
+            "created_at": source.created_at,
+        }

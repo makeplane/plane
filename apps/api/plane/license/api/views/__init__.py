@@ -30,5 +30,9 @@ from .workspace import (
 
 from .users import (
     InstanceUserListEndpoint,
+    InstanceUserBulkDeactivateEndpoint,
+    InstanceUserClearImportedEndpoint,
+    InstanceUserLifecycleEndpoint,
+    InstanceUserReactivateEndpoint,
     InstanceUserRoleEndpoint,
 )

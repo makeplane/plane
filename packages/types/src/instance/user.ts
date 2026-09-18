@@ -29,6 +29,7 @@ export type TInstanceUser = {
     group_label: string;
   } | null;
   workspace_memberships: string[];
+  import_source: { batch_id: string; kind: "ROSTER" | "ADVISOR"; created_at: string } | null;
 };
 
 export type TInstanceUserRoleResponse = {

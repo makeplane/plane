@@ -24,7 +24,13 @@ from .integration import (
     ResearchExternalReference,
 )
 from .literature import LiteratureEntry
-from .membership import ResearchInviteCode, ResearchUserProfile, UserImportBatch, UserImportRow
+from .membership import (
+    ResearchInviteCode,
+    ResearchUserProfile,
+    UserImportAccountSource,
+    UserImportBatch,
+    UserImportRow,
+)
 from .org import MentorBinding, OrgUnit, OrgUnitMember
 from .outcome import ResearchOutcome, ResearchOutcomeLink
 from .project import ResearchProjectProfile
@@ -69,6 +75,7 @@ __all__ = [
     "ResearchUserProfile",
     "UserImportBatch",
     "UserImportRow",
+    "UserImportAccountSource",
     "ExternalReferenceLink",
     "ExternalSystemConnection",
     "IntegrationCallLog",

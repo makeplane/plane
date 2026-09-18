@@ -952,13 +952,19 @@
     },
     "user_import": {
       "title": "Roster import",
-      "hint": "Use the π-Lab student and advisor Excel templates. 电话 also accepts 手机号; MS and Ph.D import as students with their degree. 备注 is optional. The required advisor table uses 导师姓名 and 邮箱. Teams and advisors must already exist.",
+      "hint": "Use the π-Lab student and advisor Excel templates. 电话 also accepts 手机号; MS and Ph.D import as students with their degree. The whole batch is rejected if either file contains an existing workspace member; update existing members from member management.",
       "fields": {
         "students": "Member roster",
         "advisors": "Advisor name-to-email table (required)",
         "reset_passwords": "Re-issue one-time passwords"
       },
       "actions": {
+        "upload": "Upload and review",
+        "approve": "Approve import",
+        "include": "Include",
+        "exclude": "Exclude",
+        "bulk_exclude": "Exclude selected",
+        "reject": "Reject batch",
         "preview": "Dry run",
         "commit": "Import",
         "download_report": "Download report"
@@ -980,9 +986,14 @@
         "error": "Rejected"
       },
       "result": {
+        "review_title": "Pending review",
         "preview_title": "Dry run",
         "committed_title": "Import finished",
         "counts": "{total} rows · imported {ok} · pending {pending} · rejected {error}"
+      },
+      "confirm": {
+        "approve": "Approve this batch and create accounts and relations for all included rows?",
+        "reject": "Enter the rejection reason"
       },
       "history": {
         "title": "Recent imports",
@@ -999,6 +1010,9 @@
         "no_file": "Choose both the member roster and advisor name-to-email table first.",
         "user_import_file_required": "Both the member roster and advisor mapping files are required.",
         "user_import_file_invalid": "The roster could not be read. Check the header row and the encoding.",
+        "user_import_existing_member": "Import rejected: the files contain existing workspace members. Update existing members from member management.",
+        "user_import_in_progress": "An import is already running for this workspace. Try again later.",
+        "user_import_duplicate_identity": "Import rejected: the files contain duplicate email addresses or student numbers.",
         "public_workspace_missing": "The public workspace does not exist yet."
       }
     },

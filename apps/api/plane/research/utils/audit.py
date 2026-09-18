@@ -111,6 +111,7 @@ class ResearchAuditAction:
     INVITE_CODE_DELETE = "account.invite.delete"
     INVITE_CODE_REDEEM = "account.invite.redeem"
     USER_IMPORT = "account.import.run"
+    USER_IMPORT_REJECT = "account.import.reject"
     USER_PROFILE_UPDATE = "account.profile.update"
     CONTEXT_READ = "context.read"
 

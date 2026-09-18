@@ -11,6 +11,7 @@ pages (SYS-ACC-01 ~ SYS-ACC-12).
 
 import csv
 
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import status
@@ -23,6 +24,7 @@ from plane.db.models import (
     ResearchUserProfile,
     User,
     UserImportBatch,
+    UserImportRow,
     WorkspaceMember,
 )
 from plane.research.serializers import (
@@ -30,9 +32,18 @@ from plane.research.serializers import (
     ResearchUserProfileSerializer,
     UserImportBatchSerializer,
     UserImportBatchSummarySerializer,
+    UserImportRowSerializer,
 )
 from plane.research.services.accounts import AccountError, issue_invite_code
-from plane.research.services.user_import import parse_advisors, parse_students, run_import
+from plane.research.services.user_import import (
+    approve_review_batch,
+    bulk_exclude_review_rows,
+    create_review_batch,
+    parse_advisors,
+    parse_students,
+    reject_review_batch,
+    update_review_row,
+)
 from plane.research.utils.audit import ResearchAuditAction, ResearchResourceType, record_audit_event
 from plane.research.utils.errors import (
     ResearchErrorCode,
@@ -62,7 +73,13 @@ def _guard(self, request):
 
 def account_error_response(error: AccountError):
     http_status = status.HTTP_400_BAD_REQUEST
-    if error.error_code == ResearchErrorCode.PUBLIC_WORKSPACE_MISSING:
+    if error.error_code in (
+        ResearchErrorCode.PUBLIC_WORKSPACE_MISSING,
+        ResearchErrorCode.IMPORT_EXISTING_MEMBER,
+        ResearchErrorCode.IMPORT_IN_PROGRESS,
+        ResearchErrorCode.IMPORT_BATCH_NOT_REVIEWABLE,
+        ResearchErrorCode.IMPORT_REVIEW_INCOMPLETE,
+    ):
         http_status = status.HTTP_409_CONFLICT
     return research_error(error.error_code, error.message, http_status)
 
@@ -401,32 +418,35 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
                 ResearchErrorCode.IMPORT_FILE_REQUIRED,
                 "An advisor name-to-email mapping file is required.",
             )
-        dry_run = str(request.data.get("dry_run", "")).strip().lower() in ("1", "true", "yes", "on")
+        allowed_extensions = (".csv", ".xlsx")
+        for uploaded in (students_file, advisors_file):
+            if not str(uploaded.name or "").lower().endswith(allowed_extensions):
+                return research_error(ResearchErrorCode.IMPORT_FILE_INVALID, "Only CSV and XLSX files are supported.")
+            if uploaded.size > settings.FILE_SIZE_LIMIT:
+                return research_error(ResearchErrorCode.IMPORT_FILE_INVALID, "The import file is too large.")
         reset_passwords = str(request.data.get("reset_passwords", "")).strip().lower() in (
             "1",
             "true",
             "yes",
             "on",
         )
-
         try:
             students = parse_students(students_file.read(), students_file.name)
             advisor_map = parse_advisors(advisors_file.read(), advisors_file.name)
         except AccountError as exc:
             return account_error_response(exc)
 
-        batch = run_import(
-            workspace,
-            request.user,
-            students,
-            advisor_map=advisor_map,
-            dry_run=dry_run,
-            source_filename=students_file.name,
-            request=request,
-            reset_passwords=reset_passwords,
-        )
-        if dry_run:
-            return Response(batch.as_dict(), status=status.HTTP_200_OK)
+        try:
+            batch = create_review_batch(
+                workspace,
+                request.user,
+                students,
+                advisor_map=advisor_map,
+                source_filename=students_file.name,
+                reset_passwords=reset_passwords,
+            )
+        except AccountError as exc:
+            return account_error_response(exc)
         batch.prefetched_rows = list(batch.rows.all())
         return Response(
             UserImportBatchSerializer(batch).data,
@@ -454,6 +474,68 @@ class ResearchUserImportDetailEndpoint(ResearchAPIView):
         return UserImportBatch.objects.filter(workspace=workspace, pk=pk).first()
 
 
+class ResearchUserImportRowEndpoint(ResearchAPIView):
+    """``PATCH .../user-imports/<pk>/rows/<row_id>/``"""
+
+    def patch(self, request, slug, pk, row_id):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            row = update_review_row(workspace, pk, row_id, request.data)
+        except AccountError as exc:
+            return account_error_response(exc)
+        return Response(UserImportRowSerializer(row).data, status=status.HTTP_200_OK)
+
+
+class ResearchUserImportApproveEndpoint(ResearchAPIView):
+    """``POST .../user-imports/<pk>/approve/``"""
+
+    def post(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            batch = approve_review_batch(workspace, request.user, pk, request=request)
+        except AccountError as exc:
+            return account_error_response(exc)
+        batch.prefetched_rows = list(batch.rows.select_related("user").all())
+        return Response(UserImportBatchSerializer(batch).data, status=status.HTTP_200_OK)
+
+
+class ResearchUserImportBulkExcludeEndpoint(ResearchAPIView):
+    def post(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        row_ids = request.data.get("row_ids")
+        if not isinstance(row_ids, list) or len(row_ids) > 1000:
+            return research_error(ResearchErrorCode.IMPORT_ROW_INVALID, "row_ids must contain at most 1000 rows.")
+        try:
+            updated = bulk_exclude_review_rows(workspace, pk, row_ids, request.data.get("note"))
+        except AccountError as exc:
+            return account_error_response(exc)
+        return Response({"updated": updated}, status=status.HTTP_200_OK)
+
+
+class ResearchUserImportRejectEndpoint(ResearchAPIView):
+    """``POST .../user-imports/<pk>/reject/``"""
+
+    def post(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        reason = str(request.data.get("reason") or "").strip()
+        if not reason:
+            return research_error(ResearchErrorCode.IMPORT_ROW_INVALID, "A rejection reason is required.")
+        try:
+            batch = reject_review_batch(workspace, request.user, pk, reason, request=request)
+        except AccountError as exc:
+            return account_error_response(exc)
+        batch.prefetched_rows = list(batch.rows.all())
+        return Response(UserImportBatchSerializer(batch).data, status=status.HTTP_200_OK)
+
+
 class ResearchUserImportReportEndpoint(ResearchAPIView):
     """``GET /api/research/workspaces/<slug>/user-imports/<pk>/report/``
 
@@ -470,6 +552,12 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
             return research_not_found(
                 ResearchErrorCode.IMPORT_BATCH_NOT_FOUND,
                 "Import batch not found.",
+            )
+        if batch.status != UserImportBatch.Status.IMPORTED:
+            return research_error(
+                ResearchErrorCode.IMPORT_BATCH_NOT_REVIEWABLE,
+                "The report is available after approval.",
+                status.HTTP_409_CONFLICT,
             )
 
         response = HttpResponse(content_type="text/csv; charset=utf-8")
@@ -496,6 +584,7 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
             ]
         )
         for row in batch.rows.select_related("user").order_by("row_number"):
+            report_status = "EXCLUDED" if row.review_decision == UserImportRow.ReviewDecision.EXCLUDED else row.status
             writer.writerow(
                 [
                     row.row_number,
@@ -510,9 +599,31 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                     row.raw.get("primary_advisor_name", row.advisor_name),
                     row.raw.get("co_advisor_1_name", ""),
                     row.raw.get("co_advisor_2_name", ""),
-                    row.status,
+                    report_status,
                     row.message,
                     row.initial_password,
+                ]
+            )
+        for source in batch.created_accounts.select_related("user").filter(
+            kind="ADVISOR"
+        ).order_by("created_at"):
+            writer.writerow(
+                [
+                    "导师表",
+                    source.user.display_name,
+                    source.user.email,
+                    "",
+                    "",
+                    "",
+                    "ADVISOR",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "OK",
+                    "导师账号",
+                    source.initial_password,
                 ]
             )
         return response

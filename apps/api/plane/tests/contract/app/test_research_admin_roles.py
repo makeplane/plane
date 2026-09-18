@@ -7,7 +7,7 @@
 import pytest
 from rest_framework.test import APIClient
 
-from plane.db.models import WorkspaceMember
+from plane.db.models import UserImportAccountSource, UserImportBatch, WorkspaceMember
 from plane.license.models import InstanceRoleAssignment
 from plane.tests.research_fixtures import (
     add_workspace_member,
@@ -174,3 +174,56 @@ def test_user_list_reports_tags(env):
     rows = response.data["results"] if isinstance(response.data, dict) else response.data
     row = next(item for item in rows if str(item["id"]) == str(target.id))
     assert row["admin_roles"] == ["OPS_ADMIN"]
+
+
+def test_import_created_account_can_be_deactivated_and_reactivated(env):
+    target = make_user(first_name="Imported")
+    membership = add_workspace_member(env["workspace"], target)
+    batch = UserImportBatch.objects.create(workspace=env["workspace"], status="IMPORTED")
+    UserImportAccountSource.objects.create(user=target, batch=batch, kind="ROSTER")
+    client = client_for(env["instance_admin"])
+
+    deactivated = client.delete(users_url(f"{target.id}/"))
+    assert deactivated.status_code == 200
+    target.refresh_from_db()
+    membership.refresh_from_db()
+    assert target.is_active is False
+    assert membership.is_active is False
+
+    reactivated = client.post(users_url(f"{target.id}/reactivate/"), {}, format="json")
+    assert reactivated.status_code == 200
+    target.refresh_from_db()
+    membership.refresh_from_db()
+    assert target.is_active is True
+    assert membership.is_active is True
+
+
+def test_manual_and_instance_admin_accounts_are_protected(env):
+    client = client_for(env["instance_admin"])
+    manual = make_user(first_name="Manual")
+    manual_response = client.delete(users_url(f"{manual.id}/"))
+    assert manual_response.status_code == 409
+    assert manual_response.data["code"] == "NOT_IMPORTED"
+
+    batch = UserImportBatch.objects.create(workspace=env["workspace"], status="IMPORTED")
+    UserImportAccountSource.objects.create(user=env["instance_admin"], batch=batch, kind="ROSTER")
+    self_response = client.delete(users_url(f"{env['instance_admin'].id}/"))
+    assert self_response.status_code == 409
+    assert self_response.data["code"] == "CURRENT_OPERATOR"
+
+
+def test_bulk_and_batch_clear_return_per_item_results(env):
+    batch = UserImportBatch.objects.create(workspace=env["workspace"], status="IMPORTED")
+    imported = [make_user(first_name=f"Imported {index}") for index in range(2)]
+    for user in imported:
+        add_workspace_member(env["workspace"], user)
+        UserImportAccountSource.objects.create(user=user, batch=batch, kind="ROSTER")
+    client = client_for(env["instance_admin"])
+
+    bulk = client.post(users_url("bulk-deactivate/"), {"user_ids": [str(imported[0].id)]}, format="json")
+    assert bulk.status_code == 200
+    assert [item["id"] for item in bulk.data["success"]] == [str(imported[0].id)]
+    cleared = client.post(users_url("clear-imported/"), {"batch_id": str(batch.id)}, format="json")
+    assert cleared.status_code == 200
+    assert [item["id"] for item in cleared.data["success"]] == [str(imported[1].id)]
+    assert [item["id"] for item in cleared.data["skipped"]] == [str(imported[0].id)]

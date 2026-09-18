@@ -70,15 +70,18 @@ class Command(BaseCommand):
             raise CommandError(f"{error.error_code}: {error.message}")
 
         dry_run = bool(options["dry_run"]) or not options["yes"]
-        batch = run_import(
-            workspace,
-            actor,
-            students,
-            advisor_map=advisor_map,
-            dry_run=dry_run,
-            source_filename=students_path.name,
-            reset_passwords=bool(options["reset_passwords"]),
-        )
+        try:
+            batch = run_import(
+                workspace,
+                actor,
+                students,
+                advisor_map=advisor_map,
+                dry_run=dry_run,
+                source_filename=students_path.name,
+                reset_passwords=bool(options["reset_passwords"]),
+            )
+        except AccountError as error:
+            raise CommandError(f"{error.error_code}: {error.message}") from error
 
         batch_label = "preview" if batch.id is None else str(batch.id)
         self.stdout.write(

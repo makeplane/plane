@@ -162,6 +162,12 @@ class ResearchErrorCode:
     IMPORT_FILE_INVALID = "user_import_file_invalid"
     IMPORT_BATCH_NOT_FOUND = "user_import_batch_not_found"
     IMPORT_ROW_INVALID = "user_import_row_invalid"
+    IMPORT_EXISTING_MEMBER = "user_import_existing_member"
+    IMPORT_IN_PROGRESS = "user_import_in_progress"
+    IMPORT_DUPLICATE_IDENTITY = "user_import_duplicate_identity"
+    IMPORT_BATCH_NOT_REVIEWABLE = "user_import_batch_not_reviewable"
+    IMPORT_REVIEW_INCOMPLETE = "user_import_review_incomplete"
+    IMPORT_ROW_NOT_FOUND = "user_import_row_not_found"
     USER_PROFILE_NOT_FOUND = "research_user_profile_not_found"
 
 

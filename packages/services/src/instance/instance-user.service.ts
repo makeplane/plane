@@ -21,14 +21,50 @@ export class InstanceUserService extends APIService {
     super(API_BASE_URL);
   }
 
-  async list(params: { search?: string; role?: TAdminRole | ""; cursor?: string } = {}) {
+  async list(
+    params: { search?: string; role?: TAdminRole | ""; cursor?: string; isActive?: boolean; imported?: boolean } = {}
+  ) {
     return this.get("/api/instances/users/", {
       params: {
         ...(params.search ? { search: params.search } : {}),
         ...(params.role ? { role: params.role } : {}),
         ...(params.cursor ? { cursor: params.cursor } : {}),
+        ...(params.isActive !== undefined ? { is_active: String(params.isActive) } : {}),
+        ...(params.imported !== undefined ? { imported: String(params.imported) } : {}),
       },
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deactivate(userId: string) {
+    return this.delete(`/api/instances/users/${userId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkDeactivate(userIds: string[]) {
+    return this.post("/api/instances/users/bulk-deactivate/", { user_ids: userIds })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async clearImported(batchId?: string) {
+    return this.post("/api/instances/users/clear-imported/", batchId ? { batch_id: batchId } : {})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async reactivate(userId: string) {
+    return this.post(`/api/instances/users/${userId}/reactivate/`, {})
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

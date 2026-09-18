@@ -109,11 +109,13 @@ class ResearchInviteCode(BaseModel):
 
 
 class UserImportBatch(BaseModel):
-    """One bulk import run (dry run or committed)."""
+    """One persisted roster import review and its eventual outcome."""
 
     class Status(models.TextChoices):
+        PENDING_REVIEW = "PENDING_REVIEW", "Pending review"
         PENDING = "PENDING", "Pending"
         IMPORTED = "IMPORTED", "Imported"
+        REJECTED = "REJECTED", "Rejected"
         FAILED = "FAILED", "Failed"
 
     workspace = models.ForeignKey(
@@ -123,13 +125,23 @@ class UserImportBatch(BaseModel):
     )
     source_filename = models.CharField(max_length=255, blank=True, default="")
     dry_run = models.BooleanField(default=False)
-    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING_REVIEW)
     rows_total = models.PositiveIntegerField(default=0)
     rows_ok = models.PositiveIntegerField(default=0)
     rows_pending = models.PositiveIntegerField(default=0)
     rows_error = models.PositiveIntegerField(default=0)
     options = models.JSONField(default=dict, blank=True)
     summary = models.JSONField(default=dict, blank=True)
+    advisor_mapping = models.JSONField(default=dict, blank=True)
+    reviewed_by = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="reviewed_research_import_batches",
+        null=True,
+        blank=True,
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True, default="")
 
     class Meta:
         verbose_name = "Research User Import Batch"
@@ -206,6 +218,11 @@ class UserImportRow(BaseModel):
         PENDING = "PENDING", "Needs input"
         ERROR = "ERROR", "Rejected"
 
+    class ReviewDecision(models.TextChoices):
+        PENDING = "PENDING", "Pending"
+        INCLUDED = "INCLUDED", "Included"
+        EXCLUDED = "EXCLUDED", "Excluded"
+
     batch = models.ForeignKey(
         UserImportBatch,
         on_delete=models.CASCADE,
@@ -220,6 +237,23 @@ class UserImportRow(BaseModel):
     student_no = models.CharField(max_length=64, blank=True, default="")
     group_label = models.CharField(max_length=128, blank=True, default="")
     advisor_name = models.CharField(max_length=255, blank=True, default="")
+    phone = models.CharField(max_length=32, blank=True, default="")
+    grade = models.CharField(max_length=16, blank=True, default="")
+    category = models.CharField(max_length=16, blank=True, default="")
+    degree = models.CharField(max_length=8, blank=True, default="")
+    business_category = models.CharField(max_length=32, blank=True, default="")
+    primary_advisor_email = models.CharField(max_length=255, blank=True, default="")
+    co_advisor_1_name = models.CharField(max_length=255, blank=True, default="")
+    co_advisor_1_email = models.CharField(max_length=255, blank=True, default="")
+    co_advisor_2_name = models.CharField(max_length=255, blank=True, default="")
+    co_advisor_2_email = models.CharField(max_length=255, blank=True, default="")
+    review_decision = models.CharField(
+        max_length=16,
+        choices=ReviewDecision.choices,
+        default=ReviewDecision.PENDING,
+    )
+    review_note = models.CharField(max_length=500, blank=True, default="")
+    edited_at = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(
         "db.User",
         on_delete=models.SET_NULL,
@@ -249,3 +283,46 @@ class UserImportRow(BaseModel):
 
     def __str__(self):
         return f"{self.batch_id}#{self.row_number} <{self.status}>"
+
+
+class UserImportAccountSource(BaseModel):
+    """The first import batch that created an account."""
+
+    class Kind(models.TextChoices):
+        ROSTER = "ROSTER", "Roster"
+        ADVISOR = "ADVISOR", "Advisor"
+
+    user = models.OneToOneField(
+        "db.User",
+        on_delete=models.CASCADE,
+        related_name="import_account_source",
+    )
+    batch = models.ForeignKey(
+        UserImportBatch,
+        on_delete=models.PROTECT,
+        related_name="created_accounts",
+    )
+    row = models.ForeignKey(
+        UserImportRow,
+        on_delete=models.SET_NULL,
+        related_name="created_accounts",
+        null=True,
+        blank=True,
+    )
+    kind = models.CharField(max_length=16, choices=Kind.choices)
+    initial_password = models.CharField(max_length=128, blank=True, default="")
+    deactivated_workspace_ids = models.JSONField(default=list, blank=True)
+    deactivated_at = models.DateTimeField(null=True, blank=True)
+    deactivated_by = models.ForeignKey(
+        "db.User",
+        on_delete=models.SET_NULL,
+        related_name="deactivated_import_accounts",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "Imported Account Source"
+        verbose_name_plural = "Imported Account Sources"
+        db_table = "research_user_import_account_sources"
+        indexes = [models.Index(fields=["batch", "kind"], name="rsch_impa_batch_kind_idx")]
