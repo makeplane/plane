@@ -226,6 +226,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
     def delete(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         project_member.is_active = False
+        project_member.access_revoked = True
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
