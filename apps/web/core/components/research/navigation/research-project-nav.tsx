@@ -33,6 +33,18 @@ export const ResearchProjectNav = observer(function ResearchProjectNav({ workspa
 
   return (
     <div className="flex flex-wrap items-center gap-1 border-b border-subtle px-5 py-2">
+      <Link
+        href={`/${workspaceSlug}/research/projects`}
+        className="mr-2 rounded-md px-2 py-1 text-12 text-secondary transition-colors hover:bg-surface-2"
+      >
+        {t("research.nav.back_to_projects")}
+      </Link>
+      <Link
+        href={`/${workspaceSlug}/research`}
+        className="mr-2 rounded-md px-2 py-1 text-12 text-secondary transition-colors hover:bg-surface-2"
+      >
+        {t("research.nav.back_to_overview")}
+      </Link>
       {items.map((item) => {
         const href = `/${workspaceSlug}/research/projects/${projectId}/${item.path}`;
         const isActive = Boolean(pathname?.startsWith(href));

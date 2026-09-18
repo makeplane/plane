@@ -885,7 +885,9 @@
       "integrations": "Integrations",
       "timeline": "Timeline",
       "dashboard": "Research overview",
-      "system": "System management"
+      "system": "System management",
+      "back_to_projects": "Back to projects",
+      "back_to_overview": "Back to research overview"
     },
     "admin_roles": {
       "dev_admin": "Development administrator",
@@ -980,7 +982,7 @@
       "result": {
         "preview_title": "Dry run",
         "committed_title": "Import finished",
-        "counts": "{{total}} rows · imported {{ok}} · pending {{pending}} · rejected {{error}}"
+        "counts": "{total} rows · imported {ok} · pending {pending} · rejected {error}"
       },
       "history": {
         "title": "Recent imports",
@@ -1003,7 +1005,7 @@
     "pi": {
       "title": "Overview for my scope",
       "description": "Projects, reports and reviews within your authorised research scope.",
-      "scope_summary": "{{units}} organisation node(s) in scope from {{workspace}}.",
+      "scope_summary": "{units} organisation node(s) in scope from {workspace}.",
       "generated_at": "Updated",
       "org_units": "Organisation nodes in scope",
       "recent_outcomes": "Recent outcomes",
@@ -1020,8 +1022,8 @@
         "projects": "Research projects",
         "reports": "Periodic reports",
         "pending_review": "awaiting review",
-        "not_submitted": "{{count}} not submitted",
-        "recent_submissions": "{{count}} submitted in 30 days",
+        "not_submitted": "{count} not submitted",
+        "recent_submissions": "{count} submitted in 30 days",
         "stages": "Stage runs",
         "blocked": "blocked",
         "reviews": "Stages awaiting review",
@@ -1047,7 +1049,149 @@
       "templates_hint": "Templates used when a report is created.",
       "identity_hint": "PiLab SSO identity mappings.",
       "platform_hint": "Module switches, upload limits and default visibility.",
-      "audit_hint": "Read-only, append-only research audit trail."
+      "audit_hint": "Read-only, append-only research audit trail.",
+      "pending_title": "Needs your attention",
+      "pending_description": "Handle returned reports, stage reviews and office approvals, then continue from the project.",
+      "next_title": "Suggested next step",
+      "next_description": "Move from a project into experiments, literature and code, then create a report for review or approval.",
+      "open_reviews": "Open reviews",
+      "open_approvals": "Open approvals",
+      "open_revisions": "Open reports to revise",
+      "open_projects": "Open research projects",
+      "open_reports": "Open periodic reports"
+    },
+    "status": {
+      "workspace": "Current workspace: {workspace}",
+      "retry": "Retry",
+      "back_to_workspace": "Back to workspace",
+      "load_failed": {
+        "title": "Research identity could not be loaded",
+        "description": "We could not confirm your research identity due to a network or service error. Retry without leaving this page."
+      },
+      "module_disabled": {
+        "title": "Research is currently unavailable",
+        "description": "The research module is disabled for this installation. Ask a system administrator to check the global configuration."
+      },
+      "workspace_disabled": {
+        "title": "Research is disabled for this workspace",
+        "description": "Research features are turned off here. A workspace administrator can enable them in Research platform settings."
+      },
+      "section_disabled": {
+        "title": "This research section is not enabled",
+        "description": "This workspace has not enabled the requested section. Return to the research overview to use another available section."
+      },
+      "permission_denied": {
+        "title": "You do not have access to this page",
+        "description": "Access is determined by the backend research permissions and organisation relationships. Ask a research administrator if you need access."
+      }
+    },
+    "feedback": {
+      "draft_saved": {
+        "title": "Draft saved",
+        "message": "The report body is up to date. You can continue editing or submit it."
+      },
+      "report_submitted": {
+        "title": "Report submitted",
+        "message": "The report is awaiting review. Its status and history have been refreshed."
+      },
+      "report_returned": {
+        "title": "Report returned",
+        "message": "The report now needs revision and the author can act on the return reason."
+      },
+      "report_accepted": {
+        "title": "Report accepted",
+        "message": "The official version is confirmed and the report history has been refreshed."
+      },
+      "visibility_updated": {
+        "title": "Visibility updated",
+        "message": "The new report visibility is now in effect."
+      },
+      "report_created": {
+        "title": "Report created",
+        "message": "Opening the report so you can continue with its body."
+      },
+      "project_created": {
+        "title": "Research project created",
+        "message": "Opening the project details."
+      },
+      "project_archived": {
+        "title": "Project archived",
+        "message": "The project is no longer active and can be restored later."
+      },
+      "project_restored": {
+        "title": "Project restored",
+        "message": "The project is active again."
+      },
+      "member_added": {
+        "title": "Member added",
+        "message": "The account was resolved, the relationship was saved, and the list was refreshed."
+      },
+      "org_remove_updated": {
+        "title": "Member removed",
+        "message": "The organisation membership has been updated."
+      },
+      "org_role_updated": {
+        "title": "Member role updated",
+        "message": "The new role is active and the member list has been refreshed."
+      },
+      "org_primary_updated": {
+        "title": "Primary organisation updated",
+        "message": "The backend validated and updated the primary relationship."
+      },
+      "org_pi_updated": {
+        "title": "PI relationship updated",
+        "message": "The target member is now in the PI set; historical report and approval authors are unchanged."
+      },
+      "mentor_created": {
+        "title": "Advisor relationship created",
+        "message": "The advisor list has been refreshed."
+      },
+      "mentor_removed": {
+        "title": "Advisor relationship removed",
+        "message": "The relationship is no longer active and the list has been refreshed."
+      }
+    },
+    "list_state": {
+      "active_filters": "Active filters:",
+      "clear_filters": "Clear filters",
+      "projects": {
+        "create": "Create project",
+        "loading": {
+          "title": "Loading research projects",
+          "description": "Please wait while the project list is updated."
+        },
+        "error": {
+          "title": "Projects could not be loaded",
+          "description": "Check your connection and try loading the project list again."
+        },
+        "empty": {
+          "title": "No research project yet",
+          "description": "Create the first cultivation project or team research project above."
+        },
+        "no-results": {
+          "title": "No project matches these filters",
+          "description": "Adjust the filters or clear them to see all visible projects."
+        }
+      },
+      "reports": {
+        "create": "Create report",
+        "loading": {
+          "title": "Loading reports",
+          "description": "Please wait while the report list is updated."
+        },
+        "error": {
+          "title": "Reports could not be loaded",
+          "description": "Check your connection and try loading the report list again."
+        },
+        "empty": {
+          "title": "No periodic report yet",
+          "description": "Research members with a primary organisation can create the first weekly or monthly report above."
+        },
+        "no-results": {
+          "title": "No report matches these filters",
+          "description": "Adjust the filters or clear them to see all visible reports."
+        }
+      }
     },
     "common": {
       "cancel": "Cancel",
@@ -1070,7 +1214,7 @@
       "date_from": "Start date",
       "date_to": "End date",
       "apply_filters": "Apply filters",
-      "total_results": "{{count}} total"
+      "total_results": "{count} total"
     },
     "roles": {
       "owner": "Node owner",
@@ -1154,12 +1298,43 @@
       "pi_transfer": "Principal investigator transfer",
       "pi_transfer_hint": "Transferring the role only changes organisation roles. Historical reports and approvals keep their original authors.",
       "pi_transfer_action": "Transfer",
+      "resolved_member": "Resolved to a member of this node: {member}",
+      "member_not_in_unit": "No matching member exists in this organisation node. Add the member first and check the email address.",
+      "workspace_member_not_found": "No matching account exists in this workspace; the backend will still validate the value on submit.",
+      "no_current_pi": "None",
+      "resolved_mentee": "Research owner: {member}",
+      "resolved_mentor": "Advisor: {member}",
+      "mentee_not_found": "The research owner was not found in this workspace.",
+      "mentor_not_found": "The advisor was not found in this workspace.",
+      "primary_for": "Set primary organisation for {member}",
       "mentee_email_placeholder": "Research owner email",
       "mentor_email_placeholder": "Advisor email",
       "bind_mentor": "Bind advisor",
       "primary_advisor": "Primary advisor",
       "co_advisor": "Co-advisor",
       "no_mentor_bindings": "No advisor binding for this node",
+      "confirm": {
+        "remove": {
+          "title": "Remove this member?",
+          "description": "{member} will be removed from “{unit}” and may lose research access derived from this node."
+        },
+        "role": {
+          "title": "Change this member's role?",
+          "description": "{member}'s role in “{unit}” will become “{role}”, which may change the actions they can perform."
+        },
+        "primary": {
+          "title": "Change the primary organisation?",
+          "description": "{member}'s primary state in “{unit}” will become “{state}”. The backend rejects conflicting primary relationships."
+        },
+        "pi": {
+          "title": "Confirm the PI change?",
+          "description": "Current PI for “{unit}”: {current}; target PI: {member}. Confirming replaces the current PI set with the target. Organisation scope and future review rights may change; historical report and approval authors remain unchanged."
+        },
+        "mentor": {
+          "title": "Remove this advisor relationship?",
+          "description": "The “{mentor} → {mentee}” relationship in “{unit}” will end. Future visibility and review paths may change."
+        }
+      },
       "columns": {
         "member": "Member",
         "role": "Role",
@@ -1196,6 +1371,10 @@
       "open_team_project": "Open project",
       "archive": "Archive",
       "restore": "Restore",
+      "confirm_archive_title": "Archive this project?",
+      "confirm_archive": "“{project}” will leave the active list and can be restored later.",
+      "confirm_restore_title": "Restore this project?",
+      "confirm_restore": "“{project}” will return to the active state.",
       "empty": "No research project yet",
       "all_statuses": "All statuses",
       "all_types": "All types",
@@ -1216,7 +1395,7 @@
       "detail_description": "Status, visibility, review history and actions.",
       "period_placeholder": "Period, e.g. 2026-W38 / 2026-09",
       "create": "Create report",
-      "team_projects": "Team projects ({{count}})",
+      "team_projects": "Team projects ({count})",
       "mine_only": "Only mine",
       "all_statuses": "All statuses",
       "all_types": "All types",
@@ -1231,12 +1410,19 @@
       "open_body": "Open body",
       "draft_content": "Report body",
       "official_content": "Submitted version",
-      "official_version": "Version {{version}}",
+      "official_version": "Version {version}",
       "no_official_content": "No submitted version is available yet.",
       "visibility": "Visibility",
       "visibility_hint": "You can narrow the workspace default, never widen it.",
       "return_reason": "Return reason",
       "return_placeholder": "Explain what has to change",
+      "return_target": "Confirming changes the status from “{from}” to “{to}”.",
+      "next_step": {
+        "draft": "Next: complete the body and submit it for review.",
+        "submitted": "Next: wait for an advisor or reviewer; a reason is required to return it.",
+        "needs_revision": "Next: revise the body from the return reason and submit again.",
+        "accepted": "Complete: the official version and review history are available."
+      },
       "history": "Review history",
       "no_history": "No review action yet",
       "columns": {
