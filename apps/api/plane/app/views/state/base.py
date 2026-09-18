@@ -42,6 +42,16 @@ class StateViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve(self, request, slug, project_id, pk):
+        # Declared explicitly so the routed GET carries the same project-role
+        # check as list() below. Without it the action is served by DRF's
+        # generic retrieve mixin under the bare default permission class:
+        # authenticated but not authorized. No client calls this today, but the
+        # route is live and a caller is already wired up one layer away, so it
+        # gets a real implementation rather than being left to fail closed.
+        return super().retrieve(request, slug=slug, project_id=project_id, pk=pk)
+
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):

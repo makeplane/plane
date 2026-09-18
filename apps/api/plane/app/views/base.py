@@ -17,9 +17,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # Third part imports
 from rest_framework import status
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, MethodNotAllowed
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -45,6 +45,25 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
+# Actions that DRF's generic mixins implement for us. Authorization in this
+# codebase lives on the concrete method — either an @allow_permission decorator
+# or an inline role check — so an action served straight from a mixin runs with
+# nothing but `permission_classes`. Where that is the bare default, the request
+# is authenticated but not authorized at all.
+_MIXIN_PROVIDED_ACTIONS = frozenset({"list", "retrieve", "create", "update", "partial_update", "destroy"})
+
+# Permission classes that authorize nothing: neither says anything about what
+# the caller may touch. `IsAuthenticated` only establishes that there is a
+# caller; `AllowAny` does not even do that. A viewset carrying only these has
+# delegated all of its authorization to per-method checks, so a mixin-served
+# action has none.
+#
+# Membership-tested rather than compared against the default, so a declaration
+# that is *weaker* than the default — `[AllowAny]`, or an empty list — is not
+# mistaken for a deliberate restrictive one.
+_NON_AUTHORIZING_PERMISSIONS = frozenset({IsAuthenticated, AllowAny})
+
+
 class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
     model = None
 
@@ -66,6 +85,117 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         except Exception as e:
             log_exception(e)
             raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
+
+    @classmethod
+    def _action_owner(cls, action):
+        """
+        Return the class in the MRO that actually implements `action`.
+
+        Used to tell "we wrote this method" from "DRF's generic mixin supplied
+        it". Inheriting the method from another class in this codebase counts as
+        ours: the authorization check travels with the implementation.
+        """
+        for klass in cls.__mro__:
+            if action in vars(klass):
+                return klass
+        return None
+
+    def _resolved_action_is_authorized(self):
+        """
+        Whether the action this request resolved to carries any authorization.
+
+        False only when a router mapped a verb to an action the viewset does not
+        implement, so the request is about to be served by a DRF mixin under the
+        bare default permission class. Every other shape is left alone.
+        """
+        action = getattr(self, "action", None)
+
+        # No action resolved (e.g. an OPTIONS probe) — DRF handles it.
+        if action is None:
+            return True
+
+        # A custom @action is always explicitly written, so it carries whatever
+        # check its author put on it.
+        if action not in _MIXIN_PROVIDED_ACTIONS:
+            return True
+
+        # A genuinely restrictive permission class authorizes every action
+        # uniformly, including mixin-served ones.
+        #
+        # Reads the *effective* permissions for this action via
+        # get_permissions() rather than the static permission_classes
+        # attribute. A viewset can override get_permissions() to return a
+        # restrictive permission for a specific action without ever mutating
+        # self.permission_classes, and nothing enforces that it must - reading
+        # the class attribute directly would miss that override and refuse an
+        # actually-authorized action with a false 405.
+        #
+        # get_permissions() was already called once this request, by
+        # super().initial() above (through DRF's own check_permissions()).
+        # Calling it again here is the same pattern DRF itself relies on
+        # whenever it needs the current permission set, and is safe as long as
+        # get_permissions() has no side effects beyond what it already has -
+        # the one override in this codebase today only reassigns
+        # self.permission_classes before delegating to super(), which is
+        # idempotent to run twice.
+        if any(type(permission) not in _NON_AUTHORIZING_PERMISSIONS for permission in self.get_permissions()):
+            return True
+
+        # Overriding perform_create is the documented way to ride
+        # CreateModelMixin.create while controlling what gets saved. Treat the
+        # override as the implementation, so this does not reject a deliberate
+        # pattern. NOTE: perform_create is a save hook, not an authorization
+        # hook — a viewset using it still needs its own permission check.
+        #
+        # perform_create must be resolved the same way every other action is:
+        # CreateModelMixin itself always defines perform_create, so checking
+        # only "is it defined" is always true and never rejects anything. The
+        # owner has to actually be ours (not rest_framework's) for this to mean
+        # the viewset overrode it.
+        if action == "create":
+            perform_create_owner = self._action_owner("perform_create")
+            if perform_create_owner is not None and not perform_create_owner.__module__.startswith(
+                "rest_framework"
+            ):
+                return True
+
+        # DRF's partial_update delegates to self.update(), so a viewset that
+        # implements update() authorizes PATCH transitively even without its own
+        # partial_update. No viewset in the tree does this today, but the guard
+        # must not punish it if one appears.
+        if action == "partial_update":
+            update_owner = self._action_owner("update")
+            if update_owner is not None and not update_owner.__module__.startswith("rest_framework"):
+                return True
+
+        owner = self._action_owner(action)
+        return owner is not None and not owner.__module__.startswith("rest_framework")
+
+    def initial(self, request, *args, **kwargs):
+        # Deliberately after super(), which runs authentication and the
+        # permission classes. Whatever they would have rejected is still
+        # rejected first and with their own status — an unauthenticated caller
+        # gets 401 from IsAuthenticated rather than learning from a 405 that the
+        # route exists.
+        super().initial(request, *args, **kwargs)
+
+        if not self._resolved_action_is_authorized():
+            # The route exists but nothing authorizes it. Refuse rather than let
+            # the generic mixin operate on whatever get_queryset() happens to
+            # return. Reported as "method not allowed" because the correct state
+            # of the world is that this verb was never meant to be routed here.
+            # Logged as a warning without a traceback: the refusal is expected
+            # and carries no stack worth capturing, and anyone can trigger it by
+            # calling a dead route in a loop. A full logger.exception() here
+            # would hand them unbounded error-log amplification.
+            log_exception(
+                Exception(
+                    f"Refused unauthorized mixin-served action: "
+                    f"{type(self).__name__}.{self.action} via {request.method} {request.path}"
+                ),
+                warning=True,
+            )
+            raise MethodNotAllowed(request.method)
 
     def handle_exception(self, exc):
         """
