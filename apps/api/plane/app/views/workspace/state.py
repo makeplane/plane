@@ -16,7 +16,7 @@ from collections import defaultdict
 
 class WorkspaceStatesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
-    use_read_replica = True
+    use_read_replica = False
 
     def get(self, request, slug):
         states = State.objects.filter(
