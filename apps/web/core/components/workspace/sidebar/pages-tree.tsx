@@ -14,7 +14,7 @@ import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, PageIcon } from "@plane/propel/icons";
 import { cn, getPageName } from "@plane/utils";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/hooks/store";
 
 // guards against malformed (cyclic) hierarchies
 const MAX_TREE_DEPTH = 20;

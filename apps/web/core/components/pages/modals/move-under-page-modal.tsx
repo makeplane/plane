@@ -14,8 +14,8 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // plane web hooks
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
+import { usePageStore } from "@/hooks/store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
