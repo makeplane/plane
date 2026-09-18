@@ -242,6 +242,9 @@ def _map_exact_headers(header_row, headers):
 
 def _map_advisor_headers(header_row):
     normalised = [_normalise_header(cell) for cell in header_row]
+    non_empty = [value for value in normalised if value]
+    if len(non_empty) != len(set(non_empty)):
+        raise AccountError(ResearchErrorCode.IMPORT_FILE_INVALID, "导师表头存在重复列，请检查列名。")
     mapping = {}
     for field_name, aliases in ADVISOR_HEADERS.items():
         for alias in aliases:
@@ -469,8 +472,13 @@ def resolve_existing_advisor(workspace, email):
     ).first()
 
 
-def resolve_row_advisors(workspace, row, advisor_map):
-    """Resolve roster advisor names without provisioning advisor accounts."""
+def resolve_row_advisors(workspace, row, advisor_map, *, allow_unprovisioned=False):
+    """Resolve roster advisor names from the mapping and workspace members.
+
+    During preview, mapped advisors that are not members yet are treated as
+    provisionable. The commit path provisions them before resolving rows, so
+    both paths use the same mapping without writing during a dry run.
+    """
     primary_advisor = None
     co_advisors = []
     reasons = []
@@ -486,6 +494,11 @@ def resolve_row_advisors(workspace, row, advisor_map):
             continue
         advisor = resolve_existing_advisor(workspace, email)
         if advisor is None:
+            if allow_unprovisioned:
+                # A valid mapped mailbox will be provisioned on commit. Keep
+                # preview optimistic while still reporting unmapped/invalid
+                # entries above.
+                continue
             reasons.append(f"{label}不是当前工作空间有效成员：{name}")
             continue
         if label == "主导师":
@@ -493,6 +506,60 @@ def resolve_row_advisors(workspace, row, advisor_map):
         else:
             co_advisors.append(advisor)
     return primary_advisor, co_advisors, reasons
+
+
+def _upsert_import_advisor(workspace, actor, name, email, batch=None):
+    """Create the account and workspace seat represented by an advisor row.
+
+    Advisor spreadsheets are the source of truth for the people referenced by
+    the roster. Provisioning is idempotent by email and deliberately does not
+    invent an organisation node; mentor bindings can point at any workspace
+    member and the administrator can classify the advisor later.
+    """
+    user = User.objects.filter(email__iexact=email).first()
+    if user is None:
+        password = generate_password()
+        user = User(
+            email=email,
+            username=email,
+            first_name=name,
+            display_name=name,
+            is_active=True,
+            is_password_reset_required=True,
+        )
+        user.set_password(password)
+        user.save()
+    else:
+        changed = set()
+        if name and not user.display_name:
+            user.display_name = name
+            changed.add("display_name")
+        if name and not user.first_name:
+            user.first_name = name
+            changed.add("first_name")
+        if not user.is_active:
+            user.is_active = True
+            changed.add("is_active")
+        if changed:
+            user.save(update_fields=sorted(changed | {"updated_at"}))
+
+    ensure_workspace_membership(workspace, user, actor)
+    ResearchUserProfile.objects.get_or_create(
+        user=user,
+        defaults={
+            "category": ResearchUserProfile.Category.ADVISOR,
+            "source_batch": batch,
+            "created_by": actor,
+        },
+    )
+    return user
+
+
+def provision_import_advisors(workspace, actor, advisor_map, batch=None):
+    """Provision every valid advisor row, even if no student references it yet."""
+    for name, email in advisor_map.items():
+        if name and _valid_email(email):
+            _upsert_import_advisor(workspace, actor, name, email, batch=batch)
 
 
 def find_user_for_row(row):
@@ -733,6 +800,10 @@ def run_import(
         options={"advisor_mapping_size": len(advisor_map), "reset_passwords": bool(reset_passwords)},
         created_by=actor,
     )
+    # The advisor workbook is an import source, not only a lookup table. Make
+    # every valid mapped advisor an idempotent workspace member before rows are
+    # resolved, otherwise every student would be reported as missing a mentor.
+    provision_import_advisors(workspace, actor, advisor_map, batch=batch)
 
     counts = {"ok": 0, "pending": 0, "error": 0}
     groups = set()
@@ -889,7 +960,12 @@ def _import_roster_row(
 ):
     unit, unit_reason = resolve_team_unit(workspace, row.group, row.business_category)
     mentor_unit = unit
-    primary_advisor, co_advisors, pending_reasons = resolve_row_advisors(workspace, row, advisor_map)
+    primary_advisor, co_advisors, pending_reasons = resolve_row_advisors(
+        workspace,
+        row,
+        advisor_map,
+        allow_unprovisioned=dry_run,
+    )
     if unit_reason:
         pending_reasons.append(unit_reason)
 

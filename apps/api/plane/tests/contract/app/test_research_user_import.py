@@ -12,7 +12,15 @@ from rest_framework.test import APIClient
 
 import pytest
 
-from plane.db.models import MentorBinding, OrgUnit, OrgUnitMember, ResearchUserProfile, User, UserImportBatch
+from plane.db.models import (
+    MentorBinding,
+    OrgUnit,
+    OrgUnitMember,
+    ResearchUserProfile,
+    User,
+    UserImportBatch,
+    WorkspaceMember,
+)
 from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
@@ -215,7 +223,7 @@ def test_advisor_table_is_required(env):
     assert response.data["error_code"] == "user_import_file_required"
 
 
-def test_missing_mapping_and_non_member_advisor_are_pending_without_auto_provisioning(env):
+def test_mapped_advisor_is_provisioned_and_missing_mapping_stays_pending(env):
     response = post_import(
         env,
         row=roster_row(co1="不存在导师", co2="未映射导师"),
@@ -223,9 +231,11 @@ def test_missing_mapping_and_non_member_advisor_are_pending_without_auto_provisi
     )
     assert response.data["rows_pending"] == 1
     message = response.data["rows"][0]["message"]
-    assert "不是当前工作空间有效成员" in message
     assert "缺少联合导师2邮箱映射" in message
-    assert not User.objects.filter(email="missing@example.com").exists()
+    provisioned = User.objects.get(email="missing@example.com")
+    assert provisioned.display_name == "不存在导师"
+    assert WorkspaceMember.objects.filter(workspace=env["workspace"], member=provisioned, is_active=True).exists()
+    assert ResearchUserProfile.objects.get(user=provisioned).category == "ADVISOR"
 
 
 def test_required_values_are_row_errors(env):

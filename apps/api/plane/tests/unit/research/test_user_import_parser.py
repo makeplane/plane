@@ -157,6 +157,13 @@ def test_advisor_table_rejects_same_name_with_different_emails():
     assert "刘俊扬" in error.value.message
 
 
+def test_advisor_table_rejects_duplicate_headers():
+    payload = "导师姓名,邮箱,邮箱\n导师甲,first@example.com,second@example.com\n"
+
+    with pytest.raises(AccountError, match="重复"):
+        parse_advisors(payload.encode("utf-8"), "advisors.csv")
+
+
 def test_duplicate_advisor_names_in_one_roster_row_are_rejected_by_row_validation(db):
     payload = ROSTER_HEADER + ROSTER_ROW.replace("刘俊扬,陈志昕,白杰", "刘俊扬,陈志昕,刘俊扬")
     row = parse_students(payload.encode("utf-8"), "roster.csv")[0]
