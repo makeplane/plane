@@ -87,3 +87,9 @@ LOGGING = {
         },
     },
 }
+
+# OpenTelemetry APM: trace-correlate the JSON logs when OTEL is enabled.
+# No-op (log schema unchanged) otherwise. Shared with settings/production.py.
+from plane.observability.logging import extend_logging_config  # noqa: E402
+
+extend_logging_config(LOGGING)
