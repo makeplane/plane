@@ -1,0 +1,5 @@
+click stored value "projectName" below "Project" within the context of "sidebar"
+click "Pages" below stored value "projectName"
+click button "Add page"
+enter stored value "pageName" into "Untitled" roughly below button "Copy link"
+click stored value "projectName" below "Project" within the context of "sidebar"

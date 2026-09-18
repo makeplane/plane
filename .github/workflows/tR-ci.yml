@@ -1,0 +1,36 @@
+name : End-to-End testing with tR
+on:
+  push:
+    branches: [tR-e2e-testing, preview]
+  pull_request:
+    branches: [tR-e2e-testing, preview]
+  workflow_dispatch:
+
+jobs:
+  e2e-tests-tR:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Set up plane
+      run: |
+        curl -fsSL https://prime.plane.so/install/ | sh -s -- --silent --domain=127.0.0.1
+    - name: Install testRigor command line tool
+      run: |
+          set -e
+          echo "Installing testrigor-cli..."
+          npm install -g testrigor-cli
+          
+          echo "Verifying testrigor-cli installation..."
+          if command -v testrigor >/dev/null 2>&1; then
+            echo "SUCCESS: testrigor-cli is installed"
+            testrigor --version
+          else
+            echo "ERROR: testrigor-cli installation failed"
+            exit 1
+          fi
+    - uses: 'actions/checkout@v4'
+      name: 'Checkout'
+      with:
+          ref: ${{ inputs.refName != '' && inputs.refName || '' }}
+    - name: Run testRigor tests
+      run: |
+          testrigor test-suite run ${{ vars.SUITE_ID }} --token ${{ secrets.CI_TOKEN }} --test-cases-path e2etests/testcases/**/*.txt --localhost --url http://localhost
