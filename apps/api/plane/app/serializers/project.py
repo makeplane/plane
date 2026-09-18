@@ -34,7 +34,13 @@ class ProjectSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = "__all__"
-        read_only_fields = ["workspace", "deleted_at"]
+        # created_by/updated_by are audit fields set server-side by BaseModel.save()
+        # from the request user; with fields="__all__" they are otherwise client-writable,
+        # letting a caller forge project ownership/attribution. save() stamps created_by
+        # unconditionally on create, but on update it only stamps updated_by and never
+        # touches created_by — so a client-supplied created_by on a PATCH would survive
+        # untouched. Mark them read-only so the client value is ignored.
+        read_only_fields = ["workspace", "deleted_at", "created_by", "updated_by"]
 
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None
