@@ -53,10 +53,12 @@ export interface IBaseUserPermissionStore {
   // actions
   fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe>;
   leaveWorkspace: (workspaceSlug: string) => Promise<void>;
+  clearWorkspaceAccess: (workspaceSlug: string) => void;
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<TProjectMembership>;
   fetchUserProjectPermissions: (workspaceSlug: string) => Promise<IUserProjectsRole>;
   joinProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+  clearProjectAccess: (workspaceSlug: string, projectId: string) => void;
   hasPageAccess: (workspaceSlug: string, key: string) => boolean;
 }
 
@@ -83,10 +85,12 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
       // actions
       fetchUserWorkspaceInfo: action,
       leaveWorkspace: action,
+      clearWorkspaceAccess: action,
       fetchUserProjectInfo: action,
       fetchUserProjectPermissions: action,
       joinProject: action,
       leaveProject: action,
+      clearProjectAccess: action,
     });
   }
 
@@ -262,15 +266,23 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
   leaveWorkspace = async (workspaceSlug: string): Promise<void> => {
     try {
       await userService.leaveWorkspace(workspaceSlug);
-      runInAction(() => {
-        unset(this.workspaceUserInfo, workspaceSlug);
-        unset(this.projectUserInfo, workspaceSlug);
-        unset(this.workspaceProjectsPermissions, workspaceSlug);
-      });
+      this.clearWorkspaceAccess(workspaceSlug);
     } catch (error) {
       console.error("Error user leaving the workspace", error);
       throw error;
     }
+  };
+
+  clearWorkspaceAccess = (workspaceSlug: string): void => {
+    runInAction(() => {
+      unset(this.workspaceUserInfo, workspaceSlug);
+      unset(this.projectUserInfo, workspaceSlug);
+      unset(this.workspaceProjectsPermissions, workspaceSlug);
+      const workspaceId = this.store.workspaceRoot.getWorkspaceBySlug(workspaceSlug)?.id;
+      if (workspaceId) {
+        unset(this.store.workspaceRoot.workspaces, workspaceId);
+      }
+    });
   };
 
   /**
@@ -344,15 +356,19 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
   leaveProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
       await userService.leaveProject(workspaceSlug, projectId);
-      runInAction(() => {
-        unset(this.workspaceProjectsPermissions, [workspaceSlug, projectId]);
-        unset(this.projectUserInfo, [workspaceSlug, projectId]);
-        unset(this.store.projectRoot.project.projectMap, [projectId]);
-      });
+      this.clearProjectAccess(workspaceSlug, projectId);
     } catch (error) {
       console.error("Error user leaving the project", error);
       throw error;
     }
+  };
+
+  clearProjectAccess = (workspaceSlug: string, projectId: string): void => {
+    runInAction(() => {
+      unset(this.workspaceProjectsPermissions, [workspaceSlug, projectId]);
+      unset(this.projectUserInfo, [workspaceSlug, projectId]);
+      unset(this.store.projectRoot.project.projectMap, [projectId]);
+    });
   };
 }
 

@@ -7,6 +7,13 @@
 import { CollaborationController } from "./collaboration.controller";
 import { DocumentController } from "./document.controller";
 import { HealthController } from "./health.controller";
+import { MembershipController } from "./membership.controller";
 import { PdfExportController } from "./pdf-export.controller";
 
-export const CONTROLLERS = [CollaborationController, DocumentController, HealthController, PdfExportController];
+export const CONTROLLERS = [
+  CollaborationController,
+  DocumentController,
+  HealthController,
+  MembershipController,
+  PdfExportController,
+];

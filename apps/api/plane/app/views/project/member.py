@@ -22,6 +22,10 @@ from plane.db.models import Project, ProjectMember, ProjectUserProperty, Workspa
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
+from plane.utils.membership_realtime import (
+    EVENT_PROJECT_MEMBER_REMOVED,
+    publish_membership_removed,
+)
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -280,10 +284,20 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
+        was_active = project_member.is_active
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
+            if was_active and serializer.instance.is_active is False:
+                publish_membership_removed(
+                    event_type=EVENT_PROJECT_MEMBER_REMOVED,
+                    actor_id=request.user.id,
+                    user_id=project_member.member_id,
+                    workspace_id=project_member.workspace_id,
+                    workspace_slug=slug,
+                    project_id=project_id,
+                )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -318,6 +332,14 @@ class ProjectMemberViewSet(BaseViewSet):
 
         project_member.is_active = False
         project_member.save()
+        publish_membership_removed(
+            event_type=EVENT_PROJECT_MEMBER_REMOVED,
+            actor_id=request.user.id,
+            user_id=project_member.member_id,
+            workspace_id=project_member.workspace_id,
+            workspace_slug=slug,
+            project_id=project_id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
