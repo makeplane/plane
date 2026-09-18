@@ -1,6 +1,6 @@
 {
   "name": "@plane/i18n",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "private": true,
   "description": "I18n shared across multiple apps internally",
   "license": "AGPL-3.0",

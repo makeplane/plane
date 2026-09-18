@@ -1,6 +1,6 @@
 {
   "name": "live",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "private": true,
   "description": "A realtime collaborative server powers PiLab's rich text editor",
   "license": "AGPL-3.0",

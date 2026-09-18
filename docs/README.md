@@ -20,6 +20,7 @@
 | [`research-system-management-testing.md`](./research-system-management-testing.md)       | 系统管理改进测试手册：一键冒烟、自动化测试与界面走查             | v1.0，已交付（v2.4.0）                   |
 | [`research-navigation-visibility.md`](./research-navigation-visibility.md)               | 科研目录分级可见：四档级别、菜单矩阵、强制点与验收方式           | v1.0，已交付（v2.5.0）                   |
 | [`research-workspace-v3.md`](./research-workspace-v3.md)                                 | v3 权威实现契约：组织、权限、工作空间、项目、报告与 Agent 上下文 | v1.3，对应 `3.0.3`                       |
+| [`wechat-mini-program-prd.md`](./wechat-mini-program-prd.md)                             | 微信小程序移动工作台：范围、认证、API、消息、发布与验收          | v1.0，待评审；规划 `3.1.0`               |
 | [`research-test-fixtures.md`](./research-test-fixtures.md)                               | 科研测试夹具：多身份账号、P0/P1 数据清单与手工验证流程           | 持续维护（`seed_research_demo`）         |
 | [`research-test-accounts.md`](./research-test-accounts.md)                               | 测试账号与身份速查：登录入口、各身份账号、可见范围与登录排错     | 持续维护（v2.5.1 实测复核）              |
 | [`linting.md`](./linting.md)                                                             | 代码风格、静态检查与提交前检查约定                               | 持续维护                                 |
