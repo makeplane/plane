@@ -78,14 +78,14 @@ class TestWorkItemPagesAPI:
 
         attached = api_key_client.post(url, {"page_id": str(page.id)}, format="json")
         assert attached.status_code == status.HTTP_201_CREATED
-        assert attached.data["page"]["id"] == str(page.id)
+        assert str(attached.data["page"]["id"]) == str(page.id)
         link_id = attached.data["id"]
         assert WorkItemPage.objects.filter(issue=issue, page=page).exists()
 
         listed = api_key_client.get(url)
         assert listed.status_code == status.HTTP_200_OK
         assert listed.data["total_count"] == 1
-        assert listed.data["results"][0]["page"]["id"] == str(page.id)
+        assert str(listed.data["results"][0]["page"]["id"]) == str(page.id)
 
         detached = api_key_client.delete(_url(workspace.slug, project.id, issue.id, link_id))
         assert detached.status_code == status.HTTP_204_NO_CONTENT
