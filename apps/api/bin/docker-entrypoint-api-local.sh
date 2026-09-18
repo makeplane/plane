@@ -28,7 +28,12 @@ python manage.py configure_instance
 # Create the default bucket
 python manage.py create_bucket
 
-# Clear Cache before starting to remove stale values
-python manage.py clear_cache
+# Clear Cache before starting to remove stale values unless skipped
+if [ "$PLANE_SKIP_CACHE_CLEAR" != "1" ] && [ "$PLANE_SKIP_CACHE_CLEAR" != "true" ]; then
+    python manage.py clear_cache
+else
+    echo "Skipping cache clear on startup (PLANE_SKIP_CACHE_CLEAR is set)"
+fi
+
 
 python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local
