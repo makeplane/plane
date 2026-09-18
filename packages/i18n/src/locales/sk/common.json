@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Je možné nahrať iba jeden súbor naraz.",
     "file_size_limit": "Súbor musí byť menší ako {size}MB.",
     "drag_and_drop": "Pretiahnite súbor kamkoľvek pre nahratie",
-    "delete": "Zmazať prílohu"
+    "delete": "Zmazať prílohu",
+    "delete_confirmation": {
+      "prefix": "Naozaj chcete zmazať prílohu ",
+      "suffix": "? Táto príloha bude natrvalo odstránená. Túto akciu nie je možné vrátiť späť."
+    }
   },
   "label": {
     "select": "Vybrať štítok",

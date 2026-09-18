@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Es kann jeweils nur eine Datei hochgeladen werden.",
     "file_size_limit": "Die Datei muss kleiner als {size} MB sein.",
     "drag_and_drop": "Datei hierher ziehen, um sie hochzuladen",
-    "delete": "Anhang löschen"
+    "delete": "Anhang löschen",
+    "delete_confirmation": {
+      "prefix": "Möchten Sie den Anhang ",
+      "suffix": " wirklich löschen? Dieser Anhang wird dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+    }
   },
   "label": {
     "select": "Label auswählen",

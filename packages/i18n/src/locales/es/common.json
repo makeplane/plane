@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Solo se puede subir un archivo a la vez.",
     "file_size_limit": "El archivo debe tener {size}MB o menos de tamaño.",
     "drag_and_drop": "Arrastra y suelta en cualquier lugar para subir",
-    "delete": "Eliminar archivo adjunto"
+    "delete": "Eliminar archivo adjunto",
+    "delete_confirmation": {
+      "prefix": "¿Seguro que quieres eliminar el archivo adjunto ",
+      "suffix": "? Este archivo adjunto se eliminará de forma permanente. Esta acción no se puede deshacer."
+    }
   },
   "label": {
     "select": "Seleccionar etiqueta",

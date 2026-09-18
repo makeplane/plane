@@ -762,7 +762,11 @@
     "only_one_file_allowed": "Je možné nahrát pouze jeden soubor najednou.",
     "file_size_limit": "Soubor musí být menší než {size}MB.",
     "drag_and_drop": "Přetáhněte soubor kamkoli pro nahrání",
-    "delete": "Smazat přílohu"
+    "delete": "Smazat přílohu",
+    "delete_confirmation": {
+      "prefix": "Opravdu chcete smazat přílohu ",
+      "suffix": "? Tato příloha bude trvale odstraněna. Tuto akci nelze vrátit zpět."
+    }
   },
   "label": {
     "select": "Vybrat štítek",
