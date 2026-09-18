@@ -10,8 +10,10 @@
  * @plane/editor/styles (imported above), which is their single source of truth.
  * Only the un-themed :root fallback below is kept: the editor package declares
  * background colors solely under [data-theme*="light"] / [data-theme*="dark"],
- * so without this they are undefined until a theme lands on the element. */
-:root {
+ * so without this they are undefined until a theme lands on the element.
+ * Scoped with :not() so it never overrides the themed ramps — as a plain :root
+ * rule later in the bundle it would win over them regardless of theme. */
+:root:not([data-theme*="light"]):not([data-theme*="dark"]) {
   --editor-colors-gray-background: #d6d6d8;
   --editor-colors-peach-background: #ffd5d7;
   --editor-colors-pink-background: #fdd4e3;
