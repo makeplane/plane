@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("db", "0120_issueview_archived_at"),
+        ("db", "0122_alter_draftissue_assignees_alter_issue_assignees_and_more"),
     ]
 
     operations = [

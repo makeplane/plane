@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("db", "0121_issuepage"),
+        ("db", "0123_issuepage"),
     ]
 
     operations = [
