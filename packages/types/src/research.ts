@@ -292,6 +292,7 @@ export type TResearchIdentity = {
       organization: boolean;
       integrations: boolean;
       operations: boolean;
+      accounts: boolean;
     };
   };
   user: {
@@ -964,8 +965,11 @@ export type TTimelineFilters = {
 export type TInviteCode = {
   id: string;
   code: string;
+  provisioning_version: number;
   org_role: TOrgRole | "";
   org_unit: string | null;
+  profile_category: TResearchProfileCategory | "";
+  primary_advisor: string | null;
   max_uses: number;
   used_count: number;
   expires_at: string | null;
@@ -977,6 +981,17 @@ export type TInviteCode = {
   created_by_detail?: TResearchUserLite | null;
   created_at: string;
   updated_at: string;
+};
+
+export type TAccountProvisioningOptions = {
+  profile_categories: { value: TResearchProfileCategory; label: string }[];
+  org_units: {
+    id: string;
+    name: string;
+    display_path: string;
+    business_category: TOrgBusinessCategory | null;
+  }[];
+  advisors: TResearchUserLite[];
 };
 
 export type TResearchUserProfile = {

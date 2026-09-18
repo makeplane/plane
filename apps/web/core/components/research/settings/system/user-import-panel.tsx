@@ -128,6 +128,9 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
       </div>
 
       <p className="text-11 text-tertiary">{t("research.user_import.hint")}</p>
+      <p className="font-mono rounded border border-subtle bg-surface-2 px-3 py-2 text-11 text-secondary">
+        姓名, 学号, 邮件, 人员类别, 业务方向, 主归属组织, 主导师邮箱, 联合导师邮箱
+      </p>
       {errorKey && <p className="text-12 text-danger-primary">{t(errorKey)}</p>}
 
       {activeBatch && (
@@ -163,8 +166,9 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                   <th className="px-2 py-1 text-left">#</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.name")}</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.email")}</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.group")}</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.advisor")}</th>
+                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.category")}</th>
+                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.primary_org")}</th>
+                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.advisors")}</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.status")}</th>
                   <th className="px-2 py-1 text-left">{t("research.user_import.columns.message")}</th>
                 </tr>
@@ -175,8 +179,13 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                     <td className="px-2 py-1 text-tertiary">{row.row_number}</td>
                     <td className="px-2 py-1 text-primary">{row.display_name}</td>
                     <td className="px-2 py-1 text-secondary">{row.email}</td>
-                    <td className="px-2 py-1 text-secondary">{row.group_label || "-"}</td>
-                    <td className="px-2 py-1 text-secondary">{row.advisor_name || "-"}</td>
+                    <td className="px-2 py-1 text-secondary">{row.raw.category || "STUDENT"}</td>
+                    <td className="px-2 py-1 text-secondary">{row.raw.primary_org_unit || row.group_label || "-"}</td>
+                    <td className="px-2 py-1 text-secondary">
+                      {[row.raw.primary_advisor_email || row.advisor_name, row.raw.co_advisor_emails]
+                        .filter(Boolean)
+                        .join("; ") || "-"}
+                    </td>
                     <td className="px-2 py-1 text-secondary">
                       {t(USER_IMPORT_ROW_STATUS_LABELS[row.status] ?? "research.user_import.status.ok")}
                     </td>

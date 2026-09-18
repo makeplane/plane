@@ -904,15 +904,19 @@
       "empty": "暂无邀请码。新建一个邀请码后才能让新成员注册。",
       "hint": "注册已关闭：新账号必须凭邀请码注册，注册后自动进入公共工作区。",
       "fields": {
-        "org_role": "组织角色",
-        "no_role": "仅工作区成员",
+        "profile_category": "人员类别",
+        "primary_org_unit": "主归属组织",
+        "primary_advisor": "主导师",
+        "unassigned": "暂不指定",
         "max_uses": "可用次数",
         "expires_in_days": "有效天数",
         "note": "备注"
       },
       "columns": {
         "code": "邀请码",
-        "org_role": "角色",
+        "profile_category": "人员类别",
+        "primary_org_unit": "主归属",
+        "primary_advisor": "主导师",
         "usage": "已用",
         "expires_at": "过期时间",
         "status": "状态",
@@ -946,9 +950,9 @@
     },
     "user_import": {
       "title": "批量导入",
-      "hint": "上传二维表（分组 / 姓名 / 学号 / 年级 / 学位 / 负责导师 / 邮件 / 电话），并可另传「导师姓名 → 邮箱」对照表。缺少导师邮箱的行会进入待处理清单，不影响其他行。",
+      "hint": "新模板支持人员类别、业务方向、主归属组织、主导师邮箱和用分号分隔的联合导师邮箱；组织与导师必须已存在。旧分组表和导师映射表继续兼容。",
       "fields": {
-        "students": "学生表",
+        "students": "成员名册",
         "advisors": "导师邮箱表（可选）",
         "reset_passwords": "重新生成初始密码"
       },
@@ -960,6 +964,9 @@
       "columns": {
         "name": "姓名",
         "email": "邮箱",
+        "category": "人员类别",
+        "primary_org": "主归属组织",
+        "advisors": "导师",
         "group": "分组",
         "advisor": "负责导师",
         "status": "状态",

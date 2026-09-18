@@ -63,7 +63,7 @@ export const ResearchSidebarItems = observer(function ResearchSidebarItems() {
     !workspaceSlug ||
     research.identityWorkspaceSlug !== workspaceSlug ||
     !research.isEnabled ||
-    research.researchLevel === "NONE"
+    (research.researchLevel === "NONE" && (research.visibleNavKeys?.length ?? 0) === 0)
   )
     return null;
 

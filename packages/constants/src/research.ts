@@ -688,6 +688,7 @@ export const researchEndpoints = {
   auditEvents: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/audit-events/`,
   // ---- account lifecycle (v2.4.0) ----
   inviteCodes: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/invite-codes/`,
+  accountProvisioningOptions: (slug: string) => `${RESEARCH_API_ROOT}/${slug}/account-provisioning/options/`,
   inviteCode: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/invite-codes/${id}/`,
   inviteCodeAction: (slug: string, id: string, action: "enable" | "disable") =>
     `${RESEARCH_API_ROOT}/${slug}/invite-codes/${id}/${action}/`,

@@ -904,15 +904,19 @@
       "empty": "No invite code yet. Create one to let somebody register.",
       "hint": "Registration is closed: a new account needs an invite code, and it always joins the public workspace.",
       "fields": {
-        "org_role": "Organisation role",
-        "no_role": "Member only",
+        "profile_category": "Member category",
+        "primary_org_unit": "Primary organisation",
+        "primary_advisor": "Primary advisor",
+        "unassigned": "Not assigned yet",
         "max_uses": "Uses",
         "expires_in_days": "Valid days",
         "note": "Note"
       },
       "columns": {
         "code": "Code",
-        "org_role": "Role",
+        "profile_category": "Category",
+        "primary_org_unit": "Primary organisation",
+        "primary_advisor": "Primary advisor",
         "usage": "Used",
         "expires_at": "Expires",
         "status": "Status",
@@ -946,9 +950,9 @@
     },
     "user_import": {
       "title": "Roster import",
-      "hint": "Upload the roster (分组 / 姓名 / 学号 / 年级 / 学位 / 负责导师 / 邮件 / 电话) and, optionally, a name-to-mailbox table for the advisors. Rows without an advisor mailbox stay in the pending list.",
+      "hint": "The new roster supports category, business direction, primary organisation, primary advisor email and semicolon-separated co-advisor emails. Organisations and advisors must already exist; legacy roster columns remain supported.",
       "fields": {
-        "students": "Student roster",
+        "students": "Member roster",
         "advisors": "Advisor mailboxes (optional)",
         "reset_passwords": "Re-issue one-time passwords"
       },
@@ -960,6 +964,9 @@
       "columns": {
         "name": "Name",
         "email": "Mailbox",
+        "category": "Category",
+        "primary_org": "Primary organisation",
+        "advisors": "Advisors",
         "group": "Group",
         "advisor": "Advisor",
         "status": "Status",

@@ -7,6 +7,7 @@
 import { API_BASE_URL, researchEndpoints } from "@plane/constants";
 import type {
   TInviteCode,
+  TAccountProvisioningOptions,
   TOrgRole,
   TPiAggregate,
   TResearchUserProfile,
@@ -17,8 +18,10 @@ import type {
 import { APIService } from "@/services/api.service";
 
 export type TInviteCodePayload = {
-  org_role?: TOrgRole | "";
+  org_role?: Extract<TOrgRole, "REVIEWER"> | "";
   org_unit?: string | null;
+  profile_category?: TResearchUserProfile["category"];
+  primary_advisor?: string | null;
   max_uses?: number;
   expires_in_days?: number;
   note?: string;
@@ -36,6 +39,14 @@ export class ResearchAccountService extends APIService {
   async getInviteCodes(workspaceSlug: string) {
     return this.get(researchEndpoints.inviteCodes(workspaceSlug))
       .then((res) => res?.data as { results: TInviteCode[]; count: number })
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getAccountProvisioningOptions(workspaceSlug: string) {
+    return this.get(researchEndpoints.accountProvisioningOptions(workspaceSlug))
+      .then((res) => res?.data as TAccountProvisioningOptions)
       .catch((err) => {
         throw err?.response?.data;
       });
