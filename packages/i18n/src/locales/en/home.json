@@ -65,6 +65,8 @@
     "manage_widgets": "Manage widgets",
     "title": "Home",
     "star_us_on_github": "Star us on GitHub",
+    "update_available": "Update available",
+    "update_available_tooltip": "This instance runs {current}. The latest upstream release is {latest}.",
     "business_trial_banner": {
       "title": "Your 14-day Business plan trial is live!",
       "description": "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",
