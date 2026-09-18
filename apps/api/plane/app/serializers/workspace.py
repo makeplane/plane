@@ -53,9 +53,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         # digit. Mirrors the frontend HAS_ALPHANUMERIC_REGEX check so the rule
         # cannot be bypassed via a direct API call.
         if not has_alphanumeric(value):
-            raise serializers.ValidationError(
-                "Name must contain at least one letter or number"
-            )
+            raise serializers.ValidationError("Name must contain at least one letter or number")
         return value
 
     def validate_slug(self, value):
@@ -90,12 +88,44 @@ class WorkspaceLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
+# workspace/member must stay read-only on every WorkspaceMember-backed serializer
+# below: WorkSpaceMemberViewSet.partial_update passes request.data straight into
+# whichever of these is in play with no scrubbing, so a writable `workspace` FK let
+# any workspace admin PATCH a member's row into an arbitrary foreign workspace (with
+# whatever role was also in the body) — instant cross-tenant admin takeover, no
+# invite, no consent, no audit trail. Shared as one constant so a future field
+# addition (or removal) can't drift between these three and reopen the same gap.
+#
+# is_active/deleted_at are read-only for the same reason: every legitimate place
+# that flips them (WorkSpaceMemberViewSet.destroy, .leave, invite acceptance) does
+# so via direct model-field assignment, never through this serializer — so exposing
+# them here only ever gave an admin a side-channel PATCH that skips destroy()'s own
+# checks (can't remove yourself, can't remove someone outranking you, can't orphan a
+# project's last admin) and its ProjectMember deactivation cascade. deleted_at is
+# worse: WorkspaceMember's default manager filters on it, so setting it directly
+# would silently vanish the row from every normal queryset with no trace, and an
+# admin could set it to an arbitrary timestamp — the same audit-trail-forgery shape
+# as the created_by/created_at class fixed elsewhere in this security pass.
+WORKSPACE_MEMBER_READ_ONLY_FIELDS = [
+    "id",
+    "workspace",
+    "member",
+    "is_active",
+    "deleted_at",
+    "created_by",
+    "updated_by",
+    "created_at",
+    "updated_at",
+]
+
+
 class WorkSpaceMemberSerializer(DynamicBaseSerializer):
     member = UserLiteSerializer(read_only=True)
 
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
+        read_only_fields = WORKSPACE_MEMBER_READ_ONLY_FIELDS
 
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
@@ -104,6 +134,8 @@ class WorkspaceMemberMeSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
+        # Only ever instantiated read-only today — see WORKSPACE_MEMBER_READ_ONLY_FIELDS above.
+        read_only_fields = WORKSPACE_MEMBER_READ_ONLY_FIELDS
 
 
 class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
@@ -112,6 +144,8 @@ class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
+        # Only ever instantiated read-only today — see WORKSPACE_MEMBER_READ_ONLY_FIELDS above.
+        read_only_fields = WORKSPACE_MEMBER_READ_ONLY_FIELDS
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
