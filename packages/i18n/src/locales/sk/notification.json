@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Schránka",
+    "page_label": "{workspace} - Schránka",
+    "options": {
+      "mark_all_as_read": "Označiť všetko ako prečítané",
+      "mark_read": "Označiť ako prečítané",
+      "mark_unread": "Označiť ako neprečítané",
+      "refresh": "Obnoviť",
+      "filters": "Filtre schránky",
+      "show_unread": "Zobraziť neprečítané",
+      "show_snoozed": "Zobraziť odložené",
+      "show_archived": "Zobraziť archivované",
+      "mark_archive": "Archivovať",
+      "mark_unarchive": "Zrušiť archiváciu",
+      "mark_snooze": "Odložiť",
+      "mark_unsnooze": "Zrušiť odloženie"
+    },
+    "toasts": {
+      "read": "Oznámenie prečítané",
+      "unread": "Označené ako neprečítané",
+      "archived": "Archivované",
+      "unarchived": "Archivácia zrušená",
+      "snoozed": "Odložené",
+      "unsnoozed": "Odloženie zrušené"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Vyberte pre podrobnosti."
+      },
+      "all": {
+        "title": "Žiadne priradené položky",
+        "description": "Aktualizácie k priradeným položkám sa zobrazia tu."
+      },
+      "mentions": {
+        "title": "Žiadne zmienky",
+        "description": "Zobrazia sa tu zmienky o vás."
+      }
+    },
+    "tabs": {
+      "all": "Všetko",
+      "mentions": "Zmienky"
+    },
+    "filter": {
+      "assigned": "Priradené mne",
+      "created": "Vytvoril som",
+      "subscribed": "Odobieram"
+    },
+    "snooze": {
+      "1_day": "1 deň",
+      "3_days": "3 dni",
+      "5_days": "5 dní",
+      "1_week": "1 týždeň",
+      "2_weeks": "2 týždne",
+      "custom": "Vlastné"
+    }
+  }
+}

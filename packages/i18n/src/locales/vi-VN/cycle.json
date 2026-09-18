@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Thêm mục công việc vào chu kỳ để xem tiến độ của nó"
+      },
+      "chart": {
+        "title": "Thêm mục công việc vào chu kỳ để xem biểu đồ burndown."
+      },
+      "priority_issue": {
+        "title": "Xem nhanh các mục công việc ưu tiên cao đang được xử lý trong chu kỳ."
+      },
+      "assignee": {
+        "title": "Thêm người phụ trách cho mục công việc để xem phân tích công việc theo người phụ trách."
+      },
+      "label": {
+        "title": "Thêm nhãn cho mục công việc để xem phân tích công việc theo nhãn."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {chu kỳ} other {chu kỳ}}",
+    "no_cycle": "Không có chu kỳ"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Thêm mục công việc vào chu kỳ để xem tiến độ\n của nó"
+      },
+      "priority": {
+        "title": "Quan sát các mục công việc ưu tiên cao được giải quyết trong\n chu kỳ chỉ với một cái nhìn."
+      },
+      "assignee": {
+        "title": "Thêm người được gán cho mục công việc để xem\n phân tích công việc theo người được gán."
+      },
+      "label": {
+        "title": "Thêm nhãn vào mục công việc để xem\n phân tích công việc theo nhãn."
+      }
+    }
+  }
+}

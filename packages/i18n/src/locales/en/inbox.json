@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pending",
+        "description": "Pending"
+      },
+      "declined": {
+        "title": "Declined",
+        "description": "Declined"
+      },
+      "snoozed": {
+        "title": "Snoozed",
+        "description": "{days, plural, one{# day} other{# days}} to go"
+      },
+      "accepted": {
+        "title": "Accepted",
+        "description": "Accepted"
+      },
+      "duplicate": {
+        "title": "Duplicate",
+        "description": "Duplicate"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Decline work item",
+        "content": "Are you sure you want to decline work item {value}?"
+      },
+      "delete": {
+        "title": "Delete work item",
+        "content": "Are you sure you want to delete work item {value}?",
+        "success": "Work item deleted successfully"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Only project admins can snooze/Un-snooze work items",
+      "accept_permission": "Only project admins can accept work items",
+      "decline_permission": "Only project admins can deny work items"
+    },
+    "actions": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "snooze": "Snooze",
+      "unsnooze": "Un snooze",
+      "copy": "Copy work item link",
+      "delete": "Delete",
+      "open": "Open work item",
+      "mark_as_duplicate": "Mark as duplicate",
+      "move": "Move {value} to project work items"
+    },
+    "source": {
+      "in-app": "in-app"
+    },
+    "order_by": {
+      "created_at": "Created at",
+      "updated_at": "Updated at",
+      "id": "ID"
+    },
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
+    "modal": {
+      "title": "Create intake work item"
+    },
+    "tabs": {
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No open work items",
+        "description": "Find open work items here. Create new work item."
+      },
+      "sidebar_closed_tab": {
+        "title": "No closed work items",
+        "description": "All the work items whether accepted or declined can be found here."
+      },
+      "sidebar_filter": {
+        "title": "No matching work items",
+        "description": "No work item matches filter applied in intake. Create a new work item."
+      },
+      "detail": {
+        "title": "Select a work item to view its details."
+      }
+    }
+  }
+}

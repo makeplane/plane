@@ -1,14 +1,22 @@
-import React, { Fragment, Ref, useState } from "react";
-import { usePopper } from "react-popper";
-import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
-// helpers
-import { cn } from "../../helpers";
-// types
-import { TPopover } from "./types";
-import { EllipsisVertical } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export const Popover = (props: TPopover) => {
+import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
+import { MoreVerticalOutline } from "@makeplane/propel/icons";
+import type { Ref } from "react";
+import React, { Fragment, useState } from "react";
+import { usePopper } from "react-popper";
+// helpers
+import { cn } from "../utils";
+// types
+import type { TPopover } from "./types";
+
+export function Popover(props: TPopover) {
   const {
+    ariaLabel,
     popperPosition = "bottom-end",
     popperPadding = 0,
     buttonClassName = "",
@@ -22,7 +30,8 @@ export const Popover = (props: TPopover) => {
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // Headless UI v2 types Panel's ref as Ref<HTMLElement> rather than the concrete tag.
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
 
   // react-popper derived values
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -41,17 +50,19 @@ export const Popover = (props: TPopover) => {
     <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
       <div ref={setReferenceElement} className={cn("w-full", buttonRefClassName)}>
         <HeadlessReactPopover.Button
+          type="button"
+          aria-label={ariaLabel}
           ref={popoverButtonRef as Ref<HTMLButtonElement>}
           className={cn(
             {
-              "flex justify-center items-center text-base h-6 w-6 rounded transition-all bg-custom-background-90 hover:bg-custom-background-80":
+              "flex h-6 w-6 items-center justify-center rounded-sm bg-surface-2 text-14 transition-all hover:bg-layer-1":
                 !button,
             },
             buttonClassName
           )}
           disabled={disabled}
         >
-          {button ? button : <EllipsisVertical className="h-3 w-3" />}
+          {button ? button : <MoreVerticalOutline className="h-3 w-3" />}
         </HeadlessReactPopover.Button>
       </div>
 
@@ -68,11 +79,11 @@ export const Popover = (props: TPopover) => {
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className={cn("absolute left-0 top-full z-20 w-screen max-w-xs mt-2", panelClassName)}
+          className={cn("absolute top-full left-0 z-20 mt-2 w-screen max-w-xs", panelClassName)}
         >
           {children}
         </HeadlessReactPopover.Panel>
       </Transition>
     </HeadlessReactPopover>
   );
-};
+}

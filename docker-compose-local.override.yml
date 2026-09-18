@@ -1,0 +1,8 @@
+services:
+  api:
+    ports: !override
+      - "8001:8000"
+  plane-minio:
+    ports: !override
+      - "9000:9000"
+      - "9091:9090"

@@ -1,0 +1,132 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+# Django imports
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import Prefetch, Q, Count, UUIDField, Value
+from django.db.models.functions import Coalesce
+
+# Third party modules
+from rest_framework import status
+from rest_framework.response import Response
+
+# Module imports
+from plane.app.views.base import BaseAPIView
+from plane.db.models import Module, ModuleLink
+from plane.app.permissions import WorkspaceViewerPermission
+from plane.app.serializers.module import ModuleSerializer
+
+
+class WorkspaceModulesEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceViewerPermission]
+
+    def get(self, request, slug):
+        modules = (
+            Module.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+            )
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("lead")
+            .prefetch_related("members")
+            .filter(archived_at__isnull=True)
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                member_ids=Coalesce(
+                    ArrayAgg(
+                        "members__id",
+                        distinct=True,
+                        filter=Q(
+                            members__id__isnull=False,
+                            modulemember__deleted_at__isnull=True,
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        )
+
+        serializer = ModuleSerializer(modules, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)

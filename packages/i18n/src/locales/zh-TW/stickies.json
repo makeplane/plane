@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "您的便利貼",
+    "placeholder": "點選此處輸入",
+    "all": "所有便利貼",
+    "no-data": "記下想法、捕捉靈感或記錄突發奇想。新增便利貼以開始。",
+    "add": "新增便利貼",
+    "search_placeholder": "依標題搜尋",
+    "delete": "刪除便利貼",
+    "delete_confirmation": "您確定要刪除此便利貼嗎？",
+    "empty_state": {
+      "simple": "記下想法、捕捉靈感或記錄突發奇想。新增便利貼以開始。",
+      "general": {
+        "title": "便利貼是您隨手記下的快速筆記和待辦事項。",
+        "description": "透過建立可隨時隨地存取的便利貼，輕鬆捕捉您的想法和點子。",
+        "primary_button": {
+          "text": "新增便利貼"
+        }
+      },
+      "search": {
+        "title": "這與您的便利貼都不符。",
+        "description": "嘗試使用不同的詞彙或讓我們知道\n如果您確定您的搜尋是正確的。",
+        "primary_button": {
+          "text": "新增便利貼"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "便利貼名稱不能超過 100 個字元。",
+        "already_exists": "已存在一個沒有描述的便利貼"
+      },
+      "created": {
+        "title": "便利貼已建立",
+        "message": "便利貼已成功建立"
+      },
+      "not_created": {
+        "title": "便利貼未建立",
+        "message": "無法建立便利貼"
+      },
+      "updated": {
+        "title": "便利貼已更新",
+        "message": "便利貼已成功更新"
+      },
+      "not_updated": {
+        "title": "便利貼未更新",
+        "message": "無法更新便利貼"
+      },
+      "removed": {
+        "title": "便利貼已移除",
+        "message": "便利貼已成功移除"
+      },
+      "not_removed": {
+        "title": "便利貼未移除",
+        "message": "無法移除便利貼"
+      }
+    }
+  }
+}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { API_BASE_URL } from "@plane/constants";
 import type { IWorkspace, TWorkspacePaginationInfo } from "@plane/types";
 import { APIService } from "../api.service";
@@ -57,6 +63,22 @@ export class InstanceWorkspaceService extends APIService {
    */
   async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.post("/api/instances/workspaces/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateResearchConfiguration(
+    workspaceId: string,
+    data: {
+      purpose?: IWorkspace["research_purpose"];
+      main_pi?: string | null;
+      private_access_users?: string[];
+      module_enabled?: boolean;
+    }
+  ): Promise<IWorkspace> {
+    return this.patch(`/api/instances/workspaces/${workspaceId}/research/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

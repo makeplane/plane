@@ -1,0 +1,36 @@
+services:
+  web:
+    image: ${DOCKERHUB_USER:-local}/plane-frontend:${APP_RELEASE:-latest}
+    build:
+      context: ../../
+      dockerfile: apps/web/Dockerfile.web
+
+  space:
+    image: ${DOCKERHUB_USER:-local}/plane-space:${APP_RELEASE:-latest}
+    build:
+      context: ../../
+      dockerfile: apps/space/Dockerfile.space
+
+  admin:
+    image: ${DOCKERHUB_USER:-local}/plane-admin:${APP_RELEASE:-latest}
+    build:
+      context: ../../
+      dockerfile: apps/admin/Dockerfile.admin
+
+  live:
+    image: ${DOCKERHUB_USER:-local}/plane-live:${APP_RELEASE:-latest}
+    build:
+      context: ../../
+      dockerfile: apps/live/Dockerfile.live
+
+  api:
+    image: ${DOCKERHUB_USER:-local}/plane-backend:${APP_RELEASE:-latest}
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.api
+
+  proxy:
+    image: ${DOCKERHUB_USER:-local}/plane-proxy:${APP_RELEASE:-latest}
+    build:
+      context: ../../apps/proxy
+      dockerfile: Dockerfile.ce

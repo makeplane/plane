@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "In sospeso",
+        "description": "In sospeso"
+      },
+      "declined": {
+        "title": "Rifiutato",
+        "description": "Rifiutato"
+      },
+      "snoozed": {
+        "title": "Snoozed",
+        "description": "{days, plural, one {# giorno} other {# giorni}} rimanenti"
+      },
+      "accepted": {
+        "title": "Accettato",
+        "description": "Accettato"
+      },
+      "duplicate": {
+        "title": "Duplicato",
+        "description": "Duplicato"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Rifiuta elemento di lavoro",
+        "content": "Sei sicuro di voler rifiutare l'elemento di lavoro {value}?"
+      },
+      "delete": {
+        "title": "Elimina elemento di lavoro",
+        "content": "Sei sicuro di voler eliminare l'elemento di lavoro {value}?",
+        "success": "Elemento di lavoro eliminato con successo"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Solo gli amministratori del progetto possono snoozare/non snoozare gli elementi di lavoro",
+      "accept_permission": "Solo gli amministratori del progetto possono accettare gli elementi di lavoro",
+      "decline_permission": "Solo gli amministratori del progetto possono rifiutare gli elementi di lavoro"
+    },
+    "actions": {
+      "accept": "Accetta",
+      "decline": "Rifiuta",
+      "snooze": "Snoozed",
+      "unsnooze": "Annulla snooze",
+      "copy": "Copia link dell'elemento di lavoro",
+      "delete": "Elimina",
+      "open": "Apri elemento di lavoro",
+      "mark_as_duplicate": "Segna come duplicato",
+      "move": "Sposta {value} negli elementi di lavoro del progetto"
+    },
+    "source": {
+      "in-app": "nell'app"
+    },
+    "order_by": {
+      "created_at": "Creato il",
+      "updated_at": "Aggiornato il",
+      "id": "ID"
+    },
+    "label": "Accoglienza",
+    "page_label": "{workspace} - Accoglienza",
+    "modal": {
+      "title": "Crea elemento di lavoro per l'accoglienza"
+    },
+    "tabs": {
+      "open": "Aperto",
+      "closed": "Chiuso"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Nessun elemento di lavoro aperto",
+        "description": "Trova qui gli elementi di lavoro aperti. Crea un nuovo elemento di lavoro."
+      },
+      "sidebar_closed_tab": {
+        "title": "Nessun elemento di lavoro chiuso",
+        "description": "Tutti gli elementi di lavoro, siano essi accettati o rifiutati, possono essere trovati qui."
+      },
+      "sidebar_filter": {
+        "title": "Nessun elemento di lavoro corrispondente",
+        "description": "Nessun elemento di lavoro corrisponde al filtro applicato in accoglienza. Crea un nuovo elemento di lavoro."
+      },
+      "detail": {
+        "title": "Seleziona un elemento di lavoro per visualizzarne i dettagli."
+      }
+    }
+  }
+}

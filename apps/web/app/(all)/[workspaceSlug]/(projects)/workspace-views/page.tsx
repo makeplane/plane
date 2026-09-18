@@ -1,0 +1,59 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import React, { useState } from "react";
+import { observer } from "mobx-react";
+// plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { SearchOutline } from "@makeplane/propel/icons";
+
+// components
+import { PageHead } from "@/components/core/page-title";
+import { GlobalDefaultViewListItem } from "@/components/workspace/views/default-view-list-item";
+import { GlobalViewsList } from "@/components/workspace/views/views-list";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+
+function WorkspaceViewsPage() {
+  const [query, setQuery] = useState("");
+  // store
+  const { currentWorkspace } = useWorkspace();
+  const { t } = useTranslation();
+  // derived values
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
+
+  return (
+    <>
+      <PageHead title={pageTitle} />
+      <div className="flex h-full w-full flex-col overflow-hidden">
+        <div className="flex h-11 w-full items-center overflow-hidden border-b border-subtle px-5 py-3">
+          <InputGroup size="2xl">
+            <SearchOutline className="text-secondary" width={14} height={14} />
+            <Input
+              size="2xl"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              aria-label="Search"
+            />
+          </InputGroup>
+        </div>
+        <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col">
+          {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => t(v.i18n_label).toLowerCase().includes(query.toLowerCase())).map(
+            (option) => (
+              <GlobalDefaultViewListItem key={option.key} view={option} />
+            )
+          )}
+          <GlobalViewsList searchQuery={query} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default observer(WorkspaceViewsPage);

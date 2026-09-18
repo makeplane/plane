@@ -1,0 +1,29 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenalezeny výsledky"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Poznámky",
+    "your_work": "Vaše práce",
+    "projects": "Projekty",
+    "pages": "Stránky",
+    "new_work_item": "Nová pracovní položka",
+    "home": "Domov",
+    "inbox": "Doručená pošta",
+    "workspace": "Pracovní prostor",
+    "views": "Pohledy",
+    "analytics": "Analytika",
+    "work_items": "Pracovní položky",
+    "cycles": "Cykly",
+    "modules": "Moduly",
+    "intake": "Příjem",
+    "drafts": "Koncepty",
+    "favorites": "Oblíbené",
+    "pi_chat": "PiLab AI",
+    "epics": "Epiky"
+  }
+}

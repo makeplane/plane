@@ -1,0 +1,138 @@
+FROM node:22-alpine AS base
+
+WORKDIR /app
+
+ENV TURBO_TELEMETRY_DISABLED=1
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"
+ENV CI=1
+
+RUN corepack enable pnpm
+
+# =========================================================================== #
+
+FROM base AS builder
+
+RUN pnpm add -g turbo@2.9.18
+
+COPY . .
+
+# Create a pruned workspace for just the admin app
+RUN turbo prune --scope=admin --docker
+
+# =========================================================================== #
+
+FROM base AS installer
+
+# Build in production mode; we still install dev deps explicitly below
+ENV NODE_ENV=production
+
+# Public envs required at build time (pick up via process.env)
+ARG VITE_API_BASE_URL=""
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ARG VITE_API_BASE_PATH="/api"
+ENV VITE_API_BASE_PATH=$VITE_API_BASE_PATH
+
+ARG VITE_ADMIN_BASE_URL=""
+ENV VITE_ADMIN_BASE_URL=$VITE_ADMIN_BASE_URL
+ARG VITE_ADMIN_BASE_PATH="/god-mode"
+ENV VITE_ADMIN_BASE_PATH=$VITE_ADMIN_BASE_PATH
+
+ARG VITE_SPACE_BASE_URL=""
+ENV VITE_SPACE_BASE_URL=$VITE_SPACE_BASE_URL
+ARG VITE_SPACE_BASE_PATH="/spaces"
+ENV VITE_SPACE_BASE_PATH=$VITE_SPACE_BASE_PATH
+
+ARG VITE_LIVE_BASE_URL=""
+ENV VITE_LIVE_BASE_URL=$VITE_LIVE_BASE_URL
+ARG VITE_LIVE_BASE_PATH="/live"
+ENV VITE_LIVE_BASE_PATH=$VITE_LIVE_BASE_PATH
+
+ARG VITE_WEB_BASE_URL=""
+ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
+ARG VITE_WEB_BASE_PATH=""
+ENV VITE_WEB_BASE_PATH=$VITE_WEB_BASE_PATH
+
+ARG VITE_BRAND_NAME=""
+ENV VITE_BRAND_NAME=$VITE_BRAND_NAME
+ARG VITE_BRAND_SHORT_NAME=""
+ENV VITE_BRAND_SHORT_NAME=$VITE_BRAND_SHORT_NAME
+ARG VITE_BRAND_URL=""
+ENV VITE_BRAND_URL=$VITE_BRAND_URL
+ARG VITE_DOCUMENTATION_URL=""
+ENV VITE_DOCUMENTATION_URL=$VITE_DOCUMENTATION_URL
+ARG VITE_STATUS_URL=""
+ENV VITE_STATUS_URL=$VITE_STATUS_URL
+ARG VITE_SUPPORT_EMAIL=""
+ENV VITE_SUPPORT_EMAIL=$VITE_SUPPORT_EMAIL
+ARG VITE_SUPPORT_URL=""
+ENV VITE_SUPPORT_URL=$VITE_SUPPORT_URL
+
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Copy full directory structure before fetch to ensure all package.json files are available
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+
+# Fetch dependencies to cache store, then install offline with dev deps
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store --prod=false
+
+# Build only the admin package
+RUN pnpm turbo run build --filter=admin
+
+# *****************************************************************************
+# STAGE 3: Serve with Caddy
+# *****************************************************************************
+
+FROM caddy:2.11.4-builder-alpine AS caddy-builder
+
+RUN XCADDY_SKIP_CLEANUP=1 xcaddy build \
+    --with github.com/mholt/caddy-ratelimit
+
+# Caddy's own go.mod pins x/crypto, x/net and x/text at versions with open CVEs
+# (CVE-2026-56854 CRITICAL in x/crypto, CVE-2026-46600 in x/net,
+# CVE-2026-56852 in x/text), so every xcaddy build re-ships them. xcaddy
+# preserved its build dir above, so upgrade them there and rebuild.
+# x/crypto v0.55.0 requires x/net v0.57.0 and x/text v0.41.0, hence those floors.
+# grpc and otel move together: grpc >= v1.83.0 requires otel v1.44.0, so bump
+# the otel pair in lockstep or go walks grpc backwards to satisfy the older one.
+RUN cd "$(find /tmp -maxdepth 1 -name 'buildenv_*' -type d | head -1)" && \
+    go get golang.org/x/crypto@v0.55.0 && \
+    go get golang.org/x/net@v0.57.0 && \
+    go get golang.org/x/text@v0.41.0 && \
+    go get google.golang.org/grpc@v1.83.1 && \
+    go get go.opentelemetry.io/otel@v1.44.0 && \
+    go get go.opentelemetry.io/otel/sdk@v1.44.0 && \
+    go mod tidy && \
+    go build -o /usr/bin/caddy -ldflags "-w -s" -trimpath .
+
+# `go get` resolves a module backwards rather than failing when pins conflict,
+# so assert the binary really carries the pinned grpc: a silent downgrade must
+# fail the build instead of shipping a caddy that only looks patched.
+RUN go version -m /usr/bin/caddy | grep -qE 'google\.golang\.org/grpc[[:space:]]v1\.83\.1[[:space:]]' \
+    || { echo "caddy was not built against the pinned grpc -- check the go get floors" >&2; exit 1; }
+
+FROM caddy:2.11.4-alpine AS production
+
+# curl is required by the HEALTHCHECK below and is not present in the base image.
+# OS security updates too: --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available && apk add --no-cache curl && rm -rf /var/cache/apk/*
+
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
+
+COPY apps/admin/caddy/Caddyfile /etc/caddy/Caddyfile
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:3000/god-mode >/dev/null || exit 1
+
+COPY --from=installer /app/apps/admin/build/client /usr/share/caddy/html/god-mode
+
+EXPOSE 3000
+
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]

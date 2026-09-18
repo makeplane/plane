@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Pendiente",
+        "description": "Pendiente"
+      },
+      "declined": {
+        "title": "Rechazado",
+        "description": "Rechazado"
+      },
+      "snoozed": {
+        "title": "Pospuesto",
+        "description": "Faltan {days, plural, one{# día} other{# días}}"
+      },
+      "accepted": {
+        "title": "Aceptado",
+        "description": "Aceptado"
+      },
+      "duplicate": {
+        "title": "Duplicado",
+        "description": "Duplicado"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Rechazar elemento de trabajo",
+        "content": "¿Estás seguro de que quieres rechazar el elemento de trabajo {value}?"
+      },
+      "delete": {
+        "title": "Eliminar elemento de trabajo",
+        "content": "¿Estás seguro de que quieres eliminar el elemento de trabajo {value}?",
+        "success": "Elemento de trabajo eliminado correctamente"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Solo los administradores del proyecto pueden posponer/desposponer elementos de trabajo",
+      "accept_permission": "Solo los administradores del proyecto pueden aceptar elementos de trabajo",
+      "decline_permission": "Solo los administradores del proyecto pueden rechazar elementos de trabajo"
+    },
+    "actions": {
+      "accept": "Aceptar",
+      "decline": "Rechazar",
+      "snooze": "Posponer",
+      "unsnooze": "Desposponer",
+      "copy": "Copiar enlace del elemento de trabajo",
+      "delete": "Eliminar",
+      "open": "Abrir elemento de trabajo",
+      "mark_as_duplicate": "Marcar como duplicado",
+      "move": "Mover {value} a elementos de trabajo del proyecto"
+    },
+    "source": {
+      "in-app": "en-app"
+    },
+    "order_by": {
+      "created_at": "Creado el",
+      "updated_at": "Actualizado el",
+      "id": "ID"
+    },
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
+    "modal": {
+      "title": "Crear elemento de trabajo de intake"
+    },
+    "tabs": {
+      "open": "Abiertos",
+      "closed": "Cerrados"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "No hay elementos de trabajo abiertos",
+        "description": "Encuentra elementos de trabajo abiertos aquí. Crea un nuevo elemento de trabajo."
+      },
+      "sidebar_closed_tab": {
+        "title": "No hay elementos de trabajo cerrados",
+        "description": "Todos los elementos de trabajo, ya sean aceptados o rechazados, se pueden encontrar aquí."
+      },
+      "sidebar_filter": {
+        "title": "No hay elementos de trabajo coincidentes",
+        "description": "Ningún elemento de trabajo coincide con el filtro aplicado en intake. Crea un nuevo elemento de trabajo."
+      },
+      "detail": {
+        "title": "Selecciona un elemento de trabajo para ver sus detalles."
+      }
+    }
+  }
+}

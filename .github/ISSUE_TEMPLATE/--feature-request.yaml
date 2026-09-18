@@ -1,7 +1,8 @@
 name: Feature request
-description: Suggest a feature to improve Plane
+description: Suggest a feature to improve PiLab
 title: "[feature]: "
-labels: [✨feature]
+type: Feature
+labels: [✨feature, plane]
 assignees: [vihar, pushya22]
 body:
 - type: markdown

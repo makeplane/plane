@@ -1,0 +1,58 @@
+{
+  "notification": {
+    "label": "Inbox",
+    "page_label": "{workspace} - Inbox",
+    "options": {
+      "mark_all_as_read": "Mark all as read",
+      "mark_read": "Mark as read",
+      "mark_unread": "Mark as unread",
+      "refresh": "Refresh",
+      "filters": "Inbox Filters",
+      "show_unread": "Show unread",
+      "show_snoozed": "Show snoozed",
+      "show_archived": "Show archived",
+      "mark_archive": "Archive",
+      "mark_unarchive": "Un archive",
+      "mark_snooze": "Snooze",
+      "mark_unsnooze": "Un snooze"
+    },
+    "toasts": {
+      "read": "Notification marked as read",
+      "unread": "Notification marked as unread",
+      "archived": "Notification marked as archived",
+      "unarchived": "Notification marked as un archived",
+      "snoozed": "Notification snoozed",
+      "unsnoozed": "Notification un snoozed"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Select to view details."
+      },
+      "all": {
+        "title": "No work items assigned",
+        "description": "Updates for work items assigned to you can be\n seen here"
+      },
+      "mentions": {
+        "title": "No work items assigned",
+        "description": "Updates for work items assigned to you can be\n seen here"
+      }
+    },
+    "tabs": {
+      "all": "All",
+      "mentions": "Mentions"
+    },
+    "filter": {
+      "assigned": "Assigned to me",
+      "created": "Created by me",
+      "subscribed": "Subscribed by me"
+    },
+    "snooze": {
+      "1_day": "1 day",
+      "3_days": "3 days",
+      "5_days": "5 days",
+      "1_week": "1 week",
+      "2_weeks": "2 weeks",
+      "custom": "Custom"
+    }
+  }
+}

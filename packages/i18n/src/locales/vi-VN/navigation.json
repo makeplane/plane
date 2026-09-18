@@ -1,0 +1,29 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Không tìm thấy kết quả"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Ghi chú nhanh",
+    "your_work": "Công việc của tôi",
+    "projects": "Dự án",
+    "pages": "Trang",
+    "new_work_item": "Mục công việc mới",
+    "home": "Trang chủ",
+    "inbox": "Hộp thư đến",
+    "workspace": "Không gian làm việc",
+    "views": "Chế độ xem",
+    "analytics": "Phân tích",
+    "work_items": "Mục công việc",
+    "cycles": "Chu kỳ",
+    "modules": "Mô-đun",
+    "intake": "Thu thập",
+    "drafts": "Bản nháp",
+    "favorites": "Yêu thích",
+    "pi_chat": "PiLab AI",
+    "epics": "Epics"
+  }
+}

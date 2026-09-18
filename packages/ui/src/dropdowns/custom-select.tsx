@@ -1,18 +1,30 @@
-import React, { useRef, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { Combobox } from "@headlessui/react";
+
+import React, { createContext, useCallback, useContext, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Listbox } from "@headlessui/react";
-import { Check, ChevronDown } from "lucide-react";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
+// plane helpers
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 // types
-import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
+import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
-const CustomSelect = (props: ICustomSelectProps) => {
+// Context to share the close handler with option components
+const DropdownContext = createContext<() => void>(() => {});
+
+function CustomSelect(props: ICustomSelectProps) {
   const {
+    ariaLabel,
     customButtonClassName = "",
     buttonClassName = "",
     placement,
@@ -31,7 +43,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -40,116 +52,153 @@ const CustomSelect = (props: ICustomSelectProps) => {
     placement: placement ?? "bottom-start",
   });
 
-  const openDropdown = () => {
+  const openDropdown = useCallback(() => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
-  };
-  const closeDropdown = () => setIsOpen(false);
+  }, [referenceElement]);
+
+  const closeDropdown = useCallback(() => setIsOpen(false), []);
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
   useOutsideClickDetector(dropdownRef, closeDropdown);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = useCallback(() => {
     if (isOpen) closeDropdown();
     else openDropdown();
-  };
+  }, [closeDropdown, isOpen, openDropdown]);
 
   return (
-    <Listbox
-      as="div"
-      ref={dropdownRef}
-      tabIndex={tabIndex}
-      value={value}
-      onChange={onChange}
-      className={cn("relative flex-shrink-0 text-left", className)}
-      onKeyDown={handleKeyDown}
-      disabled={disabled}
-    >
-      <>
-        {customButton ? (
-          <Listbox.Button as={React.Fragment}>
-            <button
-              ref={setReferenceElement}
-              type="button"
-              className={`flex items-center justify-between gap-1 text-xs ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-              } ${customButtonClassName}`}
-              onClick={toggleDropdown}
+    <DropdownContext.Provider value={closeDropdown}>
+      {/* Headless UI supplies the combobox semantics. */}
+      {/* oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
+      <Combobox
+        as="div"
+        ref={dropdownRef}
+        tabIndex={tabIndex}
+        value={value}
+        onChange={(val) => {
+          onChange?.(val);
+          closeDropdown();
+        }}
+        className={cn("relative flex-shrink-0 text-left", className)}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+      >
+        <>
+          {customButton ? (
+            <Combobox.Button as={React.Fragment}>
+              <button
+                ref={setReferenceElement}
+                type="button"
+                className={`flex items-center justify-between gap-1 rounded text-11 ${
+                  disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
+                } ${customButtonClassName}`}
+                onClick={toggleDropdown}
+                aria-label={ariaLabel}
+              >
+                {customButton}
+              </button>
+            </Combobox.Button>
+          ) : (
+            <Combobox.Button as={React.Fragment}>
+              <button
+                ref={setReferenceElement}
+                type="button"
+                className={cn(
+                  "flex w-full items-center justify-between gap-1 rounded border border-strong",
+                  {
+                    "px-3 py-2 text-13": input,
+                    "px-2 py-1 text-11": !input,
+                    "cursor-not-allowed text-secondary": disabled,
+                    "cursor-pointer hover:bg-layer-transparent-hover": !disabled,
+                  },
+                  buttonClassName
+                )}
+                onClick={toggleDropdown}
+                aria-label={ariaLabel}
+              >
+                {label}
+                {!noChevron && !disabled && <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />}
+              </button>
+            </Combobox.Button>
+          )}
+        </>
+        {isOpen &&
+          createPortal(
+            <Combobox.Options
+              as="ul"
+              data-prevent-outside-click
+              className="z-30"
+              // The popper ref/style must live on the `Options` element itself: HeadlessUI's
+              // options freeze wrapper clones the direct child and would otherwise swallow a ref
+              // placed on an inner element, leaving the popper stuck at 0,0 (top-left corner).
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
             >
-              {customButton}
-            </button>
-          </Listbox.Button>
-        ) : (
-          <Listbox.Button as={React.Fragment}>
-            <button
-              ref={setReferenceElement}
-              type="button"
-              className={cn(
-                "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
-                {
-                  "px-3 py-2 text-sm": input,
-                  "px-2 py-1 text-xs": !input,
-                  "cursor-not-allowed text-custom-text-200": disabled,
-                  "cursor-pointer hover:bg-custom-background-80": !disabled,
-                },
-                buttonClassName
-              )}
-              onClick={toggleDropdown}
-            >
-              {label}
-              {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
-            </button>
-          </Listbox.Button>
-        )}
-      </>
-      {isOpen && (
-        <Listbox.Options className="fixed z-20" onClick={() => closeDropdown()} static>
-          <div
-            className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
-              {
-                "max-h-60": maxHeight === "lg",
-                "max-h-48": maxHeight === "md",
-                "max-h-36": maxHeight === "rg",
-                "max-h-28": maxHeight === "sm",
-              },
-              optionsClassName
-            )}
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            {children}
-          </div>
-        </Listbox.Options>
-      )}
-    </Listbox>
+              <div
+                className={cn(
+                  "my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
+                  optionsClassName
+                )}
+              >
+                <div
+                  className={cn("space-y-1 overflow-y-scroll", {
+                    "max-h-60": maxHeight === "lg",
+                    "max-h-48": maxHeight === "md",
+                    "max-h-36": maxHeight === "rg",
+                    "max-h-28": maxHeight === "sm",
+                  })}
+                >
+                  {children}
+                </div>
+              </div>
+            </Combobox.Options>,
+            document.body
+          )}
+      </Combobox>
+    </DropdownContext.Provider>
   );
-};
+}
 
-const Option = (props: ICustomSelectItemProps) => {
+function Option(props: ICustomSelectItemProps) {
   const { children, value, className } = props;
+  const closeDropdown = useContext(DropdownContext);
+
+  const handleClick = useCallback(() => {
+    // Close dropdown for both new and already-selected options.
+    // Use setTimeout to ensure HeadlessUI's onChange handler fires first for new selections.
+    // For already-selected options, this ensures the dropdown closes since onChange won't fire.
+    setTimeout(() => {
+      closeDropdown();
+    }, 0);
+  }, [closeDropdown]);
+
   return (
-    <Listbox.Option
+    // Headless UI supplies the option's keyboard semantics.
+    // oxlint-disable-next-line jsx_a11y/click-events-have-key-events
+    <Combobox.Option
+      as="li"
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200 flex items-center justify-between gap-2",
+          "flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none",
           {
-            "bg-custom-background-80": active,
+            "bg-layer-transparent-hover": active,
           },
           className
         )
       }
+      onClick={handleClick}
     >
       {({ selected }) => (
-        <>
+        <div className="flex w-full items-center justify-between gap-2">
           {children}
-          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-        </>
+          {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
+        </div>
       )}
-    </Listbox.Option>
+    </Combobox.Option>
   );
-};
+}
 
 CustomSelect.Option = Option;
 

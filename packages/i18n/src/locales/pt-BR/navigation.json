@@ -1,0 +1,29 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenhum resultado encontrado"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Notas adesivas",
+    "your_work": "Seu trabalho",
+    "projects": "Projetos",
+    "pages": "Páginas",
+    "new_work_item": "Novo item",
+    "home": "Home",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Visualizações",
+    "analytics": "Analytics",
+    "work_items": "Itens",
+    "cycles": "Ciclos",
+    "modules": "Módulos",
+    "intake": "Intake",
+    "drafts": "Rascunhos",
+    "favorites": "Favoritos",
+    "pi_chat": "Chat AI",
+    "epics": "Épicos"
+  }
+}

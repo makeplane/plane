@@ -1,0 +1,151 @@
+# Docker Compose for running the API pytest suite in a contained environment.
+#
+# Prerequisite:
+#   ./setup.sh    # creates apps/api/.env (and the other env files) from .env.example
+#
+# Usage:
+#   # Run the full suite (defaults to `pytest`):
+#   docker compose -f docker-compose-test.yml up --build --abort-on-container-exit --exit-code-from api-tests
+#
+#   # Run a subset by overriding the command:
+#   docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
+#   docker compose -f docker-compose-test.yml run --rm api-tests pytest plane/tests/unit -k "test_workspace"
+#
+#   # Tear down (removes ephemeral volumes and the test network):
+#   docker compose -f docker-compose-test.yml down -v
+#
+# Notes:
+# - Postgres / Valkey / RabbitMQ / MinIO start with health checks; the test
+#   runner only starts once each dependency is healthy.
+# - Data dirs are tmpfs so every run begins from a clean state.
+# - Env vars come from apps/api/.env (the same file the local stack uses); tests
+#   use plane.settings.test, which inherits from common and reads DATABASE_URL,
+#   REDIS_URL, RABBITMQ_* etc. from the environment.
+
+services:
+  test-db:
+    image: postgres:15.7-alpine
+    networks:
+      - test_env
+    env_file:
+      - ./apps/api/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-plane}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
+      POSTGRES_DB: ${POSTGRES_DB:-plane}
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-plane} -d ${POSTGRES_DB:-plane}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  test-redis:
+    image: valkey/valkey:7.2.11-alpine
+    networks:
+      - test_env
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  test-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    networks:
+      - test_env
+    env_file:
+      - ./apps/api/.env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-plane}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+    tmpfs:
+      - /var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  test-minio:
+    image: minio/minio
+    networks:
+      - test_env
+    env_file:
+      - ./apps/api/.env
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+    entrypoint: >
+      /bin/sh -c "
+      mkdir -p /export/${AWS_S3_BUCKET_NAME:-uploads} &&
+      minio server /export --console-address ':9090' &
+      sleep 3 &&
+      mc alias set local http://localhost:9000 ${AWS_ACCESS_KEY_ID:-access-key} ${AWS_SECRET_ACCESS_KEY:-secret-key} &&
+      mc mb local/${AWS_S3_BUCKET_NAME:-uploads} -p || true &&
+      tail -f /dev/null
+      "
+    tmpfs:
+      - /export
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api-tests:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    networks:
+      - test_env
+    env_file:
+      - ./apps/api/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: plane.settings.test
+      # Override service hostnames to point at the test-only services above.
+      POSTGRES_HOST: test-db
+      DATABASE_URL: postgresql://${POSTGRES_USER:-plane}:${POSTGRES_PASSWORD:-plane}@test-db:5432/${POSTGRES_DB:-plane}
+      REDIS_HOST: test-redis
+      REDIS_URL: redis://test-redis:6379/
+      RABBITMQ_HOST: test-mq
+      AWS_S3_ENDPOINT_URL: http://test-minio:9000
+      # Magic-link tests mock the celery delay but the view first checks that
+      # EMAIL_HOST is configured. Set a placeholder so the check passes.
+      EMAIL_HOST: test-smtp.invalid
+    volumes:
+      - ./apps/api:/code
+    working_dir: /code
+    depends_on:
+      test-db:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+      test-mq:
+        condition: service_healthy
+      test-minio:
+        condition: service_healthy
+    # Install test-only requirements (not in local.txt) then exec pytest.
+    # Any args passed via `docker compose run api-tests <args>` replace the default command.
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        pip install --no-cache-dir -r requirements/test.txt
+        # STATIC_ROOT must exist or Django's static middleware emits a
+        # UserWarning on every request (~100 of the warnings in test runs).
+        mkdir -p plane/static-assets/collected-static
+        exec "$@"
+      - --
+    command: ["pytest"]
+
+networks:
+  test_env:
+    driver: bridge

@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 import React from "react";
-import { Star } from "lucide-react";
 // helpers
-import { cn } from "../helpers";
+import { cn } from "./utils";
 
 type Props = {
   buttonClassName?: string;
@@ -10,20 +16,22 @@ type Props = {
   selected: boolean;
 };
 
-export const FavoriteStar: React.FC<Props> = (props) => {
+export function FavoriteStar(props: Props) {
   const { buttonClassName, iconClassName, onClick, selected } = props;
+  // Propel splits the star into two glyphs; the filled one matches the old solid Lucide star.
+  const Icon = selected ? StarFilled : StarOutline;
 
   return (
-    <button type="button" className={cn("h-4 w-4 grid place-items-center", buttonClassName)} onClick={onClick}>
-      <Star
+    <button type="button" className={cn("grid h-4 w-4 place-items-center", buttonClassName)} onClick={onClick}>
+      <Icon
         className={cn(
-          "h-4 w-4 text-custom-text-300 transition-all",
+          "h-4 w-4 text-tertiary transition-all",
           {
-            "fill-yellow-500 stroke-yellow-500": selected,
+            "text-(--color-label-yellow-icon)": selected,
           },
           iconClassName
         )}
       />
     </button>
   );
-};
+}

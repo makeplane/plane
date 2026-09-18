@@ -1,0 +1,29 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nie znaleziono wyników"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Karteczki",
+    "your_work": "Twoja praca",
+    "projects": "Projekty",
+    "pages": "Strony",
+    "new_work_item": "Nowy element pracy",
+    "home": "Strona główna",
+    "inbox": "Skrzynka odbiorcza",
+    "workspace": "Przestrzeń robocza",
+    "views": "Widoki",
+    "analytics": "Analizy",
+    "work_items": "Elementy pracy",
+    "cycles": "Cykle",
+    "modules": "Moduły",
+    "intake": "Zgłoszenia",
+    "drafts": "Szkice",
+    "favorites": "Ulubione",
+    "pi_chat": "AI Czat",
+    "epics": "Epiki"
+  }
+}

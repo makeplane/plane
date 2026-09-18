@@ -1,0 +1,29 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Keine Ergebnisse gefunden"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Notizen",
+    "your_work": "Ihre Arbeit",
+    "projects": "Projekte",
+    "pages": "Seiten",
+    "new_work_item": "Neues Arbeitselement",
+    "home": "Startseite",
+    "inbox": "Posteingang",
+    "workspace": "Arbeitsbereich",
+    "views": "Ansichten",
+    "analytics": "Analysen",
+    "work_items": "Arbeitselemente",
+    "cycles": "Zyklen",
+    "modules": "Module",
+    "intake": "Eingang",
+    "drafts": "Entwürfe",
+    "favorites": "Favoriten",
+    "pi_chat": "PiLab AI",
+    "epics": "Epics"
+  }
+}

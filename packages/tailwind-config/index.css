@@ -1,0 +1,241 @@
+@import "tailwindcss";
+/*
+ * Design tokens + animations come from @makeplane/propel, which supersedes the
+ * variables.css / animations.css this package used to ship. It defines every
+ * token name we had bar one — --scrollbar-thumb-surface-hover, whose consumers
+ * now point at propel's --scrollbar-thumb-hover — plus every --animate-* token
+ * and a superset of our keyframes, and it keys light/dark off the same
+ * [data-theme*="dark"] / [data-theme="dark-contrast"] selectors we already use.
+ *
+ * Token *values* are propel's, not ours: many differ from what this package
+ * shipped. See the migration notes for the drift that needs a visual pass.
+ *
+ * Styles barrel (tokens + animations + `@source` of propel dist) so component
+ * utilities emit. propel's CSS does not import tailwindcss itself.
+ */
+@import "@makeplane/propel/styles";
+@source "../**/*.{ts,tsx}";
+
+* {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  font-variant-ligatures: none;
+  -webkit-font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  @apply font-body bg-canvas text-primary;
+}
+
+/* emoji icon picker */
+@utility conical-gradient {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff6b00 0deg,
+    #f7ae59 70.5deg,
+    #3f76ff 151.12deg,
+    #05c3ff 213deg,
+    #18914f 289.87deg,
+    #f6f172 329.25deg,
+    #ff6b00 360deg
+  );
+}
+
+/* progress bar */
+@utility progress-bar {
+  fill: currentColor;
+  color: var(--text-color-secondary);
+}
+
+::-webkit-input-placeholder,
+::placeholder,
+:-ms-input-placeholder {
+  @apply text-placeholder;
+}
+
+@utility vertical-lr {
+  writing-mode: vertical-lr;
+  width: fit-content;
+}
+
+@-moz-document url-prefix() {
+  * {
+    scrollbar-width: none;
+  }
+  .vertical-scrollbar,
+  .horizontal-scrollbar {
+    scrollbar-width: initial;
+    scrollbar-color: rgba(96, 100, 108, 0.1) transparent;
+
+    &:hover {
+      scrollbar-color: rgba(96, 100, 108, 0.25) transparent;
+    }
+
+    &:active {
+      scrollbar-color: rgba(96, 100, 108, 0.7) transparent;
+    }
+  }
+}
+
+/* ---------- Scrollbar utilities ----------- */
+::-webkit-scrollbar {
+  @apply hidden;
+}
+
+.vertical-scrollbar {
+  @apply overflow-y-auto;
+}
+
+.horizontal-scrollbar {
+  @apply overflow-x-auto;
+}
+
+.vertical-scrollbar,
+.horizontal-scrollbar {
+  &::-webkit-scrollbar {
+    @apply block;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-layer-transparent rounded-full;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    @apply bg-scrollbar-thumb rounded-full;
+
+    &:hover {
+      @apply bg-scrollbar-thumb-hover;
+    }
+
+    &:active {
+      @apply bg-scrollbar-thumb-active;
+    }
+  }
+
+  /* Container hover out-orders `::-webkit-scrollbar-thumb:hover` and `:active`
+     at equal specificity, so this shade shows while hovering *and* dragging. */
+  &:hover::-webkit-scrollbar-thumb {
+    @apply bg-scrollbar-thumb-hover;
+  }
+
+  &::-webkit-scrollbar-corner {
+    @apply bg-layer-transparent;
+  }
+}
+
+.vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
+  margin-top: 44px;
+}
+
+/* Scrollbar variants
+ * `sm`, `md` and `lg` collide by name with propel's own scrollbar utilities,
+ * imported at the top of this file. Both definitions are emitted and ours lands
+ * second, so it wins — but only for properties it actually restates. propel sets
+ * `scrollbar-width` / `scrollbar-color`, and from Chromium 121 setting either of
+ * those makes the browser ignore every ::-webkit-scrollbar rule on the element,
+ * which would silently drop the geometry below and leave one 11px scrollbar
+ * everywhere. Resetting both back to `auto` hands the pseudo-elements back.
+ *
+ * This leans on ours being emitted after propel's, which follows from `@utility`
+ * registration order and is not something Tailwind documents for duplicate
+ * names. Keep these definitions below the propel @import. If scrollbars ever
+ * turn thin and uniform app-wide, this is why — rename ours to break the tie.
+ *
+ * `xs` has no propel counterpart, so it needs no reset.
+ */
+@utility scrollbar-xs {
+  &::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-sm {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+
+  &:hover {
+    scrollbar-color: auto;
+  }
+
+  &::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-md {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+
+  &:hover {
+    scrollbar-color: auto;
+  }
+
+  &::-webkit-scrollbar {
+    height: 14px;
+    width: 14px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-lg {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+
+  &:hover {
+    scrollbar-color: auto;
+  }
+
+  &::-webkit-scrollbar {
+    height: 16px;
+    width: 16px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+  }
+}
+
+/* highlight class */
+@utility highlight {
+  border: 1px solid var(--border-color-accent-strong) !important;
+}
+
+@utility highlight-with-line {
+  border-left: 5px solid var(--border-color-accent-strong) !important;
+  background: var(--background-color-layer-2);
+}
+
+/* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
+@utility disable-autofill-style {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-background-clip: text;
+  }
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-placeholder;
+  }
+}

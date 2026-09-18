@@ -1,0 +1,15 @@
+FROM node:22-alpine
+
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY . .
+RUN corepack enable pnpm && pnpm add -g turbo
+RUN pnpm install
+EXPOSE 3003
+
+ENV TURBO_TELEMETRY_DISABLED=1
+
+VOLUME [ "/app/node_modules", "/app/live/node_modules"]
+
+CMD ["pnpm","dev", "--filter=live"]

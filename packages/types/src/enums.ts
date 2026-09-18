@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export enum EUserPermissions {
   ADMIN = 20,
   MEMBER = 15,
@@ -6,19 +12,16 @@ export enum EUserPermissions {
 
 export type TUserPermissions = EUserPermissions.ADMIN | EUserPermissions.MEMBER | EUserPermissions.GUEST;
 
+// project network
+export enum EProjectNetwork {
+  PRIVATE = 0,
+  PUBLIC = 2,
+}
+
 // project pages
 export enum EPageAccess {
   PUBLIC = 0,
   PRIVATE = 1,
-}
-
-export enum EDurationFilters {
-  NONE = "none",
-  TODAY = "today",
-  THIS_WEEK = "this_week",
-  THIS_MONTH = "this_month",
-  THIS_YEAR = "this_year",
-  CUSTOM = "custom",
 }
 
 export enum EIssueCommentAccessSpecifier {
@@ -60,4 +63,20 @@ export enum EFileAssetType {
   INITIATIVE_DESCRIPTION = "INITIATIVE_DESCRIPTION",
   PROJECT_DESCRIPTION = "PROJECT_DESCRIPTION",
   TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION",
+}
+
+export type TEditorAssetType =
+  | EFileAssetType.COMMENT_DESCRIPTION
+  | EFileAssetType.ISSUE_DESCRIPTION
+  | EFileAssetType.DRAFT_ISSUE_DESCRIPTION
+  | EFileAssetType.PAGE_DESCRIPTION
+  | EFileAssetType.TEAM_SPACE_DESCRIPTION
+  | EFileAssetType.INITIATIVE_DESCRIPTION
+  | EFileAssetType.PROJECT_DESCRIPTION
+  | EFileAssetType.TEAM_SPACE_COMMENT_DESCRIPTION;
+
+export enum EUpdateStatus {
+  OFF_TRACK = "OFF-TRACK",
+  ON_TRACK = "ON-TRACK",
+  AT_RISK = "AT-RISK",
 }

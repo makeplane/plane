@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export enum EAuthenticationPageType {
   STATIC = "STATIC",
   NOT_AUTHENTICATED = "NOT_AUTHENTICATED",
@@ -25,14 +31,35 @@ export enum EUserPermissionsLevel {
   PROJECT = "PROJECT",
 }
 
-export enum EUserWorkspaceRoles {
-  ADMIN = 20,
-  MEMBER = 15,
-  GUEST = 5,
-}
+export type TUserPermissionsLevel = EUserPermissionsLevel;
 
-export enum EUserProjectRoles {
+export enum EUserPermissions {
   ADMIN = 20,
   MEMBER = 15,
   GUEST = 5,
 }
+export type TUserPermissions = EUserPermissions;
+
+export type TUserAllowedPermissionsObject = {
+  create: TUserPermissions[];
+  update: TUserPermissions[];
+  delete: TUserPermissions[];
+  read: TUserPermissions[];
+};
+export type TUserAllowedPermissions = {
+  workspace: {
+    [key: string]: Partial<TUserAllowedPermissionsObject>;
+  };
+  project: {
+    [key: string]: Partial<TUserAllowedPermissionsObject>;
+  };
+};
+
+export const USER_ALLOWED_PERMISSIONS: TUserAllowedPermissions = {
+  workspace: {
+    dashboard: {
+      read: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    },
+  },
+  project: {},
+};

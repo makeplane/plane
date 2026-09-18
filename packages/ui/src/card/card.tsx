@@ -1,16 +1,15 @@
-import * as React from "react";
-import { cn } from "../../helpers";
-import {
-  ECardDirection,
-  ECardSpacing,
-  ECardVariant,
-  getCardStyle,
-  TCardDirection,
-  TCardSpacing,
-  TCardVariant,
-} from "./helper";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export interface CardProps {
+import * as React from "react";
+import { cn } from "../utils";
+import type { TCardDirection, TCardSpacing, TCardVariant } from "./helper";
+import { ECardDirection, ECardSpacing, ECardVariant, getCardStyle } from "./helper";
+
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TCardVariant;
   spacing?: TCardSpacing;
   direction?: TCardDirection;
@@ -18,7 +17,7 @@ export interface CardProps {
   children: React.ReactNode;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+const Card = React.forwardRef(function Card(props: CardProps, ref: React.ForwardedRef<HTMLDivElement>) {
   const {
     variant = ECardVariant.WITH_SHADOW,
     direction = ECardDirection.COLUMN,

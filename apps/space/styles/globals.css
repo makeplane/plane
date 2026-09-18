@@ -1,0 +1,48 @@
+@import "@plane/tailwind-config/index.css";
+@import "@plane/editor/styles";
+@import "@plane/propel/styles/react-day-picker.css";
+@plugin "@tailwindcss/typography";
+
+/* stickies and editor colors
+ * Text colors and the themed light/dark background ramps come from
+ * @plane/editor/styles (imported above), which is their single source of truth.
+ * Only the un-themed :root fallback below is kept: the editor package declares
+ * background colors solely under [data-theme*="light"] / [data-theme*="dark"],
+ * so without this they are undefined until a theme lands on the element. */
+:root {
+  --editor-colors-gray-background: #d6d6d8;
+  --editor-colors-peach-background: #ffd5d7;
+  --editor-colors-pink-background: #fdd4e3;
+  --editor-colors-orange-background: #ffe3cd;
+  --editor-colors-green-background: #c3f0de;
+  --editor-colors-light-blue-background: #c5eff9;
+  --editor-colors-dark-blue-background: #c9dafb;
+  --editor-colors-purple-background: #e3d8fd;
+}
+
+/* Progress Bar Styles */
+:root {
+  --bprogress-color: var(--background-color-accent-primary);
+  --bprogress-height: 2.5px !important;
+}
+
+.bprogress {
+  pointer-events: none;
+}
+
+.bprogress .bar {
+  background: linear-gradient(
+    90deg,
+    --alpha(var(--background-color-accent-primary) / 80%) 0%,
+    --alpha(var(--background-color-accent-primary) / 100%) 100%
+  ) !important;
+  will-change: width, opacity;
+}
+
+.bprogress .peg {
+  display: block;
+  box-shadow:
+    0 0 8px --alpha(var(--background-color-accent-primary) / 60%),
+    0 0 4px --alpha(var(--background-color-accent-primary) / 40%) !important;
+  will-change: transform, opacity;
+}

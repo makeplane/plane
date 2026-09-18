@@ -1,0 +1,104 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+// plane imports
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import type { TEstimateSystemKeys } from "@plane/types";
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
+import { RadioInput } from "../radio-select";
+
+type TEstimateCreateStageOne = {
+  estimateSystem: TEstimateSystemKeys;
+  handleEstimateSystem: (value: TEstimateSystemKeys) => void;
+  handleEstimatePoints: (value: string) => void;
+};
+
+export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
+  const { estimateSystem, handleEstimateSystem, handleEstimatePoints } = props;
+
+  // i18n
+  const { t } = useTranslation();
+
+  const currentEstimateSystem = ESTIMATE_SYSTEMS[estimateSystem] || undefined;
+
+  if (!currentEstimateSystem) return <></>;
+  return (
+    <div className="space-y-6">
+      <div className="mb-2 gap-2 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+        <RadioInput
+          options={Object.keys(ESTIMATE_SYSTEMS)
+            .map((system) => {
+              const currentSystem = system as TEstimateSystemKeys;
+              return {
+                label: <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>,
+                value: system,
+                disabled: false,
+              };
+            })
+            .filter((option) => option !== null)}
+          name="estimate-radio-input"
+          label={t("project_settings.estimates.create.choose_estimate_system")}
+          labelClassName="text-13 font-medium text-secondary mb-1.5"
+          wrapperClassName="relative flex flex-wrap gap-14"
+          fieldClassName="relative flex items-center gap-1.5"
+          buttonClassName="size-4"
+          selected={estimateSystem}
+          onChange={(value) => handleEstimateSystem(value as TEstimateSystemKeys)}
+        />
+      </div>
+      {ESTIMATE_SYSTEMS[estimateSystem]?.is_available && (
+        <>
+          <div className="space-y-1.5">
+            <div className="text-13 font-medium text-secondary">
+              {t("project_settings.estimates.create.start_from_scratch")}
+            </div>
+            <button
+              className="block w-full space-y-1 rounded-md border border-subtle p-3 py-2.5 text-left hover:bg-layer-transparent-hover"
+              onClick={() => handleEstimatePoints("custom")}
+            >
+              <p className="text-14 font-medium">{t("project_settings.estimates.create.custom")}</p>
+              <p className="text-11 text-tertiary">
+                {/* TODO: Translate here */}
+                Add your own <span className="lowercase">{currentEstimateSystem.name}</span> from scratch.
+              </p>
+            </button>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="text-13 font-medium text-secondary">
+              {t("project_settings.estimates.create.choose_template")}
+            </div>
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              {Object.keys(currentEstimateSystem.templates).map((name) =>
+                currentEstimateSystem.templates[name]?.hide ? null : (
+                  <button
+                    key={name}
+                    className="space-y-1 rounded-md border border-subtle p-3 py-2.5 text-left hover:bg-surface-2"
+                    onClick={() => handleEstimatePoints(name)}
+                  >
+                    <p className="text-14 font-medium">{currentEstimateSystem.templates[name]?.title}</p>
+                    <p className="text-11 text-tertiary">
+                      {currentEstimateSystem.templates[name]?.values
+                        ?.map((template) =>
+                          estimateSystem === (EEstimateSystem.TIME as TEstimateSystemKeys)
+                            ? convertMinutesToHoursMinutesString(Number(template.value)).trim()
+                            : template.value
+                        )
+                        ?.join(", ")}
+                    </p>
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+//

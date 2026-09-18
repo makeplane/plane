@@ -1,0 +1,20 @@
+{
+  "extends": "@plane/typescript-config/base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noUnusedParameters": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "jsx": "react-jsx",
+
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/plane-live/*": ["./src/ce/*"]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src", "tests"],
+  "exclude": ["node_modules", "dist"]
+}

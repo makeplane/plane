@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // local services
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { FileUploadService } from "./file-upload.service";
 // helpers
 import { FileService } from "./file.service";
@@ -26,6 +32,21 @@ export class SitesFileService extends FileService {
     this.cancelUpload = this.cancelUpload.bind(this);
     // services
     this.fileUploadService = new FileUploadService();
+  }
+
+  /**
+   * Normalises an upload failure into something the caller can render.
+   *
+   * HTTP failures carry a response payload that callers already know how to
+   * display, while transport failures (blocked port, CORS, offline client,
+   * timeout) carry nothing but the axios message. Rethrowing `undefined` for
+   * those is what turns every such failure into a generic "upload failed" toast.
+   */
+  private getUploadError(error: any): any {
+    if (error instanceof Error) return error;
+    const responseData = error?.response?.data;
+    if (responseData !== undefined && responseData !== null) return responseData;
+    return new Error(error?.message ?? "Failed to upload file");
   }
 
   /**
@@ -74,7 +95,7 @@ export class SitesFileService extends FileService {
    * @throws {Error} If the request fails
    */
   async uploadAsset(anchor: string, data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/public/assets/v2/anchor/${anchor}/`, {
       ...data,
       ...fileMetaData,
@@ -87,7 +108,7 @@ export class SitesFileService extends FileService {
         return signedURLResponse;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw this.getUploadError(error);
       });
   }
 
@@ -98,10 +119,10 @@ export class SitesFileService extends FileService {
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails
    */
-  async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
+  async restoreNewAsset(anchor: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
-    return this.post(`/api/public/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+    return this.post(`/api/public/assets/v2/anchor/${anchor}/restore/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,0 +1,19 @@
+FROM node:22-alpine
+
+RUN apk add --no-cache libc6-compat
+
+# Set working directory
+WORKDIR /app
+
+COPY . .
+
+RUN corepack enable pnpm && pnpm add -g turbo
+RUN pnpm install
+
+EXPOSE 3002
+
+ENV VITE_SPACE_BASE_PATH="/spaces"
+
+VOLUME [ "/app/node_modules", "/app/apps/space/node_modules"]
+
+CMD ["pnpm", "dev", "--filter=space"]

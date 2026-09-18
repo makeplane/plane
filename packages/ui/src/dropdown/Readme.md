@@ -1,6 +1,7 @@
 Below is a detailed list of the props included:
 
 ### Root Props
+
 - value: string | string[]; - Current selected value.
 - onChange: (value: string | string []) => void; - Callback function for handling value changes.
 - options: TDropdownOption[] | undefined; - Array of options.
@@ -14,6 +15,7 @@ Below is a detailed list of the props included:
 ---
 
 ### Button Props
+
 - buttonContent?: (isOpen: boolean) => React.ReactNode; - Function to render the content of the button based on the open state.
 - buttonContainerClassName?: string; - Class name for the button container.
 - buttonClassName?: string; - Class name for the button itself.
@@ -21,6 +23,7 @@ Below is a detailed list of the props included:
 ---
 
 ### Input Props
+
 - disableSearch?: boolean; - Disables the search input if set to true.
 - inputPlaceholder?: string; - Placeholder text for the search input.
 - inputClassName?: string; - Class name for the search input.
@@ -30,6 +33,7 @@ Below is a detailed list of the props included:
 ---
 
 ### Options Props
+
 - keyExtractor: (option: TDropdownOption) => string; - Function to extract the key from each option.
 - optionsContainerClassName?: string; - Class name for the options container.
 - queryArray: string[]; - Array of strings to be used for querying the options.

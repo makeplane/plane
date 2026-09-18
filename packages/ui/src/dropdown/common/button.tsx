@@ -1,11 +1,16 @@
-import React, { Fragment } from "react";
-// headless ui
-import { Combobox } from "@headlessui/react";
-// helper
-import { cn } from "../../../helpers";
-import { IMultiSelectDropdownButton, ISingleSelectDropdownButton } from "../dropdown";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export const DropdownButton: React.FC<IMultiSelectDropdownButton | ISingleSelectDropdownButton> = (props) => {
+import { Combobox } from "@headlessui/react";
+import React, { Fragment } from "react";
+// helper
+import { cn } from "../../utils";
+import type { IMultiSelectDropdownButton, ISingleSelectDropdownButton } from "../dropdown";
+
+export function DropdownButton(props: IMultiSelectDropdownButton | ISingleSelectDropdownButton) {
   const {
     isOpen,
     buttonContent,
@@ -24,7 +29,7 @@ export const DropdownButton: React.FC<IMultiSelectDropdownButton | ISingleSelect
         className={cn(
           "clickable block h-full max-w-full outline-none",
           {
-            "cursor-not-allowed text-custom-text-200": disabled,
+            "cursor-not-allowed text-secondary": disabled,
             "cursor-pointer": !disabled,
           },
           buttonContainerClassName
@@ -35,4 +40,4 @@ export const DropdownButton: React.FC<IMultiSelectDropdownButton | ISingleSelect
       </button>
     </Combobox.Button>
   );
-};
+}

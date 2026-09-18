@@ -1,0 +1,121 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FormEvent } from "react";
+import { useMemo, useRef, useState } from "react";
+import { observer } from "mobx-react";
+// icons
+import { CloseCircleOutline, WarningCircleOutline } from "@makeplane/propel/icons";
+// plane imports
+import { Banner } from "@makeplane/propel/components/banner";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import type { IEmailCheckData } from "@plane/types";
+import { Spinner } from "@plane/ui";
+import { checkEmailValidity } from "@plane/utils";
+// helpers
+type TAuthEmailForm = {
+  defaultEmail: string;
+  onSubmit: (data: IEmailCheckData) => Promise<void>;
+  // Invitation-only instances ask for the invite code on the next step; saying so
+  // up front keeps the requirement visible from the first screen.
+  inviteOnly?: boolean;
+};
+
+export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
+  const { onSubmit, defaultEmail, inviteOnly = false } = props;
+  // states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState(defaultEmail);
+  // plane hooks
+  const { t } = useTranslation();
+  const emailError = useMemo(
+    () => (email && !checkEmailValidity(email) ? { email: "auth.common.email.errors.invalid" } : undefined),
+    [email]
+  );
+
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    const payload: IEmailCheckData = {
+      email: email,
+    };
+    await onSubmit(payload);
+    setIsSubmitting(false);
+  };
+
+  const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
+
+  const [isFocused, setIsFocused] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <form onSubmit={handleFormSubmit} className="space-y-4">
+      {inviteOnly && (
+        <Banner
+          placement="inline"
+          variant="info"
+          title={t("auth.common.invite_code.notice_title")}
+          description={t("auth.common.invite_code.notice")}
+        />
+      )}
+      <div className="space-y-1">
+        <label htmlFor="email" className="text-13 font-medium text-tertiary">
+          {t("auth.common.email.label")}
+        </label>
+        <Field name="email" invalid={!isFocused && Boolean(emailError?.email)}>
+          <InputGroup
+            size="2xl"
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+            onBlur={() => {
+              setIsFocused(false);
+            }}
+          >
+            <Input
+              size="2xl"
+              id="email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("auth.common.email.placeholder")}
+              autoComplete="off"
+              autoFocus
+              ref={inputRef}
+            />
+            {email.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("");
+                  inputRef.current?.focus();
+                }}
+                className="grid size-5 place-items-center"
+                aria-label={t("aria_labels.auth_forms.clear_email")}
+                tabIndex={-1}
+              >
+                <CloseCircleOutline className="size-5 text-placeholder" />
+              </button>
+            )}
+          </InputGroup>
+        </Field>
+        {emailError?.email && !isFocused && (
+          <p className="flex items-center gap-1 px-0.5 text-11 text-danger-primary">
+            <WarningCircleOutline height={12} width={12} />
+            {t(emailError.email)}
+          </p>
+        )}
+      </div>
+      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
+      </Button>
+    </form>
+  );
+});
