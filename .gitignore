@@ -120,3 +120,6 @@ packages/i18n/src/types/keys.generated.ts
 
 # Local browser-debug artifacts (playwright-cli screenshots / console logs)
 .playwright-cli/
+
+# Local miscellaneous files
+/others/
