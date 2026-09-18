@@ -64,37 +64,53 @@ export const SidebarPagesTree = observer(function SidebarPagesTree(props: Props)
       const page = getPageById(pageId);
       if (!page) return [];
       const childPageIds = childPageIdsByParentId[pageId] ?? [];
+      const hasChildren = childPageIds.length > 0;
       const isExpanded = expandedPageIds.has(pageId) && depth < MAX_TREE_DEPTH;
       return [
-        <div key={pageId} className="flex items-center gap-1" style={{ paddingLeft: `${depth * 12}px` }}>
+        <div key={pageId} className="flex items-center gap-1" style={{ paddingLeft: `${depth * 10}px` }}>
+          {/* the page icon turns into the chevron on hover, so expanding costs no extra width */}
           <button
             type="button"
-            className={cn("grid size-4 flex-shrink-0 place-items-center rounded-xs text-placeholder hover:text-tertiary", {
-              invisible: childPageIds.length === 0,
+            className={cn("group/page-toggle grid size-4 flex-shrink-0 place-items-center text-placeholder", {
+              "cursor-default": !hasChildren,
+              "hover:text-tertiary": hasChildren,
             })}
-            onClick={() => toggleExpanded(pageId)}
+            onClick={() => hasChildren && toggleExpanded(pageId)}
             aria-label={isExpanded ? "Collapse sub-pages" : "Expand sub-pages"}
-            tabIndex={childPageIds.length === 0 ? -1 : 0}
+            tabIndex={hasChildren ? 0 : -1}
           >
-            <ChevronRightIcon className={cn("size-3.5 transition-transform", { "rotate-90": isExpanded })} />
+            <span
+              className={cn("grid place-items-center", {
+                "group-hover/page-toggle:hidden": hasChildren,
+                hidden: hasChildren && isExpanded,
+              })}
+            >
+              {page.logo_props?.in_use ? (
+                <Logo logo={page.logo_props} size={12} type="lucide" />
+              ) : (
+                <PageIcon className="size-3.5 flex-shrink-0" />
+              )}
+            </span>
+            {hasChildren && (
+              <ChevronRightIcon
+                className={cn("hidden size-3.5 group-hover/page-toggle:block", {
+                  "block rotate-90": isExpanded,
+                })}
+              />
+            )}
           </button>
           <Link
             href={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
-            className="flex min-w-0 flex-1 items-center gap-1.5 rounded-sm px-1 py-1 text-11 font-medium text-secondary hover:bg-layer-transparent-hover hover:text-primary"
+            className="min-w-0 flex-1 truncate rounded-sm px-1 py-0.5 text-11 font-medium text-secondary hover:bg-layer-transparent-hover hover:text-primary"
           >
-            {page.logo_props?.in_use ? (
-              <Logo logo={page.logo_props} size={14} type="lucide" />
-            ) : (
-              <PageIcon className="size-3.5 flex-shrink-0 text-tertiary" />
-            )}
-            <span className="truncate">{getPageName(page.name)}</span>
+            {getPageName(page.name)}
           </Link>
         </div>,
         ...(isExpanded ? renderTree(childPageIds, depth + 1) : []),
       ];
     });
 
-  if (pageIds.length === 0) return <p className="px-2 py-1 pl-7 text-11 text-placeholder">No pages yet</p>;
+  if (pageIds.length === 0) return <p className="py-0.5 pl-6 text-11 text-placeholder">No pages yet</p>;
 
-  return <div className="space-y-0.5 pl-4">{renderTree(rootPageIds, 0)}</div>;
+  return <div className="space-y-0.5 pl-3">{renderTree(rootPageIds, 0)}</div>;
 });

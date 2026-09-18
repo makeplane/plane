@@ -59,7 +59,7 @@ function PageListSectionHeader(props: { title: string; onDropToRoot?: (draggedPa
     <div
       ref={headerRef}
       className={cn(
-        "border-b border-subtle px-page-x py-2 text-11 font-medium tracking-wide text-tertiary uppercase",
+        "border-b border-subtle px-page-x py-1 text-11 font-medium tracking-wide text-tertiary uppercase",
         isDraggedOver && "bg-layer-1 text-secondary"
       )}
     >

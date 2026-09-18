@@ -203,10 +203,11 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
               <SidebarNavItem isActive={!!isActive(item)}>
                 <div className="flex w-full items-center justify-between gap-1.5 py-[1px]">
                   <div className="flex items-center gap-1.5">
-                    {isPagesItem && (
+                    {isPagesItem ? (
+                      // the icon itself turns into the chevron on hover, so the tree toggle costs no extra width
                       <button
                         type="button"
-                        className="grid size-4 flex-shrink-0 place-items-center rounded-xs text-placeholder hover:text-tertiary"
+                        className="group/pages-toggle grid size-4 flex-shrink-0 place-items-center text-placeholder hover:text-tertiary"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -214,14 +215,22 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
                         }}
                         aria-label={isPagesTreeExpanded ? "Collapse pages" : "Expand pages"}
                       >
+                        <item.icon
+                          className={cn("size-4 flex-shrink-0 stroke-[1.5] group-hover/pages-toggle:hidden", {
+                            hidden: isPagesTreeExpanded,
+                          })}
+                        />
                         <ChevronRightIcon
-                          className={cn("size-3.5 transition-transform", { "rotate-90": isPagesTreeExpanded })}
+                          className={cn("hidden size-3.5 group-hover/pages-toggle:block", {
+                            "block rotate-90": isPagesTreeExpanded,
+                          })}
                         />
                       </button>
+                    ) : (
+                      <item.icon
+                        className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                      />
                     )}
-                    <item.icon
-                      className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
-                    />
                     <span className="text-11 font-medium">{t(item.i18n_key)}</span>
                   </div>
                   {shouldShowCount && <span className="text-11 font-medium text-tertiary">{project.intake_count}</span>}
