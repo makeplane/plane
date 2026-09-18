@@ -4,7 +4,7 @@
         "name": "Cycle 1: Getting Started with Plane",
         "project_id": 1,
         "sort_order": 1,
-        "timezone": "UTC",
+        "timezone": "Asia/Shanghai",
         "type": "CURRENT"
     },
     {
@@ -12,7 +12,7 @@
         "name": "Cycle 2: Collaboration & Customization",
         "project_id": 1,
         "sort_order": 2,
-        "timezone": "UTC",
+        "timezone": "Asia/Shanghai",
         "type": "UPCOMING"
     }
 ]

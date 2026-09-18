@@ -60,6 +60,60 @@ function WorkspaceResearchOverviewPage() {
             <ResearchPiAggregateBoard workspaceSlug={workspaceSlug} />
           </div>
         )}
+        <section className="mb-6 grid grid-cols-1 gap-3 lg:grid-cols-2">
+          <div className="rounded-lg border border-subtle bg-surface-1 p-4">
+            <h3 className="text-13 font-medium text-primary">{t("research.overview.pending_title")}</h3>
+            <p className="mt-1 text-11 text-tertiary">{t("research.overview.pending_description")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {research.canSee("reviews") && (
+                <Link
+                  href={`/${workspaceSlug}/research/reviews`}
+                  className="rounded-md border border-subtle px-3 py-1.5 text-12 text-secondary hover:bg-surface-2"
+                >
+                  {t("research.overview.open_reviews")}
+                </Link>
+              )}
+              {research.canSee("approvals") && (
+                <Link
+                  href={`/${workspaceSlug}/research/approvals`}
+                  className="rounded-md border border-subtle px-3 py-1.5 text-12 text-secondary hover:bg-surface-2"
+                >
+                  {t("research.overview.open_approvals")}
+                </Link>
+              )}
+              {research.canSee("reports") && (
+                <Link
+                  href={`/${workspaceSlug}/research/reports?status=NEEDS_REVISION&mine=true`}
+                  className="rounded-md border border-subtle px-3 py-1.5 text-12 text-secondary hover:bg-surface-2"
+                >
+                  {t("research.overview.open_revisions")}
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className="rounded-lg border border-subtle bg-surface-1 p-4">
+            <h3 className="text-13 font-medium text-primary">{t("research.overview.next_title")}</h3>
+            <p className="mt-1 text-11 text-tertiary">{t("research.overview.next_description")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {research.canSee("projects") && (
+                <Link
+                  href={`/${workspaceSlug}/research/projects`}
+                  className="rounded-md bg-accent-primary px-3 py-1.5 text-12 text-on-color"
+                >
+                  {t("research.overview.open_projects")}
+                </Link>
+              )}
+              {research.canSee("reports") && (
+                <Link
+                  href={`/${workspaceSlug}/research/reports`}
+                  className="rounded-md border border-subtle px-3 py-1.5 text-12 text-secondary hover:bg-surface-2"
+                >
+                  {t("research.overview.open_reports")}
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
         <h3 className="text-13 font-medium text-primary">{t("research.overview.business_sections")}</h3>
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {businessCards.map((card) => (

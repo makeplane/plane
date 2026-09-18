@@ -43,6 +43,7 @@ export * from "./stickies";
 export * from "./swr";
 export * from "./tab-indices";
 export * from "./themes";
+export * from "./timezone";
 export * from "./user";
 export * from "./views";
 export * from "./workspace-drafts";

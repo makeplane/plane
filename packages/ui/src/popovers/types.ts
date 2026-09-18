@@ -12,6 +12,7 @@ export type TPopoverButtonDefaultOptions = {
   button?: ReactNode;
   buttonClassName?: string;
   buttonRefClassName?: string;
+  ariaLabel?: string;
   disabled?: boolean;
 };
 

@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+DEFAULT_TIMEZONE = "Asia/Shanghai"
+
 RESTRICTED_WORKSPACE_SLUGS = [
     "404",
     "accounts",

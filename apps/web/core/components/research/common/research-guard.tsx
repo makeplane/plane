@@ -9,8 +9,11 @@ import { observer } from "mobx-react";
 import { Navigate, Outlet, useParams } from "react-router";
 // plane imports
 import { Spinner } from "@plane/ui";
+// components
+import { ResearchStatusPanel, type TResearchStatus } from "@/components/research/common/research-status-panel";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   /** Which sub switch the section needs (P0-CFG-03). */
@@ -27,6 +30,7 @@ type Props = {
 export const ResearchGuard = observer(function ResearchGuard({ section, adminOnly = false }: Props) {
   const { workspaceSlug } = useParams();
   const research = useResearch();
+  const { getWorkspaceBySlug } = useWorkspace();
   const { identity, identityLoader, identityErrorCode, isEnabled, isResearchAdmin } = research;
 
   useEffect(() => {
@@ -39,7 +43,26 @@ export const ResearchGuard = observer(function ResearchGuard({ section, adminOnl
 
   if (!workspaceSlug) return <Navigate to="/" replace />;
   const isCurrentWorkspaceIdentity = research.identityWorkspaceSlug === workspaceSlug;
-  if (isCurrentWorkspaceIdentity && identityErrorCode) return <Navigate to={`/${workspaceSlug}/`} replace />;
+  const workspaceName = getWorkspaceBySlug(workspaceSlug)?.name;
+  if (isCurrentWorkspaceIdentity && identityErrorCode) {
+    const status: TResearchStatus =
+      identityErrorCode === "research_permission_denied" || identityErrorCode === "research_workspace_not_found"
+        ? "permission_denied"
+        : identityErrorCode === "research_module_disabled" || identityErrorCode === "research_module_not_enabled"
+          ? "module_disabled"
+          : "load_failed";
+    return (
+      <ResearchStatusPanel
+        status={status}
+        workspaceSlug={workspaceSlug}
+        workspaceName={workspaceName}
+        onRetry={
+          status === "load_failed" ? () => void research.fetchIdentity(workspaceSlug).catch(() => undefined) : undefined
+        }
+        isRetrying={identityLoader}
+      />
+    );
+  }
   if (identityLoader || !isCurrentWorkspaceIdentity || !identity) {
     return (
       <div className="flex h-full w-full items-center justify-center">
@@ -51,7 +74,14 @@ export const ResearchGuard = observer(function ResearchGuard({ section, adminOnl
   const sectionEnabled = section ? (identity.sections?.[section] ?? false) : true;
 
   if (!isEnabled || !sectionEnabled || (adminOnly && !isResearchAdmin)) {
-    return <Navigate to={`/${workspaceSlug}/`} replace />;
+    const status: TResearchStatus = !identity.module_enabled
+      ? "module_disabled"
+      : !identity.workspace_enabled
+        ? "workspace_disabled"
+        : !sectionEnabled
+          ? "section_disabled"
+          : "permission_denied";
+    return <ResearchStatusPanel status={status} workspaceSlug={workspaceSlug} workspaceName={workspaceName} />;
   }
 
   return <Outlet />;

@@ -204,3 +204,64 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+
+@pytest.mark.unit
+class TestS3StorageMinioPresignedPostURL:
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "uploads",
+            "AWS_REGION": "us-east-1",
+            "USE_MINIO": "1",
+            "MINIO_ENDPOINT_SSL": "0",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_presigned_post_uses_bucket_path_with_trailing_slash(self, mock_boto3):
+        """Keep MinIO POSTs on the proxy's bucket-prefix route.
+
+        Some reverse proxies serve the exact ``/uploads`` path from the web app
+        while forwarding ``/uploads/`` to MinIO. Browsers then report a generic
+        network error because the CORS preflight never reaches object storage.
+        MinIO accepts the trailing slash without changing the signed form.
+        """
+        mock_s3_client = Mock()
+        mock_s3_client.generate_presigned_post.return_value = {
+            "url": "http://10.26.15.53:3300/uploads",
+            "fields": {"key": "avatar.png"},
+        }
+        mock_boto3.client.return_value = mock_s3_client
+        request = Mock(scheme="http")
+        request.get_host.return_value = "10.26.15.53:3300"
+
+        response = S3Storage(request=request).generate_presigned_post("avatar.png", "image/png", 1024)
+
+        assert response["url"] == "http://10.26.15.53:3300/uploads/"
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "uploads",
+            "AWS_REGION": "us-east-1",
+            "USE_MINIO": "0",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_presigned_post_does_not_rewrite_external_storage_url(self, mock_boto3):
+        mock_s3_client = Mock()
+        mock_s3_client.generate_presigned_post.return_value = {
+            "url": "https://uploads.example.com",
+            "fields": {"key": "avatar.png"},
+        }
+        mock_boto3.client.return_value = mock_s3_client
+
+        response = S3Storage().generate_presigned_post("avatar.png", "image/png", 1024)
+
+        assert response["url"] == "https://uploads.example.com"

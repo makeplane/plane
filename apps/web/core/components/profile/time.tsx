@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { DEFAULT_TIMEZONE } from "@plane/constants";
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
 
@@ -12,7 +13,7 @@ type Props = {
 };
 
 export function ProfileSidebarTime(props: Props) {
-  const { timeZone } = props;
+  const timeZone = props.timeZone || DEFAULT_TIMEZONE;
   // current time hook
   const { currentTime } = useCurrentTime();
 

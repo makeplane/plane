@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { DEFAULT_TIMEZONE } from "@plane/constants";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -36,12 +37,13 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
   } = props;
   // hooks
   const { disabled: isDisabled, timezones, selectedValue } = useTimezone();
+  const selectedValueOrDefault = value || DEFAULT_TIMEZONE;
 
   return (
     <div>
       <CustomSearchSelect
-        value={value}
-        label={value && selectedValue ? selectedValue(value) : label}
+        value={selectedValueOrDefault}
+        label={selectedValue ? selectedValue(selectedValueOrDefault) : label}
         options={isDisabled || disabled ? [] : timezones}
         onChange={onChange}
         buttonClassName={cn(buttonClassName, "border border-subtle-1", {

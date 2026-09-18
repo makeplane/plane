@@ -9,7 +9,7 @@ import { FilterOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 import { PopoverMenu } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
@@ -28,10 +28,11 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
 
   return (
     <PopoverMenu
-      buttonClassName="outline-none"
+      ariaLabel={t("common.filters")}
+      buttonClassName={cn("outline-none", getIconButtonStyling("tertiary", "base"))}
       button={
         <>
-          <IconButton variant="tertiary" icon={FilterOutline} />
+          <FilterOutline className="size-4" aria-hidden="true" />
           {selectedFilters.length < filterOptions.length && (
             <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
           )}
@@ -41,12 +42,13 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
       data={filterOptions}
       keyExtractor={(item) => item.key}
       render={(item) => (
-        <div
+        <button
+          type="button"
           key={item.key}
           className="flex cursor-pointer items-center gap-2 rounded-xs p-1 px-2 text-13 transition-all hover:bg-layer-1"
           onClick={item.onClick}
         >
-          <div
+          <span
             className={cn(
               "flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-xs bg-surface-2 transition-all",
               {
@@ -57,11 +59,11 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
             )}
           >
             {item.isSelected && <TickOutline className="h-2.5 w-2.5" />}
-          </div>
+          </span>
           <div className={cn("whitespace-nowrap", item.isSelected ? "text-primary" : "text-secondary")}>
             {t(item.labelTranslationKey)}
           </div>
-        </div>
+        </button>
       )}
     />
   );

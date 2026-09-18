@@ -6,14 +6,15 @@
 
 import { useCallback } from "react";
 import { format } from "date-fns";
+import { DEFAULT_TIMEZONE } from "@plane/constants";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 
 export const useTimeZoneConverter = (projectId: string) => {
   const { data: user } = useUser();
   const { getProjectById } = useProject();
-  const userTimezone = user?.user_timezone;
-  const projectTimezone = getProjectById(projectId)?.timezone;
+  const userTimezone = user?.user_timezone || DEFAULT_TIMEZONE;
+  const projectTimezone = getProjectById(projectId)?.timezone || DEFAULT_TIMEZONE;
 
   /**
    * Render a date in the user's timezone
@@ -24,7 +25,7 @@ export const useTimeZoneConverter = (projectId: string) => {
   const renderFormattedDateInUserTimezone = useCallback(
     (date: string, formatToken: string = "MMM dd, yyyy") => {
       // return if undefined
-      if (!date || !userTimezone) return;
+      if (!date) return;
       // convert the date to the user's timezone
       const convertedDate = new Date(date).toLocaleString("en-US", { timeZone: userTimezone });
       // return the formatted date
@@ -38,8 +39,6 @@ export const useTimeZoneConverter = (projectId: string) => {
    * @returns The project's UTC offset
    */
   const getProjectUTCOffset = useCallback(() => {
-    if (!projectTimezone) return;
-
     // Get date in user's timezone
     const projectDate = new Date(new Date().toLocaleString("en-US", { timeZone: projectTimezone }));
     const utcDate = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" }));
@@ -64,7 +63,6 @@ export const useTimeZoneConverter = (projectId: string) => {
    * @returns True if the project's timezone is different from the user's timezone, false otherwise
    */
   const isProjectTimeZoneDifferent = useCallback(() => {
-    if (!projectTimezone || !userTimezone) return false;
     return projectTimezone !== userTimezone;
   }, [projectTimezone, userTimezone]);
 

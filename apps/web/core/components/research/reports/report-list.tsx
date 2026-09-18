@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -14,9 +14,11 @@ import { REPORT_STATUS_LABELS, REPORT_TYPE_LABELS, REPORT_TYPES } from "@plane/c
 import type { TReportStatus, TReportType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
+import { ResearchListState } from "@/components/research/common/research-list-state";
 // hooks
 import { useResearch } from "@/hooks/store/use-research";
 
@@ -39,11 +41,13 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
   const { reportId } = useParams();
   const [reportType, setReportType] = useState<TReportType>("WEEKLY");
   const [periodKey, setPeriodKey] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [periodFilter, setPeriodFilter] = useState("");
-  const [mineOnly, setMineOnly] = useState(
-    () => !["org_unit", "owner", "date_from", "date_to"].some((key) => searchParams.has(key))
+  const [statusFilter, setStatusFilter] = useState(() => searchParams.get("status") ?? "");
+  const [typeFilter, setTypeFilter] = useState(() => searchParams.get("report_type") ?? "");
+  const [periodFilter, setPeriodFilter] = useState(() => searchParams.get("period_key") ?? "");
+  const [mineOnly, setMineOnly] = useState(() =>
+    searchParams.has("mine")
+      ? searchParams.get("mine") === "true"
+      : !["org_unit", "owner", "date_from", "date_to"].some((key) => searchParams.has(key))
   );
   const [orgFilter, setOrgFilter] = useState(() => searchParams.get("org_unit") ?? "");
   const [ownerFilter, setOwnerFilter] = useState(() => searchParams.get("owner") ?? "");
@@ -52,6 +56,7 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
   const [cursor, setCursor] = useState("");
   const [selectedTeamProjects, setSelectedTeamProjects] = useState<string[]>([]);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const reports = research.getReports(workspaceSlug);
   const orgUnits = research.getOrgUnits(workspaceSlug);
@@ -60,6 +65,30 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
   const teamProjects = research
     .getResearchProjects(workspaceSlug)
     .filter((project) => project.research?.research_type === "RESEARCH_PROJECT");
+  const hasActiveFilters = Boolean(
+    statusFilter ||
+    typeFilter ||
+    periodFilter.trim() ||
+    mineOnly ||
+    orgFilter ||
+    ownerFilter.trim() ||
+    dateFrom ||
+    dateTo
+  );
+  const filterSummary = useMemo(
+    () =>
+      [
+        statusFilter && t(REPORT_STATUS_LABELS[statusFilter as TReportStatus]),
+        typeFilter && t(REPORT_TYPE_LABELS[typeFilter as TReportType]),
+        periodFilter.trim(),
+        orgFilter && orgUnits.find((unit) => unit.id === orgFilter)?.name,
+        ownerFilter.trim(),
+        dateFrom && `${t("research.common.date_from")}: ${dateFrom}`,
+        dateTo && `${t("research.common.date_to")}: ${dateTo}`,
+        mineOnly && t("research.reports.mine_only"),
+      ].filter((filter): filter is string => typeof filter === "string" && filter.length > 0),
+    [dateFrom, dateTo, mineOnly, orgFilter, orgUnits, ownerFilter, periodFilter, statusFilter, t, typeFilter]
+  );
 
   const load = useCallback(async () => {
     const params: Record<string, string> = { per_page: "50" };
@@ -114,12 +143,28 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
   );
 
   useEffect(() => {
+    const params = new URLSearchParams();
+    if (statusFilter) params.set("status", statusFilter);
+    if (typeFilter) params.set("report_type", typeFilter);
+    if (periodFilter.trim()) params.set("period_key", periodFilter.trim());
+    params.set("mine", String(mineOnly));
+    if (orgFilter) params.set("org_unit", orgFilter);
+    if (ownerFilter.trim()) params.set("owner", ownerFilter.trim());
+    if (dateFrom) params.set("date_from", dateFrom);
+    if (dateTo) params.set("date_to", dateTo);
+    const query = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+  }, [dateFrom, dateTo, mineOnly, orgFilter, ownerFilter, periodFilter, statusFilter, typeFilter]);
+
+  useEffect(() => {
     void research.fetchResearchProjects(workspaceSlug, { research_type: "RESEARCH_PROJECT" }).catch(() => undefined);
     void research.fetchOrgUnits(workspaceSlug).catch(() => undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug]);
 
   const handleCreate = useCallback(async () => {
+    if (isCreating) return;
+    setIsCreating(true);
     try {
       const report = await research.createReport(workspaceSlug, {
         report_type: reportType,
@@ -129,12 +174,29 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
       setPeriodKey("");
       setSelectedTeamProjects([]);
       setErrorKey(null);
-      await load();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("research.feedback.report_created.title"),
+        message: t("research.feedback.report_created.message"),
+      });
       window.location.assign(`/${workspaceSlug}/research/reports/${report.id}`);
     } catch (error) {
       setErrorKey(getResearchErrorKey(error));
+    } finally {
+      setIsCreating(false);
     }
-  }, [load, periodKey, reportType, research, selectedTeamProjects, workspaceSlug]);
+  }, [isCreating, periodKey, reportType, research, selectedTeamProjects, t, workspaceSlug]);
+
+  const clearFilters = useCallback(() => {
+    setStatusFilter("");
+    setTypeFilter("");
+    setPeriodFilter("");
+    setMineOnly(false);
+    setOrgFilter("");
+    setOwnerFilter("");
+    setDateFrom("");
+    setDateTo("");
+  }, []);
 
   return (
     <div className="flex flex-col gap-3 p-5">
@@ -164,7 +226,13 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
               value={periodKey}
               onChange={(event) => setPeriodKey(event.target.value)}
             />
-            <Button variant="primary" size="sm" onClick={() => void handleCreate()}>
+            <Button
+              variant="primary"
+              size="sm"
+              loading={isCreating}
+              disabled={isCreating}
+              onClick={() => void handleCreate()}
+            >
               {t("research.reports.create")}
             </Button>
 
@@ -266,57 +334,78 @@ export const ResearchReportList = observer(function ResearchReportList({ workspa
         </label>
       </div>
 
-      <table className="w-full text-12">
-        <thead>
-          <tr className="border-b border-subtle text-left text-tertiary">
-            <th className="font-normal py-2">{t("research.reports.columns.period")}</th>
-            <th className="font-normal py-2">{t("research.reports.columns.type")}</th>
-            <th className="font-normal py-2">{t("research.reports.columns.owner")}</th>
-            <th className="font-normal py-2">{t("research.reports.columns.org_unit")}</th>
-            <th className="font-normal py-2">{t("research.reports.columns.status")}</th>
-            <th className="font-normal py-2">{t("research.reports.columns.visibility")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reports.map((report) => (
-            <tr key={report.id} className="border-b border-subtle/60">
-              <td className="py-2">
-                <Link
-                  href={`/${workspaceSlug}/research/reports/${report.id}`}
-                  className={`text-accent-primary ${reportId === report.id ? "font-medium" : ""}`}
-                >
-                  {report.period_key}
-                </Link>
-                {report.is_backfill && (
-                  <span className="ml-2 rounded bg-surface-2 px-1.5 py-0.5 text-10 text-tertiary">
-                    {t("research.reports.backfill")}
-                  </span>
-                )}
-              </td>
-              <td className="py-2 text-secondary">{t(REPORT_TYPE_LABELS[report.report_type])}</td>
-              <td className="py-2 text-tertiary">
-                {report.owner_detail?.display_name ?? report.owner_detail?.email ?? report.owner}
-              </td>
-              <td className="py-2 text-tertiary">{report.org_unit_detail?.name ?? "-"}</td>
-              <td className="py-2">
-                <span className={`rounded px-1.5 py-0.5 text-10 ${STATUS_TONES[report.status]}`}>
-                  {t(REPORT_STATUS_LABELS[report.status])}
-                </span>
-              </td>
-              <td className="py-2 text-tertiary">
-                {t(`research.report_visibility.${report.visibility.toLowerCase()}`)}
-              </td>
-            </tr>
+      {hasActiveFilters && (
+        <div className="flex flex-wrap items-center gap-2 text-11 text-tertiary">
+          <span>{t("research.list_state.active_filters")}</span>
+          {filterSummary.map((filter) => (
+            <span key={filter} className="rounded bg-surface-2 px-2 py-0.5 text-secondary">
+              {filter}
+            </span>
           ))}
-          {reports.length === 0 && (
-            <tr>
-              <td colSpan={6} className="py-3 text-center text-tertiary">
-                {t("research.reports.empty")}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+          <button type="button" className="text-accent-primary hover:underline" onClick={clearFilters}>
+            {t("research.list_state.clear_filters")}
+          </button>
+        </div>
+      )}
+
+      {research.reportLoader && reports.length === 0 ? (
+        <ResearchListState kind="loading" resource="reports" />
+      ) : errorKey && reports.length === 0 ? (
+        <ResearchListState kind="error" resource="reports" onRetry={() => void load()} />
+      ) : reports.length === 0 ? (
+        <ResearchListState
+          kind={hasActiveFilters ? "no-results" : "empty"}
+          resource="reports"
+          onClearFilters={clearFilters}
+        />
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-12">
+            <thead>
+              <tr className="border-b border-subtle text-left text-tertiary">
+                <th className="font-normal py-2">{t("research.reports.columns.period")}</th>
+                <th className="font-normal py-2">{t("research.reports.columns.type")}</th>
+                <th className="font-normal py-2">{t("research.reports.columns.owner")}</th>
+                <th className="font-normal py-2">{t("research.reports.columns.org_unit")}</th>
+                <th className="font-normal py-2">{t("research.reports.columns.status")}</th>
+                <th className="font-normal py-2">{t("research.reports.columns.visibility")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report) => (
+                <tr key={report.id} className="border-b border-subtle/60">
+                  <td className="py-2">
+                    <Link
+                      href={`/${workspaceSlug}/research/reports/${report.id}`}
+                      className={`text-accent-primary ${reportId === report.id ? "font-medium" : ""}`}
+                    >
+                      {report.period_key}
+                    </Link>
+                    {report.is_backfill && (
+                      <span className="ml-2 rounded bg-surface-2 px-1.5 py-0.5 text-10 text-tertiary">
+                        {t("research.reports.backfill")}
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-2 text-secondary">{t(REPORT_TYPE_LABELS[report.report_type])}</td>
+                  <td className="py-2 text-tertiary">
+                    {report.owner_detail?.display_name ?? report.owner_detail?.email ?? report.owner}
+                  </td>
+                  <td className="py-2 text-tertiary">{report.org_unit_detail?.name ?? "-"}</td>
+                  <td className="py-2">
+                    <span className={`rounded px-1.5 py-0.5 text-10 ${STATUS_TONES[report.status]}`}>
+                      {t(REPORT_STATUS_LABELS[report.status])}
+                    </span>
+                  </td>
+                  <td className="py-2 text-tertiary">
+                    {t(`research.report_visibility.${report.visibility.toLowerCase()}`)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2 text-12 text-tertiary">
         <span>{t("research.common.total_results", { count: pagination?.total_results ?? reports.length })}</span>
         <div className="flex gap-2">

@@ -16,24 +16,26 @@ import { PopoverMenu } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
-import { IconButton } from "@plane/propel/icon-button";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 
 export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
 
-  const translatedFilterTypeOptions = FILTER_TYPE_OPTIONS.map((filter) => ({
-    ...filter,
-    label: t(filter.i18n_label),
-  }));
+  const translatedFilterTypeOptions = FILTER_TYPE_OPTIONS.map((filter) =>
+    Object.assign({}, filter, { label: t(filter.i18n_label) })
+  );
 
   return (
     <PopoverMenu
+      ariaLabel={t("notification.options.filters")}
       data={translatedFilterTypeOptions}
       button={
         <Tooltip label={t("notification.options.filters")} side="bottom" disabled={isMobile}>
-          <IconButton size="base" variant="ghost" icon={FilterOutline} />
+          <span className={getIconButtonStyling("ghost", "base")}>
+            <FilterOutline className="size-4" aria-hidden="true" />
+          </span>
         </Tooltip>
       }
       keyExtractor={(item: { label: string; value: ENotificationFilterType }) => item.value}

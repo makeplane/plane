@@ -86,6 +86,7 @@ from plane.research.utils.notifications import (
 )
 from plane.research.utils.org import build_path, ensure_root_org_unit
 from plane.research.utils.periods import current_period
+from plane.utils.constants import DEFAULT_TIMEZONE
 
 PROJECT_ADMIN_ROLE = 20
 PROJECT_MEMBER_ROLE = 15
@@ -816,7 +817,7 @@ class ResearchSeedBuilder:
             period_key=period_key,
             period_start=period_start,
             period_end=period_end,
-            timezone="UTC",
+            timezone=DEFAULT_TIMEZONE,
             status=status,
             visibility=visibility,
             is_backfill=is_backfill,

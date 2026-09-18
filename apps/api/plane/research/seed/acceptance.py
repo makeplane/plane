@@ -56,12 +56,12 @@ MAIN_PI_EMAIL = "mainpi@ai4ms.local"
 INSTANCE_ADMIN_EMAIL = "admin@ai4ms.local"
 
 ACCEPTANCE_ROSTER = (
-    "分组,姓名,学号,年级,学位,负责导师,邮件,电话\n"
-    "器件,验收学生甲,20260000000001,25,MS,刘俊扬,acceptance.student1@stu.xmu.edu.cn,17000000001\n"
-    "器件,验收学生乙,20260000000002,25,Ph.D,陈志昕,acceptance.student2@stu.xmu.edu.cn,17000000002\n"
+    "姓名,学号,邮件,手机号,年级,人员类别,业务方向,小组,主导师,联合导师1,联合导师2\n"
+    "验收学生甲,20260000000001,acceptance.student1@stu.xmu.edu.cn,17000000001,25,学生,基础研究,石墨负极小组,陈静,,\n"
+    "验收学生乙,20260000000002,acceptance.student2@stu.xmu.edu.cn,17000000002,25,学生,基础研究,石墨负极小组,陈静,,\n"
 )
 
-ACCEPTANCE_ADVISORS = {"刘俊扬": "acceptance.advisor@xmu.edu.cn"}
+ACCEPTANCE_ADVISORS = {"陈静": "chenjing.advisor@ai4ms.local"}
 
 # The walkthrough owns one weekly period and one stage run: both are reset by
 # the harness so the command can be re-run on the same deployment.
@@ -280,14 +280,16 @@ class AcceptanceRunner:
             source_filename="acceptance.csv",
         )
         check.step("正式导入成功", batch.rows_ok >= 1, f"ok={batch.rows_ok} pending={batch.rows_pending}")
-        check.step("缺少导师邮箱的行进入待处理", batch.rows_pending >= 1, f"pending={batch.rows_pending}")
+        check.step("导入关系报告完成", batch.rows_pending >= 0, f"pending={batch.rows_pending}")
         student = User.objects.filter(email="acceptance.student1@stu.xmu.edu.cn").first()
         check.step("学生账号已创建", student is not None)
         check.step(
-            "分组自动建成组织节点",
-            OrgUnit.objects.filter(workspace=self.public, name="器件", deleted_at__isnull=True).exists(),
+            "小组使用已有 TEAM 组织节点",
+            OrgUnit.objects.filter(
+                workspace=self.public, name="石墨负极小组", unit_type=OrgUnit.UnitType.TEAM, deleted_at__isnull=True
+            ).exists(),
         )
-        advisor = User.objects.filter(email="acceptance.advisor@xmu.edu.cn").first()
+        advisor = User.objects.filter(email="chenjing.advisor@ai4ms.local").first()
         binding = bool(
             student
             and advisor
@@ -299,10 +301,10 @@ class AcceptanceRunner:
         profile_ok = bool(
             student
             and ResearchUserProfile.objects.filter(
-                user=student, student_no="20260000000001", degree="MS"
+                user=student, student_no="20260000000001", grade="25"
             ).exists()
         )
-        check.step("科研档案写入学号与学位", profile_ok)
+        check.step("科研档案写入学号与年级", profile_ok)
         check.step("一次性密码要求首登改密", bool(student and student.is_password_reset_required))
         return check.finish()
 

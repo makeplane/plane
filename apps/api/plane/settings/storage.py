@@ -91,6 +91,15 @@ class S3Storage(S3Boto3Storage):
                 Conditions=conditions,
                 ExpiresIn=expiration,
             )
+            # Keep MinIO uploads on the bucket-prefix route exposed by Plane's
+            # reverse proxy. Some deployments only forward ``/uploads/*`` and
+            # serve the exact ``/uploads`` path from the web app, which makes a
+            # browser's CORS preflight fail before the signed POST reaches
+            # MinIO. MinIO accepts both forms and the URL path is not part of
+            # the POST policy signature, so normalising the bucket root to a
+            # trailing slash is safe.
+            if os.environ.get("USE_MINIO") == "1" and response and response.get("url"):
+                response["url"] = response["url"].rstrip("/") + "/"
         # Handle errors
         except ClientError as e:
             print(f"Error generating presigned POST URL: {e}")

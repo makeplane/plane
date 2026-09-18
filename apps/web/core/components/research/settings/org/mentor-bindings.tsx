@@ -9,11 +9,13 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TMentorBinding, TOrgUnit } from "@plane/types";
-import { Input } from "@plane/ui";
+import { AlertModalCore, Input } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
 // hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useResearch } from "@/hooks/store/use-research";
 
 type Props = {
@@ -28,11 +30,27 @@ type Props = {
 export const ResearchMentorBindings = observer(function ResearchMentorBindings({ workspaceSlug, unit }: Props) {
   const { t } = useTranslation();
   const research = useResearch();
+  const memberStore = useMember();
   const [bindings, setBindings] = useState<TMentorBinding[]>([]);
   const [menteeEmail, setMenteeEmail] = useState("");
   const [mentorEmail, setMentorEmail] = useState("");
   const [isPrimaryAdvisor, setIsPrimaryAdvisor] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [bindingToDelete, setBindingToDelete] = useState<TMentorBinding | null>(null);
+  const workspaceMembers = memberStore.workspace
+    .getWorkspaceMemberIds(workspaceSlug)
+    .map((userId) => memberStore.getUserDetails(userId))
+    .filter((member) => Boolean(member));
+  const resolveWorkspaceMember = (value: string) => {
+    const normalized = value.trim().toLowerCase();
+    if (!normalized) return undefined;
+    return workspaceMembers.find(
+      (member) => member?.id.toLowerCase() === normalized || member?.email?.toLowerCase() === normalized
+    );
+  };
+  const resolvedMentee = resolveWorkspaceMember(menteeEmail);
+  const resolvedMentor = resolveWorkspaceMember(mentorEmail);
 
   const load = useCallback(async () => {
     try {
@@ -46,14 +64,17 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
 
   useEffect(() => {
     void load();
+    void memberStore.workspace.fetchWorkspaceMembers(workspaceSlug).catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
   const handleCreate = useCallback(async () => {
-    if (!menteeEmail.trim() || !mentorEmail.trim()) return;
+    if (!resolvedMentee || !resolvedMentor || busy) return;
+    setBusy(true);
     try {
       await research.createMentorBinding(workspaceSlug, {
-        mentee: menteeEmail.trim(),
-        mentor: mentorEmail.trim(),
+        mentee: resolvedMentee.id,
+        mentor: resolvedMentor.id,
         org_unit: unit.id,
         is_primary_advisor: isPrimaryAdvisor,
       });
@@ -61,22 +82,36 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
       setMentorEmail("");
       setIsPrimaryAdvisor(false);
       await load();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("research.feedback.mentor_created.title"),
+        message: t("research.feedback.mentor_created.message"),
+      });
     } catch (error) {
       setErrorKey(getResearchErrorKey(error));
+    } finally {
+      setBusy(false);
     }
-  }, [isPrimaryAdvisor, load, menteeEmail, mentorEmail, research, unit.id, workspaceSlug]);
+  }, [busy, isPrimaryAdvisor, load, research, resolvedMentee, resolvedMentor, t, unit.id, workspaceSlug]);
 
-  const handleDelete = useCallback(
-    async (bindingId: string) => {
-      try {
-        await research.deleteMentorBinding(workspaceSlug, bindingId);
-        await load();
-      } catch (error) {
-        setErrorKey(getResearchErrorKey(error));
-      }
-    },
-    [load, research, workspaceSlug]
-  );
+  const handleDelete = useCallback(async () => {
+    if (!bindingToDelete || busy) return;
+    setBusy(true);
+    try {
+      await research.deleteMentorBinding(workspaceSlug, bindingToDelete.id);
+      await load();
+      setBindingToDelete(null);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("research.feedback.mentor_removed.title"),
+        message: t("research.feedback.mentor_removed.message"),
+      });
+    } catch (error) {
+      setErrorKey(getResearchErrorKey(error));
+    } finally {
+      setBusy(false);
+    }
+  }, [bindingToDelete, busy, load, research, t, workspaceSlug]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -92,13 +127,22 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           placeholder={t("research.org.mentee_email_placeholder")}
           value={menteeEmail}
           onChange={(event) => setMenteeEmail(event.target.value)}
+          list={`research-mentor-options-${unit.id}`}
         />
         <Input
           className="!w-56"
           placeholder={t("research.org.mentor_email_placeholder")}
           value={mentorEmail}
           onChange={(event) => setMentorEmail(event.target.value)}
+          list={`research-mentor-options-${unit.id}`}
         />
+        <datalist id={`research-mentor-options-${unit.id}`}>
+          {workspaceMembers.map((member) => (
+            <option key={member?.id} value={member?.email ?? member?.id}>
+              {member?.display_name}
+            </option>
+          ))}
+        </datalist>
         <label className="flex items-center gap-2 pb-1 text-12 text-secondary">
           <input
             type="checkbox"
@@ -107,10 +151,30 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           />
           <span>{t("research.org.primary_advisor")}</span>
         </label>
-        <Button variant="primary" size="sm" onClick={() => void handleCreate()}>
+        <Button
+          variant="primary"
+          size="sm"
+          loading={busy && !bindingToDelete}
+          disabled={busy || !resolvedMentee || !resolvedMentor}
+          onClick={() => void handleCreate()}
+        >
           {t("research.org.bind_mentor")}
         </Button>
       </div>
+      {(menteeEmail.trim() || mentorEmail.trim()) && (
+        <div className="flex flex-wrap gap-3 text-11" role="status">
+          <span className={resolvedMentee ? "text-success-primary" : "text-danger-primary"}>
+            {resolvedMentee
+              ? t("research.org.resolved_mentee", { member: resolvedMentee.display_name || resolvedMentee.email })
+              : t("research.org.mentee_not_found")}
+          </span>
+          <span className={resolvedMentor ? "text-success-primary" : "text-danger-primary"}>
+            {resolvedMentor
+              ? t("research.org.resolved_mentor", { member: resolvedMentor.display_name || resolvedMentor.email })
+              : t("research.org.mentor_not_found")}
+          </span>
+        </div>
+      )}
 
       <table className="w-full text-12">
         <thead>
@@ -136,7 +200,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
               </td>
               <td className="py-2 text-tertiary">{binding.effective_from}</td>
               <td className="py-2 text-right">
-                <Button variant="ghost" size="sm" onClick={() => void handleDelete(binding.id)}>
+                <Button variant="ghost" size="sm" disabled={busy} onClick={() => setBindingToDelete(binding)}>
                   {t("research.common.remove")}
                 </Button>
               </td>
@@ -151,6 +215,32 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           )}
         </tbody>
       </table>
+
+      <AlertModalCore
+        isOpen={Boolean(bindingToDelete)}
+        handleClose={() => {
+          if (!busy) setBindingToDelete(null);
+        }}
+        handleSubmit={() => void handleDelete()}
+        isSubmitting={busy}
+        title={t("research.org.confirm.mentor.title")}
+        content={t("research.org.confirm.mentor.description", {
+          mentee:
+            bindingToDelete?.mentee_detail?.display_name ??
+            bindingToDelete?.mentee_detail?.email ??
+            bindingToDelete?.mentee ??
+            "",
+          mentor:
+            bindingToDelete?.mentor_detail?.display_name ??
+            bindingToDelete?.mentor_detail?.email ??
+            bindingToDelete?.mentor ??
+            "",
+          unit: unit.name,
+        })}
+        primaryButtonText={{ default: t("research.common.remove"), loading: t("research.common.loading") }}
+        secondaryButtonText={t("research.common.cancel")}
+        variant="danger"
+      />
     </div>
   );
 });

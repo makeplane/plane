@@ -2,21 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Roster import: organisation nodes, accounts, mentors and reporting (SYS-IMP-*)."""
+"""Strict member roster import: profiles, TEAM membership and advisors."""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 
 import pytest
 
-from plane.db.models import (
-    MentorBinding,
-    OrgUnit,
-    OrgUnitMember,
-    ResearchUserProfile,
-    User,
-    UserImportBatch,
-)
+from plane.db.models import MentorBinding, OrgUnit, OrgUnitMember, ResearchUserProfile, User, UserImportBatch
 from plane.tests.research_fixtures import (
     add_workspace_member,
     enable_research,
@@ -27,18 +20,7 @@ from plane.tests.research_fixtures import (
 
 pytestmark = pytest.mark.contract
 
-ROSTER_HEADER = "分组,姓名,学号,年级,学位,负责导师,邮件,电话\n"
-ROSTER_ROWS = (
-    "器件,邱智鑫,20220230156625,23,Ph.D,刘俊扬,qiuzhixin@stu.xmu.edu.cn,17706010502\n"
-    ",白杰学生,20720241150079,24,MS,白杰,baijie.student@stu.xmu.edu.cn,18359311237\n"
-    "量子,高靖琦,20620251151728,25,MS,陈志昕,gaojingqi@stu.xmu.edu.cn,15803745516\n"
-    "器件,坏邮箱,20420241152012,24,MS,刘俊扬,not-an-email,18760406616\n"
-)
-
-ADVISOR_TABLE = "姓名,邮箱\n刘俊扬,liujunyang@xmu.edu.cn\n"
-V3_ROSTER_HEADER = (
-    "姓名,学号,邮件,人员类别,业务方向,主归属组织,主导师邮箱,联合导师邮箱\n"
-)
+ROSTER_HEADER = "姓名,学号,邮件,手机号,年级,人员类别,业务方向,小组,主导师,联合导师1,联合导师2\n"
 
 
 @pytest.fixture(autouse=True)
@@ -57,228 +39,300 @@ def env(db):
     admin = make_user(first_name="Admin")
     workspace = public_workspace(owner=admin)
     enable_research(workspace)
-    return {"admin": admin, "workspace": workspace}
+    root = OrgUnit.objects.create(
+        workspace=workspace,
+        name="材料科学与工程学院",
+        unit_type=OrgUnit.UnitType.ROOT,
+        path="root",
+        depth=0,
+    )
+    basic = OrgUnit.objects.create(
+        workspace=workspace,
+        parent=root,
+        name="基础研究",
+        unit_type=OrgUnit.UnitType.INSTITUTE,
+        business_category=OrgUnit.BusinessCategory.BASIC_RESEARCH,
+        path="root/basic",
+        depth=1,
+    )
+    group = OrgUnit.objects.create(
+        workspace=workspace,
+        parent=basic,
+        name="材料课题组",
+        unit_type=OrgUnit.UnitType.GROUP,
+        path="root/basic/group",
+        depth=2,
+    )
+    team = OrgUnit.objects.create(
+        workspace=workspace,
+        parent=group,
+        name="石墨负极小组",
+        unit_type=OrgUnit.UnitType.TEAM,
+        path="root/basic/group/team",
+        depth=3,
+    )
+    advisors = {}
+    for name, email in (
+        ("刘俊扬", "primary@example.com"),
+        ("陈志昕", "co1@example.com"),
+        ("白杰", "co2@example.com"),
+        ("赵老师", "co3@example.com"),
+    ):
+        user = make_user(email=email, first_name=name)
+        add_workspace_member(workspace, user)
+        advisors[name] = user
+    return {
+        "admin": admin,
+        "workspace": workspace,
+        "root": root,
+        "basic": basic,
+        "group": group,
+        "team": team,
+        "advisors": advisors,
+    }
 
 
 def upload(name, content):
     return SimpleUploadedFile(name, content.encode("utf-8"), content_type="text/csv")
 
 
-def post_import(client, workspace, *, dry_run=False, with_advisors=True):
+def advisor_table(*names):
+    emails = {
+        "刘俊扬": "primary@example.com",
+        "陈志昕": "co1@example.com",
+        "白杰": "co2@example.com",
+        "赵老师": "co3@example.com",
+        "不存在导师": "missing@example.com",
+    }
+    return "姓名,邮箱\n" + "".join(f"{name},{emails[name]}\n" for name in names)
+
+
+def roster_row(
+    *,
+    name="新成员",
+    student_no="S001",
+    email="student@example.com",
+    phone="17700000000",
+    grade="2026",
+    category="学生",
+    business="基础研究",
+    team="石墨负极小组",
+    primary="刘俊扬",
+    co1="陈志昕",
+    co2="白杰",
+):
+    return f"{name},{student_no},{email},{phone},{grade},{category},{business},{team},{primary},{co1},{co2}\n"
+
+
+def post_import(env, row=None, *, advisors=None, dry_run=False):
     payload = {
-        "students": upload("roster.csv", ROSTER_HEADER + ROSTER_ROWS),
+        "students": upload("roster.csv", ROSTER_HEADER + (row or roster_row())),
         "dry_run": "true" if dry_run else "false",
     }
-    if with_advisors:
-        payload["advisors"] = upload("advisors.csv", ADVISOR_TABLE)
-    return client.post(user_imports_url(workspace), payload, format="multipart")
+    if advisors is not None:
+        payload["advisors"] = upload("advisors.csv", advisors)
+    return client_for(env["admin"]).post(user_imports_url(env["workspace"]), payload, format="multipart")
 
 
-def test_import_creates_accounts_nodes_and_mentors(env):
-    workspace = env["workspace"]
-    member_admin = make_user(first_name="WorkspaceAdmin")
-    add_workspace_member(workspace, member_admin, role=20)
-    client = client_for(member_admin)
+def test_import_creates_profile_team_membership_and_three_advisor_bindings(env):
+    response = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
 
-    response = post_import(client, workspace)
     assert response.status_code == 201
-    body = response.data
-    assert body["rows_total"] == 4
-    assert body["rows_ok"] == 1  # 器件 + 已映射导师
-    assert body["rows_pending"] == 2  # 分组为空 / 导师未映射
-    assert body["rows_error"] == 1  # 邮箱格式错误
-    assert body["summary"]["credentials_issued"] == 3
-
-    student = User.objects.get(email="qiuzhixin@stu.xmu.edu.cn")
+    assert response.data["rows_ok"] == 1
+    student = User.objects.get(email="student@example.com")
     profile = ResearchUserProfile.objects.get(user=student)
-    assert profile.student_no == "20220230156625"
-    assert profile.degree == "PHD"
-    assert profile.grade == "23"
-    assert profile.phone == "17706010502"
-    assert profile.group_label == "器件"
-    assert student.is_password_reset_required is True
-
-    unit = OrgUnit.objects.get(workspace=workspace, name="器件", deleted_at__isnull=True)
-    assert unit.unit_type == OrgUnit.UnitType.GROUP
-    student_membership = OrgUnitMember.objects.get(
-        workspace=workspace, org_unit=unit, user=student, org_role="REVIEWER"
+    assert (profile.student_no, profile.phone, profile.grade, profile.category) == (
+        "S001",
+        "17700000000",
+        "2026",
+        "STUDENT",
     )
-    assert student_membership.is_primary is True
-
-    advisor = User.objects.get(email="liujunyang@xmu.edu.cn")
-    assert ResearchUserProfile.objects.get(user=advisor).category == "ADVISOR"
-    binding = MentorBinding.objects.get(workspace=workspace, mentee=student, mentor=advisor)
-    assert binding.is_primary_advisor is True
-
-    # The blank-group row still becomes an account, parked at the root.
-    root = OrgUnit.objects.get(workspace=workspace, unit_type=OrgUnit.UnitType.ROOT)
-    parked = User.objects.get(email="baijie.student@stu.xmu.edu.cn")
-    assert OrgUnitMember.objects.filter(workspace=workspace, org_unit=root, user=parked).exists()
-
-    # The unusable mailbox is reported without touching the roster.
-    assert not User.objects.filter(email="not-an-email").exists()
+    membership = OrgUnitMember.objects.get(workspace=env["workspace"], user=student, is_primary=True)
+    assert membership.org_unit == env["team"]
+    bindings = MentorBinding.objects.filter(workspace=env["workspace"], mentee=student)
+    assert set(bindings.values_list("mentor__email", flat=True)) == {
+        "primary@example.com",
+        "co1@example.com",
+        "co2@example.com",
+    }
+    assert bindings.get(mentor=env["advisors"]["刘俊扬"]).is_primary_advisor is True
 
 
-def test_missing_advisor_mapping_is_pending_not_fatal(env):
-    workspace = env["workspace"]
-    client = client_for(env["admin"])
-    response = post_import(client, workspace, with_advisors=False)
-
+def test_full_team_path_is_supported(env):
+    full_path = "材料科学与工程学院 / 基础研究 / 材料课题组 / 石墨负极小组"
+    response = post_import(
+        env,
+        row=roster_row(team=full_path, co1="", co2=""),
+        advisors=advisor_table("刘俊扬"),
+    )
     assert response.status_code == 201
-    assert response.data["rows_ok"] == 0  # every importable row mentions an advisor
-    assert response.data["rows_pending"] == 3
-    assert User.objects.filter(email="qiuzhixin@stu.xmu.edu.cn").exists()
-    assert not MentorBinding.objects.exists()
+    assert response.data["rows_ok"] == 1
 
 
-def test_import_is_idempotent(env):
-    workspace = env["workspace"]
-    client = client_for(env["admin"])
-    post_import(client, workspace)
-    users_after_first = User.objects.filter(email__endswith="stu.xmu.edu.cn").count()
-
-    second = post_import(client, workspace)
-    assert second.status_code == 201
-    assert User.objects.filter(email__endswith="stu.xmu.edu.cn").count() == users_after_first
-    assert second.data["summary"]["credentials_issued"] == 0
-    assert UserImportBatch.objects.filter(workspace=workspace).count() == 2
-
-
-def test_dry_run_writes_no_accounts(env):
-    workspace = env["workspace"]
-    client = client_for(env["admin"])
-    response = post_import(client, workspace, dry_run=True)
-
-    assert response.status_code == 201
-    assert response.data["dry_run"] is True
-    assert not User.objects.filter(email="qiuzhixin@stu.xmu.edu.cn").exists()
-    assert not OrgUnit.objects.filter(workspace=workspace, name="器件").exists()
+def test_ambiguous_team_name_is_pending_but_profile_is_created(env):
+    other_group = OrgUnit.objects.create(
+        workspace=env["workspace"], parent=env["basic"], name="另一课题组",
+        unit_type=OrgUnit.UnitType.GROUP, path="root/basic/other", depth=2,
+    )
+    OrgUnit.objects.create(
+        workspace=env["workspace"], parent=other_group, name="石墨负极小组",
+        unit_type=OrgUnit.UnitType.TEAM, path="root/basic/other/team", depth=3,
+    )
+    response = post_import(
+        env,
+        row=roster_row(business="", co1="", co2=""),
+        advisors=advisor_table("刘俊扬"),
+    )
+    assert response.data["rows_pending"] == 1
+    assert "小组名称不唯一" in response.data["rows"][0]["message"]
+    assert User.objects.filter(email="student@example.com").exists()
+    assert not OrgUnitMember.objects.filter(user__email="student@example.com").exists()
 
 
-def test_report_download_contains_credentials(env):
-    workspace = env["workspace"]
-    client = client_for(env["admin"])
-    batch_id = post_import(client, workspace).data["id"]
+@pytest.mark.parametrize(
+    ("team", "business", "message"),
+    [
+        ("不存在小组", "", "小组不存在"),
+        ("石墨负极小组", "产业化", "与业务方向不一致"),
+    ],
+)
+def test_unresolved_team_is_pending(env, team, business, message):
+    response = post_import(
+        env,
+        row=roster_row(team=team, business=business, co1="", co2=""),
+        advisors=advisor_table("刘俊扬"),
+    )
+    assert response.data["rows_pending"] == 1
+    assert message in response.data["rows"][0]["message"]
 
-    report = client.get(user_imports_url(workspace, f"{batch_id}/report/"))
-    assert report.status_code == 200
-    body = report.content.decode("utf-8")
-    assert "初始密码" in body
-    assert "qiuzhixin@stu.xmu.edu.cn" in body
-    assert "not-an-email" in body
 
-
-def test_import_requires_roster_file(env):
-    client = client_for(env["admin"])
-    response = client.post(user_imports_url(env["workspace"]), {}, format="multipart")
+def test_advisor_table_is_required(env):
+    response = post_import(env, advisors=None)
     assert response.status_code == 400
     assert response.data["error_code"] == "user_import_file_required"
 
 
-def test_v3_single_roster_binds_existing_org_and_multiple_advisors(env):
-    workspace = env["workspace"]
-    root = OrgUnit.objects.create(
-        workspace=workspace,
-        name="主PI",
-        unit_type=OrgUnit.UnitType.ROOT,
-        path="root",
-        depth=0,
+def test_missing_mapping_and_non_member_advisor_are_pending_without_auto_provisioning(env):
+    response = post_import(
+        env,
+        row=roster_row(co1="不存在导师", co2="未映射导师"),
+        advisors=advisor_table("刘俊扬", "不存在导师"),
     )
-    direction = OrgUnit.objects.create(
-        workspace=workspace,
-        parent=root,
-        name="基础研究",
-        unit_type=OrgUnit.UnitType.INSTITUTE,
-        business_category=OrgUnit.BusinessCategory.BASIC_RESEARCH,
-        path=f"{root.path}/direction",
-        depth=1,
-    )
-    mentor_group = OrgUnit.objects.create(
-        workspace=workspace,
-        parent=direction,
-        name="王老师导师组",
-        unit_type=OrgUnit.UnitType.GROUP,
-        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP,
-        path=f"{direction.path}/group",
-        depth=2,
-    )
-    primary_advisor = make_user(email="primary@example.com", first_name="Primary")
-    co_advisor = make_user(email="co@example.com", first_name="Co")
-    add_workspace_member(workspace, primary_advisor)
-    add_workspace_member(workspace, co_advisor)
-    roster = (
-        V3_ROSTER_HEADER
-        + "新博士后,P2026001,new.postdoc@example.com,POSTDOC,BASIC_RESEARCH,"
-        + f"{mentor_group.id},primary@example.com,co@example.com\n"
-    )
-
-    response = client_for(env["admin"]).post(
-        user_imports_url(workspace),
-        {"students": upload("v3-roster.csv", roster)},
-        format="multipart",
-    )
-
-    assert response.status_code == 201
-    assert response.data["rows_ok"] == 1
-    newcomer = User.objects.get(email="new.postdoc@example.com")
-    assert ResearchUserProfile.objects.get(user=newcomer).category == "POSTDOC"
-    membership = OrgUnitMember.objects.get(workspace=workspace, user=newcomer, org_unit=mentor_group)
-    assert membership.org_role == OrgUnitMember.OrgRole.REVIEWER
-    assert membership.is_primary is True
-    bindings = MentorBinding.objects.filter(workspace=workspace, mentee=newcomer)
-    assert set(bindings.values_list("mentor__email", flat=True)) == {"primary@example.com", "co@example.com"}
-    assert bindings.get(mentor=primary_advisor).is_primary_advisor is True
-    assert bindings.get(mentor=co_advisor).is_primary_advisor is False
+    assert response.data["rows_pending"] == 1
+    message = response.data["rows"][0]["message"]
+    assert "不是当前工作空间有效成员" in message
+    assert "缺少联合导师2邮箱映射" in message
+    assert not User.objects.filter(email="missing@example.com").exists()
 
 
-def test_v3_import_preserves_existing_primary_org_on_conflict(env):
-    workspace = env["workspace"]
-    root = OrgUnit.objects.create(
-        workspace=workspace, name="主PI", unit_type=OrgUnit.UnitType.ROOT, path="root", depth=0
+def test_required_values_are_row_errors(env):
+    response = post_import(
+        env,
+        row=roster_row(student_no="", co1="", co2=""),
+        advisors=advisor_table("刘俊扬"),
     )
-    first = OrgUnit.objects.create(
-        workspace=workspace, parent=root, name="一组", unit_type=OrgUnit.UnitType.GROUP,
-        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP, path="root/one", depth=1,
-    )
-    second = OrgUnit.objects.create(
-        workspace=workspace, parent=root, name="二组", unit_type=OrgUnit.UnitType.GROUP,
-        business_category=OrgUnit.BusinessCategory.MENTOR_GROUP, path="root/two", depth=1,
-    )
+    assert response.data["rows_error"] == 1
+    assert "学号 is required" in response.data["rows"][0]["message"]
+    assert not User.objects.filter(email="student@example.com").exists()
+
+
+def test_reimport_preserves_primary_team_and_advisor_but_adds_non_conflicting_coadvisor(env):
     existing = make_user(email="existing@example.com", first_name="Existing")
-    add_workspace_member(workspace, existing)
+    add_workspace_member(env["workspace"], existing)
     OrgUnitMember.objects.create(
-        workspace=workspace, org_unit=first, user=existing, org_role="REVIEWER", is_primary=True
+        workspace=env["workspace"], org_unit=env["team"], user=existing,
+        org_role=OrgUnitMember.OrgRole.REVIEWER, is_primary=True,
     )
-    roster = V3_ROSTER_HEADER + f"已有成员,S001,existing@example.com,STUDENT,,{second.id},,,\n"
-
-    response = client_for(env["admin"]).post(
-        user_imports_url(workspace), {"students": upload("conflict.csv", roster)}, format="multipart"
+    MentorBinding.objects.create(
+        workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["刘俊扬"],
+        org_unit=env["team"], is_primary_advisor=True,
     )
-
-    assert response.status_code == 201
+    other_team = OrgUnit.objects.create(
+        workspace=env["workspace"], parent=env["group"], name="另一小组",
+        unit_type=OrgUnit.UnitType.TEAM, path="root/basic/group/other-team", depth=3,
+    )
+    response = post_import(
+        env,
+        row=roster_row(
+            student_no="EXISTING", email="existing@example.com", team=other_team.name,
+            primary="陈志昕", co1="白杰", co2="",
+        ),
+        advisors=advisor_table("陈志昕", "白杰"),
+    )
     assert response.data["rows_pending"] == 1
-    assert "主归属" in response.data["rows"][0]["message"]
-    primary = OrgUnitMember.objects.get(workspace=workspace, user=existing, is_primary=True)
-    assert primary.org_unit == first
-    assert not OrgUnitMember.objects.filter(workspace=workspace, user=existing, org_unit=second).exists()
+    assert "已有主归属" in response.data["rows"][0]["message"]
+    assert "已有主导师" in response.data["rows"][0]["message"]
+    assert OrgUnitMember.objects.get(workspace=env["workspace"], user=existing, is_primary=True).org_unit == env["team"]
+    assert MentorBinding.objects.get(workspace=env["workspace"], mentee=existing, is_primary_advisor=True).mentor == env["advisors"]["刘俊扬"]
+    assert MentorBinding.objects.filter(workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["白杰"]).exists()
 
 
-def test_v3_dry_run_does_not_create_accounts_or_org_units(env):
-    workspace = env["workspace"]
-    roster = (
-        V3_ROSTER_HEADER
-        + "预检成员,S002,preview@example.com,STUDENT,BASIC_RESEARCH,不存在的导师组,,,\n"
+def test_effective_advisor_total_is_capped_at_three(env):
+    existing = make_user(email="capped@example.com", first_name="Capped")
+    add_workspace_member(env["workspace"], existing)
+    OrgUnitMember.objects.create(
+        workspace=env["workspace"], org_unit=env["team"], user=existing,
+        org_role=OrgUnitMember.OrgRole.REVIEWER, is_primary=True,
     )
-    units_before = OrgUnit.objects.filter(workspace=workspace).count()
-
-    response = client_for(env["admin"]).post(
-        user_imports_url(workspace),
-        {"students": upload("preview.csv", roster), "dry_run": "true"},
-        format="multipart",
+    for name, primary in (("刘俊扬", True), ("陈志昕", False)):
+        MentorBinding.objects.create(
+            workspace=env["workspace"], mentee=existing, mentor=env["advisors"][name],
+            org_unit=env["team"], is_primary_advisor=primary,
+        )
+    response = post_import(
+        env,
+        row=roster_row(
+            student_no="CAPPED", email="capped@example.com", primary="刘俊扬", co1="白杰", co2="赵老师"
+        ),
+        advisors=advisor_table("刘俊扬", "白杰", "赵老师"),
     )
-
-    assert response.status_code == 201
     assert response.data["rows_pending"] == 1
-    assert "主归属组织不存在" in response.data["rows"][0]["message"]
-    assert not User.objects.filter(email="preview@example.com").exists()
-    assert OrgUnit.objects.filter(workspace=workspace).count() == units_before
+    assert "最多为3人" in response.data["rows"][0]["message"]
+    bindings = MentorBinding.objects.filter(workspace=env["workspace"], mentee=existing)
+    assert bindings.count() == 3
+    assert bindings.filter(mentor=env["advisors"]["白杰"]).exists()
+    assert not bindings.filter(mentor=env["advisors"]["赵老师"]).exists()
+
+
+def test_import_is_idempotent(env):
+    advisors = advisor_table("刘俊扬", "陈志昕", "白杰")
+    first = post_import(env, advisors=advisors)
+    second = post_import(env, advisors=advisors)
+    assert first.status_code == second.status_code == 201
+    assert User.objects.filter(email="student@example.com").count() == 1
+    assert MentorBinding.objects.filter(workspace=env["workspace"], mentee__email="student@example.com").count() == 3
+    assert second.data["summary"]["credentials_issued"] == 0
+    assert UserImportBatch.objects.filter(workspace=env["workspace"]).count() == 2
+
+
+def test_dry_run_writes_nothing(env):
+    response = post_import(
+        env,
+        advisors=advisor_table("刘俊扬", "陈志昕", "白杰"),
+        dry_run=True,
+    )
+    assert response.status_code == 200
+    assert response.data["id"] is None
+    assert response.data["rows_ok"] == 1
+    assert not User.objects.filter(email="student@example.com").exists()
+    assert not UserImportBatch.objects.filter(workspace=env["workspace"]).exists()
+
+
+def test_report_uses_new_template_columns(env):
+    batch_id = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰")).data["id"]
+    report = client_for(env["admin"]).get(user_imports_url(env["workspace"], f"{batch_id}/report/"))
+    body = report.content.decode("utf-8")
+    assert report.status_code == 200
+    for header in ("手机号", "年级", "小组", "主导师", "联合导师1", "联合导师2", "初始密码"):
+        assert header in body
+    assert "主归属组织" not in body
+
+
+def test_user_profiles_are_scoped_to_active_workspace_members(env):
+    other_workspace = public_workspace(owner=make_user(first_name="Other owner"), slug="other-profile-space")
+    foreign_user = make_user(email="foreign-profile@example.com")
+    add_workspace_member(other_workspace, foreign_user)
+    foreign_profile = ResearchUserProfile.objects.create(user=foreign_user, student_no="FOREIGN-001")
+    response = client_for(env["admin"]).get(f"/api/research/workspaces/{env['workspace'].slug}/user-profiles/")
+    assert response.status_code == 200
+    assert foreign_profile.id not in {item["id"] for item in response.data["results"]}

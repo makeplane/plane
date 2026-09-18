@@ -358,23 +358,16 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               </ControlLink>
               <div className="flex items-center gap-1">
                 <CustomMenu
-                  customButton={
-                    <IconButton
-                      ref={actionSectionRef}
-                      variant="ghost"
-                      size="sm"
-                      icon={MoreHorizontalOutline}
-                      onClick={() => setIsMenuActive(!isMenuActive)}
-                      className="text-placeholder"
-                    />
-                  }
+                  customButton={<MoreHorizontalOutline className="size-4 text-placeholder" aria-hidden="true" />}
                   className={cn(
                     "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                     {
                       "pointer-events-auto opacity-100": isMenuActive,
                     }
                   )}
-                  customButtonClassName="grid place-items-center"
+                  customButtonClassName="grid place-items-center text-placeholder"
+                  customButtonRef={actionSectionRef}
+                  menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
                   placement="bottom-start"
                   ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
                   useCaptureForOutsideClick

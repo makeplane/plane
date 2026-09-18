@@ -26,8 +26,6 @@ from plane.db.models import (
     StageReview,
     StageTransition,
 )
-from plane.research.services.experiment_service import experiment_snapshot
-from plane.research.services.stage_service import material_snapshot
 from plane.research.utils.acl import build_actor_context, check_access
 from plane.research.utils.audit import ResearchAuditAction, ResearchResourceType, record_audit_event
 from plane.research.utils.capabilities import NAV_PROJECTS
@@ -40,7 +38,7 @@ from plane.research.utils.stages import default_stage_visibility, material_resou
 from plane.research.views.base import ResearchAPIView
 from plane.research.views.projects import visible_profile_queryset
 
-SCHEMA_VERSION = "2026-09-17"
+SCHEMA_VERSION = "2026-09-18"
 DEFAULT_PAGE_SIZE = 50
 MAX_PAGE_SIZE = 100
 FORMAL_MATERIAL_STATUSES = frozenset(
@@ -372,7 +370,8 @@ def _parse_resource_version(raw_version):
     return version, None
 
 
-def _resource_response(kind, resource_id, version, content, updated_at, *, source="plane"):
+def _resource_response(kind, resource_id, version, resource_status, updated_at, *, source="plane", link=None):
+    """Return metadata only; context endpoints never expose resource bodies."""
     return Response(
         {
             "schema_version": SCHEMA_VERSION,
@@ -380,8 +379,9 @@ def _resource_response(kind, resource_id, version, content, updated_at, *, sourc
             "id": str(resource_id),
             "source": source,
             "version": version,
+            "status": resource_status,
             "updated_at": updated_at.isoformat() if hasattr(updated_at, "isoformat") else updated_at,
-            "content": content,
+            "link": link,
         },
         status=status.HTTP_200_OK,
     )
@@ -455,7 +455,7 @@ class ResearchContextEndpoint(ContextAuthenticationMixin, ResearchAPIView):
 
 
 class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIView):
-    """Return one authorised internal body, defaulting to a formal snapshot."""
+    """Return one authorised resource reference without exposing its body."""
 
     def get(self, request, slug, kind, resource_id):
         workspace, error = self.get_workspace()
@@ -473,6 +473,9 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         response = self._resolve(workspace, request.user, context, kind, resource_id, requested_version)
         if response.status_code != status.HTTP_200_OK:
             return response
+        response.data["link"] = (
+            f"/api/research/workspaces/{workspace.slug}/context/resources/{kind}/{resource_id}/"
+        )
         record_audit_event(
             workspace=workspace,
             action=ResearchAuditAction.CONTEXT_READ,
@@ -485,7 +488,7 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         return response
 
     def _resolve(self, workspace, actor, context, kind, resource_id, version):
-        if kind == "external_reference":
+        if kind == "external_reference" or version == "draft":
             return _context_not_found()
         resolver = getattr(self, f"_resolve_{kind}", None)
         return resolver(workspace, actor, context, resource_id, version) if resolver else _context_not_found()
@@ -496,17 +499,7 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         profile = visible_profile_queryset(workspace, actor).filter(project_id=resource_id).first()
         if profile is None:
             return _context_not_found()
-        content = {
-            "name": profile.project.name,
-            "identifier": profile.project.identifier,
-            "research_type": profile.research_type,
-            "workflow_status": profile.workflow_status,
-            "owner": str(profile.owner_id),
-            "org_unit": str(profile.org_unit_id) if profile.org_unit_id else None,
-            "started_at": profile.started_at.isoformat() if profile.started_at else None,
-            "expected_end_at": profile.expected_end_at.isoformat() if profile.expected_end_at else None,
-        }
-        return _resource_response("project", profile.project_id, None, content, profile.updated_at)
+        return _resource_response("project", profile.project_id, None, profile.workflow_status, profile.updated_at)
 
     def _resolve_report(self, workspace, actor, context, resource_id, version):
         report = (
@@ -517,15 +510,6 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         )
         if report is None:
             return _context_not_found()
-        if version == "draft":
-            if report.owner_id != actor.id:
-                return _context_not_found()
-            content = {
-                "description_json": report.page.description_json,
-                "description_html": report.page.description_html,
-                "description_stripped": report.page.description_stripped,
-            }
-            return _resource_response("report", report.id, "draft", content, report.page.updated_at)
         if not check_access(actor, "view", report_resource(report), context=context):
             return _context_not_found()
         snapshots = list(report.official_snapshots.all())
@@ -536,13 +520,9 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         )
         if snapshot is None:
             return _context_not_found()
-        content = {
-            "description_json": snapshot.description_json,
-            "description_html": snapshot.description_html,
-            "description_stripped": snapshot.description_stripped,
-            "attachment_manifest": snapshot.attachment_manifest,
-        }
-        return _resource_response("report", report.id, snapshot.version_no, content, snapshot.created_at)
+        return _resource_response(
+            "report", report.id, snapshot.version_no, snapshot.snapshot_status, snapshot.created_at
+        )
 
     def _resolve_stage_material(self, workspace, actor, context, resource_id, version):
         material = (
@@ -557,16 +537,6 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         )
         if material is None:
             return _context_not_found()
-        if version == "draft":
-            if material.owner_id != actor.id or material.page is None:
-                return _context_not_found()
-            return _resource_response(
-                "stage_material",
-                material.id,
-                "draft",
-                material_snapshot(material),
-                material.page.updated_at,
-            )
         if not check_access(actor, "view", material_resource(material), context=context):
             return _context_not_found()
         versions = [item for item in material.versions.all() if item.snapshot.get("status") in FORMAL_MATERIAL_STATUSES]
@@ -581,7 +551,7 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
             "stage_material",
             material.id,
             material_version.version_no,
-            material_version.snapshot,
+            material_version.snapshot.get("status", material.status),
             material_version.created_at,
         )
 
@@ -594,16 +564,6 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         )
         if record is None:
             return _context_not_found()
-        if version == "draft":
-            if record.owner_id != actor.id:
-                return _context_not_found()
-            return _resource_response(
-                "experiment",
-                record.id,
-                "draft",
-                experiment_snapshot(record),
-                record.updated_at,
-            )
         if not check_access(actor, "view", experiment_resource(record), context=context):
             return _context_not_found()
         versions = list(record.versions.all())
@@ -618,7 +578,7 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
             "experiment",
             record.id,
             experiment_version.version_no,
-            experiment_version.snapshot,
+            experiment_version.snapshot.get("status", record.status),
             experiment_version.created_at,
         )
 
@@ -630,30 +590,15 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         )
         if entry is None:
             return _context_not_found()
-        if version == "draft":
-            if entry.owner_id != actor.id:
-                return _context_not_found()
-        elif version != "latest" or entry.status != LiteratureEntry.Status.INCLUDED:
+        if version != "latest" or entry.status != LiteratureEntry.Status.INCLUDED:
             return _context_not_found()
         if not check_access(actor, "view", literature_resource(entry), context=context):
             return _context_not_found()
-        content = {
-            "title": entry.title,
-            "authors": entry.authors,
-            "year": entry.year,
-            "venue": entry.venue,
-            "doi": entry.doi,
-            "url": entry.url,
-            "summary": entry.summary,
-            "gap_notes": entry.gap_notes,
-            "method_tags": entry.method_tags,
-            "system_tags": entry.system_tags,
-        }
         return _resource_response(
             "literature",
             entry.id,
-            "draft" if version == "draft" else None,
-            content,
+            None,
+            entry.status,
             entry.updated_at,
         )
 
@@ -665,28 +610,15 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
         )
         if outcome is None:
             return _context_not_found()
-        if version == "draft":
-            if outcome.created_by_id != actor.id:
-                return _context_not_found()
-        elif version != "latest" or outcome.status == ResearchOutcome.Status.DRAFT:
+        if version != "latest" or outcome.status == ResearchOutcome.Status.DRAFT:
             return _context_not_found()
         if not check_access(actor, "view", outcome_resource(outcome), context=context):
             return _context_not_found()
-        content = {
-            "output_type": outcome.output_type,
-            "title": outcome.title,
-            "authors": outcome.authors,
-            "venue": outcome.venue,
-            "doi": outcome.doi,
-            "external_url": outcome.external_url,
-            "status": outcome.status,
-            "published_at": outcome.published_at.isoformat() if outcome.published_at else None,
-        }
         return _resource_response(
             "outcome",
             outcome.id,
-            "draft" if version == "draft" else None,
-            content,
+            None,
+            outcome.status,
             outcome.updated_at,
         )
 
@@ -709,19 +641,11 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
             context=context,
         ):
             return _context_not_found()
-        content = {
-            "ref_type": artifact.ref_type,
-            "ref_value": artifact.ref_value,
-            "commit_message": artifact.commit_message,
-            "author_name": artifact.author_name,
-            "description": artifact.description,
-            "repository_url": artifact.repository.repository_url,
-        }
         return _resource_response(
             "code_artifact",
             artifact.id,
             None,
-            content,
+            artifact.ref_type,
             artifact.committed_at or artifact.updated_at,
         )
 
@@ -740,16 +664,9 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
             context=context,
         ):
             return _context_not_found()
-        content = {
-            "action": transition.action,
-            "from_status": transition.from_status,
-            "to_status": transition.to_status,
-            "reason": transition.reason,
-            "gate_snapshot": transition.gate_snapshot,
-            "review_snapshot": transition.review_snapshot,
-            "metadata": transition.metadata,
-        }
-        return _resource_response("stage_transition", transition.id, None, content, transition.created_at)
+        return _resource_response(
+            "stage_transition", transition.id, None, transition.to_status, transition.created_at
+        )
 
     def _resolve_stage_review(self, workspace, actor, context, resource_id, version):
         if version != "latest":
@@ -770,12 +687,6 @@ class ResearchContextResourceEndpoint(ContextAuthenticationMixin, ResearchAPIVie
             context=context,
         ):
             return _context_not_found()
-        content = {
-            "reviewer": str(review.reviewer_id),
-            "reviewer_role": review.reviewer_role,
-            "recommendation": review.recommendation,
-            "score": review.score,
-            "comment": review.comment,
-            "revision_no": review.revision_no,
-        }
-        return _resource_response("stage_review", review.id, None, content, review.submitted_at or review.created_at)
+        return _resource_response(
+            "stage_review", review.id, None, review.recommendation, review.submitted_at or review.created_at
+        )

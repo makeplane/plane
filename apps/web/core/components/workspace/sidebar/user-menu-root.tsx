@@ -6,11 +6,9 @@
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomMenu } from "@plane/ui";
@@ -23,12 +21,11 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
 import { useInstanceAdmin } from "@/hooks/use-instance-admin";
+import { getGodModeUrl } from "@/helpers/admin-url.helper";
 
 export const UserMenuRoot = observer(function UserMenuRoot() {
   // states
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  // router
-  const router = useRouter();
   // store hooks
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
@@ -59,21 +56,20 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
     <CustomMenu
       className="flex items-center"
       customButton={
-        <AppSidebarItem
-          variant="button"
-          item={{
-            icon: (
-              <Avatar
-                alt={currentUser?.display_name}
-                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
-                src={getFileURL(currentUser?.avatar_url ?? "")}
-                size="xs"
-              />
-            ),
-            isActive: isUserMenuOpen,
-          }}
+        <AppSidebarItem.Icon
+          icon={
+            <Avatar
+              alt={currentUser?.display_name}
+              fallback={currentUser?.display_name?.[0]?.toUpperCase()}
+              src={getFileURL(currentUser?.avatar_url ?? "")}
+              size="xs"
+            />
+          }
+          highlight={isUserMenuOpen}
         />
       }
+      customButtonClassName="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
+      ariaLabel={t("common.profile_settings")}
       menuButtonOnClick={() => !isUserMenuOpen && setIsUserMenuOpen(true)}
       onMenuClose={() => setIsUserMenuOpen(false)}
       placement="bottom-end"
@@ -140,7 +136,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
       </CustomMenu.MenuItem>
       {isUserInstanceAdmin && (
         <CustomMenu.MenuItem
-          onClick={() => router.push(GOD_MODE_URL)}
+          onClick={() => window.location.assign(getGodModeUrl())}
           className="flex items-center gap-2 bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary"
         >
           <SettingsOutline className="size-3.5 shrink-0" />

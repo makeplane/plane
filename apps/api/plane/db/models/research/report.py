@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Q
 
 from plane.db.models.base import BaseModel
+from plane.utils.constants import DEFAULT_TIMEZONE
 
 from .append_only import AppendOnlyModel
 from .config import ReportVisibility
@@ -63,7 +64,7 @@ class PeriodicReport(BaseModel):
     period_key = models.CharField(max_length=16, db_index=True)
     period_start = models.DateField()
     period_end = models.DateField()
-    timezone = models.CharField(max_length=255, default="UTC")
+    timezone = models.CharField(max_length=255, default=DEFAULT_TIMEZONE)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
     visibility = models.CharField(
         max_length=32,

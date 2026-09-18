@@ -28,6 +28,7 @@ from plane.research.serializers import (
     ReportAccessGrantSerializer,
     ReportReviewLogSerializer,
 )
+from plane.utils.constants import DEFAULT_TIMEZONE
 from plane.research.utils.acl import (
     build_actor_context,
     can_narrow,
@@ -276,7 +277,7 @@ def validate_report_access_update(report, workspace, payload):
 
 def report_timezone_for(workspace):
     settings_map = get_workspace_research_settings(workspace)
-    return settings_map.get("timezone") or getattr(workspace, "timezone", None) or "UTC"
+    return settings_map.get("timezone") or getattr(workspace, "timezone", None) or DEFAULT_TIMEZONE
 
 
 class ResearchReportListCreateEndpoint(ResearchAPIView):

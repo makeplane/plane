@@ -48,20 +48,20 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
 
   //ref
   const elementRef = useRef<HTMLDivElement>(null);
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
 
   const handleQuickAction = (value: boolean) => setIsMenuActive(value);
 
   // drag and drop
   useEffect(() => {
-    const element = elementRef.current;
+    const dragElement = elementRef.current;
 
-    if (!element) return;
+    if (!dragElement) return;
     const initialData = { id: favorite.id, isGroup: false, isChild: !!parentId, parentId };
     return combine(
       draggable({
-        element,
-        dragHandle: element,
+        element: dragElement,
+        dragHandle: dragElement,
         getInitialData: () => initialData,
         onDragStart: () => {
           setIsDragging(true);
@@ -86,7 +86,7 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
         },
       }),
       dropTargetForElements({
-        element,
+        element: dragElement,
         canDrop: ({ source }) => getCanDrop(source, favorite, !!parentId),
         onDragStart: () => {
           setIsDragging(true);
@@ -107,8 +107,8 @@ export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
           });
         },
         onDrag: ({ self, source, location }) => {
-          const instruction = getInstructionFromPayload(self, source, location);
-          setInstruction(instruction);
+          const nextInstruction = getInstructionFromPayload(self, source, location);
+          setInstruction(nextInstruction);
         },
         onDragLeave: () => {
           setInstruction(undefined);

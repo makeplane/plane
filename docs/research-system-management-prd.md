@@ -55,17 +55,16 @@
 
 ### 2.4 二维表批量导入
 
-- 模型：`UserImportBatch`（批次）、`UserImportRow`（逐行结果）、`ResearchUserProfile`（科研档案：学号/年级/学位/电话/人员类别/分组/来源批次）。
-- 输入列（表头中英文容错）：分组、姓名、学号、年级、学位、负责导师、邮件、电话；另可传「导师姓名 → 邮箱」对照表。
+- 模型：`UserImportBatch`（批次）、`UserImportRow`（逐行结果）、`ResearchUserProfile`（科研档案：学号/年级/电话/人员类别/小组/来源批次）。
+- 输入列：姓名、学号、邮件、手机号、年级、人员类别、业务方向、小组、主导师、联合导师1、联合导师2；另需上传「导师姓名 → 邮箱」对照表。
 - 落库规则：
-  - 分组自动建为 `GROUP` 节点，挂在根节点（默认「材料科学与工程学院」）下；
-  - 分组为空的行挂根节点并在报告中单列；
+  - 小组只匹配已有 `TEAM` 节点，支持完整组织路径或业务方向下唯一的小组名称，不自动建树；
   - 学生建为 Research Owner 账号（组织角色 `REVIEWER`，无节点管理权），写入科研档案；
-  - 导师按对照表创建/复用账号并写 `MentorBinding`；缺少导师邮箱映射的行标记为 `PENDING`，不阻塞其他行；
+  - 导师按对照表匹配当前工作空间已有成员并写 `MentorBinding`；缺少映射、成员不存在或关系超过三人的行标记为 `PENDING`，不阻塞其他行；
   - 按邮箱（其次按学号）幂等 upsert，重复导入不重复建号；学号冲突视为数据错误并逐行拒绝。
 - 凭证：新账号生成一次性初始密码并置 `is_password_reset_required=True`，导入报告（CSV）可下载；首次登录会强制改密，改密后自动清除标记。
 - 双通道：管理页 `/research/settings/system`（预检 → 正式导入 → 报告下载/历史批次）与命令
-  `manage.py import_users_from_csv --students roster.csv [--advisors advisors.csv] --dry-run|--yes [--strict]`。
+  `manage.py import_users_from_csv --students roster.csv --advisors advisors.csv --dry-run|--yes [--strict]`。
 
 ### 2.5 主PI看板
 

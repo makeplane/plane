@@ -17,6 +17,7 @@ from plane.research.utils.config import (
     research_module_enabled,
     research_submodule_defaults,
 )
+from plane.utils.constants import DEFAULT_TIMEZONE
 
 
 def default_workspace_research_settings():
@@ -33,7 +34,7 @@ def default_workspace_research_settings():
         "default_report_visibility": "DIRECT_ADVISOR",
         "weekly_default_visibility": None,
         "monthly_default_visibility": None,
-        "timezone": None,
+        "timezone": DEFAULT_TIMEZONE,
         "audit_retention_days": 0,
         **research_submodule_defaults(),
         **research_gate_defaults(),

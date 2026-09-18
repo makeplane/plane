@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 // Plane Imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { DEFAULT_TIMEZONE, ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EditOutline } from "@makeplane/propel/icons";
@@ -32,7 +32,7 @@ const defaultValues: Partial<IWorkspace> = {
   url: "",
   organization_size: "2-10",
   logo_url: null,
-  timezone: "UTC",
+  timezone: DEFAULT_TIMEZONE,
 };
 
 export const WorkspaceDetails = observer(function WorkspaceDetails() {

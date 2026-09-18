@@ -396,6 +396,11 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
                 "A student roster file is required.",
             )
         advisors_file = request.FILES.get("advisors")
+        if advisors_file is None:
+            return research_error(
+                ResearchErrorCode.IMPORT_FILE_REQUIRED,
+                "An advisor name-to-email mapping file is required.",
+            )
         dry_run = str(request.data.get("dry_run", "")).strip().lower() in ("1", "true", "yes", "on")
         reset_passwords = str(request.data.get("reset_passwords", "")).strip().lower() in (
             "1",
@@ -406,7 +411,7 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
 
         try:
             students = parse_students(students_file.read(), students_file.name)
-            advisor_map = parse_advisors(advisors_file.read(), advisors_file.name) if advisors_file else {}
+            advisor_map = parse_advisors(advisors_file.read(), advisors_file.name)
         except AccountError as exc:
             return account_error_response(exc)
 
@@ -420,6 +425,8 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
             request=request,
             reset_passwords=reset_passwords,
         )
+        if dry_run:
+            return Response(batch.as_dict(), status=status.HTTP_200_OK)
         batch.prefetched_rows = list(batch.rows.all())
         return Response(
             UserImportBatchSerializer(batch).data,
@@ -475,13 +482,14 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                 "姓名",
                 "邮箱",
                 "学号",
+                "手机号",
+                "年级",
                 "人员类别",
                 "业务方向",
-                "主归属组织",
-                "主导师邮箱",
-                "联合导师邮箱",
-                "分组",
-                "负责导师",
+                "小组",
+                "主导师",
+                "联合导师1",
+                "联合导师2",
                 "状态",
                 "说明",
                 "初始密码",
@@ -494,13 +502,14 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                     row.display_name,
                     row.email,
                     row.student_no,
+                    row.raw.get("phone", ""),
+                    row.raw.get("grade", ""),
                     row.raw.get("category", ""),
                     row.raw.get("business_category", ""),
-                    row.raw.get("primary_org_unit", ""),
-                    row.raw.get("primary_advisor_email", ""),
-                    row.raw.get("co_advisor_emails", ""),
-                    row.group_label,
-                    row.advisor_name,
+                    row.raw.get("group", row.group_label),
+                    row.raw.get("primary_advisor_name", row.advisor_name),
+                    row.raw.get("co_advisor_1_name", ""),
+                    row.raw.get("co_advisor_2_name", ""),
                     row.status,
                     row.message,
                     row.initial_password,
@@ -516,7 +525,16 @@ class ResearchUserProfileListEndpoint(ResearchAPIView):
         workspace, error = _guard(self, request)
         if error:
             return error
-        profiles = ResearchUserProfile.objects.select_related("user").order_by("created_at")
+        profiles = (
+            ResearchUserProfile.objects.select_related("user")
+            .filter(
+                user__member_workspace__workspace=workspace,
+                user__member_workspace__is_active=True,
+                user__member_workspace__deleted_at__isnull=True,
+            )
+            .distinct()
+            .order_by("created_at")
+        )
         search = request.GET.get("search")
         if search:
             profiles = profiles.filter(
@@ -537,13 +555,22 @@ class ResearchUserProfileListEndpoint(ResearchAPIView):
         workspace, error = _guard(self, request)
         if error:
             return error
+        user_queryset = User.objects.filter(
+            member_workspace__workspace=workspace,
+            member_workspace__is_active=True,
+            member_workspace__deleted_at__isnull=True,
+        ).distinct()
         user = (
-            User.objects.filter(pk=request.data.get("user")).first()
+            user_queryset.filter(pk=request.data.get("user")).first()
             if request.data.get("user")
-            else User.objects.filter(email__iexact=str(request.data.get("email") or "")).first()
+            else user_queryset.filter(email__iexact=str(request.data.get("email") or "")).first()
         )
         if user is None:
-            return research_error(ResearchErrorCode.USER_NOT_FOUND, "User not found.")
+            return research_error(
+                ResearchErrorCode.USER_NOT_FOUND,
+                "User not found in this workspace.",
+                status.HTTP_404_NOT_FOUND,
+            )
         profile, _created = ResearchUserProfile.objects.get_or_create(user=user)
         changed = []
         for field_name in ("student_no", "grade", "degree", "phone", "group_label"):

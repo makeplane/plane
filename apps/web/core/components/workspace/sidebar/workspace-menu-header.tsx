@@ -31,7 +31,7 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
   // state
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   // hooks
   const { workspaceSlug } = useParams();
   const router = useRouter();
@@ -54,24 +54,16 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
         <span>{t("common.workspace")}</span>
       </Disclosure.Button>
       <CustomMenu
-        customButton={
-          <span
-            ref={actionSectionRef}
-            className="my-auto grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
-            onClick={() => {
-              setIsMenuActive(!isMenuActive);
-            }}
-          >
-            <MoreHorizontalOutline className="size-4" />
-          </span>
-        }
+        customButton={<MoreHorizontalOutline className="size-4" aria-hidden="true" />}
         className={cn(
           "pointer-events-none z-20 my-auto flex h-full flex-shrink-0 items-center opacity-0 group-hover/workspace-button:pointer-events-auto group-hover/workspace-button:opacity-100",
           {
             "pointer-events-auto opacity-100": isMenuActive,
           }
         )}
-        customButtonClassName="grid place-items-center"
+        customButtonClassName="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+        customButtonRef={actionSectionRef}
+        menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
         placement="bottom-start"
       >
         <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/projects/archives`)}>

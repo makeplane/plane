@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceResearchSetting
 from plane.license.models import Instance, InstanceAdmin, InstanceRoleAssignment
+from plane.utils.constants import DEFAULT_TIMEZONE
 
 WORKSPACE_ADMIN_ROLE = 20
 WORKSPACE_MEMBER_ROLE = 15
@@ -28,7 +29,7 @@ def make_user(email=None, first_name="Research", last_name="User", is_active=Tru
     return user
 
 
-def make_workspace(owner, name="Research Workspace", slug=None, timezone="UTC"):
+def make_workspace(owner, name="Research Workspace", slug=None, timezone=DEFAULT_TIMEZONE):
     slug = slug or f"ws-{uuid4().hex[:8]}"
     workspace = Workspace.objects.create(
         name=name,
