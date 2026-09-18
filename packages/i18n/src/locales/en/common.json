@@ -952,7 +952,7 @@
     },
     "user_import": {
       "title": "Roster import",
-      "hint": "The new roster requires name, student number, email, phone, grade, category, business direction, team, primary advisor, co-advisor 1 and co-advisor 2. Teams and advisors must already exist, and the advisor mapping file is required.",
+      "hint": "Use the π-Lab student and advisor Excel templates. 电话 also accepts 手机号; MS and Ph.D import as students with their degree. 备注 is optional. The required advisor table uses 导师姓名 and 邮箱. Teams and advisors must already exist.",
       "fields": {
         "students": "Member roster",
         "advisors": "Advisor name-to-email table (required)",

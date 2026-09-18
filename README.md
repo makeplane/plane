@@ -278,18 +278,19 @@ docker compose -f docker-compose-test.yml run --rm api-tests pytest -m unit
 
 ## 文档索引
 
-| 文档                                                                                  | 内容                                  |
-| ------------------------------------------------------------------------------------- | ------------------------------------- |
-| [`docs/README.md`](docs/README.md)                                                    | 文档总览、维护约定与阅读顺序          |
-| [`research-management-prd-roadmap.md`](docs/research-management-prd-roadmap.md)       | 产品需求、生态边界与 P0–P3 分期路线图 |
-| [`research-p0-development-prd.md`](docs/research-p0-development-prd.md)               | P0 开发规格（含实现回写记录）         |
-| [`research-p0-development-prd-review.md`](docs/research-p0-development-prd-review.md) | P0 开发规格评审与实现复核结论         |
-| [`research-p0-acceptance-report.md`](docs/research-p0-acceptance-report.md)           | P0 验收方法与逐条验收结论             |
-| [`research-p0-release-notes.md`](docs/research-p0-release-notes.md)                   | P0 发布、开关与回滚说明               |
-| [`research-p1-development-prd.md`](docs/research-p1-development-prd.md)               | P1 开发规格（含实现回写记录）         |
-| [`research-p1-development-prd-review.md`](docs/research-p1-development-prd-review.md) | P1 开发规格评审与实现复核结论         |
-| [`research-p1-release-notes.md`](docs/research-p1-release-notes.md)                   | P1 发布、开关、环境变量与回滚说明     |
-| [`linting.md`](docs/linting.md)                                                       | 代码风格与静态检查约定                |
+| 文档                                                                                  | 内容                                   |
+| ------------------------------------------------------------------------------------- | -------------------------------------- |
+| [`docs/README.md`](docs/README.md)                                                    | 文档总览、维护约定与阅读顺序           |
+| [`research-management-prd-roadmap.md`](docs/research-management-prd-roadmap.md)       | 产品需求、生态边界与 P0–P3 分期路线图  |
+| [`research-p0-development-prd.md`](docs/research-p0-development-prd.md)               | P0 开发规格（含实现回写记录）          |
+| [`research-p0-development-prd-review.md`](docs/research-p0-development-prd-review.md) | P0 开发规格评审与实现复核结论          |
+| [`research-p0-acceptance-report.md`](docs/research-p0-acceptance-report.md)           | P0 验收方法与逐条验收结论              |
+| [`research-p0-release-notes.md`](docs/research-p0-release-notes.md)                   | P0 发布、开关与回滚说明                |
+| [`research-p1-development-prd.md`](docs/research-p1-development-prd.md)               | P1 开发规格（含实现回写记录）          |
+| [`research-p1-development-prd-review.md`](docs/research-p1-development-prd-review.md) | P1 开发规格评审与实现复核结论          |
+| [`research-p1-release-notes.md`](docs/research-p1-release-notes.md)                   | P1 发布、开关、环境变量与回滚说明      |
+| [`production-deployment.md`](docs/production-deployment.md)                           | 当前生产环境架构、更新、验证与回滚流程 |
+| [`linting.md`](docs/linting.md)                                                       | 代码风格与静态检查约定                 |
 
 ## 生态与文档
 

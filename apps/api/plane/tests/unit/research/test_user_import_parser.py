@@ -72,6 +72,45 @@ def test_xlsx_roster_is_parsed():
     assert rows[0].phone == "177"
 
 
+@pytest.mark.parametrize(("category", "degree"), [("Ph.D", "PHD"), ("MS", "MS")])
+def test_supplied_template_aliases_are_parsed(category, degree):
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.append(["姓名", "学号", "邮件", "电话", "年级", "人员类别", "业务方向", "小组", "主导师", "联合导师1", "联合导师2", "备注"])
+    sheet.append(["Alice", 20230156625, "alice@example.com", 17700000000, 23, category, "基础研究", "器件", "导师甲", "", "", ""])
+    # Match the supplied workbook's styled but empty columns and rows.
+    sheet.cell(216, 26).number_format = "@"
+    buffer = io.BytesIO()
+    workbook.save(buffer)
+
+    rows = parse_students(buffer.getvalue(), "π-Lab学生-导入信息表.xlsx")
+
+    assert len(rows) == 1
+    assert rows[0].phone == "17700000000"
+    assert rows[0].student_no == "20230156625"
+    assert rows[0].grade == "23"
+    assert rows[0].category == "STUDENT"
+    assert rows[0].degree == degree
+    assert rows[0].raw["category"] == category
+
+
+def test_supplied_advisor_template_name_header_is_parsed():
+    workbook = Workbook()
+    workbook.active.append(["导师姓名", "邮箱"])
+    workbook.active.append(["导师甲", " ADVISOR@example.com "])
+    buffer = io.BytesIO()
+    workbook.save(buffer)
+
+    assert parse_advisors(buffer.getvalue(), "导师信息表.xlsx") == {
+        "导师甲": "advisor@example.com"
+    }
+
+
+def test_duplicate_nonempty_headers_are_rejected():
+    with pytest.raises(AccountError, match="重复"):
+        parse_students((ROSTER_HEADER.rstrip() + ",姓名\n" + ROSTER_ROW).encode(), "roster.csv")
+
+
 @pytest.mark.parametrize(
     "header",
     [

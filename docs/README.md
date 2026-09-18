@@ -23,6 +23,7 @@
 | [`wechat-mini-program-prd.md`](./wechat-mini-program-prd.md)                             | 微信小程序移动工作台：范围、认证、API、消息、发布与验收          | v1.0，待评审；规划 `3.1.0`               |
 | [`research-test-fixtures.md`](./research-test-fixtures.md)                               | 科研测试夹具：多身份账号、P0/P1 数据清单与手工验证流程           | 持续维护（`seed_research_demo`）         |
 | [`research-test-accounts.md`](./research-test-accounts.md)                               | 测试账号与身份速查：登录入口、各身份账号、可见范围与登录排错     | 持续维护（v2.5.1 实测复核）              |
+| [`production-deployment.md`](./production-deployment.md)                                 | 当前生产环境：混合部署架构、更新、验证、排错与回滚流程           | 持续维护                                 |
 | [`linting.md`](./linting.md)                                                             | 代码风格、静态检查与提交前检查约定                               | 持续维护                                 |
 
 `ai4ms-plane-integration.png` 与 `ai4ms-plane-enhanced-integration.png` 是生态边界与集成架构的参考图，供产品文档引用。
@@ -38,7 +39,7 @@
 | 新加入的开发者  | 根 [`README.md`](../README.md) → 本索引 → 路线图 §1–§4 → 对应期次的开发 PRD → 该期发布说明                                                                                    |
 | 参与 v3 开发    | [`research-workspace-v3.md`](./research-workspace-v3.md) → v2.4/v2.5 历史文档 → 对应代码和测试                                                                                |
 | 参与 P0/P1 开发 | 路线图 §5.1 / §5.2 → 开发 PRD 的需求编号与接口契约 → 评审报告的决策项 → PRD §16 实现回写记录 → 验收报告 / 发布门禁结果                                                        |
-| 部署与运维      | 根 README「启用科研模块」→ 各期发布说明的「环境变量清单」「开关层级」「回滚策略」                                                                                             |
+| 部署与运维      | [`production-deployment.md`](./production-deployment.md) → 根 README「启用科研模块」→ 各期发布说明的「环境变量清单」「开关层级」「回滚策略」                                  |
 | 手工测试与验收  | [`research-test-accounts.md`](./research-test-accounts.md)（选账号）→ [`research-test-fixtures.md`](./research-test-fixtures.md)（数据与流程）→ 对应期次的开发 PRD 与验收报告 |
 | 产品与业务方    | 路线图 §1–§3（背景、目标、术语与角色）→ §5 需求优先级 → §6 功能需求 → §11 测试与验收要求                                                                                      |
 

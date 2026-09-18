@@ -36,11 +36,13 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [resetPasswords, setResetPasswords] = useState(false);
 
   const load = useCallback(async () => {
     try {
       setErrorKey(null);
+      setErrorMessage(null);
       const data = await accountService.getUserImports(workspaceSlug);
       setBatches(data?.results ?? []);
     } catch {
@@ -56,6 +58,9 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
 
   const runImport = useCallback(
     async (dryRun: boolean) => {
+      setErrorMessage(null);
+      setErrorKey(null);
+      setActiveBatch(null);
       const students = studentInput.current?.files?.[0];
       const advisors = advisorInput.current?.files?.[0];
       if (!students || !advisors) {
@@ -81,8 +86,14 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
           await load();
         }
       } catch (error) {
-        const payload = error as { error_code?: string } | undefined;
-        setErrorKey(payload?.error_code ?? "research.user_import.error.run");
+        const payload = error as { error_code?: string; message?: string } | undefined;
+        const knownCodes = ["user_import_file_required", "user_import_file_invalid", "public_workspace_missing"];
+        setErrorKey(
+          payload?.error_code && knownCodes.includes(payload.error_code)
+            ? `research.user_import.error.${payload.error_code}`
+            : "research.user_import.error.run"
+        );
+        setErrorMessage(typeof payload?.message === "string" ? payload.message : null);
       } finally {
         setBusy(false);
       }
@@ -130,9 +141,14 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
 
       <p className="text-11 text-tertiary">{t("research.user_import.hint")}</p>
       <p className="font-mono rounded border border-subtle bg-surface-2 px-3 py-2 text-11 text-secondary">
-        姓名, 学号, 邮件, 手机号, 年级, 人员类别, 业务方向, 小组, 主导师, 联合导师1, 联合导师2
+        姓名, 学号, 邮件, 电话, 年级, 人员类别, 业务方向, 小组, 主导师, 联合导师1, 联合导师2, 备注
       </p>
-      {errorKey && <p className="text-12 text-danger-primary">{t(errorKey)}</p>}
+      {errorKey && (
+        <p role="alert" className="text-12 text-danger-primary">
+          {t(errorKey)}
+          {errorMessage ? ` ${errorMessage}` : ""}
+        </p>
+      )}
 
       {activeBatch && (
         <div className="flex flex-col gap-2 rounded-md border border-subtle p-3">

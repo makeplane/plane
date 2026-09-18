@@ -44,7 +44,9 @@ ROSTER_HEADERS = {
     "name": "姓名",
     "student_no": "学号",
     "email": "邮件",
-    "phone": "手机号",
+    # The supplied π-Lab workbook calls this column “电话”. Keep both names
+    # accepted while exposing the canonical field as ``phone``.
+    "phone": ("手机号", "电话"),
     "grade": "年级",
     "category": "人员类别",
     "business_category": "业务方向",
@@ -55,13 +57,20 @@ ROSTER_HEADERS = {
 }
 
 ADVISOR_HEADERS = {
-    "name": ("姓名", "导师"),
+    # The supplied advisor workbook uses “导师姓名”.
+    "name": ("姓名", "导师", "导师姓名"),
     "email": ("邮箱", "邮件"),
 }
 
 CATEGORY_ALIASES = {
     "学生": ResearchUserProfile.Category.STUDENT,
     "student": ResearchUserProfile.Category.STUDENT,
+    "ph.d": ResearchUserProfile.Category.STUDENT,
+    "ph.d.": ResearchUserProfile.Category.STUDENT,
+    "phd": ResearchUserProfile.Category.STUDENT,
+    "博士": ResearchUserProfile.Category.STUDENT,
+    "博士生": ResearchUserProfile.Category.STUDENT,
+    "ms": ResearchUserProfile.Category.STUDENT,
     "博士后": ResearchUserProfile.Category.POSTDOC,
     "postdoc": ResearchUserProfile.Category.POSTDOC,
     "导师": ResearchUserProfile.Category.ADVISOR,
@@ -71,6 +80,15 @@ CATEGORY_ALIASES = {
     "staff": ResearchUserProfile.Category.STAFF,
     "其他": ResearchUserProfile.Category.OTHER,
     "other": ResearchUserProfile.Category.OTHER,
+}
+
+DEGREE_ALIASES = {
+    "ph.d": ResearchUserProfile.Degree.PHD,
+    "ph.d.": ResearchUserProfile.Degree.PHD,
+    "phd": ResearchUserProfile.Degree.PHD,
+    "博士": ResearchUserProfile.Degree.PHD,
+    "博士生": ResearchUserProfile.Degree.PHD,
+    "ms": ResearchUserProfile.Degree.MS,
 }
 
 BUSINESS_CATEGORY_ALIASES = {
@@ -97,6 +115,7 @@ class StudentRow:
     phone: str = ""
     group: str = ""
     category: str = ""
+    degree: str = ""
     business_category: str = ""
     primary_advisor_name: str = ""
     co_advisor_1_name: str = ""
@@ -199,17 +218,25 @@ def _normalise_header(value):
 def _map_exact_headers(header_row, headers):
     """Return field positions only when every required Chinese header exists."""
     normalised = [_normalise_header(cell) for cell in header_row]
-    if len(normalised) != len(set(normalised)):
-        raise AccountError(ResearchErrorCode.IMPORT_FILE_INVALID, "The header row contains duplicate columns.")
+    # XLSX readers preserve the worksheet's used range. Templates often have
+    # trailing blank columns (and blank cells are repeated in that range), so
+    # only non-empty headers participate in duplicate detection.
+    non_empty = [value for value in normalised if value]
+    if len(non_empty) != len(set(non_empty)):
+        raise AccountError(ResearchErrorCode.IMPORT_FILE_INVALID, "表头存在重复列，请检查列名。")
     mapping = {}
-    for field_name, header in headers.items():
-        key = _normalise_header(header)
-        if key not in normalised:
+    for field_name, header_or_aliases in headers.items():
+        aliases = header_or_aliases if isinstance(header_or_aliases, (tuple, list)) else (header_or_aliases,)
+        keys = [_normalise_header(alias) for alias in aliases]
+        matches = [candidate for candidate in keys if candidate in normalised]
+        if not matches:
             raise AccountError(
                 ResearchErrorCode.IMPORT_FILE_INVALID,
-                f"The header row is missing the {header} column.",
+                f"学生表缺少列：{' / '.join(aliases)}。",
             )
-        mapping[field_name] = normalised.index(key)
+        if len(matches) > 1:
+            raise AccountError(ResearchErrorCode.IMPORT_FILE_INVALID, f"学生表存在重复含义的列：{' / '.join(aliases)}。")
+        mapping[field_name] = normalised.index(matches[0])
     return mapping
 
 
@@ -319,6 +346,7 @@ def parse_students(payload, filename=""):
                 phone=cell(row, "phone"),
                 group=cell(row, "group"),
                 category=normalise_category(category_value) or category_value or ResearchUserProfile.Category.STUDENT,
+                degree=DEGREE_ALIASES.get(_normalise_header(category_value), ""),
                 business_category=normalise_business_category(cell(row, "business_category"))
                 or cell(row, "business_category"),
                 primary_advisor_name=cell(row, "primary_advisor_name"),
@@ -345,7 +373,7 @@ def parse_advisors(payload, filename=""):
     if "name" not in mapping or "email" not in mapping:
         raise AccountError(
             ResearchErrorCode.IMPORT_FILE_INVALID,
-            "The advisor table needs 姓名/name and 邮件/email columns.",
+            "导师表必须包含“导师姓名”和“邮箱”列（兼容“姓名 / 导师”和“邮件”）。",
         )
 
     def cell(row, field_name):
@@ -502,7 +530,7 @@ def validate_row(row):
                 f"学号 {row.student_no} already belongs to {owner.user.email}.",
             )
     if row.category and row.category not in ResearchUserProfile.Category.values:
-        return ResearchErrorCode.IMPORT_ROW_INVALID, f"Unknown category '{row.category}'."
+        return ResearchErrorCode.IMPORT_ROW_INVALID, f"无法识别人员类别：{row.category}。学生可填写 MS、Ph.D 或学生。"
     if row.business_category and row.business_category not in (
         OrgUnit.BusinessCategory.BASIC_RESEARCH,
         OrgUnit.BusinessCategory.INDUSTRIALIZATION,
@@ -561,6 +589,7 @@ def _upsert_profile(user, row, group_label, batch, actor):
             user=user,
             student_no=row.student_no,
             grade=row.grade,
+            degree=row.degree,
             phone=row.phone,
             category=row.category or ResearchUserProfile.Category.STUDENT,
             group_label=group_label,
@@ -570,6 +599,7 @@ def _upsert_profile(user, row, group_label, batch, actor):
     updates = {
         "student_no": row.student_no or profile.student_no,
         "grade": row.grade or profile.grade,
+        "degree": row.degree or profile.degree,
         "phone": row.phone or profile.phone,
         "group_label": profile.group_label or group_label,
         "source_batch": batch or profile.source_batch,

@@ -4,7 +4,10 @@
 
 """Strict member roster import: profiles, TEAM membership and advisors."""
 
+import io
+
 from django.core.files.uploadedfile import SimpleUploadedFile
+from openpyxl import Workbook
 from rest_framework.test import APIClient
 
 import pytest
@@ -316,6 +319,64 @@ def test_dry_run_writes_nothing(env):
     assert response.data["rows_ok"] == 1
     assert not User.objects.filter(email="student@example.com").exists()
     assert not UserImportBatch.objects.filter(workspace=env["workspace"]).exists()
+
+
+@pytest.mark.parametrize(("category", "degree"), [("Ph.D", "PHD"), ("MS", "MS")])
+def test_template_category_saves_degree_and_reimport_preserves_it(env, category, degree):
+    response = post_import(env, row=roster_row(category=category), advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    assert response.status_code == 201
+    assert response.data["rows_ok"] == 1
+    profile = ResearchUserProfile.objects.get(user__email="student@example.com")
+    assert profile.category == "STUDENT"
+    assert profile.degree == degree
+    post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    profile.refresh_from_db()
+    assert profile.degree == degree
+
+
+def test_unknown_template_category_is_a_row_error(env):
+    response = post_import(env, row=roster_row(category="kg"), advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    assert response.status_code == 201
+    assert response.data["rows_error"] == 1
+    assert "无法识别人员类别：kg" in response.data["rows"][0]["message"]
+    assert not User.objects.filter(email="student@example.com").exists()
+
+
+@pytest.mark.parametrize("dry_run", [True, False])
+def test_fixed_excel_templates_upload_through_api(env, dry_run):
+    def xlsx(name, rows, trailing_blanks=False):
+        workbook = Workbook()
+        for row in rows:
+            workbook.active.append(row)
+        if trailing_blanks:
+            workbook.active.cell(216, 26).number_format = "@"
+        buffer = io.BytesIO()
+        workbook.save(buffer)
+        return SimpleUploadedFile(name, buffer.getvalue(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+    students = xlsx(
+        "π-Lab学生-导入信息表.xlsx",
+        [
+            ROSTER_HEADER.strip().replace("手机号", "电话").split(",") + ["备注"],
+            roster_row(category="MS").strip().split(",") + [""],
+        ],
+        trailing_blanks=True,
+    )
+    advisors = xlsx("导师信息表.xlsx", [
+        ["导师姓名", "邮箱"],
+        ["刘俊扬", " primary@example.com "],
+        ["陈志昕", "co1@example.com"],
+        ["白杰", "co2@example.com"],
+    ])
+    response = client_for(env["admin"]).post(user_imports_url(env["workspace"]), {
+        "students": students, "advisors": advisors, "dry_run": str(dry_run).lower(),
+    }, format="multipart")
+    assert response.status_code == (200 if dry_run else 201)
+    assert response.data["rows_total"] == response.data["rows_ok"] == 1
+    assert response.data["rows"][0]["row_number"] == 2
+    assert User.objects.filter(email="student@example.com").exists() is not dry_run
+    if not dry_run:
+        assert ResearchUserProfile.objects.get(user__email="student@example.com").degree == "MS"
 
 
 def test_report_uses_new_template_columns(env):

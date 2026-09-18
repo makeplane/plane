@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "private": true,
   "description": "Core Editor that powers Plane",
   "keywords": [
