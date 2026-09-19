@@ -81,12 +81,12 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
   useEffect(() => {
     if (popperElement) return;
     const find = () => {
-      let el: HTMLElement | null = null;
+      let el: HTMLDivElement | null = null;
       if (referenceElement?.id) {
-        el = document.querySelector<HTMLElement>(`ul[aria-labelledby="${referenceElement.id}"] > div`);
+        el = document.querySelector<HTMLDivElement>(`ul[aria-labelledby="${referenceElement.id}"] > div`);
       }
       if (!el) {
-        el = document.querySelector<HTMLElement>('ul[data-headlessui-state="open"] > div, ul[data-open] > div');
+        el = document.querySelector<HTMLDivElement>('ul[data-headlessui-state="open"] > div, ul[data-open] > div');
       }
       if (el) setPopperElement(el);
       return !!el;

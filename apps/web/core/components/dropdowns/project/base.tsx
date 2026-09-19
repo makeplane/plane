@@ -102,7 +102,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
   // click. Recover by locating the mounted panel from the container DOM.
   useEffect(() => {
     if (isOpen && !popperElement && dropdownRef.current) {
-      const el = dropdownRef.current.querySelector<HTMLElement>("ul.fixed.z-10 > div");
+      const el = dropdownRef.current.querySelector<HTMLDivElement>("ul.fixed.z-10 > div");
       if (el) setPopperElement(el);
     }
   }, [isOpen, popperElement]);
