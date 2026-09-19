@@ -83,6 +83,53 @@ class InstanceConfiguration(BaseModel):
         ordering = ("-created_at",)
 
 
+class AIProviderProfile(BaseModel):
+    """Instance-level configuration for an OpenAI-compatible AI provider."""
+
+    PROTOCOL_OPENAI_COMPATIBLE = "openai_compatible"
+    PROTOCOL_CHOICES = ((PROTOCOL_OPENAI_COMPATIBLE, "OpenAI-compatible"),)
+
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="ai_providers")
+    name = models.CharField(max_length=120)
+    slug = models.SlugField(max_length=120)
+    protocol = models.CharField(max_length=32, choices=PROTOCOL_CHOICES, default=PROTOCOL_OPENAI_COMPATIBLE)
+    base_url = models.URLField(max_length=500)
+    api_key_encrypted = models.TextField(blank=True, default="")
+    organization_id = models.CharField(max_length=255, blank=True, default="")
+    project_id = models.CharField(max_length=255, blank=True, default="")
+    default_model = models.CharField(max_length=255, blank=True, default="")
+    enabled = models.BooleanField(default=True)
+    is_default = models.BooleanField(default=False)
+    timeout_seconds = models.PositiveSmallIntegerField(default=30)
+    max_retries = models.PositiveSmallIntegerField(default=2)
+    temperature = models.FloatField(null=True, blank=True)
+    top_p = models.FloatField(null=True, blank=True)
+    max_output_tokens = models.PositiveIntegerField(null=True, blank=True)
+    last_tested_at = models.DateTimeField(null=True, blank=True)
+    last_test_success = models.BooleanField(null=True, blank=True)
+    last_test_error_code = models.CharField(max_length=64, blank=True, default="")
+
+    class Meta:
+        db_table = "ai_provider_profiles"
+        ordering = ("-created_at",)
+        constraints = [models.UniqueConstraint(fields=["instance", "slug"], name="unique_ai_provider_slug")]
+
+
+class AIModelProfile(BaseModel):
+    """A model configured for an AI provider."""
+
+    provider = models.ForeignKey(AIProviderProfile, on_delete=models.CASCADE, related_name="model_profiles")
+    model_id = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255, blank=True, default="")
+    enabled = models.BooleanField(default=True)
+    capabilities = models.JSONField(default=list, blank=True)
+
+    class Meta:
+        db_table = "ai_model_profiles"
+        ordering = ("model_id",)
+        constraints = [models.UniqueConstraint(fields=["provider", "model_id"], name="unique_ai_model_profile")]
+
+
 class ChangeLog(BaseModel):
     """Change Log model to store the release changelogs made in the application."""
 

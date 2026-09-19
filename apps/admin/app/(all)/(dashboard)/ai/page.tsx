@@ -18,19 +18,20 @@ import { InstanceAIForm } from "./form";
 
 const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentProps) {
   // store
-  const { fetchInstanceConfigurations, formattedConfig } = useInstance();
+  const { fetchAIProviders, aiProviders } = useInstance();
 
-  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
+  useSWR("INSTANCE_AI_PROVIDERS", () => fetchAIProviders());
 
   return (
     <PageWrapper
       header={{
         title: "AI features for all your workspaces",
-        description: "Configure your AI API credentials so Plane AI features are turned on for all your workspaces.",
+        description:
+          "Configure one or more AI providers so Plane AI features are available across all your workspaces.",
       }}
     >
-      {formattedConfig ? (
-        <InstanceAIForm config={formattedConfig} />
+      {aiProviders ? (
+        <InstanceAIForm providers={aiProviders} />
       ) : (
         <Skeleton className="space-y-8">
           <Skeleton.Item height="50px" width="40%" />

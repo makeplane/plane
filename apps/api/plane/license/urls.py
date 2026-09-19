@@ -18,6 +18,15 @@ from plane.license.api.views import (
     InstanceAdminUserSessionEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    AIProviderCollectionEndpoint,
+    AIProviderDetailEndpoint,
+    AIProviderDiscoverModelsEndpoint,
+    AIProviderDraftTestConnectionEndpoint,
+    AIProviderModelDetailEndpoint,
+    AIProviderModelsEndpoint,
+    AIProviderSetDefaultEndpoint,
+    AIProviderTestConnectionEndpoint,
+    AIProviderImportLegacyEndpoint,
 )
 
 urlpatterns = [
@@ -71,4 +80,33 @@ urlpatterns = [
         name="instance-workspace-availability",
     ),
     path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
+    path("ai/providers/", AIProviderCollectionEndpoint.as_view(), name="ai-provider-collection"),
+    path(
+        "ai/providers/test-connection/",
+        AIProviderDraftTestConnectionEndpoint.as_view(),
+        name="ai-provider-draft-test-connection",
+    ),
+    path("ai/import-legacy/", AIProviderImportLegacyEndpoint.as_view(), name="ai-provider-import-legacy"),
+    path("ai/providers/<uuid:pk>/", AIProviderDetailEndpoint.as_view(), name="ai-provider-detail"),
+    path(
+        "ai/providers/<uuid:pk>/set-default/",
+        AIProviderSetDefaultEndpoint.as_view(),
+        name="ai-provider-set-default",
+    ),
+    path(
+        "ai/providers/<uuid:pk>/test-connection/",
+        AIProviderTestConnectionEndpoint.as_view(),
+        name="ai-provider-test",
+    ),
+    path("ai/providers/<uuid:pk>/models/", AIProviderModelsEndpoint.as_view(), name="ai-provider-models"),
+    path(
+        "ai/providers/<uuid:pk>/models/discover/",
+        AIProviderDiscoverModelsEndpoint.as_view(),
+        name="ai-provider-discover-models",
+    ),
+    path(
+        "ai/providers/<uuid:pk>/models/<str:model_id>/",
+        AIProviderModelDetailEndpoint.as_view(),
+        name="ai-provider-model-detail",
+    ),
 ]
