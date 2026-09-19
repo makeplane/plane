@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
@@ -98,6 +98,16 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
       },
     ],
   });
+  // On React 19 the panel div's ref callback can be dropped after a
+  // disrupted render, leaving popperElement null forever: popper never runs,
+  // the panel stays at 0x0 and every option click registers as an outside
+  // click. Recover by locating the mounted panel from the container DOM.
+  useEffect(() => {
+    if (isOpen && !popperElement && dropdownRef.current) {
+      const el = dropdownRef.current.querySelector<HTMLDivElement>("ul.fixed.z-10 > div");
+      if (el) setPopperElement(el);
+    }
+  }, [isOpen, popperElement]);
   // dropdown init
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,
@@ -220,6 +230,33 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
+            onClickCapture={(e) => {
+              // React 19 hit-testing sometimes resolves option clicks to this
+              // panel container instead of the option elements, so the click
+              // never reaches an option. Resolve the intended option by click
+              // coordinates and drive this component's own onChange.
+              const root = e.currentTarget as HTMLElement;
+              const items = Array.from(root.querySelectorAll<HTMLElement>("li, [role='option']")).filter(
+                (el) => el.getBoundingClientRect().height > 0
+              );
+              const option = items.find((el) => {
+                const r = el.getBoundingClientRect();
+                return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+              });
+              if (!option) {
+                // The outside-click detector misses these panel clicks (same hit flaw), so close here.
+                e.preventDefault();
+                e.stopPropagation();
+                handleClose();
+                return;
+              }
+              const idx = items.indexOf(option);
+              if (idx >= 0 && filteredOptions?.[idx]) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownOnChange(filteredOptions[idx].value);
+              }
+            }}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
