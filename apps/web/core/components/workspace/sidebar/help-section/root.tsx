@@ -6,12 +6,11 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { HelpOutline, PagesOutline, UserOutline } from "@makeplane/propel/icons";
+import { HelpOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { PlaneVersionNumber } from "@/components/global/version-number";
 // hooks
@@ -23,12 +22,9 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
   const { toggleShortcutsListModal } = usePowerK();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
-  const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
 
   return (
     <>
-      <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
-
       <CustomMenu
         customButton={
           <AppSidebarItem
@@ -46,19 +42,6 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         maxHeight="lg"
         closeOnSelect
       >
-        <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}>
-          <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <PagesOutline className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
-            <span className="text-11">{t("documentation")}</span>
-          </div>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank")}>
-          <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <UserOutline className="h-3.5 w-3.5 text-secondary" width={14} height={14} />
-            <span className="text-11">{t("contact_sales")}</span>
-          </div>
-        </CustomMenu.MenuItem>
-        <div className="my-1 border-t border-subtle" />
         <CustomMenu.MenuItem>
           <button
             type="button"
@@ -67,20 +50,6 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           >
             <span className="text-11">{t("keyboard_shortcuts")}</span>
           </button>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem>
-          <button
-            type="button"
-            onClick={() => setProductUpdatesModalOpen(true)}
-            className="justify-sbg-layer-211 flex w-full items-center hover:bg-layer-1"
-          >
-            <span className="text-11">{t("whats_new")}</span>
-          </button>
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={() => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer")}>
-          <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <span className="text-11">Forum</span>
-          </div>
         </CustomMenu.MenuItem>
         <div className="mt-1 border-t border-subtle px-1 pt-2 text-11 text-secondary">
           <PlaneVersionNumber />
