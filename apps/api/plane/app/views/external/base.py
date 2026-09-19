@@ -4,10 +4,9 @@
 
 # Python import
 import os
-from typing import List, Dict, Tuple
+from typing import Tuple
 
 # Third party import
-from openai import OpenAI
 import requests
 
 from rest_framework import status
@@ -20,57 +19,9 @@ from plane.db.models import Project, Workspace
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
 
+from .ai_provider import AIProviderError, OpenAICompatibleAdapter, get_active_provider_config
+
 from ..base import BaseAPIView
-
-
-class LLMProvider:
-    """Base class for LLM provider configurations"""
-
-    name: str = ""
-    models: List[str] = []
-    default_model: str = ""
-
-    @classmethod
-    def get_config(cls) -> Dict[str, str | List[str]]:
-        return {
-            "name": cls.name,
-            "models": cls.models,
-            "default_model": cls.default_model,
-        }
-
-
-class OpenAIProvider(LLMProvider):
-    name = "OpenAI"
-    models = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o", "o1-mini", "o1-preview"]
-    default_model = "gpt-4o-mini"
-
-
-class AnthropicProvider(LLMProvider):
-    name = "Anthropic"
-    models = [
-        "claude-3-5-sonnet-20240620",
-        "claude-3-haiku-20240307",
-        "claude-3-opus-20240229",
-        "claude-3-sonnet-20240229",
-        "claude-2.1",
-        "claude-2",
-        "claude-instant-1.2",
-        "claude-instant-1",
-    ]
-    default_model = "claude-3-sonnet-20240229"
-
-
-class GeminiProvider(LLMProvider):
-    name = "Gemini"
-    models = ["gemini-pro", "gemini-1.5-pro-latest", "gemini-pro-vision"]
-    default_model = "gemini-pro"
-
-
-SUPPORTED_PROVIDERS = {
-    "openai": OpenAIProvider,
-    "anthropic": AnthropicProvider,
-    "gemini": GeminiProvider,
-}
 
 
 def get_llm_config() -> Tuple[str | None, str | None, str | None]:
@@ -78,62 +29,38 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     Helper to get LLM configuration values, returns:
         - api_key, model, provider
     """
-    api_key, provider_key, model = get_configuration_value(
-        [
-            {
-                "key": "LLM_API_KEY",
-                "default": os.environ.get("LLM_API_KEY", None),
-            },
-            {
-                "key": "LLM_PROVIDER",
-                "default": os.environ.get("LLM_PROVIDER", "openai"),
-            },
-            {
-                "key": "LLM_MODEL",
-                "default": os.environ.get("LLM_MODEL", None),
-            },
-        ]
-    )
-
-    provider = SUPPORTED_PROVIDERS.get(provider_key.lower())
-    if not provider:
-        log_exception(ValueError(f"Unsupported provider: {provider_key}"))
+    active = get_active_provider_config()
+    if not active:
         return None, None, None
-
-    if not api_key:
-        log_exception(ValueError(f"Missing API key for provider: {provider.name}"))
-        return None, None, None
-
-    # If no model specified, use provider's default
-    if not model:
-        model = provider.default_model
-
-    # Validate model is supported by provider
-    if model not in provider.models:
-        log_exception(
-            ValueError(
-                f"Model {model} not supported by {provider.name}. Supported models: {', '.join(provider.models)}"
-            )
-        )
-        return None, None, None
-
-    return api_key, model, provider_key
+    return active.api_key, active.model, active.protocol
 
 
 def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> Tuple[str | None, str | None]:
     """Helper to get LLM completion response"""
-    final_text = task + "\n" + prompt
+    final_text = f"{task or ''}\n{prompt or ''}"
     try:
-        # For Gemini, prepend provider name to model
-        if provider.lower() == "gemini":
-            model = f"gemini/{model}"
+        active = get_active_provider_config()
+        if active and active.api_key == api_key:
+            text = OpenAICompatibleAdapter().chat(active, model or active.model, final_text)
+        else:
+            # Keep the old function contract for callers that explicitly pass
+            # legacy values while routing the request through the safe adapter.
+            from .ai_provider import ProviderConfig
 
-        client = OpenAI(api_key=api_key)
-        chat_completion = client.chat.completions.create(
-            model=model, messages=[{"role": "user", "content": final_text}]
-        )
-        text = chat_completion.choices[0].message.content
+            text = OpenAICompatibleAdapter().chat(
+                ProviderConfig(
+                    protocol="openai_compatible",
+                    base_url=os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
+                    api_key=api_key,
+                    model=model,
+                ),
+                model,
+                final_text,
+            )
         return text, None
+    except AIProviderError as e:
+        log_exception(e)
+        return None, e.code
     except Exception as e:
         log_exception(e)
         error_type = e.__class__.__name__

@@ -50,6 +50,10 @@ if SECRET_KEY in _INSECURE_SECRET_KEYS:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
+# AI provider endpoints are public HTTPS by default. Self-hosted deployments
+# may explicitly opt into localhost/private-network providers.
+AI_ALLOW_PRIVATE_ENDPOINTS = os.environ.get("AI_ALLOW_PRIVATE_ENDPOINTS", "0") == "1"
+
 # Self-hosted mode
 IS_SELF_MANAGED = True
 

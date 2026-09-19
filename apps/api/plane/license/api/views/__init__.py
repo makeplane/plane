@@ -26,3 +26,15 @@ from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
 )
+
+from .ai_provider import (
+    AIProviderCollectionEndpoint,
+    AIProviderDetailEndpoint,
+    AIProviderDiscoverModelsEndpoint,
+    AIProviderDraftTestConnectionEndpoint,
+    AIProviderModelDetailEndpoint,
+    AIProviderModelsEndpoint,
+    AIProviderSetDefaultEndpoint,
+    AIProviderTestConnectionEndpoint,
+    AIProviderImportLegacyEndpoint,
+)
