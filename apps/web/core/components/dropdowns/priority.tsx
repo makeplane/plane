@@ -475,7 +475,13 @@ export function PriorityDropdown(props: Props) {
                 const r = el.getBoundingClientRect();
                 return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
               });
-              if (!option) return;
+              if (!option) {
+                // The outside-click detector misses these panel clicks (same hit flaw), so close here.
+                e.preventDefault();
+                e.stopPropagation();
+                handleClose();
+                return;
+              }
               const idx = items.indexOf(option);
               if (idx >= 0 && filteredOptions?.[idx]) {
                 e.preventDefault();
