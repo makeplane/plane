@@ -98,6 +98,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
       },
     ],
   });
+
   // On React 19 the panel div's ref callback can be dropped after a
   // disrupted render, leaving popperElement null forever: popper never runs,
   // the panel stays at 0x0 and every option click registers as an outside
@@ -228,6 +229,27 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
+            onClickCapture={(e) => {
+              // React 19 hit-testing sometimes resolves option clicks to this
+              // panel container instead of the option elements, so the click
+              // never reaches an option. Resolve the intended option by click
+              // coordinates and drive this component's own onChange.
+              const root = e.currentTarget as HTMLElement;
+              const items = Array.from(root.querySelectorAll<HTMLElement>("li, [role='option']")).filter(
+                (el) => el.getBoundingClientRect().height > 0
+              );
+              const option = items.find((el) => {
+                const r = el.getBoundingClientRect();
+                return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+              });
+              if (!option) return;
+              const idx = items.indexOf(option);
+              if (idx >= 0 && filteredOptions?.[idx]) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownOnChange(filteredOptions[idx].value);
+              }
+            }}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <SearchOutline className="h-3.5 w-3.5 text-placeholder" />

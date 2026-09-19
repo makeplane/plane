@@ -70,21 +70,14 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       },
     ],
   });
+
   // On React 19 the panel div's ref callback can be dropped after a
   // disrupted render, leaving popperElement null forever: popper never runs
   // and the panel collapses. Recover by locating the mounted panel in the DOM.
-  // Multi-select combobox panels may carry an empty data-headlessui-state, so
-  // prefer the aria-labelledby link back to the trigger button.
   useEffect(() => {
     if (popperElement) return;
     const find = () => {
-      let el: HTMLDivElement | null = null;
-      if (referenceElement?.id) {
-        el = document.querySelector<HTMLDivElement>(`ul[aria-labelledby="${referenceElement.id}"] > div`);
-      }
-      if (!el) {
-        el = document.querySelector<HTMLDivElement>('ul[data-headlessui-state="open"] > div, ul[data-open] > div');
-      }
+      const el = document.querySelector<HTMLDivElement>("ul[data-headlessui-state=\"open\"] > div, ul[data-open] > div");
       if (el) setPopperElement(el);
       return !!el;
     };
@@ -93,7 +86,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       const t2 = setTimeout(find, 300);
       return () => { clearTimeout(t1); clearTimeout(t2); };
     }
-  }, [popperElement, referenceElement]);
+  }, [popperElement]);
 
   const onOpen = () => {
     onDropdownOpen?.();

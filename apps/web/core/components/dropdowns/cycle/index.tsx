@@ -69,6 +69,16 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
 
+  // On React 19 the trigger button's ref callback can be dropped after a
+  // disrupted render, leaving referenceElement null and the popper dead.
+  // Recover by locating the trigger button from the container DOM.
+  useEffect(() => {
+    if (isOpen && !referenceElement && dropdownRef.current) {
+      const btn = dropdownRef.current.querySelector<HTMLButtonElement>("button");
+      if (btn) setReferenceElement(btn);
+    }
+  }, [isOpen, referenceElement]);
+
   const selectedName = value ? getCycleNameById(value) : null;
 
   const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
@@ -77,16 +87,6 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
     onClose,
     setIsOpen,
   });
-  // On React 19 the trigger button's ref callback can be dropped after a
-  // disrupted render, leaving referenceElement null and the popper dead.
-  // Recover by locating the trigger button from the container DOM. Kept after
-  // useDropdown so every referenced binding (isOpen et al.) is initialized.
-  useEffect(() => {
-    if (isOpen && !referenceElement && dropdownRef.current) {
-      const btn = dropdownRef.current.querySelector<HTMLButtonElement>("button");
-      if (btn) setReferenceElement(btn);
-    }
-  }, [isOpen, referenceElement]);
 
   const dropdownOnChange = (val: string | null) => {
     onChange(val);
@@ -154,6 +154,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
     >
       {isOpen && projectId && (
         <CycleOptions
+          onHitSelect={(v: string) => dropdownOnChange(v as never)}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}

@@ -82,6 +82,16 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+
+  // On React 19 the trigger button's ref callback can be dropped after a
+  // disrupted render, leaving referenceElement null and the popper dead.
+  // Recover by locating the trigger button from the container DOM.
+  useEffect(() => {
+    if (isOpen && !referenceElement && dropdownRef.current) {
+      const btn = dropdownRef.current.querySelector<HTMLButtonElement>("button");
+      if (btn) setReferenceElement(btn);
+    }
+  }, [isOpen, referenceElement]);
   // store hooks
   const { isMobile } = usePlatformOS();
 
@@ -92,16 +102,6 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
     onClose,
     setIsOpen,
   });
-  // On React 19 the trigger button's ref callback can be dropped after a
-  // disrupted render, leaving referenceElement null and the popper dead.
-  // Recover by locating the trigger button from the container DOM. Kept after
-  // useDropdown so every referenced binding (isOpen et al.) is initialized.
-  useEffect(() => {
-    if (isOpen && !referenceElement && dropdownRef.current) {
-      const btn = dropdownRef.current.querySelector<HTMLButtonElement>("button");
-      if (btn) setReferenceElement(btn);
-    }
-  }, [isOpen, referenceElement]);
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
@@ -193,6 +193,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
     >
       {isOpen && projectId && (
         <ModuleOptions
+          onHitSelect={(v: string) => dropdownOnChange(v as never)}
           isOpen={isOpen}
           placement={placement}
           referenceElement={referenceElement}
