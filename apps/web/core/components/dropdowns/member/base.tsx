@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { ComponentType, SVGProps } from "react";
 import { useTranslation } from "@plane/i18n";
@@ -82,6 +82,16 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
     onClose,
     setIsOpen,
   });
+  // On React 19 the trigger button's ref callback can be dropped after a
+  // disrupted render, leaving referenceElement null and the popper dead.
+  // Recover by locating the trigger button from the container DOM. Kept after
+  // useDropdown so every referenced binding (isOpen et al.) is initialized.
+  useEffect(() => {
+    if (isOpen && !referenceElement && dropdownRef.current) {
+      const btn = dropdownRef.current.querySelector<HTMLButtonElement>("button");
+      if (btn) setReferenceElement(btn);
+    }
+  }, [isOpen, referenceElement]);
 
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);

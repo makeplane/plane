@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -348,6 +348,16 @@ export function PriorityDropdown(props: Props) {
       },
     ],
   });
+  // On React 19 the panel div's ref callback can be dropped after a
+  // disrupted render, leaving popperElement null forever: popper never runs,
+  // the panel stays at 0x0 and every option click registers as an outside
+  // click. Recover by locating the mounted panel from the container DOM.
+  useEffect(() => {
+    if (isOpen && !popperElement && dropdownRef.current) {
+      const el = dropdownRef.current.querySelector<HTMLElement>("ul.fixed.z-10 > div");
+      if (el) setPopperElement(el);
+    }
+  }, [isOpen, popperElement]);
 
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
