@@ -503,6 +503,7 @@ export class ResearchStore implements IResearchStore {
   identityWorkspaceSlug: string | null = null;
   identityErrorCode: string | null = null;
   private identityRequestSequence = 0;
+  private orgMemberRequestSequence: Record<string, number> = {};
   orgUnits: Record<string, TOrgUnit> = {};
   orgUnitIdsByWorkspace: Record<string, string[]> = {};
   orgUnitMembers: Record<string, TOrgUnitMember[]> = {};
@@ -1042,9 +1043,13 @@ export class ResearchStore implements IResearchStore {
   };
 
   fetchOrgUnitMembers = async (workspaceSlug: string, unitId: string) => {
+    const requestSequence = (this.orgMemberRequestSequence[unitId] ?? 0) + 1;
+    this.orgMemberRequestSequence[unitId] = requestSequence;
     const response = await this.orgService.getOrgUnitMembers(workspaceSlug, unitId);
     runInAction(() => {
-      this.orgUnitMembers[unitId] = response.results;
+      if (this.orgMemberRequestSequence[unitId] === requestSequence) {
+        this.orgUnitMembers[unitId] = response.results;
+      }
     });
     return response.results;
   };

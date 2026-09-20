@@ -8,8 +8,8 @@ import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import type { EUserPermissions } from "@plane/constants";
 import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
+import type { TUserPermissions } from "@plane/types";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
@@ -24,7 +24,7 @@ import type { RootStore } from "@/store/root.store";
 export interface IWorkspaceMembership {
   id: string;
   member: string;
-  role: EUserPermissions;
+  role: TUserPermissions;
   is_active?: boolean;
 }
 
@@ -49,7 +49,7 @@ export interface IWorkspaceMemberStore {
   fetchWorkspaceMembers: (workspaceSlug: string) => Promise<IWorkspaceMember[]>;
   fetchWorkspaceMemberInvitations: (workspaceSlug: string) => Promise<IWorkspaceMemberInvitation[]>;
   // crud actions
-  updateMember: (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => Promise<void>;
+  updateMember: (workspaceSlug: string, userId: string, data: { role: TUserPermissions }) => Promise<void>;
   removeMemberFromWorkspace: (workspaceSlug: string, userId: string) => Promise<void>;
   // invite actions
   inviteMembersToWorkspace: (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => Promise<void>;
@@ -235,15 +235,19 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   fetchWorkspaceMembers = async (workspaceSlug: string) =>
     await this.workspaceService.fetchWorkspaceMembers(workspaceSlug).then((response) => {
       runInAction(() => {
+        const workspaceMembers: Record<string, IWorkspaceMembership> = {};
         response.forEach((member) => {
           set(this.memberRoot?.memberMap, member.member.id, { ...member.member, joining_date: member.created_at });
-          set(this.workspaceMemberMap, [workspaceSlug, member.member.id], {
+          workspaceMembers[member.member.id] = {
             id: member.id,
             member: member.member.id,
-            role: member.role,
+            role: member.role as TUserPermissions,
             is_active: member.is_active,
-          });
+          };
         });
+        // Replace the workspace snapshot so removed members and MobX computed
+        // lists cannot survive a refresh as stale cache entries.
+        this.workspaceMemberMap[workspaceSlug] = workspaceMembers;
       });
       return response;
     });
@@ -254,7 +258,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param userId
    * @param data
    */
-  updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => {
+  updateMember = async (workspaceSlug: string, userId: string, data: { role: TUserPermissions }) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error

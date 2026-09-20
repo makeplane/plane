@@ -27,6 +27,44 @@ export type TInviteCodePayload = {
   note?: string;
 };
 
+export type ImportPreviewPerson = {
+  id: string;
+  name: string;
+  email: string;
+  category: string;
+  org_unit: string | null;
+  org_path: string;
+  account_action?: string;
+  advisors: { name: string; email: string; primary: boolean; membership_action: string; binding_action: string }[];
+};
+export type ImportApprovalPreview = {
+  token: string;
+  included: ImportPreviewPerson[];
+  excluded: ImportPreviewPerson[];
+  blockers: string[];
+  advisors: {
+    name: string;
+    email: string;
+    account_action: string;
+    groups: { id: string; name: string }[];
+    primary_org: string | null;
+    primary_locked: boolean;
+  }[];
+};
+export type ImportRelations = {
+  token: string;
+  items: {
+    id: string;
+    kind: string;
+    name: string;
+    email: string;
+    mentor_name: string;
+    org_path: string;
+    status: "missing" | "conflict" | "present";
+    reason: string;
+  }[];
+};
+
 /**
  * System management surface: invite codes, roster imports, research profiles
  * and the main PI aggregate.
@@ -125,9 +163,39 @@ export class ResearchAccountService extends APIService {
       });
   }
 
-  async approveUserImport(workspaceSlug: string, batchId: string) {
-    return this.post(researchEndpoints.userImportApprove(workspaceSlug, batchId), {})
+  async approveUserImport(workspaceSlug: string, batchId: string, previewToken?: string) {
+    return this.post(researchEndpoints.userImportApprove(workspaceSlug, batchId), { preview_token: previewToken })
       .then((res) => res?.data as TUserImportBatch)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async createSingleImport(workspaceSlug: string, payload: Record<string, unknown>) {
+    return this.post(`${researchEndpoints.userImports(workspaceSlug)}single/`, payload)
+      .then((res) => res.data as TUserImportBatch)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async previewUserImport(workspaceSlug: string, batchId: string, advisorPrimaryOrgs?: Record<string, string>) {
+    const url = `${researchEndpoints.userImport(workspaceSlug, batchId)}approval-preview/`;
+    return (advisorPrimaryOrgs ? this.post(url, { advisor_primary_orgs: advisorPrimaryOrgs }) : this.get(url))
+      .then((res) => res.data as ImportApprovalPreview)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async checkImportRelations(
+    workspaceSlug: string,
+    batchId: string,
+    repair?: { preview_token: string; item_ids: string[] }
+  ) {
+    const url = `${researchEndpoints.userImport(workspaceSlug, batchId)}relations/`;
+    return (repair ? this.post(url, repair) : this.get(url))
+      .then((res) => res.data as ImportRelations)
       .catch((err) => {
         throw err?.response?.data;
       });
@@ -136,6 +204,24 @@ export class ResearchAccountService extends APIService {
   async bulkExcludeUserImportRows(workspaceSlug: string, batchId: string, rowIds: string[], note = "") {
     return this.post(researchEndpoints.userImportBulkExclude(workspaceSlug, batchId), { row_ids: rowIds, note })
       .then((res) => res?.data as { updated: number })
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async bulkUpdateUserImportRows(
+    workspaceSlug: string,
+    batchId: string,
+    rowIds: string[],
+    reviewDecision: "INCLUDED" | "EXCLUDED",
+    note = ""
+  ) {
+    return this.post(researchEndpoints.userImportBulkReview(workspaceSlug, batchId), {
+      row_ids: rowIds,
+      review_decision: reviewDecision,
+      note,
+    })
+      .then((res) => res?.data as { updated: number; batch: TUserImportBatch })
       .catch((err) => {
         throw err?.response?.data;
       });

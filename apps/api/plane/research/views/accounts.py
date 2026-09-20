@@ -10,9 +10,10 @@ pages (SYS-ACC-01 ~ SYS-ACC-12).
 """
 
 import csv
+from uuid import UUID
 
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
@@ -35,9 +36,11 @@ from plane.research.serializers import (
     UserImportRowSerializer,
 )
 from plane.research.services.accounts import AccountError, issue_invite_code
+from plane.research.services import import_workflow
 from plane.research.services.user_import import (
     approve_review_batch,
     bulk_exclude_review_rows,
+    bulk_update_review_rows,
     create_review_batch,
     parse_advisors,
     parse_students,
@@ -205,6 +208,7 @@ class ResearchAccountProvisioningOptionsEndpoint(ResearchAPIView):
                         "name": unit.name,
                         "display_path": display_path(unit),
                         "business_category": unit.business_category,
+                        "unit_type": unit.unit_type,
                     }
                     for unit in units
                 ],
@@ -394,7 +398,15 @@ class ResearchUserImportListCreateEndpoint(ResearchAPIView):
         workspace, error = _guard(self, request)
         if error:
             return error
-        batches = UserImportBatch.objects.filter(workspace=workspace).order_by("-created_at")[:50]
+        batches = (
+            UserImportBatch.objects.filter(workspace=workspace)
+            .annotate(
+                review_pending_count=Count("rows", filter=Q(rows__review_decision="PENDING")),
+                review_included_count=Count("rows", filter=Q(rows__review_decision="INCLUDED")),
+                review_excluded_count=Count("rows", filter=Q(rows__review_decision="EXCLUDED")),
+            )
+            .order_by("-created_at")[:50]
+        )
         data = list(batches)
         return Response(
             {"results": UserImportBatchSummarySerializer(data, many=True).data, "count": len(data)},
@@ -485,7 +497,10 @@ class ResearchUserImportRowEndpoint(ResearchAPIView):
             row = update_review_row(workspace, pk, row_id, request.data)
         except AccountError as exc:
             return account_error_response(exc)
-        return Response(UserImportRowSerializer(row).data, status=status.HTTP_200_OK)
+        data = UserImportRowSerializer(row).data
+        row.batch.prefetched_rows = list(row.batch.rows.select_related("user"))
+        data["batch_detail"] = UserImportBatchSerializer(row.batch).data
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class ResearchUserImportApproveEndpoint(ResearchAPIView):
@@ -496,7 +511,13 @@ class ResearchUserImportApproveEndpoint(ResearchAPIView):
         if error:
             return error
         try:
-            batch = approve_review_batch(workspace, request.user, pk, request=request)
+            batch = approve_review_batch(
+                workspace,
+                request.user,
+                pk,
+                request=request,
+                preview_token=request.data.get("preview_token"),
+            )
         except AccountError as exc:
             return account_error_response(exc)
         batch.prefetched_rows = list(batch.rows.select_related("user").all())
@@ -512,10 +533,118 @@ class ResearchUserImportBulkExcludeEndpoint(ResearchAPIView):
         if not isinstance(row_ids, list) or len(row_ids) > 1000:
             return research_error(ResearchErrorCode.IMPORT_ROW_INVALID, "row_ids must contain at most 1000 rows.")
         try:
+            row_ids = [UUID(str(value)) for value in row_ids]
+        except (ValueError, TypeError, AttributeError):
+            return research_error(ResearchErrorCode.IMPORT_ROW_INVALID, "行标识无效。")
+        try:
             updated = bulk_exclude_review_rows(workspace, pk, row_ids, request.data.get("note"))
         except AccountError as exc:
             return account_error_response(exc)
-        return Response({"updated": updated}, status=status.HTTP_200_OK)
+        batch = import_workflow.batch_for(workspace, pk)
+        batch.prefetched_rows = list(batch.rows.select_related("user"))
+        return Response(
+            {"updated": updated, "batch": UserImportBatchSerializer(batch).data},
+            status=status.HTTP_200_OK,
+        )
+
+
+class ResearchUserImportBulkReviewEndpoint(ResearchAPIView):
+    def post(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        row_ids = request.data.get("row_ids")
+        if not isinstance(row_ids, list) or len(row_ids) > 1000:
+            return research_error(ResearchErrorCode.IMPORT_ROW_INVALID, "row_ids must contain at most 1000 rows.")
+        try:
+            row_ids = [UUID(str(value)) for value in row_ids]
+        except (ValueError, TypeError, AttributeError):
+            return research_error(ResearchErrorCode.IMPORT_ROW_INVALID, "行标识无效。")
+        try:
+            updated = bulk_update_review_rows(
+                workspace,
+                pk,
+                row_ids,
+                request.data.get("review_decision"),
+                request.data.get("note"),
+            )
+        except AccountError as exc:
+            return account_error_response(exc)
+        batch = import_workflow.batch_for(workspace, pk)
+        batch.prefetched_rows = list(batch.rows.select_related("user"))
+        return Response(
+            {"updated": updated, "batch": UserImportBatchSerializer(batch).data},
+            status=status.HTTP_200_OK,
+        )
+
+
+class ResearchUserImportSingleEndpoint(ResearchAPIView):
+    def post(self, request, slug):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            batch = import_workflow.create_single(workspace, request.user, request.data)
+        except AccountError as exc:
+            return account_error_response(exc)
+        return Response(UserImportBatchSerializer(batch).data, status=status.HTTP_201_CREATED)
+
+
+class ResearchUserImportPreviewEndpoint(ResearchAPIView):
+    def get(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            batch = import_workflow.batch_for(workspace, pk)
+            return Response(import_workflow.approval_preview(workspace, batch))
+        except AccountError as exc:
+            return account_error_response(exc)
+
+    def post(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            batch = import_workflow.batch_for(workspace, pk)
+            return Response(
+                import_workflow.save_primary_choices(
+                    workspace,
+                    batch,
+                    request.data.get("advisor_primary_orgs"),
+                )
+            )
+        except AccountError as exc:
+            return account_error_response(exc)
+
+
+class ResearchUserImportRelationsEndpoint(ResearchAPIView):
+    def get(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            return Response(import_workflow.relation_preview(workspace, import_workflow.batch_for(workspace, pk)))
+        except AccountError as exc:
+            return account_error_response(exc)
+
+    def post(self, request, slug, pk):
+        workspace, error = _guard(self, request)
+        if error:
+            return error
+        try:
+            return Response(
+                import_workflow.repair_relations(
+                    workspace,
+                    request.user,
+                    import_workflow.batch_for(workspace, pk),
+                    request.data.get("preview_token"),
+                    request.data.get("item_ids"),
+                    request=request,
+                )
+            )
+        except AccountError as exc:
+            return account_error_response(exc)
 
 
 class ResearchUserImportRejectEndpoint(ResearchAPIView):
@@ -591,14 +720,14 @@ class ResearchUserImportReportEndpoint(ResearchAPIView):
                     row.display_name,
                     row.email,
                     row.student_no,
-                    row.raw.get("phone", ""),
-                    row.raw.get("grade", ""),
-                    row.raw.get("category", ""),
-                    row.raw.get("business_category", ""),
-                    row.raw.get("group", row.group_label),
-                    row.raw.get("primary_advisor_name", row.advisor_name),
-                    row.raw.get("co_advisor_1_name", ""),
-                    row.raw.get("co_advisor_2_name", ""),
+                    row.phone,
+                    row.grade,
+                    row.category,
+                    row.business_category,
+                    row.group_label,
+                    row.advisor_name,
+                    row.co_advisor_1_name,
+                    row.co_advisor_2_name,
                     report_status,
                     row.message,
                     row.initial_password,

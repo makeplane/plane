@@ -698,6 +698,8 @@ export const researchEndpoints = {
   userImportApprove: (slug: string, batchId: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/approve/`,
   userImportBulkExclude: (slug: string, batchId: string) =>
     `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/rows/bulk-exclude/`,
+  userImportBulkReview: (slug: string, batchId: string) =>
+    `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/rows/bulk-review/`,
   userImportReject: (slug: string, batchId: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${batchId}/reject/`,
   userImport: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${id}/`,
   userImportReport: (slug: string, id: string) => `${RESEARCH_API_ROOT}/${slug}/user-imports/${id}/report/`,

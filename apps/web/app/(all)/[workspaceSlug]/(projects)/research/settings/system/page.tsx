@@ -8,11 +8,14 @@ import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import type { TUserImportBatch } from "@plane/types";
 // components
 import { ResearchPageShell } from "@/components/research/common/research-page-shell";
 import { ResearchAdminRoleSummary } from "@/components/research/settings/system/admin-role-summary";
 import { ResearchInviteCodeManager } from "@/components/research/settings/system/invite-code-manager";
 import { ResearchUserImportPanel } from "@/components/research/settings/system/user-import-panel";
+import { useMember } from "@/hooks/store/use-member";
+import { useResearch } from "@/hooks/store/use-research";
 
 /**
  * Account lifecycle: invite codes and the roster import
@@ -21,7 +24,19 @@ import { ResearchUserImportPanel } from "@/components/research/settings/system/u
 function WorkspaceResearchSystemSettingsPage() {
   const { workspaceSlug } = useParams();
   const { t } = useTranslation();
+  const memberStore = useMember();
+  const research = useResearch();
   if (!workspaceSlug) return null;
+
+  const refreshImportRelations = async (batch: TUserImportBatch) => {
+    const unitIds = [...new Set((batch.rows ?? []).flatMap((row) => (row.org_unit ? [row.org_unit] : [])))];
+    await Promise.all([
+      memberStore.workspace.fetchWorkspaceMembers(workspaceSlug),
+      research.fetchOrgUnits(workspaceSlug),
+      research.fetchMentorBindings(workspaceSlug),
+      ...unitIds.map((unitId) => research.fetchOrgUnitMembers(workspaceSlug, unitId)),
+    ]);
+  };
 
   return (
     <ResearchPageShell
@@ -38,7 +53,7 @@ function WorkspaceResearchSystemSettingsPage() {
         </section>
         <section className="flex flex-col gap-3">
           <h3 className="text-13 font-medium text-primary">{t("research.user_import.title")}</h3>
-          <ResearchUserImportPanel workspaceSlug={workspaceSlug} />
+          <ResearchUserImportPanel workspaceSlug={workspaceSlug} onRelationsChanged={refreshImportRelations} />
         </section>
       </div>
     </ResearchPageShell>

@@ -114,8 +114,12 @@ const TreeNodeRow = observer(function TreeNodeRow({
 export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ workspaceSlug }: Props) {
   const { t } = useTranslation();
   const research = useResearch();
-  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("unit")
+  );
   const [tab, setTab] = useState<"members" | "mentors">("members");
+  const [focusedMemberId, setFocusedMemberId] = useState<string | null>(null);
+  const [focusedBindingId, setFocusedBindingId] = useState<string | null>(null);
   const [nameDraft, setNameDraft] = useState("");
   const [newUnitName, setNewUnitName] = useState("");
   const [newUnitType, setNewUnitType] = useState<TOrgUnitType>("GROUP");
@@ -128,15 +132,15 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
   const units = research.getOrgUnits(workspaceSlug);
   const tree = useMemo(() => buildTree(units), [units]);
   const selectedUnit = units.find((unit) => unit.id === selectedUnitId) ?? null;
+  const refreshIncomplete = useCallback(async () => {
+    setIncomplete(await orgService.getIncomplete(workspaceSlug));
+  }, [workspaceSlug]);
 
   useEffect(() => {
     void research.fetchOrgUnits(workspaceSlug).catch((error) => setErrorKey(getResearchErrorKey(error)));
-    void orgService
-      .getIncomplete(workspaceSlug)
-      .then(setIncomplete)
-      .catch(() => setIncomplete(null));
+    void refreshIncomplete().catch(() => setIncomplete(null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceSlug]);
+  }, [refreshIncomplete, workspaceSlug]);
 
   useEffect(() => {
     if (!selectedUnitId && units.length > 0) setSelectedUnitId(units[0].id);
@@ -145,6 +149,8 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
 
   useEffect(() => {
     setNameDraft(selectedUnit?.name ?? "");
+    setFocusedMemberId(null);
+    setFocusedBindingId(null);
   }, [selectedUnit?.id, selectedUnit?.name]);
 
   const openCreateDialog = useCallback((parent: TOrgUnit | null) => {
@@ -360,9 +366,27 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
 
             <div className="flex-1 overflow-y-auto">
               {tab === "members" ? (
-                <ResearchOrgMemberTable workspaceSlug={workspaceSlug} unit={selectedUnit} />
+                <ResearchOrgMemberTable
+                  workspaceSlug={workspaceSlug}
+                  unit={selectedUnit}
+                  onRelationsChanged={refreshIncomplete}
+                  focusedUserId={focusedMemberId}
+                  onLocateBinding={(bindingId) => {
+                    setFocusedBindingId(bindingId);
+                    setTab("mentors");
+                  }}
+                />
               ) : (
-                <ResearchMentorBindings workspaceSlug={workspaceSlug} unit={selectedUnit} />
+                <ResearchMentorBindings
+                  workspaceSlug={workspaceSlug}
+                  unit={selectedUnit}
+                  onRelationsChanged={refreshIncomplete}
+                  focusedBindingId={focusedBindingId}
+                  onLocateMember={(userId) => {
+                    setFocusedMemberId(userId);
+                    setTab("members");
+                  }}
+                />
               )}
             </div>
           </>

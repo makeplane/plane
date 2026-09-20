@@ -530,7 +530,7 @@ class ResearchOrgUnitMemberListCreateEndpoint(ResearchAPIView):
             return research_not_found(ResearchErrorCode.ORG_UNIT_NOT_FOUND, "Org unit not found.")
         members = (
             OrgUnitMember.objects.filter(org_unit=unit)
-            .select_related("user")
+            .select_related("user", "user__research_profile")
             .order_by("org_role", "created_at")
         )
         if request.GET.get("org_role"):
