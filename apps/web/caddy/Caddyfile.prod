@@ -1,0 +1,51 @@
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+:3300 {
+	root * /usr/share/caddy/html
+
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+	}
+
+	# Keep the browser-visible Host for Django's CSRF/origin validation.
+	handle /api/* {
+		reverse_proxy api:8000 {
+			header_up Host {http.request.host}
+		}
+	}
+	handle /auth/* {
+		reverse_proxy api:8000 {
+			header_up Host {http.request.host}
+		}
+	}
+
+	# Plane signs MinIO requests with the public host, so preserve Host here too.
+	handle /uploads/* {
+		reverse_proxy plane-minio:9000 {
+			header_up Host {http.request.host}
+		}
+	}
+
+	redir /god-mode /god-mode/ 308
+	handle_path /god-mode/* {
+		root * /usr/share/caddy/admin
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

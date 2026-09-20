@@ -1,0 +1,23 @@
+FROM alpine:3.22
+
+ARG CADDY_VERSION=2.11.4
+ARG TARGETARCH
+
+RUN apk add --no-cache ca-certificates curl tar \
+    && case "$TARGETARCH" in \
+        amd64) caddy_arch="amd64" ;; \
+        arm64) caddy_arch="arm64" ;; \
+        *) echo "Unsupported architecture: $TARGETARCH" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSL \
+        "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_${caddy_arch}.tar.gz" \
+        -o /tmp/caddy.tar.gz \
+    && tar -xzf /tmp/caddy.tar.gz -C /usr/bin caddy \
+    && chmod 0755 /usr/bin/caddy \
+    && rm -f /tmp/caddy.tar.gz \
+    && caddy version
+
+EXPOSE 3300
+
+ENTRYPOINT ["caddy"]
+CMD ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
