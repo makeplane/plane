@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": true,
   "description": "Admin UI for PiLab",
   "license": "AGPL-3.0",
@@ -10,6 +10,7 @@
     "build": "react-router build",
     "preview": "react-router build && serve -s build/client -l 3001",
     "start": "serve -s build/client -l 3001",
+    "test:components": "vitest run --config vitest.config.ts",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf build",
     "check:lint": "oxlint --max-warnings=759 .",
     "check:types": "react-router typegen && tsc --noEmit",
@@ -54,8 +55,10 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -704,6 +704,12 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 16.4.7
+      jsdom:
+        specifier: 'catalog:'
+        version: 26.1.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.8(@opentelemetry/api@1.9.1)(@types/node@22.12.0)(@vitest/coverage-v8@4.1.8)(jsdom@26.1.0)(vite@8.0.16(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
       typescript:
         specifier: 5.8.3
         version: 5.8.3

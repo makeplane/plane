@@ -87,15 +87,9 @@ const TreeNodeRow = observer(function TreeNodeRow({
         <span className="rounded bg-surface-2 px-1.5 py-0.5 text-10 text-tertiary">
           {t(ORG_UNIT_TYPE_LABELS[node.unit_type as TOrgUnitType])}
         </span>
-        {node.unit_type !== "ROOT" && (
-          <button
-            type="button"
-            className="hidden text-10 text-accent-primary group-hover:inline"
-            onClick={() => onAddChild(node)}
-          >
-            {addLabel}
-          </button>
-        )}
+        <button type="button" className="shrink-0 text-10 text-accent-primary" onClick={() => onAddChild(node)}>
+          {addLabel}
+        </button>
       </div>
       {expanded &&
         node.children.map((child) => (
@@ -129,6 +123,7 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
   const [parentForNewUnit, setParentForNewUnit] = useState<string | null | undefined>(undefined);
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [incomplete, setIncomplete] = useState<TResearchOrgIncomplete | null>(null);
+  const [creating, setCreating] = useState(false);
 
   const units = research.getOrgUnits(workspaceSlug);
   const tree = useMemo(() => buildTree(units), [units]);
@@ -155,13 +150,15 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
   const openCreateDialog = useCallback((parent: TOrgUnit | null) => {
     setParentForNewUnit(parent?.id ?? null);
     setNewUnitName("");
-    setNewUnitType(parent ? "GROUP" : "ROOT");
-    setNewBusinessCategory(parent ? "MENTOR_GROUP" : "");
+    setNewUnitType(parent ? "TEAM" : "ROOT");
+    setNewBusinessCategory(parent?.business_category ?? "");
+    setErrorKey(null);
   }, []);
 
   const handleCreate = useCallback(
     async (parentId: string | null) => {
-      if (!newUnitName.trim()) return;
+      if (!newUnitName.trim() || creating) return;
+      setCreating(true);
       try {
         const unit = await research.createOrgUnit(workspaceSlug, {
           name: newUnitName.trim(),
@@ -175,9 +172,11 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
         setIncomplete(await orgService.getIncomplete(workspaceSlug));
       } catch (error) {
         setErrorKey(getResearchErrorKey(error));
+      } finally {
+        setCreating(false);
       }
     },
-    [newBusinessCategory, newUnitName, newUnitType, research, workspaceSlug]
+    [creating, newBusinessCategory, newUnitName, newUnitType, research, workspaceSlug]
   );
 
   const handleBusinessCategory = useCallback(
@@ -227,9 +226,11 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
       <div className="flex w-80 flex-col gap-2 overflow-hidden rounded-lg border border-subtle bg-surface-1 p-2">
         <div className="flex items-center justify-between gap-2 px-1">
           <span className="text-13 font-medium text-primary">{t("research.org.title")}</span>
-          <Button variant="secondary" size="sm" onClick={() => openCreateDialog(null)}>
-            {t("research.org.new_root")}
-          </Button>
+          {tree.length === 0 && (
+            <Button variant="secondary" size="sm" onClick={() => openCreateDialog(null)}>
+              {t("research.org.new_root")}
+            </Button>
+          )}
         </div>
         {incomplete && Object.values(incomplete.counts).some(Boolean) && (
           <details className="border-warning-primary/30 rounded-md border bg-warning-subtle p-2 text-11 text-secondary">
@@ -325,14 +326,19 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
                   </select>
                 )}
               </div>
-              <Button
-                variant="error-outline"
-                size="sm"
-                disabled={selectedUnit.unit_type === "ROOT"}
-                onClick={() => void handleDelete(selectedUnit)}
-              >
-                {t("research.org.delete_node")}
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="primary" size="sm" onClick={() => openCreateDialog(selectedUnit)}>
+                  {t("research.org.add_child")}
+                </Button>
+                <Button
+                  variant="error-outline"
+                  size="sm"
+                  disabled={selectedUnit.unit_type === "ROOT"}
+                  onClick={() => void handleDelete(selectedUnit)}
+                >
+                  {t("research.org.delete_node")}
+                </Button>
+              </div>
             </div>
 
             <div className="flex gap-2 border-b border-subtle">
@@ -367,10 +373,25 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
 
       {parentForNewUnit !== undefined && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-96 rounded-lg border border-subtle bg-surface-1 p-4">
-            <h3 className="text-14 font-medium text-primary">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="org-create-title"
+            className="w-96 rounded-lg border border-subtle bg-surface-1 p-4"
+          >
+            <h3 id="org-create-title" className="text-14 font-medium text-primary">
               {parentForNewUnit ? t("research.org.new_child") : t("research.org.new_root")}
             </h3>
+            {parentForNewUnit && (
+              <p className="mt-2 text-12 text-secondary">
+                上级节点：{units.find((unit) => unit.id === parentForNewUnit)?.name}
+              </p>
+            )}
+            {errorKey && (
+              <p role="alert" className="mt-2 text-12 text-danger-primary">
+                {t(errorKey)}
+              </p>
+            )}
             <div className="mt-3 flex flex-col gap-3">
               <Input
                 placeholder={t("research.org.name_placeholder")}
@@ -378,6 +399,7 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
                 onChange={(event) => setNewUnitName(event.target.value)}
               />
               <select
+                aria-label="节点类型"
                 className="rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"
                 value={newUnitType}
                 onChange={(event) => setNewUnitType(event.target.value as TOrgUnitType)}
@@ -391,6 +413,7 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
               </select>
               {parentForNewUnit && (
                 <select
+                  aria-label="业务方向"
                   className="rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"
                   value={newBusinessCategory}
                   onChange={(event) => setNewBusinessCategory(event.target.value as TOrgBusinessCategory | "")}
@@ -405,10 +428,15 @@ export const ResearchOrgTreeEditor = observer(function ResearchOrgTreeEditor({ w
               )}
             </div>
             <div className="mt-4 flex justify-end gap-2">
-              <Button variant="secondary" size="sm" onClick={() => setParentForNewUnit(undefined)}>
+              <Button variant="secondary" size="sm" disabled={creating} onClick={() => setParentForNewUnit(undefined)}>
                 {t("research.common.cancel")}
               </Button>
-              <Button variant="primary" size="sm" onClick={() => void handleCreate(parentForNewUnit)}>
+              <Button
+                variant="primary"
+                size="sm"
+                disabled={creating || !newUnitName.trim()}
+                onClick={() => void handleCreate(parentForNewUnit)}
+              >
                 {t("research.common.create")}
               </Button>
             </div>
