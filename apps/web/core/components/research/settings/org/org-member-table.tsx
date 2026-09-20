@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ORG_ROLES } from "@plane/constants";
@@ -12,10 +12,11 @@ import type { TOrgRole } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TOrgUnit } from "@plane/types";
-import { AlertModalCore, Input } from "@plane/ui";
+import type { TOrgUnit, TMentorBinding } from "@plane/types";
+import { AlertModalCore } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
+import { ResearchPersonSelect } from "@/components/research/common/person-select";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useResearch } from "@/hooks/store/use-research";
@@ -23,6 +24,9 @@ import { useResearch } from "@/hooks/store/use-research";
 type Props = {
   workspaceSlug: string;
   unit: TOrgUnit;
+  onRelationsChanged?: () => Promise<void>;
+  focusedUserId?: string | null;
+  onLocateBinding?: (bindingId: string) => void;
 };
 
 const ROLE_LABEL_KEYS: Record<TOrgRole, string> = {
@@ -37,12 +41,21 @@ const ROLE_LABEL_KEYS: Record<TOrgRole, string> = {
  * Member table for a node: roles, primary belonging, effective window and the
  * principal investigator set (P0-ORG-03 ~ P0-ORG-07, P0-UI-04).
  */
-export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({ workspaceSlug, unit }: Props) {
+export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
+  workspaceSlug,
+  unit,
+  onRelationsChanged,
+  focusedUserId,
+  onLocateBinding,
+}: Props) {
   const { t } = useTranslation();
   const research = useResearch();
   const memberStore = useMember();
   const [newMemberEmail, setNewMemberEmail] = useState("");
-  const [newMemberRole, setNewMemberRole] = useState<string>("PI");
+  const [newMemberRole, setNewMemberRole] = useState<string>("REVIEWER");
+  const [bindings, setBindings] = useState<TMentorBinding[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [piEmail, setPiEmail] = useState("");
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -54,11 +67,16 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
     | null
   >(null);
 
-  const members = useMemo(() => research.orgUnitMembers[unit.id] ?? [], [research.orgUnitMembers, unit.id]);
+  const members = research.orgUnitMembers[unit.id] ?? [];
+  const today = new Date().toLocaleDateString("en-CA");
+  const activeMembers = members.filter(
+    (member) => member.effective_from <= today && (!member.effective_to || member.effective_to >= today)
+  );
   const workspaceMembers = memberStore.workspace
     .getWorkspaceMemberIds(workspaceSlug)
     .map((userId) => memberStore.getUserDetails(userId))
-    .filter((member) => Boolean(member));
+    .filter((member): member is NonNullable<typeof member> => !!member)
+    .filter((member) => !memberStore.workspace.isUserSuspended(member.id, workspaceSlug));
   const normalizedNewMember = newMemberEmail.trim().toLowerCase();
   const resolvedNewMember = normalizedNewMember
     ? workspaceMembers.find(
@@ -91,10 +109,41 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
       : t("research.org.member_not_in_unit");
 
   useEffect(() => {
-    void research.fetchOrgUnitMembers(workspaceSlug, unit.id).catch((error) => setErrorKey(getResearchErrorKey(error)));
-    void memberStore.workspace.fetchWorkspaceMembers(workspaceSlug).catch(() => undefined);
+    let current = true;
+    setNewMemberEmail("");
+    setPiEmail("");
+    setBindings([]);
+    setLoading(true);
+    setLoadFailed(false);
+    setErrorKey(null);
+    Promise.all([
+      research.fetchOrgUnitMembers(workspaceSlug, unit.id),
+      research.fetchMentorBindings(workspaceSlug, { org_unit: unit.id }),
+      memberStore.workspace.fetchWorkspaceMembers(workspaceSlug),
+    ])
+      .then(([, data]) => {
+        if (current) setBindings(data);
+        return undefined;
+      })
+      .catch((error) => {
+        if (current) {
+          setLoadFailed(true);
+          setErrorKey(getResearchErrorKey(error));
+        }
+      })
+      .finally(() => {
+        if (current) setLoading(false);
+      });
+    return () => {
+      current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug, unit.id]);
+
+  useEffect(() => {
+    if (!focusedUserId || loading) return;
+    document.getElementById(`org-member-${focusedUserId}`)?.scrollIntoView({ block: "center" });
+  }, [focusedUserId, loading]);
 
   const handleAdd = useCallback(async () => {
     if (!resolvedNewMember || busy) return;
@@ -104,6 +153,7 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
         user: resolvedNewMember.id,
         org_role: newMemberRole,
       });
+      await onRelationsChanged?.();
       setNewMemberEmail("");
       setErrorKey(null);
       setToast({
@@ -116,7 +166,7 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
     } finally {
       setBusy(false);
     }
-  }, [busy, newMemberRole, research, resolvedNewMember, t, unit.id, workspaceSlug]);
+  }, [busy, newMemberRole, onRelationsChanged, research, resolvedNewMember, t, unit.id, workspaceSlug]);
 
   const applyPendingChange = useCallback(async () => {
     if (!pendingChange || busy) return;
@@ -136,6 +186,7 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
         await research.transferPi(workspaceSlug, unit.id, [pendingChange.targetId]);
         setPiEmail("");
       }
+      await onRelationsChanged?.();
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t(`research.feedback.org_${pendingChange.kind}_updated.title`),
@@ -148,7 +199,7 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
     } finally {
       setBusy(false);
     }
-  }, [busy, pendingChange, research, t, unit.id, workspaceSlug]);
+  }, [busy, onRelationsChanged, pendingChange, research, t, unit.id, workspaceSlug]);
 
   const handleRoleChange = useCallback((memberId: string, memberName: string, role: string) => {
     setPendingChange({ kind: "role", memberId, memberName, role: role as TOrgRole });
@@ -201,20 +252,13 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
       )}
 
       <div className="flex flex-wrap items-end gap-2">
-        <Input
-          className="!w-64"
-          placeholder={t("research.org.member_email_placeholder")}
+        <ResearchPersonSelect
+          label="选择成员"
+          people={workspaceMembers}
           value={newMemberEmail}
-          onChange={(event) => setNewMemberEmail(event.target.value)}
-          list={`research-member-options-${unit.id}`}
+          onChange={setNewMemberEmail}
+          disabled={busy || loading || loadFailed}
         />
-        <datalist id={`research-member-options-${unit.id}`}>
-          {workspaceMembers.map((member) => (
-            <option key={member?.id} value={member?.email ?? member?.id}>
-              {member?.display_name}
-            </option>
-          ))}
-        </datalist>
         <select
           className="rounded-md border border-subtle bg-surface-1 px-2 py-1.5 text-13 text-primary"
           value={newMemberRole}
@@ -236,6 +280,14 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
           {t("research.org.add_member")}
         </Button>
       </div>
+      <p className="text-11 text-tertiary">
+        人员类别表示学生、导师等身份；组织角色用于组织职责，具体师生关系请在“直接导师”页签查看和维护。
+      </p>
+      {loading && (
+        <p role="status" className="text-12">
+          正在加载组织成员与指导关系…
+        </p>
+      )}
       {newMemberResolutionStatus && (
         <p className={`text-11 ${resolvedNewMember ? "text-success-primary" : "text-danger-primary"}`} role="status">
           {newMemberResolutionStatus}
@@ -253,11 +305,56 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
           </tr>
         </thead>
         <tbody>
-          {members.map((member) => {
+          {(!loading && !loadFailed ? members : []).map((member) => {
             const memberName = member.member_detail?.display_name ?? member.member_detail?.email ?? member.user;
             return (
-              <tr key={member.id} className="border-b border-subtle/60">
-                <td className="py-2 text-secondary">{memberName}</td>
+              <tr
+                id={`org-member-${member.user}`}
+                key={member.id}
+                className={`border-b border-subtle/60 ${focusedUserId === member.user ? "bg-accent-primary/10" : ""}`}
+              >
+                <td className="py-2 text-secondary">
+                  <span className="block">{memberName}</span>
+                  <span className="block text-11 text-tertiary">{member.member_detail?.email}</span>
+                  <span className="block text-11">
+                    人员类别：
+                    {(
+                      {
+                        STUDENT: "学生",
+                        ADVISOR: "导师",
+                        PI: "PI",
+                        POSTDOC: "博士后",
+                        STAFF: "员工",
+                        OTHER: "其他",
+                      } as Record<string, string>
+                    )[(member as typeof member & { profile_category?: string }).profile_category ?? ""] || "待完善"}
+                  </span>
+                  {bindings
+                    .filter((binding) => binding.mentee === member.user)
+                    .map((binding) => (
+                      <button
+                        type="button"
+                        className="block text-left text-11 text-accent-primary"
+                        key={binding.id}
+                        onClick={() => onLocateBinding?.(binding.id)}
+                      >
+                        {binding.is_primary_advisor ? "主导师" : "联合导师"}：{binding.mentor_detail?.display_name} ·{" "}
+                        {binding.mentor_detail?.email}
+                      </button>
+                    ))}
+                  {bindings
+                    .filter((binding) => binding.mentor === member.user)
+                    .map((binding) => (
+                      <button
+                        type="button"
+                        className="block text-left text-11 text-accent-primary"
+                        key={binding.id}
+                        onClick={() => onLocateBinding?.(binding.id)}
+                      >
+                        指导：{binding.mentee_detail?.display_name} · {binding.mentee_detail?.email}
+                      </button>
+                    ))}
+                </td>
                 <td className="py-2">
                   <select
                     className="rounded border border-subtle bg-surface-1 px-1.5 py-1 text-12 text-primary"
@@ -290,7 +387,7 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
               </tr>
             );
           })}
-          {members.length === 0 && (
+          {!loading && !loadFailed && members.length === 0 && (
             <tr>
               <td colSpan={5} className="py-3 text-center text-tertiary">
                 {t("research.org.no_members")}
@@ -304,12 +401,12 @@ export const ResearchOrgMemberTable = observer(function ResearchOrgMemberTable({
         <h4 className="text-12 font-medium text-primary">{t("research.org.pi_transfer")}</h4>
         <p className="mt-1 text-11 text-tertiary">{t("research.org.pi_transfer_hint")}</p>
         <div className="mt-2 flex items-center gap-2">
-          <Input
-            className="!w-64"
-            placeholder={t("research.org.member_email_placeholder")}
+          <ResearchPersonSelect
+            label="选择本组织成员转移主 PI"
+            people={activeMembers.flatMap((member) => (member.member_detail ? [member.member_detail] : []))}
             value={piEmail}
-            onChange={(event) => setPiEmail(event.target.value)}
-            list={`research-member-options-${unit.id}`}
+            onChange={setPiEmail}
+            disabled={busy || loading || loadFailed}
           />
           <Button variant="secondary" size="sm" disabled={busy || !resolvedPiMember} onClick={handleTransferPi}>
             {t("research.org.pi_transfer_action")}

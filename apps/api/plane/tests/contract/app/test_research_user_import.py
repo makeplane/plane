@@ -20,7 +20,6 @@ from plane.db.models import (
     User,
     UserImportBatch,
     UserImportAccountSource,
-    WorkspaceMember,
 )
 from plane.tests.research_fixtures import (
     add_workspace_member,
@@ -145,6 +144,14 @@ def post_import(env, row=None, *, advisors=None, dry_run=False):
     return client_for(env["admin"]).post(user_imports_url(env["workspace"]), payload, format="multipart")
 
 
+def approval_token(env, batch_id):
+    response = client_for(env["admin"]).get(
+        user_imports_url(env["workspace"], f"{batch_id}/approval-preview/")
+    )
+    assert response.status_code == 200, response.data
+    return response.data["token"]
+
+
 def test_upload_persists_review_without_creating_accounts_or_memberships(env):
     response = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
 
@@ -166,7 +173,11 @@ def test_reviewed_row_is_approved_and_creates_complete_relations(env):
         format="json",
     )
     assert included.status_code == 200
-    approved = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    approved = client.post(
+        user_imports_url(env["workspace"], f"{batch_id}/approve/"),
+        {"preview_token": approval_token(env, batch_id)},
+        format="json",
+    )
     assert approved.status_code == 200
     assert approved.data["status"] == "IMPORTED"
     student = User.objects.get(email="student@example.com")
@@ -195,9 +206,22 @@ def test_approval_is_idempotent_and_existing_accounts_are_not_marked_as_import_c
     client = client_for(env["admin"])
     batch_id = uploaded.data["id"]
     row_id = uploaded.data["rows"][0]["id"]
-    client.patch(user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"), {"review_decision": "INCLUDED"}, format="json")
-    first = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
-    second = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    client.patch(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"),
+        {"review_decision": "INCLUDED"},
+        format="json",
+    )
+    token = approval_token(env, batch_id)
+    first = client.post(
+        user_imports_url(env["workspace"], f"{batch_id}/approve/"),
+        {"preview_token": token},
+        format="json",
+    )
+    second = client.post(
+        user_imports_url(env["workspace"], f"{batch_id}/approve/"),
+        {"preview_token": token},
+        format="json",
+    )
     assert first.status_code == second.status_code == 200
     assert User.objects.filter(email="student@example.com").count() == 1
     assert not UserImportAccountSource.objects.filter(user=existing).exists()
@@ -208,12 +232,111 @@ def test_invalid_row_can_be_excluded_and_creates_no_account(env):
     client = client_for(env["admin"])
     batch_id = uploaded.data["id"]
     row_id = uploaded.data["rows"][0]["id"]
-    excluded = client.patch(user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"), {"review_decision": "EXCLUDED"}, format="json")
+    excluded = client.patch(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"),
+        {"review_decision": "EXCLUDED"},
+        format="json",
+    )
     assert excluded.status_code == 200
     approved = client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
-    assert approved.status_code == 200
-    assert approved.data["summary"]["excluded"] == 1
+    assert approved.status_code == 409
+    assert UserImportBatch.objects.get(pk=batch_id).status == "PENDING_REVIEW"
+    rejected = client.post(
+        user_imports_url(env["workspace"], f"{batch_id}/reject/"),
+        {"reason": "没有可导入人员"}, format="json",
+    )
+    assert rejected.status_code == 200
+    assert rejected.data["status"] == "REJECTED"
     assert not User.objects.filter(email="student@example.com").exists()
+
+
+def test_rows_can_be_included_in_bulk(env):
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/bulk-review/"),
+        {"row_ids": [row_id], "review_decision": "INCLUDED"},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["updated"] == 1
+    assert response.data["batch"]["rows"][0]["review_decision"] == "INCLUDED"
+    assert UserImportBatch.objects.get(pk=batch_id).rows.get(pk=row_id).review_decision == "INCLUDED"
+    history = client_for(env["admin"]).get(user_imports_url(env["workspace"]))
+    assert history.status_code == 200
+    assert history.data["results"][0]["review_counts"] == {
+        "pending": 0,
+        "included": 1,
+        "excluded": 0,
+    }
+
+
+def test_189_rows_can_be_reviewed_in_one_bulk_request(env):
+    roster = "".join(
+        roster_row(
+            name=f"批量学生{i}",
+            student_no=f"BULK-{i:03d}",
+            email=f"bulk-{i:03d}@example.com",
+            co1="",
+            co2="",
+        )
+        for i in range(1, 190)
+    )
+    uploaded = post_import(env, row=roster, advisors=advisor_table("刘俊扬"))
+    assert uploaded.status_code == 201, uploaded.data
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(env["workspace"], f"{uploaded.data['id']}/rows/bulk-review/"),
+        {
+            "row_ids": [row["id"] for row in uploaded.data["rows"]],
+            "review_decision": "INCLUDED",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 200, response.data
+    assert response.data["updated"] == 189
+    assert response.data["batch"]["review_counts"] == {
+        "pending": 0,
+        "included": 189,
+        "excluded": 0,
+    }
+
+
+def test_rows_can_be_excluded_in_bulk(env):
+    uploaded = post_import(env, advisors=advisor_table("刘俊扬", "陈志昕", "白杰"))
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/bulk-review/"),
+        {"row_ids": [row_id], "review_decision": "EXCLUDED"},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["updated"] == 1
+    assert response.data["batch"]["rows"][0]["review_decision"] == "EXCLUDED"
+    assert UserImportBatch.objects.get(pk=batch_id).rows.get(pk=row_id).review_decision == "EXCLUDED"
+
+
+def test_bulk_include_rejects_the_whole_request_when_any_row_is_invalid(env):
+    uploaded = post_import(env, row=roster_row(student_no=""), advisors=advisor_table("刘俊扬"))
+    batch_id = uploaded.data["id"]
+    row_id = uploaded.data["rows"][0]["id"]
+
+    response = client_for(env["admin"]).post(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/bulk-review/"),
+        {"row_ids": [row_id], "review_decision": "INCLUDED"},
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert response.data["error_code"] == "user_import_row_invalid"
+    assert UserImportBatch.objects.get(pk=batch_id).rows.get(pk=row_id).review_decision == "PENDING"
 
 
 def test_pending_review_decision_blocks_approval(env):
@@ -351,8 +474,17 @@ def test_existing_member_upload_is_reviewable_without_writes(env):
     assert response.status_code == 201
     assert response.data["status"] == "PENDING_REVIEW"
     assert OrgUnitMember.objects.get(workspace=env["workspace"], user=existing, is_primary=True).org_unit == env["team"]
-    assert MentorBinding.objects.get(workspace=env["workspace"], mentee=existing, is_primary_advisor=True).mentor == env["advisors"]["刘俊扬"]
-    assert not MentorBinding.objects.filter(workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["白杰"]).exists()
+    assert (
+        MentorBinding.objects.get(
+            workspace=env["workspace"],
+            mentee=existing,
+            is_primary_advisor=True,
+        ).mentor
+        == env["advisors"]["刘俊扬"]
+    )
+    assert not MentorBinding.objects.filter(
+        workspace=env["workspace"], mentee=existing, mentor=env["advisors"]["白杰"]
+    ).exists()
 
 
 def test_existing_member_row_is_validated_without_mutation(env):
@@ -432,7 +564,11 @@ def test_fixed_excel_templates_upload_through_api(env, dry_run):
             workbook.active.cell(216, 26).number_format = "@"
         buffer = io.BytesIO()
         workbook.save(buffer)
-        return SimpleUploadedFile(name, buffer.getvalue(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        return SimpleUploadedFile(
+            name,
+            buffer.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
 
     students = xlsx(
         "π-Lab学生-导入信息表.xlsx",
@@ -462,8 +598,16 @@ def test_report_uses_new_template_columns(env):
     client = client_for(env["admin"])
     batch_id = uploaded.data["id"]
     row_id = uploaded.data["rows"][0]["id"]
-    client.patch(user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"), {"review_decision": "INCLUDED"}, format="json")
-    client.post(user_imports_url(env["workspace"], f"{batch_id}/approve/"), {}, format="json")
+    client.patch(
+        user_imports_url(env["workspace"], f"{batch_id}/rows/{row_id}/"),
+        {"review_decision": "INCLUDED"},
+        format="json",
+    )
+    client.post(
+        user_imports_url(env["workspace"], f"{batch_id}/approve/"),
+        {"preview_token": approval_token(env, batch_id)},
+        format="json",
+    )
     report = client.get(user_imports_url(env["workspace"], f"{batch_id}/report/"))
     body = report.content.decode("utf-8")
     assert report.status_code == 200

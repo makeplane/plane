@@ -963,12 +963,15 @@
         "approve": "审批导入",
         "include": "纳入",
         "exclude": "排除",
+        "select_all": "全选",
+        "bulk_include": "批量纳入",
         "bulk_exclude": "批量排除",
         "reject": "驳回批次",
         "preview": "预检",
         "commit": "正式导入",
         "download_report": "下载导入报告"
       },
+      "selection_count": "已选择 {count} 行",
       "columns": {
         "name": "姓名",
         "email": "邮箱",

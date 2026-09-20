@@ -44,6 +44,11 @@ class OrgUnitSerializer(serializers.ModelSerializer):
 
 class OrgUnitMemberSerializer(serializers.ModelSerializer):
     member_detail = ResearchUserSerializer(source="user", read_only=True)
+    profile_category = serializers.SerializerMethodField()
+
+    def get_profile_category(self, obj):
+        profile = getattr(obj.user, "research_profile", None)
+        return profile.category if profile else None
 
     class Meta:
         model = OrgUnitMember
@@ -52,6 +57,7 @@ class OrgUnitMemberSerializer(serializers.ModelSerializer):
             "org_unit",
             "user",
             "member_detail",
+            "profile_category",
             "org_role",
             "is_primary",
             "effective_from",

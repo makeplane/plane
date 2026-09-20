@@ -963,12 +963,15 @@
         "approve": "Approve import",
         "include": "Include",
         "exclude": "Exclude",
+        "select_all": "Select all",
+        "bulk_include": "Include selected",
         "bulk_exclude": "Exclude selected",
         "reject": "Reject batch",
         "preview": "Dry run",
         "commit": "Import",
         "download_report": "Download report"
       },
+      "selection_count": "{count} rows selected",
       "columns": {
         "name": "Name",
         "email": "Mailbox",

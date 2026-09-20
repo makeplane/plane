@@ -77,6 +77,7 @@ export type TOrgUnitMember = {
   org_unit: string;
   user: string;
   member_detail?: TResearchUserLite;
+  profile_category?: TResearchProfileCategory | null;
   org_role: TOrgRole;
   is_primary: boolean;
   effective_from: string;
@@ -991,6 +992,7 @@ export type TAccountProvisioningOptions = {
     name: string;
     display_path: string;
     business_category: TOrgBusinessCategory | null;
+    unit_type?: TOrgUnitType;
   }[];
   advisors: TResearchUserLite[];
 };
@@ -1057,6 +1059,7 @@ export type TUserImportBatch = {
   reviewed_by?: string | null;
   reviewed_at?: string | null;
   rejection_reason?: string;
+  review_counts?: { pending: number; included: number; excluded: number };
   created_by_detail?: TResearchUserLite | null;
   created_at: string | null;
   rows?: TUserImportRow[];

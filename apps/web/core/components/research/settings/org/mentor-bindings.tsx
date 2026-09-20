@@ -11,9 +11,10 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TMentorBinding, TOrgUnit } from "@plane/types";
-import { AlertModalCore, Input } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // components
 import { getResearchErrorKey } from "@/components/research/common/error-messages";
+import { ResearchPersonSelect } from "@/components/research/common/person-select";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useResearch } from "@/hooks/store/use-research";
@@ -21,13 +22,22 @@ import { useResearch } from "@/hooks/store/use-research";
 type Props = {
   workspaceSlug: string;
   unit: TOrgUnit;
+  onRelationsChanged?: () => Promise<void>;
+  focusedBindingId?: string | null;
+  onLocateMember?: (userId: string) => void;
 };
 
 /**
  * Direct advisor bindings: one research owner may have several advisors
  * (P0-ORG-06).
  */
-export const ResearchMentorBindings = observer(function ResearchMentorBindings({ workspaceSlug, unit }: Props) {
+export const ResearchMentorBindings = observer(function ResearchMentorBindings({
+  workspaceSlug,
+  unit,
+  onRelationsChanged,
+  focusedBindingId,
+  onLocateMember,
+}: Props) {
   const { t } = useTranslation();
   const research = useResearch();
   const memberStore = useMember();
@@ -37,11 +47,14 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
   const [isPrimaryAdvisor, setIsPrimaryAdvisor] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [bindingToDelete, setBindingToDelete] = useState<TMentorBinding | null>(null);
   const workspaceMembers = memberStore.workspace
     .getWorkspaceMemberIds(workspaceSlug)
     .map((userId) => memberStore.getUserDetails(userId))
-    .filter((member) => Boolean(member));
+    .filter((member): member is NonNullable<typeof member> => !!member)
+    .filter((member) => !memberStore.workspace.isUserSuspended(member.id, workspaceSlug));
   const resolveWorkspaceMember = (value: string) => {
     const normalized = value.trim().toLowerCase();
     if (!normalized) return undefined;
@@ -51,6 +64,15 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
   };
   const resolvedMentee = resolveWorkspaceMember(menteeEmail);
   const resolvedMentor = resolveWorkspaceMember(mentorEmail);
+  const today = new Date().toLocaleDateString("en-CA");
+  const menteeIds = new Set(
+    (research.orgUnitMembers[unit.id] ?? [])
+      .filter(
+        (member) =>
+          member.is_primary && member.effective_from <= today && (!member.effective_to || member.effective_to >= today)
+      )
+      .map((member) => member.user)
+  );
 
   const load = useCallback(async () => {
     try {
@@ -63,10 +85,42 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
   }, [research, unit.id, workspaceSlug]);
 
   useEffect(() => {
-    void load();
-    void memberStore.workspace.fetchWorkspaceMembers(workspaceSlug).catch(() => undefined);
+    let current = true;
+    setMenteeEmail("");
+    setMentorEmail("");
+    setBindings([]);
+    setIsPrimaryAdvisor(false);
+    setErrorKey(null);
+    setLoading(true);
+    setLoadFailed(false);
+    Promise.all([
+      research.fetchMentorBindings(workspaceSlug, { org_unit: unit.id }),
+      research.fetchOrgUnitMembers(workspaceSlug, unit.id),
+      memberStore.workspace.fetchWorkspaceMembers(workspaceSlug),
+    ])
+      .then(([data]) => {
+        if (current) setBindings(data);
+        return undefined;
+      })
+      .catch((error) => {
+        if (current) {
+          setErrorKey(getResearchErrorKey(error));
+          setLoadFailed(true);
+        }
+      })
+      .finally(() => {
+        if (current) setLoading(false);
+      });
+    return () => {
+      current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
+
+  useEffect(() => {
+    if (!focusedBindingId || loading) return;
+    document.getElementById(`mentor-binding-${focusedBindingId}`)?.scrollIntoView({ block: "center" });
+  }, [focusedBindingId, loading]);
 
   const handleCreate = useCallback(async () => {
     if (!resolvedMentee || !resolvedMentor || busy) return;
@@ -82,6 +136,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
       setMentorEmail("");
       setIsPrimaryAdvisor(false);
       await load();
+      await onRelationsChanged?.();
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("research.feedback.mentor_created.title"),
@@ -92,7 +147,18 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
     } finally {
       setBusy(false);
     }
-  }, [busy, isPrimaryAdvisor, load, research, resolvedMentee, resolvedMentor, t, unit.id, workspaceSlug]);
+  }, [
+    busy,
+    isPrimaryAdvisor,
+    load,
+    onRelationsChanged,
+    research,
+    resolvedMentee,
+    resolvedMentor,
+    t,
+    unit.id,
+    workspaceSlug,
+  ]);
 
   const handleDelete = useCallback(async () => {
     if (!bindingToDelete || busy) return;
@@ -100,6 +166,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
     try {
       await research.deleteMentorBinding(workspaceSlug, bindingToDelete.id);
       await load();
+      await onRelationsChanged?.();
       setBindingToDelete(null);
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -111,7 +178,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
     } finally {
       setBusy(false);
     }
-  }, [bindingToDelete, busy, load, research, t, workspaceSlug]);
+  }, [bindingToDelete, busy, load, onRelationsChanged, research, t, workspaceSlug]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -122,27 +189,20 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
       )}
 
       <div className="flex flex-wrap items-end gap-2">
-        <Input
-          className="!w-56"
-          placeholder={t("research.org.mentee_email_placeholder")}
+        <ResearchPersonSelect
+          label="选择本组学生 / 科研责任人"
+          people={workspaceMembers.filter((member) => menteeIds.has(member.id))}
           value={menteeEmail}
-          onChange={(event) => setMenteeEmail(event.target.value)}
-          list={`research-mentor-options-${unit.id}`}
+          onChange={setMenteeEmail}
+          disabled={busy || loading || loadFailed}
         />
-        <Input
-          className="!w-56"
-          placeholder={t("research.org.mentor_email_placeholder")}
+        <ResearchPersonSelect
+          label="选择导师"
+          people={workspaceMembers.filter((member) => member.id !== menteeEmail)}
           value={mentorEmail}
-          onChange={(event) => setMentorEmail(event.target.value)}
-          list={`research-mentor-options-${unit.id}`}
+          onChange={setMentorEmail}
+          disabled={busy || loading || loadFailed}
         />
-        <datalist id={`research-mentor-options-${unit.id}`}>
-          {workspaceMembers.map((member) => (
-            <option key={member?.id} value={member?.email ?? member?.id}>
-              {member?.display_name}
-            </option>
-          ))}
-        </datalist>
         <label className="flex items-center gap-2 pb-1 text-12 text-secondary">
           <input
             type="checkbox"
@@ -155,12 +215,19 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
           variant="primary"
           size="sm"
           loading={busy && !bindingToDelete}
-          disabled={busy || !resolvedMentee || !resolvedMentor}
+          disabled={
+            busy || loading || loadFailed || !resolvedMentee || !resolvedMentor || !menteeIds.has(resolvedMentee.id)
+          }
           onClick={() => void handleCreate()}
         >
           {t("research.org.bind_mentor")}
         </Button>
       </div>
+      {loading && (
+        <p role="status" className="text-12">
+          正在加载指导关系…
+        </p>
+      )}
       {(menteeEmail.trim() || mentorEmail.trim()) && (
         <div className="flex flex-wrap gap-3 text-11" role="status">
           <span className={resolvedMentee ? "text-success-primary" : "text-danger-primary"}>
@@ -188,12 +255,30 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
         </thead>
         <tbody>
           {bindings.map((binding) => (
-            <tr key={binding.id} className="border-b border-subtle/60">
+            <tr
+              id={`mentor-binding-${binding.id}`}
+              key={binding.id}
+              className={`border-b border-subtle/60 ${focusedBindingId === binding.id ? "bg-accent-primary/10" : ""}`}
+            >
               <td className="py-2 text-secondary">
-                {binding.mentee_detail?.display_name ?? binding.mentee_detail?.email ?? binding.mentee}
+                <button
+                  type="button"
+                  className="text-left text-accent-primary"
+                  onClick={() => onLocateMember?.(binding.mentee)}
+                >
+                  {binding.mentee_detail?.display_name ?? binding.mentee_detail?.email ?? binding.mentee}
+                </button>
+                <span className="block text-11 text-tertiary">{binding.mentee_detail?.email}</span>
               </td>
               <td className="py-2 text-secondary">
-                {binding.mentor_detail?.display_name ?? binding.mentor_detail?.email ?? binding.mentor}
+                <button
+                  type="button"
+                  className="text-left text-accent-primary"
+                  onClick={() => onLocateMember?.(binding.mentor)}
+                >
+                  {binding.mentor_detail?.display_name ?? binding.mentor_detail?.email ?? binding.mentor}
+                </button>
+                <span className="block text-11 text-tertiary">{binding.mentor_detail?.email}</span>
               </td>
               <td className="py-2 text-tertiary">
                 {t(binding.is_primary_advisor ? "research.org.primary_advisor" : "research.org.co_advisor")}
@@ -206,7 +291,7 @@ export const ResearchMentorBindings = observer(function ResearchMentorBindings({
               </td>
             </tr>
           ))}
-          {bindings.length === 0 && (
+          {!loading && !loadFailed && bindings.length === 0 && (
             <tr>
               <td colSpan={5} className="py-3 text-center text-tertiary">
                 {t("research.org.no_mentor_bindings")}

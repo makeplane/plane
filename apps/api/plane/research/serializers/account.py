@@ -119,6 +119,7 @@ class UserImportRowSerializer(serializers.ModelSerializer):
 
 
 class UserImportBatchSerializer(serializers.ModelSerializer):
+    review_counts = serializers.SerializerMethodField()
     created_by_detail = ResearchUserSerializer(source="created_by", read_only=True)
     reviewed_by_detail = ResearchUserSerializer(source="reviewed_by", read_only=True)
     rows = serializers.SerializerMethodField()
@@ -143,6 +144,7 @@ class UserImportBatchSerializer(serializers.ModelSerializer):
             "created_by_detail",
             "created_at",
             "rows",
+            "review_counts",
         ]
         read_only_fields = fields
 
@@ -152,8 +154,17 @@ class UserImportBatchSerializer(serializers.ModelSerializer):
             rows = obj.rows.all()
         return UserImportRowSerializer(rows, many=True).data
 
+    def get_review_counts(self, obj):
+        rows = list(getattr(obj, "prefetched_rows", obj.rows.all()))
+        return {
+            decision.lower(): sum(row.review_decision == decision for row in rows)
+            for decision in ("PENDING", "INCLUDED", "EXCLUDED")
+        }
+
 
 class UserImportBatchSummarySerializer(serializers.ModelSerializer):
+    review_counts = serializers.SerializerMethodField()
+
     class Meta:
         model = UserImportBatch
         fields = [
@@ -170,5 +181,12 @@ class UserImportBatchSummarySerializer(serializers.ModelSerializer):
             "reviewed_at",
             "rejection_reason",
             "created_at",
+            "review_counts",
         ]
         read_only_fields = fields
+
+    def get_review_counts(self, obj):
+        return {
+            decision.lower(): getattr(obj, f"review_{decision.lower()}_count", 0)
+            for decision in ("PENDING", "INCLUDED", "EXCLUDED")
+        }
