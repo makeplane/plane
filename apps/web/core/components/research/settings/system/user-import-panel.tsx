@@ -7,7 +7,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { USER_IMPORT_ROW_STATUS_LABELS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -17,6 +16,21 @@ import { Spinner } from "@plane/ui";
 import { ResearchAccountService } from "@/services/research/account.service";
 
 const accountService = new ResearchAccountService();
+
+const BATCH_STATUS_LABELS: Record<TUserImportBatch["status"], string> = {
+  PENDING_REVIEW: "待审批",
+  PENDING: "待处理",
+  IMPORTED: "已审批 · 已导入",
+  REJECTED: "已驳回 · 未导入",
+  FAILED: "导入失败",
+};
+const REVIEW_LABELS = { PENDING: "待审核", INCLUDED: "已纳入", EXCLUDED: "已排除" };
+const VALIDATION_LABELS = { OK: "通过", PENDING: "待修正", ERROR: "失败" };
+
+const batchCounts = (batch: TUserImportBatchSummary) =>
+  batch.status === "IMPORTED"
+    ? `共 ${batch.rows_total} 行 · 已导入 ${batch.rows_ok} · 已排除 ${batch.rows_total - batch.rows_ok}`
+    : `共 ${batch.rows_total} 行 · 校验通过 ${batch.rows_ok} · 待修正 ${batch.rows_pending} · 校验失败 ${batch.rows_error}`;
 
 type Props = {
   workspaceSlug: string;
@@ -78,6 +92,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
         reset_passwords: resetPasswords,
       });
       setActiveBatch(batch);
+      setSelectedRowIds([]);
       setErrorKey(null);
       await load();
     } catch (error) {
@@ -104,17 +119,25 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
 
   const updateRow = useCallback(
     async (rowId: string, payload: Record<string, unknown>) => {
-      if (!activeBatch?.id) return;
+      if (!activeBatch?.id || activeBatch.status !== "PENDING_REVIEW") return;
       try {
         const row = await accountService.updateUserImportRow(workspaceSlug, activeBatch.id, rowId, payload);
-        setActiveBatch((batch) =>
-          batch ? { ...batch, rows: batch.rows?.map((item) => (item.id === rowId ? row : item)) } : batch
-        );
+        setActiveBatch((batch) => {
+          if (!batch || batch.id !== activeBatch.id) return batch;
+          const rows = batch.rows?.map((item) => (item.id === rowId ? row : item)) ?? [];
+          return {
+            ...batch,
+            rows,
+            rows_ok: rows.filter((item) => item.status === "OK").length,
+            rows_pending: rows.filter((item) => item.status === "PENDING").length,
+            rows_error: rows.filter((item) => item.status === "ERROR").length,
+          };
+        });
       } catch {
         setErrorKey("research.user_import.error.run");
       }
     },
-    [activeBatch?.id, workspaceSlug]
+    [activeBatch?.id, activeBatch?.status, workspaceSlug]
   );
 
   const approve = useCallback(async () => {
@@ -145,6 +168,9 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
       await accountService.bulkExcludeUserImportRows(workspaceSlug, activeBatch.id, selectedRowIds);
       setActiveBatch(await accountService.getUserImport(workspaceSlug, activeBatch.id));
       setSelectedRowIds([]);
+    } catch (error) {
+      setErrorMessage((error as { message?: string })?.message ?? null);
+      setErrorKey("research.user_import.error.run");
     } finally {
       setBusy(false);
     }
@@ -153,11 +179,15 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
   const reject = useCallback(async () => {
     if (!activeBatch?.id) return;
     const reason = window.prompt(t("research.user_import.confirm.reject"));
-    if (!reason) return;
+    if (!reason?.trim()) return;
     setBusy(true);
     try {
       setActiveBatch(await accountService.rejectUserImport(workspaceSlug, activeBatch.id, reason));
+      setSelectedRowIds([]);
       await load();
+    } catch (error) {
+      setErrorMessage((error as { message?: string })?.message ?? null);
+      setErrorKey("research.user_import.error.run");
     } finally {
       setBusy(false);
     }
@@ -167,6 +197,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
     async (batchId: string) => {
       try {
         setActiveBatch(await accountService.getUserImport(workspaceSlug, batchId));
+        setSelectedRowIds([]);
       } catch {
         setErrorKey("research.user_import.error.load");
       }
@@ -227,16 +258,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
         <div className="flex flex-col gap-2 rounded-md border border-subtle p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-12 text-primary">
-              {activeBatch.status === "IMPORTED"
-                ? t("research.user_import.result.committed_title")
-                : t("research.user_import.result.review_title")}{" "}
-              ·{" "}
-              {t("research.user_import.result.counts", {
-                total: activeBatch.rows_total,
-                ok: activeBatch.rows_ok,
-                pending: activeBatch.rows_pending,
-                error: activeBatch.rows_error,
-              })}
+              <span role="status">{BATCH_STATUS_LABELS[activeBatch.status]}</span> · {batchCounts(activeBatch)}
             </div>
             {activeBatch.status === "IMPORTED" && (
               <a
@@ -249,152 +271,171 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
               </a>
             )}
           </div>
-          <div className="max-h-72 overflow-auto rounded border border-subtle">
-            <table className="w-full text-11">
-              <thead className="bg-surface-2 text-tertiary">
-                <tr>
-                  <th className="px-2 py-1 text-left">选择</th>
-                  <th className="px-2 py-1 text-left">#</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.name")}</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.email")}</th>
-                  <th className="px-2 py-1 text-left">学号 / 电话 / 年级</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.category")}</th>
-                  <th className="px-2 py-1 text-left">业务方向</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.primary_org")}</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.advisors")}</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.status")}</th>
-                  <th className="px-2 py-1 text-left">{t("research.user_import.columns.message")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(activeBatch.rows ?? []).map((row) => (
-                  <tr key={row.id ?? row.row_number} className="border-t border-subtle">
-                    <td className="px-2 py-1">
-                      <input
-                        type="checkbox"
-                        aria-label={`选择第 ${row.row_number} 行`}
-                        disabled={activeBatch.status !== "PENDING_REVIEW"}
-                        checked={Boolean(row.id && selectedRowIds.includes(row.id))}
-                        onChange={(event) =>
-                          row.id &&
-                          setSelectedRowIds((ids) =>
-                            event.target.checked ? [...ids, row.id!] : ids.filter((id) => id !== row.id)
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="px-2 py-1 text-tertiary">{row.row_number}</td>
-                    <td className="px-2 py-1 text-primary">
-                      <input
-                        aria-label={`${row.row_number} name`}
-                        className="w-24 rounded border border-subtle bg-transparent px-1"
-                        defaultValue={row.display_name}
-                        onBlur={(event) => void updateRow(row.id!, { display_name: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <input
-                        type="email"
-                        aria-label={`${row.row_number} email`}
-                        className="w-44 rounded border border-subtle bg-transparent px-1"
-                        defaultValue={row.email}
-                        onBlur={(event) => void updateRow(row.id!, { email: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <div className="grid min-w-32 gap-1">
-                        {(["student_no", "phone", "grade"] as const).map((field) => (
-                          <input
-                            key={field}
-                            aria-label={`${row.row_number} ${field}`}
-                            className="rounded border border-subtle bg-transparent px-1"
-                            defaultValue={row[field]}
-                            onBlur={(event) => void updateRow(row.id!, { [field]: event.target.value })}
-                          />
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <input
-                        aria-label={`${row.row_number} category`}
-                        className="w-24 rounded border border-subtle bg-transparent px-1"
-                        defaultValue={row.category || ""}
-                        onBlur={(event) => void updateRow(row.id!, { category: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <input
-                        aria-label={`${row.row_number} business category`}
-                        className="w-24 rounded border border-subtle bg-transparent px-1"
-                        defaultValue={row.business_category}
-                        onBlur={(event) => void updateRow(row.id!, { business_category: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <input
-                        aria-label={`${row.row_number} group`}
-                        className="w-32 rounded border border-subtle bg-transparent px-1"
-                        defaultValue={row.group_label || ""}
-                        onBlur={(event) => void updateRow(row.id!, { group_label: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <div className="grid min-w-72 grid-cols-2 gap-1">
-                        {(
-                          [
-                            ["advisor_name", "primary_advisor_email"],
-                            ["co_advisor_1_name", "co_advisor_1_email"],
-                            ["co_advisor_2_name", "co_advisor_2_email"],
-                          ] as const
-                        ).map(([nameField, emailField]) => (
-                          <div key={nameField} className="contents">
-                            <input
-                              aria-label={`${row.row_number} ${nameField}`}
-                              className="rounded border border-subtle bg-transparent px-1"
-                              defaultValue={row[nameField]}
-                              onBlur={(event) => void updateRow(row.id!, { [nameField]: event.target.value })}
-                            />
-                            <input
-                              type="email"
-                              aria-label={`${row.row_number} ${emailField}`}
-                              className="rounded border border-subtle bg-transparent px-1"
-                              defaultValue={row[emailField]}
-                              onBlur={(event) => void updateRow(row.id!, { [emailField]: event.target.value })}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-2 py-1 text-secondary">
-                      <div className="flex items-center gap-1">
-                        {t(USER_IMPORT_ROW_STATUS_LABELS[row.status] ?? "research.user_import.status.ok")}
-                        {activeBatch.status === "PENDING_REVIEW" && (
-                          <>
-                            <Button
-                              variant={row.review_decision === "INCLUDED" ? "primary" : "secondary"}
-                              size="sm"
-                              disabled={row.status !== "OK"}
-                              onClick={() => void updateRow(row.id!, { review_decision: "INCLUDED" })}
-                            >
-                              {t("research.user_import.actions.include")}
-                            </Button>
-                            <Button
-                              variant={row.review_decision === "EXCLUDED" ? "primary" : "secondary"}
-                              size="sm"
-                              onClick={() => void updateRow(row.id!, { review_decision: "EXCLUDED" })}
-                            >
-                              {t("research.user_import.actions.exclude")}
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-2 py-1 text-tertiary">{row.message}</td>
+          {activeBatch.reviewed_at && (
+            <p className="text-12 text-secondary">审核时间：{new Date(activeBatch.reviewed_at).toLocaleString()}</p>
+          )}
+          {activeBatch.status === "REJECTED" && (
+            <p className="text-12 text-danger-primary">
+              驳回原因：{activeBatch.rejection_reason || "未填写"}。此记录作为审核历史保留，请修改文件后重新上传。
+            </p>
+          )}
+          <fieldset key={activeBatch.id} disabled={busy || activeBatch.status !== "PENDING_REVIEW"} className="min-w-0">
+            <div className="max-h-96 overflow-auto rounded border border-subtle">
+              <table className="w-full text-11 [&_td]:align-top">
+                <thead className="bg-surface-2 text-tertiary">
+                  <tr>
+                    <th className="px-2 py-1 text-left">选择</th>
+                    <th className="px-2 py-1 text-left">#</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.name")}</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.email")}</th>
+                    <th className="px-2 py-1 text-left">学号 / 电话 / 年级</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.category")}</th>
+                    <th className="px-2 py-1 text-left">业务方向</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.primary_org")}</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.advisors")}</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.status")}</th>
+                    <th className="px-2 py-1 text-left">{t("research.user_import.columns.message")}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {(activeBatch.rows ?? []).map((row) => (
+                    <tr key={row.id ?? row.row_number} className="border-t border-subtle">
+                      <td className="px-2 py-1">
+                        <input
+                          type="checkbox"
+                          aria-label={`选择第 ${row.row_number} 行`}
+                          disabled={activeBatch.status !== "PENDING_REVIEW"}
+                          checked={Boolean(row.id && selectedRowIds.includes(row.id))}
+                          onChange={(event) =>
+                            row.id &&
+                            setSelectedRowIds((ids) =>
+                              event.target.checked ? [...ids, row.id!] : ids.filter((id) => id !== row.id)
+                            )
+                          }
+                        />
+                      </td>
+                      <td className="px-2 py-1 text-tertiary">{row.row_number}</td>
+                      <td className="px-2 py-1 text-primary">
+                        <input
+                          aria-label={`${row.row_number} name`}
+                          className="w-24 rounded border border-subtle bg-transparent px-1"
+                          defaultValue={row.display_name}
+                          onBlur={(event) => void updateRow(row.id!, { display_name: event.target.value })}
+                        />
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <input
+                          type="email"
+                          aria-label={`${row.row_number} email`}
+                          className="w-44 rounded border border-subtle bg-transparent px-1"
+                          defaultValue={row.email}
+                          onBlur={(event) => void updateRow(row.id!, { email: event.target.value })}
+                        />
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <div className="grid min-w-32 gap-1">
+                          {(["student_no", "phone", "grade"] as const).map((field) => (
+                            <input
+                              key={field}
+                              aria-label={`${row.row_number} ${field}`}
+                              className="rounded border border-subtle bg-transparent px-1"
+                              defaultValue={row[field]}
+                              onBlur={(event) => void updateRow(row.id!, { [field]: event.target.value })}
+                            />
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <input
+                          aria-label={`${row.row_number} category`}
+                          className="w-24 rounded border border-subtle bg-transparent px-1"
+                          defaultValue={row.category || ""}
+                          onBlur={(event) => void updateRow(row.id!, { category: event.target.value })}
+                        />
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <input
+                          aria-label={`${row.row_number} business category`}
+                          className="w-24 rounded border border-subtle bg-transparent px-1"
+                          defaultValue={row.business_category}
+                          onBlur={(event) => void updateRow(row.id!, { business_category: event.target.value })}
+                        />
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <input
+                          aria-label={`${row.row_number} group`}
+                          className="w-32 rounded border border-subtle bg-transparent px-1"
+                          defaultValue={row.group_label || ""}
+                          onBlur={(event) => void updateRow(row.id!, { group_label: event.target.value })}
+                        />
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <div className="grid min-w-72 grid-cols-2 gap-1">
+                          {(
+                            [
+                              ["advisor_name", "primary_advisor_email"],
+                              ["co_advisor_1_name", "co_advisor_1_email"],
+                              ["co_advisor_2_name", "co_advisor_2_email"],
+                            ] as const
+                          ).map(([nameField, emailField]) => (
+                            <div key={nameField} className="contents">
+                              <input
+                                aria-label={`${row.row_number} ${nameField}`}
+                                className="rounded border border-subtle bg-transparent px-1"
+                                defaultValue={row[nameField]}
+                                onBlur={(event) => void updateRow(row.id!, { [nameField]: event.target.value })}
+                              />
+                              <input
+                                type="email"
+                                aria-label={`${row.row_number} ${emailField}`}
+                                className="rounded border border-subtle bg-transparent px-1"
+                                defaultValue={row[emailField]}
+                                onBlur={(event) => void updateRow(row.id!, { [emailField]: event.target.value })}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-2 py-1 text-secondary">
+                        <div className="flex items-center gap-1">
+                          <span className="whitespace-nowrap">
+                            {activeBatch.status === "REJECTED"
+                              ? "批次已驳回"
+                              : row.review_decision === "EXCLUDED"
+                                ? "已排除"
+                                : activeBatch.status === "IMPORTED"
+                                  ? "已导入"
+                                  : REVIEW_LABELS[row.review_decision]}
+                            <span className="block text-tertiary">校验：{VALIDATION_LABELS[row.status]}</span>
+                          </span>
+                          {activeBatch.status === "PENDING_REVIEW" && (
+                            <>
+                              <Button
+                                variant={row.review_decision === "INCLUDED" ? "primary" : "secondary"}
+                                size="sm"
+                                disabled={row.status !== "OK"}
+                                onClick={() => void updateRow(row.id!, { review_decision: "INCLUDED" })}
+                              >
+                                {t("research.user_import.actions.include")}
+                              </Button>
+                              <Button
+                                variant={row.review_decision === "EXCLUDED" ? "primary" : "secondary"}
+                                size="sm"
+                                onClick={() => void updateRow(row.id!, { review_decision: "EXCLUDED" })}
+                              >
+                                {t("research.user_import.actions.exclude")}
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-2 py-1 text-tertiary">{row.message}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
           {activeBatch.status === "PENDING_REVIEW" && (
             <div className="flex flex-wrap gap-2">
               <Button
@@ -441,13 +482,7 @@ export const ResearchUserImportPanel = observer(function ResearchUserImportPanel
                 >
                   {batch.source_filename || batch.id}
                   <span className="ml-2 text-11 text-tertiary">
-                    {batch.dry_run ? t("research.user_import.history.dry_run") : ""} ·{" "}
-                    {t("research.user_import.result.counts", {
-                      total: batch.rows_total,
-                      ok: batch.rows_ok,
-                      pending: batch.rows_pending,
-                      error: batch.rows_error,
-                    })}
+                    {BATCH_STATUS_LABELS[batch.status]} · {batchCounts(batch)}
                   </span>
                 </button>
                 <span className="text-11 text-tertiary">
