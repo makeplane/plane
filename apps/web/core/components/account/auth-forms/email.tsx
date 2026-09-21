@@ -74,7 +74,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              autoComplete="off"
+              autoComplete="username"
               autoFocus
               ref={inputRef}
             />
