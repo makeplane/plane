@@ -21,6 +21,10 @@ from plane.api.serializers import (
 )
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
+from plane.utils.membership_realtime import (
+    EVENT_PROJECT_MEMBER_REMOVED,
+    publish_membership_removed,
+)
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -227,6 +231,14 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         project_member.is_active = False
         project_member.save()
+        publish_membership_removed(
+            event_type=EVENT_PROJECT_MEMBER_REMOVED,
+            actor_id=request.user.id,
+            user_id=project_member.member_id,
+            workspace_id=project_member.workspace_id,
+            workspace_slug=slug,
+            project_id=project_id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
