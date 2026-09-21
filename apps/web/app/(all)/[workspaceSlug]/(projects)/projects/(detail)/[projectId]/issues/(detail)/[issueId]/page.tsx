@@ -12,7 +12,7 @@ import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url
 import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
-import { LogoSpinner } from "@/components/common/logo-spinner";
+import { LogoSpinner } from "@makeplane/propel/components/logo-spinner";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
@@ -66,7 +66,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="flex size-full items-center justify-center">
-      <LogoSpinner />
+      <LogoSpinner size="fluid" alt={t("common.loading")} />
     </div>
   );
 }
