@@ -89,10 +89,13 @@ class ProjectMemberViewSet(BaseViewSet):
         ):
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
+            project_member.access_revoked = False
             bulk_project_members.append(project_member)
 
         # Update the roles of the existing members
-        ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
+        ProjectMember.objects.bulk_update(
+            bulk_project_members, ["is_active", "role", "access_revoked"], batch_size=100
+        )
 
         # Get the minimum sort_order for each member in the workspace
         member_sort_orders = (
@@ -280,10 +283,17 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
+        was_active = project_member.is_active
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
+            if was_active and serializer.instance.is_active is False:
+                serializer.instance.access_revoked = True
+                serializer.instance.save(update_fields=["access_revoked", "updated_at"])
+            elif (not was_active) and serializer.instance.is_active is True:
+                serializer.instance.access_revoked = False
+                serializer.instance.save(update_fields=["access_revoked", "updated_at"])
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -317,6 +327,7 @@ class ProjectMemberViewSet(BaseViewSet):
             )
 
         project_member.is_active = False
+        project_member.access_revoked = True
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -343,8 +354,9 @@ class ProjectMemberViewSet(BaseViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Deactivate the user
+        # Deactivate the user (voluntary leave — public self-join still allowed)
         project_member.is_active = False
+        project_member.access_revoked = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

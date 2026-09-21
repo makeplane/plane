@@ -154,9 +154,31 @@ class UserProjectInvitationsViewset(BaseViewSet):
         # network check above (GHSA-45hc-q4mw-jhxm).
         validated_project_ids = [str(p.id) for p in projects]
 
-        # If the user was already part of workspace
+        # Admin-removed members cannot self-join until an admin re-adds or invites them
+        revoked_project_ids = list(
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id__in=validated_project_ids,
+                member=request.user,
+                is_active=False,
+                access_revoked=True,
+            ).values_list("project_id", flat=True)
+        )
+        if revoked_project_ids:
+            return Response(
+                {
+                    "error": "Your access to this project was revoked. Ask a project admin to add you again."
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Reactivate only voluntary leavers (not admin-revoked)
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id__in=validated_project_ids, member=request.user
+            workspace__slug=slug,
+            project_id__in=validated_project_ids,
+            member=request.user,
+            is_active=False,
+            access_revoked=False,
         ).update(is_active=True)
 
         ProjectMember.objects.bulk_create(
@@ -167,6 +189,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                     role=workspace_role,
                     workspace=workspace,
                     created_by=request.user,
+                    access_revoked=False,
                 )
                 for project_id in validated_project_ids
             ],
@@ -251,7 +274,7 @@ class ProjectJoinEndpoint(BaseAPIView):
 
                 # Check if the user was already a member of project then activate the user
                 project_member = ProjectMember.objects.filter(
-                    workspace_id=project_invite.workspace_id, member=user
+                    workspace_id=project_invite.workspace_id, project_id=project_id, member=user
                 ).first()
                 if project_member is None:
                     # Create a Project Member
@@ -259,10 +282,12 @@ class ProjectJoinEndpoint(BaseAPIView):
                         project_id=project_id,
                         member=user,
                         role=project_invite.role,
+                        access_revoked=False,
                     )
                 else:
                     project_member.is_active = True
-                    project_member.role = project_member.role
+                    project_member.role = project_invite.role
+                    project_member.access_revoked = False
                     project_member.save()
 
                 return Response(
