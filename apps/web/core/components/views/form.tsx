@@ -8,11 +8,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ViewsOutline } from "@makeplane/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -21,7 +24,6 @@ import type {
   IIssueFilters,
 } from "@plane/types";
 import { EViewAccess, EIssuesStoreType } from "@plane/types";
-import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -121,7 +123,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <ViewsIcon className="h-4 w-4 text-tertiary" />
+                      <ViewsOutline className="h-4 w-4 text-tertiary" />
                     )}
                   </>
                 </span>
@@ -162,19 +164,22 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   },
                 }}
                 render={({ field: { value, onChange } }) => (
-                  <Input
-                    id="name"
-                    type="name"
-                    name="name"
-                    value={value}
-                    onChange={onChange}
-                    hasError={Boolean(errors.name)}
-                    placeholder={t("common.title")}
-                    className="w-full text-14"
-                    tabIndex={getIndex("name")}
-                    // oxlint-disable-next-line jsx_a11y/no-autofocus
-                    autoFocus
-                  />
+                  <Field name="name" invalid={Boolean(errors.name)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="name"
+                        type="name"
+                        name="name"
+                        value={value}
+                        onChange={onChange}
+                        placeholder={t("common.title")}
+                        tabIndex={getIndex("name")}
+                        // oxlint-disable-next-line jsx_a11y/no-autofocus
+                        autoFocus
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
@@ -185,16 +190,22 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  placeholder={t("common.description")}
-                  className="min-h-24 w-full resize-none text-14"
-                  hasError={Boolean(errors?.description)}
-                  value={value}
-                  onChange={onChange}
-                  tabIndex={getIndex("descriptions")}
-                />
+                <Field name="description" invalid={Boolean(errors?.description)}>
+                  <TextAreaGroup resize="none">
+                    <TextArea
+                      size="lg"
+                      surface="field"
+                      autoResize
+                      maxRows={8}
+                      id="description"
+                      name="description"
+                      placeholder={t("common.description")}
+                      value={value}
+                      onChange={onChange}
+                      tabIndex={getIndex("descriptions")}
+                    />
+                  </TextAreaGroup>
+                </Field>
               )}
             />
           </div>

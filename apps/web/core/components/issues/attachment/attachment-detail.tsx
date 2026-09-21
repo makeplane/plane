@@ -7,10 +7,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { AlertCircle } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, WarningCircleOutline } from "@makeplane/propel/icons";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import {
   convertBytesToSize,
   getFileExtension,
@@ -77,17 +76,18 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
             <div className="h-7 w-7">{fileIcon}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Tooltip tooltipContent={fileName} isMobile={isMobile}>
+                <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
                   <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={`${
+                  label={`${
                     getUserDetails(attachment.updated_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
+                  layout="stacked"
+                  disabled={isMobile}
                 >
                   <span>
-                    <AlertCircle className="h-3 w-3" />
+                    <WarningCircleOutline className="h-3 w-3" />
                   </span>
                 </Tooltip>
               </div>
@@ -102,7 +102,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
 
         {!disabled && (
           <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" />
+            <CloseOutline className="h-4 w-4 text-secondary hover:text-primary" />
           </button>
         )}
       </div>

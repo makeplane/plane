@@ -11,11 +11,11 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -53,7 +53,7 @@ interface IssueBlockProps {
 }
 
 interface IssueDetailsBlockProps {
-  cardRef: React.RefObject<HTMLElement>;
+  cardRef: React.RefObject<HTMLElement | null>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -80,7 +80,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
-      <MoreHorizontal className="h-3.5 w-3.5" />
+      <MoreHorizontalOutline className="h-3.5 w-3.5" />
     </div>
   );
 
@@ -120,7 +120,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         </div>
       </div>
 
-      <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
+      <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
         <div className="line-clamp-1 w-full text-body-sm-medium text-primary">
           <span>{issue.name}</span>
         </div>

@@ -7,13 +7,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { SquareUser } from "lucide-react";
+import { UserAltOutline } from "@makeplane/propel/icons";
 // Plane imports
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
@@ -30,7 +30,7 @@ import { ButtonAvatars } from "../dropdowns/member/avatar";
 type Props = {
   moduleId: string;
   moduleDetails: IModule;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {
@@ -166,8 +166,8 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
         </span>
       ) : (
-        <Tooltip tooltipContent="No lead">
-          <SquareUser className="h-4 w-4 text-tertiary" />
+        <Tooltip label="No lead">
+          <UserAltOutline className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}
 

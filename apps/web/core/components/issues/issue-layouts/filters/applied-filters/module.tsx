@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // hooks
-import { CloseIcon, ModuleIcon } from "@plane/propel/icons";
+import { CloseOutline, ModuleOutline } from "@makeplane/propel/icons";
 import { useModule } from "@/hooks/store/use-module";
 // ui
 
@@ -30,7 +30,7 @@ export const AppliedModuleFilters = observer(function AppliedModuleFilters(props
 
         return (
           <div key={moduleId} className="flex items-center gap-1 truncate rounded-sm bg-layer-1 p-1 text-11">
-            <ModuleIcon className="h-3 w-3 flex-shrink-0" />
+            <ModuleOutline className="h-3 w-3 flex-shrink-0" />
             <span className="truncate normal-case">{moduleDetails.name}</span>
             {editable && (
               <button
@@ -38,7 +38,7 @@ export const AppliedModuleFilters = observer(function AppliedModuleFilters(props
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(moduleId)}
               >
-                <CloseIcon height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

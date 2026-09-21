@@ -5,11 +5,9 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { Home, Settings, Briefcase, GridIcon, Layers2, FileIcon } from "lucide-react";
+import { HomeOutline, SettingsOutline } from "@makeplane/propel/icons";
 import * as React from "react";
-import { ContrastIcon, EpicIcon, LayersIcon } from "@plane/propel/icons";
 import { Breadcrumbs } from "./breadcrumbs";
-import { BreadcrumbNavigationDropdown } from "./navigation-dropdown";
 
 const meta: Meta<typeof Breadcrumbs> = {
   title: "UI/Breadcrumbs",
@@ -87,141 +85,18 @@ export const SingleItem: Story = {
   },
 };
 
-export const WithNavigationDropdown: Story = {
-  args: {
-    children: [
-      <Breadcrumbs.Item key="home" component={<BreadcrumbBlock href="/" label="Home" />} />,
-      <Breadcrumbs.Item
-        key="projects"
-        component={
-          <BreadcrumbNavigationDropdown
-            selectedItemKey="project-1"
-            navigationItems={[
-              {
-                key: "project-1",
-                title: "Project Alpha",
-
-                action: () => console.log("Project Alpha selected"),
-              },
-              {
-                key: "project-2",
-                title: "Project Beta",
-
-                action: () => console.log("Project Beta selected"),
-              },
-              {
-                key: "project-3",
-                title: "Project Gamma",
-
-                action: () => console.log("Project Gamma selected"),
-              },
-            ]}
-          />
-        }
-        showSeparator={false}
-      />,
-      <Breadcrumbs.Item key="settings" component={<BreadcrumbBlock href="/settings" label="Settings" />} />,
-    ],
-  },
-};
-
-export const WithNavigationDropdownAndIcons: Story = {
+export const WithIcons: Story = {
   args: {
     children: [
       <Breadcrumbs.Item
         key="home"
-        component={<BreadcrumbBlock href="/" label="Home" icon={<Home className="size-3.5" />} />}
-      />,
-      <Breadcrumbs.Item
-        key="projects"
-        component={
-          <BreadcrumbNavigationDropdown
-            selectedItemKey="project-1"
-            navigationItems={[
-              {
-                key: "project-1",
-                title: "Project Alpha",
-                icon: Briefcase,
-
-                action: () => console.log("Project Alpha selected"),
-              },
-              {
-                key: "project-2",
-                title: "Project Beta",
-                icon: Briefcase,
-
-                // disabled: true,
-                action: () => console.log("Project Beta selected"),
-              },
-              {
-                key: "project-3",
-                title: "Project Gamma",
-                icon: Briefcase,
-
-                action: () => console.log("Project Gamma selected"),
-              },
-            ]}
-          />
-        }
-        showSeparator={false}
-      />,
-      <Breadcrumbs.Item
-        key="features"
-        component={
-          <BreadcrumbNavigationDropdown
-            selectedItemKey="feature-1"
-            navigationItems={[
-              {
-                key: "feature-1",
-                title: "Epics",
-                icon: EpicIcon,
-
-                action: () => console.log("Feature Alpha selected"),
-              },
-              {
-                key: "feature-2",
-                title: "Work items",
-                icon: LayersIcon,
-
-                // disabled: true,
-                action: () => console.log("Feature Beta selected"),
-              },
-              {
-                key: "feature-3",
-                title: "Cycles",
-                icon: ContrastIcon,
-
-                action: () => console.log("Feature Gamma selected"),
-              },
-              {
-                key: "feature-3",
-                title: "Modules",
-                icon: GridIcon,
-
-                action: () => console.log("Feature Gamma selected"),
-              },
-              {
-                key: "feature-3",
-                title: "Views",
-                icon: Layers2,
-
-                action: () => console.log("Feature Gamma selected"),
-              },
-              {
-                key: "feature-3",
-                title: "Pages",
-                icon: FileIcon,
-
-                action: () => console.log("Feature Gamma selected"),
-              },
-            ]}
-          />
-        }
-        showSeparator={false}
+        component={<BreadcrumbBlock href="/" label="Home" icon={<HomeOutline className="size-3.5" />} />}
       />,
       <Breadcrumbs.Item
         key="settings"
-        component={<BreadcrumbBlock href="/settings" label="Settings" icon={<Settings className="size-3.5" />} />}
+        component={
+          <BreadcrumbBlock href="/settings" label="Settings" icon={<SettingsOutline className="size-3.5" />} />
+        }
         isLast
       />,
     ],

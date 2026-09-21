@@ -6,11 +6,10 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Loader } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, LoadingOutline } from "@makeplane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -21,7 +20,6 @@ type TStateDelete = {
   totalStates: number;
   state: IState;
   deleteStateCallback: TStateOperationsCallbacks["deleteState"];
-  shouldTrackEvents?: boolean;
 };
 
 export const StateDelete = observer(function StateDelete(props: TStateDelete) {
@@ -88,14 +86,17 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         onClick={() => setIsDeleteModal(true)}
       >
         <Tooltip
-          tooltipContent={
+          label={
             state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
           }
-          isMobile={isMobile}
-          disabled={!isDeleteDisabled}
-          className="focus:outline-none"
+          layout="stacked"
+          disabled={!isDeleteDisabled || isMobile}
         >
-          {isDelete ? <Loader className="h-3.5 w-3.5 text-secondary" /> : <CloseIcon className="h-3.5 w-3.5" />}
+          {isDelete ? (
+            <LoadingOutline className="h-3.5 w-3.5 text-secondary" />
+          ) : (
+            <CloseOutline className="h-3.5 w-3.5" />
+          )}
         </Tooltip>
       </button>
     </>

@@ -16,7 +16,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
 type BlockProps = {
   activity: TActivityEntityData;
-  ref: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
   workspaceSlug: string;
 };
 export function RecentProject(props: BlockProps) {

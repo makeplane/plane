@@ -111,5 +111,8 @@
       "success_message": "Pagina uit collectie verwijderd.",
       "error_message": "Pagina kon niet uit de collectie worden verwijderd. Probeer het opnieuw."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Inhoudslimiet bereikt en live-synchronisatie staat uit. Maak een nieuwe pagina aan of gebruik geneste pagina's om te blijven synchroniseren."
   }
 }

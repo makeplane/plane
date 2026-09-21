@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -119,7 +120,7 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
 
   return (
     <div>
-      <Tab.Group defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
+      <Tab.Group as={Fragment} defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
         <Tab.List
           as="div"
           className={cn(

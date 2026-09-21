@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Popover } from "@plane/propel/popover";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { ControlLink } from "@plane/ui";
 import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 // components
@@ -151,7 +151,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
             displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}
-        <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
+        <Tooltip label={issueDetails?.name ?? ""} layout="stacked" disabled={isMobile}>
           <span className="flex-grow truncate text-13 font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>

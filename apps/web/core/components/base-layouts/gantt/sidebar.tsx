@@ -22,7 +22,7 @@ type Props<T extends IBaseLayoutsBaseItem> = {
   blockUpdateHandler: (block: T, payload: IBlockUpdateData) => void;
   canLoadMoreBlocks?: boolean;
   loadMoreItems?: (groupId: string) => void;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: RefObject<HTMLDivElement | null>;
   blockIds: string[];
   enableReorder: boolean;
   showAllBlocks?: boolean;

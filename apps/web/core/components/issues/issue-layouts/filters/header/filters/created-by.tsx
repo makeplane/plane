@@ -8,7 +8,8 @@ import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane ui
-import { Avatar, Loader } from "@plane/ui";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -76,7 +77,14 @@ export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
                       key={`created-by-${member.id}`}
                       isChecked={appliedFilters?.includes(member.id) ? true : false}
                       onClick={() => handleUpdate(member.id)}
-                      icon={<Avatar name={member.display_name} src={getFileURL(member.avatar_url)} size="md" />}
+                      icon={
+                        <Avatar
+                          alt={member.display_name}
+                          fallback={member.display_name?.[0]?.toUpperCase()}
+                          src={getFileURL(member.avatar_url)}
+                          size="xs"
+                        />
+                      }
                       title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />
                   );

@@ -23,7 +23,6 @@ type TStateItem = {
   totalStates: number;
   state: IState;
   stateOperationsCallbacks: TStateOperationsCallbacks;
-  shouldTrackEvents: boolean;
   disabled?: boolean;
   stateItemClassName?: string;
 };
@@ -35,7 +34,6 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
     totalStates,
     state,
     stateOperationsCallbacks,
-    shouldTrackEvents,
     disabled = false,
     stateItemClassName,
   } = props;
@@ -123,7 +121,6 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
       <StateUpdate
         state={state}
         updateStateCallback={stateOperationsCallbacks.updateState}
-        shouldTrackEvents={shouldTrackEvents}
         handleClose={() => setUpdateStateModal(false)}
       />
     );
@@ -151,7 +148,6 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
               markStateAsDefault: stateOperationsCallbacks.markStateAsDefault,
               deleteState: stateOperationsCallbacks.deleteState,
             }}
-            shouldTrackEvents={shouldTrackEvents}
           />
         )}
       </div>

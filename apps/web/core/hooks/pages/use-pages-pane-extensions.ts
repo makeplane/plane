@@ -21,7 +21,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageExtensionHookParams = {
   page: TPageInstance;
-  editorRef: RefObject<EditorRefApi>;
+  editorRef: RefObject<EditorRefApi | null>;
 };
 
 export const usePagesPaneExtensions = (_params: TPageExtensionHookParams) => {

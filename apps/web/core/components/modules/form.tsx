@@ -7,12 +7,13 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IModule } from "@plane/types";
-// ui
-import { Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -124,18 +125,21 @@ export function ModuleForm(props: Props) {
                 },
               }}
               render={({ field: { value, onChange } }) => (
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  hasError={Boolean(errors?.name)}
-                  placeholder={t("title")}
-                  className="w-full text-14"
-                  tabIndex={getIndex("name")}
-                  autoFocus
-                />
+                <Field name="name" invalid={Boolean(errors?.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      placeholder={t("title")}
+                      tabIndex={getIndex("name")}
+                      autoFocus
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -145,16 +149,22 @@ export function ModuleForm(props: Props) {
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t("description")}
-                  className="min-h-24 w-full resize-none text-14"
-                  hasError={Boolean(errors?.description)}
-                  tabIndex={getIndex("description")}
-                />
+                <Field name="description" invalid={Boolean(errors?.description)}>
+                  <TextAreaGroup resize="none">
+                    <TextArea
+                      size="lg"
+                      surface="field"
+                      autoResize
+                      maxRows={8}
+                      id="description"
+                      name="description"
+                      value={value}
+                      onChange={onChange}
+                      placeholder={t("description")}
+                      tabIndex={getIndex("description")}
+                    />
+                  </TextAreaGroup>
+                </Field>
               )}
             />
           </div>

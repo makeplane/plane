@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import { Row } from "@plane/ui";
 import type { TQuickAddIssueButton } from "../root";
 
@@ -21,7 +21,7 @@ export const GanttQuickAddIssueButton = observer(function GanttQuickAddIssueButt
       onClick={onClick}
     >
       <Row className="flex gap-2 py-2">
-        <PlusIcon className="my-auto h-3.5 w-3.5 stroke-2" />
+        <AddOutline className="my-auto h-3.5 w-3.5" />
         <span className="text-13 font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
       </Row>
     </button>

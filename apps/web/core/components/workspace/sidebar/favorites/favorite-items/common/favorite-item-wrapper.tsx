@@ -10,7 +10,7 @@ import { cn } from "@plane/utils";
 
 type Props = {
   children: React.ReactNode;
-  elementRef: React.RefObject<HTMLDivElement>;
+  elementRef: React.RefObject<HTMLDivElement | null>;
   isMenuActive?: boolean;
 };
 

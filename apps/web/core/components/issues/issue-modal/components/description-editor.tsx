@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { Sparkle } from "lucide-react";
+import { AiStar1Outline } from "@makeplane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -258,7 +258,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                   "Generating response"
                 ) : (
                   <>
-                    <Sparkle className="h-3.5 w-3.5" />I{"'"}m feeling lucky
+                    <AiStar1Outline className="h-3.5 w-3.5" />I{"'"}m feeling lucky
                   </>
                 )}
               </button>
@@ -282,7 +282,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                     onClick={() => setGptAssistantModal((prevData) => !prevData)}
                     tabIndex={-1}
                   >
-                    <Sparkle className="h-4 w-4" />
+                    <AiStar1Outline className="h-4 w-4" />
                     AI
                   </button>
                 }

@@ -6,13 +6,9 @@
 
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueFilterDateKeys } from "@plane/types";
-// helpers
-import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
-// constants
-// hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type InboxIssueAppliedFiltersDate = {
@@ -45,7 +41,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -57,7 +53,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
               className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
             >
-              <CloseIcon className={`h-3 w-3`} />
+              <CloseOutline className={`h-3 w-3`} />
             </div>
           </div>
         );
@@ -67,8 +63,8 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
         className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
         onClick={clearFilter}
       >
-        <CloseIcon className={`h-3 w-3`} />
+        <CloseOutline className={`h-3 w-3`} />
       </div>
-    </Tag>
+    </div>
   );
 });

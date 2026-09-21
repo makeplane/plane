@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Work item could not be archived. Please try again."
-      }
+      },
+      "banner_message": "This work item has been archived. Visit the Archives section to restore it.",
+      "go_to_archives": "Go to archives"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Unable to update work items",
         "message": "State change is not allowed for some work items. Ensure the state change is allowed."
       }
+    },
+    "upgrade_banner": {
+      "message": "Change state, priority, and more for several work items at once. Save three minutes on an average per operation.",
+      "cta": "Upgrade to One"
     }
   },
   "recurring_work_items": {

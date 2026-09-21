@@ -72,7 +72,7 @@ services:
       retries: 10
 
   test-minio:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     networks:
       - test_env
     env_file:

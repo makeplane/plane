@@ -22,7 +22,8 @@ import { createRoot } from "react-dom/client";
 import { useTranslation } from "@plane/i18n";
 import type { InstructionType } from "@plane/types";
 // plane ui
-import { DropIndicator, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { DropIndicator } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -63,7 +64,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
     return combine(
       draggable({
         element,
-        dragHandle: elementRef.current,
+        dragHandle: element,
         getInitialData: () => initialData,
         onDragStart: () => {
           setIsDragging(true);
@@ -136,9 +137,11 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
           <div>{t(widgetTitle, { count: 1 })}</div>
         </div>
-        <ToggleSwitch
-          value={widget.is_enabled}
-          onChange={() => handleToggle(workspaceSlug.toString(), widget.key, !widget.is_enabled)}
+        <Switch
+          size="sm"
+          checked={widget.is_enabled}
+          onCheckedChange={(enabled) => handleToggle(workspaceSlug.toString(), widget.key, enabled)}
+          aria-label={t(widgetTitle, { count: 1 })}
         />
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}

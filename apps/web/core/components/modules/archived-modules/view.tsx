@@ -53,7 +53,7 @@ export const ArchivedModulesView = observer(function ArchivedModulesView(props: 
   return (
     <div className="h-full overflow-y-auto">
       <div className="flex h-full w-full justify-between">
-        <div className="vertical-scrollbar flex scrollbar-lg h-full w-full flex-col overflow-y-auto">
+        <div className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col overflow-y-auto">
           {filteredArchivedModuleIds.map((moduleId) => (
             <ModuleListItem key={moduleId} moduleId={moduleId} />
           ))}

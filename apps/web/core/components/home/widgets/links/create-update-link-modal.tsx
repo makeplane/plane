@@ -9,10 +9,12 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TLinkEditableFields } from "@plane/types";
-import { Input, ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/ui";
 import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
@@ -87,16 +89,19 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
                   required: t("link.modal.url.required"),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
-                  <Input
-                    id="url"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.url)}
-                    placeholder={t("link.modal.url.placeholder")}
-                    className="w-full"
-                  />
+                  <Field name="url" invalid={Boolean(errors.url)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="url"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("link.modal.url.placeholder")}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
@@ -110,16 +115,19 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
                 control={control}
                 name="title"
                 render={({ field: { value, onChange, ref } }) => (
-                  <Input
-                    id="title"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.title)}
-                    placeholder={t("link.modal.title.placeholder")}
-                    className="w-full"
-                  />
+                  <Field name="title" invalid={Boolean(errors.title)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="title"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("link.modal.title.placeholder")}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
             </div>

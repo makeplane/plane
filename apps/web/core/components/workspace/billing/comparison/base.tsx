@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDownOutline, TopArrowOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
@@ -130,7 +130,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}
-            appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
+            appendIcon={isCompareAllFeaturesSectionOpen ? <TopArrowOutline /> : <ArrowDownOutline />}
           >
             {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
           </Button>

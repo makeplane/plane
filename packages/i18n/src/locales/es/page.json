@@ -111,5 +111,8 @@
       "success_message": "Página quitada de la colección.",
       "error_message": "No se pudo quitar la página de la colección. Inténtalo de nuevo."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Se alcanzó el límite de contenido y la sincronización en vivo está desactivada. Cree una página nueva o utilice páginas anidadas para continuar sincronizando."
   }
 }

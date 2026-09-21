@@ -8,7 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { AddOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
@@ -69,18 +69,18 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
   const optionItems = [
     {
       i18n_label: "common.create_new",
-      icon: <PlusIcon className="h-3 w-3" />,
+      icon: <AddOutline className="h-3 w-3" />,
       onClick: handleCreateNew,
     },
     {
       i18n_label: "common.add_existing",
-      icon: <WorkItemsIcon className="h-3 w-3" />,
+      icon: <WorkItemsOutline className="h-3 w-3" />,
       onClick: handleAddExisting,
     },
   ];
 
   // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <PlusIcon className="h-4 w-4" />;
+  const customButtonElement = customButton ? <>{customButton}</> : <AddOutline className="h-4 w-4" />;
 
   return (
     <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>

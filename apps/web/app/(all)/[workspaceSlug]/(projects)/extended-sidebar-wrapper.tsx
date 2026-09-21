@@ -18,7 +18,7 @@ import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar
 type Props = {
   className?: string;
   children: React.ReactNode;
-  extendedSidebarRef: React.RefObject<HTMLDivElement>;
+  extendedSidebarRef: React.RefObject<HTMLDivElement | null>;
   isExtendedSidebarOpened: boolean;
   handleClose: () => void;
   excludedElementId: string;

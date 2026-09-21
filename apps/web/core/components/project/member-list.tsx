@@ -7,10 +7,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { SearchIcon } from "@plane/propel/icons";
+import { SearchOutline } from "@makeplane/propel/icons";
 // components
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
@@ -85,7 +85,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
         <div className="text-14 font-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1">
-            <SearchIcon className="h-3.5 w-3.5" />
+            <SearchOutline className="h-3.5 w-3.5" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 placeholder:text-placeholder focus:outline-none"
               placeholder="Search"
@@ -105,7 +105,6 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
               onClick={() => {
                 setInviteModal(true);
               }}
-              data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
             >
               {t("add_member")}
             </Button>

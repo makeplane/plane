@@ -14,21 +14,12 @@ type TStateList = {
   groupedStates: Record<string, IState[]>;
   states: IState[];
   stateOperationsCallbacks: TStateOperationsCallbacks;
-  shouldTrackEvents: boolean;
   disabled?: boolean;
   stateItemClassName?: string;
 };
 
 export const StateList = observer(function StateList(props: TStateList) {
-  const {
-    groupKey,
-    groupedStates,
-    states,
-    stateOperationsCallbacks,
-    shouldTrackEvents,
-    disabled = false,
-    stateItemClassName,
-  } = props;
+  const { groupKey, groupedStates, states, stateOperationsCallbacks, disabled = false, stateItemClassName } = props;
 
   return (
     <>
@@ -41,7 +32,6 @@ export const StateList = observer(function StateList(props: TStateList) {
           state={state}
           disabled={disabled}
           stateOperationsCallbacks={stateOperationsCallbacks}
-          shouldTrackEvents={shouldTrackEvents}
           stateItemClassName={stateItemClassName}
         />
       ))}

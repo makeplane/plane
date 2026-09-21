@@ -24,6 +24,7 @@ export type TLanguage =
   | "ro"
   | "vi-VN"
   | "tr-TR"
+  | "ka-ge"
   | "nl";
 
 export interface ILanguageOption {

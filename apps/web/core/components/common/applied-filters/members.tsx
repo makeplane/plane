@@ -5,9 +5,9 @@
  */
 
 import { observer } from "mobx-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane ui
-import { Avatar } from "@plane/ui";
+import { Avatar } from "@makeplane/propel/components/avatar";
 // helpers
 import { getFileURL } from "@plane/utils";
 // types
@@ -36,10 +36,10 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         return (
           <div key={memberId} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             <Avatar
-              name={memberDetails.display_name}
+              alt={memberDetails.display_name}
+              fallback={memberDetails.display_name?.[0]?.toUpperCase()}
               src={getFileURL(memberDetails.avatar_url)}
-              showTooltip={false}
-              size={"sm"}
+              size="2xs"
             />
             <span className="normal-case">{memberDetails.display_name}</span>
             {editable && (
@@ -48,7 +48,7 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(memberId)}
               >
-                <CloseIcon height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

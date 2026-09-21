@@ -64,10 +64,6 @@ const ComboDropDown = forwardRef(function ComboDropDown(props: Props, ref) {
   );
 });
 
-const ComboOptions = Combobox.Options;
-const ComboOption = Combobox.Option;
-const ComboInput = Combobox.Input;
-
 ComboDropDown.displayName = "ComboDropDown";
 
-export { ComboDropDown, ComboOptions, ComboOption, ComboInput };
+export { ComboDropDown };

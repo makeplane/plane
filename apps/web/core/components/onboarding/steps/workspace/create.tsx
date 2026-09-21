@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { CircleCheck } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -274,7 +274,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                             : "border-subtle text-tertiary hover:border-strong"
                         }`}
                       >
-                        <CircleCheck className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />
+                        <TickCircleOutline className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />
 
                         <span className="font-medium">{size}</span>
                       </button>

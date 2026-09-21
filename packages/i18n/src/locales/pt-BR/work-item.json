@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Não foi possível arquivar o item de trabalho. Por favor, tente novamente."
-      }
+      },
+      "banner_message": "Este item de trabalho foi arquivado. Acesse a seção Arquivos para restaurá-lo.",
+      "go_to_archives": "Ir para arquivos"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Não é possível atualizar itens de trabalho",
         "message": "A mudança de estado não é permitida para alguns itens de trabalho. Certifique-se de que a mudança de estado seja permitida."
       }
+    },
+    "upgrade_banner": {
+      "message": "Altere o estado, a prioridade e muito mais para vários itens de trabalho de uma vez. Economize em média três minutos por operação.",
+      "cta": "Upgrade para One"
     }
   },
   "recurring_work_items": {

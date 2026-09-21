@@ -48,7 +48,7 @@ type Props = {
   /**
    * @description Editor ref, this will be used to imperatively attach editor related helper functions
    */
-  editorRef?: React.RefObject<EditorRefApi>;
+  editorRef?: React.RefObject<EditorRefApi | null>;
   /**
    * @description Entity ID, this will be used for file uploads and as the unique identifier for the entity
    */

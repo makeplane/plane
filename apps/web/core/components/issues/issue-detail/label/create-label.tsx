@@ -8,12 +8,13 @@ import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
-import { Loader } from "lucide-react";
+import { AddOutline, CloseOutline, LoadingOutline } from "@makeplane/propel/icons";
 import { Popover } from "@headlessui/react";
-import { PlusIcon, CloseIcon } from "@plane/propel/icons";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { IIssueLabel } from "@plane/types";
 // hooks
-import { Input } from "@plane/ui";
+
 // ui
 // types
 import type { TLabelOperations } from "./root";
@@ -86,7 +87,7 @@ export function LabelCreate(props: ILabelCreate) {
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
-          {isCreateToggle ? <CloseIcon className="h-2.5 w-2.5" /> : <PlusIcon className="h-2.5 w-2.5" />}
+          {isCreateToggle ? <CloseOutline className="h-2.5 w-2.5" /> : <AddOutline className="h-2.5 w-2.5" />}
         </div>
         <div className="flex-shrink-0">{isCreateToggle ? "Cancel" : "New"}</div>
       </div>
@@ -134,18 +135,21 @@ export function LabelCreate(props: ILabelCreate) {
               required: "This is required",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                value={value ?? ""}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.name)}
-                placeholder="Title"
-                className="w-full px-1.5 py-1 text-11"
-                disabled={isSubmitting}
-              />
+              <Field name="name" invalid={Boolean(errors.name)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={value ?? ""}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder="Title"
+                    disabled={isSubmitting}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           <button
@@ -154,7 +158,7 @@ export function LabelCreate(props: ILabelCreate) {
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
-            <CloseIcon className="h-3.5 w-3.5 text-on-color" />
+            <CloseOutline className="h-3.5 w-3.5 text-on-color" />
           </button>
           <button
             type="submit"
@@ -162,9 +166,9 @@ export function LabelCreate(props: ILabelCreate) {
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <Loader className="spin h-3.5 w-3.5 text-on-color" />
+              <LoadingOutline className="spin h-3.5 w-3.5 text-on-color" />
             ) : (
-              <PlusIcon className="h-3.5 w-3.5 text-on-color" />
+              <AddOutline className="h-3.5 w-3.5 text-on-color" />
             )}
           </button>
         </form>

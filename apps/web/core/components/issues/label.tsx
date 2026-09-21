@@ -6,7 +6,7 @@
 
 import React from "react";
 // components
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 type Props = {
   labelDetails: any[];
@@ -25,7 +25,7 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
                 key={label.id}
                 className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11"
               >
-                <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name} isMobile={isMobile}>
+                <Tooltip label={`Label: ${label.name}`} layout="stacked" disabled={isMobile}>
                   <div className="flex items-center gap-1.5 text-secondary">
                     <span
                       className="h-2 w-2 flex-shrink-0 rounded-full"
@@ -42,10 +42,9 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
         ) : (
           <div className="shadow-sm flex flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
             <Tooltip
-              position="top"
-              tooltipHeading="Labels"
-              tooltipContent={labelDetails.map((l) => l.name).join(", ")}
-              isMobile={isMobile}
+              label={`Labels: ${labelDetails.map((l) => l.name).join(", ")}`}
+              layout="stacked"
+              disabled={isMobile}
             >
               <div className="flex items-center gap-1.5 text-secondary">
                 <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />

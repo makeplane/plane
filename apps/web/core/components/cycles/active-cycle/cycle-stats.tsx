@@ -8,18 +8,19 @@ import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { CalendarCheck } from "lucide-react";
+import { CompletedAtOutline } from "@makeplane/propel/icons";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Loader, Avatar } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // assets
 import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
@@ -173,11 +174,11 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
+            className="vertical-scrollbar scrollbar-sm flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             <div
               ref={issuesContainerRef}
-              className="vertical-scrollbar flex scrollbar-sm h-full w-full flex-col gap-1 overflow-y-auto"
+              className="vertical-scrollbar scrollbar-sm flex h-full w-full flex-col gap-1 overflow-y-auto"
             >
               {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
                 cycleIssueDetails.issueCount > 0 ? (
@@ -207,7 +208,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         >
                           <div className="flex w-full min-w-24 flex-grow items-center gap-1.5 truncate">
                             <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
-                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip label={`Title: ${issue.name}`} layout="stacked" align="start">
                               <span className="truncate text-13 text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
@@ -223,12 +224,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                               showTooltip
                             />
                             {issue.target_date && (
-                              <Tooltip
-                                tooltipHeading="Target Date"
-                                tooltipContent={renderFormattedDate(issue.target_date)}
-                              >
+                              <Tooltip label={`Target Date: ${renderFormattedDate(issue.target_date) ?? ""}`}>
                                 <div className="flex h-full cursor-pointer items-center gap-1.5 truncate rounded-sm bg-layer-1 px-2 py-0.5 text-11 group-hover:bg-surface-1">
-                                  <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                                  <CompletedAtOutline className="h-3 w-3 flex-shrink-0" />
                                   <span className="truncate text-11">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>
@@ -264,7 +262,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
+            className="vertical-scrollbar scrollbar-sm flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -276,8 +274,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         title={
                           <div className="flex items-center gap-2">
                             <Avatar
-                              name={assignee?.display_name ?? undefined}
+                              alt={assignee?.display_name ?? undefined}
+                              fallback={assignee?.display_name?.[0]?.toUpperCase()}
                               src={getFileURL(assignee?.avatar_url ?? "")}
+                              size="xs"
                             />
 
                             <span>{assignee.display_name}</span>
@@ -326,7 +326,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="vertical-scrollbar flex scrollbar-sm h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
+            className="vertical-scrollbar scrollbar-sm flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (

@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { HelpCircle } from "lucide-react";
+import { HelpOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "./root";
 
 const meta = {
@@ -72,7 +72,7 @@ export const WithIcon: Story = {
     tooltipContent: "Click here for help",
     children: (
       <button className="hover:bg-gray-100 rounded-full p-2">
-        <HelpCircle className="text-gray-600 h-5 w-5" />
+        <HelpOutline className="text-gray-600 h-5 w-5" />
       </button>
     ),
   },
@@ -295,7 +295,7 @@ export const InFormField: Story = {
             tooltipContent="Enter a valid email address that you have access to. We'll send a verification link."
             position="right"
           >
-            <HelpCircle className="text-gray-400 h-4 w-4 cursor-help" />
+            <HelpOutline className="text-gray-400 h-4 w-4 cursor-help" />
           </Tooltip>
         </label>
         <input

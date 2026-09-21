@@ -6,8 +6,9 @@
 
 import { observer } from "mobx-react";
 // plane types
-import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { WorkItemsOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // plane ui
@@ -23,7 +24,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 
 type BlockProps = {
   activity: TActivityEntityData;
-  ref: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
   workspaceSlug: string;
 };
 export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
@@ -82,7 +83,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
           ) : (
             <div className="flex items-center justify-center gap-2">
               <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
-                <WorkItemsIcon className="size-4 text-tertiary" />
+                <WorkItemsOutline className="size-4 text-tertiary" />
               </div>
               <div className="text-13 font-medium whitespace-nowrap text-placeholder">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
@@ -98,7 +99,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       quickActionElement={
         <div className="flex gap-4">
-          <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
+          <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
             <div>
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
@@ -108,7 +109,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               />
             </div>
           </Tooltip>
-          <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>
+          <Tooltip label={`Priority: ${issueDetails?.priority ?? "Priority"}`}>
             <div>
               <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
             </div>

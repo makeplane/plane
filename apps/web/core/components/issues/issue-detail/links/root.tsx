@@ -6,7 +6,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueLink } from "@plane/types";
@@ -132,7 +132,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
               onClick={() => toggleIssueLinkModal(true)}
               disabled={disabled}
             >
-              <PlusIcon className="h-4 w-4" />
+              <AddOutline className="h-4 w-4" />
             </button>
           )}
         </div>

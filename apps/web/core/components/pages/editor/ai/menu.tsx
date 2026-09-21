@@ -5,13 +5,17 @@
  */
 
 import React, { useEffect, useRef, useState } from "react";
-import type { LucideIcon } from "lucide-react";
-import { CornerDownRight, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
+import {
+  AiStar1Outline,
+  ChevronRightOutline,
+  CornerRightDownOutline,
+  RefreshOutline,
+  WarningTriangleOutline,
+} from "@makeplane/propel/icons";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // components
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -32,13 +36,13 @@ type Props = {
 };
 
 const MENU_ITEMS: {
-  icon: LucideIcon;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   key: AI_EDITOR_TASKS;
   label: string;
 }[] = [
   {
     key: AI_EDITOR_TASKS.ASK_ANYTHING,
-    icon: Sparkles,
+    icon: AiStar1Outline,
     label: "Ask Pi",
   },
 ];
@@ -179,7 +183,7 @@ export function EditorAIMenu(props: Props) {
                   <item.icon className="size-3 flex-shrink-0" />
                   {item.label}
                 </span>
-                <ChevronRightIcon
+                <ChevronRightOutline
                   className={cn("pointer-events-none size-3 flex-shrink-0 opacity-0 transition-opacity", {
                     "pointer-events-auto opacity-100": isActiveTask,
                   })}
@@ -210,7 +214,7 @@ export function EditorAIMenu(props: Props) {
                 })}
               >
                 <span className="grid size-7 flex-shrink-0 place-items-center rounded-full border border-subtle text-secondary">
-                  <Sparkles className="size-3" />
+                  <AiStar1Outline className="size-3" />
                 </span>
                 {response ? (
                   <div>
@@ -234,16 +238,16 @@ export function EditorAIMenu(props: Props) {
                       >
                         Replace selection
                       </button>
-                      <Tooltip tooltipContent="Add to next line">
+                      <Tooltip label="Add to next line">
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
                           onClick={() => handleInsertText(true)}
                         >
-                          <CornerDownRight className="size-4 text-tertiary" />
+                          <CornerRightDownOutline className="size-4 text-tertiary" />
                         </button>
                       </Tooltip>
-                      <Tooltip tooltipContent="Re-generate response">
+                      <Tooltip label="Re-generate response">
                         <button
                           type="button"
                           className="grid size-6 flex-shrink-0 place-items-center rounded-sm outline-none hover:bg-layer-1"
@@ -254,7 +258,7 @@ export function EditorAIMenu(props: Props) {
                           }}
                           disabled={isRegenerating}
                         >
-                          <RefreshCcw
+                          <RefreshOutline
                             className={cn("size-4 text-tertiary", {
                               "animate-spin": isRegenerating,
                             })}
@@ -297,7 +301,7 @@ export function EditorAIMenu(props: Props) {
       {activeTask && (
         <div className="flex items-center gap-2 rounded-b-md border-t border-subtle bg-surface-2 px-4 py-2 text-tertiary">
           <span className="grid size-4 flex-shrink-0 place-items-center">
-            <TriangleAlert className="size-3" />
+            <WarningTriangleOutline className="size-3" />
           </span>
           <p className="flex-shrink-0 text-11 font-medium">
             By using this feature, you consent to sharing the message with a 3rd party service.

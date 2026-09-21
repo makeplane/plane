@@ -7,11 +7,10 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ArrowRight } from "lucide-react";
 // Plane Imports
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -127,7 +126,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
             className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover"
             onClick={() => handleClose()}
           >
-            <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
+            <ChevronRightOutline className="size-4 text-secondary" />
           </button>
         </div>
       </div>
@@ -176,13 +175,9 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
                       to: t("project_cycles.end_date"),
                     }}
                     customTooltipHeading={t("project_cycles.in_your_timezone")}
-                    customTooltipContent={
-                      <span className="flex gap-1">
-                        {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
-                        <ArrowRight className="my-auto h-3 w-3 flex-shrink-0" />
-                        {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
-                      </span>
-                    }
+                    customTooltipContent={`${renderFormattedDateInUserTimezone(
+                      cycleDetails.start_date ?? ""
+                    )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
                     mergeDates
                     showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date} // show tooltip only if both start and end date are present
                     required={cycleDetails.status !== "draft"}

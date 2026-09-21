@@ -8,7 +8,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { CloseIcon, PlaneLockup } from "@plane/propel/icons";
+import { PlaneLockup } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // assets
 import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
 import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
@@ -136,7 +137,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
             className="fixed top-[19%] right-[9%] z-10 translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border border-strong bg-surface-1 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
             onClick={onComplete}
           >
-            <CloseIcon className="border-strong- h-3 w-3 text-primary" />
+            <CloseOutline className="border-strong- h-3 w-3 text-primary" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">

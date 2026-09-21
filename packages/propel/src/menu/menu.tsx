@@ -6,8 +6,7 @@
 
 import * as React from "react";
 import { Menu as BaseMenu } from "@base-ui-components/react/menu";
-import { MoreHorizontal } from "lucide-react";
-import { ChevronDownIcon, ChevronRightIcon } from "../icons";
+import { ChevronDownOutline, ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { cn } from "../utils/classname";
 import type { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
@@ -31,7 +30,7 @@ function SubMenu(props: TSubMenuProps) {
     <BaseMenu.SubmenuRoot disabled={disabled}>
       <BaseMenu.SubmenuTrigger className={""}>
         <span className="flex-1">{trigger}</span>
-        <ChevronRightIcon />
+        <ChevronRightOutline />
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal>
         <BaseMenu.Positioner className={""} alignOffset={-4} sideOffset={-4}>
@@ -154,7 +153,7 @@ function Menu(props: TMenuProps) {
               tabIndex={customButtonTabIndex}
               aria-label={ariaLabel}
             >
-              <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
+              <MoreHorizontalOutline className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
             </BaseMenu.Trigger>
           ) : (
             <BaseMenu.Trigger
@@ -170,7 +169,7 @@ function Menu(props: TMenuProps) {
               aria-label={ariaLabel}
             >
               {label}
-              {!noChevron && <ChevronDownIcon className="h-3.5 w-3.5" />}
+              {!noChevron && <ChevronDownOutline className="h-3.5 w-3.5" />}
             </BaseMenu.Trigger>
           )}
         </>

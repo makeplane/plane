@@ -8,10 +8,9 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import type { Control, UseFormSetValue } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { SlidersHorizontal } from "lucide-react";
+import { CalendarOutline, PreferencesOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
-import { CalendarLayoutIcon } from "@plane/propel/icons";
 import type { IAnalyticsParams } from "@plane/types";
 import { ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -70,7 +69,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               }}
               label={
                 <div className="flex items-center gap-2">
-                  <CalendarLayoutIcon className="h-3 w-3" />
+                  <CalendarOutline className="h-3 w-3" />
                   <span className={cn("text-secondary", value && "text-primary")}>
                     {xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}
                   </span>
@@ -91,7 +90,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               }}
               label={
                 <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="h-3 w-3" />
+                  <PreferencesOutline className="h-3 w-3" />
                   <span className={cn("text-secondary", value && "text-primary")}>
                     {groupByOptions.find((v) => v.value === value)?.label || "Add Property"}
                   </span>

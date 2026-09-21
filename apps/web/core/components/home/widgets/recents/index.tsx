@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { PageIcon, ProjectIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { PagesOutline, ProjectsOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import type { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // plane ui
 // components
@@ -27,9 +27,9 @@ const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
 const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode; i18n_key: string }[] = [
   { name: "all item", i18n_key: "home.recents.filters.all" },
-  { name: "issue", icon: <WorkItemsIcon className="h-4 w-4" />, i18n_key: "home.recents.filters.issues" },
-  { name: "page", icon: <PageIcon height={16} width={16} />, i18n_key: "home.recents.filters.pages" },
-  { name: "project", icon: <ProjectIcon height={16} width={16} />, i18n_key: "home.recents.filters.projects" },
+  { name: "issue", icon: <WorkItemsOutline className="h-4 w-4" />, i18n_key: "home.recents.filters.issues" },
+  { name: "page", icon: <PagesOutline height={16} width={16} />, i18n_key: "home.recents.filters.pages" },
+  { name: "project", icon: <ProjectsOutline height={16} width={16} />, i18n_key: "home.recents.filters.projects" },
 ];
 
 type TRecentWidgetProps = THomeWidgetProps & {

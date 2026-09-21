@@ -6,8 +6,7 @@
 
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
-import { AlertTriangle, CheckIcon, InfoIcon, XIcon } from "lucide-react";
-import { CloseIcon } from "../icons/actions/close-icon";
+import { CloseOutline, InfoOutline, TickOutline, WarningTriangleOutline } from "@makeplane/propel/icons";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
 import { cn } from "../utils/classname";
@@ -69,25 +68,25 @@ export function Toast(props: ToastProps) {
 
 const TOAST_DATA = {
   [TOAST_TYPE.SUCCESS]: {
-    icon: <CheckIcon width={12} height={12} className="text-on-color" />,
+    icon: <TickOutline width={12} height={12} className="text-on-color" />,
     iconBgClassName: "bg-success-primary",
     backgroundColorClassName: "!bg-surface-1",
     borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.ERROR]: {
-    icon: <XIcon width={12} height={12} className="text-on-color" />,
+    icon: <CloseOutline width={12} height={12} className="text-on-color" />,
     iconBgClassName: "bg-danger-primary",
     backgroundColorClassName: "bg-surface-1",
     borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.WARNING]: {
-    icon: <AlertTriangle width={12} height={12} className="text-on-color" />,
+    icon: <WarningTriangleOutline width={12} height={12} className="text-on-color" />,
     iconBgClassName: "bg-warning-primary",
     backgroundColorClassName: "bg-surface-1",
     borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.INFO]: {
-    icon: <InfoIcon width={12} height={12} className="text-on-color" />,
+    icon: <InfoOutline width={12} height={12} className="text-on-color" />,
     iconBgClassName: "bg-accent-primary",
     backgroundColorClassName: "bg-surface-1",
     borderColorClassName: "border-subtle",
@@ -164,7 +163,7 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       }}
     >
       <BaseToast.Close className="absolute top-3 right-3 cursor-pointer text-icon-secondary hover:text-icon-tertiary">
-        <CloseIcon strokeWidth={1.5} width={16} height={16} />
+        <CloseOutline width={16} height={16} />
       </BaseToast.Close>
       <div className="flex w-full items-start gap-2 p-4">
         <div className="py-1">
@@ -218,7 +217,7 @@ export function ToastStatic({ type, title, message, actionItems, theme = "light"
         )}
       >
         <div className="absolute top-1 right-1 cursor-default text-icon-tertiary">
-          <CloseIcon strokeWidth={1.5} width={14} height={14} />
+          <CloseOutline width={14} height={14} />
         </div>
         <div className="flex w-full items-start gap-3 p-4">
           <div className="py-1">

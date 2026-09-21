@@ -7,7 +7,7 @@
 // plane imports
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -33,27 +33,31 @@ export function LayoutSelection(props: Props) {
 
   return (
     <div className="flex items-center gap-1 rounded-md bg-layer-3 p-1">
-      {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
-        <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
-          <button
-            type="button"
-            className={cn(
-              "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
-              {
-                "bg-layer-transparent-active hover:bg-layer-transparent-active": selectedLayout === layout.key,
-              }
-            )}
-            onClick={() => handleOnChange(layout.key)}
-          >
-            <IssueLayoutIcon
-              layout={layout.key}
-              size={14}
-              strokeWidth={2}
-              className={`size-3.5 ${selectedLayout == layout.key ? "text-primary" : "text-secondary"}`}
-            />
-          </button>
-        </Tooltip>
-      ))}
+      {ISSUE_LAYOUTS.map((layout) => {
+        if (!layouts.includes(layout.key)) return null;
+        return (
+          <Tooltip key={layout.key} label={t(layout.i18n_title)} disabled={isMobile}>
+            <button
+              type="button"
+              aria-label={t(layout.i18n_title)}
+              className={cn(
+                "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
+                {
+                  "bg-layer-transparent-active hover:bg-layer-transparent-active": selectedLayout === layout.key,
+                }
+              )}
+              onClick={() => handleOnChange(layout.key)}
+            >
+              <IssueLayoutIcon
+                layout={layout.key}
+                size={14}
+                strokeWidth={2}
+                className={`size-3.5 ${selectedLayout == layout.key ? "text-primary" : "text-secondary"}`}
+              />
+            </button>
+          </Tooltip>
+        );
+      })}
     </div>
   );
 }

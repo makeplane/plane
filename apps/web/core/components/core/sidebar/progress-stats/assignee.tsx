@@ -6,8 +6,8 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
-import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // assets
 import emptyMembers from "@/app/assets/empty-state/empty_members.svg?url";
@@ -43,7 +43,12 @@ export const AssigneeStatComponent = observer(function AssigneeStatComponent(pro
                 key={assignee?.id}
                 title={
                   <div className="flex items-center gap-2">
-                    <Avatar name={assignee?.title ?? undefined} src={getFileURL(assignee?.avatar_url ?? "")} />
+                    <Avatar
+                      alt={assignee?.title ?? undefined}
+                      fallback={assignee?.title?.[0]?.toUpperCase()}
+                      src={getFileURL(assignee?.avatar_url ?? "")}
+                      size="xs"
+                    />
                     <span>{assignee?.title ?? ""}</span>
                   </div>
                 }

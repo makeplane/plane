@@ -32,7 +32,7 @@ type TInboxIssueDescription = {
   workspaceId: string;
   data: Partial<TIssue>;
   handleData: (issueKey: keyof Partial<TIssue>, issueValue: Partial<TIssue>[keyof Partial<TIssue>]) => void;
-  editorRef: RefObject<EditorRefApi>;
+  editorRef: RefObject<EditorRefApi | null>;
   onEnterKeyPress?: (e?: any) => void;
   onAssetUpload?: (assetId: string) => void;
 };

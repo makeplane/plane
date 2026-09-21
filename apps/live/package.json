@@ -38,6 +38,7 @@
     "@plane/decorators": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/logger": "workspace:*",
+    "@plane/services": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
     "@react-pdf/renderer": "catalog:",

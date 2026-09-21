@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "İş öğesi arşivlenemedi. Lütfen tekrar deneyin."
-      }
+      },
+      "banner_message": "Bu iş öğesi arşivlendi. Geri yüklemek için Arşivler bölümüne gidin.",
+      "go_to_archives": "Arşivlere git"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "İş öğeleri güncellenemiyor",
         "message": "Bazı iş öğeleri için durum değişikliğine izin verilmiyor. Durum değişikliğine izin verildiğinden emin olun."
       }
+    },
+    "upgrade_banner": {
+      "message": "Birden fazla iş öğesinin durumunu, önceliğini ve daha fazlasını tek seferde değiştirin. İşlem başına ortalama üç dakika kazanın.",
+      "cta": "One'a yükseltin"
     }
   },
   "recurring_work_items": {

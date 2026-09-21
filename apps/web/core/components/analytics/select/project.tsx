@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane package imports
 import { getButtonStyling } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon, ProjectIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, ProjectsOutline } from "@makeplane/propel/icons";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -35,7 +35,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
           {projectDetails?.logo_props ? (
             <Logo logo={projectDetails?.logo_props} size={16} />
           ) : (
-            <ProjectIcon className="h-4 w-4" />
+            <ProjectsOutline className="h-4 w-4" />
           )}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
@@ -51,7 +51,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
       className="border-none p-0"
       customButton={
         <div className={cn(getButtonStyling("secondary", "lg"), "gap-2")}>
-          <ProjectIcon className="h-4 w-4" />
+          <ProjectsOutline className="h-4 w-4" />
           {value && value.length > 3
             ? `3+ projects`
             : value && value.length > 0
@@ -60,7 +60,7 @@ export const ProjectSelect = observer(function ProjectSelect(props: Props) {
                   .map((p) => getProjectById(p)?.name)
                   .join(", ")
               : "All projects"}
-          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+          <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
         </div>
       }
       customButtonClassName="border-none p-0 bg-transparent hover:bg-transparent w-auto h-auto"

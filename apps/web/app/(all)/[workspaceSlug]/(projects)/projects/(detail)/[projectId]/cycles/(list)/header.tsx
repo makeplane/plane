@@ -7,10 +7,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CycleIcon } from "@plane/propel/icons";
+import { CyclesOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -49,7 +49,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
               <BreadcrumbLink
                 label="Cycles"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
-                icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
+                icon={<CyclesOutline className="h-4 w-4 text-tertiary" />}
                 isLast
               />
             }
@@ -63,7 +63,6 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <Button
             variant="primary"
             size="lg"
-            data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateCycleModal(true);
             }}

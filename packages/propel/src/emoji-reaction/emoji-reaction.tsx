@@ -7,7 +7,7 @@
 import * as React from "react";
 import { AnimatedCounter } from "../animated-counter";
 import { stringToEmoji } from "../emoji-icon-picker";
-import { AddReactionIcon } from "../icons";
+import { ReactionOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 import { IconButton } from "../icon-button";
@@ -110,7 +110,7 @@ const EmojiReactionButton = React.forwardRef(function EmojiReactionButton(
     <Tooltip tooltipContent="Add reaction">
       <IconButton
         ref={ref}
-        icon={AddReactionIcon}
+        icon={ReactionOutline}
         variant="ghost"
         size="sm"
         onClick={onAddReaction}

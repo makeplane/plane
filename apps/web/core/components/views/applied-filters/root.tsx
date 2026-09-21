@@ -5,10 +5,10 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { PillButton } from "@makeplane/propel/components/pill";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
-import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // components
 import { AppliedDateFilters } from "@/components/common/applied-filters/date";
@@ -45,7 +45,10 @@ export function ViewAppliedFiltersList(props: Props) {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <Tag key={filterKey}>
+          <div
+            key={filterKey}
+            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
+          >
             <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {VIEW_ACCESS_FILTERS.includes(filterKey) && (
               <AppliedAccessFilters
@@ -74,19 +77,21 @@ export function ViewAppliedFiltersList(props: Props) {
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemoveFilter(filterKey, null)}
               >
-                <CloseIcon height={12} width={12} strokeWidth={2} />
+                <CloseOutline height={12} width={12} />
               </button>
             )}
-          </Tag>
+          </div>
         );
       })}
       {isEditingAllowed && (
-        <button type="button" onClick={handleClearAllFilters}>
-          <Tag>
-            {t("common.clear_all")}
-            <CloseIcon height={12} width={12} strokeWidth={2} />
-          </Tag>
-        </button>
+        <PillButton
+          type="button"
+          size="md"
+          variant="outline"
+          label={t("common.clear_all")}
+          endIcon={<CloseOutline height={12} width={12} />}
+          onClick={handleClearAllFilters}
+        />
       )}
     </div>
   );

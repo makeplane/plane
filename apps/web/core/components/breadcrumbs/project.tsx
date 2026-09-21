@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
+import { ProjectsOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
@@ -46,7 +46,7 @@ export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TPro
           <SwitcherLabel
             name={project?.name}
             logo_props={project?.logo_props}
-            LabelIcon={ProjectIcon}
+            LabelIcon={ProjectsOutline}
             type="material"
           />
         ),

@@ -8,7 +8,7 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { UploadCloud } from "lucide-react";
+import { UploadOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
@@ -135,7 +135,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
               <div className="absolute top-0 left-0 z-30 flex h-full w-full items-center justify-center bg-surface-2/75">
                 <div className="flex items-center justify-center rounded-md bg-surface-1 p-1">
                   <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-strong px-5 py-6">
-                    <UploadCloud className="size-7" />
+                    <UploadOutline className="size-7" />
                     <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>

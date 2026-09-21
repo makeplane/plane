@@ -50,7 +50,7 @@ const CustomLegend = React.forwardRef(function CustomLegend(
   return (
     <div
       ref={ref}
-      className={cn("vertical-scrollbar flex scrollbar-sm items-center overflow-scroll px-4", {
+      className={cn("vertical-scrollbar scrollbar-sm flex items-center overflow-scroll px-4", {
         "max-h-full flex-col items-start py-4": layout === "vertical",
       })}
     >

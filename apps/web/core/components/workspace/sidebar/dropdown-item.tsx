@@ -7,12 +7,11 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Settings, UserPlus } from "lucide-react";
+import { SettingsOutline, TickOutline, UserPlusOutline } from "@makeplane/propel/icons";
 import { Menu } from "@headlessui/react";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
 
@@ -80,7 +79,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
           </div>
           {workspace.id === activeWorkspace?.id ? (
             <span className="flex-shrink-0 p-1">
-              <CheckIcon className="h-5 w-5 text-primary" />
+              <TickOutline className="h-5 w-5 text-primary" />
             </span>
           ) : null}
         </div>
@@ -96,7 +95,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                   }}
                   className="flex gap-1.5 rounded-md border border-strong bg-layer-2 px-2.5 py-1.5 text-secondary transition-colors hover:border-strong hover:text-secondary hover:shadow-raised-100"
                 >
-                  <Settings className="my-auto h-4 w-4 flex-shrink-0" />
+                  <SettingsOutline className="my-auto h-4 w-4 flex-shrink-0" />
                   <span className="my-auto text-13 font-medium whitespace-nowrap">{t("settings")}</span>
                 </Link>
               )}
@@ -109,7 +108,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                   }}
                   className="flex gap-1.5 rounded-md border border-strong bg-layer-2 px-2.5 py-1.5 text-secondary transition-colors hover:border-strong hover:text-secondary hover:shadow-raised-100"
                 >
-                  <UserPlus className="my-auto h-4 w-4 flex-shrink-0" />
+                  <UserPlusOutline className="my-auto h-4 w-4 flex-shrink-0" />
                   <span className="my-auto text-13 font-medium whitespace-nowrap">
                     {t("project_settings.members.invite_members.title")}
                   </span>

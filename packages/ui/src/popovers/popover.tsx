@@ -5,7 +5,7 @@
  */
 
 import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
-import { EllipsisVertical } from "lucide-react";
+import { MoreVerticalOutline } from "@makeplane/propel/icons";
 import type { Ref } from "react";
 import React, { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
@@ -29,7 +29,8 @@ export function Popover(props: TPopover) {
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // Headless UI v2 types Panel's ref as Ref<HTMLElement> rather than the concrete tag.
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
 
   // react-popper derived values
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -58,7 +59,7 @@ export function Popover(props: TPopover) {
           )}
           disabled={disabled}
         >
-          {button ? button : <EllipsisVertical className="h-3 w-3" />}
+          {button ? button : <MoreVerticalOutline className="h-3 w-3" />}
         </HeadlessReactPopover.Button>
       </div>
 

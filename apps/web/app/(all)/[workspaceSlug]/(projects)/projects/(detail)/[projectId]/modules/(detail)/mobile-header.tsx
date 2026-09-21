@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { BoardOutline, CalendarOutline, ChevronDownOutline, ListOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -24,9 +24,9 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", i18n_title: "issue.layouts.list", icon: ListLayoutIcon },
-  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: BoardLayoutIcon },
-  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: CalendarLayoutIcon },
+  { key: "list", i18n_title: "issue.layouts.list", icon: ListOutline },
+  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: BoardOutline },
+  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: CalendarOutline },
 ];
 
 export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHeader() {
@@ -107,7 +107,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
             menuButton={
               <span className="flex items-center text-13 text-secondary">
                 Display
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >
