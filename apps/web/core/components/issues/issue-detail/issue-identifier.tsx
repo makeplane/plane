@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueIdentifierProps } from "@plane/types";
+import { shouldDisplayWorkItemId } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
@@ -25,9 +26,8 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
   const issue = isUsingStoreData ? getIssueById(props.issueId) : null;
   const projectIdentifier = isUsingStoreData ? getProjectIdentifierById(projectId) : props.projectIdentifier;
   const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
-  const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
 
-  if (!shouldRenderIssueID) return null;
+  if (!shouldDisplayWorkItemId(displayProperties)) return null;
 
   return (
     <div className="flex shrink-0 items-center space-x-2">
