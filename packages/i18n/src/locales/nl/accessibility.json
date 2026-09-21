@@ -1,0 +1,34 @@
+{
+  "aria_labels": {
+    "projects_sidebar": {
+      "workspace_logo": "Logo van werkruimte",
+      "open_workspace_switcher": "Werkruimtewisselaar openen",
+      "open_user_menu": "Gebruikersmenu openen",
+      "open_command_palette": "Opdrachtenpalet openen",
+      "open_extended_sidebar": "Uitgebreide zijbalk openen",
+      "close_extended_sidebar": "Uitgebreide zijbalk sluiten",
+      "create_favorites_folder": "Favorietenmap aanmaken",
+      "open_folder": "Map openen",
+      "close_folder": "Map sluiten",
+      "open_favorites_menu": "Favorietenmenu openen",
+      "close_favorites_menu": "Favorietenmenu sluiten",
+      "enter_folder_name": "Mapnaam invoeren",
+      "create_new_project": "Nieuw project aanmaken",
+      "open_projects_menu": "Projectenmenu openen",
+      "close_projects_menu": "Projectenmenu sluiten",
+      "toggle_quick_actions_menu": "Menu met snelle acties in-/uitschakelen",
+      "open_project_menu": "Projectmenu openen",
+      "close_project_menu": "Projectmenu sluiten",
+      "collapse_sidebar": "Zijbalk inklappen",
+      "expand_sidebar": "Zijbalk uitklappen",
+      "edition_badge": "Venster met betaalde abonnementen openen"
+    },
+    "auth_forms": {
+      "clear_email": "E-mail wissen",
+      "show_password": "Wachtwoord tonen",
+      "hide_password": "Wachtwoord verbergen",
+      "close_alert": "Melding sluiten",
+      "close_popover": "Pop-over sluiten"
+    }
+  }
+}

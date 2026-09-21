@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Nieuwe werkitems toestaan",
+      "work_item_creation_disable_tooltip": "Het aanmaken van werkitems is uitgeschakeld voor deze status",
+      "default_state": "Bij de standaardstatus kunnen alle leden nieuwe werkitems aanmaken. Dit kan niet worden gewijzigd",
+      "state_change_count": "{count, plural, one {1 toegestane statuswijziging} other {{count} toegestane statuswijzigingen}}",
+      "movers_count": "{count, plural, one {1 vermelde reviewer} other {{count} vermelde reviewers}}",
+      "state_changes": {
+        "label": {
+          "default": "Toegestane statuswijziging toevoegen",
+          "loading": "Toegestane statuswijziging toevoegen"
+        },
+        "move_to": "Status wijzigen naar",
+        "movers": {
+          "label": "Bij review door",
+          "tooltip": "Reviewers zijn mensen die werkitems van de ene status naar de andere mogen verplaatsen.",
+          "add": "Reviewers toevoegen"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Je kunt dit werkitem hier niet naartoe verplaatsen."
+    },
+    "workflow_enabled": {
+      "label": "Statuswijziging"
+    },
+    "workflow_tree": {
+      "label": "Voor werkitems in",
+      "state_change_label": "kan het verplaatst worden naar"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Beheer de chaos van wijzigingen en reviews met Workflows.",
+        "description": "Stel met Workflows in Plane regels in voor waar je werk naartoe gaat, door wie en wanneer."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Wijzigingsgeschiedenis bekijken",
+      "reset_workflow": "Workflow resetten"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Weet je zeker dat je deze workflow wilt resetten?",
+        "description": "Als je deze workflow reset, worden al je statuswijzigingsregels verwijderd en moet je ze opnieuw aanmaken om ze voor dit project te laten werken."
+      },
+      "delete_state_change": {
+        "title": "Weet je zeker dat je deze statuswijzigingsregel wilt verwijderen?",
+        "description": "Na verwijdering kun je deze wijziging niet ongedaan maken en moet je de regel opnieuw instellen als je wilt dat die voor dit project blijft werken."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "Workflow {action}",
+        "success": {
+          "title": "Gelukt",
+          "message": "Workflow succesvol {action}"
+        },
+        "error": {
+          "title": "Fout",
+          "message": "Workflow kon niet worden {action}. Probeer het opnieuw."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Gelukt",
+          "message": "Workflow succesvol gereset"
+        },
+        "error": {
+          "title": "Fout bij het resetten van de workflow",
+          "message": "Workflow kon niet worden gereset. Probeer het opnieuw."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Fout bij het toevoegen van de statuswijzigingsregel",
+          "message": "Statuswijzigingsregel kon niet worden toegevoegd. Probeer het opnieuw."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Fout bij het wijzigen van de statuswijzigingsregel",
+          "message": "Statuswijzigingsregel kon niet worden gewijzigd. Probeer het opnieuw."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Fout bij het verwijderen van de statuswijzigingsregel",
+          "message": "Statuswijzigingsregel kon niet worden verwijderd. Probeer het opnieuw."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Fout bij het wijzigen van de reviewers van de statuswijzigingsregel",
+          "message": "Reviewers van de statuswijzigingsregel konden niet worden gewijzigd. Probeer het opnieuw."
+        }
+      }
+    }
+  }
+}

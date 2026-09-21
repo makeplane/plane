@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "In behandeling",
+        "description": "In behandeling"
+      },
+      "declined": {
+        "title": "Afgewezen",
+        "description": "Afgewezen"
+      },
+      "snoozed": {
+        "title": "Uitgesteld",
+        "description": "Nog {days, plural, one{# dag} other{# dagen}} te gaan"
+      },
+      "accepted": {
+        "title": "Geaccepteerd",
+        "description": "Geaccepteerd"
+      },
+      "duplicate": {
+        "title": "Duplicaat",
+        "description": "Duplicaat"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "Werkitem afwijzen",
+        "content": "Weet je zeker dat je werkitem {value} wilt afwijzen?"
+      },
+      "delete": {
+        "title": "Werkitem verwijderen",
+        "content": "Weet je zeker dat je werkitem {value} wilt verwijderen?",
+        "success": "Werkitem succesvol verwijderd"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Alleen projectbeheerders kunnen werkitems uitstellen of het uitstel opheffen",
+      "accept_permission": "Alleen projectbeheerders kunnen werkitems accepteren",
+      "decline_permission": "Alleen projectbeheerders kunnen werkitems weigeren"
+    },
+    "actions": {
+      "accept": "Accepteren",
+      "decline": "Afwijzen",
+      "snooze": "Uitstellen",
+      "unsnooze": "Uitstel opheffen",
+      "copy": "Koppeling naar werkitem kopiëren",
+      "delete": "Verwijderen",
+      "open": "Werkitem openen",
+      "mark_as_duplicate": "Als duplicaat markeren",
+      "move": "{value} verplaatsen naar projectwerkitems"
+    },
+    "source": {
+      "in-app": "in-app"
+    },
+    "order_by": {
+      "created_at": "Aangemaakt op",
+      "updated_at": "Bijgewerkt op",
+      "id": "ID"
+    },
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
+    "modal": {
+      "title": "Intake-werkitem aanmaken"
+    },
+    "tabs": {
+      "open": "Open",
+      "closed": "Gesloten"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Geen open werkitems",
+        "description": "Vind hier open werkitems. Maak een nieuw werkitem aan."
+      },
+      "sidebar_closed_tab": {
+        "title": "Geen gesloten werkitems",
+        "description": "Alle werkitems, of ze nu geaccepteerd of afgewezen zijn, vind je hier."
+      },
+      "sidebar_filter": {
+        "title": "Geen overeenkomende werkitems",
+        "description": "Geen werkitem komt overeen met het filter dat is toegepast in de intake. Maak een nieuw werkitem aan."
+      },
+      "detail": {
+        "title": "Selecteer een werkitem om de details te bekijken."
+      }
+    }
+  }
+}
