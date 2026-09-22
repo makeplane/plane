@@ -251,6 +251,22 @@ export class IssueService extends APIService {
       });
   }
 
+  async bulkUpdateState(
+    workspaceSlug: string,
+    projectId: string,
+    issueIds: string[],
+    stateId: string
+  ): Promise<{ message: string; updated_count: number }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/bulk-update-state/`, {
+      issue_ids: issueIds,
+      state_id: stateId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async subIssues(
     workspaceSlug: string,
     projectId: string,

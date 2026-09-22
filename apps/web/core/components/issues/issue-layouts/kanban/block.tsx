@@ -30,7 +30,10 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 // local components
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
@@ -50,6 +53,7 @@ interface IssueBlockProps {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
+  selectionHelpers?: TSelectionHelper;
 }
 
 interface IssueDetailsBlockProps {
@@ -60,10 +64,24 @@ interface IssueDetailsBlockProps {
   quickActions: TRenderQuickActions;
   isReadOnly: boolean;
   isEpic?: boolean;
+  groupId: string;
+  canSelectIssue: boolean;
+  selectionHelpers?: TSelectionHelper;
 }
 
 const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
-  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
+  const {
+    cardRef,
+    issue,
+    updateIssue,
+    quickActions,
+    isReadOnly,
+    displayProperties,
+    isEpic = false,
+    groupId,
+    canSelectIssue,
+    selectionHelpers,
+  } = props;
   // refs
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -92,9 +110,21 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
+  const isIssueSelected = selectionHelpers?.getIsEntitySelected(issue.id) ?? false;
+
   return (
     <>
-      <div className="relative">
+      <div className="relative flex items-center gap-1">
+        {canSelectIssue && selectionHelpers && (
+          <div
+            className={cn(
+              "pointer-events-none flex-shrink-0 opacity-0 transition-opacity group-hover/kanban-block:pointer-events-auto group-hover/kanban-block:opacity-100",
+              { "pointer-events-auto opacity-100": isIssueSelected }
+            )}
+          >
+            <MultipleSelectEntityAction groupId={groupId} id={issue.id} selectionHelpers={selectionHelpers} />
+          </div>
+        )}
         {issue.project_id && (
           <IssueIdentifier
             issueId={issue.id}
@@ -154,6 +184,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
     scrollableContainerRef,
     shouldRenderByDefault,
     isEpic = false,
+    selectionHelpers,
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
@@ -177,6 +208,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
 
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
+  const canSelectIssue = canEditIssueProperties && !selectionHelpers?.isSelectionDisabled && !isEpic;
 
   const isDragAllowed = canDragIssuesInCurrentGrouping && !issue?.tempId && canEditIssueProperties;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
@@ -286,6 +318,9 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
               quickActions={quickActions}
               isReadOnly={!canEditIssueProperties}
               isEpic={isEpic}
+              groupId={groupId}
+              canSelectIssue={canSelectIssue}
+              selectionHelpers={selectionHelpers}
             />
           </RenderIfVisible>
         </ControlLink>

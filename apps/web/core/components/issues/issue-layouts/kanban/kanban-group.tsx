@@ -44,6 +44,7 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // local imports
 import { GroupDragOverlay } from "../group-drag-overlay";
 import type { TRenderQuickActions } from "../list/list-view-types";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import { KanbanIssueBlocksList } from "./blocks-list";
 
@@ -70,6 +71,7 @@ interface IKanbanGroup {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
   isEpic?: boolean;
+  selectionHelpers?: TSelectionHelper;
 }
 
 export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
@@ -94,6 +96,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     scrollableContainerRef,
     handleOnDrop,
     isEpic = false,
+    selectionHelpers,
   } = props;
   // i18n
   const { t } = useTranslation();
@@ -311,6 +314,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         canDropOverIssue={!canOverlayBeVisible}
         canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
         isEpic={isEpic}
+        selectionHelpers={selectionHelpers}
       />
 
       {shouldLoadMore &&

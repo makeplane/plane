@@ -124,6 +124,7 @@ from .issue.base import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueBulkUpdateStateEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
 )

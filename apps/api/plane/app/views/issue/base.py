@@ -59,6 +59,7 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     ProjectMember,
+    State,
     UserRecentVisit,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
@@ -1181,6 +1182,64 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
 
         return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
+
+
+class IssueBulkUpdateStateEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        issue_ids = request.data.get("issue_ids", [])
+        state_id = request.data.get("state_id")
+
+        if not issue_ids or not isinstance(issue_ids, list):
+            return Response(
+                {"message": "issue_ids is required and must be a non-empty list"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not state_id:
+            return Response(
+                {"message": "state_id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Ensure the target state belongs to the same project, guarding against
+        # cross-project state assignment.
+        if not State.objects.filter(id=state_id, project_id=project_id, workspace__slug=slug).exists():
+            return Response(
+                {"message": "Invalid state for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        epoch = int(timezone.now().timestamp())
+
+        # Fetch all relevant issues in a single query, silently ignoring any
+        # issue_ids that don't belong to this project/workspace.
+        issues = list(Issue.objects.filter(id__in=issue_ids, workspace__slug=slug, project_id=project_id))
+
+        issues_to_update = []
+        for issue in issues:
+            if str(issue.state_id) == str(state_id):
+                continue
+
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps({"state_id": str(state_id)}),
+                current_instance=json.dumps({"state_id": str(issue.state_id)}),
+                issue_id=str(issue.id),
+                actor_id=str(request.user.id),
+                project_id=str(project_id),
+                epoch=epoch,
+            )
+            issue.state_id = state_id
+            issues_to_update.append(issue)
+
+        if issues_to_update:
+            Issue.objects.bulk_update(issues_to_update, ["state"])
+
+        return Response(
+            {"message": "Issues updated successfully", "updated_count": len(issues_to_update)},
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueMetaEndpoint(BaseAPIView):
