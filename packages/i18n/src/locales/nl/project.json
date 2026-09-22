@@ -1,0 +1,418 @@
+{
+  "project_view": {
+    "sort_by": {
+      "created_at": "Aangemaakt op",
+      "updated_at": "Bijgewerkt op",
+      "name": "Naam"
+    }
+  },
+  "project_cycles": {
+    "add_cycle": "Cyclus toevoegen",
+    "more_details": "Meer details",
+    "cycle": "Cyclus",
+    "update_cycle": "Cyclus bijwerken",
+    "create_cycle": "Cyclus aanmaken",
+    "no_matching_cycles": "Geen overeenkomende cycli",
+    "remove_filters_to_see_all_cycles": "Verwijder de filters om alle cycli te zien",
+    "remove_search_criteria_to_see_all_cycles": "Verwijder de zoekcriteria om alle cycli te zien",
+    "only_completed_cycles_can_be_archived": "Alleen voltooide cycli kunnen worden gearchiveerd",
+    "start_date": "Startdatum",
+    "end_date": "Einddatum",
+    "in_your_timezone": "In jouw tijdzone",
+    "transfer_work_items": "{count} werkitems overzetten",
+    "transfer": {
+      "no_cycles_available": "Geen andere cycli beschikbaar om werkitems naartoe over te zetten."
+    },
+    "date_range": "Datumbereik",
+    "add_date": "Datum toevoegen",
+    "active_cycle": {
+      "label": "Actieve cyclus",
+      "progress": "Voortgang",
+      "chart": "Burndown-grafiek",
+      "priority_issue": "Prioriteitswerkitems",
+      "assignees": "Toegewezenen",
+      "issue_burndown": "Werkitem-burndown",
+      "ideal": "Ideaal",
+      "current": "Huidig",
+      "labels": "Labels",
+      "trailing": "Achterlopend",
+      "leading": "Voorlopend"
+    },
+    "upcoming_cycle": {
+      "label": "Aankomende cyclus"
+    },
+    "completed_cycle": {
+      "label": "Voltooide cyclus"
+    },
+    "status": {
+      "days_left": "Dagen resterend",
+      "completed": "Voltooid",
+      "yet_to_start": "Nog te starten",
+      "in_progress": "Bezig",
+      "draft": "Concept"
+    },
+    "action": {
+      "restore": {
+        "title": "Cyclus herstellen",
+        "success": {
+          "title": "Cyclus hersteld",
+          "description": "De cyclus is hersteld."
+        },
+        "failed": {
+          "title": "Herstellen van cyclus mislukt",
+          "description": "De cyclus kon niet worden hersteld. Probeer het opnieuw."
+        }
+      },
+      "favorite": {
+        "loading": "Cyclus toevoegen aan favorieten",
+        "success": {
+          "description": "Cyclus toegevoegd aan favorieten.",
+          "title": "Gelukt!"
+        },
+        "failed": {
+          "description": "Kon de cyclus niet toevoegen aan favorieten. Probeer het opnieuw.",
+          "title": "Fout!"
+        }
+      },
+      "unfavorite": {
+        "loading": "Cyclus verwijderen uit favorieten",
+        "success": {
+          "description": "Cyclus verwijderd uit favorieten.",
+          "title": "Gelukt!"
+        },
+        "failed": {
+          "description": "Kon de cyclus niet verwijderen uit favorieten. Probeer het opnieuw.",
+          "title": "Fout!"
+        }
+      },
+      "update": {
+        "loading": "Cyclus bijwerken",
+        "success": {
+          "description": "Cyclus succesvol bijgewerkt.",
+          "title": "Gelukt!"
+        },
+        "failed": {
+          "description": "Fout bij het bijwerken van de cyclus. Probeer het opnieuw.",
+          "title": "Fout!"
+        },
+        "error": {
+          "already_exists": "Je hebt al een cyclus op de opgegeven data. Als je een conceptcyclus wilt aanmaken, kun je dat doen door beide data te verwijderen."
+        }
+      }
+    },
+    "empty_state": {
+      "general": {
+        "title": "Groepeer en timebox je werk in cycli.",
+        "description": "Deel werk op in getimeboxte stukken, werk terug vanaf je projectdeadline om data in te stellen, en boek als team tastbare voortgang.",
+        "primary_button": {
+          "text": "Stel je eerste cyclus in",
+          "comic": {
+            "title": "Cycli zijn zich herhalende timeboxen.",
+            "description": "Een sprint, een iteratie of welke andere term je ook gebruikt voor het wekelijks of tweewekelijks volgen van werk is een cyclus."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Geen werkitems toegevoegd aan de cyclus",
+        "description": "Voeg werkitems toe of maak ze aan die je binnen deze cyclus wilt timeboxen en opleveren",
+        "primary_button": {
+          "text": "Nieuw werkitem aanmaken"
+        },
+        "secondary_button": {
+          "text": "Bestaand werkitem toevoegen"
+        }
+      },
+      "completed_no_issues": {
+        "title": "Geen werkitems in de cyclus",
+        "description": "Geen werkitems in de cyclus. De werkitems zijn overgezet of verborgen. Pas je weergave-eigenschappen aan om eventuele verborgen werkitems te zien."
+      },
+      "active": {
+        "title": "Geen actieve cyclus",
+        "description": "Een actieve cyclus is elke periode waarvan het bereik de datum van vandaag omvat. Vind hier de voortgang en details van de actieve cyclus."
+      },
+      "archived": {
+        "title": "Nog geen gearchiveerde cycli",
+        "description": "Archiveer voltooide cycli om je project op te ruimen. Vind ze hier terug zodra ze gearchiveerd zijn."
+      }
+    }
+  },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Sla gefilterde weergaven op voor je project. Maak er zoveel als je nodig hebt",
+        "description": "Weergaven zijn een set opgeslagen filters die je vaak gebruikt of gemakkelijk wilt kunnen benaderen. Al je collega's in een project kunnen elkaars weergaven zien en de weergave kiezen die het beste bij hun behoeften past.",
+        "primary_button": {
+          "text": "Maak je eerste weergave",
+          "comic": {
+            "title": "Weergaven werken bovenop werkitem-eigenschappen.",
+            "description": "Je kunt hier een weergave aanmaken met zoveel eigenschappen en filters als je wilt."
+          }
+        },
+        "filter": {
+          "title": "Geen overeenkomende weergaven",
+          "description": "Geen weergaven komen overeen met de zoekcriteria.\nMaak in plaats daarvan een nieuwe weergave."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Nog geen gearchiveerde werkitems",
+        "description": "Handmatig of via automatisering kun je werkitems archiveren die voltooid of geannuleerd zijn. Vind ze hier terug zodra ze gearchiveerd zijn.",
+        "primary_button": {
+          "text": "Automatisering instellen"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Geen werkitems gevonden die overeenkomen met de toegepaste filters",
+        "secondary_button": {
+          "text": "Alle filters wissen"
+        }
+      },
+      "public": {
+        "title": "Nog geen openbare pagina's",
+        "description": "Bekijk hier pagina's die met iedereen in je project zijn gedeeld.",
+        "primary_button": {
+          "text": "Maak je eerste pagina"
+        }
+      },
+      "archived": {
+        "title": "Nog geen gearchiveerde pagina's",
+        "description": "Archiveer pagina's die niet op je radar staan. Benader ze hier wanneer nodig."
+      },
+      "shared": {
+        "title": "Nog geen gedeelde pagina's",
+        "description": "Pagina's die anderen met je hebben gedeeld verschijnen hier."
+      }
+    },
+    "delete_view": {
+      "title": "Weet je zeker dat je deze weergave wilt verwijderen?",
+      "content": "Als je bevestigt, worden alle sorteer-, filter- en weergaveopties plus de indeling die je voor deze weergave hebt gekozen permanent verwijderd zonder enige mogelijkheid tot herstel."
+    }
+  },
+  "project_issues": {
+    "empty_state": {
+      "no_issues": {
+        "title": "Maak een werkitem aan en wijs het toe aan iemand, zelfs aan jezelf",
+        "description": "Zie werkitems als klussen, taken, werk of JTBD. Wat we mooi vinden. Een werkitem en zijn subwerkitems zijn meestal tijdgebonden acties die zijn toegewezen aan leden van je team. Je team maakt werkitems aan, wijst ze toe en voltooit ze om je project richting zijn doel te bewegen.",
+        "primary_button": {
+          "text": "Maak je eerste werkitem",
+          "comic": {
+            "title": "Werkitems zijn de bouwstenen in Plane.",
+            "description": "De Plane UI opnieuw ontwerpen, het bedrijf een nieuwe merkidentiteit geven of het nieuwe brandstofinjectiesysteem lanceren zijn voorbeelden van werkitems die waarschijnlijk subwerkitems hebben."
+          }
+        }
+      },
+      "no_archived_issues": {
+        "title": "Nog geen gearchiveerde werkitems",
+        "description": "Handmatig of via automatisering kun je werkitems archiveren die voltooid of geannuleerd zijn. Vind ze hier terug zodra ze gearchiveerd zijn.",
+        "primary_button": {
+          "text": "Automatisering instellen"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Geen werkitems gevonden die overeenkomen met de toegepaste filters",
+        "secondary_button": {
+          "text": "Alle filters wissen"
+        }
+      }
+    }
+  },
+  "project_module": {
+    "add_module": "Module toevoegen",
+    "update_module": "Module bijwerken",
+    "create_module": "Module aanmaken",
+    "archive_module": "Module archiveren",
+    "restore_module": "Module herstellen",
+    "delete_module": "Module verwijderen",
+    "empty_state": {
+      "general": {
+        "title": "Breng je projectmijlpalen in kaart met modules en volg geaggregeerd werk eenvoudig.",
+        "description": "Een groep werkitems die tot een logische, hiërarchische bovenliggende eenheid behoort vormt een module. Zie ze als een manier om werk te volgen per projectmijlpaal. Ze hebben hun eigen perioden en deadlines, evenals analyses om je te helpen zien hoe dichtbij of ver je van een mijlpaal bent.",
+        "primary_button": {
+          "text": "Bouw je eerste module",
+          "comic": {
+            "title": "Modules helpen werk te groeperen op hiërarchie.",
+            "description": "Een winkelwagenmodule, een chassismodule en een magazijnmodule zijn allemaal goede voorbeelden van deze groepering."
+          }
+        }
+      },
+      "no_issues": {
+        "title": "Geen werkitems in de module",
+        "description": "Maak werkitems aan of voeg ze toe die je als onderdeel van deze module wilt bereiken",
+        "primary_button": {
+          "text": "Nieuwe werkitems aanmaken"
+        },
+        "secondary_button": {
+          "text": "Een bestaand werkitem toevoegen"
+        }
+      },
+      "archived": {
+        "title": "Nog geen gearchiveerde modules",
+        "description": "Archiveer voltooide of geannuleerde modules om je project op te ruimen. Vind ze hier terug zodra ze gearchiveerd zijn."
+      },
+      "sidebar": {
+        "in_active": "Deze module is nog niet actief.",
+        "invalid_date": "Ongeldige datum. Voer een geldige datum in."
+      }
+    },
+    "quick_actions": {
+      "archive_module": "Module archiveren",
+      "archive_module_description": "Alleen een voltooide of geannuleerde\nmodule kan worden gearchiveerd.",
+      "delete_module": "Module verwijderen"
+    },
+    "toast": {
+      "copy": {
+        "success": "Modulekoppeling gekopieerd naar klembord"
+      },
+      "delete": {
+        "success": "Module succesvol verwijderd",
+        "error": "Verwijderen van module mislukt"
+      }
+    }
+  },
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "Schrijf een notitie, een document of een volledige kennisbank. Laat Galileo, de AI-assistent van Plane, je helpen om te beginnen",
+        "description": "Pagina's zijn de ruimte om je gedachten kwijt te kunnen in Plane. Maak notities van vergaderingen, formatteer ze eenvoudig, embed werkitems, deel ze in met een bibliotheek aan componenten en houd ze allemaal binnen de context van je project. Roep Galileo, de AI van Plane, aan met een sneltoets of een klik op de knop om elk document snel af te ronden.",
+        "primary_button": {
+          "text": "Maak je eerste pagina"
+        }
+      },
+      "private": {
+        "title": "Nog geen privépagina's",
+        "description": "Bewaar hier je persoonlijke gedachten. Wanneer je klaar bent om te delen, is het team maar een klik verwijderd.",
+        "primary_button": {
+          "text": "Maak je eerste pagina"
+        }
+      },
+      "public": {
+        "title": "Nog geen openbare pagina's",
+        "description": "Bekijk hier pagina's die met iedereen in je project zijn gedeeld.",
+        "primary_button": {
+          "text": "Maak je eerste pagina"
+        }
+      },
+      "archived": {
+        "title": "Nog geen gearchiveerde pagina's",
+        "description": "Archiveer pagina's die niet op je radar staan. Benader ze hier wanneer nodig."
+      }
+    }
+  },
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "Intake is niet ingeschakeld voor het project.",
+        "description": "Intake helpt je binnenkomende verzoeken aan je project te beheren en ze als werkitems toe te voegen aan je workflow. Schakel intake in via de projectinstellingen om verzoeken te beheren.",
+        "primary_button": {
+          "text": "Functies beheren"
+        }
+      },
+      "cycle": {
+        "title": "Cycli zijn niet ingeschakeld voor dit project.",
+        "description": "Deel werk op in getimeboxte stukken, werk terug vanaf je projectdeadline om data in te stellen, en boek als team tastbare voortgang. Schakel de cyclusfunctie in voor je project om ze te gaan gebruiken.",
+        "primary_button": {
+          "text": "Functies beheren"
+        }
+      },
+      "module": {
+        "title": "Modules zijn niet ingeschakeld voor het project.",
+        "description": "Modules zijn de bouwstenen van je project. Schakel modules in via de projectinstellingen om ze te gaan gebruiken.",
+        "primary_button": {
+          "text": "Functies beheren"
+        }
+      },
+      "page": {
+        "title": "Pagina's zijn niet ingeschakeld voor het project.",
+        "description": "Pagina's zijn de bouwstenen van je project. Schakel pagina's in via de projectinstellingen om ze te gaan gebruiken.",
+        "primary_button": {
+          "text": "Functies beheren"
+        }
+      },
+      "view": {
+        "title": "Weergaven zijn niet ingeschakeld voor het project.",
+        "description": "Weergaven zijn de bouwstenen van je project. Schakel weergaven in via de projectinstellingen om ze te gaan gebruiken.",
+        "primary_button": {
+          "text": "Functies beheren"
+        }
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "Backlog",
+      "planned": "Gepland",
+      "in_progress": "Bezig",
+      "paused": "Gepauzeerd",
+      "completed": "Voltooid",
+      "cancelled": "Geannuleerd"
+    },
+    "layout": {
+      "list": "Lijstindeling",
+      "board": "Galerij-indeling",
+      "timeline": "Tijdlijnindeling"
+    },
+    "order_by": {
+      "name": "Naam",
+      "progress": "Voortgang",
+      "issues": "Aantal werkitems",
+      "due_date": "Vervaldatum",
+      "created_at": "Aanmaakdatum",
+      "manual": "Handmatig"
+    }
+  },
+  "project_members": {
+    "full_name": "Volledige naam",
+    "display_name": "Weergavenaam",
+    "email": "E-mail",
+    "joining_date": "Datum van toetreden",
+    "role": "Rol"
+  },
+  "project": {
+    "members_import": {
+      "title": "Leden importeren uit CSV",
+      "description": "Upload een CSV met de kolommen: Email en Role (5=Gast, 15=Lid, 20=Beheerder). Gebruikers moeten al lid van de werkruimte zijn.",
+      "download_sample": "Voorbeeld-CSV downloaden",
+      "dropzone": {
+        "active": "Zet het CSV-bestand hier neer",
+        "inactive": "Sleep en zet neer of klik om te uploaden",
+        "file_type": "Alleen .csv-bestanden worden ondersteund"
+      },
+      "buttons": {
+        "cancel": "Annuleren",
+        "import": "Importeren",
+        "try_again": "Opnieuw proberen",
+        "close": "Sluiten",
+        "done": "Klaar"
+      },
+      "progress": {
+        "uploading": "Uploaden...",
+        "importing": "Importeren..."
+      },
+      "summary": {
+        "title": {
+          "complete": "Import voltooid"
+        },
+        "message": {
+          "success": "{count} lid{plural} succesvol geïmporteerd naar het project.",
+          "no_imports": "Er zijn geen nieuwe leden geïmporteerd uit het CSV-bestand."
+        },
+        "stats": {
+          "added": "Toegevoegd",
+          "reactivated": "Opnieuw geactiveerd",
+          "already_members": "Al lid",
+          "skipped": "Overgeslagen"
+        },
+        "download_errors": "Overgeslagen details downloaden"
+      },
+      "toast": {
+        "invalid_file": {
+          "title": "Ongeldig bestand",
+          "message": "Alleen CSV-bestanden worden ondersteund."
+        },
+        "import_failed": {
+          "title": "Import mislukt",
+          "message": "Er is iets misgegaan."
+        }
+      }
+    }
+  }
+}

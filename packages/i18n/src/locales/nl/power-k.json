@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Werkitems in bulk verwijderen"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Werkitemacties",
+        "indicator": "Werkitem",
+        "change_state": "Status wijzigen",
+        "change_priority": "Prioriteit wijzigen",
+        "change_assignees": "Toewijzen aan",
+        "assign_to_me": "Aan mij toewijzen",
+        "unassign_from_me": "Toewijzing aan mij opheffen",
+        "change_estimate": "Inschatting wijzigen",
+        "add_to_cycle": "Toevoegen aan cyclus",
+        "add_to_modules": "Toevoegen aan modules",
+        "add_labels": "Labels toevoegen",
+        "subscribe": "Abonneren op meldingen",
+        "unsubscribe": "Afmelden voor meldingen",
+        "delete": "Verwijderen",
+        "copy_id": "ID kopiëren",
+        "copy_id_toast_success": "Werkitem-ID gekopieerd naar klembord.",
+        "copy_id_toast_error": "Er is een fout opgetreden bij het kopiëren van de werkitem-ID naar het klembord.",
+        "copy_title": "Titel kopiëren",
+        "copy_title_toast_success": "Werkitemtitel gekopieerd naar klembord.",
+        "copy_title_toast_error": "Er is een fout opgetreden bij het kopiëren van de werkitemtitel naar het klembord.",
+        "copy_url": "URL kopiëren",
+        "copy_url_toast_success": "Werkitem-URL gekopieerd naar klembord.",
+        "copy_url_toast_error": "Er is een fout opgetreden bij het kopiëren van de werkitem-URL naar het klembord."
+      },
+      "cycle": {
+        "title": "Cyclusacties",
+        "indicator": "Cyclus",
+        "add_to_favorites": "Toevoegen aan favorieten",
+        "remove_from_favorites": "Verwijderen uit favorieten",
+        "copy_url": "URL kopiëren",
+        "copy_url_toast_success": "Cyclus-URL gekopieerd naar klembord.",
+        "copy_url_toast_error": "Er is een fout opgetreden bij het kopiëren van de cyclus-URL naar het klembord."
+      },
+      "module": {
+        "title": "Moduleacties",
+        "indicator": "Module",
+        "add_remove_members": "Leden toevoegen/verwijderen",
+        "change_status": "Status wijzigen",
+        "add_to_favorites": "Toevoegen aan favorieten",
+        "remove_from_favorites": "Verwijderen uit favorieten",
+        "copy_url": "URL kopiëren",
+        "copy_url_toast_success": "Module-URL gekopieerd naar klembord.",
+        "copy_url_toast_error": "Er is een fout opgetreden bij het kopiëren van de module-URL naar het klembord."
+      },
+      "page": {
+        "title": "Pagina-acties",
+        "indicator": "Pagina",
+        "lock": "Vergrendelen",
+        "unlock": "Ontgrendelen",
+        "make_private": "Privé maken",
+        "make_public": "Openbaar maken",
+        "archive": "Archiveren",
+        "restore": "Herstellen",
+        "add_to_favorites": "Toevoegen aan favorieten",
+        "remove_from_favorites": "Verwijderen uit favorieten",
+        "copy_url": "URL kopiëren",
+        "copy_url_toast_success": "Pagina-URL gekopieerd naar klembord.",
+        "copy_url_toast_error": "Er is een fout opgetreden bij het kopiëren van de pagina-URL naar het klembord."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Nieuw werkitem",
+      "create_page": "Nieuwe pagina",
+      "create_view": "Nieuwe weergave",
+      "create_cycle": "Nieuwe cyclus",
+      "create_module": "Nieuwe module",
+      "create_project": "Nieuw project",
+      "create_workspace": "Nieuwe werkruimte",
+      "create_project_automation": "Nieuwe automatisering"
+    },
+    "navigation_actions": {
+      "open_workspace": "Een werkruimte openen",
+      "nav_home": "Ga naar home",
+      "nav_inbox": "Ga naar postvak IN",
+      "nav_your_work": "Ga naar jouw werk",
+      "nav_account_settings": "Ga naar accountinstellingen",
+      "open_project": "Een project openen",
+      "nav_projects_list": "Ga naar projectenlijst",
+      "nav_all_workspace_work_items": "Ga naar alle werkitems",
+      "nav_assigned_workspace_work_items": "Ga naar toegewezen werkitems",
+      "nav_created_workspace_work_items": "Ga naar aangemaakte werkitems",
+      "nav_subscribed_workspace_work_items": "Ga naar geabonneerde werkitems",
+      "nav_workspace_analytics": "Ga naar de analyses van de werkruimte",
+      "nav_workspace_drafts": "Ga naar concepten van werkruimte",
+      "nav_workspace_archives": "Ga naar archieven van werkruimte",
+      "open_workspace_setting": "Een instelling van de werkruimte openen",
+      "nav_workspace_settings": "Ga naar instellingen van werkruimte",
+      "nav_project_work_items": "Ga naar werkitems",
+      "open_project_cycle": "Een cyclus openen",
+      "nav_project_cycles": "Ga naar cycli",
+      "open_project_module": "Een module openen",
+      "nav_project_modules": "Ga naar modules",
+      "open_project_view": "Een projectweergave openen",
+      "nav_project_views": "Ga naar projectweergaven",
+      "nav_project_pages": "Ga naar pagina's",
+      "nav_project_intake": "Ga naar intake",
+      "nav_project_archives": "Ga naar projectarchieven",
+      "open_project_setting": "Een projectinstelling openen",
+      "nav_project_settings": "Ga naar projectinstellingen",
+      "nav_workspace_active_cycle": "Ga naar alle actieve cycli",
+      "nav_project_overview": "Ga naar projectoverzicht"
+    },
+    "account_actions": {
+      "sign_out": "Uitloggen",
+      "workspace_invites": "Uitnodigingen voor werkruimte"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "App-zijbalk in-/uitschakelen",
+      "copy_current_page_url": "URL van huidige pagina kopiëren",
+      "copy_current_page_url_toast_success": "URL van huidige pagina gekopieerd naar klembord.",
+      "copy_current_page_url_toast_error": "Er is een fout opgetreden bij het kopiëren van de URL van de huidige pagina naar het klembord.",
+      "focus_top_nav_search": "Zoekveld focussen"
+    },
+    "preferences_actions": {
+      "update_theme": "Interfacethema wijzigen",
+      "update_timezone": "Tijdzone wijzigen",
+      "update_start_of_week": "Eerste dag van de week wijzigen",
+      "update_language": "Interfacetaal wijzigen",
+      "toast": {
+        "theme": {
+          "success": "Thema bijgewerkt.",
+          "error": "Bijwerken van thema mislukt. Probeer het opnieuw."
+        },
+        "timezone": {
+          "success": "Tijdzone bijgewerkt.",
+          "error": "Bijwerken van tijdzone mislukt. Probeer het opnieuw."
+        },
+        "generic": {
+          "success": "Voorkeuren bijgewerkt.",
+          "error": "Bijwerken van voorkeuren mislukt. Probeer het opnieuw."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Sneltoetsen openen",
+      "open_plane_documentation": "Plane-documentatie openen",
+      "join_forum": "Word lid van ons Forum",
+      "report_bug": "Een bug melden",
+      "chat_with_us": "Chat met ons"
+    },
+    "page_placeholders": {
+      "default": "Typ een opdracht of zoek",
+      "open_workspace": "Een werkruimte openen",
+      "open_project": "Een project openen",
+      "open_workspace_setting": "Een instelling van de werkruimte openen",
+      "open_project_cycle": "Een cyclus openen",
+      "open_project_module": "Een module openen",
+      "open_project_view": "Een projectweergave openen",
+      "open_project_setting": "Een projectinstelling openen",
+      "update_work_item_state": "Status wijzigen",
+      "update_work_item_priority": "Prioriteit wijzigen",
+      "update_work_item_assignee": "Toewijzen aan",
+      "update_work_item_estimate": "Inschatting wijzigen",
+      "update_work_item_cycle": "Toevoegen aan cyclus",
+      "update_work_item_module": "Toevoegen aan modules",
+      "update_work_item_labels": "Labels toevoegen",
+      "update_module_member": "Leden wijzigen",
+      "update_module_status": "Status wijzigen",
+      "update_theme": "Thema wijzigen",
+      "update_timezone": "Tijdzone wijzigen",
+      "update_start_of_week": "Eerste dag van de week wijzigen",
+      "update_language": "Taal wijzigen"
+    },
+    "search_menu": {
+      "no_results": "Geen resultaten gevonden",
+      "clear_search": "Zoekopdracht wissen",
+      "go_to_advanced_search": "Ga naar geavanceerd zoeken"
+    },
+    "footer": {
+      "workspace_level": "Werkruimteniveau"
+    },
+    "group_titles": {
+      "actions": "Acties",
+      "contextual": "Contextueel",
+      "navigation": "Navigeren",
+      "create": "Aanmaken",
+      "general": "Algemeen",
+      "settings": "Instellingen",
+      "account": "Account",
+      "miscellaneous": "Diversen",
+      "preferences": "Voorkeuren",
+      "help": "Help"
+    }
+  }
+}

@@ -5,7 +5,7 @@
  */
 
 import { useMemo, useCallback } from "react";
-import { Tabs } from "@base-ui-components/react";
+import { Tabs } from "@base-ui/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";

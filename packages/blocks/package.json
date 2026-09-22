@@ -57,7 +57,7 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
-    "@base-ui-components/react": "catalog:",
+    "@base-ui/react": "catalog:",
     "@headlessui/react": "catalog:",
     "@makeplane/propel": "catalog:",
     "@plane/constants": "workspace:*",

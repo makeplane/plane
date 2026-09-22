@@ -5,7 +5,7 @@
  */
 
 import * as React from "react";
-import { Toast as BaseToast } from "@base-ui-components/react/toast";
+import { Toast as BaseToast } from "@base-ui/react/toast";
 import { CloseOutline, InfoOutline, TickOutline, WarningTriangleOutline } from "@makeplane/propel/icons";
 // spinner
 import { CircularBarSpinner } from "../spinner/circular-bar-spinner";

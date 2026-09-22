@@ -1,0 +1,84 @@
+name: Migration check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+      - "canary"
+      - "master"
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/migration-check.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  migration-check:
+    name: check + makemigrations --check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    env:
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      # No database or redis is contacted: `check` and `makemigrations --check`
+      # read the migration graph off disk. These only need to parse.
+      SECRET_KEY: ci-migration-check
+      REDIS_URL: redis://127.0.0.1:6379/0
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+    steps:
+      # On pull_request this checks out refs/pull/N/merge — the PR already
+      # merged into the base branch — so the checks below run against the
+      # post-merge migration graph, not the branch in isolation.
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12.x"
+          cache: "pip"
+          cache-dependency-path: "apps/api/requirements/*.txt"
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Django system checks
+        working-directory: apps/api
+        run: python manage.py check
+
+      # Fails on two leaf nodes in one app (the PR and the base branch both
+      # numbered a migration off the same parent), on a dependency pointing at
+      # a migration that does not exist, and on models whose changes were never
+      # written to a migration at all.
+      - name: Migration graph and model/migration drift
+        working-directory: apps/api
+        run: python manage.py makemigrations --check --dry-run
+
+      # HEAD^1 is the base branch tip, HEAD^2 the PR head, so this is exactly
+      # what the PR does to files that already exist on the base branch.
+      # Renumbering or rewriting a merged migration leaves every already-migrated
+      # environment with a django_migrations row that no longer resolves.
+      - name: Guard already-merged migrations
+        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'migration-history-override')
+        run: |
+          TOUCHED=$(git diff --name-status --diff-filter=MDR HEAD^1 HEAD -- 'apps/api/*/migrations/*.py')
+          if [ -n "$TOUCHED" ]; then
+            echo "::error::This PR edits, deletes or renames migrations that are already on ${{ github.base_ref }}:"
+            echo "$TOUCHED"
+            echo "Add a new migration instead. If the rewrite is deliberate and no"
+            echo "environment has applied the old file, label the PR 'migration-history-override'."
+            exit 1
+          fi

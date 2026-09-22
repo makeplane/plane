@@ -142,7 +142,7 @@ services:
 
   plane-minio:
     container_name: plane-minio
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     restart: always
     command: server /export --console-address ":9090"
     volumes:
