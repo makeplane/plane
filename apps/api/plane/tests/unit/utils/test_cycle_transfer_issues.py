@@ -13,9 +13,12 @@ path. Both writes must happen inside a single atomic transaction so a
 failure during the issue move rolls back the snapshot write as well.
 """
 
+import threading
+import time
 from unittest import mock
 
 import pytest
+from django.db import connections
 from django.http import HttpRequest
 
 from plane.db.models import Cycle, CycleIssue, Issue, Project, ProjectMember, State
@@ -160,3 +163,121 @@ class TestTransferCycleIssuesAtomicity:
 
         assert source_cycle.progress_snapshot != {}
         assert incomplete_cycle_issue.cycle_id == destination_cycle.id
+
+
+@pytest.mark.unit
+@pytest.mark.django_db(transaction=True)
+class TestTransferCycleIssuesConcurrency:
+    """Regression test for the race CodeRabbit flagged on PR #9684.
+
+    transfer_cycle_issues used to lock the source cycle (select_for_update)
+    only around the final writes, after already reading old_cycle's issue
+    counts and distributions. Two concurrent transfers of the SAME source
+    cycle could both read that data before either had moved anything. The
+    first to acquire the lock would move the issues and save an accurate
+    snapshot; the second would then acquire the lock, overwrite that
+    snapshot with data computed before the first transfer's move (now
+    stale), and move zero issues - while still returning
+    {"success": True}. The fix locks the source cycle first, before any of
+    the counting queries, so a transfer's snapshot always reflects the
+    state as of when it actually acquired the lock.
+    """
+
+    def test_concurrent_transfers_do_not_persist_a_stale_snapshot(
+        self,
+        project,
+        source_cycle,
+        destination_cycle,
+        incomplete_cycle_issue,
+        create_user,
+        settings,
+    ):
+        settings.WEB_URL = "http://app.plane.so"
+
+        second_destination_cycle = Cycle.objects.create(
+            name="Second Destination Cycle",
+            project=project,
+            workspace=project.workspace,
+            owned_by=create_user,
+        )
+
+        # Fires once thread A is holding the source cycle's row lock,
+        # mid-transaction (snapshot saved, not yet committed), and is about
+        # to perform the real issue move. Starting thread B only after this
+        # fires guarantees B's call genuinely overlaps with A's in-flight
+        # transfer instead of running strictly after it.
+        a_holds_lock = threading.Event()
+        errors = []
+
+        real_bulk_update = CycleIssue.objects.bulk_update
+
+        def delayed_bulk_update(objs, fields, batch_size=100):
+            if threading.current_thread().name == "transfer-A":
+                a_holds_lock.set()
+                # Give thread B a real window to run its own read(s) and
+                # reach (and, with the fix, block on) the row lock before A
+                # finally commits and releases it.
+                time.sleep(1.0)
+            return real_bulk_update(objs, fields, batch_size=batch_size)
+
+        def run_transfer(thread_name, destination):
+            threading.current_thread().name = thread_name
+            request = HttpRequest()
+            request.META["HTTP_HOST"] = "app.plane.so"
+            try:
+                transfer_cycle_issues(
+                    slug=project.workspace.slug,
+                    project_id=str(project.id),
+                    cycle_id=str(source_cycle.id),
+                    new_cycle_id=str(destination.id),
+                    request=request,
+                    user_id=str(create_user.id),
+                )
+            except Exception as exc:  # pragma: no cover - surfaced via `errors`
+                errors.append(exc)
+            finally:
+                connections.close_all()
+
+        # Both mocks are entered once, in the main thread, around both
+        # worker threads - patching the same attribute from two threads
+        # independently is itself racy (whichever thread's context manager
+        # exits first restores the target, possibly while the other thread
+        # is still mid-call).
+        with (
+            mock.patch(
+                "plane.utils.cycle_transfer_issues.CycleIssue.objects.bulk_update",
+                side_effect=delayed_bulk_update,
+            ),
+            mock.patch("plane.utils.cycle_transfer_issues.issue_activity.delay"),
+        ):
+            thread_a = threading.Thread(target=run_transfer, args=("transfer-A", destination_cycle))
+            thread_a.start()
+            assert a_holds_lock.wait(timeout=5), "thread A never reached the row lock"
+
+            thread_b = threading.Thread(target=run_transfer, args=("transfer-B", second_destination_cycle))
+            thread_b.start()
+
+            thread_a.join(timeout=15)
+            thread_b.join(timeout=15)
+
+        assert not thread_a.is_alive(), "thread A did not finish"
+        assert not thread_b.is_alive(), "thread B did not finish"
+        assert not errors, f"transfer_cycle_issues raised: {errors!r}"
+
+        source_cycle.refresh_from_db()
+
+        actual_remaining = CycleIssue.objects.filter(
+            cycle_id=source_cycle.id,
+            issue__archived_at__isnull=True,
+            issue__is_draft=False,
+            issue__state__group__in=["backlog", "unstarted", "started"],
+        ).count()
+
+        # The single issue can only be claimed by whichever transfer wins
+        # the race for the row lock; the other legitimately moves nothing.
+        # But whatever ends up persisted as the source cycle's
+        # progress_snapshot must match reality, not data read before the
+        # winning transfer moved the issue out.
+        assert actual_remaining == 0
+        assert source_cycle.progress_snapshot["backlog_issues"] == actual_remaining
+        assert source_cycle.progress_snapshot["total_issues"] == actual_remaining
