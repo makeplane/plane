@@ -249,9 +249,16 @@ class ProjectJoinEndpoint(BaseAPIView):
                     workspace_member.is_active = True
                     workspace_member.save()
 
-                # Check if the user was already a member of project then activate the user
+                # Check if the user was already a member of the invited project
+                # then activate the user.  The lookup must be scoped to
+                # `project_id` — a workspace-wide lookup reactivates whatever
+                # membership the user already had (typically a project they were
+                # removed from) and leaves the invited project without a member
+                # row (SECUR-234).
                 project_member = ProjectMember.objects.filter(
-                    workspace_id=project_invite.workspace_id, member=user
+                    workspace_id=project_invite.workspace_id,
+                    project_id=project_id,
+                    member=user,
                 ).first()
                 if project_member is None:
                     # Create a Project Member
@@ -261,8 +268,10 @@ class ProjectJoinEndpoint(BaseAPIView):
                         role=project_invite.role,
                     )
                 else:
+                    # The invitation's role is what the inviting admin chose; the
+                    # stale role on a deactivated row must not survive the rejoin.
                     project_member.is_active = True
-                    project_member.role = project_member.role
+                    project_member.role = project_invite.role
                     project_member.save()
 
                 return Response(
