@@ -98,7 +98,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         {/* The visible header is the "edited by" meta row, so the dialog's accessible name is
             carried by a visually hidden title. */}
         <div className="sr-only">
-          <DialogTitle>{t("page_navigation_pane.tabs.version_history.label")}</DialogTitle>
+          <DialogTitle>{t("page_navigation_pane.tabs.info.version_history.label")}</DialogTitle>
         </div>
         <DialogToolbar>
           <div className="flex items-center justify-between gap-2">

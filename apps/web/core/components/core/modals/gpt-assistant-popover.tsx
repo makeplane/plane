@@ -14,8 +14,8 @@ import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
-import { convertPlacementToSideAndAlign } from "@plane/blocks/utils";
-import type { Placement } from "@plane/blocks/utils";
+import { toSideAndAlign } from "@plane/blocks/common";
+import type { TPopoverMenuPlacement } from "@plane/blocks/common";
 import { cn } from "@plane/utils";
 
 // components
@@ -29,7 +29,7 @@ type Props = {
   handleClose: () => void;
   onResponse: (response: any) => void;
   onError?: (error: any) => void;
-  placement?: Placement;
+  placement?: TPopoverMenuPlacement;
   prompt?: string;
   button: React.ReactNode;
   className?: string;
@@ -64,7 +64,7 @@ export function GptAssistantPopover(props: Props) {
   const editorRef = useRef<EditorRefApi>(null);
   const responseRef = useRef<EditorRefApi>(null);
   // derived values
-  const { side, align } = convertPlacementToSideAndAlign(placement ?? "auto");
+  const { side, align } = toSideAndAlign(placement ?? "auto");
   // form
   const {
     handleSubmit,
