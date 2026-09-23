@@ -164,6 +164,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Email security</h4>
             <Select
+              items={EMAIL_SECURITY_OPTIONS}
               value={emailSecurityKey}
               onValueChange={(value) => handleEmailSecurityChange(value as TEmailSecurityKeys)}
             >
