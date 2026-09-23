@@ -24,7 +24,7 @@ import { cn } from "@plane/utils";
 // local imports
 import { BreadcrumbItemContext, useBreadcrumbCurrent } from "./breadcrumb-context";
 import { getCollapsedCrumb, readCrumbLabel } from "./helpers";
-import type { TCrumbLabelProps } from "./helpers";
+import type { TCollapsedCrumb, TCrumbLabelProps } from "./helpers";
 
 /** Viewport width, in px, at or below which the leading crumbs collapse into the overflow menu. */
 const COLLAPSE_BREAKPOINT = 640;
@@ -202,20 +202,25 @@ function BreadcrumbItemWrapper(props: BreadcrumbItemWrapperProps) {
 }
 
 /**
- * Turns a collapsed `Breadcrumbs.Item` into a real menu row, so the crumbs behind the ellipsis are
- * `role="menuitem"` and reachable with the arrow keys rather than inert markup in a `role="menu"`.
+ * Reads the overflow-menu row a collapsed child resolves to. The name may be declared on the direct
+ * child itself (`Breadcrumbs.Item crumbLabel`) as well as inside its `component` tree, which is where
+ * `getCollapsedCrumb` looks — Ruling 39 — so a wrapper-rendered crumb can be named from either side.
  */
-function CollapsedCrumbRow({ child }: { child: React.ReactNode }) {
+function resolveCollapsedCrumb(child: React.ReactNode): TCollapsedCrumb {
   const itemProps = React.isValidElement<BreadcrumbItemProps>(child) ? child.props : undefined;
-  const { label, href, onClick } = getCollapsedCrumb(itemProps?.component ?? child, {
-    // Ruling 39: the name may be declared on the direct child itself (`Breadcrumbs.Item
-    // crumbLabel`) as well as inside its `component` tree, which is where `getCollapsedCrumb`
-    // looks. Reading both means a wrapper-rendered crumb can be named from either side.
+  return getCollapsedCrumb(itemProps?.component ?? child, {
     label: readCrumbLabel(itemProps),
     href: itemProps?.crumbHref ?? itemProps?.href,
     onClick: itemProps?.crumbOnClick ?? itemProps?.onClick,
   });
+}
 
+/**
+ * Turns a collapsed crumb into a real menu row, so the crumbs behind the ellipsis are
+ * `role="menuitem"` and reachable with the arrow keys rather than inert markup in a `role="menu"`.
+ */
+function CollapsedCrumbRow({ crumb }: { crumb: TCollapsedCrumb }) {
+  const { label, href, onClick } = crumb;
   if (href) return <MenuLinkItem variant="neutral" label={label} href={href} onClick={onClick} />;
   return <MenuItem variant="neutral" label={label} onClick={onClick} disabled={!onClick} />;
 }
@@ -228,7 +233,9 @@ function CollapsedCrumbRow({ child }: { child: React.ReactNode }) {
  * Below `collapseBreakpoint` (640px by default) the leading crumbs collapse into an overflow menu
  * behind an ellipsis trigger and only the current page stays in the trail, matching what the legacy
  * trail did on narrow viewports. Each collapsed crumb becomes a real `MenuItem` / `MenuLinkItem`, so
- * the hidden steps stay keyboard-reachable.
+ * the hidden steps stay keyboard-reachable. A collapsed crumb that resolves to no label — a wrapper
+ * component that names nothing (Ruling 39), or one that renders `null` — gets no row, and when no
+ * row is left the ellipsis is not rendered at all, so the menu never opens onto blank rows.
  *
  * There is no `onBack`. The legacy trail's back arrow was how a narrow viewport got to the crumbs it
  * had hidden; the overflow menu is that route now, so the arrow has nothing left to do. The prop was
@@ -263,7 +270,12 @@ function Breadcrumbs(props: BreadcrumbsProps) {
   const overflowLabel = showMoreLabel ?? t("aria_labels.breadcrumb.show_more");
   const childrenArray = React.Children.toArray(children);
   const isCollapsed = isSmallScreen && childrenArray.length > 1;
-  const collapsedChildren = isCollapsed ? childrenArray.slice(0, -1) : [];
+  const collapsedCrumbs = isCollapsed
+    ? childrenArray
+        .slice(0, -1)
+        .map(resolveCollapsedCrumb)
+        .filter((crumb) => crumb.label.trim() !== "")
+    : [];
   const lastChild = childrenArray[childrenArray.length - 1];
 
   const renderCrumb = (child: React.ReactNode, isLast: boolean) => {
@@ -294,18 +306,22 @@ function Breadcrumbs(props: BreadcrumbsProps) {
             ))}
           {isCollapsed && (
             <>
-              <PropelBreadcrumbItem>
-                <Menu>
-                  <BreadcrumbEllipsisTrigger aria-label={overflowLabel} />
-                  <MenuContent side="bottom" align="start">
-                    {collapsedChildren.map((child, index) => (
-                      // oxlint-disable-next-line react/no-array-index-key -- crumbs are positional; children carry no stable id
-                      <CollapsedCrumbRow key={index} child={child} />
-                    ))}
-                  </MenuContent>
-                </Menu>
-              </PropelBreadcrumbItem>
-              <BreadcrumbSeparator />
+              {collapsedCrumbs.length > 0 && (
+                <>
+                  <PropelBreadcrumbItem>
+                    <Menu>
+                      <BreadcrumbEllipsisTrigger aria-label={overflowLabel} />
+                      <MenuContent side="bottom" align="start">
+                        {collapsedCrumbs.map((crumb, index) => (
+                          // oxlint-disable-next-line react/no-array-index-key -- crumbs are positional; children carry no stable id
+                          <CollapsedCrumbRow key={index} crumb={crumb} />
+                        ))}
+                      </MenuContent>
+                    </Menu>
+                  </PropelBreadcrumbItem>
+                  <BreadcrumbSeparator />
+                </>
+              )}
               {renderCrumb(lastChild, true)}
             </>
           )}

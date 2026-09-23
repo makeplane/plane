@@ -77,7 +77,22 @@ type CrumbProps = {
   crumbOnClick?: unknown;
   href?: unknown;
   onClick?: unknown;
+  /** `BreadcrumbNavigationSelect`'s activation of the crumb itself. */
+  handleOnClick?: unknown;
+  /** `BreadcrumbNavigationSelect`'s rows and the key of the one the crumb shows. */
+  navigationItems?: unknown;
+  selectedItemKey?: unknown;
 };
+
+/**
+ * The row a `BreadcrumbNavigationSelect` crumb currently shows. Its `label` and link default to that
+ * row's, so a call site that leaves them to the select still gets a named, routed overflow row.
+ */
+function getSelectedNavigationItem(props: CrumbProps): { label?: unknown; href?: unknown } | undefined {
+  if (!Array.isArray(props.navigationItems) || typeof props.selectedItemKey !== "string") return undefined;
+  const items = props.navigationItems as { key?: unknown; label?: unknown; href?: unknown }[];
+  return items.find((item) => item?.key === props.selectedItemKey);
+}
 
 function getProps(node: React.ReactNode): CrumbProps | undefined {
   return React.isValidElement(node) ? (node.props as CrumbProps) : undefined;
@@ -121,6 +136,8 @@ function getTextContent(node: React.ReactNode, depth = 0): string {
   // only place its row label can come from.
   const declared = readCrumbLabel(props);
   if (declared !== undefined) return declared;
+  const selectedLabel = getSelectedNavigationItem(props)?.label;
+  if (typeof selectedLabel === "string" && selectedLabel !== "") return selectedLabel;
   return getTextContent(props.children, depth + 1);
 }
 
@@ -148,9 +165,13 @@ function findNavigation(
       : undefined;
   if (href || onClick) return { href, onClick };
   const derivedHref = typeof props.href === "string" ? props.href : undefined;
-  const derivedOnClick =
-    typeof props.onClick === "function" ? (props.onClick as (event: React.MouseEvent<HTMLElement>) => void) : undefined;
+  // `BreadcrumbNavigationSelect` navigates to the crumb itself through `handleOnClick`.
+  const derivedOnClick = [props.onClick, props.handleOnClick].find(
+    (candidate): candidate is (event: React.MouseEvent<HTMLElement>) => void => typeof candidate === "function"
+  );
   if (derivedHref || derivedOnClick) return { href: derivedHref, onClick: derivedOnClick };
+  const selectedHref = getSelectedNavigationItem(props)?.href;
+  if (typeof selectedHref === "string" && selectedHref !== "") return { href: selectedHref };
   return findNavigation(props.children, depth + 1);
 }
 

@@ -37,6 +37,11 @@ function ProjectCrumb(props: ProjectCrumbProps) {
   );
 }
 
+/** A wrapper that renders nothing — `CommonProjectBreadcrumbs` in TABBED navigation mode. */
+function HiddenCrumb(_props: { projectId: string }) {
+  return null;
+}
+
 /** A stand-in for any crumb part that declares its own name, for the helper's precedence tests. */
 function NamedCrumb(props: TCrumbLabelProps & { label?: string; children?: ReactNode }) {
   return <span>{props.children}</span>;
@@ -168,6 +173,66 @@ describe("Breadcrumbs collapsed overflow rows", () => {
 
     const menu = await openOverflow(user);
     expect(within(menu).getByRole("menuitem").textContent).toBe("Plane");
+  });
+
+  it("drops a row for a wrapper-rendered crumb that names nothing", async () => {
+    const user = userEvent.setup();
+    render(
+      <Breadcrumbs ariaLabel={TRAIL_LABEL} collapseBreakpoint={ALWAYS_COLLAPSED}>
+        <Breadcrumbs.Item component={plainCrumb("Plane")} />
+        {/* `CommonProjectBreadcrumbs`'s shape: ids only, markup (or `null`) inside the wrapper. */}
+        <ProjectCrumb projectId="p-1" projectName="Web app" />
+        <Breadcrumbs.Item component={<ProjectCrumb projectId="p-2" projectName="Mobile" />} />
+        <Breadcrumbs.Item component={plainCrumb("Work items", true)} />
+      </Breadcrumbs>
+    );
+
+    const menu = await openOverflow(user);
+    const rows = within(menu).getAllByRole("menuitem");
+    expect(rows.map((row) => row.textContent)).toEqual(["Plane"]);
+  });
+
+  it("renders no overflow trigger when every collapsed crumb names nothing", () => {
+    render(
+      <Breadcrumbs ariaLabel={TRAIL_LABEL} collapseBreakpoint={ALWAYS_COLLAPSED}>
+        <HiddenCrumb projectId="p-1" />
+        <Breadcrumbs.Item component={plainCrumb("Work items", true)} />
+      </Breadcrumbs>
+    );
+
+    const trail = screen.getByRole("navigation", { name: TRAIL_LABEL });
+    // No ellipsis opening onto blank, disabled rows — and no separator left dangling before the page.
+    expect(within(trail).queryByRole("button")).toBeNull();
+    expect(within(trail).getAllByRole("listitem")).toHaveLength(1);
+    expect(within(trail).getByText("Work items")).toBeTruthy();
+  });
+
+  it("names and routes a `BreadcrumbNavigationSelect` crumb from its selected row", async () => {
+    const user = userEvent.setup();
+    const handleOnClick = vi.fn();
+    render(
+      <Breadcrumbs ariaLabel={TRAIL_LABEL} collapseBreakpoint={ALWAYS_COLLAPSED}>
+        <Breadcrumbs.Item
+          component={
+            <BreadcrumbNavigationSelect
+              selectedItemKey="p-1"
+              navigationItems={[
+                { key: "p-1", label: "Web app" },
+                { key: "p-2", label: "Mobile" },
+              ]}
+              handleOnClick={handleOnClick}
+            />
+          }
+        />
+        <Breadcrumbs.Item component={plainCrumb("Work items", true)} />
+      </Breadcrumbs>
+    );
+
+    const menu = await openOverflow(user);
+    const row = within(menu).getByRole("menuitem");
+    expect(row.textContent).toBe("Web app");
+    await user.click(row);
+    expect(handleOnClick).toHaveBeenCalledTimes(1);
   });
 });
 
