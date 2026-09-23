@@ -22,6 +22,7 @@ import { FavoriteStar } from "@plane/blocks/common";
 import { DateRangeSelect } from "@plane/blocks/property-select";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
+import { handleTriggerKeyDown } from "@/components/common/trigger-guard";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
@@ -34,12 +35,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
-};
-
-// Ruling 38: the card is a `Link`, which activates on Enter — keep Enter/Space on a trigger
-// inside it from bubbling out and navigating away while the dropdown opens.
-const handleTriggerKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
 };
 
 export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {

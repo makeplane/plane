@@ -15,6 +15,7 @@ import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
+import { handleTriggerClick, handleTriggerKeyDown } from "@/components/common/trigger-guard";
 import { useTimeLineRelationOptions } from "@/components/relations";
 // types
 import type { TIssueRelationTypes } from "@plane/types";
@@ -25,15 +26,6 @@ type Props = {
   customButton?: React.ReactElement;
   disabled?: boolean;
   issueServiceType: TIssueServiceType;
-};
-
-// trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
-const handleTriggerClick = (e: React.MouseEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
-const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
-  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
 };
 
 export const RelationActionButton = observer(function RelationActionButton(props: Props) {

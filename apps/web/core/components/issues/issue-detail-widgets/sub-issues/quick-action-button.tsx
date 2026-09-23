@@ -11,6 +11,8 @@ import { useTranslation } from "@plane/i18n";
 import { AddOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+// components
+import { handleTriggerClick, handleTriggerKeyDown } from "@/components/common/trigger-guard";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
@@ -20,15 +22,6 @@ type Props = {
   customButton?: React.ReactElement;
   disabled?: boolean;
   issueServiceType: TIssueServiceType;
-};
-
-// trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
-const handleTriggerClick = (e: React.MouseEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
-const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
-  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
 };
 
 export const SubIssuesActionButton = observer(function SubIssuesActionButton(props: Props) {
