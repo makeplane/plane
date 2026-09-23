@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "ワークスペースレベル"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "キーボードショートカットを検索",
+      "no_results": "「{query}」のキーボードショートカットが見つかりません",
+      "sequence_separator": "次に"
+    },
     "group_titles": {
       "actions": "アクション",
       "contextual": "コンテキスト",

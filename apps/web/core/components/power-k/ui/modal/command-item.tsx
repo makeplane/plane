@@ -19,6 +19,8 @@ type Props = {
   isDisabled?: boolean;
   isSelected?: boolean;
   keySequence?: string;
+  /** Translated connector rendered between the keys of `keySequence` */
+  keySequenceSeparator?: string;
   label: string | React.ReactNode;
   onSelect: () => void;
   shortcut?: string;
@@ -26,7 +28,18 @@ type Props = {
 };
 
 export function PowerKModalCommandItem(props: Props) {
-  const { icon: Icon, iconNode, isDisabled, isSelected, keySequence, label, onSelect, shortcut, value } = props;
+  const {
+    icon: Icon,
+    iconNode,
+    isDisabled,
+    isSelected,
+    keySequence,
+    keySequenceSeparator = "",
+    label,
+    onSelect,
+    shortcut,
+    value,
+  } = props;
 
   return (
     <Command.Item value={value} onSelect={onSelect} className="focus:outline-none" disabled={isDisabled}>
@@ -41,7 +54,7 @@ export function PowerKModalCommandItem(props: Props) {
       </div>
       <div className="flex shrink-0 items-center gap-2">
         {isSelected && <TickOutline className="size-3 shrink-0 text-secondary" />}
-        {keySequence && <KeySequenceBadge sequence={keySequence} />}
+        {keySequence && <KeySequenceBadge sequence={keySequence} separator={keySequenceSeparator} />}
         {shortcut && <ShortcutBadge shortcut={shortcut} />}
       </div>
     </Command.Item>
