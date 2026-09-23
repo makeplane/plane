@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 
 interface IStickyDelete {
   isOpen: boolean;
@@ -40,7 +40,7 @@ export const StickyDeleteModal = observer(function StickyDeleteModal(props: ISti
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={formSubmit}
       isSubmitting={loader}

@@ -5,10 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Pill } from "@makeplane/propel/components/pill";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { TRecentActivityFilterKeys } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
 import { cn } from "@plane/utils";
 
 export type TFiltersDropdown = {
@@ -22,36 +24,27 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
   const { className, activeFilter, setActiveFilter, filters } = props;
   const { t } = useTranslation();
 
-  function DropdownOptions() {
-    return filters?.map((filter) => (
-      <CustomMenu.MenuItem
-        key={filter.name}
-        className="flex items-center gap-2 truncate text-secondary"
-        onClick={() => {
-          setActiveFilter(filter.name);
-        }}
-      >
-        <div className="truncate text-11 font-medium capitalize">{t(filter.i18n_key)}</div>
-      </CustomMenu.MenuItem>
-    ));
-  }
-
   const title = activeFilter ? filters?.find((filter) => filter.name === activeFilter)?.i18n_key : "";
   return (
-    <CustomMenu
-      maxHeight={"md"}
-      className={cn("flex w-fit justify-center text-11 text-secondary", className)}
-      placement="bottom-start"
-      customButton={
-        <button className="flex gap-1 rounded-sm border border-subtle px-2 py-1 capitalize hover:bg-layer-transparent-hover">
-          <span className="my-auto text-13 font-medium">{t(title || "")}</span>
-          <ChevronDownOutline className={cn("my-auto size-3 text-tertiary duration-300 hover:text-secondary")} />
-        </button>
-      }
-      customButtonClassName="flex justify-center"
-      closeOnSelect
-    >
-      <DropdownOptions />
-    </CustomMenu>
+    <div className={cn("flex w-fit justify-center text-11 text-secondary", className)}>
+      <Menu>
+        <MenuTrigger
+          render={
+            <Pill size="md" variant="outline" label={t(title || "")} endIcon={<Icon icon={ChevronDownOutline} />} />
+          }
+        />
+        <MenuContent side="bottom" align="start">
+          {filters?.map((filter) => (
+            <MenuItem
+              key={filter.name}
+              label={t(filter.i18n_key)}
+              onClick={() => {
+                setActiveFilter(filter.name);
+              }}
+            />
+          ))}
+        </MenuContent>
+      </Menu>
+    </div>
   );
 });

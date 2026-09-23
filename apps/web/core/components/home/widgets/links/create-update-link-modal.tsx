@@ -14,7 +14,16 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import type { TLinkEditableFields } from "@plane/types";
-import { ModalCore } from "@plane/blocks/modals";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
@@ -70,83 +79,96 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
   }, [preloadedData, reset, isModalOpen]);
 
   return (
-    <ModalCore isOpen={isModalOpen} handleClose={onClose}>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className="space-y-5 p-5">
-          <h3 className="text-18 font-medium text-secondary">
-            {preloadedData?.id ? t("update") : t("add")} {t("home.quick_links.title")}
-          </h3>
-          <div className="mt-2 space-y-3">
-            <div>
-              <label htmlFor="url" className="mb-2 text-14 font-medium text-secondary">
-                {t("link.modal.url.text")}
-                <span className="block text-10">{t("required")}</span>
-              </label>
-              <Controller
-                control={control}
-                name="url"
-                rules={{
-                  required: t("link.modal.url.required"),
-                }}
-                render={({ field: { value, onChange, ref } }) => (
-                  <Field name="url" invalid={Boolean(errors.url)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="url"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder={t("link.modal.url.placeholder")}
-                      />
-                    </InputGroup>
-                  </Field>
-                )}
-              />
-              {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
-            </div>
-            <div>
-              <label htmlFor="title" className="mb-2 text-14 font-medium text-secondary">
-                {t("link.modal.title.text")}
-                <span className="block text-10">{t("optional")}</span>
-              </label>
-              <Controller
-                control={control}
-                name="title"
-                render={({ field: { value, onChange, ref } }) => (
-                  <Field name="title" invalid={Boolean(errors.title)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="title"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        placeholder={t("link.modal.title.placeholder")}
-                      />
-                    </InputGroup>
-                  </Field>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-          <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label={t("Cancel")} />
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            type="submit"
-            loading={isSubmitting}
-            label={`${
-              preloadedData?.id ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")
-            } ${t("home.quick_links.title")}`}
-          />
-        </div>
-      </form>
-    </ModalCore>
+    <Dialog
+      open={isModalOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>
+                  {preloadedData?.id ? t("update") : t("add")} {t("home.quick_links.title")}
+                </DialogTitle>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody tabIndex={0}>
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="url" className="mb-2 text-14 font-medium text-secondary">
+                    {t("link.modal.url.text")}
+                    <span className="block text-10">{t("required")}</span>
+                  </label>
+                  <Controller
+                    control={control}
+                    name="url"
+                    rules={{
+                      required: t("link.modal.url.required"),
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Field name="url" invalid={Boolean(errors.url)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="url"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder={t("link.modal.url.placeholder")}
+                          />
+                        </InputGroup>
+                      </Field>
+                    )}
+                  />
+                  {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
+                </div>
+                <div>
+                  <label htmlFor="title" className="mb-2 text-14 font-medium text-secondary">
+                    {t("link.modal.title.text")}
+                    <span className="block text-10">{t("optional")}</span>
+                  </label>
+                  <Controller
+                    control={control}
+                    name="title"
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Field name="title" invalid={Boolean(errors.title)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="title"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder={t("link.modal.title.placeholder")}
+                          />
+                        </InputGroup>
+                      </Field>
+                    )}
+                  />
+                </div>
+              </div>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label={t("Cancel")} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              loading={isSubmitting}
+              label={`${
+                preloadedData?.id ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")
+              } ${t("home.quick_links.title")}`}
+            />
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });
