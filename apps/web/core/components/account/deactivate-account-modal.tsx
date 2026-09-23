@@ -7,10 +7,8 @@
 import { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@makeplane/propel/components/button";
-import { DeleteOutline } from "@makeplane/propel/icons";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -61,35 +59,15 @@ export function DeactivateAccountModal(props: Props) {
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div className="">
-          <div className="flex items-start gap-x-4">
-            <div className="mt-3 grid place-items-center rounded-full bg-danger-subtle p-2 sm:mt-3 sm:p-2 md:mt-0 md:p-4 lg:mt-0 lg:p-4">
-              <DeleteOutline
-                className="h-4 w-4 text-danger-primary sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6"
-                aria-hidden="true"
-              />
-            </div>
-            <div>
-              <h3 className="my-4 text-20 leading-6 font-medium text-primary">{t("deactivate_your_account")}</h3>
-              <p className="mt-6 list-disc pr-4 text-14 font-regular text-secondary">
-                {t("deactivate_your_account_description")}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
-        <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
-        <Button
-          variant="danger"
-          size="md"
-          stretch="auto"
-          label={isDeactivating ? t("deactivating") : t("confirm")}
-          onClick={handleDeleteAccount}
-        />
-      </div>
-    </ModalCore>
+    <ConfirmDialog
+      isOpen={isOpen}
+      handleClose={handleClose}
+      handleSubmit={handleDeleteAccount}
+      isSubmitting={isDeactivating}
+      title={t("deactivate_your_account")}
+      content={t("deactivate_your_account_description")}
+      primaryButtonText={{ loading: t("deactivating"), default: t("confirm") }}
+      secondaryButtonText={t("cancel")}
+    />
   );
 }

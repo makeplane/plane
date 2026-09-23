@@ -134,6 +134,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           placement="inline"
           variant="danger"
           description={t("auth.sign_up.errors.password.strength")}
+          dismissLabel={t("close")}
           onDismiss={() => setBannerMessage(false)}
         />
       )}

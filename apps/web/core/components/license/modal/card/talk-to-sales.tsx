@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // types
 // plane imports
-import { Button } from "@makeplane/propel/components/button";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
 // local imports
@@ -28,6 +28,13 @@ export type TalkToSalesCardProps = {
   renderTrialButton?: (props: { productId: string | undefined; priceId: string | undefined }) => React.ReactNode;
 };
 
+const renderPriceContent = (price: TSubscriptionPrice) => (
+  <>
+    {price.recurring === "month" && "Monthly"}
+    {price.recurring === "year" && "Yearly"}
+  </>
+);
+
 export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
   const {
     planVariant,
@@ -43,13 +50,6 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
     isTrialAllowed,
     renderTrialButton,
   } = props;
-
-  const renderPriceContent = (price: TSubscriptionPrice) => (
-    <>
-      {price.recurring === "month" && "Monthly"}
-      {price.recurring === "year" && "Yearly"}
-    </>
-  );
 
   const renderActionButton = (price: TSubscriptionPrice) => (
     <>
@@ -71,12 +71,12 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
         </Loader>
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
-          <Button
+          <AnchorButton
             variant="primary"
             size="md"
-            stretch="auto"
-            nativeButton={false}
-            render={<a href={href} target="_blank" className="w-56" rel="noreferrer" />}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
             label="Talk to Sales"
           />
           {isTrialAllowed && !isSelfHosted && (

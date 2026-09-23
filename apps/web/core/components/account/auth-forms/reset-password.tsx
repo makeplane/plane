@@ -108,6 +108,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           variant="accent"
           role="alert"
           description={errorInfo.message}
+          dismissLabel={t("close")}
           onDismiss={() => setErrorInfo(undefined)}
         />
       )}

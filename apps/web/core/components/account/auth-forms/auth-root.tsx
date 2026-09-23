@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import { Banner } from "@makeplane/propel/components/banner";
 import { OAuthOptions } from "@plane/blocks/auth";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -48,6 +49,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // store hooks
   const { config } = useInstance();
+  // translation
+  const { t } = useTranslation();
   // derived values
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
@@ -121,6 +124,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           variant="accent"
           role="alert"
           description={errorInfo.message}
+          dismissLabel={t("close")}
           onDismiss={() => setErrorInfo(undefined)}
         />
       )}
