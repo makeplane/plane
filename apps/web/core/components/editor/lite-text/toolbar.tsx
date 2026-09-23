@@ -175,7 +175,6 @@ export function IssueCommentToolbar(props: Props) {
               size="sm"
               stretch="auto"
               label={t(submitButtonText)}
-              render={<button className="px-2.5 py-1.5 text-11" />}
               onClick={handleSubmit}
               disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
