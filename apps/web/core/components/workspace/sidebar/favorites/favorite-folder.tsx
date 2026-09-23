@@ -194,8 +194,9 @@ export function FavoriteFolder(props: Props) {
                     align="end"
                     disabled={isDragging || isMobile}
                   >
-                    <button
-                      type="button"
+                    {/* Visual drag affordance only: the whole row is the draggable, and a <span> keeps it from
+                        nesting a second button inside the folder toggle. Clicks bubble to the toggle as before. */}
+                    <span
                       className={cn(
                         "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
                         {
@@ -205,7 +206,7 @@ export function FavoriteFolder(props: Props) {
                       )}
                     >
                       <DragHandle className="bg-transparent" />
-                    </button>
+                    </span>
                   </Tooltip>
                   <div className="grid size-5 flex-shrink-0 place-items-center">
                     <FavoriteFolderIcon />
