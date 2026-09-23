@@ -9,6 +9,7 @@
     "**/*.css"
   ],
   "exports": {
+    "./auth": "./dist/auth/index.js",
     "./avatar": "./dist/avatar/index.js",
     "./breadcrumbs": "./dist/breadcrumbs/index.js",
     "./card": "./dist/card/index.js",
@@ -17,8 +18,8 @@
     "./charts/line-chart": "./dist/charts/line-chart/index.js",
     "./charts/pie-chart": "./dist/charts/pie-chart/index.js",
     "./charts/radar-chart": "./dist/charts/radar-chart/index.js",
-    "./charts/scatter-chart": "./dist/charts/scatter-chart/index.js",
     "./charts/tree-map": "./dist/charts/tree-map/index.js",
+    "./common": "./dist/common/index.js",
     "./content-wrapper": "./dist/content-wrapper/index.js",
     "./control-link": "./dist/control-link/index.js",
     "./dropdowns": "./dist/dropdowns/index.js",
@@ -29,6 +30,7 @@
     "./form-fields": "./dist/form-fields/index.js",
     "./header": "./dist/header/index.js",
     "./icons": "./dist/icons/index.js",
+    "./layout": "./dist/layout/index.js",
     "./link": "./dist/link/index.js",
     "./loader": "./dist/loader/index.js",
     "./modals": "./dist/modals/index.js",

@@ -6,8 +6,8 @@
 
 import React from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
-import { Card, ECardSpacing } from "../../card";
-import { cn } from "../../utils/classname";
+import { cn } from "@plane/utils";
+import { Card } from "../../card";
 
 type Props = {
   active: boolean | undefined;
@@ -29,7 +29,7 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
   return (
     <Card
       className="vertical-scrollbar scrollbar-sm flex max-h-[40vh] w-[12rem] flex-col overflow-y-scroll"
-      spacing={ECardSpacing.SM}
+      spacing="sm"
     >
       <p className="flex-shrink-0 truncate border-b border-subtle pb-2 text-11 font-medium text-primary">{label}</p>
       {filteredPayload.map((item) => {

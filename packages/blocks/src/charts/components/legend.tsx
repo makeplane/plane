@@ -8,7 +8,7 @@ import React from "react";
 import type { LegendProps } from "recharts";
 // plane imports
 import type { TChartLegend } from "@plane/types";
-import { cn } from "../../utils/classname";
+import { cn } from "@plane/utils";
 
 export const getLegendProps = (args: TChartLegend): LegendProps => {
   const { align, layout, verticalAlign } = args;

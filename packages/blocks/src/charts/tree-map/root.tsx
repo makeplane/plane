@@ -8,8 +8,8 @@ import React from "react";
 import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
 import type { TreeMapChartProps } from "@plane/types";
+import { cn } from "@plane/utils";
 // local imports
-import { cn } from "../../utils/classname";
 import { CustomTreeMapContent } from "./map-content";
 import { TreeMapTooltip } from "./tooltip";
 

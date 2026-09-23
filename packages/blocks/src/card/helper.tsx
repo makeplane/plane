@@ -4,38 +4,43 @@
  * See the LICENSE file for details.
  */
 
-export enum ECardVariant {
-  WITHOUT_SHADOW = "without-shadow",
-  WITH_SHADOW = "with-shadow",
-}
-export enum ECardDirection {
-  ROW = "row",
-  COLUMN = "column",
-}
-export enum ECardSpacing {
-  SM = "sm",
-  LG = "lg",
-}
-export type TCardVariant = ECardVariant.WITHOUT_SHADOW | ECardVariant.WITH_SHADOW;
-export type TCardDirection = ECardDirection.ROW | ECardDirection.COLUMN;
-export type TCardSpacing = ECardSpacing.SM | ECardSpacing.LG;
+export type CardVariant = "without-shadow" | "with-shadow";
 
-export interface ICardProperties {
-  [key: string]: string;
-}
+/** @deprecated Use CardVariant instead. */
+export type TCardVariant = CardVariant;
+
+export type CardDirection = "row" | "column";
+
+/** @deprecated Use CardDirection instead. */
+export type TCardDirection = CardDirection;
+
+export type CardSpacing = "sm" | "lg";
+
+/** @deprecated Use CardSpacing instead. */
+export type TCardSpacing = CardSpacing;
+
+export type CardVariantClassNameMap = Record<CardVariant, string>;
+export type CardSpacingClassNameMap = Record<CardSpacing, string>;
+export type CardDirectionClassNameMap = Record<CardDirection, string>;
+
+/** @deprecated Use the specific Card*ClassNameMap type for the map you are defining. */
+export type CardProperties = Partial<Record<CardVariant | CardSpacing | CardDirection, string>>;
+
+/** @deprecated Use the specific Card*ClassNameMap type for the map you are defining. */
+export type ICardProperties = CardProperties;
 
 const DEFAULT_STYLE = "bg-surface-1 rounded-lg border-[0.5px] border-subtle w-full flex flex-col";
-export const containerStyle: ICardProperties = {
-  [ECardVariant.WITHOUT_SHADOW]: "",
-  [ECardVariant.WITH_SHADOW]: "hover:shadow-raised-200 duration-300",
+export const containerStyle: CardVariantClassNameMap = {
+  "without-shadow": "",
+  "with-shadow": "hover:shadow-raised-200 duration-300",
 };
-export const spacings = {
-  [ECardSpacing.SM]: "p-4",
-  [ECardSpacing.LG]: "p-6",
+export const spacings: CardSpacingClassNameMap = {
+  sm: "p-4",
+  lg: "p-6",
 };
-export const directions = {
-  [ECardDirection.ROW]: "flex-row space-x-3",
-  [ECardDirection.COLUMN]: "flex-col space-y-3",
+export const directions: CardDirectionClassNameMap = {
+  row: "flex-row space-x-3",
+  column: "flex-col space-y-3",
 };
-export const getCardStyle = (variant: TCardVariant, spacing: TCardSpacing, direction: TCardDirection) =>
+export const getCardStyle = (variant: CardVariant, spacing: CardSpacing, direction: CardDirection) =>
   DEFAULT_STYLE + " " + directions[direction] + " " + containerStyle[variant] + " " + spacings[spacing];

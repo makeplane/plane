@@ -6,7 +6,7 @@
 
 import React from "react";
 // plane imports
-import { Card, ECardSpacing } from "../../card";
+import { Card } from "../../card";
 
 interface TreeMapTooltipProps {
   active: boolean | undefined;
@@ -19,7 +19,7 @@ export const TreeMapTooltip = React.memo(function TreeMapTooltip({ active, paylo
   const data = payload[0].payload;
 
   return (
-    <Card className="flex flex-col space-y-1.5" spacing={ECardSpacing.SM}>
+    <Card className="flex flex-col space-y-1.5" spacing="sm">
       <div className="flex items-center gap-2 border-b border-subtle pb-2.5">
         {data?.icon}
         <p className="text-11 font-medium text-primary capitalize">{data?.name}</p>

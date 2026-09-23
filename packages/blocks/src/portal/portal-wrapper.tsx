@@ -5,9 +5,18 @@
  */
 
 import React, { useLayoutEffect, useState, useMemo } from "react";
+import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { DEFAULT_PORTAL_ID } from "./constants";
-import type { PortalWrapperProps } from "./types";
+
+export type PortalWrapperProps = {
+  children: ReactNode;
+  className?: string;
+  portalId?: string;
+  fallbackToDocument?: boolean;
+  onMount?: () => void;
+  onUnmount?: () => void;
+};
 
 /**
  * PortalWrapper - A reusable portal component that renders children into a specific DOM element

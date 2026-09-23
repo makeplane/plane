@@ -5,27 +5,18 @@
  */
 
 import * as React from "react";
-import { cn } from "../utils/classname";
-import type { TCardDirection, TCardSpacing, TCardVariant } from "./helper";
-import { ECardDirection, ECardSpacing, ECardVariant, getCardStyle } from "./helper";
+import { cn } from "@plane/utils";
+import { getCardStyle } from "./helper";
+import type { CardDirection, CardSpacing, CardVariant } from "./helper";
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: TCardVariant;
-  spacing?: TCardSpacing;
-  direction?: TCardDirection;
-  className?: string;
-  children: React.ReactNode;
-}
+export type CardProps = React.ComponentPropsWithRef<"div"> & {
+  variant?: CardVariant;
+  spacing?: CardSpacing;
+  direction?: CardDirection;
+};
 
 const Card = React.forwardRef(function Card(props: CardProps, ref: React.ForwardedRef<HTMLDivElement>) {
-  const {
-    variant = ECardVariant.WITH_SHADOW,
-    direction = ECardDirection.COLUMN,
-    className = "",
-    spacing = ECardSpacing.LG,
-    children,
-    ...rest
-  } = props;
+  const { variant = "with-shadow", direction = "column", className = "", spacing = "lg", children, ...rest } = props;
 
   const style = getCardStyle(variant, spacing, direction);
   return (
@@ -35,6 +26,7 @@ const Card = React.forwardRef(function Card(props: CardProps, ref: React.Forward
   );
 });
 
-Card.displayName = "plane-ui-card";
+Card.displayName = "Card";
 
-export { Card, ECardVariant, ECardSpacing, ECardDirection };
+export { Card };
+export type { CardVariant, CardSpacing, CardDirection };
