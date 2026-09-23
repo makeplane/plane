@@ -138,7 +138,7 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
           }}
           shouldFilter={searchTerm.length > 0}
           onKeyDown={handleKeyDown}
-          className="w-full"
+          className="flex min-h-0 w-full flex-1 flex-col"
         >
           <PowerKModalHeader
             activePage={activePage}
@@ -146,7 +146,7 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
             onSearchChange={setSearchTerm}
             searchTerm={searchTerm}
           />
-          <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll outline-none">
+          <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 min-h-0 flex-1 overflow-scroll outline-none">
             <CommandsListComponent
               activePage={activePage}
               context={context}
