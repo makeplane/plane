@@ -26,6 +26,7 @@ import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifi
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useKeyboardNavStore } from "@/hooks/store/use-keyboard-nav-store";
 import { useProject } from "@/hooks/store/use-project";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -85,6 +86,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     setPeekIssue,
     subIssues: subIssuesStore,
   } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const { getIsEntityFocused } = useKeyboardNavStore();
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -105,6 +107,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const subIssuesCount = issue?.sub_issues_count ?? 0;
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
   const isDraggingAllowed = canDrag && canEditIssueProperties;
+  const isKeyboardFocused = getIsEntityFocused(issueId);
 
   const { isMobile } = usePlatformOS();
 
@@ -178,11 +181,14 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     >
       <Row
         ref={issueRef}
+        data-keyboard-nav-id={issue.id}
         className={cn(
           "group/list-block relative flex min-h-11 flex-col gap-3 bg-layer-transparent py-3 text-13 transition-colors hover:bg-layer-transparent-hover",
           {
             "border-accent-strong": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
             "border-strong-1": isIssueActive,
+            // keyboard cursor: needs real width + tint to be visible
+            "border-l-2 border-accent-strong bg-accent-primary/10 hover:bg-accent-primary/10": isKeyboardFocused,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
             "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
             "bg-layer-1": isCurrentBlockDragging,

@@ -44,6 +44,15 @@ export function isTypingInInput(target: EventTarget | null): boolean {
  * Global shortcut handler
  * Handles all keyboard shortcuts: single keys, sequences, and modifiers
  */
+/**
+ * Keys that can never be part of a key sequence: named control keys (Escape,
+ * Enter, arrows, F-keys…) plus lone modifier presses. They terminate whatever
+ * sequence is pending instead of being appended to it — otherwise "escape"
+ * fills the buffer, makes it unmatchable, and swallows the next keystrokes.
+ */
+const isSequenceTerminator = (e: KeyboardEvent): boolean =>
+  ["Shift", "Control", "Alt", "Meta"].includes(e.key) || e.key.length > 1;
+
 export class ShortcutHandler {
   private sequence = "";
   private sequenceTimeout: number | null = null;
@@ -87,12 +96,26 @@ export class ShortcutHandler {
     }
 
     // Handle modifier shortcuts (Cmd+Delete, Cmd+Shift+,, etc.)
-    if (hasModifier) {
+    // `?` is typed with shift on most layouts but registers as a single-key
+    // shortcut ("?"), so it must bypass the modifier branch
+    if (hasModifier && key !== "?") {
       this.handleModifierShortcut(e);
       return;
     }
 
-    // Handle single key shortcuts and sequences (c, p, gm, op, etc.)
+    // Named keys (Enter, Escape, arrows, function keys) can never extend a
+    // sequence, so any pending prefix is dropped. They may still carry a
+    // binding of their own - Enter opens the focused work item - so the
+    // registered shortcut is dispatched before the key is discarded.
+    if (isSequenceTerminator(e)) {
+      this.resetSequence();
+      const command = this.registry.findByShortcut(this.getContext(), key);
+      if (command && this.canExecuteCommand(command)) {
+        e.preventDefault();
+        this.executeCommand(command);
+      }
+      return;
+    }
     this.handleKeyOrSequence(e, key);
   };
 
@@ -113,6 +136,12 @@ export class ShortcutHandler {
    * Handle single key shortcuts or build sequences (c, gm, op, etc.)
    */
   private handleKeyOrSequence(e: KeyboardEvent, key: string): void {
+    // Any pending prefix that cannot lead anywhere is dropped *before* this
+    // key is appended, so a dead sequence never blocks the next keystroke.
+    if (this.sequence && !this.getKeySequenceMap().has(this.sequence)) {
+      this.resetSequence();
+    }
+
     // Add key to sequence
     this.sequence += key;
 
@@ -136,8 +165,23 @@ export class ShortcutHandler {
       }
     }
 
+    // If nothing can extend this prefix, clear it now instead of leaving it to
+    // swallow keys until the timeout fires (e.g. "escapej" before this fix).
+    if (!this.getKeySequenceMap().has(this.sequence)) {
+      this.resetSequence();
+      return;
+    }
+
     // Reset sequence after 1 second of no typing
     this.scheduleSequenceReset();
+  }
+
+  /**
+   * Key sequences registered by any command currently in the registry, used to
+   * tell a live prefix ("g" awaiting "m") from a dead one ("escape").
+   */
+  private getKeySequenceMap(): Map<string, string> {
+    return this.registry.getKeySequenceMap(this.getContext());
   }
 
   /**
