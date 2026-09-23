@@ -14,14 +14,18 @@ interface TableSkeletonProps {
   rows: number;
 }
 
+const getColumnKey = (column: ColumnDef<any>) => column.id ?? String(column.header ?? "");
+
 export function TableLoader({ columns, rows }: TableSkeletonProps) {
+  const rowKeys = Array.from({ length: rows }, (_, rowIndex) => `skeleton-row-${rowIndex}`);
+
   return (
     <Table variant="table">
       <TableHeader>
         <TableRow>
-          {columns.map((column, index) => (
+          {columns.map((column) => (
             <TableHead
-              key={column.header?.toString() ?? index}
+              key={getColumnKey(column)}
               pinned="none"
               label={typeof column.header === "string" ? column.header : ""}
             />
@@ -29,10 +33,10 @@ export function TableLoader({ columns, rows }: TableSkeletonProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {Array.from({ length: rows }).map((_, rowIndex) => (
-          <TableRow key={rowIndex}>
-            {columns.map((_, colIndex) => (
-              <TableCell key={colIndex} pinned="none" padding="cell">
+        {rowKeys.map((rowKey) => (
+          <TableRow key={rowKey}>
+            {columns.map((column) => (
+              <TableCell key={getColumnKey(column)} pinned="none" padding="cell">
                 <Loader.Item height="20px" width="100%" />
               </TableCell>
             ))}

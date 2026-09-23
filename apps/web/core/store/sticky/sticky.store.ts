@@ -205,7 +205,7 @@ export class StickyStore implements IStickyStore {
     } catch (error) {
       console.error("Error in updating sticky:", error);
       this.stickies[id] = sticky;
-      throw new Error("", { cause: error });
+      throw new Error("Failed to update sticky", { cause: error });
     }
   };
 

@@ -117,7 +117,6 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
               stretch="auto"
               label={isSubmitting ? t("common.creating") : t("common.create")}
               loading={isSubmitting}
-              render={<button className="capitalize" />}
             />
           )}
         </div>
