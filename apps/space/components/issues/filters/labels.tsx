@@ -6,7 +6,7 @@
 
 import React, { useState } from "react";
 // plane imports
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // types
 import type { IIssueLabel } from "@/types/issue";
 // local imports

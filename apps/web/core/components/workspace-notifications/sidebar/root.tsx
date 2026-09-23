@@ -11,9 +11,7 @@ import { useParams } from "next/navigation";
 import type { TNotificationTab } from "@plane/constants";
 import { NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper } from "@plane/blocks/content-wrapper";
-import { Header, EHeaderVariant } from "@plane/blocks/header";
-import { Row, ERowVariant } from "@plane/blocks/row";
+import { ContentWrapper, Header, EHeaderVariant, Row, ERowVariant } from "@plane/blocks/layout";
 import { cn, getNumberCount } from "@plane/utils";
 // components
 import { CountChip } from "@/components/common/count-chip";

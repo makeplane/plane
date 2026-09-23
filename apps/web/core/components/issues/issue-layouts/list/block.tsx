@@ -17,8 +17,7 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { ControlLink } from "@plane/blocks/control-link";
-import { Row } from "@plane/blocks/row";
+import { ControlLink, Row } from "@plane/blocks/layout";
 import { Spinner } from "@plane/blocks/spinner";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components

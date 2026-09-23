@@ -34,7 +34,7 @@ import { FavoriteFolderIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { DropIndicator, DragHandle } from "@plane/blocks/sortable";
+import { DropIndicator, DragHandle } from "@plane/blocks/common";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

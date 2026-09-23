@@ -15,7 +15,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // components

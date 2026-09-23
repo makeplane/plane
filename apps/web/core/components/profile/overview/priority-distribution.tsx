@@ -10,7 +10,7 @@ import { BarChart } from "@plane/blocks/charts/bar-chart";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IUserProfileData } from "@plane/types";
 import { Card } from "@plane/blocks/card";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { capitalizeFirstLetter } from "@plane/utils";
 
 type Props = {

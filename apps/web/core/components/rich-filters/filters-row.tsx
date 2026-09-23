@@ -12,9 +12,9 @@ import { Transition } from "@headlessui/react";
 import { Button } from "@makeplane/propel/components/button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
-import { EHeaderVariant, Header } from "@plane/blocks/header";
-import { Loader } from "@plane/blocks/loader";
-import { cn } from "@plane/blocks/utils";
+import { EHeaderVariant, Header } from "@plane/blocks/layout";
+import { Loader } from "@plane/blocks/skeleton";
+import { cn } from "@plane/utils";
 // local imports
 import type { TAddFilterButtonProps } from "./add-filters/button";
 import { AddFilterButton } from "./add-filters/button";

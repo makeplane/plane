@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ContentWrapper } from "@plane/blocks/content-wrapper";
+import { ContentWrapper } from "@plane/blocks/layout";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";

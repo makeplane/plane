@@ -10,7 +10,7 @@ import { CycleGroupIcon } from "@plane/blocks/icons";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // icons
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 // helpers
 import { cn } from "@plane/utils";
 

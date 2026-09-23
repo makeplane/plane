@@ -15,7 +15,7 @@ import { ViewsOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Breadcrumbs, BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";

@@ -15,7 +15,7 @@ import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // assets
 import GithubLogo from "@/app/assets/services/github.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";

@@ -9,7 +9,7 @@ import { GlobeOutline, InfoOutline, LockOutline, MinusOutline } from "@makeplane
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { FavoriteStar } from "@plane/blocks/favorite-star";
+import { FavoriteStar } from "@plane/blocks/common";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

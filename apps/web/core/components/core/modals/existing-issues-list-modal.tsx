@@ -16,7 +16,7 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers

@@ -12,7 +12,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-import { Header, EHeaderVariant } from "@plane/blocks/header";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { calculateTotalFilters } from "@plane/utils";
 // assets
 import darkViewsAsset from "@/app/assets/empty-state/disabled-feature/views-dark.webp?url";

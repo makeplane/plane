@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 import { AddOutline } from "@makeplane/propel/icons";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import type { TQuickAddIssueButton } from "../root";
 
 export const ListQuickAddIssueButton = observer(function ListQuickAddIssueButton(props: TQuickAddIssueButton) {

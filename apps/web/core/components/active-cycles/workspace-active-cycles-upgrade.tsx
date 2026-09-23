@@ -11,7 +11,7 @@ import { AlertOctagonOutline, BarOutline, FolderOutline, SearchOutline } from "@
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/elements/button";
-import { ContentWrapper } from "@plane/blocks/content-wrapper";
+import { ContentWrapper } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // assets
 import ctaL1Dark from "@/app/assets/workspace-active-cycles/cta-l-1-dark.webp?url";

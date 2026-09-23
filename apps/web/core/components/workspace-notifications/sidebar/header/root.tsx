@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { InboxOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // local imports

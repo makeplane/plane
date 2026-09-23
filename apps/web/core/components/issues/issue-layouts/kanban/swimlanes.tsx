@@ -19,7 +19,7 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web imports

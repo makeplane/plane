@@ -15,7 +15,7 @@ import { ChevronLeftOutline, ChevronRightOutline, CopyOutline } from "@makeplane
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components

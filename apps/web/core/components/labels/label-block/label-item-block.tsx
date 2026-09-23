@@ -15,7 +15,7 @@ import { CloseOutline } from "@makeplane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { DragHandle } from "@plane/blocks/sortable";
+import { DragHandle } from "@plane/blocks/common";
 // helpers
 import { cn } from "@plane/utils";
 // components

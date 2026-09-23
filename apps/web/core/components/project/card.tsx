@@ -29,7 +29,7 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 import { ContextMenu } from "@plane/blocks/dropdowns";
-import { FavoriteStar } from "@plane/blocks/favorite-star";
+import { FavoriteStar } from "@plane/blocks/common";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 // hooks

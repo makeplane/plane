@@ -11,8 +11,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserProjectRoles } from "@plane/types";
-import { ContentWrapper } from "@plane/blocks/content-wrapper";
-import { Row, ERowVariant } from "@plane/blocks/row";
+import { ContentWrapper, Row, ERowVariant } from "@plane/blocks/layout";
 // components
 import { ListLayout } from "@/components/core/list";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";

@@ -24,7 +24,7 @@ import { Avatar } from "@makeplane/propel/components/avatar";
 import { setPromiseToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
-import { FavoriteStar } from "@plane/blocks/favorite-star";
+import { FavoriteStar } from "@plane/blocks/common";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
 import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";

@@ -11,8 +11,8 @@ import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
-import { Header, EHeaderVariant } from "@plane/blocks/header";
-import { Loader } from "@plane/blocks/loader";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
+import { Loader } from "@plane/blocks/skeleton";
 import { cn } from "@plane/utils";
 // components
 import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";

@@ -13,7 +13,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";

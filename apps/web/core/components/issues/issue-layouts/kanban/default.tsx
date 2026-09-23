@@ -19,7 +19,7 @@ import type {
   TIssueOrderByOptions,
 } from "@plane/types";
 // constants
-import { ContentWrapper } from "@plane/blocks/content-wrapper";
+import { ContentWrapper } from "@plane/blocks/layout";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";

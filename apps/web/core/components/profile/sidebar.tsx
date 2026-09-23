@@ -17,7 +17,7 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { ChevronDownOutline, EditOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";

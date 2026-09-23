@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // local imports
 import { DiscountInfo } from "./discount-info";
 

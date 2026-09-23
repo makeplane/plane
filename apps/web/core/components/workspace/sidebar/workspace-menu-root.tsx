@@ -15,7 +15,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";

@@ -18,7 +18,7 @@ import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/typ
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
 import { CustomSelect } from "@plane/blocks/dropdowns";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { ModalCore, EModalWidth } from "@plane/blocks/modals";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";

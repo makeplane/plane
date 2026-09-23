@@ -20,7 +20,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { SpreadSheetPropertyIcon } from "../../utils";
 

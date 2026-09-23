@@ -32,9 +32,9 @@ import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { ControlLink } from "@plane/blocks/control-link";
+import { ControlLink } from "@plane/blocks/layout";
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { DropIndicator, DragHandle } from "@plane/blocks/sortable";
+import { DropIndicator, DragHandle } from "@plane/blocks/common";
 import { cn } from "@plane/utils";
 // components
 import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigation-utils";

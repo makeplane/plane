@@ -8,7 +8,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { DragHandle } from "@plane/blocks/sortable";
+import { DragHandle } from "@plane/blocks/common";
 // helper
 import { cn } from "@plane/utils";
 // hooks

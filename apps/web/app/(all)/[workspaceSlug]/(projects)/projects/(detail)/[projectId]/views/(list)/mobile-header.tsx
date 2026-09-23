@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // icons
 import { ChevronDownOutline, FilterOutline } from "@makeplane/propel/icons";
 // components
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";

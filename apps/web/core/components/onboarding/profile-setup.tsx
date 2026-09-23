@@ -17,7 +17,7 @@ import { Button } from "@makeplane/propel/elements/button";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { Spinner } from "@plane/blocks/spinner";
 // components
 import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";

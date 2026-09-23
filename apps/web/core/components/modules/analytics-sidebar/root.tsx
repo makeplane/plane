@@ -27,7 +27,7 @@ import { setToast } from "@plane/blocks/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
 import { CustomSelect } from "@plane/blocks/dropdowns";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { TextArea } from "@makeplane/propel/components/text-area";
 // components
 // helpers

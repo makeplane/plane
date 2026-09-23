@@ -14,7 +14,7 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkspaceDraftIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

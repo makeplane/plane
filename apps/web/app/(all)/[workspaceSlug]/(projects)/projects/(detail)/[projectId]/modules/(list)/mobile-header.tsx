@@ -9,7 +9,7 @@ import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import { ModuleLayoutIcon } from "@/components/modules";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";

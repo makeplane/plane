@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { cn } from "@plane/blocks/utils";
+import { cn } from "@plane/utils";
 
 type Props = {
   className?: string;

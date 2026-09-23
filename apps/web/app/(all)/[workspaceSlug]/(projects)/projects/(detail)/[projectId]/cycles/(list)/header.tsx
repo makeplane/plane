@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/elements/button";
 import { CyclesOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";

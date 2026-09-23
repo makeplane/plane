@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { PagesOutline } from "@makeplane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

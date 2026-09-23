@@ -5,11 +5,12 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { PillButton } from "@makeplane/propel/components/pill";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
-import { Header, EHeaderVariant } from "@plane/blocks/header";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
@@ -123,12 +124,11 @@ export function ModuleAppliedFiltersList(props: Props) {
           </div>
         )}
         {isEditingAllowed && (
-          <PillButton
-            type="button"
+          <Pill
             size="md"
             variant="outline"
             label={t("common.clear_all")}
-            endIcon={<CloseOutline height={12} width={12} />}
+            endIcon={<Icon icon={CloseOutline} />}
             onClick={handleClearAllFilters}
           />
         )}

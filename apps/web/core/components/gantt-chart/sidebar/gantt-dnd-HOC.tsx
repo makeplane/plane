@@ -11,7 +11,7 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { setToast } from "@plane/blocks/toast";
-import { DropIndicator } from "@plane/blocks/sortable";
+import { DropIndicator } from "@plane/blocks/common";
 import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 
 type Props = {

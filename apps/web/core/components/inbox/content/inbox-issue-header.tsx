@@ -30,9 +30,8 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { setToast } from "@plane/blocks/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
-import { ControlLink } from "@plane/blocks/control-link";
+import { ControlLink, Row } from "@plane/blocks/layout";
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { Row } from "@plane/blocks/row";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";

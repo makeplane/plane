@@ -19,8 +19,8 @@ import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { ControlLink } from "@plane/blocks/control-link";
-import { DropIndicator } from "@plane/blocks/sortable";
+import { ControlLink } from "@plane/blocks/layout";
+import { DropIndicator } from "@plane/blocks/common";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";

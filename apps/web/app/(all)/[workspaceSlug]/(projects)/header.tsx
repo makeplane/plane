@@ -10,7 +10,7 @@ import { HomeOutline, WidgetOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/elements/button";
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

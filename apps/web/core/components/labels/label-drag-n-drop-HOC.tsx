@@ -17,7 +17,7 @@ import { createRoot } from "react-dom/client";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueLabel, InstructionType } from "@plane/types";
 // ui
-import { DropIndicator } from "@plane/blocks/sortable";
+import { DropIndicator } from "@plane/blocks/common";
 // components
 import { useUserPermissions } from "@/hooks/store/user";
 import { LabelName } from "./label-block/label-name";

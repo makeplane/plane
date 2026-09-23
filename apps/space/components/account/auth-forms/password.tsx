@@ -12,7 +12,8 @@ import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { AuthService } from "@plane/services";
-import { Input, PasswordStrengthIndicator } from "@plane/blocks/form-fields";
+import { Input } from "@plane/blocks/form-fields";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 import { Spinner } from "@plane/blocks/spinner";
 import { getPasswordStrength } from "@plane/utils";
 // types

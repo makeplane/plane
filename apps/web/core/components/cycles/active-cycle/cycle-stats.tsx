@@ -20,7 +20,7 @@ import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // assets
 import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";

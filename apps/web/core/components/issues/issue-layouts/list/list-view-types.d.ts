@@ -1,4 +1,4 @@
-import type { TPlacement } from "@plane/blocks/utils/placement";
+import type { TPopoverMenuPlacement } from "@plane/blocks/common";
 import type { TIssue } from "@plane/types";
 
 export interface IQuickActionProps {
@@ -13,7 +13,7 @@ export interface IQuickActionProps {
   customActionButton?: React.ReactElement;
   portalElement?: HTMLDivElement | null;
   readOnly?: boolean;
-  placements?: TPlacement;
+  placements?: TPopoverMenuPlacement;
 }
 
 export type TRenderQuickActions = ({
@@ -26,6 +26,6 @@ export type TRenderQuickActions = ({
   issue: TIssue;
   parentRef: React.RefObject<HTMLElement | null>;
   customActionButton?: React.ReactElement;
-  placement?: TPlacement;
+  placement?: TPopoverMenuPlacement;
   portalElement?: HTMLDivElement | null;
 }) => React.ReactNode;

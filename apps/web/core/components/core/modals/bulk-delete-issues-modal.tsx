@@ -18,7 +18,7 @@ import { SearchOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";

@@ -13,7 +13,7 @@ import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel
 import { useTranslation } from "@plane/i18n";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
-import { Sortable } from "@plane/blocks/sortable";
+import { Sortable } from "@plane/blocks/common";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";

@@ -15,7 +15,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
+import { PasswordStrengthIndicator } from "@plane/blocks/auth";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // helpers

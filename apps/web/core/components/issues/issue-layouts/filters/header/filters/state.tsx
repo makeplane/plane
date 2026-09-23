@@ -11,7 +11,7 @@ import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/blocks/icons";
 import type { IState } from "@plane/types";
 // components
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // ui
 // types

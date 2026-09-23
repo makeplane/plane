@@ -8,7 +8,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PillButton } from "@makeplane/propel/components/pill";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -84,12 +85,11 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
         );
       })}
       {isEditingAllowed && (
-        <PillButton
-          type="button"
+        <Pill
           size="md"
           variant="outline"
           label={t("common.clear_all")}
-          endIcon={<CloseOutline height={12} width={12} />}
+          endIcon={<Icon icon={CloseOutline} />}
           onClick={handleClearAllFilters}
         />
       )}

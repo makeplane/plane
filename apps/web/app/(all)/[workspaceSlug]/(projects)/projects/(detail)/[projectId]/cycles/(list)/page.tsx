@@ -14,7 +14,7 @@ import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { Header, EHeaderVariant } from "@plane/blocks/header";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { calculateTotalFilters } from "@plane/utils";
 // assets
 import darkEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-dark.webp?url";

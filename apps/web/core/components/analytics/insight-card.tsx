@@ -7,7 +7,7 @@
 // plane package imports
 import React from "react";
 import type { IAnalyticsResponseFields } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 
 export type InsightCardProps = {
   data?: IAnalyticsResponseFields;

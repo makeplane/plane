@@ -16,7 +16,7 @@ import { setToast } from "@plane/blocks/toast";
 import type { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // helpers
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

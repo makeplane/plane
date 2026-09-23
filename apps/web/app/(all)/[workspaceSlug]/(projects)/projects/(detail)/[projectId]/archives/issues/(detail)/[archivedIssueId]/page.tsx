@@ -12,7 +12,7 @@ import { Banner } from "@makeplane/propel/components/banner";
 import { ArchiveOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";

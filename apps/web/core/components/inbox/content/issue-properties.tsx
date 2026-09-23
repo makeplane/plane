@@ -15,7 +15,7 @@ import {
 } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
-import { ControlLink } from "@plane/blocks/control-link";
+import { ControlLink } from "@plane/blocks/layout";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";

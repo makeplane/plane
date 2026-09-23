@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { SearchOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";

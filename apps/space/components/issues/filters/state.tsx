@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // ui
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/blocks/icons";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // hooks
 import { useStates } from "@/hooks/store/use-state";
 // local imports

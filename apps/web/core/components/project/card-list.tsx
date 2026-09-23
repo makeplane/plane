@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/blocks/empty-state";
-import { ContentWrapper } from "@plane/blocks/content-wrapper";
+import { ContentWrapper } from "@plane/blocks/layout";
 // components
 import { calculateTotalFilters } from "@plane/utils";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";

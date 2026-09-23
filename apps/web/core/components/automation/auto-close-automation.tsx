@@ -15,7 +15,7 @@ import { StateGroupIcon } from "@plane/blocks/icons";
 import type { IProject } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
 import { CustomSelect, CustomSearchSelect } from "@plane/blocks/dropdowns";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks

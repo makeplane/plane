@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";

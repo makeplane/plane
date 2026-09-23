@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { Button } from "@makeplane/propel/components/button";
 import { MultipleStickyOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
-import { Header } from "@plane/blocks/header";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { StickySearch } from "@/components/stickies/modal/search";

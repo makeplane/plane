@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // helpers
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";

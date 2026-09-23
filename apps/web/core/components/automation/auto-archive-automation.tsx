@@ -14,7 +14,7 @@ import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
 import { CustomSelect } from "@plane/blocks/dropdowns";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // component
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";

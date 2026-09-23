@@ -24,7 +24,7 @@ import { Icon } from "@makeplane/propel/components/icon";
 import type { TNameDescriptionLoader } from "@plane/types";
 
 import { CustomMenu } from "@plane/blocks/dropdowns";
-import { Header, EHeaderVariant } from "@plane/blocks/header";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";

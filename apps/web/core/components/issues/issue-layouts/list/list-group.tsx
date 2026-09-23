@@ -23,7 +23,7 @@ import type {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";

@@ -7,7 +7,11 @@
 // FIXME: fix this!!!
 import type { ICustomSearchSelectOption } from "@plane/types";
 
+// Every consumer hands this straight to `usePopper`, which also takes the `auto*` family.
 type Placement =
+  | "auto"
+  | "auto-start"
+  | "auto-end"
   | "top"
   | "top-start"
   | "top-end"

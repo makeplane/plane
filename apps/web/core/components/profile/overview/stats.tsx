@@ -13,7 +13,7 @@ import { LayerStackIcon } from "@plane/blocks/icons";
 import { AddOutline, UserOutline } from "@makeplane/propel/icons";
 import type { IUserProfileData } from "@plane/types";
 import { Card } from "@plane/blocks/card";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // types
 
 type Props = {

@@ -12,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { PriorityIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 import { cn, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";

@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { CycleGroupIcon } from "@plane/blocks/icons";
 import type { TCycleGroups } from "@plane/types";
 // components
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useCycle } from "@/hooks/store/use-cycle";
 // ui

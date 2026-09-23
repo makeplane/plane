@@ -12,7 +12,7 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import type { TIssue } from "@plane/types";
-import { ControlLink } from "@plane/blocks/control-link";
+import { ControlLink } from "@plane/blocks/layout";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

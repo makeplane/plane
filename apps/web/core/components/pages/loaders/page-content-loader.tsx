@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { cn } from "@plane/utils";
 
 type Props = {

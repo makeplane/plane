@@ -9,7 +9,7 @@ import { ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons
 import { useTranslation } from "@plane/i18n";
 // plane
 import type { TGanttViews } from "@plane/types";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 // components
 import { cn } from "@plane/utils";
 import { VIEWS_LIST } from "@/components/gantt-chart/data";

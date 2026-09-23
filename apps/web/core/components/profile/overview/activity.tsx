@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { Card } from "@plane/blocks/card";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core/activity";

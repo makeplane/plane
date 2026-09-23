@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IIssueLabel } from "@plane/types";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import type { TLabelOperationsCallbacks } from "@/components/labels";
 import {
   CreateUpdateLabelInline,

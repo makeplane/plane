@@ -18,7 +18,7 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";

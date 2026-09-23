@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 // icons
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 // helpers
 import { cn } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";

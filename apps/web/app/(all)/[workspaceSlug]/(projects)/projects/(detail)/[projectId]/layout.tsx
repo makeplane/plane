@@ -7,8 +7,7 @@
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 // plane imports
-import { Header } from "@plane/blocks/header";
-import { Row } from "@plane/blocks/row";
+import { Header, Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // components
 import { TabNavigationRoot } from "@/components/navigation/tab-navigation-root";

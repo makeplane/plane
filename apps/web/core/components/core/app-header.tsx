@@ -7,7 +7,7 @@
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 // components
 import { cn } from "@plane/utils";
 import { ExtendedAppHeader } from "@/components/common/extended-app-header";

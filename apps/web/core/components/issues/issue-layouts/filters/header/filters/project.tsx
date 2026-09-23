@@ -9,7 +9,7 @@ import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
 import { Logo } from "@plane/blocks/emoji-icon-picker";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks

@@ -15,7 +15,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 // constants
 import { PROJECT_DETAILS } from "@plane/constants";
 // hooks

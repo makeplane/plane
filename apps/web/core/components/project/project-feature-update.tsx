@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@makeplane/propel/elements/button";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
-import { Row } from "@plane/blocks/row";
+import { Row } from "@plane/blocks/layout";
 // components
 // hooks
 import { useProject } from "@/hooks/store/use-project";

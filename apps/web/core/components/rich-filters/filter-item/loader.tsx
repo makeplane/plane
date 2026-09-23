@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Loader } from "@plane/blocks/loader";
+import { Loader } from "@plane/blocks/skeleton";
 
 export function FilterItemLoader() {
   return (

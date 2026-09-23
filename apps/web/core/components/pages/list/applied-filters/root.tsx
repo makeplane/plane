@@ -5,7 +5,8 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { PillButton } from "@makeplane/propel/components/pill";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TPageFilterProps } from "@plane/types";
@@ -76,12 +77,11 @@ export function PageAppliedFiltersList(props: Props) {
         );
       })}
       {isEditingAllowed && (
-        <PillButton
-          type="button"
+        <Pill
           size="md"
           variant="outline"
           label={t("common.clear_all")}
-          endIcon={<CloseOutline height={12} />}
+          endIcon={<Icon icon={CloseOutline} />}
           onClick={handleClearAllFilters}
         />
       )}

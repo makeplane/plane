@@ -13,7 +13,7 @@ import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { AddOutline } from "@makeplane/propel/icons";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
-import { Sortable } from "@plane/blocks/sortable";
+import { Sortable } from "@plane/blocks/common";
 // local imports
 import { EstimatePointCreate } from "./create";
 import { EstimatePointItemPreview } from "./preview";
