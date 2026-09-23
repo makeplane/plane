@@ -264,8 +264,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           <MenuTrigger
             tabIndex={getIndex("parent_id")}
             render={
-              // `MenuTrigger` supplies the real button, so this is chrome only.
-              <PillChrome size="sm" variant="outline" render={<span />}>
+              // `PillChrome` renders its own `<button type="button">`, which becomes the menu trigger.
+              <PillChrome size="sm" variant="outline">
                 {selectedParentIssue?.project_id && (
                   <IssueIdentifier
                     projectId={selectedParentIssue.project_id}

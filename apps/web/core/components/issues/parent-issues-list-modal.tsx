@@ -192,9 +192,10 @@ export function ParentIssuesListModal({
                               target="_blank"
                               className="relative z-1 hidden shrink-0 text-secondary group-hover/item:block hover:text-primary"
                               rel="noopener noreferrer"
+                              aria-label={t("common.actions.open_in_new_tab")}
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <RocketOutline className="h-4 w-4" />
+                              <RocketOutline className="h-4 w-4" aria-hidden="true" />
                             </a>
                           }
                         />
