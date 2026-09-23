@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useEffectEvent, useState, useRef } from "react";
 import { Controller, useForm } from "react-hook-form"; // services
 import { WarningCircleOutline } from "@makeplane/propel/icons";
 // plane imports
@@ -149,11 +149,15 @@ export function GptAssistantPopover(props: Props) {
     responseRef.current?.setEditorValue(`<p>${response}</p>`);
   }, [response, responseRef]);
 
+  // Read the latest submit handler (it closes over `prompt` and the workspace props) without
+  // re-subscribing the Enter listener on every render.
+  const onEnterKey = useEffectEvent(() => void handleSubmit(handleAIResponse)());
+
   useEffect(() => {
     const handleEnterKeyPress = (event: KeyboardEvent) => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
-        handleSubmit(handleAIResponse)();
+        onEnterKey();
       }
     };
 
@@ -163,8 +167,7 @@ export function GptAssistantPopover(props: Props) {
     return () => {
       window.removeEventListener("keydown", handleEnterKeyPress);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, handleSubmit, onClose]);
+  }, [isOpen]);
 
   const responseActionButton = response !== "" && (
     <Button
