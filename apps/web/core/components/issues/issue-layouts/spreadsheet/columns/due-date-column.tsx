@@ -7,14 +7,14 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { DueDateOutline } from "@makeplane/propel/icons";
+import { DateSelect } from "@plane/blocks/property-select";
+import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
-// components
-import { DateDropdown } from "@/components/dropdowns/date";
-// helpers
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserProfile } from "@/hooks/store/user";
 
 type Props = {
   issue: TIssue;
@@ -27,13 +27,16 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
   const { issue, onChange, disabled, onClose } = props;
   // store hooks
   const { getStateById } = useProjectState();
+  const { data: userProfile } = useUserProfile();
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const stateDetails = getStateById(issue.state_id);
 
   return (
     <div className="h-11 border-b-[0.5px] border-subtle">
-      <DateDropdown
-        value={issue.target_date}
+      <DateSelect
+        value={getDate(issue.target_date) ?? null}
         minDate={getDate(issue.start_date)}
         onChange={(data) => {
           const targetDate = data ? renderFormattedPayloadDate(data) : null;
@@ -47,19 +50,16 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
           );
         }}
         disabled={disabled}
-        placeholder="Due date"
-        icon={<DueDateOutline className="h-3 w-3 flex-shrink-0" />}
-        buttonVariant="transparent-with-text"
-        buttonContainerClassName="w-full"
-        buttonClassName={cn(
-          "rounded-none px-page-x text-left group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
-          {
-            "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-          }
-        )}
-        optionsClassName="z-[9]"
-        clearIconClassName="!text-primary"
+        placeholder={t("common.order_by.due_date")}
+        icon={<DueDateOutline />}
+        clearable
+        // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
+        className={cn("clickable h-full", {
+          "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+        })}
+        weekStartsOn={userProfile?.start_of_the_week}
         onClose={onClose}
+        variant="table-cell"
       />
     </div>
   );

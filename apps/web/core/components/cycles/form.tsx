@@ -13,13 +13,15 @@ import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area"
 import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
+import { DateRangeSelect } from "@plane/blocks/property-select";
 import { Button } from "@makeplane/propel/components/button";
+import { CalendarOutline } from "@makeplane/propel/icons";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns/date-range";
-import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
+import { ProjectSelect } from "@/components/dropdowns/project/project-select";
 // hooks
+import { useUserProfile } from "@/hooks/store/user";
 import { useUser } from "@/hooks/store/user/user-user";
 
 type Props = {
@@ -45,6 +47,7 @@ export function CycleForm(props: Props) {
   const { t } = useTranslation();
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
+  const { data: userProfile } = useUserProfile();
   // form data
   const {
     formState: { errors, isSubmitting },
@@ -79,21 +82,18 @@ export function CycleForm(props: Props) {
               control={control}
               name="project_id"
               render={({ field: { value, onChange } }) => (
-                <div className="h-7">
-                  <ProjectDropdown
-                    value={value}
-                    onChange={(val) => {
-                      if (!Array.isArray(val)) {
-                        onChange(val);
-                        setActiveProject(val);
-                      }
-                    }}
-                    multiple={false}
-                    buttonVariant="border-with-text"
-                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
-                    tabIndex={getIndex("cover_image")}
-                  />
-                </div>
+                <ProjectSelect
+                  value={value}
+                  onChange={(val) => {
+                    if (!val) return;
+                    onChange(val);
+                    setActiveProject(val);
+                  }}
+                  multiple={false}
+                  variant="pill-md"
+                  filterOption={(id) => !!projectsWithCreatePermissions?.[id]}
+                  tabIndex={getIndex("cover_image")}
+                />
               )}
             />
           )}
@@ -165,25 +165,21 @@ export function CycleForm(props: Props) {
                   control={control}
                   name="end_date"
                   render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                    <DateRangeDropdown
-                      buttonVariant="border-with-text"
+                    <DateRangeSelect
+                      variant="pill-md"
                       className="h-7"
                       minDate={new Date()}
                       value={{
-                        from: getDate(startDateValue),
-                        to: getDate(endDateValue),
+                        from: getDate(startDateValue) ?? null,
+                        to: getDate(endDateValue) ?? null,
                       }}
-                      onSelect={(val) => {
-                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                      onChange={(val) => {
+                        onChangeStartDate(val.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val.to ? renderFormattedPayloadDate(val.to) : null);
                       }}
-                      placeholder={{
-                        from: "Start date",
-                        to: "End date",
-                      }}
-                      hideIcon={{
-                        to: true,
-                      }}
+                      icon={<CalendarOutline />}
+                      placeholder={`${t("start_date")} - ${t("end_date")}`}
+                      weekStartsOn={userProfile?.start_of_the_week}
                       tabIndex={getIndex("date_range")}
                     />
                   )}

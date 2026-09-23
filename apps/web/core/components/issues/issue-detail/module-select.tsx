@@ -4,16 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
-import { xor } from "lodash-es";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-// hooks
-// components
 import { cn } from "@plane/utils";
-import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
-// ui
-// helpers
+// components
+import { ModuleSelect } from "@/components/dropdowns/module/module-select";
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TIssueOperations } from "./root";
@@ -27,57 +24,59 @@ type TIssueModuleSelect = {
   disabled?: boolean;
 };
 
+/**
+ * Issue-detail sidebar binding — diffs the selection into add/remove ops and serializes them so a
+ * second toggle waits for the first to finish (the multi-select stays open across picks).
+ */
 export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIssueModuleSelect) {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
   const { t } = useTranslation();
   // states
   const [isUpdating, setIsUpdating] = useState(false);
+  // refs — serialize operations so a second call waits for the first to finish
+  const pendingOp = useRef<Promise<void>>(Promise.resolve());
   // store hooks
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   // derived values
   const issue = getIssueById(issueId);
+  const moduleIds = issue?.module_ids ?? [];
   const disableSelect = disabled || isUpdating;
 
-  const handleIssueModuleChange = async (moduleIds: string[]) => {
-    if (!issue || !issue.module_ids) return;
-
-    setIsUpdating(true);
-    const updatedModuleIds = xor(issue.module_ids, moduleIds);
-    const modulesToAdd: string[] = [];
-    const modulesToRemove: string[] = [];
-
-    for (const moduleId of updatedModuleIds) {
-      if (issue.module_ids.includes(moduleId)) {
-        modulesToRemove.push(moduleId);
-      } else {
-        modulesToAdd.push(moduleId);
-      }
-    }
-
-    await issueOperations.changeModulesInIssue?.(workspaceSlug, projectId, issueId, modulesToAdd, modulesToRemove);
-
-    setIsUpdating(false);
-  };
+  const handleChange = useCallback(
+    (newModuleIds: string[]) => {
+      setIsUpdating(true);
+      pendingOp.current = pendingOp.current
+        .then(async () => {
+          const current = getIssueById(issueId)?.module_ids ?? [];
+          const modulesToAdd = newModuleIds.filter((id) => !current.includes(id));
+          const modulesToRemove = current.filter((id) => !newModuleIds.includes(id));
+          if (modulesToAdd.length === 0 && modulesToRemove.length === 0) return;
+          return await issueOperations.changeModulesInIssue?.(
+            workspaceSlug,
+            projectId,
+            issueId,
+            modulesToAdd,
+            modulesToRemove
+          );
+        })
+        .finally(() => setIsUpdating(false));
+    },
+    [getIssueById, issueId, issueOperations, workspaceSlug, projectId]
+  );
 
   return (
-    <div className={cn(`flex h-full items-center gap-1`, className)}>
-      <ModuleDropdown
-        projectId={projectId}
-        value={issue?.module_ids ?? []}
-        onChange={handleIssueModuleChange}
-        placeholder={t("module.no_module")}
-        disabled={disableSelect}
-        className="group h-full w-full"
-        buttonContainerClassName="w-full text-left rounded-sm"
-        buttonClassName={`text-body-xs-medium justify-between ${issue?.module_ids?.length ? "" : "text-placeholder"}`}
-        buttonVariant="transparent-with-text"
-        hideIcon
-        dropdownArrow
-        dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+    <div className={cn("flex h-full w-full grow items-center gap-1", className)}>
+      <ModuleSelect
         multiple
-        itemClassName="px-2"
+        projectId={projectId}
+        value={moduleIds}
+        onChange={handleChange}
+        disabled={disableSelect}
+        variant="select-ghost-md"
+        placeholder={t("module.no_module")}
+        tooltip
       />
     </div>
   );
