@@ -5,11 +5,14 @@
  */
 
 import React from "react";
+import { StarFilled, StarOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { cn } from "@plane/utils";
-import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 
 type Props = {
+  /** Accessible name for the icon-only toggle; defaults to the translated "Add to favorites". */
+  "aria-label"?: string;
   buttonClassName?: string;
   iconClassName?: string;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -17,10 +20,17 @@ type Props = {
 };
 
 export function FavoriteStar(props: Props) {
-  const { buttonClassName, iconClassName, onClick, selected } = props;
+  const { "aria-label": ariaLabel, buttonClassName, iconClassName, onClick, selected } = props;
+  const { t } = useTranslation();
 
   return (
-    <button type="button" className={cn("grid h-4 w-4 place-items-center", buttonClassName)} onClick={onClick}>
+    <button
+      type="button"
+      className={cn("grid h-4 w-4 place-items-center", buttonClassName)}
+      onClick={onClick}
+      aria-label={ariaLabel ?? t("add_to_favorites")}
+      aria-pressed={selected}
+    >
       <StarOutline
         aria-hidden="true"
         className={cn(

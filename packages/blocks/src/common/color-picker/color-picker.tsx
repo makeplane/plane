@@ -30,6 +30,7 @@ export function ColorPicker(props: ColorPickerProps) {
   return (
     <div className="relative flex items-center justify-center">
       <button
+        type="button"
         className={`size-4 cursor-pointer rounded-full conical-gradient ${className}`}
         onClick={handleOnClick}
         aria-label={t("aria_labels.color_picker.open")}

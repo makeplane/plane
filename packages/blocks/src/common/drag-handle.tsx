@@ -5,10 +5,13 @@
  */
 
 import React, { forwardRef } from "react";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { cn } from "@plane/utils";
 
 interface IDragHandle {
+  /** Accessible name for the icon-only handle; defaults to the translated "Drag to rearrange". */
+  "aria-label"?: string;
   className?: string;
   disabled?: boolean;
 }
@@ -17,7 +20,8 @@ export const DragHandle = forwardRef(function DragHandle(
   props: IDragHandle,
   ref: React.ForwardedRef<HTMLButtonElement | null>
 ) {
-  const { className, disabled = false } = props;
+  const { "aria-label": ariaLabel, className, disabled = false } = props;
+  const { t } = useTranslation();
 
   if (disabled) {
     return <div className="h-[18px] w-[14px]" />;
@@ -32,8 +36,11 @@ export const DragHandle = forwardRef(function DragHandle(
         e.stopPropagation();
       }}
       ref={ref}
+      aria-label={ariaLabel ?? t("drag_to_rearrange")}
     >
       <svg
+        aria-hidden="true"
+        focusable="false"
         width="16"
         height="16"
         viewBox="0 0 16 16"
