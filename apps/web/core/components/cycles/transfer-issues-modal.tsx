@@ -102,7 +102,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
         if (!open) handleClose();
       }}
     >
-      <DialogContent size="md">
+      <DialogContent size="sm">
         <DialogCloseGroup>
           <IconButton
             variant="ghost"

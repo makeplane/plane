@@ -10,7 +10,7 @@ import { AlertOctagonOutline, BarOutline, FolderOutline, SearchOutline } from "@
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Button } from "@makeplane/propel/components/button";
 import { ContentWrapper } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // assets
@@ -91,13 +91,14 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
             <p className="text-14 font-medium text-tertiary">{t("active_cycles_description")}</p>
           </div>
           <div className="flex items-center gap-3">
-            <AnchorButton
+            <Button
               variant="primary"
               size="sm"
-              href={MARKETING_PRICING_PAGE_LINK}
-              target="_blank"
-              rel="noreferrer"
-              icon={<ProIcon className="h-3.5 w-3.5" />}
+              stretch="auto"
+              nativeButton={false}
+              // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label and icon into this anchor
+              render={<a href={MARKETING_PRICING_PAGE_LINK} target="_blank" rel="noreferrer" />}
+              icon={<ProIcon className="h-3.5 w-3.5 text-on-color" />}
               label={t("upgrade")}
             />
           </div>

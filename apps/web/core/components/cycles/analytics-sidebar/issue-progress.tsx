@@ -9,7 +9,8 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
-import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { Collapsible } from "@base-ui/react/collapsible";
+import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -145,9 +146,16 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
     <div className="space-y-4 border-t border-subtle py-5">
       {/* progress bar header */}
       {isCycleDateValid ? (
-        <Collapsible defaultOpen trigger={progressTitle}>
-          {progressBody}
-        </Collapsible>
+        <Collapsible.Root defaultOpen className="flex flex-col">
+          <Collapsible.Trigger className="group relative flex w-full items-center justify-between gap-2">
+            {progressTitle}
+            <span className="ml-auto">
+              <ChevronUpOutline className="hidden h-3.5 w-3.5 group-data-[panel-open]:block" aria-hidden="true" />
+              <ChevronDownOutline className="h-3.5 w-3.5 group-data-[panel-open]:hidden" aria-hidden="true" />
+            </span>
+          </Collapsible.Trigger>
+          <Collapsible.Panel>{progressBody}</Collapsible.Panel>
+        </Collapsible.Root>
       ) : (
         <div className="flex flex-col">
           <div className="relative flex w-full items-center justify-between gap-2">{progressTitle}</div>
