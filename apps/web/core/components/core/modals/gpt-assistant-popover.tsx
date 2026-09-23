@@ -4,18 +4,19 @@
  * See the LICENSE file for details.
  */
 
-import type { Ref } from "react";
-import React, { useEffect, useState, useRef, Fragment } from "react";
-import type { Placement } from "@popperjs/core";
+import type React from "react";
+import { useEffect, useState, useRef } from "react";
 import { Controller, useForm } from "react-hook-form"; // services
-import { usePopper } from "react-popper";
 import { WarningCircleOutline } from "@makeplane/propel/icons";
-import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
+import { convertPlacementToSideAndAlign } from "@plane/blocks/utils";
+import type { Placement } from "@plane/blocks/utils";
+import { cn } from "@plane/utils";
 
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -59,15 +60,11 @@ export function GptAssistantPopover(props: Props) {
   // states
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const responseRef = useRef<EditorRefApi>(null);
-  // popper
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "auto",
-  });
+  // derived values
+  const { side, align } = convertPlacementToSideAndAlign(placement ?? "auto");
   // form
   const {
     handleSubmit,
@@ -160,20 +157,11 @@ export function GptAssistantPopover(props: Props) {
       }
     };
 
-    const handleEscapeKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      window.addEventListener("keydown", handleEnterKeyPress);
-      window.addEventListener("keydown", handleEscapeKeyPress);
-    }
+    // Escape is Base UI's now: it closes the popover, which runs `onClose` through `onOpenChange`.
+    if (isOpen) window.addEventListener("keydown", handleEnterKeyPress);
 
     return () => {
       window.removeEventListener("keydown", handleEnterKeyPress);
-      window.removeEventListener("keydown", handleEscapeKeyPress);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, handleSubmit, onClose]);
@@ -198,112 +186,118 @@ export function GptAssistantPopover(props: Props) {
       : "Generate again";
 
   return (
-    <Popover as="div" className={`relative w-min text-left`}>
-      <Popover.Button as={Fragment}>
-        <button ref={setReferenceElement} className="flex items-center" tabIndex={-1}>
-          {button}
-        </button>
-      </Popover.Button>
-      <Transition
-        show={isOpen}
-        as={React.Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
+    <div className="relative w-min text-left">
+      <Popover
+        open={isOpen}
+        onOpenChange={(nextOpen) => {
+          // The caller's own button owns opening (`openOnClick={false}` below), so the only
+          // transitions Base UI drives here are dismissals: Escape and outside press.
+          if (!nextOpen) onClose();
+        }}
       >
-        <Popover.Panel
-          as="div"
-          className={`shadow fixed z-10 flex w-full max-w-full min-w-[50rem] flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 ${className}`}
-          ref={setPopperElement as Ref<HTMLDivElement>}
-          style={styles.popper}
-          {...attributes.popper}
+        {/* The trigger only anchors the panel: the `button` node the caller hands us already toggles
+            `isOpen`, so a second toggle here would cancel it out. It stays out of the tab order,
+            as the `<button tabIndex={-1}>` it replaces did. */}
+        <PopoverTrigger
+          nativeButton={false}
+          openOnClick={false}
+          tabIndex={-1}
+          render={<span className="flex items-center" />}
         >
-          <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
-            {prompt && (
-              <div className="text-13">
-                Content:
-                <RichTextEditor
-                  editable={false}
-                  id="ai-assistant-content"
-                  initialValue={prompt}
-                  containerClassName="-m-3"
-                  ref={editorRef}
-                  workspaceId={workspaceId}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
+          {button}
+        </PopoverTrigger>
+        {/* The popover owns the portal, positioning, enter/leave and the panel surface, so
+            react-popper, the Headless UI `Transition` and the hand-rolled chrome all go. */}
+        <PopoverContent variant="rich" side={side} align={align}>
+          <div className={cn("flex min-h-0 w-200 max-w-full flex-1 flex-col space-y-4 overflow-hidden", className)}>
+            <PopoverBody tabIndex={0}>
+              <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
+                {prompt && (
+                  <div className="text-13">
+                    Content:
+                    <RichTextEditor
+                      editable={false}
+                      id="ai-assistant-content"
+                      initialValue={prompt}
+                      containerClassName="-m-3"
+                      ref={editorRef}
+                      workspaceId={workspaceId}
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                    />
+                  </div>
+                )}
+                {response !== "" && (
+                  <div className="page-block-section max-h-[8rem] text-13">
+                    Response:
+                    <RichTextEditor
+                      editable={false}
+                      id="ai-assistant-response"
+                      initialValue={`<p>${response}</p>`}
+                      ref={responseRef}
+                      workspaceId={workspaceId}
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                    />
+                  </div>
+                )}
+                {invalidResponse && (
+                  <div className="text-13 text-danger-primary">
+                    No response could be generated. This may be due to insufficient content or task information. Please
+                    try again.
+                  </div>
+                )}
+              </div>
+            </PopoverBody>
+            <Controller
+              control={control}
+              name="task"
+              render={({ field: { value, onChange, ref } }) => (
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="task"
+                    name="task"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={`${
+                      prompt && prompt !== ""
+                        ? "Tell AI what action to perform on this content..."
+                        : "Ask AI anything..."
+                    }`}
+                    autoFocus
+                  />
+                </InputGroup>
+              )}
+            />
+            <div className="flex justify-between gap-2">
+              {responseActionButton ? (
+                <>{responseActionButton}</>
+              ) : (
+                <>
+                  <div className="flex items-start justify-center gap-2 text-13 text-accent-primary">
+                    <WarningCircleOutline className="h-4 w-4" />
+                    <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
+                  </div>
+                </>
+              )}
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" size="sm" stretch="auto" label="Close" onClick={onClose} />
+                <Button
+                  variant="primary"
+                  size="sm"
+                  stretch="auto"
+                  label={generateResponseButtonText}
+                  onClick={handleSubmit(handleAIResponse)}
+                  loading={isSubmitting}
                 />
               </div>
-            )}
-            {response !== "" && (
-              <div className="page-block-section max-h-[8rem] text-13">
-                Response:
-                <RichTextEditor
-                  editable={false}
-                  id="ai-assistant-response"
-                  initialValue={`<p>${response}</p>`}
-                  ref={responseRef}
-                  workspaceId={workspaceId}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                />
-              </div>
-            )}
-            {invalidResponse && (
-              <div className="text-13 text-danger-primary">
-                No response could be generated. This may be due to insufficient content or task information. Please try
-                again.
-              </div>
-            )}
-          </div>
-          <Controller
-            control={control}
-            name="task"
-            render={({ field: { value, onChange, ref } }) => (
-              <InputGroup size="2xl">
-                <Input
-                  size="2xl"
-                  id="task"
-                  name="task"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  placeholder={`${
-                    prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
-                  }`}
-                  autoFocus
-                />
-              </InputGroup>
-            )}
-          />
-          <div className="flex justify-between gap-2">
-            {responseActionButton ? (
-              <>{responseActionButton}</>
-            ) : (
-              <>
-                <div className="flex items-start justify-center gap-2 text-13 text-accent-primary">
-                  <WarningCircleOutline className="h-4 w-4" />
-                  <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
-                </div>
-              </>
-            )}
-            <div className="flex items-center gap-2">
-              <Button variant="secondary" size="sm" stretch="auto" label="Close" onClick={onClose} />
-              <Button
-                variant="primary"
-                size="sm"
-                stretch="auto"
-                label={generateResponseButtonText}
-                onClick={handleSubmit(handleAIResponse)}
-                loading={isSubmitting}
-              />
             </div>
           </div>
-        </Popover.Panel>
-      </Transition>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
