@@ -24,14 +24,7 @@ export function WebhooksEmptyState(props: Props) {
         <img src={EmptyWebhook} className="w-52 object-cover sm:w-60" alt="empty" />
         <h6 className="mt-6 mb-3 text-18 font-semibold sm:mt-8">No webhooks</h6>
         <p className="mb-7 text-tertiary sm:mb-8">Create webhooks to receive real-time updates and automate actions</p>
-        <Button
-          variant="primary"
-          size="sm"
-          stretch="auto"
-          label="Add webhook"
-          onClick={onClick}
-          render={<button className="flex items-center gap-1.5" />}
-        />
+        <Button variant="primary" size="sm" stretch="auto" label="Add webhook" onClick={onClick} />
       </div>
     </div>
   );
