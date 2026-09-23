@@ -36,6 +36,7 @@
     "./pill-button": "./dist/pill-button/index.js",
     "./popovers": "./dist/popovers/index.js",
     "./portal": "./dist/portal/index.js",
+    "./property-select": "./dist/property-select/index.js",
     "./select": "./dist/select/index.js",
     "./skeleton": "./dist/skeleton/index.js",
     "./spinner": "./dist/spinner/index.js",
