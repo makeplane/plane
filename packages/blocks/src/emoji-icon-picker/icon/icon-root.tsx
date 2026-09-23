@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { SearchOutline, InfoOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
@@ -23,6 +23,8 @@ type IconRootProps = {
   onSearchQueryChange?: (query: string) => void;
 };
 
+const isPresetColor = (color: string) => DEFAULT_COLORS.includes(color.toLowerCase());
+
 export function IconRoot(props: IconRootProps) {
   const {
     defaultColor,
@@ -37,19 +39,22 @@ export function IconRoot(props: IconRootProps) {
   const searchLabel = searchPlaceholder ?? t("common.search.label");
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
-  const [showHexInput, setShowHexInput] = useState(false);
-  const [hexValue, setHexValue] = useState("");
+  // A preset default shows the swatch row; any other colour opens the hex input pre-filled with it.
+  const [showHexInput, setShowHexInput] = useState(() => !isPresetColor(defaultColor));
+  const [hexValue, setHexValue] = useState(() => (isPresetColor(defaultColor) ? "" : defaultColor.slice(1, 7)));
+  // Re-apply that rule when the caller passes a new default (guarded render update, not an effect)
+  const [appliedDefaultColor, setAppliedDefaultColor] = useState(defaultColor);
+  if (defaultColor !== appliedDefaultColor) {
+    setAppliedDefaultColor(defaultColor);
+    if (isPresetColor(defaultColor)) setShowHexInput(false);
+    else {
+      setHexValue(defaultColor.slice(1, 7));
+      setShowHexInput(true);
+    }
+  }
   const [isInputFocused, setIsInputFocused] = useState(false);
   // use shared search query from parent
   const query = searchQuery ?? "";
-
-  useEffect(() => {
-    if (DEFAULT_COLORS.includes(defaultColor.toLowerCase() ?? "")) setShowHexInput(false);
-    else {
-      setHexValue(defaultColor?.slice(1, 7) ?? "");
-      setShowHexInput(true);
-    }
-  }, [defaultColor]);
 
   return (
     <>

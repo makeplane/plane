@@ -5,7 +5,7 @@
  */
 
 import type { ReactElement, Ref, ReactNode } from "react";
-import { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 import { Check } from "lucide-react";
 import { ComboboxItem, ComboboxItemIndicator, ComboboxList } from "@makeplane/propel/components/combobox";
@@ -251,21 +251,26 @@ export function VirtualListBody<T>(props: VirtualListBodyProps<T>) {
     [virtualizer, rowIndexByOption, items.length]
   );
 
+  // Asks for the next page unless one is already in flight; a Promise result drives the spinner row.
+  const requestNextPage = useCallback(() => {
+    if (isAppendingRef.current) return;
+    const pending = onLoadMore();
+    if (!(pending instanceof Promise)) return;
+    isAppendingRef.current = true;
+    setIsAppending(true);
+    void pending.finally(() => {
+      isAppendingRef.current = false;
+      setIsAppending(false);
+    });
+  }, [onLoadMore]);
+
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!hasMore || !sentinel) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
-        if (isAppendingRef.current) return;
-        const pending = onLoadMore();
-        if (!(pending instanceof Promise)) return;
-        isAppendingRef.current = true;
-        setIsAppending(true);
-        void pending.finally(() => {
-          isAppendingRef.current = false;
-          setIsAppending(false);
-        });
+        requestNextPage();
       },
       { root: scrollRef.current }
     );
@@ -274,7 +279,7 @@ export function VirtualListBody<T>(props: VirtualListBodyProps<T>) {
     // `items.length` re-arms the observer after each append. An IntersectionObserver only reports
     // a CHANGE in intersection, so a page too short to push the sentinel out of view would leave it
     // still intersecting, fire nothing, and strand paging with `hasMore` still true.
-  }, [hasMore, onLoadMore, items.length]);
+  }, [hasMore, requestNextPage, items.length]);
 
   return (
     // Bounded below the panel's own `max-h-72` cap so this scroller — not the panel's ScrollArea —

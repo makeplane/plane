@@ -20,31 +20,17 @@ const sizeClasses = {
 };
 
 export function AnimatedCounter({ count, className, size = "md" }: AnimatedCounterProps) {
-  // states
-  const [displayCount, setDisplayCount] = useState(count);
+  // The number sliding out. It trails `count` and catches up once the slide finishes, so the
+  // animation state is derived from the pair instead of being copied from `count` in an effect.
   const [prevCount, setPrevCount] = useState(count);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState<"up" | "down" | null>(null);
-  const [animationKey, setAnimationKey] = useState(0);
+  const isAnimating = count !== prevCount;
+  const direction = isAnimating ? (count > prevCount ? "up" : "down") : null;
 
   useEffect(() => {
-    if (count !== prevCount) {
-      setDirection(count > prevCount ? "up" : "down");
-      setIsAnimating(true);
-      setAnimationKey((prev) => prev + 1);
-
-      // Update the display count immediately, animation will show the transition
-      setDisplayCount(count);
-
-      // End animation after CSS transition
-      const timer = setTimeout(() => {
-        setIsAnimating(false);
-        setDirection(null);
-        setPrevCount(count);
-      }, 250);
-
-      return () => clearTimeout(timer);
-    }
+    if (count === prevCount) return;
+    // End the animation after the CSS transition
+    const timer = setTimeout(() => setPrevCount(count), 250);
+    return () => clearTimeout(timer);
   }, [count, prevCount]);
 
   const sizeClass = sizeClasses[size];
@@ -54,7 +40,7 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
       {/* Previous number sliding out */}
       {isAnimating && (
         <span
-          key={`prev-${animationKey}`}
+          key={`prev-${prevCount}-${count}`}
           className={cn(
             "absolute inset-0 flex items-center justify-center font-medium",
             "animate-slide-out",
@@ -73,7 +59,7 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
 
       {/* New number sliding in */}
       <span
-        key={`current-${animationKey}`}
+        key={`current-${count}`}
         className={cn(
           "flex items-center justify-center font-medium",
           !isAnimating && "opacity-100",
@@ -85,7 +71,7 @@ export function AnimatedCounter({ count, className, size = "md" }: AnimatedCount
           className
         )}
       >
-        {displayCount}
+        {count}
       </span>
     </div>
   );

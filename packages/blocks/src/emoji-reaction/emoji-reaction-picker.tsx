@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { EmojiRoot } from "../emoji-icon-picker/emoji/emoji";
 import { emojiToString } from "../emoji-icon-picker/helper";
 import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
@@ -52,10 +52,15 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const resolvedSearchPlaceholder = searchPlaceholder ?? t("common.search.label");
 
-  // clear search when picker closes
-  useEffect(() => {
-    if (!isOpen) setSearchQuery("");
-  }, [isOpen]);
+  // Start every open with an empty search. Clearing on both transitions (not only on close) also
+  // covers a picker the caller closed itself, since the next open still goes through this handler.
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      setSearchQuery("");
+      handleToggle(open);
+    },
+    [handleToggle]
+  );
 
   // side and align calculations
   const { finalSide, finalAlign } = useMemo(() => {
@@ -70,13 +75,13 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     (value: string) => {
       const emoji = emojiToString(value);
       onChange(emoji);
-      if (closeOnSelect) handleToggle(false);
+      if (closeOnSelect) handleOpenChange(false);
     },
-    [onChange, closeOnSelect, handleToggle]
+    [onChange, closeOnSelect, handleOpenChange]
   );
 
   return (
-    <Popover open={isOpen} onOpenChange={handleToggle}>
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         disabled={disabled}
         render={<button type="button" className={cn("outline-none", buttonClassName)} disabled={disabled} />}
