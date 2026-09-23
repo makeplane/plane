@@ -4,8 +4,8 @@
  * See the LICENSE file for details.
  */
 
-// @ts-expect-error Due to live server dependencies
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
+// Same entry point as `./draggable`: a monitor only sees drags registered on its own adapter instance.
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import React, { Fragment, useEffect, useId, useMemo } from "react";
 import { Draggable } from "./draggable";
 
@@ -76,10 +76,12 @@ export function Sortable<T>({
 }: Props<T>) {
   // Identifies this Sortable instance so `Draggable`'s `canDrop` can reject items dragged in from another list.
   const instanceId = useId();
+  const listId = id ? id : instanceId;
 
   useEffect(() => {
     const unsubscribe = monitorForElements({
-      // @ts-expect-error Due to live server dependencies
+      // Only drags that started in this list; the shared adapter also reports every other element drag in the app.
+      canMonitor: ({ source }) => source.data.__uuid__ === listId,
       onDrop({ source, location }) {
         const destination = location?.current?.dropTargets[0];
         if (!destination) return;
@@ -103,12 +105,9 @@ export function Sortable<T>({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [data, keyExtractor, onChange]);
+  }, [data, keyExtractor, onChange, listId]);
 
-  const enhancedData = useMemo(() => {
-    const uuid = id ? id : instanceId;
-    return data.map((item) => ({ ...item, __uuid__: uuid }));
-  }, [data, id, instanceId]);
+  const enhancedData = useMemo(() => data.map((item) => ({ ...item, __uuid__: listId })), [data, listId]);
 
   return (
     <>
