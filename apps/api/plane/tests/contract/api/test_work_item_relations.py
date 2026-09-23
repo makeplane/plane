@@ -136,3 +136,17 @@ class TestWorkItemRelationRemove:
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not IssueRelation.objects.filter(id=relation.id).exists()
+
+    @pytest.mark.django_db
+    def test_remove_relation_list_body_returns_400(self, api_key_client, workspace, project, issue1):
+        url = self.get_url(workspace.slug, project.id, issue1.id)
+        response = api_key_client.post(url, [{"related_issue": "550e8400-e29b-41d4-a716-446655440000"}], format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_remove_relation_invalid_uuid_returns_400(self, api_key_client, workspace, project, issue1):
+        url = self.get_url(workspace.slug, project.id, issue1.id)
+        response = api_key_client.post(url, {"related_issue": "invalid-uuid"}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

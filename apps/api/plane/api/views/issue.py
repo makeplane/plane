@@ -47,6 +47,7 @@ from plane.api.serializers import (
     IssueCommentSerializer,
     IssueLinkSerializer,
     IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
     IssueSerializer,
@@ -2595,7 +2596,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 class IssueRelationRemoveAPIEndpoint(BaseAPIView):
     """Issue Relation Remove Endpoint"""
 
-    serializer_class = IssueRelationSerializer
+    serializer_class = IssueRelationRemoveSerializer
     model = IssueRelation
     permission_classes = [ProjectEntityPermission]
 
@@ -2606,6 +2607,9 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
         parameters=[
             ISSUE_ID_PARAMETER,
         ],
+        request=OpenApiRequest(
+            request=IssueRelationRemoveSerializer,
+        ),
         responses={
             204: OpenApiResponse(
                 description="Work item relation removed successfully",
@@ -2616,12 +2620,21 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, issue_id):
         """Remove work item relation"""
-        related_issue = request.data.get("related_issue") or request.query_params.get("related_issue")
-        if not related_issue:
+        if not isinstance(request.data, dict):
             return Response(
-                {"error": "related_issue is required"},
+                {"error": "Invalid request body. Expected an object."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        data = request.data
+        if not data.get("related_issue") and request.query_params.get("related_issue"):
+            data = {"related_issue": request.query_params.get("related_issue")}
+
+        serializer = IssueRelationRemoveSerializer(data=data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        related_issue = serializer.validated_data["related_issue"]
 
         matching_relations = IssueRelation.objects.filter(
             workspace__slug=slug,
@@ -2642,7 +2655,7 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
         matching_relations.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
-            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            requested_data=json.dumps(data, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
@@ -2656,3 +2669,4 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, issue_id):
         """Allow HTTP DELETE method as well"""
         return self.post(request, slug, project_id, issue_id)
+
