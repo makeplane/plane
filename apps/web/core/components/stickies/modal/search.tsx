@@ -59,7 +59,7 @@ export const StickySearch = observer(function StickySearch() {
         <IconButton
           variant="ghost"
           size="md"
-          render={<button className="-mr-2" />}
+          render={<button type="button" className="-mr-2" />}
           icon={<Icon icon={SearchOutline} />}
           aria-label={t("stickies.search_placeholder")}
           onClick={() => {

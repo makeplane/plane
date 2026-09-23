@@ -45,7 +45,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
         <IconButton
           variant="ghost"
           size="md"
-          render={<button className="-mr-1" />}
+          render={<button type="button" className="-mr-1" />}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();

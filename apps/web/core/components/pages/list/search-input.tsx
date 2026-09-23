@@ -48,7 +48,7 @@ export function PageSearchInput(props: Props) {
         <IconButton
           variant="ghost"
           size="md"
-          render={<button className="my-auto -mr-1 shrink-0" />}
+          render={<button type="button" className="my-auto -mr-1 shrink-0" />}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
