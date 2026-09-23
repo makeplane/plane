@@ -11,7 +11,7 @@ import { ContextMenu as PropelContextMenu, ContextMenuContent } from "@makeplane
 import { usePlatformOS } from "@plane/hooks";
 // local imports
 import { ContextMenuItem } from "./context-menu-item";
-import { getRenderableItems } from "./helpers";
+import { getRenderableItems, stopClickPropagation } from "./helpers";
 import type { TContextMenuItem } from "./types";
 
 export type ContextMenuProps = {
@@ -72,7 +72,7 @@ export function ContextMenu(props: ContextMenuProps) {
 
   return (
     <PropelContextMenu open={isOpen} onOpenChange={setIsOpen}>
-      <ContextMenuContent anchor={anchor} side="bottom" align="start" sideOffset={0}>
+      <ContextMenuContent anchor={anchor} side="bottom" align="start" sideOffset={0} onClick={stopClickPropagation}>
         {renderedItems.map((item) => (
           <ContextMenuItem key={item.key} item={item} />
         ))}

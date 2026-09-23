@@ -23,7 +23,7 @@ import {
 import type { ContextMenuItemVariant } from "@makeplane/propel/components/context-menu";
 import { Icon } from "@makeplane/propel/components/icon";
 // local imports
-import { getRenderableItems, resolveItemVariant } from "./helpers";
+import { getRenderableItems, resolveItemVariant, stopClickPropagation } from "./helpers";
 import type { TContextMenuItem } from "./types";
 
 type ContextMenuItemProps = {
@@ -77,7 +77,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
           trailing={trailing}
           disabled={item.disabled}
         />
-        <ContextMenuSubmenuContent sizing="auto">
+        <ContextMenuSubmenuContent sizing="auto" onClick={stopClickPropagation}>
           {nestedItems.map((nestedItem) => (
             <ContextMenuItem key={nestedItem.key} item={nestedItem} />
           ))}
@@ -94,7 +94,12 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
       description={item.description || undefined}
       disabled={item.disabled}
       closeOnClick={item.closeOnClick !== false}
-      onClick={() => item.action()}
+      onClick={(e) => {
+        // Parity with the legacy menu: a choice must not also fire a wrapping `Link`'s click.
+        e.preventDefault();
+        e.stopPropagation();
+        item.action();
+      }}
     />
   );
 }

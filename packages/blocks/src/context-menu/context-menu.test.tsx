@@ -32,10 +32,19 @@ function Glyph() {
 }
 
 /** The consumer owns the right-click target and hands its ref to the menu, like the board cards do. */
-function Harness({ items, onOuterContextMenu }: { items: TContextMenuItem[]; onOuterContextMenu?: () => void }) {
+function Harness({
+  items,
+  onOuterContextMenu,
+  onOuterClick,
+}: {
+  items: TContextMenuItem[];
+  onOuterContextMenu?: () => void;
+  onOuterClick?: (e: React.MouseEvent) => void;
+}) {
   const parentRef = useRef<HTMLDivElement>(null);
   return (
-    <div onContextMenu={onOuterContextMenu}>
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- stands in for a card `Link` wrapping the menu
+    <div onContextMenu={onOuterContextMenu} onClick={onOuterClick}>
       <div ref={parentRef} data-testid="target">
         <span data-testid="target-child">Card title</span>
       </div>
@@ -155,6 +164,19 @@ describe("ContextMenu rows", () => {
     expect(copy).toHaveBeenCalledTimes(1);
     expect(remove).not.toHaveBeenCalled();
     await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
+  });
+
+  it("keeps a row click from reaching a wrapping link's click handler", async () => {
+    // The surface is portalled, but React events bubble through the consumer's tree, so a card
+    // `Link` around the menu would otherwise navigate on every choice.
+    const user = userEvent.setup();
+    const copy = vi.fn();
+    const onOuterClick = vi.fn();
+    render(<Harness items={[{ key: "copy", title: "Copy link", action: copy }]} onOuterClick={onOuterClick} />);
+    await openMenu();
+    await user.click(row("Copy link"));
+    expect(copy).toHaveBeenCalledTimes(1);
+    expect(onOuterClick).not.toHaveBeenCalled();
   });
 
   it("stays open after a closeOnClick: false row is pressed", async () => {
@@ -291,6 +313,20 @@ describe("ContextMenu nested rows", () => {
 
     await user.click(row("Backlog"));
     expect(onBacklog).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps submenu clicks from reaching a wrapping link's click handler", async () => {
+    // See the pointer-events and delay note on the submenu trigger test above.
+    const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never, delay: null });
+    const onBacklog = vi.fn();
+    const onOuterClick = vi.fn();
+    render(<Harness items={nested(onBacklog)} onOuterClick={onOuterClick} />);
+    await openMenu();
+    await user.click(row("Move to"));
+    await waitFor(() => expect(screen.getAllByRole("menu")).toHaveLength(2));
+    await user.click(row("Backlog"));
+    expect(onBacklog).toHaveBeenCalledTimes(1);
+    expect(onOuterClick).not.toHaveBeenCalled();
   });
 
   it("renders a plain row when every nested row is hidden", async () => {

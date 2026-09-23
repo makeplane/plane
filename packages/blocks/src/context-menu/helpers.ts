@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import type * as React from "react";
 import type { TContextMenuItem, TContextMenuItemVariant } from "./types";
 
 /** Rows whose `shouldRender` is explicitly `false` never reach the surface. */
@@ -20,4 +21,12 @@ export function resolveItemVariant(item: TContextMenuItem): TContextMenuItemVari
   if (item.variant) return item.variant;
   if (item.className?.includes("text-danger")) return "danger";
   return "neutral";
+}
+
+/**
+ * The popup is portalled, but React events still bubble through the consumer's tree — a card `Link`
+ * or `ControlLink` wrapping the menu would otherwise act on every click inside the surface.
+ */
+export function stopClickPropagation(e: React.MouseEvent) {
+  e.stopPropagation();
 }
