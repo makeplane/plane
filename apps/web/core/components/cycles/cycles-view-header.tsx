@@ -86,7 +86,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
             inputRef.current?.focus();
           }}
           icon={<Icon icon={SearchOutline} />}
-          aria-label="Search"
+          aria-label={t("common.search.label")}
         />
       ) : (
         <div
