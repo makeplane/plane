@@ -83,12 +83,6 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
-  const handleIssueClick = (issueId: string, isArchived: boolean) => {
-    if (!issueId) return;
-    setPeekIssue({ workspaceSlug, projectId, issueId, isArchived });
-    handleFiltersUpdate([{ property: "priority", operator: "in", value: ["urgent", "high"] }]);
-  };
-
   const loaders = (
     <Loader className="space-y-3">
       <Loader.Item height="30px" />
@@ -129,13 +123,17 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         <div
                           key={issue.id}
                           className="group flex cursor-pointer items-center justify-between gap-2 rounded-md p-1 hover:bg-surface-2"
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => handleIssueClick(issue.id, !!issue.archived_at)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handleIssueClick(issue.id, !!issue.archived_at);
+                          onClick={() => {
+                            if (issue.id) {
+                              setPeekIssue({
+                                workspaceSlug,
+                                projectId,
+                                issueId: issue.id,
+                                isArchived: !!issue.archived_at,
+                              });
+                              handleFiltersUpdate([
+                                { property: "priority", operator: "in", value: ["urgent", "high"] },
+                              ]);
                             }
                           }}
                         >
