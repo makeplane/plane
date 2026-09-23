@@ -167,6 +167,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="off"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
             autoFocus
           />
           {showPassword?.password ? (

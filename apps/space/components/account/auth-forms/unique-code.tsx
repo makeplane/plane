@@ -128,6 +128,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             onChange={(e) => handleFormChange("code", e.target.value)}
             placeholder="123456"
             autoComplete="off"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
             autoFocus
           />
         </div>
