@@ -135,7 +135,14 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
           disabled={!isValid}
           loading={isSubmitting || resendTimerCode > 0}
         />
-        <AnchorButton variant="primary" size="lg" render={<Link href="/" />} label={t("auth.common.back_to_sign_in")} />
+        <div className="flex h-7 items-center justify-center">
+          <AnchorButton
+            variant="primary"
+            size="md"
+            render={<Link href="/" />}
+            label={t("auth.common.back_to_sign_in")}
+          />
+        </div>
       </form>
     </FormContainer>
   );
