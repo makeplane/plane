@@ -9,7 +9,8 @@ import { observer } from "mobx-react";
 import { FilterOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { ButtonSize, ButtonVariant } from "@makeplane/propel/components/button";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { IconButton as IconButtonElement } from "@makeplane/propel/elements/icon-button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 import { LOGICAL_OPERATOR } from "@plane/types";
@@ -41,13 +42,13 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
   const {
     variant = "secondary",
     size = "sm",
-    className,
     label,
     iconConfig = { shouldShowIcon: true },
     isDisabled = false,
   } = buttonConfig || {};
   // derived values
   const FilterIcon = iconConfig.iconComponent || FilterOutline;
+  const iconSizeClassName = size === "xs" || size === "sm" ? "size-3.5" : "size-4";
 
   const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
     filter.addCondition(
@@ -66,21 +67,19 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
   return (
     <AddFilterDropdown
       {...props}
-      buttonConfig={{
-        ...buttonConfig,
-        className: undefined,
-      }}
       handleFilterSelect={handleFilterSelect}
       customButton={
-        <Button
-          variant={variant}
-          size={size}
-          stretch="auto"
-          render={<div className={cn("flex items-center gap-1 py-[5px]", className)} />}
-        >
-          {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-secondary" />}
-          {label}
-        </Button>
+        // The dropdown trigger is the native button, so this borrows the styled element chrome only.
+        label ? (
+          <ButtonElement variant={variant} size={size} stretch="auto" render={<span />}>
+            {iconConfig.shouldShowIcon && <FilterIcon className={cn(iconSizeClassName, "text-secondary")} />}
+            {label}
+          </ButtonElement>
+        ) : (
+          <IconButtonElement variant={variant} size={size} render={<span />}>
+            {iconConfig.shouldShowIcon && <FilterIcon className={cn(iconSizeClassName, "text-secondary")} />}
+          </IconButtonElement>
+        )
       }
     />
   );
