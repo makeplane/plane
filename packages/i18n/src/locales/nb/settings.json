@@ -1,0 +1,65 @@
+{
+  "account_settings": {
+    "preferences": { "heading": "Innstillinger", "description": "Tilpass appopplevelsen til måten du arbeider på" },
+    "notifications": {
+      "heading": "E-postvarsler",
+      "description": "Hold deg oppdatert på arbeidselementer du abonnerer på. Aktiver dette for å få varsler.",
+      "select_default_view": "Velg standardvisning",
+      "compact": "Kompakt",
+      "full": "Fullskjerm"
+    },
+    "security": { "heading": "Sikkerhet" },
+    "api_tokens": {
+      "title": "Personlige tilgangstokener",
+      "description": "Opprett sikre API-tokener for å integrere dataene dine med eksterne systemer og applikasjoner."
+    },
+    "activity": {
+      "heading": "Aktivitet",
+      "description": "Følg de siste handlingene og endringene dine på tvers av prosjekter og arbeidselementer."
+    },
+    "connections": {
+      "title": "Tilkoblinger",
+      "heading": "Tilkoblinger",
+      "description": "Administrer innstillinger for tilkoblingene i arbeidsområdet ditt."
+    }
+  },
+  "profile": {
+    "label": "Profil",
+    "page_label": "Ditt arbeid",
+    "work": "Arbeid",
+    "details": { "joined_on": "Ble med", "time_zone": "Tidssone" },
+    "stats": {
+      "workload": "Arbeidsmengde",
+      "overview": "Oversikt",
+      "created": "Opprettede arbeidselementer",
+      "assigned": "Tildelte arbeidselementer",
+      "subscribed": "Arbeidselementer du abonnerer på"
+    },
+    "actions": {
+      "profile": "Profil",
+      "security": "Sikkerhet",
+      "activity": "Aktivitet",
+      "preferences": "Innstillinger",
+      "notifications": "Varsler",
+      "api-tokens": "Personlige tilgangstokener",
+      "connections": "Tilkoblinger"
+    },
+    "tabs": {
+      "summary": "Sammendrag",
+      "assigned": "Tildelt",
+      "created": "Opprettet",
+      "subscribed": "Abonnerer",
+      "activity": "Aktivitet"
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": { "label": "Systeminnstilling" },
+      "light": { "label": "Lyst" },
+      "dark": { "label": "Mørkt" },
+      "light_contrast": { "label": "Lyst med høy kontrast" },
+      "dark_contrast": { "label": "Mørkt med høy kontrast" },
+      "custom": { "label": "Egendefinert tema" }
+    }
+  }
+}

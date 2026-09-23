@@ -86,6 +86,23 @@ Notes:
 - **Generic uses translate normally and don't follow this glossary:** `next page` (paginator), `the page` (browser refresh), `status page`, `web page`, `life cycle`, `release cycle`, `rate-limit cycle`, `cycle of releases` — these are not the Plane Cycle/Page feature; translate them as ordinary words in the surrounding prose.
 - When editing an existing file, migrate occurrences you are already touching. Do not bulk-rewrite unrelated strings in the same PR — land a separate sweep PR with the `chore(i18n):` prefix.
 
+### Norwegian Bokmål feature noun glossary
+
+Use these forms when the English source refers to the Plane product feature:
+
+| Source      | Norwegian Bokmål |
+| ----------- | ---------------- |
+| **Cycle**   | Syklus           |
+| **Cycles**  | Sykluser         |
+| **Module**  | Modul            |
+| **Modules** | Moduler          |
+| **Epic**    | Epic             |
+| **Epics**   | Epics            |
+| **Page**    | Side             |
+| **Pages**   | Sider            |
+
+Plane, Plane AI, Power K, PQL, Active Cycles, Sticky, Stickies, Intake, plan tiers, third-party product names, and acronyms remain unchanged. Use the glossary only for Plane feature nouns; translate generic uses naturally in context.
+
 #### Slavic case forms inside ICU plural blocks
 
 When a Slavic plural block counts a Plane feature noun, use these forms:
@@ -253,6 +270,7 @@ Below are the required keywords for locales currently in the repo. When adding a
 | Locale                                             | Required keywords                                                                     | Example mapping                                                               |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | en, es, de, tr-TR, vi-VN, id, ja, ko, zh-CN, zh-TW | `one, other` (single-form locales may use `other` alone, but **always emit `other`**) | 1 → one; 2+ → other                                                           |
+| nb                                                 | `one, other`                                                                          | 1 (including 1.0) → one; 0, 2+ and non-integers → other                       |
 | fr                                                 | `one, many, other`                                                                    | 0, 1 → one; 1 000 000 → many; else other                                      |
 | it                                                 | `one, many, other`                                                                    | 1 → one; 1 000 000 → many; else other                                         |
 | pt-BR                                              | `one, many, other`                                                                    | 0, 1 → one; 1 000 000 → many; else other                                      |
@@ -341,30 +359,32 @@ Table below covers locales currently in the repo; add a row when you add a local
 | **ko**                 | Western `. , ? !`; straight quotes `"…"`.                                                                                                                                                        |
 | **zh-CN**              | Full-width `。，？！；：`. Primary `"…"`, nested `'…'`. Work titles `《…》`. Half-width space around embedded Latin tokens.                                                                      |
 | **zh-TW**              | Full-width `。，？！；：`. Primary `「…」`, nested `『…』`. Work titles `《…》`. Half-width space around embedded Latin tokens.                                                                  |
+| **nb**                 | Standard Western punctuation. Use primary quotes `«…»`; use `“…”` or `‘…’` for nested quotations. No space before `:`, `;`, `?` or `!`.                                                          |
 
 ## Tone & Register (SaaS defaults)
 
 Formality defaults for locales currently in the repo. Add a row for each new locale, consulting the Microsoft Style Guide for that locale as the default authority on product-UI register.
 
-| Locale  | Default "you"                                                                | Notes                                            |
-| ------- | ---------------------------------------------------------------------------- | ------------------------------------------------ |
-| fr      | **vous**                                                                     | Never "tu" in product UI                         |
-| es      | **usted** + **ustedes**                                                      | Neutral Spanish — no "vosotros", no "tú"         |
-| it      | **Lei** (formal third-person)                                                | B2B/enterprise convention                        |
-| de      | **Sie**                                                                      | Use infinitive constructions for system messages |
-| pt-BR   | **você**                                                                     | Semi-formal default; never "tu"                  |
-| pl      | **Pan/Pani** + 3rd-person, or impersonal                                     | Never "ty"                                       |
-| cs / sk | **Vy** (formal, 3rd-person plural)                                           | Never "ty"                                       |
-| ro      | **dumneavoastră** (formal)                                                   | Or impersonal                                    |
-| tr-TR   | **siz** + `-iniz` endings                                                    | Never "sen"                                      |
-| vi-VN   | **bạn** (safe neutral)                                                       | Never "mày/tao"; consistency > variety           |
-| id      | **Anda** (always capitalized)                                                | Never "kamu" in product UI                       |
-| ja      | **です・ます体**                                                             | Never plain form; avoid 尊敬語・謙譲語           |
-| ko      | **합니다체** for system/errors; **해요체** acceptable for onboarding         | Match surrounding file                           |
-| zh-CN   | **您**                                                                       | B2B convention; never 你                         |
-| zh-TW   | **您**                                                                       | B2B convention; never 你                         |
-| ru      | **Вы** (cap.) for singular direct address, **вы** (lower) for plural/general | Context-dependent                                |
-| ua      | **ви** (lowercase, modern convention)                                        | Capitalized Ви only for very formal              |
+| Locale  | Default "you"                                                                | Notes                                                                       |
+| ------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| fr      | **vous**                                                                     | Never "tu" in product UI                                                    |
+| es      | **usted** + **ustedes**                                                      | Neutral Spanish — no "vosotros", no "tú"                                    |
+| it      | **Lei** (formal third-person)                                                | B2B/enterprise convention                                                   |
+| de      | **Sie**                                                                      | Use infinitive constructions for system messages                            |
+| pt-BR   | **você**                                                                     | Semi-formal default; never "tu"                                             |
+| pl      | **Pan/Pani** + 3rd-person, or impersonal                                     | Never "ty"                                                                  |
+| cs / sk | **Vy** (formal, 3rd-person plural)                                           | Never "ty"                                                                  |
+| ro      | **dumneavoastră** (formal)                                                   | Or impersonal                                                               |
+| tr-TR   | **siz** + `-iniz` endings                                                    | Never "sen"                                                                 |
+| vi-VN   | **bạn** (safe neutral)                                                       | Never "mày/tao"; consistency > variety                                      |
+| id      | **Anda** (always capitalized)                                                | Never "kamu" in product UI                                                  |
+| ja      | **です・ます体**                                                             | Never plain form; avoid 尊敬語・謙譲語                                      |
+| ko      | **합니다체** for system/errors; **해요체** acceptable for onboarding         | Match surrounding file                                                      |
+| zh-CN   | **您**                                                                       | B2B convention; never 你                                                    |
+| zh-TW   | **您**                                                                       | B2B convention; never 你                                                    |
+| ru      | **Вы** (cap.) for singular direct address, **вы** (lower) for plural/general | Context-dependent                                                           |
+| ua      | **ви** (lowercase, modern convention)                                        | Capitalized Ви only for very formal                                         |
+| nb      | **du/din**                                                                   | Natural, direct Bokmål UI register; **De** is obsolete in modern product UI |
 
 General writing rules (apply across all locales):
 
@@ -394,6 +414,7 @@ Design strings knowing translations will grow. Typical expansion vs. English for
 | tr-TR        | +10–30% (agglutination)                           |                                                 |
 | vi-VN        | +30–40%                                           | Diacritic-heavy, many small words               |
 | id           | +10–20%                                           |                                                 |
+| nb           | +10–20%                                           | Compound nouns can make controls longer         |
 | ja           | −10 to −55% character count (similar pixel width) |                                                 |
 | ko           | −10 to −15%                                       |                                                 |
 | zh-CN, zh-TW | −40% character count (≈2× char width)             |                                                 |

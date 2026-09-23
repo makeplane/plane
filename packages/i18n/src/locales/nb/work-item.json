@@ -1,0 +1,149 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Arbeidselement} other {Arbeidselementer}}",
+    "all": "Alle arbeidselementer",
+    "edit": "Rediger arbeidselement",
+    "title": { "label": "Tittel på arbeidselement", "required": "Tittel på arbeidselement er påkrevd." },
+    "add": {
+      "press_enter": "Trykk på Enter for å legge til et nytt arbeidselement",
+      "label": "Legg til arbeidselement",
+      "assignee": "Legg til ansvarlige",
+      "start_date": "Legg til startdato",
+      "due_date": "Legg til forfallsdato",
+      "parent": "Legg til overordnet arbeidselement",
+      "sub_issue": "Legg til underordnet arbeidselement",
+      "dependency": "Legg til avhengighet",
+      "relation": "Legg til relasjon",
+      "link": "Legg til lenke",
+      "existing": "Legg til eksisterende arbeidselement"
+    },
+    "remove": { "label": "Fjern arbeidselement", "parent": { "label": "Fjern overordnet arbeidselement" } },
+    "new": "Nytt arbeidselement",
+    "adding": "Legger til arbeidselement",
+    "create": { "success": "Arbeidselementet ble opprettet" },
+    "priority": { "urgent": "Haster", "high": "Høy", "medium": "Middels", "low": "Lav" },
+    "display": {
+      "properties": {
+        "label": "Visningsegenskaper",
+        "id": "ID",
+        "issue_type": "Type arbeidselement",
+        "sub_issue_count": "Antall underordnede arbeidselementer",
+        "attachment_count": "Antall vedlegg",
+        "created_on": "Opprettet",
+        "sub_issue": "Underordnet arbeidselement",
+        "work_item_count": "Antall arbeidselementer"
+      },
+      "extra": { "show_sub_issues": "Vis underordnede arbeidselementer", "show_empty_groups": "Vis tomme grupper" }
+    },
+    "layouts": {
+      "ordered_by_label": "Dette oppsettet er sortert etter",
+      "list": "Liste",
+      "kanban": "Tavle",
+      "calendar": "Kalender",
+      "spreadsheet": "Tabell",
+      "gantt": "Tidslinje"
+    },
+    "states": { "active": "Aktiv", "backlog": "Etterslep" },
+    "comments": {
+      "placeholder": "Legg til kommentar",
+      "switch": { "private": "Bytt til privat kommentar", "public": "Bytt til offentlig kommentar" },
+      "create": {
+        "success": "Kommentaren ble opprettet",
+        "error": "Kunne ikke opprette kommentaren. Prøv igjen senere."
+      },
+      "update": {
+        "success": "Kommentaren ble oppdatert",
+        "error": "Kunne ikke oppdatere kommentaren. Prøv igjen senere."
+      },
+      "remove": { "success": "Kommentaren ble fjernet", "error": "Kunne ikke fjerne kommentaren. Prøv igjen senere." },
+      "copy_link": {
+        "success": "Kommentarlenken ble kopiert til utklippstavlen",
+        "error": "Kunne ikke kopiere kommentarlenken. Prøv igjen senere."
+      },
+      "replies": { "create": { "submit_button": "Legg til svar", "placeholder": "Legg til svar" } }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Arbeidselementet finnes ikke",
+        "description": "Arbeidselementet du leter etter finnes ikke, er arkivert eller er slettet.",
+        "primary_button": { "text": "Vis andre arbeidselementer" }
+      }
+    },
+    "archive": {
+      "description": "Bare fullførte eller avbrutte arbeidselementer kan arkiveres",
+      "label": "Arkiver arbeidselement",
+      "confirm_message": "Er du sikker på at du vil arkivere arbeidselementet? Du kan gjenopprette alle arkiverte arbeidselementer senere.",
+      "banner_message": "Dette arbeidselementet er arkivert. Gå til Arkiver for å gjenopprette det.",
+      "go_to_archives": "Gå til arkiver"
+    },
+    "relation": {
+      "relates_to": "Er relatert til",
+      "duplicate": "Duplikat av",
+      "blocked_by": "Blokkert av",
+      "blocking": "Blokkerer",
+      "start_before": "Starter før",
+      "start_after": "Starter etter",
+      "finish_before": "Avsluttes før",
+      "finish_after": "Avsluttes etter",
+      "implements": "Implementerer",
+      "implemented_by": "Implementert av"
+    },
+    "copy_link": "Kopier lenke til arbeidselement",
+    "delete": { "label": "Slett arbeidselement", "error": "Feil ved sletting av arbeidselement" },
+    "select": {
+      "error": "Velg minst ett arbeidselement",
+      "empty": "Ingen arbeidselementer valgt",
+      "add_selected": "Legg til valgte arbeidselementer",
+      "select_all": "Velg alle",
+      "deselect_all": "Fjern alle valg"
+    },
+    "open_in_full_screen": "Åpne arbeidselement i fullskjerm",
+    "duplicate": {
+      "modal": {
+        "title": "Lag en kopi i et annet prosjekt",
+        "description1": "Dette oppretter en kopi av arbeidselementet.",
+        "description2": "Alle egenskapsdata fjernes ved duplisering.",
+        "placeholder": "Velg et prosjekt"
+      }
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Det underordnede arbeidselementet ble oppdatert",
+      "error": "Feil ved oppdatering av underordnet arbeidselement"
+    },
+    "remove": {
+      "success": "Det underordnede arbeidselementet ble fjernet",
+      "error": "Feil ved fjerning av underordnet arbeidselement"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Du har ingen underordnede arbeidselementer som samsvarer med filtrene.",
+        "description": "Tøm alle filtre for å se alle underordnede arbeidselementer.",
+        "action": "Tøm filtre"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": { "title": "Ingen samsvarende arbeidselementer funnet" },
+      "no_issues": { "title": "Ingen arbeidselementer funnet" }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Ingen kommentarer ennå",
+        "description": "Kommentarer kan brukes til diskusjon og oppfølging av arbeidselementer"
+      }
+    }
+  },
+  "epic": {
+    "new": "Ny Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Legger til epic",
+    "create": { "success": "Epic ble opprettet" },
+    "add": { "label": "Legg til Epic", "press_enter": "Trykk på Enter for å legge til en ny Epic" },
+    "title": { "label": "Tittel på Epic", "required": "Tittel på Epic er påkrevd." }
+  }
+}
