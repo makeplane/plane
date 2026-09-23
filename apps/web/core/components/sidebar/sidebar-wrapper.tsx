@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { PreferencesOutline } from "@makeplane/propel/icons";
 import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 // components
@@ -29,6 +30,8 @@ type TSidebarWrapperProps = {
 
 export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWrapperProps) {
   const { title, children, quickActions } = props;
+  // translation
+  const { t } = useTranslation();
   // state
   const [isCustomizeNavDialogOpen, setIsCustomizeNavDialogOpen] = useState(false);
   // store hooks
@@ -63,7 +66,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
                   size="sm"
                   variant="ghost"
                   icon={<Icon icon={PreferencesOutline} />}
-                  aria-label="Customize navigation"
+                  aria-label={t("customize_navigation")}
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
                 />
               )}
