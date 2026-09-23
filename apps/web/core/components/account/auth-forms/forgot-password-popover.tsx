@@ -21,7 +21,14 @@ export function ForgotPasswordPopover() {
         {t("auth.common.forgot_password")}
       </PopoverTrigger>
       {/* propel (ruling 33): `text` is the fixed-width (296px) info card; the legacy panel was a 256px card. */}
-      <PopoverContent variant="text" side="right" align="start" sideOffset={12} collisionPadding={12}>
+      <PopoverContent
+        variant="text"
+        side="right"
+        align="start"
+        sideOffset={12}
+        collisionPadding={12}
+        aria-label={t("auth.common.forgot_password")}
+      >
         <div className="flex items-start gap-3 text-left">
           <span className="flex-shrink-0">🤥</span>
           <p className="text-11">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>

@@ -44,9 +44,17 @@ export function InstanceNotReady() {
                 </p>
               </div>
             </div>
-            <a href={GOD_MODE_URL} className="w-72">
-              <Button variant="primary" stretch="full" size="lg" label="Get started" />
-            </a>
+            <div className="w-72">
+              <Button
+                variant="primary"
+                size="lg"
+                stretch="full"
+                nativeButton={false}
+                // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label into this anchor
+                render={<a href={GOD_MODE_URL} />}
+                label="Get started"
+              />
+            </div>
           </div>
         </div>
       </div>

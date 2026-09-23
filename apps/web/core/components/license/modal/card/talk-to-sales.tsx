@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // types
 // plane imports
-import { AnchorButton } from "@makeplane/propel/components/anchor-button";
+import { Button } from "@makeplane/propel/components/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
 // local imports
@@ -71,14 +71,17 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
         </Loader>
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
-          <AnchorButton
-            variant="primary"
-            size="md"
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            label="Talk to Sales"
-          />
+          <div className="w-56">
+            <Button
+              variant="primary"
+              size="md"
+              stretch="full"
+              nativeButton={false}
+              // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label into this anchor
+              render={<a href={href} target="_blank" rel="noreferrer" />}
+              label="Talk to Sales"
+            />
+          </div>
           {isTrialAllowed && !isSelfHosted && (
             <div className="mt-4 h-4">
               {renderTrialButton &&
