@@ -15,6 +15,7 @@ import { useProject } from "@/hooks/store/use-project";
 type TCreateIssueToastActionArgs = {
   workspaceSlug: string;
   issueId: string;
+  isEpic?: boolean;
 };
 
 /**
@@ -31,7 +32,7 @@ export function useCreateIssueToastActions() {
   const { getProjectIdentifierById } = useProject();
 
   return useCallback(
-    ({ workspaceSlug, issueId }: TCreateIssueToastActionArgs): ToastActionItem[] => {
+    ({ workspaceSlug, issueId, isEpic = false }: TCreateIssueToastActionArgs): ToastActionItem[] => {
       const issue = getIssueById(issueId);
       if (!issue) return [];
 
@@ -46,6 +47,7 @@ export function useCreateIssueToastActions() {
         issueId,
         projectIdentifier,
         sequenceId: issue.sequence_id,
+        isEpic,
       });
       if (!workItemLink) return [];
 

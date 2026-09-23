@@ -118,7 +118,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           title: t("common.success"),
           message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
           actionItems: (data) =>
-            buildCreateIssueToastActions({ workspaceSlug: workspaceSlug.toString(), issueId: data.id }),
+            buildCreateIssueToastActions({ workspaceSlug: workspaceSlug.toString(), issueId: data.id, isEpic }),
         },
         error: {
           title: t("common.error.label"),
