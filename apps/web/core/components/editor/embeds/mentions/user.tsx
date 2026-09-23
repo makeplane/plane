@@ -55,24 +55,30 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
       )}
     >
       <Popover>
-        <PopoverTrigger openOnHover delay={100} render={<Link to={profileLink}>@{userDetails?.display_name}</Link>} />
-        <PopoverContent side="bottom" align="start" sideOffset={8}>
-          <div className="w-60 rounded-lg border-[0.5px] border-strong bg-surface-1 p-3 shadow-raised-200">
-            <div className="flex items-center gap-3">
-              <div className="grid size-10 flex-shrink-0 place-items-center">
-                <Avatar
-                  alt={userDetails?.display_name}
-                  fallback={userDetails?.display_name?.[0]?.toUpperCase()}
-                  src={getFileURL(userDetails?.avatar_url ?? "")}
-                  size="xl"
-                />
-              </div>
-              <div>
-                <Link to={profileLink} className="not-prose text-13 font-medium text-primary hover:underline">
-                  {userDetails?.first_name} {userDetails?.last_name}
-                </Link>
-                {roleDetails && <p className="text-11 text-secondary">{ROLE[roleDetails]}</p>}
-              </div>
+        <PopoverTrigger
+          openOnHover
+          delay={100}
+          nativeButton={false}
+          render={<Link to={profileLink}>@{userDetails?.display_name}</Link>}
+        />
+        <PopoverContent variant="rich" side="bottom" align="start" sideOffset={8}>
+          <div className="flex items-center gap-3">
+            <div className="grid size-10 flex-shrink-0 place-items-center">
+              <Avatar
+                alt={userDetails?.display_name}
+                fallback={userDetails?.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(userDetails?.avatar_url ?? "")}
+                size="xl"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <Link
+                to={profileLink}
+                className="not-prose block truncate text-13 font-medium text-primary hover:underline"
+              >
+                {userDetails?.first_name} {userDetails?.last_name}
+              </Link>
+              {roleDetails && <p className="truncate text-11 text-secondary">{ROLE[roleDetails]}</p>}
             </div>
           </div>
         </PopoverContent>
