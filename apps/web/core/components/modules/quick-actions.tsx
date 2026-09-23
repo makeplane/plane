@@ -11,10 +11,11 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { setToast } from "@plane/blocks/toast";
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
-import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
-import { copyUrlToClipboard, cn } from "@plane/utils";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { useModuleMenuItems } from "@/components/common/quick-actions-helper";
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
@@ -135,53 +136,37 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
-      <CustomMenu
-        customButton={
-          <IconButton
-            variant="tertiary"
-            size="md"
-            icon={<Icon icon={MoreHorizontalOutline} />}
-            aria-label="Module actions"
+      {/* The legacy menu applied `customClassName` to the button around the trigger; a wrapper keeps
+          that chrome off the Propel IconButton. */}
+      <span className={customClassName}>
+        <Menu>
+          <MenuTrigger
+            render={
+              <IconButton
+                variant="tertiary"
+                size="md"
+                icon={<Icon icon={MoreHorizontalOutline} />}
+                aria-label="Module actions"
+              />
+            }
           />
-        }
-        placement="bottom-end"
-        closeOnSelect
-        buttonClassName={customClassName}
-      >
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={() => {
-                item.action();
-              }}
-              className={cn(
-                "flex items-center gap-2",
-                {
-                  "text-placeholder": item.disabled,
-                },
-                item.className
-              )}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3 flex-shrink-0", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("whitespace-pre-line text-tertiary", {
-                      "text-placeholder": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+          <MenuContent side="bottom" align="end">
+            {getRenderableItems(MENU_ITEMS).map((item) => (
+              <MenuItem
+                key={item.key}
+                variant={resolveItemVariant(item)}
+                label={item.title ?? ""}
+                description={item.description}
+                icon={item.icon && <Icon icon={item.icon} />}
+                disabled={item.disabled}
+                onClick={() => {
+                  item.action();
+                }}
+              />
+            ))}
+          </MenuContent>
+        </Menu>
+      </span>
     </>
   );
 });

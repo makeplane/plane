@@ -14,10 +14,12 @@ import { useTranslation } from "@plane/i18n";
 import { StateOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 // types
 // common
 // constants
+
+type ModuleStatusOption = (typeof MODULE_STATUS)[number];
 
 type Props = {
   control: Control<Partial<IModule>, any>;
@@ -38,8 +40,21 @@ export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
           control={control}
           name="status"
           render={({ field: { value } }) => (
-            <CustomSelect
-              label={
+            <Select<ModuleStatusOption>
+              getValues={() => MODULE_STATUS}
+              value={MODULE_STATUS.find((option) => option.value === value) ?? null}
+              onChange={(val) => {
+                submitChanges({ status: val as IModule["status"] });
+              }}
+              getOptionValue={(option) => option.value}
+              getOptionLabel={(option) => t(option.i18n_label)}
+              getOptionIcon={(option) => (
+                <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: option.color }} />
+              )}
+              showSearch={false}
+              pinSelected={false}
+            >
+              <Select.Trigger variant="select-md">
                 <span className={`flex items-center gap-2 text-left capitalize ${value ? "" : "text-primary"}`}>
                   <span
                     className="h-2 w-2 flex-shrink-0 rounded-full"
@@ -49,21 +64,8 @@ export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
                   />
                   {watch("status")}
                 </span>
-              }
-              value={value}
-              onChange={(value: any) => {
-                submitChanges({ status: value });
-              }}
-            >
-              {MODULE_STATUS.map((option) => (
-                <CustomSelect.Option key={option.value} value={option.value}>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: option.color }} />
-                    {t(option.i18n_label)}
-                  </div>
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+              </Select.Trigger>
+            </Select>
           )}
         />
       </div>

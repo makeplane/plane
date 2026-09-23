@@ -9,15 +9,16 @@ import React from "react";
 // react hook form
 import type { FieldError, Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { StateOutline } from "@makeplane/propel/icons";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
+import type { TModuleStatus } from "@plane/blocks/icons";
+import { Select } from "@plane/blocks/select";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/blocks/icons";
-import { StateOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
-// ui
-import { CustomSelect } from "@plane/blocks/dropdowns";
-// types
-// constants
+import { cn } from "@plane/utils";
+
+type ModuleStatusOption = (typeof MODULE_STATUS)[number];
 
 type Props = {
   control: Control<IModule, any>;
@@ -33,37 +34,41 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
       rules={{ required: true }}
       name="status"
       render={({ field: { value, onChange } }) => {
-        const selectedValue = MODULE_STATUS.find((s) => s.value === value);
+        const selectedValue = MODULE_STATUS.find((s) => s.value === value) ?? null;
         return (
-          <CustomSelect
-            value={value}
-            label={
-              <div
-                className={`flex items-center justify-center gap-2 py-0.5 text-11 ${error ? "text-danger-primary" : ""}`}
-              >
-                {value ? (
+          <Select<ModuleStatusOption>
+            getValues={() => MODULE_STATUS}
+            value={selectedValue}
+            onChange={(val) => onChange(val as TModuleStatus)}
+            getOptionValue={(status) => status.value}
+            getOptionLabel={(status) => t(status.i18n_label)}
+            getOptionIcon={(status) => <ModuleStatusIcon status={status.value} />}
+            showSearch={false}
+            pinSelected={false}
+          >
+            <Select.Trigger
+              variant="pill-md"
+              className={cn(error && "text-danger-primary")}
+              tabIndex={tabIndex}
+              appendIcon={null}
+              prependIcon={
+                value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <StateOutline className={`h-3 w-3 ${error ? "text-danger-primary" : "text-secondary"}`} />
-                )}
-                {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>Status</span>
-                )}
-              </div>
-            }
-            onChange={onChange}
-            tabIndex={tabIndex}
-            noChevron
-          >
-            {MODULE_STATUS.map((status) => (
-              <CustomSelect.Option key={status.value} value={status.value}>
-                <div className="flex items-center gap-2">
-                  <ModuleStatusIcon status={status.value} />
-                  {t(status.i18n_label)}
-                </div>
-              </CustomSelect.Option>
-            ))}
-          </CustomSelect>
+                  <StateOutline
+                    aria-hidden="true"
+                    className={cn("h-3 w-3", error ? "text-danger-primary" : "text-secondary")}
+                  />
+                )
+              }
+            >
+              {selectedValue ? (
+                t(selectedValue.i18n_label)
+              ) : (
+                <span className={error ? "text-danger-primary" : "text-secondary"}>Status</span>
+              )}
+            </Select.Trigger>
+          </Select>
         );
       }}
     />

@@ -101,7 +101,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   const isModuleDateValid = isModuleStartDateValid && isModuleEndDateValid;
   const isArchived = !!moduleDetails?.archived_at;
   // state
-  const [isOpen, setIsOpen] = useState(isModuleDateValid ? true : false);
+  const [isOpen, setIsOpen] = useState(!!isModuleDateValid);
 
   // handlers
   const onChange = async (value: TModulePlotType) => {

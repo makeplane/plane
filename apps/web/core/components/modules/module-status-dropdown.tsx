@@ -10,8 +10,10 @@ import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TModuleStatus } from "@plane/blocks/icons";
 import { ModuleStatusIcon } from "@plane/blocks/icons";
+import { Select } from "@plane/blocks/select";
 import type { IModule } from "@plane/types";
-import { CustomSelect } from "@plane/blocks/dropdowns";
+
+type ModuleStatusOption = (typeof MODULE_STATUS)[number];
 
 type Props = {
   isDisabled: boolean;
@@ -27,34 +29,37 @@ export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props
   if (!moduleStatus) return <></>;
 
   return (
-    <CustomSelect
-      customButton={
+    <Select<ModuleStatusOption>
+      getValues={() => MODULE_STATUS}
+      value={moduleStatus}
+      onChange={(val) => {
+        void handleModuleDetailsChange({ status: val as TModuleStatus });
+      }}
+      getOptionValue={(status) => status.value}
+      getOptionLabel={(status) => t(status.i18n_label)}
+      getOptionIcon={(status) => <ModuleStatusIcon status={status.value} />}
+      disabled={isDisabled}
+      showSearch={false}
+      pinSelected={false}
+    >
+      {/* The chip carries the status colour (a runtime hex), so the trigger chrome is neutralised
+          and the coloured surface stays on the inner span — as it was under `customButton`. */}
+      <Select.Trigger
+        variant="pill-md"
+        className={`h-6 border-none bg-transparent p-0 hover:bg-transparent active:bg-transparent ${
+          isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
+      >
         <span
-          className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-11 ${
-            isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-          }`}
+          className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-11"
           style={{
-            color: moduleStatus ? moduleStatus.color : "#a3a3a2",
-            backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
+            color: moduleStatus.color,
+            backgroundColor: `${moduleStatus.color}20`,
           }}
         >
-          {(moduleStatus && t(moduleStatus?.i18n_label)) ?? t("project_modules.status.backlog")}
+          {t(moduleStatus.i18n_label)}
         </span>
-      }
-      value={moduleStatus?.value}
-      onChange={(val: TModuleStatus) => {
-        handleModuleDetailsChange({ status: val });
-      }}
-      disabled={isDisabled}
-    >
-      {MODULE_STATUS.map((status) => (
-        <CustomSelect.Option key={status.value} value={status.value}>
-          <div className="flex items-center gap-2">
-            <ModuleStatusIcon status={status.value} />
-            {t(status.i18n_label)}
-          </div>
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
+      </Select.Trigger>
+    </Select>
   );
 });
