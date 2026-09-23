@@ -12,6 +12,8 @@ type MenuSearchInputProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
+  /** Accessible name for the field; defaults to the placeholder so it is never placeholder-only. */
+  "aria-label"?: string;
 };
 
 /**
@@ -19,7 +21,7 @@ type MenuSearchInputProps = {
  * parent Combobox's list navigation; Escape still bubbles so the root menu can dismiss.
  */
 export function MenuSearchInput(props: MenuSearchInputProps) {
-  const { value, onChange, placeholder } = props;
+  const { value, onChange, placeholder, "aria-label": ariaLabel } = props;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // This input mounts when its flyout/panel opens — take focus so typing works immediately.
@@ -35,7 +37,7 @@ export function MenuSearchInput(props: MenuSearchInputProps) {
   // a Popover flyout, with no Combobox context to take behavior from.
   return (
     <ComboboxSearch>
-      <SearchOutline className="pointer-events-none size-4 shrink-0 text-icon-tertiary" />
+      <SearchOutline aria-hidden="true" className="pointer-events-none size-4 shrink-0 text-icon-tertiary" />
       <ComboboxSearchInput
         render={
           <input
@@ -48,6 +50,7 @@ export function MenuSearchInput(props: MenuSearchInputProps) {
               event.stopPropagation();
             }}
             placeholder={placeholder}
+            aria-label={ariaLabel ?? placeholder}
           />
         }
       />
