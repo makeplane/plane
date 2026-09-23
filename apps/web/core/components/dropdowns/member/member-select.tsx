@@ -60,8 +60,9 @@ export type MemberSelectWebProps = MemberSelectWebCommonProps &
  *
  * CE change: EE sources a paginated members "lite" resource with server-side scopes (`scope`,
  * `teamspaceId`, `scopedProjectIds`, `getPage`); CE reads the member store and serves one page,
- * filtering the search client-side. Suspended workspace members are not offered (a selected one stays
- * pinned so it can still be removed).
+ * filtering the search client-side. Suspended workspace members are listed as disabled rows with a
+ * "Suspended" badge, as the legacy CE dropdown did (a selected one stays enabled so it can still be
+ * removed, and the trigger keeps showing it).
  */
 export const MemberSelect = observer(function MemberSelect(props: MemberSelectWebProps) {
   const {
@@ -114,9 +115,10 @@ export const MemberSelect = observer(function MemberSelect(props: MemberSelectWe
         display_name: id === currentUser?.id ? `${name} (${youLabel})` : name,
         name,
         avatar_url: getFileURL(member?.avatar_url ?? ""),
+        suspended: !!slug && isUserSuspended(id, slug),
       };
     },
-    [getUserDetails, currentUser?.id, youLabel]
+    [getUserDetails, currentUser?.id, youLabel, slug, isUserSuspended]
   );
 
   const getValues = useCallback(
@@ -129,7 +131,6 @@ export const MemberSelect = observer(function MemberSelect(props: MemberSelectWe
       const query = search?.trim().toLowerCase();
       const results: MemberOption[] = [];
       for (const id of rosterIds ?? []) {
-        if (slug && isUserSuspended(id, slug)) continue;
         const member = getUserDetails(id);
         if (!member) continue;
         const searchText = `${member.display_name} ${member.first_name} ${member.last_name}`.toLowerCase();
@@ -138,17 +139,7 @@ export const MemberSelect = observer(function MemberSelect(props: MemberSelectWe
       }
       return { results, next_page_results: false };
     },
-    [
-      memberIds,
-      projectId,
-      slug,
-      workspaceMemberIds,
-      getProjectMemberIds,
-      fetchProjectMembers,
-      isUserSuspended,
-      getUserDetails,
-      toOption,
-    ]
+    [memberIds, projectId, slug, workspaceMemberIds, getProjectMemberIds, fetchProjectMembers, getUserDetails, toOption]
   );
 
   const filterOption = useCallback((option: MemberOption) => !excludeSet?.has(option.id), [excludeSet]);
