@@ -5,6 +5,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import type { MouseEvent } from "react";
 import { observer } from "mobx-react";
 import {
   ArrowNarrowRightOutline,
@@ -30,7 +31,7 @@ import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/comp
 import { setToast } from "@plane/blocks/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
-import { ControlLink, Row } from "@plane/blocks/layout";
+import { Row } from "@plane/blocks/layout";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -246,6 +247,13 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     sequenceId: issue?.sequence_id,
   });
 
+  // Plain click navigates in-app; Cmd/Ctrl+click keeps the browser's open-in-new-tab behaviour.
+  const handleOpenIssueLink = (event: MouseEvent<HTMLElement>) => {
+    if ((event.metaKey || event.ctrlKey) && event.button === 0) return;
+    event.preventDefault();
+    router.push(workItemLink);
+  };
+
   return (
     <>
       <>
@@ -375,16 +383,18 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                   onClick={() => handleCopyIssueLink(workItemLink)}
                   label={t("inbox_issue.actions.copy")}
                 />
-                <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    stretch="auto"
-                    icon={<Icon icon={NewTabOutline} />}
-                    iconPosition="start"
-                    label={t("inbox_issue.actions.open")}
-                  />
-                </ControlLink>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  stretch="auto"
+                  nativeButton={false}
+                  // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label and icon into this anchor
+                  render={<a href={workItemLink} target="_self" />}
+                  onClick={handleOpenIssueLink}
+                  icon={<Icon icon={NewTabOutline} />}
+                  iconPosition="start"
+                  label={t("inbox_issue.actions.open")}
+                />
               </div>
             ) : (
               <>
