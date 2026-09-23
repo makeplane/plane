@@ -26,6 +26,7 @@ import { MENU_ROW_HEIGHT, SELECT_OPTION_ROW_HEIGHT } from "./select.constants";
 import { SelectOptionsSkeleton } from "./skeleton";
 import type { SelectContextValue, SelectPaginationParams, SelectProps } from "./types";
 import { useInfiniteOptions } from "./use-infinite-options";
+import { useSkipDisabledRows } from "./use-skip-disabled-rows";
 import { pinSelected } from "./utils";
 import type { SelectVirtualizer } from "./virtual-list-body";
 import { VirtualListBody } from "./virtual-list-body";
@@ -239,6 +240,16 @@ export function SelectRoot<T>(props: SelectProps<T>) {
         (!filterHeaderItems && headerKeys.has(getOptionValue(option))) || contains(searchTextOf(option), trimmed)
     );
   }, [isInfinite, baseItems, syncQuery, contains, searchTextOf, headerKeys, filterHeaderItems, getOptionValue]);
+
+  // Keyboard moves walk past disabled rows instead of parking on a row Enter cannot pick.
+  const skipDisabledRow = useSkipDisabledRows({ isOpen, items, getOptionDisabled });
+  const handleHighlight = useCallback(
+    (item: unknown, details: { index: number; reason: string }) => {
+      handleItemHighlighted(item, details);
+      skipDisabledRow(details.index, details.reason);
+    },
+    [handleItemHighlighted, skipDisabledRow]
+  );
 
   // In ids mode this is the caller's own list, unresolved ids included — base-ui operates on it
   // directly, so nothing an option lookup could not find can be lost from `onChange`.
@@ -525,7 +536,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
     virtualized: true,
     open: isOpen,
     onOpenChange: handleOpenChange,
-    onItemHighlighted: handleItemHighlighted,
+    onItemHighlighted: handleHighlight,
     inputValue: query,
     onInputValueChange: (next: string, details: { reason: string }) => {
       // `input-change` is the only reason base-ui reports for text the USER typed (ComboboxInput's

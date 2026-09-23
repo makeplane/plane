@@ -867,6 +867,89 @@ describe("Select on Propel combobox", () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
+  it("announces a disabled row as aria-disabled", async () => {
+    const user = userEvent.setup();
+    renderSelect({
+      getValues: () => options.slice(0, 3),
+      getOptionDisabled: (o: Option) => o.id === "id-1",
+    });
+
+    await openSelect(user);
+    expect(popup().getByRole("option", { name: "Option 1" }).getAttribute("aria-disabled")).toBe("true");
+    expect(popup().getByRole("option", { name: "Option 0" }).getAttribute("aria-disabled")).not.toBe("true");
+  });
+
+  it("walks the keyboard highlight past disabled rows", async () => {
+    const user = userEvent.setup();
+    const { onChange } = renderSelect({
+      getValues: () => options.slice(0, 5),
+      getOptionDisabled: (o: Option) => o.id === "id-1" || o.id === "id-2",
+    });
+
+    await openSelect(user);
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{ArrowDown}");
+    // Option 1 and Option 2 are skipped, so the second step lands on Option 3.
+    await waitFor(() =>
+      expect(popup().getByRole("option", { name: "Option 3" }).getAttribute("data-highlighted")).not.toBeNull()
+    );
+    await user.keyboard("{Enter}");
+    expect(onChange).toHaveBeenCalledWith("id-3");
+  });
+
+  it("walks back up past disabled rows", async () => {
+    const user = userEvent.setup();
+    const { onChange } = renderSelect({
+      getValues: () => options.slice(0, 5),
+      getOptionDisabled: (o: Option) => o.id === "id-1" || o.id === "id-2",
+    });
+
+    await openSelect(user);
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{End}");
+    await user.keyboard("{ArrowUp}");
+    // Option 4 -> Option 3, then past Option 2 and Option 1.
+    await user.keyboard("{ArrowUp}");
+    await waitFor(() =>
+      expect(popup().getByRole("option", { name: "Option 0" }).getAttribute("data-highlighted")).not.toBeNull()
+    );
+    await user.keyboard("{Enter}");
+    expect(onChange).toHaveBeenCalledWith("id-0");
+  });
+
+  it("carries End inwards when the last row is disabled", async () => {
+    const user = userEvent.setup();
+    const { onChange } = renderSelect({
+      getValues: () => options.slice(0, 5),
+      getOptionDisabled: (o: Option) => o.id === "id-4",
+    });
+
+    await openSelect(user);
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{End}");
+    await waitFor(() =>
+      expect(popup().getByRole("option", { name: "Option 3" }).getAttribute("data-highlighted")).not.toBeNull()
+    );
+    await user.keyboard("{Enter}");
+    expect(onChange).toHaveBeenCalledWith("id-3");
+  });
+
+  it("stops walking when every row is disabled", async () => {
+    const user = userEvent.setup();
+    const { onChange } = renderSelect({
+      getValues: () => options.slice(0, 3),
+      getOptionDisabled: () => true,
+    });
+
+    await openSelect(user);
+    await user.keyboard("{ArrowDown}");
+    await act(() => vi.runOnlyPendingTimersAsync());
+    // The replay loop is bounded: it runs off the end of the list instead of cycling, and Enter
+    // with nothing pickable highlighted selects nothing.
+    await user.keyboard("{Enter}");
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it("puts the tab index on the search-input variant's own field", () => {
     render(
       <Select<Option>

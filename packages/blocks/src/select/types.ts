@@ -82,9 +82,11 @@ type SelectBaseProps<T> = {
    */
   filterOption?: (option: T) => boolean;
   /**
-   * Marks individual options as non-selectable. The row keeps its place in the list and arrow keys
-   * still highlight it — base-ui does not skip disabled rows — but neither a click nor Enter
-   * selects it.
+   * Marks individual options as non-selectable. The row keeps its place in the list, dimmed and
+   * `aria-disabled`, and neither a click nor Enter selects it. The keyboard walks past it: base-ui
+   * would park the highlight on a disabled row, so the Select replays the arrow (`Home` / `End`
+   * included) until it lands on an enabled one. Pair it with {@link getOptionTrailing} to say why
+   * the row is off — e.g. a "Suspended" badge.
    */
   getOptionDisabled?: (option: T) => boolean;
   /**
