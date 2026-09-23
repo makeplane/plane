@@ -226,7 +226,7 @@ function CollapsedCrumbRow({ crumb }: { crumb: TCollapsedCrumb }) {
 }
 
 /**
- * The trail of crumbs above every page header. Keeps `@plane/ui`'s compound API — `Breadcrumbs.Item`
+ * The trail of crumbs above every page header. Keeps the retired UI package's compound API — `Breadcrumbs.Item`
  * / `.Icon` / `.Label` / `.Separator` / `.ItemWrapper` — on top of Propel's breadcrumb parts, so
  * migrating a call site is an import change.
  *

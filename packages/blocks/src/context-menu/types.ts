@@ -11,7 +11,7 @@ export type TContextMenuItemVariant = "neutral" | "accent" | "danger";
 
 /**
  * One row of a context menu, or of a quick-actions list rendered as a menu elsewhere. Kept
- * shape-compatible with `@plane/ui`'s `TContextMenuItem` so the ~60 files that build these arrays
+ * shape-compatible with the retired UI package's `TContextMenuItem` so the ~60 files that build these arrays
  * migrate with an import change alone.
  */
 export type TContextMenuItem = {

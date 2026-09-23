@@ -9,7 +9,7 @@ import type { ButtonSize, ButtonVariant as PropelButtonVariant } from "@makeplan
 import type { ActionButton, ButtonVariant } from "./types";
 
 /**
- * propel: `@plane/propel/button` is gone (Ruling 25). `EmptyState`'s public `ActionButton` keeps
+ * propel: the in-repo Propel button is gone (Ruling 25). `EmptyState`'s public `ActionButton` keeps
  * the legacy variant names so its ~150 call sites are untouched; this adapter is the single place
  * that maps them — and the legacy `prependIcon`/`appendIcon` pair — onto the ready-made Propel
  * `Button`. It disappears when Phase 3 migrates `EmptyState` itself.

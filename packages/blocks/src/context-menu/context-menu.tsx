@@ -23,7 +23,7 @@ export type ContextMenuProps = {
 
 /**
  * The right-click menu Plane's boards, lists and tables share. Takes the same `{ parentRef, items }`
- * contract as `@plane/ui`'s `ContextMenu` and renders it with Propel's context-menu parts.
+ * contract as the retired UI package's `ContextMenu` and renders it with Propel's context-menu parts.
  *
  * Propel's `ContextMenuTrigger` wants to own its right-click target, but this contract hands us a
  * ref to an element the consumer already rendered — so the `contextmenu` listener and the

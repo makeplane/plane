@@ -124,7 +124,7 @@ function NavigationRow({ item, isSelected }: { item: BreadcrumbNavigationItem; i
 
 /**
  * A breadcrumb crumb you can switch: the current destination plus a dropdown of its siblings, built
- * on `@plane/blocks/select`. Replaces `@plane/ui`'s `BreadcrumbNavigationDropdown` and
+ * on `@plane/blocks/select`. Replaces the retired UI package's `BreadcrumbNavigationDropdown` and
  * `BreadcrumbNavigationSearchDropdown` — one component, with `showSearch` covering the difference.
  *
  * The crumb is a pair of sibling controls inside one `Select`, matching the legacy split: a label

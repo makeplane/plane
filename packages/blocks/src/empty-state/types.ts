@@ -9,7 +9,7 @@ import type { Align } from "../utils/placement";
 import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 
 /**
- * propel: kept verbatim from the deleted `@plane/propel/button` so `EmptyState`'s public action
+ * propel: kept verbatim from the deleted in-repo Propel button so `EmptyState`'s public action
  * API is unchanged; `./action-button` maps these onto Propel's six variants.
  */
 export type ButtonVariant =
