@@ -11,6 +11,7 @@
   "exports": {
     "./auth": "./dist/auth/index.js",
     "./avatar": "./dist/avatar/index.js",
+    "./breadcrumb": "./dist/breadcrumb/index.js",
     "./breadcrumbs": "./dist/breadcrumbs/index.js",
     "./card": "./dist/card/index.js",
     "./charts/area-chart": "./dist/charts/area-chart/index.js",
@@ -35,6 +36,7 @@
     "./pill-button": "./dist/pill-button/index.js",
     "./popovers": "./dist/popovers/index.js",
     "./portal": "./dist/portal/index.js",
+    "./select": "./dist/select/index.js",
     "./skeleton": "./dist/skeleton/index.js",
     "./spinner": "./dist/spinner/index.js",
     "./tab-navigation": "./dist/tab-navigation/index.js",
