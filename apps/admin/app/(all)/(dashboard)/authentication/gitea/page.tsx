@@ -74,6 +74,7 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
           icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
           config={
             <Switch
+              aria-label="Enable Gitea authentication"
               checked={isGiteaEnabled}
               onCheckedChange={() => {
                 updateConfig("IS_GITEA_ENABLED", isGiteaEnabled ? "0" : "1");

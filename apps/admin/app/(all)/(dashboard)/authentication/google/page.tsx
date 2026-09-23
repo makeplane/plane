@@ -74,6 +74,7 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
           icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
           config={
             <Switch
+              aria-label="Enable Google authentication"
               checked={Boolean(parseInt(enableGoogleConfig))}
               onCheckedChange={() => {
                 if (Boolean(parseInt(enableGoogleConfig)) === true) {

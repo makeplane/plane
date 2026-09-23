@@ -73,6 +73,7 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
           icon={<img src={GitlabLogo} height={24} width={24} alt="GitLab Logo" />}
           config={
             <Switch
+              aria-label="Enable GitLab authentication"
               checked={Boolean(parseInt(enableGitlabConfig))}
               onCheckedChange={() => {
                 if (Boolean(parseInt(enableGitlabConfig)) === true) {

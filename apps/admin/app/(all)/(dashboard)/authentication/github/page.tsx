@@ -89,6 +89,7 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
           }
           config={
             <Switch
+              aria-label="Enable GitHub authentication"
               checked={isGithubEnabled}
               onCheckedChange={() => {
                 updateConfig("IS_GITHUB_ENABLED", isGithubEnabled ? "0" : "1");

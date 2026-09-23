@@ -132,6 +132,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
                 <Switch
+                  aria-label="Allow anyone to sign up even without an invite"
                   checked={Boolean(parseInt(enableSignUpConfig))}
                   onCheckedChange={() => {
                     if (Boolean(parseInt(enableSignUpConfig)) === true) {
