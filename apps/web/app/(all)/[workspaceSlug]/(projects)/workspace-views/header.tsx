@@ -12,10 +12,10 @@ import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, DEFAULT_GLOBAL_VIEWS_L
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { ViewsOutline } from "@makeplane/propel/icons";
-import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs } from "@plane/blocks/breadcrumb";
-import { BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
+import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -77,25 +77,25 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
 
   const defaultViewDetails = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
 
-  const defaultOptions = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => ({
-    value: view.key,
-    query: view.key,
+  const defaultOptions = DEFAULT_GLOBAL_VIEWS_LIST.map<BreadcrumbNavigationItem>((view) => ({
+    key: view.key,
+    label: t(view.i18n_label),
     content: <SwitcherLabel name={t(view.i18n_label)} LabelIcon={ViewsOutline} />,
   }));
 
-  const workspaceOptions = (currentWorkspaceViews || []).map((view) => {
+  const workspaceOptions = (currentWorkspaceViews || []).map<BreadcrumbNavigationItem | undefined>((view) => {
     const _view = getViewDetailsById(view);
     if (!_view) return;
     return {
-      value: _view.id,
-      query: _view.name,
+      key: _view.id,
+      label: _view.name,
       content: <SwitcherLabel name={_view.name} LabelIcon={ViewsOutline} />,
     };
   });
 
   const switcherOptions = [...defaultOptions, ...workspaceOptions].filter(
-    (option) => option !== undefined
-  ) as ICustomSearchSelectOption[];
+    (option): option is BreadcrumbNavigationItem => option !== undefined
+  );
   const currentLayoutFilters = useMemo(() => {
     const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
     return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.layoutOptions[layout];
@@ -114,18 +114,17 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             />
             <Breadcrumbs.Item
               component={
-                <BreadcrumbNavigationSearchDropdown
-                  selectedItem={globalViewId?.toString() || ""}
+                <BreadcrumbNavigationSelect
+                  selectedItemKey={globalViewId || ""}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/workspace-views/${value}`);
                   }}
-                  title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
-                  icon={
-                    <Breadcrumbs.Icon>
-                      <ViewsOutline className="size-4 flex-shrink-0 text-tertiary" />
-                    </Breadcrumbs.Icon>
-                  }
+                  label={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
+                  icon={<ViewsOutline className="size-4 shrink-0 text-tertiary" />}
+                  placeholder={t("views")}
+                  searchPlaceholder={t("common.search.label")}
+                  emptyMessage={t("common.search.no_matches_found")}
                   isLast
                 />
               }
