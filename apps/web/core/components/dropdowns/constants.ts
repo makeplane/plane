@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+// plane imports
+import type { SelectVariant } from "@plane/blocks/select";
 // types
 import type { TButtonVariants } from "./types";
 
@@ -24,3 +26,18 @@ export const BUTTON_VARIANTS_WITH_TEXT: TButtonVariants[] = [
   "background-with-text",
   "transparent-with-text",
 ];
+
+/**
+ * The trigger chrome a legacy `buttonVariant` renders as once a legacy dropdown export forwards to
+ * its `@plane/blocks` binding (critic C15 default): bordered chips become `pill-sm`, filled and
+ * transparent rows `select-ghost-md`, and the text-less filled/transparent triggers the icon-only
+ * `icon-sm` chrome. Only the phase-A adapters read this; call sites pick a `SelectVariant` directly.
+ */
+export const LEGACY_BUTTON_SELECT_VARIANT: Record<TButtonVariants, Exclude<SelectVariant, "breadcrumb">> = {
+  "border-with-text": "pill-sm",
+  "border-without-text": "pill-sm",
+  "background-with-text": "select-ghost-md",
+  "transparent-with-text": "select-ghost-md",
+  "background-without-text": "icon-sm",
+  "transparent-without-text": "icon-sm",
+};

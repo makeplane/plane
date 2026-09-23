@@ -1,4 +1,4 @@
-import type { Placement } from "@popperjs/core";
+import type { TPopoverMenuPlacement } from "@plane/blocks/common";
 
 export type TButtonVariants =
   | "border-with-text"
@@ -16,7 +16,7 @@ export type TDropdownProps = {
   disabled?: boolean;
   hideIcon?: boolean;
   placeholder?: string;
-  placement?: Placement;
+  placement?: TPopoverMenuPlacement;
   showTooltip?: boolean;
   tabIndex?: number;
 };

@@ -4,60 +4,62 @@
  * See the LICENSE file for details.
  */
 
-import React, { useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { isValidElement } from "react";
 import { observer } from "mobx-react";
-import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
-import { CalendarOutline, CloseOutline } from "@makeplane/propel/icons";
-import { Combobox } from "@headlessui/react";
-// ui
-import { Calendar } from "@makeplane/propel/components/calendar";
-import { ComboDropDown } from "@plane/blocks/dropdowns";
-import { cn, renderFormattedDate, getDate } from "@plane/utils";
-// helpers
+// plane imports
+import { toSideAndAlign } from "@plane/blocks/common";
+import { DateSelect } from "@plane/blocks/property-select";
+import { useTranslation } from "@plane/i18n";
+import { CalendarOutline } from "@makeplane/propel/icons";
+import { cn, getDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
-import { useDropdown } from "@/hooks/use-dropdown";
-// components
-import { DropdownButton } from "./buttons";
-// constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-// types
+// local imports
+import { LEGACY_BUTTON_SELECT_VARIANT } from "./constants";
+import { LegacyDropdownContainer } from "./legacy-dropdown-container";
 import type { TDropdownProps } from "./types";
 
-// react-day-picker matcher subset used to disable days outside the min/max range
-type Matcher = { before: Date } | { after: Date };
-
 type Props = TDropdownProps & {
+  /** @deprecated No effect — clearing moved to the calendar's "Clear" footer. */
   clearIconClassName?: string;
   defaultOpen?: boolean;
+  /** @deprecated No effect — the popover sizes itself. */
   optionsClassName?: string;
-  icon?: React.ReactNode;
+  /** Leading trigger icon. Defaults to a calendar; `null` renders none. */
+  icon?: ReactNode;
+  /** Offers the calendar's "Clear" footer action. Defaults to `true`. */
   isClearable?: boolean;
   minDate?: Date;
   maxDate?: Date;
   onChange: (val: Date | null) => void;
   onClose?: () => void;
   value: Date | string | null;
+  /** @deprecated No effect — picking a day always closes the calendar. */
   closeOnSelect?: boolean;
   formatToken?: string;
+  /** @deprecated No effect — the calendar mounts on first click. */
   renderByDefault?: boolean;
+  /** @deprecated No effect — the label takes the trigger's type scale. */
   labelClassName?: string;
 };
 
+/**
+ * @deprecated Phase-A adapter (critic C15) over the `DateSelect` block. Call sites move to
+ * `DateSelect` from `@plane/blocks/property-select` directly, passing
+ * `weekStartsOn={userProfile?.start_of_the_week}`; this adapter is deleted once every call site has
+ * moved.
+ */
 export const DateDropdown = observer(function DateDropdown(props: Props) {
   const {
-    buttonClassName = "",
+    buttonClassName,
     buttonContainerClassName,
     buttonVariant,
-    className = "",
-    clearIconClassName = "",
+    className,
     defaultOpen = false,
-    optionsClassName = "",
-    closeOnSelect = true,
     disabled = false,
     hideIcon = false,
-    icon = <CalendarOutline className="h-3 w-3 flex-shrink-0" />,
+    icon = <CalendarOutline />,
     isClearable = true,
     minDate,
     maxDate,
@@ -69,146 +71,40 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
     tabIndex,
     value,
     formatToken,
-    renderByDefault = true,
-    labelClassName = "",
   } = props;
-  // states
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  // refs
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  // hooks
-  const { data } = useUserProfile();
-  const startOfWeek = data?.start_of_the_week;
-  // popper-js refs
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
-
-  const isDateSelected = value && value.toString().trim() !== "";
-
-  const onOpen = () => {
-    if (referenceElement) referenceElement.focus();
-  };
-
-  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
-    dropdownRef,
-    isOpen,
-    onClose,
-    onOpen,
-    setIsOpen,
-  });
-
-  const dropdownOnChange = (val: Date | null) => {
-    onChange(val);
-    if (closeOnSelect) {
-      handleClose();
-      referenceElement?.blur();
-    }
-  };
-
-  const disabledDays: Matcher[] = [];
-  if (minDate) disabledDays.push({ before: minDate });
-  if (maxDate) disabledDays.push({ after: maxDate });
-
-  const comboButton = (
-    <button
-      type="button"
-      className={cn(
-        "clickable block h-full max-w-full outline-none",
-        {
-          "cursor-not-allowed text-secondary": disabled,
-          "cursor-pointer": !disabled,
-        },
-        buttonContainerClassName
-      )}
-      ref={setReferenceElement}
-      onClick={handleOnClick}
-      disabled={disabled}
-    >
-      <DropdownButton
-        className={buttonClassName}
-        isActive={isOpen}
-        tooltipHeading={placeholder}
-        tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
-        showTooltip={showTooltip}
-        variant={buttonVariant}
-        renderToolTipByDefault={renderByDefault}
-      >
-        {!hideIcon && icon}
-        {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className={cn("flex-grow truncate text-left text-body-xs-medium", labelClassName)}>
-            {value ? renderFormattedDate(value, formatToken) : placeholder}
-          </span>
-        )}
-        {isClearable && !disabled && isDateSelected && (
-          <CloseOutline
-            className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              onChange(null);
-            }}
-          />
-        )}
-      </DropdownButton>
-    </button>
-  );
+  // store hooks
+  const { data: userProfile } = useUserProfile();
+  // translation
+  const { t } = useTranslation();
+  // derived values
+  const triggerIcon = !hideIcon && isValidElement<{ className?: string }>(icon) ? icon : undefined;
+  const sideAndAlign = placement ? toSideAndAlign(placement) : undefined;
 
   return (
-    <ComboDropDown
-      as="div"
-      ref={dropdownRef}
-      tabIndex={tabIndex}
-      className={cn("h-full", className)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          if (!isOpen) handleKeyDown(e);
-        } else handleKeyDown(e);
-      }}
-      button={comboButton}
-      disabled={disabled}
-      renderByDefault={renderByDefault}
-    >
-      {isOpen &&
-        createPortal(
-          <Combobox.Options as="ul" data-prevent-outside-click static>
-            <div
-              className={cn(
-                "z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200",
-                optionsClassName
-              )}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              <Calendar
-                selected={getDate(value)}
-                defaultMonth={getDate(value)}
-                onSelect={(date: Date | undefined) => {
-                  dropdownOnChange(date ?? null);
-                }}
-                showOutsideDays
-                autoFocus
-                disabled={disabledDays}
-                mode="single"
-                fixedWeeks
-                weekStartsOn={startOfWeek}
-              />
-            </div>
-          </Combobox.Options>,
-          document.body
-        )}
-    </ComboDropDown>
+    <LegacyDropdownContainer className={className}>
+      <DateSelect
+        value={getDate(value) ?? null}
+        onChange={onChange}
+        variant={LEGACY_BUTTON_SELECT_VARIANT[buttonVariant]}
+        placeholder={placeholder}
+        minDate={minDate}
+        maxDate={maxDate}
+        disabled={disabled}
+        clearable={isClearable}
+        clearLabel={t("common.clear")}
+        formatToken={formatToken}
+        weekStartsOn={userProfile?.start_of_the_week}
+        icon={triggerIcon}
+        className={cn("clickable", buttonContainerClassName, buttonClassName)}
+        showTooltip={showTooltip}
+        tooltipHeading={placeholder}
+        tooltipEmptyContent={t("common.none")}
+        onClose={onClose}
+        tabIndex={tabIndex}
+        defaultOpen={defaultOpen}
+        side={sideAndAlign?.side}
+        align={sideAndAlign?.align}
+      />
+    </LegacyDropdownContainer>
   );
 });

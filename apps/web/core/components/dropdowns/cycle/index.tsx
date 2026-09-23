@@ -4,48 +4,43 @@
  * See the LICENSE file for details.
  */
 
-import type { ReactNode } from "react";
-import { useRef, useState } from "react";
-import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-// ui
-import { ChevronDownOutline, CyclesOutline } from "@makeplane/propel/icons";
-import { ComboDropDown } from "@plane/blocks/dropdowns";
-// helpers
+// plane imports
 import { cn } from "@plane/utils";
-// hooks
-import { useCycle } from "@/hooks/store/use-cycle";
-import { useDropdown } from "@/hooks/use-dropdown";
-// local components and constants
-import { DropdownButton } from "../buttons";
-import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
+// local imports
+import { LEGACY_BUTTON_SELECT_VARIANT } from "../constants";
+import { LegacyDropdownContainer } from "../legacy-dropdown-container";
 import type { TDropdownProps } from "../types";
-import { CycleOptions } from "./cycle-options";
+import { CycleSelect } from "./cycle-select";
 
 type Props = TDropdownProps & {
-  button?: ReactNode;
+  /** @deprecated No effect — `select-ghost` chrome reveals its own chevron on hover. */
   dropdownArrow?: boolean;
+  /** @deprecated No effect. */
   dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;
   onClose?: () => void;
   projectId: string | undefined;
   value: string | null;
+  /** Offers a "No cycle" row that clears the selection. Defaults to `true`. */
   canRemoveCycle?: boolean;
+  /** @deprecated No effect — the Select mounts lazily on first click. */
   renderByDefault?: boolean;
+  /** Hides this cycle from the options. */
   currentCycleId?: string;
 };
 
-export const CycleDropdown = observer(function CycleDropdown(props: Props) {
+/**
+ * @deprecated Phase-A adapter (critic C15) over the `CycleSelect` binding in `./cycle-select`.
+ * Use `CycleSelect` with an explicit `variant` in new code; this adapter is deleted once every call
+ * site has moved.
+ */
+export function CycleDropdown(props: Props) {
   const {
-    button,
     buttonClassName,
     buttonContainerClassName,
     buttonVariant,
-    className = "",
+    className,
     disabled = false,
-    dropdownArrow = false,
-    dropdownArrowClassName = "",
-    hideIcon = false,
     onChange,
     onClose,
     placeholder = "",
@@ -55,103 +50,25 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
     tabIndex,
     value,
     canRemoveCycle = true,
-    renderByDefault = true,
     currentCycleId,
   } = props;
-  // i18n
-  const { t } = useTranslation();
-  // states
-
-  const [isOpen, setIsOpen] = useState(false);
-  const { getCycleNameById } = useCycle();
-  // refs
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  // popper-js refs
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-
-  const selectedName = value ? getCycleNameById(value) : null;
-
-  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
-    dropdownRef,
-    isOpen,
-    onClose,
-    setIsOpen,
-  });
-
-  const dropdownOnChange = (val: string | null) => {
-    onChange(val);
-    handleClose();
-  };
-
-  const comboButton = button ? (
-    <button
-      ref={setReferenceElement}
-      type="button"
-      className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
-      onClick={handleOnClick}
-      disabled={disabled}
-      tabIndex={tabIndex}
-    >
-      {button}
-    </button>
-  ) : (
-    <button
-      ref={setReferenceElement}
-      type="button"
-      className={cn(
-        "clickable block h-full max-w-full outline-none hover:bg-layer-1",
-        {
-          "cursor-not-allowed text-secondary": disabled,
-          "cursor-pointer": !disabled,
-        },
-        buttonContainerClassName
-      )}
-      onClick={handleOnClick}
-      disabled={disabled}
-      tabIndex={tabIndex}
-    >
-      <DropdownButton
-        className={buttonClassName}
-        isActive={isOpen}
-        tooltipHeading={t("common.cycle")}
-        tooltipContent={selectedName ?? placeholder}
-        showTooltip={showTooltip}
-        variant={buttonVariant}
-        renderToolTipByDefault={renderByDefault}
-      >
-        {!hideIcon && <CyclesOutline className="h-3 w-3 flex-shrink-0" />}
-        {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
-          <span className="max-w-40 truncate">{selectedName ?? placeholder}</span>
-        )}
-        {dropdownArrow && (
-          <ChevronDownOutline className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-        )}
-      </DropdownButton>
-    </button>
-  );
 
   return (
-    <ComboDropDown
-      as="div"
-      ref={dropdownRef}
-      className={cn("h-full", className)}
-      value={value}
-      onChange={dropdownOnChange}
-      disabled={disabled}
-      onKeyDown={handleKeyDown}
-      button={comboButton}
-      renderByDefault={renderByDefault}
-    >
-      {isOpen && projectId && (
-        <CycleOptions
-          isOpen={isOpen}
-          projectId={projectId}
-          placement={placement}
-          referenceElement={referenceElement}
-          canRemoveCycle={canRemoveCycle}
-          currentCycleId={currentCycleId}
-        />
-      )}
-    </ComboDropDown>
+    <LegacyDropdownContainer className={className} placement={placement}>
+      <CycleSelect
+        projectId={projectId}
+        value={value}
+        onChange={onChange}
+        variant={LEGACY_BUTTON_SELECT_VARIANT[buttonVariant]}
+        disabled={disabled}
+        placeholder={placeholder}
+        onClose={onClose}
+        clearable={canRemoveCycle}
+        excludeIds={currentCycleId ? [currentCycleId] : undefined}
+        className={cn("clickable", buttonContainerClassName, buttonClassName)}
+        tooltip={showTooltip}
+        tabIndex={tabIndex}
+      />
+    </LegacyDropdownContainer>
   );
-});
+}

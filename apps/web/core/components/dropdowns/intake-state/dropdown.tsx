@@ -4,49 +4,53 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// hooks
-import { useProjectState } from "@/hooks/store/use-project-state";
+// plane imports
+import { cn } from "@plane/utils";
 // local imports
-import type { TWorkItemStateDropdownBaseProps } from "./base";
-import { WorkItemStateDropdownBase } from "./base";
+import { LEGACY_BUTTON_SELECT_VARIANT } from "../constants";
+import { LegacyDropdownContainer } from "../legacy-dropdown-container";
+import type { TLegacyStateDropdownProps } from "../state/dropdown";
+import { IntakeStateSelect } from "./intake-state-select";
 
-type TWorkItemStateDropdownProps = Omit<
-  TWorkItemStateDropdownBaseProps,
-  "stateIds" | "getStateById" | "onDropdownOpen" | "isInitializing"
-> & {
-  stateIds?: string[];
-};
-
-export const IntakeStateDropdown = observer(function IntakeStateDropdown(props: TWorkItemStateDropdownProps) {
-  const { projectId, stateIds: propsStateIds } = props;
+/**
+ * @deprecated Phase-A adapter (critic C15) over the `IntakeStateSelect` binding in
+ * `./intake-state-select`. Takes the same props as `StateDropdown` (call sites swap the two). The
+ * intake state is a project singleton, so an empty `value` always shows it.
+ */
+export const IntakeStateDropdown = observer(function IntakeStateDropdown(props: TLegacyStateDropdownProps) {
+  const {
+    buttonClassName,
+    buttonContainerClassName,
+    buttonVariant,
+    className,
+    disabled = false,
+    onChange,
+    onClose,
+    placeholder,
+    placement,
+    projectId,
+    tabIndex,
+    value,
+  } = props;
   // router params
   const { workspaceSlug } = useParams();
-  // states
-  const [stateLoader, setStateLoader] = useState(false);
-  // store hooks
-  const { fetchProjectIntakeState, getProjectIntakeStateIds, getIntakeStateById } = useProjectState();
-  // derived values
-  const stateIds = propsStateIds ?? getProjectIntakeStateIds(projectId);
-
-  // fetch states if not provided
-  const onDropdownOpen = async () => {
-    if ((stateIds === undefined || stateIds.length === 0) && workspaceSlug && projectId) {
-      setStateLoader(true);
-      await fetchProjectIntakeState(workspaceSlug.toString(), projectId);
-      setStateLoader(false);
-    }
-  };
 
   return (
-    <WorkItemStateDropdownBase
-      {...props}
-      getStateById={getIntakeStateById}
-      isInitializing={stateLoader}
-      stateIds={stateIds ?? []}
-      onDropdownOpen={onDropdownOpen}
-    />
+    <LegacyDropdownContainer className={className} placement={placement}>
+      <IntakeStateSelect
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        projectId={projectId ?? ""}
+        value={value}
+        onChange={onChange}
+        variant={LEGACY_BUTTON_SELECT_VARIANT[buttonVariant]}
+        disabled={disabled}
+        placeholder={placeholder}
+        onClose={onClose}
+        className={cn("clickable", buttonContainerClassName, buttonClassName)}
+        tabIndex={tabIndex}
+      />
+    </LegacyDropdownContainer>
   );
 });

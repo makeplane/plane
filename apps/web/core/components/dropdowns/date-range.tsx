@@ -4,45 +4,43 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect, useRef, useState } from "react";
-import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { createPortal } from "react-dom";
-import { usePopper } from "react-popper";
-import { ArrowNarrowRightOutline, CalendarOutline, CloseOutline, DueDateOutline } from "@makeplane/propel/icons";
-import { Combobox } from "@headlessui/react";
 // plane imports
+import { toSideAndAlign } from "@plane/blocks/common";
+import type { TPopoverMenuPlacement } from "@plane/blocks/common";
+import { DateRangeSelect } from "@plane/blocks/property-select";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Calendar } from "@makeplane/propel/components/calendar";
-import { ComboDropDown } from "@plane/blocks/dropdowns";
-import { cn, renderFormattedDate } from "@plane/utils";
-// helpers
+import { CalendarOutline } from "@makeplane/propel/icons";
+import { cn } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
-import { useDropdown } from "@/hooks/use-dropdown";
-// components
-import { DropdownButton } from "./buttons";
-import { MergedDateDisplay } from "./merged-date";
-// types
+// local imports
+import { LEGACY_BUTTON_SELECT_VARIANT } from "./constants";
+import { LegacyDropdownContainer } from "./legacy-dropdown-container";
 import type { TButtonVariants } from "./types";
 
-// react-day-picker types used by this dropdown (not re-exported by @makeplane/propel)
+// react-day-picker range shape the legacy `onSelect` emitted (not re-exported by @makeplane/propel)
 type DateRange = { from: Date | undefined; to?: Date | undefined };
-type Matcher = { before: Date } | { after: Date };
 
 type Props = {
+  /** @deprecated No effect. */
   applyButtonText?: string;
+  /** @deprecated No effect — the range is emitted once both ends are picked. */
   bothRequired?: boolean;
   buttonClassName?: string;
   buttonContainerClassName?: string;
+  /** @deprecated No effect — the range renders as one label. */
   buttonFromDateClassName?: string;
+  /** @deprecated No effect — the range renders as one label. */
   buttonToDateClassName?: string;
   buttonVariant: TButtonVariants;
+  /** @deprecated No effect. */
   cancelButtonText?: string;
   className?: string;
+  /** @deprecated No effect — clearing moved to the calendar's "Clear" footer. */
   clearIconClassName?: string;
   disabled?: boolean;
+  /** Hides the leading calendar icon. Both ends default to hidden; the range shows one icon. */
   hideIcon?: {
     from?: boolean;
     to?: boolean;
@@ -51,12 +49,14 @@ type Props = {
   mergeDates?: boolean;
   minDate?: Date;
   maxDate?: Date;
+  /** Fires once both ends are picked, and with both ends unset when the range is cleared. */
   onSelect?: (range: DateRange | undefined) => void;
   placeholder?: {
     from?: string;
     to?: string;
   };
-  placement?: Placement;
+  placement?: TPopoverMenuPlacement;
+  /** @deprecated No effect. */
   required?: boolean;
   showTooltip?: boolean;
   tabIndex?: number;
@@ -64,24 +64,30 @@ type Props = {
     from: Date | undefined;
     to: Date | undefined;
   };
+  /** @deprecated No effect — the calendar mounts on first click. */
   renderByDefault?: boolean;
+  /** Shows the placeholder while no date is set. Defaults to `true`. */
   renderPlaceholder?: boolean;
   customTooltipContent?: string;
   customTooltipHeading?: string;
   defaultOpen?: boolean;
+  /** @deprecated No effect — the calendar is always portaled. */
   renderInPortal?: boolean;
 };
 
+/**
+ * @deprecated Phase-A adapter (critic C15) over the `DateRangeSelect` block. Call sites move to
+ * `DateRangeSelect` from `@plane/blocks/property-select` directly, passing
+ * `weekStartsOn={userProfile?.start_of_the_week}`; this adapter is deleted once every call site has
+ * moved.
+ */
 export const DateRangeDropdown = observer(function DateRangeDropdown(props: Props) {
   const { t } = useTranslation();
   const {
     buttonClassName,
     buttonContainerClassName,
-    buttonFromDateClassName,
-    buttonToDateClassName,
     buttonVariant,
     className,
-    clearIconClassName = "",
     disabled = false,
     hideIcon = {
       from: true,
@@ -100,205 +106,45 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
     showTooltip = false,
     tabIndex,
     value,
-    renderByDefault = true,
     renderPlaceholder = true,
     customTooltipContent,
     customTooltipHeading,
     defaultOpen = false,
-    renderInPortal = false,
   } = props;
-  // states
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  const [dateRange, setDateRange] = useState<DateRange>(value);
-  // hooks
-  const { data } = useUserProfile();
-  const startOfWeek = data?.start_of_the_week;
-  // refs
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  // popper-js refs
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
-
-  const onOpen = () => {
-    if (referenceElement) referenceElement.focus();
-  };
-
-  const { handleKeyDown, handleOnClick } = useDropdown({
-    dropdownRef,
-    isOpen,
-    onOpen,
-    setIsOpen,
-  });
-
-  const disabledDays: Matcher[] = [];
-  if (minDate) disabledDays.push({ before: minDate });
-  if (maxDate) disabledDays.push({ after: maxDate });
-
-  const clearDates = () => {
-    const clearedRange = { from: undefined, to: undefined };
-    setDateRange(clearedRange);
-    onSelect?.(clearedRange);
-  };
-
-  const hasDisplayedDates = dateRange.from || dateRange.to;
-
-  useEffect(() => {
-    setDateRange(value);
-  }, [value]);
-
-  const comboButton = (
-    <button
-      ref={setReferenceElement}
-      type="button"
-      className={cn(
-        "clickable block h-full max-w-full outline-none",
-        {
-          "cursor-not-allowed text-secondary": disabled,
-          "cursor-pointer": !disabled,
-        },
-        buttonContainerClassName
-      )}
-      onClick={handleOnClick}
-      disabled={disabled}
-    >
-      <DropdownButton
-        className={buttonClassName}
-        isActive={isOpen}
-        tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
-        tooltipContent={
-          customTooltipContent ??
-          `${dateRange.from ? renderFormattedDate(dateRange.from) : ""}${
-            dateRange.from && dateRange.to ? " - " : ""
-          }${dateRange.to ? renderFormattedDate(dateRange.to) : ""}`
-        }
-        showTooltip={showTooltip}
-        variant={buttonVariant}
-        renderToolTipByDefault={renderByDefault}
-      >
-        {mergeDates ? (
-          // Merged date display
-          <div className="flex w-full items-center gap-1.5">
-            {!hideIcon.from && <CalendarOutline className="h-3 w-3 flex-shrink-0" />}
-            {dateRange.from || dateRange.to ? (
-              <MergedDateDisplay
-                startDate={dateRange.from}
-                endDate={dateRange.to}
-                className="flex-grow truncate text-11"
-              />
-            ) : (
-              renderPlaceholder && (
-                <>
-                  <span className="text-placeholder">{placeholder.from}</span>
-                  {placeholder.from && placeholder.to && (
-                    <ArrowNarrowRightOutline className="h-3 w-3 flex-shrink-0 text-placeholder" />
-                  )}
-                  <span className="text-placeholder">{placeholder.to}</span>
-                </>
-              )
-            )}
-            {isClearable && !disabled && hasDisplayedDates && (
-              <CloseOutline
-                className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer", clearIconClassName)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  clearDates();
-                }}
-              />
-            )}
-          </div>
-        ) : (
-          // Original separate date display
-          <>
-            <span
-              className={cn(
-                "flex h-full flex-grow items-center justify-center gap-1 rounded-xs",
-                buttonFromDateClassName
-              )}
-            >
-              {!hideIcon.from && <CalendarOutline className="h-3 w-3 flex-shrink-0" />}
-              {dateRange.from ? renderFormattedDate(dateRange.from) : renderPlaceholder ? placeholder.from : ""}
-            </span>
-            <ArrowNarrowRightOutline className="h-3 w-3 flex-shrink-0" />
-            <span
-              className={cn(
-                "flex h-full flex-grow items-center justify-center gap-1 rounded-xs",
-                buttonToDateClassName
-              )}
-            >
-              {!hideIcon.to && <DueDateOutline className="h-3 w-3 flex-shrink-0" />}
-              {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
-            </span>
-            {isClearable && !disabled && hasDisplayedDates && (
-              <CloseOutline
-                className={cn("ml-1 h-2.5 w-2.5 flex-shrink-0 cursor-pointer", clearIconClassName)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  clearDates();
-                }}
-              />
-            )}
-          </>
-        )}
-      </DropdownButton>
-    </button>
-  );
-
-  const comboOptions = (
-    <Combobox.Options as="ul" data-prevent-outside-click static>
-      <div
-        className="z-30 my-1 overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1"
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-      >
-        <Calendar
-          selected={dateRange}
-          onSelect={(val: DateRange | undefined) => {
-            onSelect?.(val);
-          }}
-          mode="range"
-          disabled={disabledDays}
-          showOutsideDays
-          fixedWeeks
-          weekStartsOn={startOfWeek}
-          autoFocus
-        />
-      </div>
-    </Combobox.Options>
-  );
-
-  const Options = renderInPortal ? createPortal(comboOptions, document.body) : comboOptions;
+  // store hooks
+  const { data: userProfile } = useUserProfile();
+  // derived values
+  const showIcon = hideIcon.from === false || hideIcon.to === false;
+  // The two legacy placeholders become one label: "Start date - End date", or the shared text once.
+  const placeholderText = renderPlaceholder
+    ? [...new Set([placeholder.from, placeholder.to].filter((text): text is string => !!text))].join(" - ")
+    : "";
+  const sideAndAlign = placement ? toSideAndAlign(placement) : undefined;
 
   return (
-    <ComboDropDown
-      as="div"
-      ref={dropdownRef}
-      tabIndex={tabIndex}
-      className={cn("h-full", className)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          if (!isOpen) handleKeyDown(e);
-        } else handleKeyDown(e);
-      }}
-      button={comboButton}
-      disabled={disabled}
-      renderByDefault={renderByDefault}
-    >
-      {isOpen && Options}
-    </ComboDropDown>
+    <LegacyDropdownContainer className={className}>
+      <DateRangeSelect
+        value={{ from: value.from ?? null, to: value.to ?? null }}
+        onChange={(range) => onSelect?.({ from: range.from ?? undefined, to: range.to ?? undefined })}
+        variant={LEGACY_BUTTON_SELECT_VARIANT[buttonVariant]}
+        placeholder={placeholderText}
+        mergeDates={mergeDates}
+        minDate={minDate}
+        maxDate={maxDate}
+        disabled={disabled}
+        clearable={isClearable}
+        clearLabel={t("common.clear")}
+        weekStartsOn={userProfile?.start_of_the_week}
+        icon={showIcon ? <CalendarOutline /> : undefined}
+        className={cn("clickable", buttonContainerClassName, buttonClassName)}
+        showTooltip={showTooltip}
+        tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
+        tooltipContent={customTooltipContent}
+        tabIndex={tabIndex}
+        defaultOpen={defaultOpen}
+        side={sideAndAlign?.side}
+        align={sideAndAlign?.align}
+      />
+    </LegacyDropdownContainer>
   );
 });
