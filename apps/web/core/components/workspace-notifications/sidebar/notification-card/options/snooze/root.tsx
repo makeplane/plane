@@ -5,18 +5,15 @@
  */
 
 import type { Dispatch, SetStateAction } from "react";
-import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { ClockOutline } from "@makeplane/propel/icons";
-import { Popover, Transition } from "@headlessui/react";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // plane imports
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
 import type { INotification } from "@/store/notifications/notification";
@@ -37,7 +34,6 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
   const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const {} = useWorkspaceNotifications();
   const { t } = useTranslation();
   const { asJson: data, snoozeNotification, unSnoozeNotification } = notification;
 
@@ -72,11 +68,11 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
 
   const handleDropdownSelect = (snoozeDate: Date | "un-snooze" | undefined) => {
     if (snoozeDate === "un-snooze") {
-      handleNotificationSnoozeDate(undefined);
+      void handleNotificationSnoozeDate(undefined);
       return;
     }
     if (snoozeDate) {
-      handleNotificationSnoozeDate(snoozeDate);
+      void handleNotificationSnoozeDate(snoozeDate);
     } else {
       setCustomSnoozeModal(true);
     }
@@ -89,73 +85,58 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         onClose={() => setCustomSnoozeModal(false)}
         onSubmit={handleNotificationSnoozeDate}
       />
-      <Popover className="relative">
-        {({ open }) => {
-          if (open) setIsSnoozeStateModalOpen(true);
-          else setIsSnoozeStateModalOpen(false);
-
-          return (
-            <>
-              <Tooltip
-                label={
+      {/* Command rows, not a value picker — each row snoozes by a preset and nothing stays
+          selected afterwards, so this is a Menu rather than a Select. */}
+      <Menu onOpenChange={setIsSnoozeStateModalOpen}>
+        <Tooltip
+          label={data.snoozed_till ? t("notification.options.mark_unsnooze") : t("notification.options.mark_snooze")}
+          disabled={isMobile}
+        >
+          <MenuTrigger
+            render={
+              <button
+                type="button"
+                aria-label={
                   data.snoozed_till ? t("notification.options.mark_unsnooze") : t("notification.options.mark_snooze")
                 }
-                disabled={isMobile}
+                className="relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs bg-layer-1 outline-none hover:bg-surface-2"
+                // The notification row opens the peek view on click; keep the trigger's press to itself.
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+                }}
               >
-                <Popover.Button
-                  className={cn(
-                    "relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs bg-layer-1 outline-none hover:bg-surface-2",
-                    open ? "bg-layer-1" : ""
-                  )}
-                >
-                  <ClockOutline className="h-3 w-3 text-tertiary" />
-                </Popover.Button>
-              </Tooltip>
+                <ClockOutline className="h-3 w-3 text-tertiary" />
+              </button>
+            }
+          />
+        </Tooltip>
+        <MenuContent side="bottom" align="end">
+          {data.snoozed_till && (
+            <MenuItem
+              label={t("notification.options.mark_unsnooze")}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDropdownSelect("un-snooze");
+              }}
+            />
+          )}
 
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <Popover.Panel className="absolute right-0 z-10 mt-2 min-w-44 select-none">
-                  <div className="space-y-1 rounded-md border border-subtle bg-surface-1 p-2">
-                    {data.snoozed_till && (
-                      <button
-                        className="w-full cursor-pointer rounded-xs p-1 px-2 text-left text-body-xs-medium text-secondary transition-all hover:bg-layer-1"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDropdownSelect("un-snooze");
-                        }}
-                      >
-                        <div>{t("notification.options.mark_unsnooze")}</div>
-                      </button>
-                    )}
-
-                    {NOTIFICATION_SNOOZE_OPTIONS.map((option) => (
-                      <button
-                        key={option.key}
-                        className="w-full cursor-pointer rounded-xs p-1 px-2 text-left text-body-xs-medium text-secondary transition-all hover:bg-layer-1"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDropdownSelect(option.value != undefined ? option.value() : option.value);
-                        }}
-                      >
-                        <div>{t(option?.i18n_label)}</div>
-                      </button>
-                    ))}
-                  </div>
-                </Popover.Panel>
-              </Transition>
-            </>
-          );
-        }}
-      </Popover>
+          {NOTIFICATION_SNOOZE_OPTIONS.map((option) => (
+            <MenuItem
+              key={option.key}
+              label={t(option?.i18n_label)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDropdownSelect(option.value != undefined ? option.value() : option.value);
+              }}
+            />
+          ))}
+        </MenuContent>
+      </Menu>
     </>
   );
 });

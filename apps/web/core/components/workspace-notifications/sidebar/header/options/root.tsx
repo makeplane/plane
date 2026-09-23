@@ -10,7 +10,6 @@ import { CheckDoneOutline, RefreshOutline } from "@makeplane/propel/icons";
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Spinner } from "@plane/blocks/spinner";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -59,10 +58,11 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
         <IconButton
           size="sm"
           variant="ghost"
-          icon={loader === ENotificationLoader.MARK_ALL_AS_READY ? <Spinner /> : <Icon icon={CheckDoneOutline} />}
+          icon={<Icon icon={CheckDoneOutline} />}
+          loading={loader === ENotificationLoader.MARK_ALL_AS_READY}
           aria-label={t("notification.options.mark_all_as_read")}
           onClick={() => {
-            handleMarkAllNotificationsAsRead();
+            void handleMarkAllNotificationsAsRead();
           }}
         />
       </Tooltip>
@@ -74,8 +74,10 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
           variant="ghost"
           icon={<Icon icon={RefreshOutline} />}
           aria-label={t("notification.options.refresh")}
-          render={<button className={loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""} />}
-          onClick={refreshNotifications}
+          loading={loader === ENotificationLoader.MUTATION_LOADER}
+          onClick={() => {
+            void refreshNotifications();
+          }}
         />
       </Tooltip>
 

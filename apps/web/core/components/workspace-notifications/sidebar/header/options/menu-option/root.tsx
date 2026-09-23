@@ -6,32 +6,22 @@
 
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import {
-  ArchiveOutline,
-  ClockOutline,
-  MoreVerticalOutline,
-  TickCircleOutline,
-  TickOutline,
-} from "@makeplane/propel/icons";
+import { ArchiveOutline, ClockOutline, MoreVerticalOutline, TickCircleOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import type { TNotificationFilter } from "@plane/types";
-import { PopoverMenu } from "@plane/blocks/popovers";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuCheckboxItem, MenuContent, MenuTrigger } from "@makeplane/propel/components/menu";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
-// local imports
-import { NotificationMenuOptionItem } from "./menu-item";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { Icon } from "@makeplane/propel/components/icon";
 
-export type TPopoverMenuOptions = {
+type TNotificationMenuOption = {
   key: string;
-  type: string;
-  label?: string | undefined;
-  isActive?: boolean | undefined;
-  prependIcon?: ReactNode | undefined;
-  appendIcon?: ReactNode | undefined;
-  onClick?: (() => void) | undefined;
+  label: string;
+  icon: ReactNode;
+  checked: boolean;
+  onChange: () => void;
 };
 
 export const NotificationHeaderMenuOption = observer(function NotificationHeaderMenuOption() {
@@ -44,24 +34,20 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
 
   const handleBulkFilterChange = (filter: Partial<TNotificationFilter>) => updateBulkFilters(filter);
 
-  const popoverMenuOptions: TPopoverMenuOptions[] = [
+  const menuOptions: TNotificationMenuOption[] = [
     {
       key: "menu-unread",
-      type: "menu-item",
       label: t("notification.options.show_unread"),
-      isActive: filters?.read,
-      prependIcon: <TickCircleOutline className="h-3 w-3 flex-shrink-0" />,
-      appendIcon: filters?.read ? <TickOutline className="h-3 w-3" /> : undefined,
-      onClick: () => handleFilterChange("read", !filters?.read),
+      icon: <Icon icon={TickCircleOutline} />,
+      checked: !!filters?.read,
+      onChange: () => handleFilterChange("read", !filters?.read),
     },
     {
       key: "menu-archived",
-      type: "menu-item",
       label: t("notification.options.show_archived"),
-      isActive: filters?.archived,
-      prependIcon: <ArchiveOutline className="h-3 w-3 flex-shrink-0" />,
-      appendIcon: filters?.archived ? <TickOutline className="h-3 w-3" /> : undefined,
-      onClick: () =>
+      icon: <Icon icon={ArchiveOutline} />,
+      checked: !!filters?.archived,
+      onChange: () =>
         handleBulkFilterChange({
           archived: !filters?.archived,
           snoozed: false,
@@ -69,12 +55,10 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
     },
     {
       key: "menu-snoozed",
-      type: "menu-item",
       label: t("notification.options.show_snoozed"),
-      isActive: filters?.snoozed,
-      prependIcon: <ClockOutline className="h-3 w-3 flex-shrink-0" />,
-      appendIcon: filters?.snoozed ? <TickOutline className="h-3 w-3" /> : undefined,
-      onClick: () =>
+      icon: <Icon icon={ClockOutline} />,
+      checked: !!filters?.snoozed,
+      onChange: () =>
         handleBulkFilterChange({
           snoozed: !filters?.snoozed,
           archived: false,
@@ -83,19 +67,29 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
   ];
 
   return (
-    <PopoverMenu
-      data={popoverMenuOptions}
-      button={
-        <IconButton
-          size="sm"
-          variant="ghost"
-          icon={<Icon icon={MoreVerticalOutline} />}
-          aria-label="Notification options"
-        />
-      }
-      keyExtractor={(item: TPopoverMenuOptions) => item.key}
-      panelClassName="p-0 py-2 rounded-md border border-subtle bg-surface-1 space-y-1"
-      render={(item: TPopoverMenuOptions) => <NotificationMenuOptionItem {...item} />}
-    />
+    // Toggle rows: checkbox items keep the menu open, as the legacy popover did.
+    <Menu>
+      <MenuTrigger
+        render={
+          <IconButton
+            size="sm"
+            variant="ghost"
+            icon={<Icon icon={MoreVerticalOutline} />}
+            aria-label="Notification options"
+          />
+        }
+      />
+      <MenuContent side="bottom" align="end">
+        {menuOptions.map((option) => (
+          <MenuCheckboxItem
+            key={option.key}
+            icon={option.icon}
+            label={option.label}
+            checked={option.checked}
+            onCheckedChange={option.onChange}
+          />
+        ))}
+      </MenuContent>
+    </Menu>
   );
 });
