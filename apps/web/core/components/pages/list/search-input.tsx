@@ -7,6 +7,7 @@
 import { useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
@@ -19,6 +20,8 @@ type Props = {
 
 export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -51,7 +54,7 @@ export function PageSearchInput(props: Props) {
             inputRef.current?.focus();
           }}
           icon={<Icon icon={SearchOutline} />}
-          aria-label="Search pages"
+          aria-label={t("search")}
         />
       )}
       <div
