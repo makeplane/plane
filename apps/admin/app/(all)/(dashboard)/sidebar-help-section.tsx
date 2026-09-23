@@ -7,7 +7,6 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Transition } from "@headlessui/react";
 import { WEB_BASE_URL } from "@plane/constants";
 // plane internal packages
 import { Tooltip } from "@makeplane/propel/components/tooltip";
@@ -110,20 +109,13 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         </Tooltip>
       </div>
       <div className="relative">
-        <Transition
-          as="div"
-          show={isNeedHelpOpen}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
+        {/* The standalone Headless UI enter/leave transition is now a mount-time fade (leave animation
+            dropped), the same shape Propel's own panels animate with. */}
+        {isNeedHelpOpen && (
           <div
             className={`absolute bottom-2 z-[15] min-w-[10rem] ${
               isSidebarCollapsed ? "left-full" : "-left-[75px]"
-            } divide-y divide-subtle-1 rounded-sm bg-surface-1 p-1 whitespace-nowrap shadow-raised-100`}
+            } animate-fade-in divide-y divide-subtle-1 rounded-sm bg-surface-1 p-1 whitespace-nowrap shadow-raised-100 motion-reduce:animate-none`}
             ref={helpOptionsRef}
           >
             <div className="space-y-1 pb-2">
@@ -156,7 +148,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
             </div>
             <div className="px-2 pt-2 pb-1 text-10">Version: v{instance?.current_version}</div>
           </div>
-        </Transition>
+        )}
       </div>
     </div>
   );
