@@ -7,13 +7,11 @@
 import { observer } from "mobx-react";
 import type { ComponentType, SVGProps } from "react";
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
 import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
 import { MembersOutline } from "@makeplane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
-// plane utils
-// helpers
 // hooks
-import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { useMember } from "@/hooks/store/use-member";
 
 type AvatarProps = {
@@ -23,6 +21,8 @@ type AvatarProps = {
   size?: AvatarGroupSize;
 };
 
+const MAX_GROUP_AVATARS = 2;
+
 export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
   const { userIds, icon: Icon, size = "xs" } = props;
   // store hooks
@@ -30,34 +30,22 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
 
   if (Array.isArray(userIds)) {
     if (userIds.length > 0)
+      // Resolve at most `max + 1` avatars: `AvatarGroup` shows the extra face only when it replaces a "+1" and
+      // counts the rest from `total`.
       return (
-        <AvatarGroupOverflow size={size}>
-          {userIds.map((userId) => {
+        <AvatarGroup size={size} max={MAX_GROUP_AVATARS} total={userIds.length}>
+          {userIds.slice(0, MAX_GROUP_AVATARS + 1).map((userId) => {
             const userDetails = getUserDetails(userId);
 
-            if (!userDetails) return;
-            return (
-              <Avatar
-                key={userId}
-                src={getFileURL(userDetails.avatar_url)}
-                alt={userDetails.display_name}
-                fallback={userDetails.display_name?.[0]?.toUpperCase()}
-              />
-            );
+            if (!userDetails) return null;
+            return <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} alt={userDetails.display_name} />;
           })}
-        </AvatarGroupOverflow>
+        </AvatarGroup>
       );
   } else {
     if (userIds) {
       const userDetails = getUserDetails(userIds);
-      return (
-        <Avatar
-          src={getFileURL(userDetails?.avatar_url ?? "")}
-          alt={userDetails?.display_name}
-          fallback={userDetails?.display_name?.[0]?.toUpperCase()}
-          size={size}
-        />
-      );
+      return <Avatar src={getFileURL(userDetails?.avatar_url ?? "")} alt={userDetails?.display_name} size={size} />;
     }
   }
 
