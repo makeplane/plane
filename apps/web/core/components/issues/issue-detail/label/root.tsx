@@ -79,8 +79,8 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
       <LabelSelect
         projectId={projectId}
         value={labelIds}
-        onChange={(labelIds) =>
-          void labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: labelIds })
+        onChange={(nextLabelIds) =>
+          void labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: nextLabelIds })
         }
         disabled={disabled}
         variant="select-ghost-md"
