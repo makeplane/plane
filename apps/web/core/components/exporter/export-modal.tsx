@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,8 +15,18 @@ import { setToast } from "@plane/blocks/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
 import { Checkbox } from "@makeplane/propel/components/checkbox";
-import { CustomSearchSelect } from "@plane/blocks/dropdowns";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+// components
+import { ProjectSelect } from "@/components/dropdowns/project/project-select";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -38,7 +48,6 @@ export const Exporter = observer(function Exporter(props: Props) {
   const { isOpen, handleClose, user, provider, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
@@ -51,26 +60,10 @@ export const Exporter = observer(function Exporter(props: Props) {
     ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
 
-  const options = wsProjectIdsWithCreatePermisisons?.map((projectId) => {
-    const projectDetails = getProjectById(projectId);
+  const wsProjectIdsWithCreatePermissionsSet = new Set(wsProjectIdsWithCreatePermisisons);
 
-    return {
-      value: projectDetails?.id,
-      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <span className="flex-shrink-0 text-10 text-secondary">{projectDetails?.identifier}</span>
-          <span className="truncate">{projectDetails?.name}</span>
-        </div>
-      ),
-    };
-  });
-
-  const [value, setValue] = React.useState<string[]>([]);
-  const [multiple, setMultiple] = React.useState<boolean>(false);
-  const onChange = (val: any) => {
-    setValue(val);
-  };
+  const [value, setValue] = useState<string[]>([]);
+  const [multiple, setMultiple] = useState<boolean>(false);
 
   async function ExportCSVToMail() {
     setExportLoading(true);
@@ -80,86 +73,85 @@ export const Exporter = observer(function Exporter(props: Props) {
         project: value,
         multiple: multiple,
       };
-      await projectExportService
-        .csvExport(workspaceSlug, payload)
-        .then(() => {
-          mutateServices();
-          router.push(`/${workspaceSlug}/settings/exports`);
-          setExportLoading(false);
-          setToast({
-            type: "success",
-            title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
-            message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
-              entity: provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : "",
-            }),
-          });
-        })
-        .catch(() => {
-          setExportLoading(false);
-          setToast({
-            type: "error",
-            title: t("error"),
-            message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
-          });
+      try {
+        await projectExportService.csvExport(workspaceSlug, payload);
+        mutateServices();
+        router.push(`/${workspaceSlug}/settings/exports`);
+        setExportLoading(false);
+        setToast({
+          type: "success",
+          title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
+          message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
+            entity: provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : "",
+          }),
         });
+      } catch {
+        setExportLoading(false);
+        setToast({
+          type: "error",
+          title: t("error"),
+          message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
+        });
+      }
     }
   }
 
   return (
-    <ModalCore
-      isOpen={isOpen}
-      handleClose={() => {
-        if (!isSelectOpen) handleClose();
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
       }}
-      position={EModalPosition.CENTER}
-      width={EModalWidth.XL}
     >
-      <div className="flex flex-col gap-6 gap-y-4 p-6">
-        <div className="flex w-full items-center justify-start gap-6">
-          <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">
-              {t("workspace_settings.settings.exports.modal.title")}{" "}
-              {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
-            </h3>
-          </span>
-        </div>
-        <div>
-          <CustomSearchSelect
-            value={value ?? []}
-            onChange={(val: string[]) => onChange(val)}
-            options={options}
-            input
-            label={
-              value && value.length > 0
-                ? value
-                    .map((projectId) => {
-                      const projectDetails = getProjectById(projectId);
-
-                      return projectDetails?.identifier;
-                    })
-                    .join(", ")
-                : "All projects"
-            }
-            onOpen={() => setIsSelectOpen(true)}
-            onClose={() => setIsSelectOpen(false)}
-            optionsClassName="max-w-48 sm:max-w-[532px]"
-            placement="bottom-end"
-            multiple
-          />
-        </div>
-        <Checkbox
-          label={t("workspace_settings.settings.exports.export_separate_files")}
-          stretch="auto"
-          checked={multiple}
-          onCheckedChange={setMultiple}
-        />
-        <div className="flex justify-end gap-2">
+      <DialogContent size="sm">
+        <DialogMain>
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>
+                {t("workspace_settings.settings.exports.modal.title")}{" "}
+                {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
+              </DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
+          <DialogBody tabIndex={0}>
+            <div className="flex flex-col gap-4">
+              <ProjectSelect
+                multiple
+                projectList="all"
+                value={value}
+                onChange={setValue}
+                variant="select-md"
+                filterOption={(projectId) => wsProjectIdsWithCreatePermissionsSet.has(projectId)}
+                // Preserve selected ids even if their project is unloaded or removed from the available options.
+                resolveProject={(projectId) => {
+                  const project = getProjectById(projectId);
+                  if (!project) return { id: projectId, name: projectId };
+                  return {
+                    id: project.id,
+                    name: project.name,
+                    identifier: project.identifier,
+                    logo_props: project.logo_props,
+                  };
+                }}
+                placeholder="All projects"
+                className="w-full"
+              />
+              <Checkbox
+                label={t("workspace_settings.settings.exports.export_separate_files")}
+                stretch="auto"
+                checked={multiple}
+                onCheckedChange={setMultiple}
+              />
+            </div>
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
           <Button variant="secondary" size="sm" stretch="auto" onClick={handleClose} label={t("cancel")} />
           <Button
             variant="primary"
             size="sm"
             stretch="auto"
-            onClick={ExportCSVToMail}
+            onClick={() => void ExportCSVToMail()}
             disabled={exportLoading}
             loading={exportLoading}
             label={
@@ -168,8 +160,8 @@ export const Exporter = observer(function Exporter(props: Props) {
                 : t("workspace_settings.settings.exports.title")
             }
           />
-        </div>
-      </div>
-    </ModalCore>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 });
