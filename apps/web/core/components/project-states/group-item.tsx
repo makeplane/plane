@@ -123,17 +123,19 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
             stateItemClassName={stateItemClassName}
           />
         </div>
-
-        {isEditable && createState && (
-          <div className="mt-1">
-            <StateCreate
-              groupKey={groupKey}
-              handleClose={() => setCreateState(false)}
-              createStateCallback={stateOperationsCallbacks.createState}
-            />
-          </div>
-        )}
       </Collapsible>
+
+      {/* Rendered outside the collapsible panel (as in legacy) so the create form, and whatever the user typed
+          into it, survives collapsing the group — the panel unmounts its children when closed. */}
+      {isEditable && createState && (
+        <div className="mt-1">
+          <StateCreate
+            groupKey={groupKey}
+            handleClose={() => setCreateState(false)}
+            createStateCallback={stateOperationsCallbacks.createState}
+          />
+        </div>
+      )}
     </div>
   );
 });
