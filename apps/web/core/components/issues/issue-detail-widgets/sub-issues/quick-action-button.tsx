@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { AddOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
@@ -79,24 +79,43 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
     },
   ];
 
-  // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <AddOutline className="h-4 w-4" />;
+  // trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+  };
 
   return (
-    <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>
-      {optionItems.map((item, index) => (
-        <CustomMenu.MenuItem
-          key={index}
-          onClick={() => {
-            item.onClick();
-          }}
-        >
-          <div className="flex items-center gap-2">
-            {item.icon}
-            <span>{t(item.i18n_label)}</span>
-          </div>
-        </CustomMenu.MenuItem>
-      ))}
-    </CustomMenu>
+    <Menu>
+      <MenuTrigger
+        disabled={disabled}
+        render={
+          <button
+            type="button"
+            aria-label={customButton ? undefined : t("issue.add.sub_issue")}
+            onClick={handleTriggerClick}
+            onKeyDown={handleTriggerKeyDown}
+          />
+        }
+      >
+        {customButton ?? <AddOutline className="h-4 w-4" />}
+      </MenuTrigger>
+      <MenuContent side="bottom" align="start">
+        {optionItems.map((item) => (
+          <MenuItem
+            key={item.i18n_label}
+            icon={item.icon}
+            label={t(item.i18n_label)}
+            onClick={(e) => {
+              e.stopPropagation();
+              item.onClick();
+            }}
+          />
+        ))}
+      </MenuContent>
+    </Menu>
   );
 });

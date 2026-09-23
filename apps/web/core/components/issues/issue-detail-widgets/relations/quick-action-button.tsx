@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 import { AddOutline } from "@makeplane/propel/icons";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -40,35 +40,47 @@ export const RelationActionButton = observer(function RelationActionButton(props
     toggleRelationModal(issueId, relationKey);
   };
 
-  // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <AddOutline className="h-4 w-4" />;
+  // trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+  };
 
   return (
-    <CustomMenu
-      customButton={customButtonElement}
-      placement="bottom-start"
-      disabled={disabled}
-      maxHeight="lg"
-      closeOnSelect
-    >
-      {Object.values(ISSUE_RELATION_OPTIONS).map((item, index) => {
-        if (!item) return <></>;
+    <Menu>
+      <MenuTrigger
+        disabled={disabled}
+        render={
+          <button
+            type="button"
+            aria-label={customButton ? undefined : t("issue.add.relation")}
+            onClick={handleTriggerClick}
+            onKeyDown={handleTriggerKeyDown}
+          />
+        }
+      >
+        {customButton ?? <AddOutline className="h-4 w-4" />}
+      </MenuTrigger>
+      <MenuContent side="bottom" align="start">
+        {Object.values(ISSUE_RELATION_OPTIONS).map((item) => {
+          if (!item) return null;
 
-        return (
-          <CustomMenu.MenuItem
-            // oxlint-disable-next-line react/no-array-index-key
-            key={index}
-            onClick={() => {
-              handleOnClick(item.key);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              {item.icon(12)}
-              <span>{t(item.i18n_label)}</span>
-            </div>
-          </CustomMenu.MenuItem>
-        );
-      })}
-    </CustomMenu>
+          return (
+            <MenuItem
+              key={item.key}
+              icon={item.icon(12)}
+              label={t(item.i18n_label)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOnClick(item.key);
+              }}
+            />
+          );
+        })}
+      </MenuContent>
+    </Menu>
   );
 });
