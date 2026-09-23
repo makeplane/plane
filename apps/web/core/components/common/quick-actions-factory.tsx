@@ -13,7 +13,7 @@ import {
   RestoreOutline,
 } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
 
 /**
  * Unified factory for creating menu items across all entities (cycles, modules, views, epics)
@@ -53,8 +53,6 @@ export const useQuickActionsFactory = () => {
       title: t("archive"),
       icon: ArchiveOutline,
       action: handler,
-      className: "items-start",
-      iconClassName: "mt-1",
       description: opts.description,
       disabled: opts.disabled,
       shouldRender: opts.shouldRender,
