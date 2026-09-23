@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ProjectsOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
@@ -60,18 +60,30 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
           <HeaderFilters />
         </div>
         {isAuthorizedUser && !isArchived ? (
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            onClick={() => {
-              toggleCreateProjectModal(true);
-            }}
-            render={<button className="items-center gap-1" />}
-          >
-            <span className="hidden sm:inline-block">{t("workspace_projects.create.label")}</span>
-            <span className="inline-block sm:hidden">{t("workspace_projects.label", { count: 1 })}</span>
-          </Button>
+          <>
+            <span className="hidden sm:inline-block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                onClick={() => {
+                  toggleCreateProjectModal(true);
+                }}
+                label={t("workspace_projects.create.label")}
+              />
+            </span>
+            <span className="inline-block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                onClick={() => {
+                  toggleCreateProjectModal(true);
+                }}
+                label={t("workspace_projects.label", { count: 1 })}
+              />
+            </span>
+          </>
         ) : (
           <></>
         )}

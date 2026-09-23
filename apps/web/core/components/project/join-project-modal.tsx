@@ -9,7 +9,16 @@ import { useState } from "react";
 import { Button } from "@makeplane/propel/components/button";
 import type { IProject } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -49,28 +58,39 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
-      <div className="space-y-5 px-5 py-8 sm:p-6">
-        <h3 className="text-16 leading-6 font-medium text-primary">Join Project?</h3>
-        <p>
-          Are you sure you want to join the project <span className="font-semibold break-words">{project?.name}</span>?
-          Please click the &apos;Join Project&apos; button below to continue.
-        </p>
-        <div className="space-y-3" />
-      </div>
-      <div className="mt-5 flex justify-end gap-2 px-5 pb-8 sm:px-6 sm:pb-6">
-        <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
-        <Button
-          variant="primary"
-          size="md"
-          stretch="auto"
-          label={isJoiningLoading ? "Joining..." : "Join Project"}
-          tabIndex={1}
-          type="submit"
-          onClick={handleJoin}
-          loading={isJoiningLoading}
-        />
-      </div>
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="sm">
+        <DialogMain>
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>Join Project?</DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
+          <DialogBody>
+            <p>
+              Are you sure you want to join the project{" "}
+              <span className="font-semibold break-words">{project?.name}</span>? Please click the &apos;Join
+              Project&apos; button below to continue.
+            </p>
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isJoiningLoading ? "Joining..." : "Join Project"}
+            onClick={handleJoin}
+            loading={isJoiningLoading}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 }
