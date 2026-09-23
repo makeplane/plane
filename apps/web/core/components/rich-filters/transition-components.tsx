@@ -9,15 +9,14 @@ import { observer } from "mobx-react";
 import { cn } from "@plane/utils";
 
 /**
- * Where the element is in its enter/leave cycle. `entering` and `left` both wear the "from" end of
- * the animated properties; only the timing classes and whether the element is hidden differ.
+ * Where the element is in its enter/leave cycle. `entering` wears the "from" end of the animated
+ * properties; `left` means the element has unmounted.
  */
 type TransitionPhase = "entering" | "entered" | "leaving" | "left";
 
 /**
  * Hand-rolled enter/leave, replacing Headless UI's `Transition` (Ruling 36). The element stays in
- * the DOM for the length of the leave transition so the exit is visible, then unmounts — or, when
- * the caller keeps it mounted, is hidden in place.
+ * the DOM for the length of the leave transition so the exit is visible, then unmounts.
  */
 function useTransitionPhase(show: boolean, leaveDurationMs: number): TransitionPhase {
   const [phase, setPhase] = useState<TransitionPhase>(show ? "entered" : "left");
@@ -52,13 +51,11 @@ function useTransitionPhase(show: boolean, leaveDurationMs: number): TransitionP
 type CssTransitionProps = {
   children: React.ReactNode;
   show: boolean;
-  /** Keeps the subtree mounted while hidden instead of unmounting it. */
-  keepMountedWhenHidden?: boolean;
   /** Transition property class, applied in every phase. */
   transitionClassName: string;
   enterClassName: string;
   leaveClassName: string;
-  /** The "from" end of the animated properties — worn while entering and once left. */
+  /** The "from" end of the animated properties — worn while entering. */
   fromClassName: string;
   /** The "to" end — worn once entered. */
   toClassName: string;
@@ -73,7 +70,6 @@ function CssTransition(props: CssTransitionProps) {
   const {
     children,
     show,
-    keepMountedWhenHidden = false,
     transitionClassName,
     enterClassName,
     leaveClassName,
@@ -83,16 +79,15 @@ function CssTransition(props: CssTransitionProps) {
   } = props;
   const phase = useTransitionPhase(show, leaveDurationMs);
 
-  if (phase === "left" && !keepMountedWhenHidden) return null;
+  if (phase === "left") return null;
 
   return (
     <div
       className={cn(
         transitionClassName,
         phase === "entered" ? toClassName : fromClassName,
-        phase === "leaving" || phase === "left" ? leaveClassName : enterClassName
+        phase === "leaving" ? leaveClassName : enterClassName
       )}
-      hidden={phase === "left"}
     >
       {children}
     </div>
@@ -123,19 +118,12 @@ export const ElementTransition = observer(function ElementTransition(props: Elem
 type RowTransitionProps = {
   children: React.ReactNode;
   show: boolean;
-  // Keeps the row's subtree mounted while hidden instead of unmounting it (the transition's default) —
-  // each filter pill's dropdown seeds its open/closed state once at mount (e.g. `defaultOpen` on the
-  // blocks `Select`), so unmounting on hide and remounting on show would re-run that initializer and
-  // pop every empty filter's dropdown open again. Opt-in per surface: it keeps hidden pill subtrees (and
-  // any portaled select state) alive, so only set it where that remount is an actual problem.
-  keepMountedWhenHidden?: boolean;
 };
 
 export const RowTransition = observer(function RowTransition(props: RowTransitionProps) {
   return (
     <CssTransition
       show={props.show}
-      keepMountedWhenHidden={props.keepMountedWhenHidden}
       transitionClassName="transition-all"
       enterClassName="duration-150 ease-out"
       leaveClassName="duration-100 ease-in"
