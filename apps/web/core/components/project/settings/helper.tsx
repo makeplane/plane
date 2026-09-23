@@ -24,7 +24,7 @@ export function ProjectFeatureToggle(props: Props) {
   return featureItem?.href ? (
     <Link href={joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem?.href)}>
       <div className="flex items-center gap-2">
-        <Badge variant={value ? "brand" : "neutral"} size="sm" label={value ? "Enabled" : "Disabled"} />
+        <Badge variant={value ? "brand" : "neutral"} size="xs" label={value ? "Enabled" : "Disabled"} />
         <ChevronRightOutline className="h-4 w-4 text-tertiary" />
       </div>
     </Link>

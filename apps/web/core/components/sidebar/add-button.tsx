@@ -14,16 +14,8 @@ type Props = React.ComponentProps<"button"> & {
 export function SidebarAddButton(props: Props) {
   const { label, onClick, disabled, ...rest } = props;
   return (
-    <Button
-      variant="secondary"
-      size="lg"
-      stretch="full"
-      onClick={onClick}
-      disabled={disabled}
-      render={<button className="justify-start" />}
-      {...rest}
-    >
-      {label}
+    <Button type="button" variant="secondary" size="lg" stretch="full" onClick={onClick} disabled={disabled} {...rest}>
+      <span className="flex w-full items-center justify-start gap-2">{label}</span>
     </Button>
   );
 }
