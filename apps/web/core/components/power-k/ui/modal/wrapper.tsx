@@ -72,6 +72,9 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
       // Cmd/Ctrl+K closes palette
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        // The Dialog is portaled, so this stops the native event at the portal container
+        // before the document-level ShortcutHandler can re-open the palette.
+        e.stopPropagation();
         onClose();
         return;
       }

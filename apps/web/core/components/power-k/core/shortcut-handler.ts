@@ -8,6 +8,35 @@ import type { IPowerKCommandRegistry } from "./registry";
 import type { TPowerKCommandConfig, TPowerKContext } from "./types";
 
 /**
+ * With Shift held, `e.key` reports the shifted glyph on US-style layouts
+ * ("<" for ","). Map it back to the base character so it matches the
+ * registered form ("cmd+shift+,"). Letters are unaffected.
+ */
+const SHIFTED_KEY_TO_BASE: Record<string, string> = {
+  "<": ",",
+  ">": ".",
+  "?": "/",
+  ":": ";",
+  '"': "'",
+  "~": "`",
+  "{": "[",
+  "}": "]",
+  "|": "\\",
+  _: "-",
+  "+": "=",
+  "!": "1",
+  "@": "2",
+  "#": "3",
+  $: "4",
+  "%": "5",
+  "^": "6",
+  "&": "7",
+  "*": "8",
+  "(": "9",
+  ")": "0",
+};
+
+/**
  * Formats a keyboard event into a modifier shortcut string
  * e.g., "cmd+k", "cmd+shift+,", "cmd+delete"
  */
@@ -18,7 +47,8 @@ export function formatModifierShortcut(e: KeyboardEvent): string {
   if (e.altKey) parts.push("alt");
   if (e.shiftKey) parts.push("shift");
 
-  const key = e.key.toLowerCase();
+  let key = e.key.toLowerCase();
+  if (e.shiftKey && e.key.length === 1) key = SHIFTED_KEY_TO_BASE[e.key] ?? key;
   parts.push(key === " " ? "space" : key);
 
   return parts.join("+");
@@ -71,6 +101,9 @@ export class ShortcutHandler {
   handleKeyDown = (e: KeyboardEvent): void => {
     if (!this.isEnabled) return;
 
+    // Auto-repeat must neither re-fire a shortcut nor touch the sequence buffer
+    if (e.repeat) return;
+
     const key = e.key.toLowerCase();
     const hasModifier = e.metaKey || e.ctrlKey || e.altKey || e.shiftKey;
 
@@ -113,11 +146,19 @@ export class ShortcutHandler {
    * Handle single key shortcuts or build sequences (c, gm, op, etc.)
    */
   private handleKeyOrSequence(e: KeyboardEvent, key: string): void {
+    // Non-printable keys (Escape, Tab, Enter, arrows, ...) cancel a pending sequence
+    if (e.key.length !== 1) {
+      this.resetSequence();
+      return;
+    }
+
+    const ctx = this.getContext();
+
     // Add key to sequence
     this.sequence += key;
 
     // Check if sequence matches a command (e.g., "gm", "op")
-    const sequenceCommand = this.registry.findByKeySequence(this.getContext(), this.sequence);
+    const sequenceCommand = this.registry.findByKeySequence(ctx, this.sequence);
     if (sequenceCommand && this.canExecuteCommand(sequenceCommand)) {
       e.preventDefault();
       this.executeCommand(sequenceCommand);
@@ -125,9 +166,15 @@ export class ShortcutHandler {
       return;
     }
 
+    // If the buffer can no longer become a registered sequence, the earlier keys
+    // were stray - restart from the current key
+    if (!this.registry.hasKeySequencePrefix(ctx, this.sequence)) {
+      this.sequence = key;
+    }
+
     // If sequence is one character, check for single-key shortcut
     if (this.sequence.length === 1) {
-      const singleKeyCommand = this.registry.findByShortcut(this.getContext(), key);
+      const singleKeyCommand = this.registry.findByShortcut(ctx, key);
       if (singleKeyCommand && this.canExecuteCommand(singleKeyCommand)) {
         e.preventDefault();
         this.executeCommand(singleKeyCommand);

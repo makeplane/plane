@@ -27,6 +27,7 @@ export interface IPowerKCommandRegistry {
   findByShortcut(ctx: TPowerKContext, key: string): TPowerKCommandConfig | undefined;
   findByKeySequence(ctx: TPowerKContext, sequence: string): TPowerKCommandConfig | undefined;
   findByModifierShortcut(ctx: TPowerKContext, shortcut: string): TPowerKCommandConfig | undefined;
+  hasKeySequencePrefix(ctx: TPowerKContext, prefix: string): boolean;
   // Utility
   clear(): void;
 }
@@ -130,6 +131,11 @@ export class PowerKCommandRegistry implements IPowerKCommandRegistry {
     const commandId = this.getModifierShortcutMap(ctx).get(shortcut.toLowerCase());
     return commandId ? this.commands.get(commandId) : undefined;
   });
+
+  hasKeySequencePrefix: IPowerKCommandRegistry["hasKeySequencePrefix"] = (ctx, prefix) => {
+    const normalizedPrefix = prefix.toLowerCase();
+    return Array.from(this.getKeySequenceMap(ctx).keys()).some((sequence) => sequence.startsWith(normalizedPrefix));
+  };
 
   // ============================================================================
   // Utility
