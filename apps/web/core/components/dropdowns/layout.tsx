@@ -27,13 +27,12 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
   // plane i18n
   const { t } = useTranslation();
   // derived values
-  const options = useMemo<TLayoutOption[]>(
-    () =>
-      Object.values(ISSUE_LAYOUT_MAP)
-        .filter((layout) => !disabledLayouts.includes(layout.key))
-        .map((layout) => ({ key: layout.key, i18n_label: layout.i18n_label })),
-    [disabledLayouts]
-  );
+  const options = useMemo<TLayoutOption[]>(() => {
+    const disabled = new Set(disabledLayouts);
+    return Object.values(ISSUE_LAYOUT_MAP)
+      .filter((layout) => !disabled.has(layout.key))
+      .map((layout) => ({ key: layout.key, i18n_label: layout.i18n_label }));
+  }, [disabledLayouts]);
   const selected = options.find((option) => option.key === value) ?? null;
 
   return (
