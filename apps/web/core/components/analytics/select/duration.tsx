@@ -4,29 +4,20 @@
  * See the LICENSE file for details.
  */
 
-// plane package imports
-import type { ReactNode } from "react";
+// react
 import React from "react";
 import { CalendarOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Select } from "@plane/blocks/select";
-// types
-import type { TDropdownProps } from "@/components/dropdowns/types";
 
 type TDurationOption = (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number];
 
-type Props = TDropdownProps & {
+type Props = {
   value: string | null;
   onChange: (val: TDurationOption["value"]) => void;
-  //optional
-  button?: ReactNode;
-  dropdownArrow?: boolean;
-  dropdownArrowClassName?: string;
-  onClose?: () => void;
-  renderByDefault?: boolean;
-  tabIndex?: number;
+  placeholder?: string;
 };
 
 const getDurationOption = (value: string | null) =>
