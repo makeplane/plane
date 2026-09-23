@@ -251,7 +251,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           </div>
           <div
             className="fixed right-0 z-[5] h-full w-full min-w-[300px] border-l border-subtle bg-surface-1 sm:w-1/2 md:relative md:w-1/4 lg:min-w-80 xl:min-w-96"
-            style={issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
+            style={issueDetailSidebarCollapsed ? { right: "-100vw" } : {}}
           >
             <IssueDetailsSidebar
               workspaceSlug={workspaceSlug}
