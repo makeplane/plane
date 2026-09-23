@@ -27,14 +27,7 @@ export function ApiTokenEmptyState(props: Props) {
         <p className="mb-7 text-tertiary sm:mb-8">
           Create API tokens for safe and easy data sharing with external apps, maintaining control and security.
         </p>
-        <Button
-          variant="primary"
-          size="sm"
-          stretch="auto"
-          label="Add token"
-          render={<button className="flex items-center gap-1.5" />}
-          onClick={onClick}
-        />
+        <Button variant="primary" size="sm" stretch="auto" label="Add token" onClick={onClick} />
       </div>
     </div>
   );
