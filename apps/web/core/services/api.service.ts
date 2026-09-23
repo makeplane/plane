@@ -42,7 +42,14 @@ export abstract class APIService {
       (error) => {
         if (error.response && error.response.status === 401) {
           const currentPath = window.location.pathname;
-          window.location.replace(`/${currentPath ? `?next_path=${currentPath}` : ``}`);
+          // The entry page ("/") runs its own current-user request on mount;
+          // when the session is expired that request 401s too, and redirecting
+          // "/" to "/?next_path=/" reloads the page in an endless loop instead of
+          // letting the sign-in screen render. Only bounce away from private
+          // routes.
+          if (currentPath !== "/") {
+            window.location.replace(`/${currentPath ? `?next_path=${encodeURIComponent(currentPath)}` : ``}`);
+          }
         }
         return Promise.reject(error);
       }
