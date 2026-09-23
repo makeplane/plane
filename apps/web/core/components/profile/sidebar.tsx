@@ -91,7 +91,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+      style={profileSidebarCollapsed ? { marginLeft: "100vw" } : {}}
     >
       {userProjectsData ? (
         <>
