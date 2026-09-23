@@ -26,23 +26,21 @@ const BADGE_CONTENT = {
 };
 
 export function PageSyncingBadge({ syncStatus }: Props) {
-  const [prevSyncStatus, setPrevSyncStatus] = useState<"syncing" | "synced" | "error" | null>(null);
   const [isVisible, setIsVisible] = useState(syncStatus !== "synced");
 
+  // Runs once per status change. The pending hide is cancelled if the status moves on (or the badge
+  // unmounts) before it fires, so a stale timer can't hide the badge during a later sync.
   useEffect(() => {
-    // Only handle transitions when there's a change
-    if (prevSyncStatus !== syncStatus) {
-      if (syncStatus === "synced") {
-        // Delay hiding to allow exit animation to complete
-        setTimeout(() => {
-          setIsVisible(false);
-        }, 300); // match animation duration
-      } else {
-        setIsVisible(true);
-      }
-      setPrevSyncStatus(syncStatus);
+    if (syncStatus !== "synced") {
+      setIsVisible(true);
+      return;
     }
-  }, [syncStatus, prevSyncStatus]);
+    // Delay hiding to allow exit animation to complete
+    const timeoutId = setTimeout(() => {
+      setIsVisible(false);
+    }, 300); // match animation duration
+    return () => clearTimeout(timeoutId);
+  }, [syncStatus]);
 
   if (!isVisible || syncStatus === "synced") return null;
 
