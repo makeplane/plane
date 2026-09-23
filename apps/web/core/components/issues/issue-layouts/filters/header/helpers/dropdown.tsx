@@ -4,20 +4,21 @@
  * See the LICENSE file for details.
  */
 
-import React, { Fragment, useState } from "react";
-import type { Placement } from "@popperjs/core";
-import { usePopper } from "react-popper";
-// headless ui
-import { Popover, Transition } from "@headlessui/react";
+import type React from "react";
 // ui
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import type { TPopoverMenuPlacement } from "@plane/blocks/common";
+import { toSideAndAlign } from "@plane/blocks/common";
+import type { IconElement } from "@plane/blocks/types";
 
 type Props = {
   children: React.ReactNode;
-  icon?: React.ReactElement;
+  icon?: IconElement;
   miniIcon?: React.ReactNode;
   title?: string;
-  placement?: Placement;
+  placement?: TPopoverMenuPlacement;
   disabled?: boolean;
   tabIndex?: number;
   menuButton?: React.ReactNode;
@@ -37,85 +38,77 @@ export function FiltersDropdown(props: Props) {
     isFiltersApplied = false,
   } = props;
 
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | HTMLDivElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "auto",
-  });
-
   return (
-    <Popover as="div">
-      {({ open }) => (
-        <>
-          <Popover.Button as={React.Fragment}>
-            {menuButton ? (
-              <button type="button" ref={setReferenceElement}>
-                {menuButton}
-              </button>
-            ) : (
-              <div ref={setReferenceElement}>
-                <div className="hidden @4xl:flex">
+    <div>
+      <Popover>
+        {menuButton ? (
+          <PopoverTrigger render={<button type="button" />}>{menuButton}</PopoverTrigger>
+        ) : (
+          <>
+            {/* Base UI anchors the panel to whichever trigger opened it, so each breakpoint gets its own trigger. */}
+            <div className="hidden @4xl:flex">
+              <PopoverTrigger
+                disabled={disabled}
+                render={
                   <Button
                     disabled={disabled}
                     variant="secondary"
+                    icon={icon}
+                    tabIndex={tabIndex}
                     size="md"
                     stretch="auto"
-                    tabIndex={tabIndex}
-                    render={<button type="button" className="relative" />}
-                  >
-                    {icon}
-                    <>
-                      <div className={`${open ? "text-primary" : "text-secondary"}`}>
-                        <span>{title}</span>
-                      </div>
-                      {isFiltersApplied && (
-                        <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
-                      )}
-                    </>
-                  </Button>
-                </div>
-                <div className="flex @4xl:hidden">
-                  <Button
-                    disabled={disabled}
-                    ref={setReferenceElement}
-                    variant="secondary"
-                    size="md"
-                    stretch="auto"
-                    type="button"
-                    tabIndex={tabIndex}
-                  >
-                    {miniIcon || title}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Popover.Button>
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-y-1"
-            enterTo="opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-1"
-          >
-            {/** translate-y-0 is a hack to create new stacking context. Required for safari  */}
-            <Popover.Panel className="fixed z-10 translate-y-0">
-              <div
-                className="my-1 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-100"
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-              >
-                <div className="flex max-h-[30rem] w-[18.75rem] flex-col overflow-hidden lg:max-h-[37.5rem]">
-                  {children}
-                </div>
-              </div>
-            </Popover.Panel>
-          </Transition>
-        </>
-      )}
-    </Popover>
+                    label={title}
+                    render={(renderProps) => (
+                      // propel: the applied-filters dot needs a positioned host, so it rides the render target.
+                      <button {...renderProps} type="button" className={`${renderProps.className ?? ""} relative`}>
+                        {renderProps.children}
+                        {isFiltersApplied && (
+                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-accent-primary" />
+                        )}
+                      </button>
+                    )}
+                  />
+                }
+              />
+            </div>
+            {/* Below @4xl the compact trigger is the mini icon alone — Propel's `Button` always renders its
+                `label`, so an icon-only trigger has to be an `IconButton`. */}
+            <div className="flex @4xl:hidden">
+              <PopoverTrigger
+                disabled={disabled}
+                render={
+                  miniIcon ? (
+                    <IconButton
+                      disabled={disabled}
+                      variant="secondary"
+                      tabIndex={tabIndex}
+                      size="md"
+                      icon={miniIcon}
+                      aria-label={title}
+                    />
+                  ) : (
+                    <Button
+                      disabled={disabled}
+                      variant="secondary"
+                      tabIndex={tabIndex}
+                      size="md"
+                      stretch="auto"
+                      label={title}
+                    />
+                  )
+                }
+              />
+            </div>
+          </>
+        )}
+        <PopoverContent variant="rich" {...toSideAndAlign(placement ?? "auto")}>
+          <PopoverBody tabIndex={0} render={<div className="flex flex-col" />}>
+            <div className="flex max-h-[30rem] min-h-0 w-[18.75rem] flex-col overflow-hidden lg:max-h-[37.5rem]">
+              {children}
+            </div>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
