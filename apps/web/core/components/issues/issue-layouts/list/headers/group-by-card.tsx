@@ -12,8 +12,9 @@ import { AddOutline } from "@makeplane/propel/icons";
 // types
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 // ui
-import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -53,6 +54,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     handleCollapsedGroups,
     isEpic = false,
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
@@ -122,28 +125,33 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
-            <CustomMenu
-              customButton={
-                <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">
-                  <AddOutline className="h-3.5 w-3.5" />
-                </span>
-              }
-            >
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setIsOpen(true);
-                }}
-              >
-                <span className="flex items-center justify-start gap-2">Create work item</span>
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setOpenExistingIssueListModal(true);
-                }}
-              >
-                <span className="flex items-center justify-start gap-2">Add an existing work item</span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            <Menu>
+              <MenuTrigger
+                render={
+                  <button
+                    type="button"
+                    aria-label={t("common.add")}
+                    className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
+                  >
+                    <AddOutline className="h-3.5 w-3.5" />
+                  </button>
+                }
+              />
+              <MenuContent side="bottom" align="start">
+                <MenuItem
+                  label="Create work item"
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                />
+                <MenuItem
+                  label="Add an existing work item"
+                  onClick={() => {
+                    setOpenExistingIssueListModal(true);
+                  }}
+                />
+              </MenuContent>
+            </Menu>
           ) : (
             // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
             <div
