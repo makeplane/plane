@@ -190,7 +190,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
   const cellRef = useRef(null);
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const menuActionRef = useRef<HTMLButtonElement | null>(null);
   // router
   const { workspaceSlug, projectId } = useParams();
   // hooks
@@ -212,7 +212,10 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
   const customActionButton = (
-    <div
+    // The quick-action menu grafts its trigger behaviour (and accessible name) onto this element via
+    // MenuTrigger render, so it has to be a real button.
+    <button
+      type="button"
       ref={menuActionRef}
       className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
         isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
@@ -220,7 +223,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
       <MoreHorizontalOutline className="h-3.5 w-3.5" />
-    </div>
+    </button>
   );
   if (!issueDetail) return null;
 

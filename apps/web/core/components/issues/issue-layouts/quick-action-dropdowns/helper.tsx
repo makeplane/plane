@@ -39,6 +39,15 @@ export const quickActionTriggerGuard = {
   },
 };
 
+/**
+ * `MenuTrigger` defaults to `nativeButton`, so a caller's `customActionButton` that isn't a real
+ * `<button>` (e.g. a `<div>`) would get no role/tabIndex and trip Base UI's native-button check.
+ * Returns the `nativeButton` flag for the rendered trigger: true for the IconButton fallback and
+ * `<button>` elements, false otherwise so Base UI adds `role="button"` + `tabIndex` + key handling.
+ */
+export const isNativeQuickActionTrigger = (customActionButton: React.ReactElement | undefined) =>
+  !customActionButton || customActionButton.type === "button";
+
 export const stopQuickActionPropagation = (e: React.SyntheticEvent) => {
   e.stopPropagation();
 };

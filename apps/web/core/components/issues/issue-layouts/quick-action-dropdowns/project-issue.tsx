@@ -38,7 +38,12 @@ import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
-import { useProjectIssueMenuItems, quickActionTriggerGuard, stopQuickActionPropagation } from "./helper";
+import {
+  useProjectIssueMenuItems,
+  quickActionTriggerGuard,
+  isNativeQuickActionTrigger,
+  stopQuickActionPropagation,
+} from "./helper";
 
 export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActions(props: IQuickActionProps) {
   const {
@@ -155,6 +160,8 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
       <Menu>
         <MenuTrigger
           {...quickActionTriggerGuard}
+          nativeButton={isNativeQuickActionTrigger(customActionButton)}
+          aria-label={t("aria_labels.common.more_actions")}
           render={
             customActionButton ?? (
               // Icon-only fallback trigger, so it needs an explicit accessible name.
