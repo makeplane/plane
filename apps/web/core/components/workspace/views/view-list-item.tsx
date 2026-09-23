@@ -74,25 +74,24 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                         />
                       }
                     />
-                    <MenuContent side="bottom" align="end">
-                      {/* React events bubble through the portal to the row link, so the rows stop them too. */}
+                    {/* React events bubble through the portal to the row link, so the whole popup stops them. */}
+                    <MenuContent
+                      side="bottom"
+                      align="end"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                    >
                       <MenuItem
                         icon={<Icon icon={EditOutline} />}
                         label="Edit View"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setUpdateViewModal(true);
-                        }}
+                        onClick={() => setUpdateViewModal(true)}
                       />
                       <MenuItem
                         icon={<Icon icon={DeleteOutline} />}
                         label="Delete View"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setDeleteViewModal(true);
-                        }}
+                        onClick={() => setDeleteViewModal(true)}
                       />
                     </MenuContent>
                   </Menu>

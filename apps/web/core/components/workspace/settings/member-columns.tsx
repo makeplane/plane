@@ -90,7 +90,7 @@ export function NameColumn(props: NameProps) {
         </div>
 
         {!isSuspended && (isAdmin || id === currentUser?.id) && (
-          <div className="opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+          <div className="opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[data-popup-open]]:opacity-100">
             <Menu>
               <MenuTrigger
                 render={

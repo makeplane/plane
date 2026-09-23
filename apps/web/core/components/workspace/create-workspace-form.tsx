@@ -228,7 +228,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                   pinSelected={false}
                   placeholder={t("workspace_creation.form.organization_size.placeholder")}
                 >
-                  <Select.Trigger<string> variant="select-lg">
+                  <Select.Trigger<string> variant="select-2xl">
                     {(selected) => (
                       <span className="grow truncate text-left">
                         {selected[0] ?? t("workspace_creation.form.organization_size.placeholder")}
