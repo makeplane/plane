@@ -21,7 +21,8 @@ import type { TIssueRelationTypes } from "@plane/types";
 
 type Props = {
   issueId: string;
-  customButton?: React.ReactNode;
+  /** Rendered as the trigger itself (not nested inside one); must forward ref and props to a `<button>`. */
+  customButton?: React.ReactElement;
   disabled?: boolean;
   issueServiceType: TIssueServiceType;
 };
@@ -51,19 +52,23 @@ export const RelationActionButton = observer(function RelationActionButton(props
 
   return (
     <Menu>
-      <MenuTrigger
-        disabled={disabled}
-        render={
-          <button
-            type="button"
-            aria-label={customButton ? undefined : t("issue.add.relation")}
-            onClick={handleTriggerClick}
-            onKeyDown={handleTriggerKeyDown}
-          />
-        }
-      >
-        {customButton ?? <AddOutline className="h-4 w-4" />}
-      </MenuTrigger>
+      {customButton ? (
+        <MenuTrigger
+          disabled={disabled}
+          render={customButton}
+          onClick={handleTriggerClick}
+          onKeyDown={handleTriggerKeyDown}
+        />
+      ) : (
+        <MenuTrigger
+          disabled={disabled}
+          aria-label={t("issue.add.relation")}
+          onClick={handleTriggerClick}
+          onKeyDown={handleTriggerKeyDown}
+        >
+          <AddOutline className="h-4 w-4" />
+        </MenuTrigger>
+      )}
       <MenuContent side="bottom" align="start">
         {Object.values(ISSUE_RELATION_OPTIONS).map((item) => {
           if (!item) return null;

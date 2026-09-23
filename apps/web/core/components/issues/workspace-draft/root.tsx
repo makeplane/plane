@@ -99,15 +99,19 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
           {loader === "pagination" && issueIds.length >= 0 ? (
             <WorkspaceDraftIssuesLoader items={1} />
           ) : (
-            <div
-              className={cn("h-11 border-b border-subtle bg-surface-1 p-3 pl-6 text-13 font-medium transition-all", {
-                "cursor-pointer text-accent-primary underline-offset-2 hover:text-accent-secondary hover:underline":
-                  paginationInfo?.next_page_results,
-              })}
+            <button
+              type="button"
+              className={cn(
+                "h-11 w-full border-b border-subtle bg-surface-1 p-3 pl-6 text-left text-13 font-medium transition-all",
+                {
+                  "cursor-pointer text-accent-primary underline-offset-2 hover:text-accent-secondary hover:underline":
+                    paginationInfo?.next_page_results,
+                }
+              )}
               onClick={handleNextIssues}
             >
               Load More &darr;
-            </div>
+            </button>
           )}
         </Fragment>
       )}
