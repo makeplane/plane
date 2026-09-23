@@ -72,7 +72,6 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
               size="md"
               stretch="auto"
               label={t("workspace_draft_issues.draft_an_issue")}
-              render={<button className="items-center gap-1" />}
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}
             />
