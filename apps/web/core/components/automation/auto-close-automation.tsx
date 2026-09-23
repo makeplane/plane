@@ -12,9 +12,9 @@ import { AutoCloseOutline, StateOutline } from "@makeplane/propel/icons";
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "@plane/blocks/icons";
-import type { IProject } from "@plane/types";
+import type { IProject, IState } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect, CustomSearchSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 import { Loader } from "@plane/blocks/skeleton";
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
@@ -27,12 +27,18 @@ type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
 };
 
+type TAutomationMonthOption = {
+  id: string;
+  label: string;
+};
+
 export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
   const [monthModal, setmonthModal] = useState(false);
+  const [isMonthSelectOpen, setIsMonthSelectOpen] = useState(false);
   // store hooks
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
@@ -41,18 +47,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
 
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
 
-  const options = projectStates
-    ?.filter((state) => state.group === "cancelled")
-    .map((state) => ({
-      value: state.id,
-      query: state.name,
-      content: (
-        <div className="flex items-center gap-2">
-          <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.LG} />
-          {state.name}
-        </div>
-      ),
-    }));
+  const options = (projectStates ?? []).filter((state) => state.group === "cancelled");
 
   const multipleOptions = (options ?? []).length > 1;
 
@@ -60,6 +55,23 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
 
   const selectedOption = projectStates?.find((s) => s.id === (currentProjectDetails?.default_state ?? defaultState));
   const currentDefaultState = projectStates?.find((s) => s.id === defaultState);
+  // The trigger falls back to the project's own cancelled state when nothing is stored yet.
+  const triggerState = selectedOption ?? currentDefaultState;
+
+  // `close_in` is not constrained to the presets — the "Customize time range" modal writes any
+  // month count — and `Select` names its trigger from the option list, so a value outside the
+  // presets has to join the list or the trigger reads empty.
+  const closeIn = currentProjectDetails?.close_in;
+  const monthOptions = useMemo<TAutomationMonthOption[]>(() => {
+    const months = PROJECT_AUTOMATION_MONTHS.map((month) => month.value);
+    if (closeIn !== undefined && !months.includes(closeIn)) months.push(closeIn);
+    months.sort((a, b) => a - b);
+    return months.map((month) => ({
+      id: String(month),
+      label: t("workspace_projects.common.months_count", { months: month }),
+    }));
+  }, [t, closeIn]);
+  const selectedMonthOption = monthOptions.find((option) => option.id === String(closeIn)) ?? null;
 
   const initialValues: Partial<IProject> = {
     close_in: 1,
@@ -122,30 +134,34 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                     {t("project_settings.automations.auto-close.duration")}
                   </div>
                   <div className="w-1/2">
-                    <CustomSelect
-                      value={currentProjectDetails?.close_in}
-                      label={`${currentProjectDetails?.close_in} ${
-                        currentProjectDetails?.close_in === 1 ? "month" : "months"
-                      }`}
-                      onChange={(val: number) => void handleChange({ close_in: val })}
-                      input
+                    <Select<TAutomationMonthOption>
+                      getValues={() => monthOptions}
+                      value={selectedMonthOption}
+                      onChange={(id) => void handleChange({ close_in: Number(id) })}
+                      getOptionValue={(option) => option.id}
+                      getOptionLabel={(option) => option.label}
+                      showSearch={false}
+                      pinSelected={false}
                       disabled={!isAdmin}
-                    >
-                      <>
-                        {PROJECT_AUTOMATION_MONTHS.map((month) => (
-                          <CustomSelect.Option key={month.i18n_label} value={month.value}>
-                            {t(month.i18n_label, { months: month.value })}
-                          </CustomSelect.Option>
-                        ))}
+                      open={isMonthSelectOpen}
+                      onOpenChange={setIsMonthSelectOpen}
+                      footer={
                         <button
                           type="button"
                           className="flex w-full items-center rounded-sm px-1 py-1.5 text-secondary select-none hover:bg-layer-1"
-                          onClick={() => setmonthModal(true)}
+                          onClick={() => {
+                            setIsMonthSelectOpen(false);
+                            setmonthModal(true);
+                          }}
                         >
                           {t("common.customize_time_range")}
                         </button>
-                      </>
-                    </CustomSelect>
+                      }
+                    >
+                      <Select.Trigger variant="select-md" disabled={!isAdmin}>
+                        <Select.Value />
+                      </Select.Trigger>
+                    </Select>
                   </div>
                 </div>
 
@@ -154,35 +170,37 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
                   <div className="w-1/2">
-                    <CustomSearchSelect
-                      value={currentProjectDetails?.default_state ?? defaultState}
-                      label={
-                        <div className="flex items-center gap-2">
-                          {selectedOption ? (
-                            <StateGroupIcon
-                              stateGroup={selectedOption.group}
-                              color={selectedOption.color}
-                              size={EIconSize.LG}
-                            />
-                          ) : currentDefaultState ? (
-                            <StateGroupIcon
-                              stateGroup={currentDefaultState.group}
-                              color={currentDefaultState.color}
-                              size={EIconSize.LG}
-                            />
-                          ) : (
-                            <StateOutline className="h-3.5 w-3.5 text-secondary" />
-                          )}
-                          {selectedOption?.name
-                            ? selectedOption.name
-                            : (currentDefaultState?.name ?? <span className="text-secondary">{t("state")}</span>)}
-                        </div>
-                      }
-                      onChange={(val: string) => void handleChange({ default_state: val })}
-                      options={options}
+                    <Select<IState>
+                      getValues={() => options}
+                      value={selectedOption ?? null}
+                      onChange={(val) => void handleChange({ default_state: val })}
                       disabled={!multipleOptions}
-                      input
-                    />
+                      getOptionValue={(state) => state.id}
+                      getOptionLabel={(state) => state.name}
+                      getOptionIcon={(state) => (
+                        <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.LG} />
+                      )}
+                      pinSelected={false}
+                      placeholder={t("state")}
+                    >
+                      <Select.Trigger variant="select-md">
+                        {triggerState ? (
+                          <>
+                            <StateGroupIcon
+                              stateGroup={triggerState.group}
+                              color={triggerState.color}
+                              size={EIconSize.LG}
+                            />
+                            <span className="grow truncate">{triggerState.name}</span>
+                          </>
+                        ) : (
+                          <>
+                            <StateOutline className="h-3.5 w-3.5 text-secondary" />
+                            <span className="grow truncate text-secondary">{t("state")}</span>
+                          </>
+                        )}
+                      </Select.Trigger>
+                    </Select>
                   </div>
                 </div>
               </div>
