@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -36,6 +37,8 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
   const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [editModal, setEditModal] = useState(false);
   const [archiveModuleModal, setArchiveModuleModal] = useState(false);
@@ -146,7 +149,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
                 variant="tertiary"
                 size="md"
                 icon={<Icon icon={MoreHorizontalOutline} />}
-                aria-label="Module actions"
+                aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
               />
             }
           />

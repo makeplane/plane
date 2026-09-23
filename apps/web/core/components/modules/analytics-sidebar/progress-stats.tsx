@@ -28,11 +28,8 @@ type TModuleProgressStats = {
   handleFiltersUpdate: (condition: TWorkItemFilterCondition) => void;
   isEditable?: boolean;
   moduleId: string;
-  noBackground?: boolean;
   plotType: TModulePlotType;
-  roundedTab?: boolean;
   selectedFilters: TSelectedFilterProgressStats;
-  size?: "xs" | "sm";
   totalIssuesCount: number;
 };
 
