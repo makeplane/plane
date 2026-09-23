@@ -12,14 +12,25 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
-import { GlobeOutline, NewTabOutline, TickOutline } from "@makeplane/propel/icons";
+import { GlobeOutline, NewTabOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogInfoIcon,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import { Loader } from "@plane/blocks/skeleton";
-import { ModalCore, EModalWidth } from "@plane/blocks/modals";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -42,10 +53,12 @@ const defaultValues: Partial<TProjectPublishSettings> = {
   },
 };
 
-const VIEW_OPTIONS: {
+type TViewOption = {
   key: TProjectPublishLayouts;
   label: string;
-}[] = [
+};
+
+const VIEW_OPTIONS: TViewOption[] = [
   { key: "list", label: "List" },
   { key: "kanban", label: "Kanban" },
 ];
@@ -180,174 +193,196 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     );
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-18 font-medium text-secondary">Publish project</h5>
-          {isProjectPublished && (
-            <Button
-              variant="danger"
-              size="md"
-              stretch="auto"
-              label={isUnPublishing ? "Unpublishing" : "Unpublish"}
-              onClick={() => handleUnPublishProject(watch("id") ?? "")}
-              loading={isUnPublishing}
-            />
-          )}
-        </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <div className="flex items-center justify-between gap-2">
+                <DialogHeading>
+                  <DialogTitle>Publish project</DialogTitle>
+                </DialogHeading>
+                {isProjectPublished && (
+                  <Button
+                    variant="danger"
+                    size="md"
+                    stretch="auto"
+                    label={isUnPublishing ? "Unpublishing" : "Unpublish"}
+                    onClick={() => void handleUnPublishProject(watch("id") ?? "")}
+                    loading={isUnPublishing}
+                  />
+                )}
+              </div>
+            </DialogHeader>
 
-        {/* content */}
-        {fetchSettingsLoader ? (
-          <Loader className="space-y-4 px-5">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </Loader>
-        ) : (
-          <div className="space-y-4 px-5">
-            {isProjectPublished && projectPublishSettings && (
-              <>
-                <div className="flex items-center justify-between gap-2 rounded-md border border-strong py-1.5 pr-1 pl-4">
-                  <a
-                    href={publishLink}
-                    className="truncate text-13 text-secondary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {publishLink}
-                  </a>
-                  <div className="flex flex-shrink-0 items-center gap-1">
-                    <a
-                      href={publishLink}
-                      className="grid size-8 place-items-center rounded-sm bg-layer-3 hover:bg-layer-3-hover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <NewTabOutline className="size-4" />
-                    </a>
-                    <button
-                      type="button"
-                      className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-11 font-medium hover:bg-layer-3-hover"
-                      onClick={handleCopyLink}
-                    >
-                      Copy link
-                    </button>
+            {/* content */}
+            <DialogBody tabIndex={0}>
+              {fetchSettingsLoader ? (
+                <Loader className="space-y-4">
+                  <Loader.Item height="30px" />
+                  <Loader.Item height="30px" />
+                  <Loader.Item height="30px" />
+                  <Loader.Item height="30px" />
+                </Loader>
+              ) : (
+                <div className="space-y-4">
+                  {isProjectPublished && projectPublishSettings && (
+                    <>
+                      <div className="flex items-center justify-between gap-2 rounded-md border border-strong py-1.5 pr-1 pl-4">
+                        <a
+                          href={publishLink}
+                          className="truncate text-13 text-secondary"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {publishLink}
+                        </a>
+                        <div className="flex flex-shrink-0 items-center gap-1">
+                          <a
+                            href={publishLink}
+                            aria-label="Open in new tab"
+                            className="grid size-8 place-items-center rounded-sm bg-layer-3 hover:bg-layer-3-hover"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <NewTabOutline className="size-4" />
+                          </a>
+                          <button
+                            type="button"
+                            className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-11 font-medium hover:bg-layer-3-hover"
+                            onClick={() => void handleCopyLink()}
+                          >
+                            Copy link
+                          </button>
+                        </div>
+                      </div>
+                      <p className="mt-3 flex items-center gap-1 text-13 font-medium text-accent-primary">
+                        <span className="relative grid size-2.5 place-items-center">
+                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-primary opacity-75" />
+                          <span className="relative inline-flex size-1.5 rounded-full bg-accent-primary" />
+                        </span>
+                        This project is now live on web
+                      </p>
+                    </>
+                  )}
+                  <div className="space-y-4">
+                    <div className="relative flex items-center justify-between gap-2">
+                      <div className="text-13">Views</div>
+                      <Controller
+                        control={control}
+                        name="view_props"
+                        render={({ field: { onChange, value } }) => (
+                          // `select-ghost-*` chrome is `w-full`; the shrink-0 wrapper keeps the
+                          // trigger content-width inside the settings row, as the old button was.
+                          <span className="flex shrink-0">
+                            <Select<TViewOption>
+                              multiple
+                              getValues={() => VIEW_OPTIONS}
+                              value={VIEW_OPTIONS.filter((o) => selectedLayouts.includes(o.key))}
+                              onChange={(keys) => {
+                                // The old dropdown refused to unset the last remaining layout; a
+                                // publish needs at least one, so an empty selection is a no-op.
+                                if (keys.length === 0) return;
+                                onChange({
+                                  ...value,
+                                  ...Object.fromEntries(VIEW_OPTIONS.map((o) => [o.key, keys.includes(o.key)])),
+                                });
+                              }}
+                              getOptionValue={(option) => option.key}
+                              getOptionLabel={(option) => option.label}
+                              showSearch={false}
+                              pinSelected={false}
+                            >
+                              <Select.Trigger<TViewOption> variant="select-ghost-md">
+                                {(options) => (
+                                  <span className="min-w-0 grow truncate text-left">
+                                    {options.map((o) => o.label).join(", ")}
+                                  </span>
+                                )}
+                              </Select.Trigger>
+                            </Select>
+                          </span>
+                        )}
+                      />
+                    </div>
+                    <div className="relative flex items-center justify-between gap-2">
+                      <div className="text-13">Allow comments</div>
+                      <Controller
+                        control={control}
+                        name="is_comments_enabled"
+                        render={({ field: { onChange, value } }) => (
+                          <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow comments" />
+                        )}
+                      />
+                    </div>
+                    <div className="relative flex items-center justify-between gap-2">
+                      <div className="text-13">Allow reactions</div>
+                      <Controller
+                        control={control}
+                        name="is_reactions_enabled"
+                        render={({ field: { onChange, value } }) => (
+                          <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow reactions" />
+                        )}
+                      />
+                    </div>
+                    <div className="relative flex items-center justify-between gap-2">
+                      <div className="text-13">Allow voting</div>
+                      <Controller
+                        control={control}
+                        name="is_votes_enabled"
+                        render={({ field: { onChange, value } }) => (
+                          <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow voting" />
+                        )}
+                      />
+                    </div>
                   </div>
                 </div>
-                <p className="mt-3 flex items-center gap-1 text-13 font-medium text-accent-primary">
-                  <span className="relative grid size-2.5 place-items-center">
-                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-primary opacity-75" />
-                    <span className="relative inline-flex size-1.5 rounded-full bg-accent-primary" />
-                  </span>
-                  This project is now live on web
-                </p>
-              </>
-            )}
-            <div className="space-y-4">
-              <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Views</div>
-                <Controller
-                  control={control}
-                  name="view_props"
-                  render={({ field: { onChange, value } }) => (
-                    <CustomSelect
-                      value={value}
-                      label={VIEW_OPTIONS.filter((o) => selectedLayouts.includes(o.key))
-                        .map((o) => o.label)
-                        .join(", ")}
-                      onChange={(val: TProjectPublishLayouts) => {
-                        if (selectedLayouts.length === 1 && selectedLayouts[0] === val) return;
-                        onChange({
-                          ...value,
-                          [val]: !value?.[val],
-                        });
-                      }}
-                      buttonClassName="border-none"
-                      placement="bottom-end"
-                    >
-                      {VIEW_OPTIONS.map((option) => (
-                        <CustomSelect.Option
-                          key={option.key}
-                          value={option.key}
-                          className="flex items-center justify-between gap-2"
-                        >
-                          {option.label}
-                          {selectedLayouts.includes(option.key) && <TickOutline className="size-3.5 flex-shrink-0" />}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              </div>
-              <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Allow comments</div>
-                <Controller
-                  control={control}
-                  name="is_comments_enabled"
-                  render={({ field: { onChange, value } }) => (
-                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow comments" />
-                  )}
-                />
-              </div>
-              <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Allow reactions</div>
-                <Controller
-                  control={control}
-                  name="is_reactions_enabled"
-                  render={({ field: { onChange, value } }) => (
-                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow reactions" />
-                  )}
-                />
-              </div>
-              <div className="relative flex items-center justify-between gap-2">
-                <div className="text-13">Allow voting</div>
-                <Controller
-                  control={control}
-                  name="is_votes_enabled"
-                  render={({ field: { onChange, value } }) => (
-                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow voting" />
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+              )}
+            </DialogBody>
+          </DialogMain>
 
-        {/* modal handlers */}
-        <div className="relative mt-4 flex items-center justify-between border-t border-subtle px-5 py-4">
-          <div className="flex items-center gap-1 text-13 text-placeholder">
-            <GlobeOutline className="size-3.5" />
-            <div className="text-13">Anyone with the link can access</div>
-          </div>
-          {!fetchSettingsLoader && (
-            <div className="relative flex items-center gap-2">
-              <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
-              {isProjectPublished ? (
-                isDirty && (
+          {/* modal handlers */}
+          <DialogActions>
+            <DialogInfo>
+              <DialogInfoIcon>
+                <GlobeOutline />
+              </DialogInfoIcon>
+              Anyone with the link can access
+            </DialogInfo>
+            {!fetchSettingsLoader && (
+              <div className="relative flex items-center gap-2">
+                <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+                {isProjectPublished ? (
+                  isDirty && (
+                    <Button
+                      variant="primary"
+                      size="md"
+                      stretch="auto"
+                      type="submit"
+                      label={isSubmitting ? "Updating" : "Update settings"}
+                      loading={isSubmitting}
+                    />
+                  )
+                ) : (
                   <Button
                     variant="primary"
                     size="md"
                     stretch="auto"
                     type="submit"
-                    label={isSubmitting ? "Updating" : "Update settings"}
+                    label={isSubmitting ? "Publishing" : "Publish"}
                     loading={isSubmitting}
                   />
-                )
-              ) : (
-                <Button
-                  variant="primary"
-                  size="md"
-                  stretch="auto"
-                  type="submit"
-                  label={isSubmitting ? "Publishing" : "Publish"}
-                  loading={isSubmitting}
-                />
-              )}
-            </div>
-          )}
-        </div>
-      </form>
-    </ModalCore>
+                )}
+              </div>
+            )}
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });
