@@ -45,6 +45,9 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   const focusTopNavSearch = useCallback(() => {
     topNavInputRef?.current?.focus();
   }, [topNavInputRef]);
+  // Without a mounted top-nav input the command has nothing to focus, and Cmd+F must fall
+  // through to the browser's Find
+  const hasTopNavInput = useCallback(() => Boolean(topNavInputRef?.current), [topNavInputRef]);
 
   return [
     {
@@ -79,8 +82,8 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       icon: SearchOutline,
       action: focusTopNavSearch,
       modifierShortcut: "cmd+f",
-      isEnabled: () => true,
-      isVisible: () => true,
+      isEnabled: hasTopNavInput,
+      isVisible: hasTopNavInput,
       closeOnSelect: true,
     },
   ];

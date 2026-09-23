@@ -5,19 +5,15 @@
  */
 
 import React from "react";
-import { useTranslation } from "@plane/i18n";
-
-const isMacPlatform = (): boolean =>
-  typeof window !== "undefined" && /Mac|iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 /**
  * Formats a shortcut string for display, one label per key
  * e.g. "cmd+shift+," -> ["⌘", "⇧", ","] on Mac, ["Ctrl", "Shift", ","] elsewhere
  */
-export const formatShortcutForDisplay = (shortcut: string | undefined): string[] => {
+export const formatShortcutForDisplay = (shortcut: string | undefined, isMac: boolean): string[] => {
   if (!shortcut) return [];
-
-  const isMac = isMacPlatform();
 
   return shortcut.split("+").map((part) => {
     const lower = part.toLowerCase().trim();
@@ -70,17 +66,16 @@ export const formatShortcutForDisplay = (shortcut: string | undefined): string[]
 };
 
 export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
-  const labels = formatShortcutForDisplay(shortcut);
+  const { platform } = usePlatformOS();
+  const labels = formatShortcutForDisplay(shortcut, platform === "MacOS");
   if (labels.length === 0) return null;
-
-  // Cumulative prefix is unique per part, unlike the label itself
-  const parts = labels.map((label, index) => ({ key: labels.slice(0, index + 1).join("+"), label }));
 
   return (
     <div className="pointer-events-none inline-flex shrink-0 items-center gap-1 font-medium select-none">
-      {parts.map(({ key, label }) => (
+      {labels.map((label, index) => (
         <kbd
-          key={key}
+          // oxlint-disable-next-line react/no-array-index-key -- static list from a constant string, never reordered
+          key={index}
           className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary"
         >
           {label}
@@ -90,28 +85,26 @@ export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
   );
 }
 
-export function KeySequenceBadge({ sequence }: { sequence: string | undefined }) {
-  // translation
-  const { t } = useTranslation();
+type TKeySequenceBadgeProps = {
+  sequence: string | undefined;
+  /** Translated connector rendered between keys, e.g. "then" in "G then M" */
+  separator: string;
+};
+
+export function KeySequenceBadge({ sequence, separator }: TKeySequenceBadgeProps) {
   if (!sequence) return null;
 
-  // Cumulative prefix stays unique for repeated keys such as "gg"
-  const chars = sequence.split("").map((char, index) => ({
-    key: sequence.slice(0, index + 1),
-    char,
-    isLast: index === sequence.length - 1,
-  }));
+  const chars = sequence.split("");
 
   return (
     <div className="pointer-events-none inline-flex shrink-0 items-center gap-1 font-medium select-none">
-      {chars.map(({ key, char, isLast }) => (
-        <React.Fragment key={key}>
+      {chars.map((char, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- static list from a constant string, never reordered
+        <React.Fragment key={index}>
           <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
             {char.toUpperCase()}
           </kbd>
-          {!isLast && (
-            <span className="text-10 text-placeholder">{t("power_k.shortcuts_modal.sequence_separator")}</span>
-          )}
+          {index < chars.length - 1 && <span className="text-10 text-placeholder">{separator}</span>}
         </React.Fragment>
       ))}
     </div>
