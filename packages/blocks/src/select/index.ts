@@ -15,7 +15,7 @@ export { SelectDropdownPlacementContext, useSelectDropdownPlacement } from "./dr
 export type { SelectDropdownPlacement } from "./dropdown-placement";
 export { SelectContent } from "./select-content";
 export type { SelectContentProps } from "./select-content";
-export { NestedSubmenu } from "./nested-submenu";
+export { NestedSubmenu } from "./nested-submenu/nested-submenu";
 export { useSubmenuLevel } from "./nested-submenu/nested-submenu.context";
 export {
   isDismissalFromPreventedRegion,

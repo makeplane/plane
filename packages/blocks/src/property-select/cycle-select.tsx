@@ -8,12 +8,12 @@ import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { CyclesOutline } from "@makeplane/propel/icons";
-import { CycleGroupIcon } from "../icons";
+import { CycleGroupIcon } from "../icons/cycle/cycle-group-icon";
 import type { TCycleGroups, TPaginatedResponse } from "@plane/types";
 // local imports
-import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select";
-import { Select } from "../select";
-import { ProjectIdentifierElement } from "./shared";
+import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select/types";
+import { Select } from "../select/select";
+import { ProjectIdentifierElement } from "./shared/project-identifier-element";
 
 /** Minimal cycle shape the dropdown needs — the client maps its richer record down to this. */
 export type CycleOption = {

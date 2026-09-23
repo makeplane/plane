@@ -7,7 +7,7 @@
 import { Icon as PropelIcon } from "@makeplane/propel/components/icon";
 import * as React from "react";
 import { AnimatedCounter } from "./animated-counter";
-import { stringToEmoji } from "../emoji-icon-picker";
+import { stringToEmoji } from "../emoji-icon-picker/helper";
 import { ReactionOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { useTranslation } from "@plane/i18n";

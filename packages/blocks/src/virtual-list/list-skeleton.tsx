@@ -5,7 +5,7 @@
  */
 
 import { cn } from "@plane/utils";
-import { Skeleton } from "../skeleton";
+import { Skeleton } from "../skeleton/root";
 
 type VirtualListSkeletonProps = {
   /** Number of placeholder rows (default 3). */

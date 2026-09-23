@@ -4,34 +4,32 @@
  * See the LICENSE file for details.
  */
 
-import {
-  CustomerHorizontalStackIllustration,
-  EpicHorizontalStackIllustration,
-  EstimateHorizontalStackIllustration,
-  ExportHorizontalStackIllustration,
-  IntakeHorizontalStackIllustration,
-  LabelHorizontalStackIllustration,
-  LinkHorizontalStackIllustration,
-  MembersHorizontalStackIllustration,
-  NoteHorizontalStackIllustration,
-  PriorityHorizontalStackIllustration,
-  ProjectHorizontalStackIllustration,
-  SettingsHorizontalStackIllustration,
-  StateHorizontalStackIllustration,
-  StateSquareHorizontalStackIllustration,
-  TemplateHorizontalStackIllustration,
-  TokenHorizontalStackIllustration,
-  UnknownHorizontalStackIllustration,
-  UpdateHorizontalStackIllustration,
-  WebhookHorizontalStackIllustration,
-  WorkflowHorizontalStackIllustration,
-  WorkItemHorizontalStackIllustration,
-  WorklogHorizontalStackIllustration,
-  RunnerScriptsHorizontalStackIllustration,
-  RunnerFunctionsHorizontalStackIllustration,
-  CustomPropertiesHorizontalStackIllustration,
-  SearchHorizontalStackIllustration,
-} from "./";
+import { CustomerHorizontalStackIllustration } from "./customer";
+import { EpicHorizontalStackIllustration } from "./epic";
+import { EstimateHorizontalStackIllustration } from "./estimate";
+import { ExportHorizontalStackIllustration } from "./export";
+import { IntakeHorizontalStackIllustration } from "./intake";
+import { LabelHorizontalStackIllustration } from "./label";
+import { LinkHorizontalStackIllustration } from "./link";
+import { MembersHorizontalStackIllustration } from "./members";
+import { NoteHorizontalStackIllustration } from "./note";
+import { PriorityHorizontalStackIllustration } from "./priority";
+import { ProjectHorizontalStackIllustration } from "./project";
+import { SettingsHorizontalStackIllustration } from "./settings";
+import { StateHorizontalStackIllustration } from "./state";
+import { StateSquareHorizontalStackIllustration } from "./state-square";
+import { TemplateHorizontalStackIllustration } from "./template";
+import { TokenHorizontalStackIllustration } from "./token";
+import { UnknownHorizontalStackIllustration } from "./unknown";
+import { UpdateHorizontalStackIllustration } from "./update";
+import { WebhookHorizontalStackIllustration } from "./webhook";
+import { WorkflowHorizontalStackIllustration } from "./workflow";
+import { WorkItemHorizontalStackIllustration } from "./work-item";
+import { WorklogHorizontalStackIllustration } from "./worklog";
+import { RunnerScriptsHorizontalStackIllustration } from "./runner-scripts";
+import { RunnerFunctionsHorizontalStackIllustration } from "./runner-functions";
+import { CustomPropertiesHorizontalStackIllustration } from "./custom-properties";
+import { SearchHorizontalStackIllustration } from "./search";
 
 export const HorizontalStackAssetsMap = [
   {

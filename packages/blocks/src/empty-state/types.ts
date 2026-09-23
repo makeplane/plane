@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { IconElement } from "../types";
+import type { IconElement } from "../types/icon";
 import type { Align } from "../utils/placement";
 import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 

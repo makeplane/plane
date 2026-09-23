@@ -5,7 +5,7 @@
  */
 
 import { cva } from "class-variance-authority";
-import { getPillButtonClassName } from "../pill-button";
+import { getPillButtonClassName } from "../pill-button/helper";
 import { cn } from "@plane/utils";
 import type { SelectChromeSize, SelectTriggerSize, SelectTriggerVariant } from "./types";
 

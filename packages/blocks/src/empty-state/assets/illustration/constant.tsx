@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { InboxIllustration, SearchIllustration } from "./";
+import { InboxIllustration } from "./inbox";
+import { SearchIllustration } from "./search";
 
 export const IllustrationMap = [
   {

@@ -6,9 +6,9 @@
 
 import { ModuleOutline } from "@makeplane/propel/icons";
 import type { TPaginatedResponse } from "@plane/types";
-import { Select } from "../select";
-import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select";
-import { ProjectIdentifierElement } from "./shared";
+import { Select } from "../select/select";
+import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select/types";
+import { ProjectIdentifierElement } from "./shared/project-identifier-element";
 
 /** Minimal module shape the dropdown needs — the client maps its richer record down to this. */
 export type ModuleOption = {

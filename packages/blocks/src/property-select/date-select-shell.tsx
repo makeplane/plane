@@ -10,10 +10,11 @@ import { Button } from "@makeplane/propel/components/button";
 import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import type { PopoverContentProps } from "@makeplane/propel/components/popover";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { IconElement } from "../types";
+import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
-import type { SelectVariant } from "../select";
-import { SelectTriggerChrome, splitSelectVariant } from "../select";
+import type { SelectVariant } from "../select/types";
+import { SelectTriggerChrome } from "../select/trigger-chrome";
+import { splitSelectVariant } from "../select/utils";
 
 /** Popover placement axes, taken straight off propel's own `PopoverContent`. */
 export type PopoverSide = NonNullable<PopoverContentProps["side"]>;

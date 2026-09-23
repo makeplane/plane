@@ -6,10 +6,10 @@
 
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "../icons";
+import { PriorityIcon } from "../icons/priority-icon";
 import type { TIssuePriorities } from "@plane/types";
-import { Select } from "../select";
-import type { SelectTooltip, SelectVariant } from "../select";
+import { Select } from "../select/select";
+import type { SelectTooltip, SelectVariant } from "../select/types";
 
 /** A single priority the picker offers. Sourced from the hardcoded `ISSUE_PRIORITIES` list. */
 export type PriorityOption = {

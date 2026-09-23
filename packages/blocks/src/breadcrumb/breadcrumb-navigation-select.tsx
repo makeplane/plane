@@ -8,10 +8,10 @@ import type * as React from "react";
 // plane imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
-import type { IconElement } from "../types";
+import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
 // local imports
-import { Select } from "../select";
+import { Select } from "../select/select";
 import { BreadcrumbItemContext, useBreadcrumbCurrent } from "./breadcrumb-context";
 import { BreadcrumbIcon, BreadcrumbLabel } from "./breadcrumbs";
 

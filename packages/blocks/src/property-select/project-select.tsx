@@ -5,12 +5,13 @@
  */
 
 import type { ReactNode } from "react";
-import { Logo } from "../emoji-icon-picker";
+import { Logo } from "../emoji-icon-picker/logo";
 import { ChevronDownOutline, ProjectsOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 import type { TLogoProps, TPaginatedResponse } from "@plane/types";
-import { Select, splitSelectVariant } from "../select";
-import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select";
+import { Select } from "../select/select";
+import { splitSelectVariant } from "../select/utils";
+import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select/types";
 
 /** Minimal project shape the dropdown needs — the client maps its richer record down to this. */
 export type ProjectOption = {

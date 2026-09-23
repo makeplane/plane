@@ -5,12 +5,12 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { LabelPropertyIcon } from "../../icons";
+import { LabelPropertyIcon } from "../../icons/properties/label-icon";
 import type { TPaginatedResponse } from "@plane/types";
-import { Select } from "../../select";
-import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../../select";
+import { Select } from "../../select/select";
+import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../../select/types";
 import { splitSelectVariant } from "../../select/utils";
-import { ProjectIdentifierElement } from "../shared";
+import { ProjectIdentifierElement } from "../shared/project-identifier-element";
 import { CreateLabelEmptyState } from "./create-label-empty-state";
 
 /** Minimal label shape the dropdown needs — the client maps its richer record down to this. */

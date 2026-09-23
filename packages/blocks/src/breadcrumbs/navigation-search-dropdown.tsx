@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { CustomSearchSelect } from "../dropdowns";
+import { CustomSearchSelect } from "../dropdowns/custom-search-select";
 import { cn } from "@plane/utils";
 
 // Legacy crumb parts, kept local to this dropdown until it is replaced by `BreadcrumbNavigationSelect`

@@ -4,32 +4,30 @@
  * See the LICENSE file for details.
  */
 
-import {
-  ArchivedCycleVerticalStackIllustration,
-  ArchivedModuleVerticalStackIllustration,
-  ArchivedWorkItemVerticalStackIllustration,
-  ChangelogVerticalStackIllustration,
-  CustomerVerticalStackIllustration,
-  CycleVerticalStackIllustration,
-  DashboardVerticalStackIllustration,
-  DraftVerticalStackIllustration,
-  EpicVerticalStackIllustration,
-  Error404VerticalStackIllustration,
-  InboxVerticalStackIllustration,
-  InitiativeVerticalStackIllustration,
-  InvalidLinkVerticalStackIllustration,
-  ModuleVerticalStackIllustration,
-  NoAccessVerticalStackIllustration,
-  PageVerticalStackIllustration,
-  PropertyVerticalStackIllustration,
-  ProjectVerticalStackIllustration,
-  ServerErrorVerticalStackIllustration,
-  StickiesVerticalStackIllustration,
-  TeamspaceVerticalStackIllustration,
-  ViewVerticalStackIllustration,
-  WorkItemVerticalStackIllustration,
-  WorkflowVerticalStackIllustration,
-} from "./";
+import { ArchivedCycleVerticalStackIllustration } from "./archived-cycle";
+import { ArchivedModuleVerticalStackIllustration } from "./archived-module";
+import { ArchivedWorkItemVerticalStackIllustration } from "./archived-work-item";
+import { ChangelogVerticalStackIllustration } from "./changelog";
+import { CustomerVerticalStackIllustration } from "./customer";
+import { CycleVerticalStackIllustration } from "./cycle";
+import { DashboardVerticalStackIllustration } from "./dashboard";
+import { DraftVerticalStackIllustration } from "./draft";
+import { EpicVerticalStackIllustration } from "./epic";
+import { Error404VerticalStackIllustration } from "./404-error";
+import { InboxVerticalStackIllustration } from "./inbox";
+import { InitiativeVerticalStackIllustration } from "./initiative";
+import { InvalidLinkVerticalStackIllustration } from "./invalid-link";
+import { ModuleVerticalStackIllustration } from "./module";
+import { NoAccessVerticalStackIllustration } from "./no-access";
+import { PageVerticalStackIllustration } from "./page";
+import { PropertyVerticalStackIllustration } from "./property";
+import { ProjectVerticalStackIllustration } from "./project";
+import { ServerErrorVerticalStackIllustration } from "./server-error";
+import { StickiesVerticalStackIllustration } from "./stickies";
+import { TeamspaceVerticalStackIllustration } from "./teamspace";
+import { ViewVerticalStackIllustration } from "./view";
+import { WorkItemVerticalStackIllustration } from "./work-item";
+import { WorkflowVerticalStackIllustration } from "./workflow";
 
 export const VerticalStackAssetsMap = [
   {

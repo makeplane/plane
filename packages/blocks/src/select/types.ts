@@ -7,8 +7,8 @@
 import type { KeyboardEvent, ReactElement, ReactNode } from "react";
 import type { ComboboxContentSizing } from "@makeplane/propel/components/combobox";
 import type { ComboboxSize } from "@makeplane/propel/elements/combobox";
-import type { PillButtonSize } from "../pill-button";
-import type { IconElement } from "../types";
+import type { PillButtonSize } from "../pill-button/helper";
+import type { IconElement } from "../types/icon";
 import type { TPaginatedResponse } from "@plane/types";
 
 /** Trigger chrome variants. */

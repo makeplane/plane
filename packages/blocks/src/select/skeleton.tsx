@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Skeleton } from "../skeleton";
+import { Skeleton } from "../skeleton/root";
 
 type SelectOptionsSkeletonProps = {
   /** Number of placeholder rows. Default: 3. */

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-export * from "./content-wrapper";
-export * from "./control-link";
-export * from "./header";
-export * from "./row";
+export * from "./content-wrapper/content-wrapper";
+export * from "./control-link/control-link";
+export * from "./header/header";
+export * from "./row/row";

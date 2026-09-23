@@ -6,7 +6,7 @@
 
 import React from "react";
 // plane imports
-import { Card } from "../../card";
+import { Card } from "../../card/card";
 
 interface TreeMapTooltipProps {
   active: boolean | undefined;

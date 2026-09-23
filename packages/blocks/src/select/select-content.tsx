@@ -6,7 +6,7 @@
 
 import * as React from "react";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
-import type { IconElement } from "../types";
+import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
 import { SelectContext } from "./context";
 import type { SelectChromeSize } from "./types";

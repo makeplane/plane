@@ -7,7 +7,7 @@
 import React from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { cn } from "@plane/utils";
-import { Card } from "../../card";
+import { Card } from "../../card/card";
 
 type Props = {
   active: boolean | undefined;

@@ -9,7 +9,7 @@
 
 import useFontFaceObserver from "use-font-face-observer";
 // types
-import type { Logo as LogoType } from "../types";
+import type { Logo as LogoType } from "../types/logo";
 // local imports
 import { getEmojiSize, stringToEmoji } from "./helper";
 import { LUCIDE_ICONS_LIST } from "./lucide-icons";

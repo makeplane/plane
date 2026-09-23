@@ -13,7 +13,8 @@ import { cn } from "@plane/utils";
 // types
 import type { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "../dropdown";
 // components
-import { DropdownOptionsLoader, InputSearch } from ".";
+import { InputSearch } from "./input-search";
+import { DropdownOptionsLoader } from "./loader";
 
 export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSelectDropdownOptions) {
   const {

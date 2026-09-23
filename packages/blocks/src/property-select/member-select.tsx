@@ -10,8 +10,8 @@ import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
 import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
 import { AssigneeOutline, UserAltOutline } from "@makeplane/propel/icons";
 import type { TPaginatedResponse } from "@plane/types";
-import { Select } from "../select";
-import type { SelectPaginationParams, SelectTooltip, SelectTriggerSize, SelectVariant } from "../select";
+import { Select } from "../select/select";
+import type { SelectPaginationParams, SelectTooltip, SelectTriggerSize, SelectVariant } from "../select/types";
 import { splitSelectVariant } from "../select/utils";
 import { cn, getAvatarName } from "@plane/utils";
 

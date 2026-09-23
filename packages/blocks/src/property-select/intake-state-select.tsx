@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { IntakeStateGroupIcon } from "../icons";
+import { IntakeStateGroupIcon } from "../icons/state/intake-state-group-icon";
 import type { TPaginatedResponse, TIntakeStateGroups } from "@plane/types";
-import { Select } from "../select";
-import type { SelectPaginationParams, SelectVariant } from "../select";
+import { Select } from "../select/select";
+import type { SelectPaginationParams, SelectVariant } from "../select/types";
 
 /** Minimal intake state shape the dropdown needs; the web layer maps its store record down to this. */
 export type IntakeStateOption = {

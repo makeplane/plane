@@ -13,7 +13,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
 import { useDropdownKeyPressed } from "../../hooks/use-dropdown-key-pressed";
 import { cn } from "@plane/utils";
-import { DropdownButton } from "./common";
+import { DropdownButton } from "./common/button";
 import { DropdownOptions } from "./common/options";
 import type { ISingleSelectDropdown } from "./dropdown";
 

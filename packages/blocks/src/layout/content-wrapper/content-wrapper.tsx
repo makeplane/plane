@@ -5,7 +5,7 @@
  */
 
 import * as React from "react";
-import { Row } from "../row";
+import { Row } from "../row/row";
 import type { TRowVariant } from "../row/helper";
 import { ERowVariant } from "../row/helper";
 import { cn } from "@plane/utils";

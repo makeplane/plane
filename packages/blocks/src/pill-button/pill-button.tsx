@@ -7,7 +7,7 @@
 import * as React from "react";
 import type { PillButtonSize } from "./helper";
 import { getPillButtonClassName, getPillButtonIconClassName } from "./helper";
-import type { IconElement } from "../types";
+import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
 
 export type PillButtonContentProps = {

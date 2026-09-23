@@ -9,8 +9,8 @@ import { BreadcrumbTrigger, BreadcrumbTriggerIndicator } from "@makeplane/propel
 import { useBreadcrumbCurrent } from "../breadcrumb/breadcrumb-context";
 import { BreadcrumbIcon, BreadcrumbLabel } from "../breadcrumb/breadcrumbs";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
-import { PillButtonContent } from "../pill-button";
-import type { IconElement } from "../types";
+import { PillButtonContent } from "../pill-button/pill-button";
+import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
 import { SelectContent } from "./select-content";
 import type { SelectVariant } from "./types";

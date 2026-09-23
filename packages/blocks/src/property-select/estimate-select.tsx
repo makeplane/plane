@@ -9,8 +9,8 @@ import { useMemo } from "react";
 import { EstimateOutline } from "@makeplane/propel/icons";
 import type { TPaginatedResponse } from "@plane/types";
 // local imports
-import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select";
-import { Select } from "../select";
+import type { SelectPaginationParams, SelectTooltip, SelectVariant } from "../select/types";
+import { Select } from "../select/select";
 
 /** Minimal estimate point shape the dropdown needs — the client resolves the id and pre-formats the display value. */
 export type EstimateOption = {

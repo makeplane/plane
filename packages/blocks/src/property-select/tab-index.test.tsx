@@ -10,7 +10,7 @@ import { describe, expect, it, vi } from "vitest";
 import { CycleSelect } from "./cycle-select";
 import { EstimateSelect } from "./estimate-select";
 import { IntakeStateSelect } from "./intake-state-select";
-import { LabelSelect } from "./label-select";
+import { LabelSelect } from "./label-select/label-select";
 import { MemberSelect } from "./member-select";
 import { ModuleSelect } from "./module-select";
 import { PrioritySelect } from "./priority-select";

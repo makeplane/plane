@@ -7,7 +7,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { ColorPicker } from "./color-picker";
+import { ColorPicker } from "./color-picker/color-picker";
 import { DragHandle } from "./drag-handle";
 import { FavoriteStar } from "./favorite-star";
 
