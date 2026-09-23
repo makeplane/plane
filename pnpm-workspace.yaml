@@ -19,7 +19,6 @@ catalog:
   "@fontsource/ibm-plex-mono": "5.2.7"
   "@fontsource/inter": "5.2.8"
   "@fontsource/material-symbols-rounded": "5.2.30"
-  "@headlessui/react": "^2.2.10"
   "@hocuspocus/extension-database": "2.15.2"
   "@hocuspocus/extension-logger": "2.15.2"
   "@hocuspocus/extension-redis": "2.15.2"
@@ -28,7 +27,6 @@ catalog:
   "@hocuspocus/transformer": "2.15.2"
   "@hypermod/utils": "^0.7.1"
   "@makeplane/propel": "0.7.3"
-  "@popperjs/core": "^2.11.8"
   "@radix-ui/react-scroll-area": "^1.2.3"
   "@react-pdf/renderer": "^4.8.1"
   "@react-pdf/types": "^2.13.1"
@@ -85,7 +83,6 @@ catalog:
   "@types/node": "22.12.0"
   "@types/pdf-parse": "^1.1.5"
   "@types/react": "19.2.17"
-  "@types/react-color": "^3.0.9"
   "@types/react-dom": "19.2.3"
   "@types/sanitize-html": "2.16.0"
   "@types/ws": "^8.18.1"
@@ -111,7 +108,6 @@ catalog:
   "express-winston": "^4.2.0"
   "express-ws": "^5.0.2"
   "file-type": "^21.3.1"
-  "framer-motion": "^12.23.0"
   "frimousse": "^0.3.0"
   "hast": "^1.0.0"
   "hast-util-to-mdast": "^10.1.2"
@@ -145,8 +141,6 @@ catalog:
   "postcss-nested": "^6.0.1"
   "prosemirror-codemark": "^0.4.2"
   "react": "19.2.8"
-  "react-color": "^2.19.3"
-  "react-day-picker": "9.5.0"
   "react-dom": "19.2.8"
   "react-dropzone": "^14.2.3"
   "react-fast-compare": "^3.2.2"
@@ -156,7 +150,6 @@ catalog:
   "react-markdown": "^10.1.0"
   "react-masonry-component": "^6.3.0"
   "react-pdf-html": "^2.1.2"
-  "react-popper": "^2.3.0"
   "react-router": "8.3.0"
   "recharts": "^2.15.4"
   "reflect-metadata": "^0.2.2"
@@ -304,17 +297,11 @@ minimumReleaseAgeExclude:
   - storybook@10.4.6
   - "@makeplane/propel@0.7.3"
 
-patchedDependencies:
-  react-color@2.19.3: patches/react-color@2.19.3.patch
-
 peerDependencyRules:
   allowedVersions:
-    # react-popper 2.3.0 is unmaintained and its peer range stops at React 18, but it
-    # only uses hooks — no findDOMNode, no string refs, no element.ref reads and no
-    # defaultProps on function components — so it runs unchanged on React 19. All 32
-    # call sites import usePopper only. Recorded here so the acceptance is explicit
-    # rather than hidden behind the global strict-peer-dependencies=false.
-    "react-popper>react": "19"
-    # Same situation: peer range predates React 19, uses nothing React 19 removed.
+    # Peer ranges predate React 19, but neither package uses anything React 19 removed
+    # (no findDOMNode, no string refs, no element.ref reads). Recorded here so the
+    # acceptance is explicit rather than hidden behind the global
+    # strict-peer-dependencies=false.
     "react-masonry-component>react": "19"
     "use-font-face-observer>react": "19"

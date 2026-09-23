@@ -32,7 +32,7 @@ export type ColorSwatchPickerProps = {
 };
 
 /**
- * A preset-swatch colour picker with a hex field — the shape of the old react-color `TwitterPicker`,
+ * A preset-swatch colour picker with a hex field — the shape of the old Twitter-style swatch picker,
  * on propel tokens. Picking a swatch fires `onChange` at once; the hex field fires as soon as the draft
  * is a colour (three or six hex characters, expanded to `#rrggbb`) and snaps back to the current value
  * on blur when what was typed is not one. It draws no popup or pointer of its own: put it inside a

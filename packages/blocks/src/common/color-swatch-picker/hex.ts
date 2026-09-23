@@ -10,7 +10,7 @@ const HEX_6 = /^[0-9a-f]{6}$/i;
 /**
  * Parses the two hex forms a person actually types — `abc` and `abc123`, with or without the leading `#` —
  * into a lowercased `#rrggbb` (`#abc` → `#aabbcc`). Anything else comes back as `null`. Both lengths are
- * accepted because the react-color picker this replaces accepted both.
+ * accepted because the Twitter-style picker this replaces accepted both.
  */
 export function parseHexColor(value: string): string | null {
   const raw = value.trim().replace(/^#/, "").toLowerCase();

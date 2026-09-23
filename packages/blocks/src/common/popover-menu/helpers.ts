@@ -5,7 +5,7 @@
  */
 
 /**
- * Every placement popper accepts, kept as a literal union so `@popperjs/core` does not have to be a
+ * Every placement popper accepts, kept as a literal union so Popper does not have to be a
  * dependency of this package. Structurally identical to popper's own `Placement`, so a call site
  * that stores one in a `Placement`-typed variable still assigns.
  */

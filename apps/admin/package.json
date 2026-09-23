@@ -22,7 +22,6 @@
     "@fontsource-variable/inter": "catalog:",
     "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/material-symbols-rounded": "catalog:",
-    "@headlessui/react": "catalog:",
     "@makeplane/propel": "catalog:",
     "@plane/blocks": "workspace:*",
     "@plane/constants": "workspace:*",

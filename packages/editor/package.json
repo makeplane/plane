@@ -35,7 +35,6 @@
   "dependencies": {
     "@floating-ui/dom": "catalog:",
     "@floating-ui/react": "catalog:",
-    "@headlessui/react": "catalog:",
     "@hocuspocus/provider": "catalog:",
     "@makeplane/propel": "catalog:",
     "@plane/blocks": "workspace:*",

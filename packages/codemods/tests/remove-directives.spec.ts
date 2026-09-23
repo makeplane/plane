@@ -195,7 +195,7 @@ describe("remove-directives", () => {
       import type { FC } from "react";
       import { useState } from "react";
       // plane imports
-      import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+      import { ConfirmDialog } from "@plane/blocks/dialog";
 
       export function MyComponent() {
         return <div>Hello</div>;
@@ -208,7 +208,7 @@ describe("remove-directives", () => {
       "import type { FC } from "react";
             import { useState } from "react";
             // plane imports
-            import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+            import { ConfirmDialog } from "@plane/blocks/dialog";
 
             export function MyComponent() {
               return <div>Hello</div>;
@@ -248,7 +248,7 @@ describe("remove-directives", () => {
       import type { FC } from "react";
       import { useState } from "react";
       // plane imports
-      import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+      import { ConfirmDialog } from "@plane/blocks/dialog";
       // hooks
       import useKeypress from "@/hooks/use-keypress";
       // local imports
@@ -273,7 +273,7 @@ describe("remove-directives", () => {
       "import type { FC } from "react";
             import { useState } from "react";
             // plane imports
-            import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+            import { ConfirmDialog } from "@plane/blocks/dialog";
             // hooks
             import useKeypress from "@/hooks/use-keypress";
             // local imports
