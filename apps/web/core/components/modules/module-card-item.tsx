@@ -14,7 +14,7 @@ import { InfoOutline, UserAltOutline, WorkItemsOutline } from "@makeplane/propel
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { LinearProgress } from "@makeplane/propel/components/linear-progress";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/blocks/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
 import { Card } from "@plane/blocks/card";
@@ -120,14 +120,14 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, payload)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.detail ?? "Module could not be updated. Please try again.",
         });

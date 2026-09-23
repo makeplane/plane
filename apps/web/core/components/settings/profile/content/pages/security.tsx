@@ -14,7 +14,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
 import { getPasswordStrength } from "@plane/utils";
 // components
@@ -90,7 +90,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
       reset(defaultValues);
       setShowPassword(defaultShowPassword);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("auth.common.password.toast.change_password.success.title"),
         message: t("auth.common.password.toast.change_password.success.message"),
       });
@@ -100,7 +100,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
       const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
 
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: errorInfo?.title ?? t("auth.common.password.toast.change_password.error.title"),
         message:
           typeof errorInfo?.message === "string"

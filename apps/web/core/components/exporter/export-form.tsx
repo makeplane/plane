@@ -17,7 +17,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 // import { Tooltip } from "@makeplane/propel/components/tooltip";
 // import { EIssuesStoreType } from "@plane/types";
 import type { TWorkItemFilterExpression } from "@plane/types";
@@ -111,7 +111,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         mutateServices();
         setExportLoading(false);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
           message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
             entity:
@@ -127,7 +127,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       } catch (_error) {
         setExportLoading(false);
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
         });

@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
 import { EIssueLayoutTypes, GANTT_TIMELINE_TYPE } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
@@ -100,7 +100,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
     ) =>
       issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("toast.error"),
           message: "Error while updating work item dates, Please try again Later",
         });

@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -73,7 +73,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
     if (!authorized) {
       setToast({
         title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message:
           PROJECT_ERROR_MESSAGES.permissionError.i18n_message && t(PROJECT_ERROR_MESSAGES.permissionError.i18n_message),
       });
@@ -84,7 +84,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
       await onSubmit()
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("common.success"),
             message: t("entity.delete.success", {
               entity: isSubIssue ? t("common.sub_work_item") : isEpic ? t("common.epic") : t("common.work_item"),
@@ -101,7 +101,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
             title: t(currentError.i18n_title),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: currentError.i18n_message && t(currentError.i18n_message),
           });
         })

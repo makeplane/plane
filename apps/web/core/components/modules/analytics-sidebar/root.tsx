@@ -23,7 +23,7 @@ import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem
 // plane types
 import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon } from "@plane/blocks/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
 import { CustomSelect } from "@plane/blocks/dropdowns";
@@ -102,13 +102,13 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     try {
       await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Module link deleted successfully.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Some error occurred",
       });
@@ -121,7 +121,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
     });
     setToast({
-      type: TOAST_TYPE.SUCCESS,
+      type: "success",
       title: "Success!",
       message: "Module updated successfully.",
     });

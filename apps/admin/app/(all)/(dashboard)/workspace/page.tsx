@@ -19,7 +19,7 @@ import { cn } from "@plane/utils";
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { Skeleton } from "@/components/common/skeleton";
 import { WorkspaceListItem } from "@/components/workspace/list-item";
-import { setPromiseToast } from "@/providers/toast";
+import { setPromiseToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
 // types

@@ -16,7 +16,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { Loader } from "@plane/blocks/loader";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
@@ -71,7 +71,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });
@@ -101,7 +101,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong"),
         });

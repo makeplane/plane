@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { AlertModalCore } from "@plane/blocks/modals";
 
 interface IStickyDelete {
@@ -30,7 +30,7 @@ export const StickyDeleteModal = observer(function StickyDeleteModal(props: ISti
       await handleSubmit();
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("stickies.toasts.not_removed.title"),
         message: t("stickies.toasts.not_removed.message"),
       });

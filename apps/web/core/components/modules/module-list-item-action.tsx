@@ -12,7 +12,7 @@ import { UserAltOutline } from "@makeplane/propel/icons";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/blocks/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IModule } from "@plane/types";
 import { FavoriteStar } from "@plane/blocks/favorite-star";
@@ -112,14 +112,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, payload)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.detail ?? "Module could not be updated. Please try again.",
         });

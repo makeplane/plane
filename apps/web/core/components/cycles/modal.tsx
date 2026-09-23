@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { mutate } from "swr";
 // types
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
@@ -62,14 +62,14 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
         }
 
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Cycle created successfully.",
         });
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.detail ?? "Error in creating cycle. Please try again.",
         });
@@ -83,14 +83,14 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then((_res) => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Cycle updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.detail ?? "Error in updating cycle. Please try again.",
         });
@@ -151,7 +151,7 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
       handleClose();
     } else
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
       });

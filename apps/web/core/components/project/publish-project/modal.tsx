@@ -13,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { GlobeOutline, NewTabOutline, TickOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
@@ -102,7 +102,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
 
     await updatePublishSettings(workspaceSlug.toString(), projectId, payload.id, payload).then((res) => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Publish settings updated successfully!",
       });
@@ -120,7 +120,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     await unPublishProject(workspaceSlug.toString(), projectId, publishId)
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Something went wrong while unpublishing the project.",
         })
@@ -138,7 +138,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
   const handleFormSubmit = async (formData: Partial<TProjectPublishSettings>) => {
     if (!selectedLayouts || selectedLayouts.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Please select at least one view layout to publish the project.",
       });
@@ -173,7 +173,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
   const handleCopyLink = () =>
     copyTextToClipboard(publishLink).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "",
         message: "Published page link copied successfully.",
       })

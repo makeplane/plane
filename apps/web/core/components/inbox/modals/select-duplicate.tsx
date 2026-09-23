@@ -11,7 +11,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { SearchOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Loader } from "@plane/blocks/loader";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
@@ -79,7 +79,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
     if (!selectedItem || selectedItem.length === 0)
       return setToast({
         title: "Error",
-        type: TOAST_TYPE.ERROR,
+        type: "error",
       });
     onSubmit(selectedItem);
     handleClose();

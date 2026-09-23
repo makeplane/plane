@@ -7,7 +7,7 @@
 import { useState } from "react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -44,7 +44,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
     await archiveProject(workspaceSlug, projectId)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Archive success",
           message: `${projectDetails.name} has been archived successfully`,
         });
@@ -54,7 +54,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
       })
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Project could not be archived. Please try again.",
         })
@@ -67,7 +67,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
     await restoreProject(workspaceSlug, projectId)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Restore success",
           message: `You can find ${projectDetails.name} in your projects.`,
         });
@@ -77,7 +77,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
       })
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Project could not be restored. Please try again.",
         })

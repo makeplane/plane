@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ClipboardOutline, ExportOutline, HistoryOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -83,7 +83,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
             if (!editorRef) return;
             editorRef.copyMarkdownToClipboard();
             setToast({
-              type: TOAST_TYPE.SUCCESS,
+              type: "success",
               title: "Success!",
               message: "Markdown copied to clipboard.",
             });

@@ -12,7 +12,7 @@ import { EPageAccess } from "@plane/constants";
 // plane types
 import { Button } from "@makeplane/propel/components/button";
 import { PagesOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
@@ -52,7 +52,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
         });

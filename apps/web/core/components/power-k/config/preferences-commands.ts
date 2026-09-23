@@ -10,7 +10,7 @@ import { Languages } from "lucide-react";
 import { CalendarOutline, GlobeOutline, PaletteOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -34,7 +34,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       return updateUserTheme({ theme: newTheme })
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Theme updated",
             message: "Reloading to apply changes...",
           });
@@ -44,7 +44,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.theme.error"),
           });
@@ -60,7 +60,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       updateCurrentUser({ user_timezone: value })
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("power_k.preferences_actions.toast.timezone.success"),
           });
@@ -68,7 +68,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.timezone.error"),
           });
@@ -84,7 +84,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       updateUserProfile(payload)
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("power_k.preferences_actions.toast.generic.success"),
           });
@@ -92,7 +92,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.generic.error"),
           });

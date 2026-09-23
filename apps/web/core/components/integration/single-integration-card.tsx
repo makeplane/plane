@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 import { TickCircleOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
@@ -90,7 +90,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         setDeletingIntegration(false);
 
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Deleted successfully!",
           message: `${integration.title} integration deleted successfully.`,
         });
@@ -99,7 +99,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         setDeletingIntegration(false);
 
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: `${integration.title} integration could not be deleted. Please try again.`,
         });

@@ -14,7 +14,7 @@ import { useParams } from "next/navigation";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -249,7 +249,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           if (isDragAllowed) setIsCurrentBlockDragging(true);
           else {
             setToast({
-              type: TOAST_TYPE.WARNING,
+              type: "warning",
               title: "Cannot move work item",
               message: !canEditIssueProperties
                 ? "You are not allowed to move this work item"

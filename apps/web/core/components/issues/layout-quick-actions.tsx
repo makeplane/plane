@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 import { CustomMenu } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -28,7 +28,7 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
   const handleCopyLink = () =>
     copyUrlToClipboard(layoutLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link copied",
         message: `${storeType === "EPIC" ? "Epics" : "Work items"} link copied to clipboard.`,
       });

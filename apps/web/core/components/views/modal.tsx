@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // types
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProjectView } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
@@ -50,13 +50,13 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
       handleClose();
       router.push(`/${workspaceSlug}/projects/${projectId}/views/${res.id}`);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "View created successfully.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Failed to create view. Please try again.",
       });
@@ -71,7 +71,7 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
       handleClose();
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Failed to update view. Please try again.",
       });

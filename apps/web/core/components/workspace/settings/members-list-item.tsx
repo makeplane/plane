@@ -8,7 +8,7 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMember } from "@plane/types";
 import { Table } from "@plane/blocks/tables";
 // components
@@ -53,7 +53,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.error || t("something_went_wrong_please_try_again"),
       });
@@ -68,7 +68,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.error || t("something_went_wrong_please_try_again"),
       });

@@ -16,7 +16,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IIssueLabel } from "@plane/types";
 
 // error codes
@@ -100,7 +100,7 @@ export const CreateUpdateLabelInline = observer(
           const errorMessage = getErrorMessage(error, "create");
           setToast({
             title: "Error!",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: errorMessage,
           });
           reset(formData);
@@ -120,7 +120,7 @@ export const CreateUpdateLabelInline = observer(
           const errorMessage = getErrorMessage(error, "update");
           setToast({
             title: "Oops!",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: errorMessage,
           });
           reset(formData);

@@ -28,7 +28,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 // ui
 import { Spinner } from "@plane/blocks/spinner";
@@ -304,7 +304,7 @@ export function InviteMembers(props: Props) {
       })
       .then(async () => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Invitations sent successfully.",
         });
@@ -312,7 +312,7 @@ export function InviteMembers(props: Props) {
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.error,
         });

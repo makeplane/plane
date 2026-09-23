@@ -13,7 +13,7 @@ import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { AddOutline, ChevronDownOutline, CloseOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { CustomSelect, CustomSearchSelect } from "@plane/blocks/dropdowns";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // helpers
@@ -90,7 +90,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         onClose();
         setToast({
           title: "Success!",
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           message: "Members added successfully.",
         });
       })

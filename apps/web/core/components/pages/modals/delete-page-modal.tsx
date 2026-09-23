@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { AlertModalCore } from "@plane/blocks/modals";
 import { getPageName } from "@plane/utils";
 // constants
@@ -51,7 +51,7 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       .then(() => {
         handleClose();
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Page deleted successfully.",
         });
@@ -62,7 +62,7 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Page could not be deleted. Please try again.",
         });

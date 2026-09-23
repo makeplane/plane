@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { USE_CASES } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { TickOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -52,13 +52,13 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
     try {
       [await updateUserProfile(profileUpdatePayload)];
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success",
         message: "Profile setup completed!",
       });
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "Profile setup failed. Please try again!",
       });

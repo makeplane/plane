@@ -10,7 +10,7 @@ import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { UploadOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // hooks
@@ -78,7 +78,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
         createAttachment(currentFile)
           .catch(() => {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("toast.error"),
               message: t("attachment.error"),
             });
@@ -91,7 +91,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
       }
 
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message:
           totalAttachedFiles > 1

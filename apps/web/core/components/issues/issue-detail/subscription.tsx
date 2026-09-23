@@ -14,7 +14,7 @@ import { useTranslation } from "@plane/i18n";
 // UI
 import { Button } from "@makeplane/propel/elements/button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/blocks/loader";
 // hooks
@@ -56,7 +56,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
       if (isSubscribed) await removeSubscription(workspaceSlug, projectId, issueId);
       else await createSubscription(workspaceSlug, projectId, issueId);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("toast.success"),
         message: isSubscribed
           ? t("issue.subscription.actions.unsubscribed")
@@ -66,7 +66,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
     } catch {
       setLoading(false);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: t("common.error.message"),
       });

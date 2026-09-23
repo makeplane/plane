@@ -26,7 +26,7 @@ import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EOnboardingSteps } from "@plane/types";
 import { Spinner } from "@plane/blocks/spinner";
 // hooks
@@ -304,7 +304,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
       })
       .then(async () => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Invitations sent successfully.",
         });
@@ -312,7 +312,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.error,
         });

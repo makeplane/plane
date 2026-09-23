@@ -12,7 +12,7 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
 import { Loader } from "@plane/blocks/loader";
@@ -111,7 +111,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       .then(() => {
         setToast({
           title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           message: t("project_settings.general.toast.success"),
         });
       })
@@ -129,7 +129,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       .then(() => {
         setToast({
           title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           message: t("project_settings.general.toast.success"),
         });
       })

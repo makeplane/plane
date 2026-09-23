@@ -11,7 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/blocks/empty-state";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
@@ -65,7 +65,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
         });

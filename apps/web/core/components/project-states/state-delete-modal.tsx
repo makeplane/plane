@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -46,14 +46,14 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
       .catch((err) => {
         if (err.status === 400)
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message:
               "This state contains some work items within it, please move them to some other state to delete this state.",
           });
         else
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });

@@ -16,7 +16,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 
 import { checkEmailValidity } from "@plane/utils";
 // hooks
@@ -66,7 +66,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
       })
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("auth.forgot_password.toast.success.title"),
           message: t("auth.forgot_password.toast.success.message"),
         });
@@ -74,7 +74,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("auth.forgot_password.toast.error.title"),
           message: err?.error ?? t("auth.forgot_password.toast.error.message"),
         });

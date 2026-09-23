@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
@@ -33,7 +33,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
   const handleCopyText = () =>
     copyUrlToClipboard(viewLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });

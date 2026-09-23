@@ -11,7 +11,7 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProjectView } from "@plane/types";
 // ui
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
@@ -53,7 +53,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
     // oxlint-disable-next-line promise/always-return
     copyUrlToClipboard(viewLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });

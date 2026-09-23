@@ -16,7 +16,7 @@ import { cn, resolveGeneralTheme } from "@plane/utils";
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { Skeleton } from "@/components/common/skeleton";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@/providers/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 // helpers
 import { canDisableAuthMethod } from "@/helpers/authentication";
 // hooks
@@ -55,7 +55,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
 
           if (!canDisable) {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: "Cannot disable authentication",
               message:
                 "At least one authentication method must remain enabled. Please enable another method before disabling this one.",

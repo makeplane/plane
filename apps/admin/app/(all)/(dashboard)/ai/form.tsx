@@ -11,7 +11,7 @@ import type { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } fr
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -90,7 +90,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     await updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success",
           message: "AI Settings updated successfully",
         })

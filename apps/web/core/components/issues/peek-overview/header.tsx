@@ -17,7 +17,7 @@ import {
 } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -128,7 +128,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     e.preventDefault();
     copyUrlToClipboard(workItemLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
@@ -145,7 +145,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     } catch (_error) {
       setToast({
         title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
     }

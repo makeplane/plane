@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@makeplane/propel/components/button";
 import { DeleteOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useUser } from "@/hooks/store/user";
@@ -41,7 +41,7 @@ export function DeactivateAccountModal(props: Props) {
     await deactivateAccount()
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Account deactivated successfully.",
         });
@@ -52,7 +52,7 @@ export function DeactivateAccountModal(props: Props) {
       })
       .catch((err: any) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.error,
         });

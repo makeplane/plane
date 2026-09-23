@@ -11,7 +11,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -48,7 +48,7 @@ export function SwitchAccountModal(props: Props) {
       })
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })

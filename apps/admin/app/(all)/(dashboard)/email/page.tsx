@@ -11,7 +11,7 @@ import { Switch } from "@makeplane/propel/components/switch";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { Skeleton } from "@/components/common/skeleton";
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -37,13 +37,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
         setToast({
           title: "Email feature disabled",
           message: "Email feature has been disabled",
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (_error) {
         setToast({
           title: "Error disabling email",
           message: "Failed to disable email feature. Please try again.",
-          type: TOAST_TYPE.ERROR,
+          type: "error",
         });
       } finally {
         setIsSubmitting(false);

@@ -15,7 +15,7 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { SearchOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { Loader } from "@plane/blocks/loader";
@@ -103,7 +103,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Please select at least one work item.",
       });
@@ -115,7 +115,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     await removeBulkIssues(workspaceSlug, projectId, data.delete_issue_ids)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Work items deleted successfully!",
         });
@@ -123,7 +123,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
       })
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Something went wrong. Please try again.",
         })

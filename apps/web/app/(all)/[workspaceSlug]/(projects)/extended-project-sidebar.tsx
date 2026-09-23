@@ -12,7 +12,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { AddOutline, SearchOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
@@ -62,7 +62,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong"),
         });
@@ -87,7 +87,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });

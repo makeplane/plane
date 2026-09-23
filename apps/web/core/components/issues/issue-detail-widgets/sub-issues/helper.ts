@@ -7,7 +7,7 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
@@ -32,7 +32,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
       copyLink: async (path) => {
         await copyUrlToClipboard(path);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("common.link_copied"),
           message: t("entity.link_copied_to_clipboard", {
             entity:
@@ -47,7 +47,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           await fetchSubIssues(workspaceSlug, projectId, parentIssueId);
         } catch {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("entity.fetch.failed", {
               entity:
@@ -62,7 +62,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           await createSubIssues(workspaceSlug, projectId, parentIssueId, issueIds);
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("entity.add.success", {
               entity:
@@ -73,7 +73,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           });
         } catch {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("entity.add.failed", {
               entity:
@@ -97,14 +97,14 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (_error) {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("sub_work_item.update.error"),
           });
@@ -115,7 +115,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("entity.remove.success", {
               entity:
@@ -127,7 +127,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (_error) {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("entity.remove.failed", {
               entity:
@@ -145,7 +145,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (_error) {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("entity.delete.failed", {
               entity:

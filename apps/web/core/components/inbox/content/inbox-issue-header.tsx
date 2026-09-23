@@ -27,7 +27,7 @@ import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
 import { ControlLink } from "@plane/blocks/control-link";
@@ -184,7 +184,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleCopyIssueLink = (path: string) =>
     copyUrlToClipboard(path).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("common.copied_to_clipboard"),
       })
@@ -223,7 +223,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     if (isAdmin) action();
     else {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Permission denied",
         message: errorMessage,
       });

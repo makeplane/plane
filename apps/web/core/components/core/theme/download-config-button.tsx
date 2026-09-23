@@ -9,7 +9,7 @@ import type { UseFormGetValues } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUserTheme } from "@plane/types";
 
 type Props = {
@@ -43,14 +43,14 @@ export const CustomThemeDownloadConfigButton = observer(function CustomThemeDown
       URL.revokeObjectURL(url);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("success"),
         message: "Theme configuration downloaded successfully.",
       });
     } catch (error) {
       console.error("Failed to download config:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: "Failed to download theme configuration.",
       });

@@ -15,7 +15,7 @@ import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type {
   TGroupedIssues,
   TIssue,
@@ -164,7 +164,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
 
           if ((isWorkflowDropDisabled || isDropDisabled) && dropErrorMessage) {
             setToast({
-              type: TOAST_TYPE.WARNING,
+              type: "warning",
               title: t("common.warning"),
               message: dropErrorMessage,
             });

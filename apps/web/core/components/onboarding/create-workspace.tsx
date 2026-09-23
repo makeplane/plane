@@ -14,7 +14,7 @@ import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/elements/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/blocks/dropdowns";
@@ -71,7 +71,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
         setSlugError(false);
         const workspaceResponse = await createWorkspace(formData);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("workspace_creation.toast.success.title"),
           message: t("workspace_creation.toast.success.message"),
         });
@@ -80,7 +80,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
       } else setSlugError(true);
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("workspace_creation.toast.error.title"),
         message: t("workspace_creation.toast.error.message"),
       });

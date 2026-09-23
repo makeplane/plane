@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { CustomSelect } from "@plane/blocks/dropdowns";
 // components
 import { TimezoneSelect } from "@/components/global";
@@ -34,13 +34,13 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         setToast({
           title: "Success!",
           message: "Timezone updated successfully",
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (_error) {
         setToast({
           title: "Error!",
           message: "Failed to update timezone",
-          type: TOAST_TYPE.ERROR,
+          type: "error",
         });
       }
     };
@@ -51,13 +51,13 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
         setToast({
           title: "Success!",
           message: "Language updated successfully",
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (_error) {
         setToast({
           title: "Error!",
           message: "Failed to update language",
-          type: TOAST_TYPE.ERROR,
+          type: "error",
         });
       }
     };

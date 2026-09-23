@@ -13,7 +13,7 @@ import { ChevronDownOutline, LogOutOutline, MailOutline, PlusCircleOutline } fro
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
 import { Loader } from "@plane/blocks/loader";
 import { orderWorkspacesList, cn } from "@plane/utils";
@@ -53,7 +53,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("auth.sign_out.toast.error.title"),
         message: t("auth.sign_out.toast.error.message"),
       })

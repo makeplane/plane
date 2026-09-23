@@ -12,7 +12,7 @@ import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { CustomMenu } from "@plane/blocks/dropdowns";
 import { getFileURL } from "@plane/utils";
 // components
@@ -41,7 +41,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   const handleSignOut = () => {
     signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("auth.sign_out.toast.error.title"),
         message: t("auth.sign_out.toast.error.message"),
       })

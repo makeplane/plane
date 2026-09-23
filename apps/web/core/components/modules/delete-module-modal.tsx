@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IModule } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -51,7 +51,7 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
         if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
         handleClose();
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module deleted successfully.",
         });
@@ -63,7 +63,7 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
           : PROJECT_ERROR_MESSAGES.moduleDeleteError;
         setToast({
           title: t(currentError.i18n_title),
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           message: currentError.i18n_message && t(currentError.i18n_message),
         });
       })

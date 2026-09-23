@@ -15,7 +15,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
 // components
 import { getPasswordStrength } from "@plane/utils";
@@ -99,7 +99,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
         message = err.error;
       }
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("common.errors.default.title"),
         message: message ?? t("common.errors.default.message"),
       });

@@ -11,7 +11,7 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
@@ -83,7 +83,7 @@ export function ExistingIssuesListModal(props: Props) {
   const onSubmit = async () => {
     if (selectedIssues.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: t("issue.select.error"),
       });

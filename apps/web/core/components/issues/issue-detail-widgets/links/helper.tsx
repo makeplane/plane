@@ -7,7 +7,7 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssueLink, TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -32,13 +32,13 @@ export const useLinkOperations = (
           await createLink(workspaceSlug, projectId, issueId, data);
           setToast({
             message: t("links.toasts.created.message"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("links.toasts.created.title"),
           });
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? t("links.toasts.not_created.message"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("links.toasts.not_created.title"),
           });
           throw error;
@@ -50,13 +50,13 @@ export const useLinkOperations = (
           await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToast({
             message: t("links.toasts.updated.message"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("links.toasts.updated.title"),
           });
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? t("links.toasts.not_updated.message"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("links.toasts.not_updated.title"),
           });
           throw error;
@@ -68,13 +68,13 @@ export const useLinkOperations = (
           await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToast({
             message: t("links.toasts.removed.message"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("links.toasts.removed.title"),
           });
         } catch {
           setToast({
             message: t("links.toasts.not_removed.message"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("links.toasts.not_removed.title"),
           });
         }

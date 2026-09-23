@@ -15,7 +15,7 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
@@ -95,7 +95,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("toast.success"),
           message: t("project_settings.general.toast.success"),
         });
@@ -112,7 +112,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           if (nameError || identifierError || nameSpecialCharError) {
             if (nameError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_name_already_taken"),
               });
@@ -120,7 +120,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
             if (identifierError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
               });
@@ -128,14 +128,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
             if (nameSpecialCharError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_name_cannot_contain_special_characters"),
               });
             }
           } else {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("toast.error"),
               message: t("something_went_wrong"),
             });
@@ -144,7 +144,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           // Fallback error handling if the error processing fails
           console.error("Error processing API error:", error);
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("something_went_wrong"),
           });
@@ -180,7 +180,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     } catch (error) {
       console.error("Error handling cover image:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: error instanceof Error ? error.message : "Failed to process cover image",
       });

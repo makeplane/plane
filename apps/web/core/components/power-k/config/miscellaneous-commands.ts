@@ -8,7 +8,7 @@ import { useCallback } from "react";
 import { LeftSidePaneOutline, LinkOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -28,13 +28,13 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
     copyTextToClipboard(url.href)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_error"),
         });
       });

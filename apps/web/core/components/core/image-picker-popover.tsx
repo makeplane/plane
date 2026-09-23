@@ -19,7 +19,7 @@ import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } fro
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/blocks/loader";
 // helpers
@@ -146,7 +146,7 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
           setIsImageUploading(false);
           setToast({
             message: error?.error ?? "The image could not be uploaded",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Image not uploaded",
           });
         });
@@ -167,7 +167,7 @@ function ImagePickerPopoverComponent<TFieldValues extends FieldValues = FieldVal
           setIsImageUploading(false);
           setToast({
             message: error?.error ?? "The image could not be uploaded",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Image not uploaded",
           });
         });

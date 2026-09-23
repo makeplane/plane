@@ -17,7 +17,7 @@ import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Switch } from "@makeplane/propel/components/switch";
@@ -212,7 +212,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("editor_is_not_ready_to_discard_changes"),
       });
@@ -285,7 +285,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
       } as TWorkspaceDraftIssue);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Failed to move work item to project. Please try again.",
       });
@@ -474,7 +474,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                             onClose();
                           } else {
                             setToast({
-                              type: TOAST_TYPE.ERROR,
+                              type: "error",
                               title: "Error!",
                               message: "Editor is still processing changes. Please wait before proceeding.",
                             });

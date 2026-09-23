@@ -5,7 +5,7 @@
  */
 
 import { DeleteOutline, EditOutline, NewTabOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // hooks
@@ -52,7 +52,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
           onClick={() => {
             copyTextToClipboard(linkDetail.url);
             setToast({
-              type: TOAST_TYPE.SUCCESS,
+              type: "success",
               title: "Link copied!",
               message: "Link copied to clipboard",
             });

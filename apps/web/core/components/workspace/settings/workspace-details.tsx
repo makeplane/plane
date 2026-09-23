@@ -14,7 +14,7 @@ import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@pla
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { EditOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
 import { CustomSelect } from "@plane/blocks/dropdowns";
 import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
@@ -72,7 +72,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       await updateWorkspace(currentWorkspace.slug, payload);
       setToast({
         title: "Success!",
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         message: "Workspace updated successfully",
       });
     } catch (err: unknown) {
@@ -92,13 +92,13 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         logo_url: "",
       });
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Workspace picture removed successfully.",
       });
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "There was some error in deleting your profile picture. Please try again.",
       });
@@ -111,7 +111,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
     void copyUrlToClipboard(`${currentWorkspace.slug}`)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Workspace URL copied to the clipboard.",
         });
         return undefined;

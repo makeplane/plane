@@ -17,7 +17,7 @@ import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
 import { validateSlug, validateWorkspaceName } from "@plane/utils";
 // components
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
@@ -62,7 +62,7 @@ export function WorkspaceCreateForm() {
           await createWorkspace(formData)
             .then(async () => {
               setToast({
-                type: TOAST_TYPE.SUCCESS,
+                type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
@@ -70,7 +70,7 @@ export function WorkspaceCreateForm() {
             })
             .catch(() => {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               });
@@ -79,7 +79,7 @@ export function WorkspaceCreateForm() {
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // types
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -48,7 +48,7 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
     await onSubmit()
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: `${t("success")}`,
           message: `${t("inbox_issue.modals.delete.success")}`,
         });
@@ -60,7 +60,7 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
           : PROJECT_ERROR_MESSAGES.issueDeleteError;
         setToast({
           title: t(currentError.i18n_title),
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           message: currentError.i18n_message && t(currentError.i18n_message),
         });
       })

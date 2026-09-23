@@ -12,7 +12,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type {
   IGroupByColumn,
   TIssueMap,
@@ -220,7 +220,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           if (isWorkflowDropDisabled || group.isDropDisabled) {
             if (group.dropErrorMessage)
               setToast({
-                type: TOAST_TYPE.WARNING,
+                type: "warning",
                 title: t("common.warning"),
                 message: group.dropErrorMessage,
               });

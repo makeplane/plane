@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // lucide icons
 import { Circle } from "lucide-react";
 import { AddOutline, ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/blocks/dropdowns";
@@ -71,13 +71,13 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
       await addIssuesToView?.(issues);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Selected work items could not be added to the cycle. Please try again.",
       });

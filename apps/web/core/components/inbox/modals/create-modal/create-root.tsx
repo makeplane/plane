@@ -14,7 +14,7 @@ import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -91,7 +91,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       handleModalClose();
     } else {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Editor is still processing changes. Please wait before proceeding.",
       });
@@ -123,7 +123,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
     if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Editor is still processing changes. Please wait before proceeding.",
       });
@@ -158,7 +158,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
           setFormData(defaultIssueData);
         }
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: `Success!`,
           message: "Work item created successfully.",
         });
@@ -166,7 +166,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       .catch((error) => {
         console.error(error);
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: `Error!`,
           message: "Some error occurred. Please try again.",
         });
@@ -226,7 +226,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                     handleModalClose();
                   } else {
                     setToast({
-                      type: TOAST_TYPE.ERROR,
+                      type: "error",
                       title: "Error!",
                       message: "Editor is still processing changes. Please wait before proceeding.",
                     });

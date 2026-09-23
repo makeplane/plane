@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { stringToEmoji } from "@plane/blocks/emoji-icon-picker";
 import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
 import type { EmojiReactionType } from "@plane/blocks/emoji-reaction";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser } from "@plane/types";
 // hooks
 // ui
@@ -51,13 +51,13 @@ export const IssueReaction = observer(function IssueReaction(props: TIssueReacti
           await createReaction(workspaceSlug, projectId, issueId, reaction);
           setToast({
             title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             message: "Reaction created successfully",
           });
         } catch (_error) {
           setToast({
             title: "Error!",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: "Reaction creation failed",
           });
         }
@@ -68,13 +68,13 @@ export const IssueReaction = observer(function IssueReaction(props: TIssueReacti
           await removeReaction(workspaceSlug, projectId, issueId, reaction, currentUser.id);
           setToast({
             title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             message: "Reaction removed successfully",
           });
         } catch (_error) {
           setToast({
             title: "Error!",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: "Reaction remove failed",
           });
         }

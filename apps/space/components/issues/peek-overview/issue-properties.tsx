@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon, PriorityIcon } from "@plane/blocks/icons";
 import { DueDateOutline, LinkOutline, PriorityOutline, StateOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -47,7 +47,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
 
     copyTextToClipboard(urlToCopy).then(() => {
       setToast({
-        type: TOAST_TYPE.INFO,
+        type: "info",
         title: "Link copied!",
         message: "Work item link copied to clipboard",
       });

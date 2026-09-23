@@ -11,7 +11,7 @@ import { CircleMinus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
 import { CustomMenu, CustomSelect } from "@plane/blocks/dropdowns";
 import { getFileURL } from "@plane/utils";
@@ -160,7 +160,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                     const errorString = Array.isArray(error) ? error[0] : error;
 
                     setToast({
-                      type: TOAST_TYPE.ERROR,
+                      type: "error",
                       title: "You can’t change this role yet.",
                       message: errorString ?? "An error occurred while updating member role. Please try again.",
                     });

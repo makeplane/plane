@@ -13,7 +13,7 @@ import { Disclosure } from "@headlessui/react";
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { DeactivatedUserOutline, DeleteOutline } from "@makeplane/propel/icons";
 import { Badge } from "@makeplane/propel/components/badge";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
 import { CustomSelect } from "@plane/blocks/dropdowns";
@@ -162,7 +162,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
 
                   setToast({
-                    type: TOAST_TYPE.ERROR,
+                    type: "error",
                     title: "Error!",
                     message: errorString ?? "An error occurred while updating member role. Please try again.",
                   });

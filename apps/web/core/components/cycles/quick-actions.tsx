@@ -12,7 +12,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -60,7 +60,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const handleCopyText = () =>
     copyUrlToClipboard(cycleLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
@@ -71,7 +71,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     await restoreCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("project_cycles.action.restore.success.title"),
           message: t("project_cycles.action.restore.success.description"),
         });
@@ -79,7 +79,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("project_cycles.action.restore.failed.title"),
           message: t("project_cycles.action.restore.failed.description"),
         });

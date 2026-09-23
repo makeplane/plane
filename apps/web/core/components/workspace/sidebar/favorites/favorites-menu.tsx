@@ -20,7 +20,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite } from "@plane/types";
 // helpers
@@ -61,7 +61,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
       parent: destinationId,
     }).catch(() => {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("failed_to_move_favorite"),
       });
@@ -112,7 +112,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
     deleteFavorite(workspaceSlug.toString(), favorite.id)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("success"),
           message: t("favorite_removed_successfully"),
         });
@@ -120,7 +120,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong"),
         });
@@ -130,7 +130,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
     removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("failed_to_move_favorite"),
       });
@@ -141,7 +141,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
     (favoriteId: string, droppedFavId: string, edge: string | undefined) => {
       reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("failed_to_reorder_favorite"),
         });

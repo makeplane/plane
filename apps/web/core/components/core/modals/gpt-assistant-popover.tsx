@@ -15,7 +15,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -97,7 +97,7 @@ export function GptAssistantPopover(props: Props) {
         : error || "Some error occurred. Please try again.";
 
     setToast({
-      type: TOAST_TYPE.ERROR,
+      type: "error",
       title: "Error!",
       message: errorMessage,
     });
@@ -123,7 +123,7 @@ export function GptAssistantPopover(props: Props) {
 
   const handleInvalidTask = () => {
     setToast({
-      type: TOAST_TYPE.ERROR,
+      type: "error",
       title: "Error!",
       message: "Please enter some task to get AI assistance.",
     });

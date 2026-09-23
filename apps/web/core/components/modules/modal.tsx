@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // Plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IModule } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // components
@@ -61,14 +61,14 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
       .then((_res) => {
         handleClose();
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module created successfully.",
         });
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.detail ?? err?.error ?? "Module could not be created. Please try again.",
         });
@@ -84,14 +84,14 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
         handleClose();
 
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module updated successfully.",
         });
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err?.detail ?? err?.error ?? "Module could not be updated. Please try again.",
         });

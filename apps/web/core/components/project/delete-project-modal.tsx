@@ -11,7 +11,7 @@ import { WarningTriangleOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProject } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
@@ -64,13 +64,13 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
       if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
       handleClose();
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Project deleted successfully.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Something went wrong. Please try again later.",
       });

@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // plane ui
 import { ModalCore } from "@plane/blocks/modals";
@@ -54,14 +54,14 @@ export function CreateUpdateModuleLinkModal(props: Props) {
       if (!data) {
         await createLink(payload);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module link created successfully.",
         });
       } else {
         await updateLink(payload, data.id);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Module link updated successfully.",
         });
@@ -69,7 +69,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
       onClose();
     } catch (error: any) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.data?.error ?? "Some error occurred. Please try again.",
       });

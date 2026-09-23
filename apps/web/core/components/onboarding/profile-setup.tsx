@@ -14,7 +14,7 @@ import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/elements/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { PasswordStrengthIndicator } from "@plane/blocks/form-fields";
@@ -139,7 +139,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success",
         message: "Profile setup completed!",
       });
@@ -149,7 +149,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       }
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "Profile setup failed. Please try again!",
       });
@@ -174,7 +174,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       });
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "User details update failed. Please try again!",
       });
@@ -192,7 +192,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success",
         message: "Profile setup completed!",
       });
@@ -202,7 +202,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       }
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "Profile setup failed. Please try again!",
       });

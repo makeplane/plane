@@ -10,7 +10,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { DropIndicator } from "@plane/blocks/sortable";
 import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 
@@ -107,7 +107,7 @@ export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
         if (!isDragEnabled) {
           setToast({
             title: "Warning!",
-            type: TOAST_TYPE.WARNING,
+            type: "warning",
             message: "Drag and drop is only enabled when sorted by manual",
           });
         }

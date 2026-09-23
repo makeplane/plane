@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane Imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceView } from "@plane/types";
 import { AlertModalCore } from "@plane/blocks/modals";
 // hooks
@@ -40,7 +40,7 @@ export const DeleteGlobalViewModal = observer(function DeleteGlobalViewModal(pro
       await deleteGlobalView(workspaceSlug.toString(), data.id);
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Failed to delete the view. Please try again.",
       });

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IIssueLabel } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -48,7 +48,7 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
         setIsDeleteLoading(false);
         const error = err?.error || "Label could not be deleted. Please try again.";
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: error,
         });

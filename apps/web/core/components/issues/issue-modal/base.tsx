@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TBaseIssue, TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
@@ -236,7 +236,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       }
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("success"),
         message: `${is_draft_issue ? t("draft_created") : t("issue_created_successfully")} `,
         actionItems:
@@ -251,7 +251,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       return response;
     } catch (error: any) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
@@ -340,7 +340,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       });
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("success"),
         message: t("issue_updated_successfully"),
         actionItems:
@@ -352,7 +352,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
     } catch (error: any) {
       console.error(error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: error?.error ?? t("issue_could_not_be_updated"),
       });

@@ -12,7 +12,7 @@ import { WarningTriangleOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProject } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
@@ -68,28 +68,28 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
             })
             .catch((_err) => {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
             });
         } else {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message: "Please confirm leaving the project by typing the 'Leave Project'.",
           });
         }
       } else {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Please enter the project name as shown in the description.",
         });
       }
     } else {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Please fill all fields.",
       });

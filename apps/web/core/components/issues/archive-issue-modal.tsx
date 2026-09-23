@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
@@ -50,7 +50,7 @@ export function ArchiveIssueModal(props: Props) {
     await onSubmit()
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("issue.archive.success.label"),
           message: t("issue.archive.success.message"),
         });
@@ -59,7 +59,7 @@ export function ArchiveIssueModal(props: Props) {
       })
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("common.error.label"),
           message: t("issue.archive.failed.message"),
         })

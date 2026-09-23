@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
@@ -73,7 +73,7 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
     await createWebhook(workspaceSlug.toString(), payload)
       .then(({ webHook, secretKey }) => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("workspace_settings.settings.webhooks.toasts.created.title"),
           message: t("workspace_settings.settings.webhooks.toasts.created.message"),
         });
@@ -85,7 +85,7 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
       })
       .catch((error) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("workspace_settings.settings.webhooks.toasts.not_created.title"),
           message: error?.error ?? t("workspace_settings.settings.webhooks.toasts.not_created.message"),
         });

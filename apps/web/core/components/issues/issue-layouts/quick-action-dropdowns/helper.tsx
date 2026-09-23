@@ -17,7 +17,7 @@ import {
 } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
@@ -51,7 +51,7 @@ export function handleOptionalAction<T>(
     }
   } else {
     setToast({
-      type: TOAST_TYPE.ERROR,
+      type: "error",
       title: "Action not available",
       message: `${actionName} action is not implemented.`,
     });
@@ -106,7 +106,7 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(workItemLink).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link copied",
         message: "Work item link copied to clipboard",
       })
@@ -123,14 +123,14 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
       // oxlint-disable-next-line promise/always-return
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Restore success",
           message: "Your work item can be found in project work items.",
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Work item could not be restored. Please try again.",
         });

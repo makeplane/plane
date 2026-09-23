@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -43,7 +43,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       }
       setButtonLoader(false);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Estimate deleted",
         message: "Estimate has been removed from your project.",
       });
@@ -51,7 +51,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
     } catch (_error) {
       setButtonLoader(false);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Estimate creation failed",
         message: "We were unable to delete the estimate, please try again.",
       });

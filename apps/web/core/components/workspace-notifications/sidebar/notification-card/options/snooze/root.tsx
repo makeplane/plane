@@ -12,7 +12,7 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -48,7 +48,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         setToast({
           title: `${t("common.success")}!`,
           message: t("notification.toasts.snoozed"),
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (e) {
         console.error(e);
@@ -59,7 +59,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         setToast({
           title: `${t("common.success")}!`,
           message: t("notification.toasts.unsnoozed"),
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
         });
       } catch (e) {
         console.error(e);

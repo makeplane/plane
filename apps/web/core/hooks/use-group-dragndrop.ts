@@ -5,7 +5,8 @@
  */
 
 import { useParams } from "next/navigation";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
+import type { SetToastProps } from "@plane/blocks/toast";
 import type { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
 import { handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
@@ -61,8 +62,8 @@ export const useGroupIssuesDragNDrop = (
       };
     }
   ) => {
-    const errorToastProps = {
-      type: TOAST_TYPE.ERROR,
+    const errorToastProps: SetToastProps = {
+      type: "error",
       title: "Error!",
       message: "Error while updating work item",
     };
@@ -118,7 +119,7 @@ export const useGroupIssuesDragNDrop = (
     ).catch((err) => {
       setToast({
         title: "Error!",
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: err?.detail ?? "Failed to perform this action",
       });
     });

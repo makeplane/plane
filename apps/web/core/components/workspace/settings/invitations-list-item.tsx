@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline, DeleteOutline, LinkOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 import { CustomSelect, CustomMenu } from "@plane/blocks/dropdowns";
 import { cn, copyTextToClipboard } from "@plane/utils";
@@ -59,14 +59,14 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
 
       await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Invitation removed successfully.",
       });
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.error || "Something went wrong. Please try again.",
       });
@@ -80,7 +80,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       const inviteLink = new URL(invitationDetails.invite_link, window.location.origin).href;
       await copyTextToClipboard(inviteLink);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
       });
@@ -160,7 +160,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
               }).catch((err: unknown) => {
                 const error = err as { error?: string };
                 setToast({
-                  type: TOAST_TYPE.ERROR,
+                  type: "error",
                   title: "Error!",
                   message: error?.error || "An error occurred while updating member role. Please try again.",
                 });

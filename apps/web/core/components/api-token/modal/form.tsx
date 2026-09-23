@@ -14,7 +14,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IApiToken } from "@plane/types";
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
@@ -93,7 +93,7 @@ export function CreateApiTokenForm(props: Props) {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
     if (!neverExpires && (!data.expired_at || (data.expired_at === "custom" && !customDate)))
       return setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Please select an expiration date.",
       });

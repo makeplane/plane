@@ -8,7 +8,7 @@ import { useState } from "react";
 import { mutate } from "swr";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 // ui
@@ -43,7 +43,7 @@ export function DeleteApiTokenModal(props: Props) {
       .destroy(tokenId)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("workspace_settings.settings.api_tokens.delete.success.title"),
           message: t("workspace_settings.settings.api_tokens.delete.success.message"),
         });
@@ -59,7 +59,7 @@ export function DeleteApiTokenModal(props: Props) {
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("workspace_settings.settings.api_tokens.delete.error.title"),
           message: err?.message ?? t("workspace_settings.settings.api_tokens.delete.error.message"),
         });

@@ -11,7 +11,7 @@ import { useDropzone } from "react-dropzone";
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { UserOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
@@ -65,7 +65,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
       setImage(null);
     } catch (error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.toString() ?? "Something went wrong. Please try again.",
       });

@@ -13,7 +13,7 @@ import { useParams } from "react-router";
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { CustomSelect } from "@plane/blocks/dropdowns";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // components
@@ -186,7 +186,7 @@ export function ExportPageModal(props: Props) {
         await handleExportAsMarkdown();
       }
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Page exported successfully.",
       });
@@ -194,7 +194,7 @@ export function ExportPageModal(props: Props) {
     } catch (error) {
       console.error("Error in exporting page:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Page could not be exported. Please try again later.",
       });

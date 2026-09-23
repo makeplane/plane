@@ -12,7 +12,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
 
 import { cn } from "@plane/utils";
@@ -69,13 +69,13 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       handleClose();
       router.push(getWorkspaceRedirectionUrl());
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("workspace_settings.settings.general.delete_modal.success_title"),
         message: t("workspace_settings.settings.general.delete_modal.success_message"),
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("workspace_settings.settings.general.delete_modal.error_title"),
         message: t("workspace_settings.settings.general.delete_modal.error_message"),
       });

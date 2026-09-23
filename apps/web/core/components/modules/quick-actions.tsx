@@ -11,7 +11,7 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TContextMenuItem } from "@plane/blocks/dropdowns";
 import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -58,7 +58,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
   const handleCopyText = () =>
     copyUrlToClipboard(moduleLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link Copied!",
         message: "Module link copied to clipboard.",
       });
@@ -69,14 +69,14 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     try {
       await restoreModule(workspaceSlug, projectId, moduleId);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Restore success",
         message: "Your module can be found in project modules.",
       });
       router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Module could not be restored. Please try again.",
       });

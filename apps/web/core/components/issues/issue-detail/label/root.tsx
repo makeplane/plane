@@ -7,7 +7,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // components
@@ -65,7 +65,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
         } catch (_error) {
           setToast({
             title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: t("entity.update.failed", { entity: t("issue.label", { count: 1 }) }),
           });
         }
@@ -76,7 +76,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
           if (!isInboxIssue)
             setToast({
               title: t("toast.success"),
-              type: TOAST_TYPE.SUCCESS,
+              type: "success",
               message: t("label.create.success"),
             });
           return labelResponse;
@@ -87,7 +87,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
 
           setToast({
             title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: errMessage,
           });
           throw error;

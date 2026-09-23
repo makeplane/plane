@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
@@ -72,7 +72,7 @@ export function CreateApiTokenModal(props: Props) {
       })
       .catch((err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: err.message || err.detail,
         });

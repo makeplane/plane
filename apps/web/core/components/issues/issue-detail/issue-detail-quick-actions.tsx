@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { LinkOutline } from "@makeplane/propel/icons";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
@@ -78,14 +78,14 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
       const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
       await copyTextToClipboard(`${originURL}${workItemLink}`);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("common.copied_to_clipboard"),
       });
     } catch (_error) {
       setToast({
         title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
       });
     }
   };
@@ -102,7 +102,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     } catch (_error) {
       setToast({
         title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
     }
@@ -115,7 +115,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     } catch (_error) {
       setToast({
         title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("issue.archive.failed.message"),
       });
     }
@@ -126,7 +126,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     try {
       await restoreIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString());
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("issue.restore.success.title"),
         message: t("issue.restore.success.message"),
       });
@@ -134,7 +134,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     } catch (_error) {
       setToast({
         title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("issue.restore.failed.message"),
       });
     }

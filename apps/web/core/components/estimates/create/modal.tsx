@@ -11,7 +11,7 @@ import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { ChevronLeftOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
@@ -101,7 +101,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
         await createEstimate(workspaceSlug, projectId, payload);
         setButtonLoader(false);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("project_settings.estimates.toasts.created.success.title"),
           message: t("project_settings.estimates.toasts.created.success.message"),
         });
@@ -109,7 +109,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
       } catch {
         setButtonLoader(false);
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("project_settings.estimates.toasts.created.error.title"),
           message: t("project_settings.estimates.toasts.created.error.message"),
         });

@@ -13,7 +13,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/blocks/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
 
@@ -99,7 +99,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     })
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Profile picture deleted successfully.",
         });
@@ -108,7 +108,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "There was some error in deleting your profile picture. Please try again.",
         });
@@ -140,7 +140,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     } catch (error) {
       console.error("Error handling cover image:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: error instanceof Error ? error.message : "Failed to process cover image",
       });

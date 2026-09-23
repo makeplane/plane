@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 import { CustomSearchSelect } from "@plane/blocks/dropdowns";
@@ -70,7 +70,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
       setToast({
         title: "Filter configuration error",
         message: "This filter is not properly configured and cannot be applied",
-        type: TOAST_TYPE.ERROR,
+        type: "error",
       });
     }
   };

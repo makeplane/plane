@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Table } from "@plane/blocks/tables";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -52,7 +52,7 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
         })
         .catch((err) => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "You can’t leave this project yet.",
             message: err?.error || "Something went wrong. Please try again.",
           });
@@ -60,7 +60,7 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
     } else
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "You can't remove the member from this project yet.",
           message: err?.error || "Something went wrong. Please try again.",
         })

@@ -12,7 +12,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { cn } from "@plane/utils";
 // helpers
@@ -62,7 +62,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("auth.sign_out.toast.error.title"),
         message: t("auth.sign_out.toast.error.message"),
       })
@@ -76,7 +76,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
         await userService.verifyEmailCode({ email: formData.email, code: formData.code });
 
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: changeEmailT("toasts.success_title"),
           message: changeEmailT("toasts.success_message"),
         });

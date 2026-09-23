@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -60,7 +60,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
     if (!authorized) {
       setToast({
         title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message:
           PROJECT_ERROR_MESSAGES.permissionError.i18n_message && t(PROJECT_ERROR_MESSAGES.permissionError.i18n_message),
       });
@@ -71,7 +71,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
       await onSubmit()
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: `${t("success")}!`,
             message: t("workspace_draft_issues.toasts.deleted.success"),
           });
@@ -84,7 +84,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
             : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
             title: t(currentError.i18n_title),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: currentError.i18n_message && t(currentError.i18n_message),
           });
         })

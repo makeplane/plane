@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { AlertModalCore } from "@plane/blocks/modals";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
@@ -40,13 +40,13 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
       await removeWebhook(workspaceSlug.toString(), webhookId.toString());
       router.replace(`/${workspaceSlug}/settings/webhooks/`);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Webhook deleted successfully.",
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Webhook could not be deleted. Please try again.",
       });

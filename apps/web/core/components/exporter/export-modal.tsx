@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
 import { Checkbox } from "@makeplane/propel/components/checkbox";
@@ -87,7 +87,7 @@ export const Exporter = observer(function Exporter(props: Props) {
           router.push(`/${workspaceSlug}/settings/exports`);
           setExportLoading(false);
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
             message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
               entity: provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : "",
@@ -97,7 +97,7 @@ export const Exporter = observer(function Exporter(props: Props) {
         .catch(() => {
           setExportLoading(false);
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("error"),
             message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
           });

@@ -15,7 +15,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
 import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { PlaneLogo } from "@plane/blocks/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
@@ -130,7 +130,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Failed to sign out. Please try again.",
       })

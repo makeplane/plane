@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIdentifierTextProps, TIdentifierTextVariant, TIssueIdentifierSize } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -34,7 +34,7 @@ export function IdentifierText(props: TIdentifierTextProps) {
         .writeText(identifier)
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Work item ID copied to clipboard",
           });
           return;

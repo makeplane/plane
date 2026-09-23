@@ -16,7 +16,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@makeplane/propel/components/button";
 import { PlaneLogo } from "@plane/blocks/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { truncateText } from "@plane/utils";
 // assets
@@ -67,7 +67,7 @@ function UserInvitationsPage() {
   const submitInvitations = () => {
     if (invitationsRespond.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("please_select_at_least_one_invitation"),
       });
@@ -91,7 +91,7 @@ function UserInvitationsPage() {
           })
           .catch(() => {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("error"),
               message: t("something_went_wrong_please_try_again"),
             });
@@ -100,7 +100,7 @@ function UserInvitationsPage() {
       })
       .catch((_err) => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong_please_try_again"),
         });

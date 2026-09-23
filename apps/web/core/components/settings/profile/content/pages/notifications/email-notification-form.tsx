@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUserEmailNotificationSettings } from "@plane/types";
 import { Switch } from "@makeplane/propel/components/switch";
 // components
@@ -42,13 +42,13 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
       });
       setToast({
         title: t("success"),
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         message: t("email_notification_setting_updated_successfully"),
       });
     } catch (_error) {
       setToast({
         title: t("error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("failed_to_update_email_notification_setting"),
       });
     }

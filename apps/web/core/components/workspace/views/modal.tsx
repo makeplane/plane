@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceView } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
@@ -51,7 +51,7 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       };
       const res = await createGlobalView(workspaceSlug, payloadData);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "View created successfully.",
       });
@@ -59,7 +59,7 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       handleClose();
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "View could not be created. Please try again.",
       });
@@ -80,7 +80,7 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       if (res) {
         resetExpression(EIssuesStoreType.GLOBAL, data.id, res.rich_filters);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "View updated successfully.",
         });
@@ -88,7 +88,7 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
       }
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "View could not be updated. Please try again.",
       });

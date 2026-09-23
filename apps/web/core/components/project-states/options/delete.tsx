@@ -8,7 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { CloseOutline, LoadingOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 import { AlertModalCore } from "@plane/blocks/modals";
@@ -44,14 +44,14 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       const errorStatus = error as { status: number; data: { error: string } };
       if (errorStatus.status === 400) {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message:
             "This state contains some work items within it, please move them to some other state to delete this state.",
         });
       } else {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "State could not be deleted. Please try again.",
         });

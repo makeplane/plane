@@ -14,7 +14,7 @@ import {
   TransferWorkItemOutline,
   WarningCircleOutline,
 } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -45,7 +45,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
     await transferIssuesFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), payload)
       .then(async () => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Work items have been transferred successfully",
         });
@@ -53,7 +53,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Unable to transfer work items. Please try again.",
         });
@@ -68,7 +68,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
     ];
     await Promise.all(cyclesFetch).catch((error) => {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: error.error || "Unable to fetch cycle details",
       });

@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
@@ -99,13 +99,13 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
     if (isDateValid) {
       submitChanges(payload);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("project_cycles.action.update.success.title"),
         message: t("project_cycles.action.update.success.description"),
       });
     } else {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("project_cycles.action.update.failed.title"),
         message: t("project_cycles.action.update.error.already_exists"),
       });

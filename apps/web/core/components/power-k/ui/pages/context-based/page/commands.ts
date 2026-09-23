@@ -19,7 +19,7 @@ import {
 } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { setToast, TOAST_TYPE } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EPageAccess } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
 // components
@@ -61,7 +61,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       else addToFavorites?.();
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Some error occurred",
       });
     }
@@ -72,13 +72,13 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     copyTextToClipboard(url.href)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("power_k.contextual_actions.page.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("power_k.contextual_actions.page.copy_url_toast_error"),
         });
       });

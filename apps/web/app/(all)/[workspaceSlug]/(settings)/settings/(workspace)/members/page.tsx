@@ -11,7 +11,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { SearchOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -58,7 +58,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
       setInviteModal(false);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
@@ -69,7 +69,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         message = err.error;
       }
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });

@@ -15,7 +15,7 @@ import {
 } from "@makeplane/propel/icons";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -58,7 +58,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
 
     copyTextToClipboard(urlToCopy).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link copied!",
         message: "Work item link copied to clipboard.",
       });

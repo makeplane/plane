@@ -14,7 +14,7 @@ import { Switch } from "@makeplane/propel/components/switch";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -46,7 +46,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
     await updateInstanceInfo(payload)
       .then(() =>
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success",
           message: "Settings updated successfully",
         })

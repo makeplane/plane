@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssueLink } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // hooks
@@ -53,14 +53,14 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           await createLink(workspaceSlug, projectId, issueId, data);
           setToast({
             message: "The link has been successfully created",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Link created",
           });
           toggleIssueLinkModal(false);
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? "The link could not be created",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Link not created",
           });
           throw error;
@@ -72,14 +72,14 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           await updateLink(workspaceSlug, projectId, issueId, linkId, data);
           setToast({
             message: "The link has been successfully updated",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Link updated",
           });
           toggleIssueLinkModal(false);
         } catch (error) {
           setToast({
             message: "The link could not be updated",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Link not updated",
           });
           throw error;
@@ -91,14 +91,14 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
           await removeLink(workspaceSlug, projectId, issueId, linkId);
           setToast({
             message: "The link has been successfully removed",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Link removed",
           });
           toggleIssueLinkModal(false);
         } catch {
           setToast({
             message: "The link could not be removed",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Link not removed",
           });
         }

@@ -7,7 +7,7 @@
 import { useState } from "react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -43,7 +43,7 @@ export function ArchiveCycleModal(props: Props) {
     await archiveCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Archive success",
           message: "Your archives can be found in project archives.",
         });
@@ -53,7 +53,7 @@ export function ArchiveCycleModal(props: Props) {
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Cycle could not be archived. Please try again.",
         });

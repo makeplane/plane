@@ -11,7 +11,7 @@ import { ImageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
@@ -98,7 +98,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       ]);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "User details update failed. Please try again!",
       });

@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { TOAST_TYPE, setToast } from "@plane/blocks/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUserTheme } from "@plane/types";
 import { applyCustomTheme } from "@plane/utils";
 // components
@@ -78,7 +78,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       });
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("success"),
         message: "Reloading to apply changes...",
       });
@@ -89,7 +89,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
     } catch (error) {
       console.error("Failed to apply theme:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("error"),
         message: t("failed_to_update_the_theme"),
       });
