@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { UsageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
-import { Input } from "@makeplane/propel/components/input";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Switch } from "@makeplane/propel/components/switch";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
 // components
@@ -73,23 +73,34 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Email</h4>
             <div className="w-full">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                size="lg"
-                value={instanceAdmins[0]?.user_detail?.email ?? ""}
-                placeholder="Admin email"
-                autoComplete="on"
-                disabled
-              />
+              <InputGroup size="lg">
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  size="lg"
+                  value={instanceAdmins[0]?.user_detail?.email ?? ""}
+                  placeholder="Admin email"
+                  autoComplete="on"
+                  disabled
+                />
+              </InputGroup>
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Instance ID</h4>
             <div className="w-full">
-              <Input id="instance_id" name="instance_id" type="text" size="lg" value={instance.instance_id} disabled />
+              <InputGroup size="lg">
+                <Input
+                  id="instance_id"
+                  name="instance_id"
+                  type="text"
+                  size="lg"
+                  value={instance.instance_id}
+                  disabled
+                />
+              </InputGroup>
             </div>
           </div>
         </div>
@@ -125,7 +136,13 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               control={control}
               name="is_telemetry_enabled"
               render={({ field: { value, onChange } }) => (
-                <Switch checked={value ?? false} onCheckedChange={onChange} size="sm" disabled={isSubmitting} />
+                <Switch
+                  aria-label="Let Plane collect anonymous usage data"
+                  checked={value ?? false}
+                  onCheckedChange={onChange}
+                  size="sm"
+                  disabled={isSubmitting}
+                />
               )}
             />
           </div>
