@@ -17,7 +17,7 @@ import type {
   TGroupedIssues,
 } from "@plane/types";
 // ui
-import { Avatar } from "@plane/blocks/avatar";
+import { Avatar } from "@makeplane/propel/components/avatar";
 // components
 // constants
 // stores
@@ -165,11 +165,17 @@ const getAssigneeColumns = (member: IIssueMemberStore) => {
   const assigneeColumns: any = members.map((member) => ({
     id: member.id,
     name: member?.member__display_name || "",
-    icon: <Avatar name={member?.member__display_name} src={undefined} size="md" />,
+    icon: (
+      <Avatar
+        size="xs"
+        alt={member?.member__display_name}
+        fallback={member?.member__display_name?.[0]?.toUpperCase()}
+      />
+    ),
     payload: { assignee_ids: [member.id] },
   }));
 
-  assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
+  assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="xs" />, payload: {} });
 
   return assigneeColumns;
 };
@@ -182,7 +188,13 @@ const getCreatedByColumns = (member: IIssueMemberStore) => {
   return members.map((member) => ({
     id: member.id,
     name: member?.member__display_name || "",
-    icon: <Avatar name={member?.member__display_name} src={undefined} size="md" />,
+    icon: (
+      <Avatar
+        size="xs"
+        alt={member?.member__display_name}
+        fallback={member?.member__display_name?.[0]?.toUpperCase()}
+      />
+    ),
     payload: {},
   }));
 };
