@@ -6,6 +6,7 @@
 
 import { useEffect, useRef } from "react";
 import { EmojiPicker } from "frimousse";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type EmojiRootProps = {
@@ -17,7 +18,9 @@ type EmojiRootProps = {
 };
 
 export function EmojiRoot(props: EmojiRootProps) {
-  const { onChange, searchPlaceholder = "Search", searchDisabled = false, searchQuery, onSearchQueryChange } = props;
+  const { onChange, searchPlaceholder, searchDisabled = false, searchQuery, onSearchQueryChange } = props;
+  const { t } = useTranslation();
+  const searchLabel = searchPlaceholder ?? t("common.search.label");
   const searchWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const focusInput = () => {
@@ -42,7 +45,8 @@ export function EmojiRoot(props: EmojiRootProps) {
       <div className="sticky top-0 z-10 flex items-center justify-between gap-2 px-1.5 py-2 [&>[data-slot='emoji-picker-search-wrapper']]:flex-grow [&>[data-slot='emoji-picker-search-wrapper']]:p-0">
         <div ref={searchWrapperRef} data-slot="emoji-picker-search-wrapper" className="">
           <EmojiPicker.Search
-            placeholder={searchPlaceholder}
+            placeholder={searchLabel}
+            aria-label={searchLabel}
             disabled={searchDisabled}
             value={searchQuery ?? ""}
             onChange={(e) => onSearchQueryChange?.(e.target.value)}

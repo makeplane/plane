@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from "react";
 
 import { SearchOutline, InfoOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
@@ -15,6 +16,7 @@ import { MaterialIconList } from "./material-root";
 type IconRootProps = {
   onChange: (value: { name: string; color: string }) => void;
   defaultColor: string;
+  searchPlaceholder?: string;
   searchDisabled?: boolean;
   iconType: "material" | "lucide";
   searchQuery?: string;
@@ -22,7 +24,17 @@ type IconRootProps = {
 };
 
 export function IconRoot(props: IconRootProps) {
-  const { defaultColor, onChange, searchDisabled = false, iconType, searchQuery, onSearchQueryChange } = props;
+  const {
+    defaultColor,
+    onChange,
+    searchPlaceholder,
+    searchDisabled = false,
+    iconType,
+    searchQuery,
+    onSearchQueryChange,
+  } = props;
+  const { t } = useTranslation();
+  const searchLabel = searchPlaceholder ?? t("common.search.label");
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
   const [showHexInput, setShowHexInput] = useState(false);
@@ -53,10 +65,11 @@ export function IconRoot(props: IconRootProps) {
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
-              <SearchOutline className="absolute bottom-3 left-2.5 h-3.5 w-3.5 text-placeholder" />
+              <SearchOutline aria-hidden="true" className="absolute bottom-3 left-2.5 h-3.5 w-3.5 text-placeholder" />
 
               <input
-                placeholder="Search"
+                placeholder={searchLabel}
+                aria-label={searchLabel}
                 value={query}
                 onChange={(e) => onSearchQueryChange?.(e.target.value)}
                 className="block h-full w-full rounded-md border-[0.5px] border-none border-subtle bg-transparent p-0 px-3 py-2 text-body-md-regular placeholder-(--text-color-placeholder) focus:outline-none"

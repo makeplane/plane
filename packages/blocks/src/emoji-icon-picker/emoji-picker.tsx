@@ -127,6 +127,7 @@ export function EmojiPicker(props: EmojiPickerProps) {
             <IconRoot
               defaultColor={defaultIconColor}
               onChange={handleIconChange}
+              searchPlaceholder={resolvedSearchPlaceholder}
               searchDisabled={searchDisabled}
               iconType={iconType}
               searchQuery={searchQuery}
