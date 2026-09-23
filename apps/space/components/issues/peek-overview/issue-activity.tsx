@@ -62,9 +62,14 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
                 <LockOutline className="size-3 shrink-0" />
                 Sign in to add your comment
               </p>
-              <Link to={`/?next_path=${pathname}`}>
-                <Button variant="primary" size="sm" stretch="auto" label="Sign in" />
-              </Link>
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                nativeButton={false}
+                render={<Link to={`/?next_path=${pathname}`} />}
+                label="Sign in"
+              />
             </div>
           ))}
       </div>
