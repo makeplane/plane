@@ -23,16 +23,22 @@ export function NotAWorkspaceMember() {
             </p>
           </div>
           <div className="flex items-center justify-center gap-2">
-            <Link href="/invitations">
-              <span>
-                <Button variant="secondary" size="sm" stretch="auto" label="Check pending invites" />
-              </span>
-            </Link>
-            <Link href="/create-workspace">
-              <span>
-                <Button variant="primary" size="sm" stretch="auto" label="Create new workspace" />
-              </span>
-            </Link>
+            <Button
+              variant="secondary"
+              size="sm"
+              stretch="auto"
+              label="Check pending invites"
+              nativeButton={false}
+              render={<Link href="/invitations" />}
+            />
+            <Button
+              variant="primary"
+              size="sm"
+              stretch="auto"
+              label="Create new workspace"
+              nativeButton={false}
+              render={<Link href="/create-workspace" />}
+            />
           </div>
         </div>
       </div>
