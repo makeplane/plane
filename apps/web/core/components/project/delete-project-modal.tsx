@@ -13,7 +13,16 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
 import type { IProject } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -78,87 +87,102 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
-        <div className="flex w-full items-center justify-start gap-6">
-          <span className="place-items-center rounded-full bg-danger-subtle p-4">
-            <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
-          </span>
-          <span className="flex items-center justify-start">
-            <h3 className="text-18 font-medium 2xl:text-20">Delete project</h3>
-          </span>
-        </div>
-        <span>
-          <p className="text-13 leading-7 text-secondary">
-            Are you sure you want to delete project <span className="font-semibold break-words">{project?.name}</span>?
-            All of the data related to the project will be permanently removed. This action cannot be undone
-          </p>
-        </span>
-        <div className="text-secondary">
-          <p className="text-13 break-words">
-            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
-          </p>
-          <Controller
-            control={control}
-            name="projectName"
-            render={({ field: { value, onChange, ref } }) => (
-              <Field name="projectName" invalid={Boolean(errors.projectName)}>
-                <InputGroup size="2xl">
-                  <Input
-                    size="2xl"
-                    id="projectName"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <div className="flex w-full items-center justify-start gap-6">
+                <span className="place-items-center rounded-full bg-danger-subtle p-4">
+                  <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
+                </span>
+                <DialogHeading>
+                  <DialogTitle>Delete project</DialogTitle>
+                </DialogHeading>
+              </div>
+            </DialogHeader>
+            <DialogBody tabIndex={0}>
+              <div className="flex flex-col gap-6">
+                <p className="text-13 leading-7 text-secondary">
+                  Are you sure you want to delete project{" "}
+                  <span className="font-semibold break-words">{project?.name}</span>? All of the data related to the
+                  project will be permanently removed. This action cannot be undone
+                </p>
+                <div className="text-secondary">
+                  <p className="text-13 break-words">
+                    Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
+                    continue:
+                  </p>
+                  <Controller
+                    control={control}
                     name="projectName"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    placeholder="Project name"
-                    autoComplete="off"
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Field name="projectName" invalid={Boolean(errors.projectName)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="projectName"
+                            name="projectName"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder="Project name"
+                            autoComplete="off"
+                          />
+                        </InputGroup>
+                      </Field>
+                    )}
                   />
-                </InputGroup>
-              </Field>
-            )}
-          />
-        </div>
-        <div className="text-secondary">
-          <p className="text-13">
-            To confirm, type <span className="font-medium text-primary">delete my project</span> below:
-          </p>
-          <Controller
-            control={control}
-            name="confirmDelete"
-            render={({ field: { value, onChange, ref } }) => (
-              <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
-                <InputGroup size="2xl">
-                  <Input
-                    size="2xl"
-                    id="confirmDelete"
+                </div>
+                <div className="text-secondary">
+                  <p className="text-13">
+                    To confirm, type <span className="font-medium text-primary">delete my project</span> below:
+                  </p>
+                  <Controller
+                    control={control}
                     name="confirmDelete"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    placeholder="Enter 'delete my project'"
-                    autoComplete="off"
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
+                        <InputGroup size="2xl">
+                          <Input
+                            size="2xl"
+                            id="confirmDelete"
+                            name="confirmDelete"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            placeholder="Enter 'delete my project'"
+                            autoComplete="off"
+                          />
+                        </InputGroup>
+                      </Field>
+                    )}
                   />
-                </InputGroup>
-              </Field>
-            )}
-          />
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
-          <Button
-            variant="danger"
-            size="md"
-            stretch="auto"
-            type="submit"
-            label={isSubmitting ? "Deleting" : "Delete project"}
-            disabled={!canDelete}
-            loading={isSubmitting}
-          />
-        </div>
-      </form>
-    </ModalCore>
+                </div>
+              </div>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+            <Button
+              variant="danger"
+              size="md"
+              stretch="auto"
+              type="submit"
+              label={isSubmitting ? "Deleting" : "Delete project"}
+              disabled={!canDelete}
+              loading={isSubmitting}
+            />
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

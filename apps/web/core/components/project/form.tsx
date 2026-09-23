@@ -10,6 +10,7 @@ import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import type { TNetworkChoice } from "@plane/constants";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
@@ -19,7 +20,7 @@ import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -389,38 +390,40 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               render={({ field: { value, onChange } }) => {
                 const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
                 return (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      <div className="flex items-center gap-1">
-                        {selectedNetwork ? (
-                          <>
-                            <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
-                            {t(selectedNetwork.i18n_label)}
-                          </>
-                        ) : (
-                          <span className="text-placeholder">{t("select_network")}</span>
-                        )}
-                      </div>
-                    }
-                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
-                    input
+                  <Select<TNetworkChoice>
+                    getValues={() => NETWORK_CHOICES}
+                    value={selectedNetwork ?? null}
+                    onChange={(key) => onChange(Number(key))}
+                    getOptionValue={(network) => String(network.key)}
+                    getOptionLabel={(network) => t(network.i18n_label)}
+                    getOptionIcon={(network) => (
+                      <ProjectNetworkIcon iconKey={network.iconKey} className="mt-0.5 size-4 shrink-0" />
+                    )}
+                    getOptionDescription={(network) => t(network.description)}
+                    placeholder={t("select_network")}
+                    showSearch={false}
+                    pinSelected={false}
+                    contentSizing="anchor"
                     disabled={!isAdmin}
-                    // optionsClassName="w-full"
+                    estimateItemSize={64}
                   >
-                    {NETWORK_CHOICES.map((network) => (
-                      <CustomSelect.Option key={network.key} value={network.key}>
-                        <div className="flex items-start gap-2">
-                          <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
-                          <div className="-mt-1">
-                            <p>{t(network.i18n_label)}</p>
-                            <p className="text-11 text-placeholder">{t(network.description)}</p>
-                          </div>
-                        </div>
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
+                    <Select.Trigger<TNetworkChoice>
+                      variant="select-lg"
+                      className="font-medium"
+                      disabled={!isAdmin}
+                      prependIcon={(networks) =>
+                        networks[0] ? (
+                          <ProjectNetworkIcon iconKey={networks[0].iconKey} className="h-3.5 w-3.5" />
+                        ) : undefined
+                      }
+                    >
+                      {(networks) => (
+                        <span className="min-w-0 grow truncate text-left">
+                          {networks[0] ? t(networks[0].i18n_label) : t("select_network")}
+                        </span>
+                      )}
+                    </Select.Trigger>
+                  </Select>
                 );
               }}
             />

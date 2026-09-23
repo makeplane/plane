@@ -5,12 +5,10 @@
  */
 
 import { useEffect, useState } from "react";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
 // plane ui
 // helpers
-// hooks
-import useKeypress from "@/hooks/use-keypress";
 // plane web components
 import { CreateProjectForm } from "@/components/projects/create/root";
 // plane web types
@@ -61,26 +59,30 @@ export function CreateProjectModal(props: Props) {
     }
   };
 
-  useKeypress("Escape", () => {
-    if (isOpen) onClose();
-  });
-
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXXL}>
-      {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
-        <CreateProjectForm
-          setToFavorite={setToFavorite}
-          workspaceSlug={workspaceSlug}
-          onClose={onClose}
-          updateCoverImageStatus={handleCoverImageStatusUpdate}
-          handleNextStep={handleNextStep}
-          data={data}
-          templateId={templateId}
-        />
-      )}
-      {currentStep === EProjectCreationSteps.FEATURE_SELECTION && (
-        <ProjectFeatureUpdate projectId={createdProjectId} workspaceSlug={workspaceSlug} onClose={onClose} />
-      )}
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      disablePointerDismissal
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent size="lg">
+        {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
+          <CreateProjectForm
+            setToFavorite={setToFavorite}
+            workspaceSlug={workspaceSlug}
+            onClose={onClose}
+            updateCoverImageStatus={handleCoverImageStatusUpdate}
+            handleNextStep={handleNextStep}
+            data={data}
+            templateId={templateId}
+          />
+        )}
+        {currentStep === EProjectCreationSteps.FEATURE_SELECTION && (
+          <ProjectFeatureUpdate projectId={createdProjectId} workspaceSlug={workspaceSlug} onClose={onClose} />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

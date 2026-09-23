@@ -8,7 +8,16 @@ import { useState } from "react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -86,29 +95,41 @@ export function ArchiveRestoreProjectModal(props: Props) {
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
-      <div className="px-5 py-4">
-        <h3 className="text-18 font-medium 2xl:text-20">
-          {archive ? "Archive" : "Restore"} {projectDetails.name}
-        </h3>
-        <p className="mt-3 text-13 text-secondary">
-          {archive
-            ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project."
-            : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
-        </p>
-        <div className="mt-3 flex justify-end gap-2">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="sm">
+        <DialogMain>
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>
+                {archive ? "Archive" : "Restore"} {projectDetails.name}
+              </DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
+          <DialogBody>
+            <p className="text-13 text-secondary">
+              {archive
+                ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project."
+                : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
+            </p>
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
           <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={onClose} />
           <Button
             variant="primary"
             size="md"
             stretch="auto"
             label={archive ? (isLoading ? "Archiving" : "Archive") : isLoading ? "Restoring" : "Restore"}
-            tabIndex={1}
             onClick={archive ? handleArchiveProject : handleRestoreProject}
             loading={isLoading}
           />
-        </div>
-      </div>
-    </ModalCore>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 }
