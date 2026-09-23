@@ -8,6 +8,7 @@
   "submit": "送出",
   "cancel": "取消",
   "loading": "載入中",
+  "searching": "搜尋中…",
   "error": "錯誤",
   "success": "成功",
   "warning": "警告",
@@ -303,6 +304,9 @@
   "create_new_label": "建立新標籤",
   "label_name": "標籤名稱",
   "failed_to_create_label": "建立標籤失敗，請重試。",
+  "no_matching_labels": "沒有符合的標籤",
+  "adding_label": "新增「{name}」中",
+  "add_label_to_labels": "將「{name}」新增至標籤",
   "start_date": "開始日期",
   "end_date": "結束日期",
   "due_date": "截止日期",
@@ -619,7 +623,8 @@
       "enable": "啟用",
       "disable": "停用",
       "copy_markdown": "複製 Markdown",
-      "reply": "回覆"
+      "reply": "回覆",
+      "add_reaction": "新增表情回應"
     },
     "name": "名稱",
     "discard": "捨棄",
@@ -867,5 +872,6 @@
       "description": "將工作事項匯出為 JSON 檔案。",
       "short_description": "匯出為 JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# 個標籤} other {# 個標籤}}"
 }

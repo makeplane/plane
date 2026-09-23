@@ -8,6 +8,7 @@
   "submit": "提交",
   "cancel": "取消",
   "loading": "加载中",
+  "searching": "搜索中…",
   "error": "错误",
   "success": "成功",
   "warning": "警告",
@@ -303,6 +304,9 @@
   "create_new_label": "创建新标签",
   "label_name": "标签名称",
   "failed_to_create_label": "创建标签失败，请重试。",
+  "no_matching_labels": "没有匹配的标签",
+  "adding_label": "正在添加\"{name}\"",
+  "add_label_to_labels": "将\"{name}\"添加到标签",
   "start_date": "开始日期",
   "end_date": "结束日期",
   "due_date": "截止日期",
@@ -619,7 +623,8 @@
       "enable": "启用",
       "disable": "禁用",
       "copy_markdown": "复制Markdown",
-      "reply": "回复"
+      "reply": "回复",
+      "add_reaction": "添加表情回应"
     },
     "name": "名称",
     "discard": "放弃",
@@ -867,5 +872,6 @@
       "description": "将工作项导出为 JSON 文件。",
       "short_description": "导出为 JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# 个标签} other {# 个标签}}"
 }

@@ -8,6 +8,7 @@
   "submit": "Verzenden",
   "cancel": "Annuleren",
   "loading": "Laden",
+  "searching": "Zoeken...",
   "error": "Fout",
   "success": "Gelukt",
   "warning": "Waarschuwing",
@@ -303,6 +304,9 @@
   "create_new_label": "Nieuw label aanmaken",
   "label_name": "Labelnaam",
   "failed_to_create_label": "Aanmaken van label is mislukt. Probeer het opnieuw.",
+  "no_matching_labels": "Geen overeenkomende labels",
+  "adding_label": "\"{name}\" wordt toegevoegd",
+  "add_label_to_labels": "\"{name}\" aan labels toevoegen",
   "start_date": "Startdatum",
   "end_date": "Einddatum",
   "due_date": "Vervaldatum",
@@ -619,7 +623,8 @@
       "enable": "Inschakelen",
       "disable": "Uitschakelen",
       "copy_markdown": "Markdown kopiëren",
-      "reply": "Beantwoorden"
+      "reply": "Beantwoorden",
+      "add_reaction": "Emoji-reactie toevoegen"
     },
     "name": "Naam",
     "discard": "Verwerpen",
@@ -867,5 +872,6 @@
       "description": "Exporteer werkitems naar een JSON-bestand.",
       "short_description": "Exporteren als json"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# label} other {# labels}}"
 }

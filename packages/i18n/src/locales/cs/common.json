@@ -8,6 +8,7 @@
   "submit": "Odeslat",
   "cancel": "Zrušit",
   "loading": "Načítání",
+  "searching": "Hledání...",
   "error": "Chyba",
   "success": "Úspěch",
   "warning": "Varování",
@@ -303,6 +304,9 @@
   "create_new_label": "Vytvořit nový štítek",
   "label_name": "Název štítku",
   "failed_to_create_label": "Vytvoření štítku se nezdařilo. Zkuste to prosím znovu.",
+  "no_matching_labels": "Žádné odpovídající štítky",
+  "adding_label": "Přidávání „{name}“",
+  "add_label_to_labels": "Přidat „{name}“ do štítků",
   "start_date": "Datum začátku",
   "end_date": "Datum ukončení",
   "due_date": "Termín",
@@ -619,7 +623,8 @@
       "enable": "Povolit",
       "disable": "Zakázat",
       "copy_markdown": "Kopírovat markdown",
-      "reply": "Odpovědět"
+      "reply": "Odpovědět",
+      "add_reaction": "Přidat reakci"
     },
     "name": "Název",
     "discard": "Zahodit",
@@ -867,5 +872,6 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovat jako JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# štítek} few {# štítky} many {# štítku} other {# štítků}}"
 }

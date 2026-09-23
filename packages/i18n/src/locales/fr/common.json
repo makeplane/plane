@@ -8,6 +8,7 @@
   "submit": "Valider",
   "cancel": "Annuler",
   "loading": "Chargement",
+  "searching": "Recherche en cours...",
   "error": "Erreur",
   "success": "Succès",
   "warning": "Avertissement",
@@ -303,6 +304,9 @@
   "create_new_label": "Créer une nouvelle étiquette",
   "label_name": "Nom de l'étiquette",
   "failed_to_create_label": "Échec de la création de l'étiquette. Veuillez réessayer.",
+  "no_matching_labels": "Aucune étiquette correspondante",
+  "adding_label": "Ajout de « {name} »",
+  "add_label_to_labels": "Ajouter « {name} » aux étiquettes",
   "start_date": "Date de début",
   "end_date": "Date de fin",
   "due_date": "Date d’échéance",
@@ -619,7 +623,8 @@
       "enable": "Activer",
       "disable": "Désactiver",
       "copy_markdown": "Copier le markdown",
-      "reply": "Répondre"
+      "reply": "Répondre",
+      "add_reaction": "Ajouter une réaction"
     },
     "name": "Nom",
     "discard": "Abandonner",
@@ -867,5 +872,6 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# étiquette} many {# étiquettes} other {# étiquettes}}"
 }

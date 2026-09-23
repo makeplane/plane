@@ -8,6 +8,7 @@
   "submit": "Gönder",
   "cancel": "İptal",
   "loading": "Yükleniyor",
+  "searching": "Aranıyor...",
   "error": "Hata",
   "success": "Başarılı",
   "warning": "Uyarı",
@@ -303,6 +304,9 @@
   "create_new_label": "Yeni etiket oluştur",
   "label_name": "Etiket adı",
   "failed_to_create_label": "Etiket oluşturulamadı. Lütfen tekrar deneyin.",
+  "no_matching_labels": "Eşleşen etiket yok",
+  "adding_label": "\"{name}\" ekleniyor",
+  "add_label_to_labels": "\"{name}\" etiketlere ekle",
   "start_date": "Başlangıç tarihi",
   "end_date": "Bitiş tarihi",
   "due_date": "Son tarih",
@@ -619,7 +623,8 @@
       "enable": "Etkinleştir",
       "disable": "Devre dışı bırak",
       "copy_markdown": "Markdown'ı kopyala",
-      "reply": "Yanıtla"
+      "reply": "Yanıtla",
+      "add_reaction": "Tepki ekle"
     },
     "name": "Ad",
     "discard": "Vazgeç",
@@ -867,5 +872,6 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# etiket} other {# etiket}}"
 }

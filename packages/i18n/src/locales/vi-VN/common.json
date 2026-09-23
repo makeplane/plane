@@ -8,6 +8,7 @@
   "submit": "Gửi",
   "cancel": "Hủy",
   "loading": "Đang tải",
+  "searching": "Đang tìm kiếm...",
   "error": "Lỗi",
   "success": "Thành công",
   "warning": "Cảnh báo",
@@ -303,6 +304,9 @@
   "create_new_label": "Tạo nhãn mới",
   "label_name": "Tên nhãn",
   "failed_to_create_label": "Không thể tạo nhãn. Vui lòng thử lại.",
+  "no_matching_labels": "Không có nhãn phù hợp",
+  "adding_label": "Đang thêm \"{name}\"",
+  "add_label_to_labels": "Thêm \"{name}\" vào nhãn",
   "start_date": "Ngày bắt đầu",
   "end_date": "Ngày kết thúc",
   "due_date": "Ngày hết hạn",
@@ -619,7 +623,8 @@
       "enable": "Bật",
       "disable": "Tắt",
       "copy_markdown": "Sao chép markdown",
-      "reply": "Trả lời"
+      "reply": "Trả lời",
+      "add_reaction": "Thêm biểu cảm"
     },
     "name": "Tên",
     "discard": "Hủy bỏ",
@@ -867,5 +872,6 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# nhãn} other {# nhãn}}"
 }

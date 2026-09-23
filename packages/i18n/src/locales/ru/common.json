@@ -8,6 +8,7 @@
   "submit": "Отправить",
   "cancel": "Отменить",
   "loading": "Загрузка",
+  "searching": "Поиск...",
   "error": "Ошибка",
   "success": "Успешно",
   "warning": "Предупреждение",
@@ -303,6 +304,9 @@
   "create_new_label": "Создать новую метку",
   "label_name": "Название метки",
   "failed_to_create_label": "Не удалось создать метку. Пожалуйста, попробуйте снова.",
+  "no_matching_labels": "Нет совпадающих меток",
+  "adding_label": "Добавление «{name}»",
+  "add_label_to_labels": "Добавить «{name}» в метки",
   "start_date": "Дата начала",
   "end_date": "Дата окончания",
   "due_date": "Срок выполнения",
@@ -619,7 +623,8 @@
       "enable": "Включить",
       "disable": "Отключить",
       "copy_markdown": "Копировать markdown",
-      "reply": "Ответить"
+      "reply": "Ответить",
+      "add_reaction": "Добавить реакцию"
     },
     "name": "Название",
     "discard": "Отменить",
@@ -867,5 +872,6 @@
       "description": "Экспорт рабочих элементов в JSON-файл.",
       "short_description": "Экспорт в json"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# метка} few {# метки} many {# меток} other {# метки}}"
 }

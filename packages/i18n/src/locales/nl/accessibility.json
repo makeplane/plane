@@ -29,6 +29,19 @@
       "hide_password": "Wachtwoord verbergen",
       "close_alert": "Melding sluiten",
       "close_popover": "Pop-over sluiten"
+    },
+    "breadcrumb": {
+      "trail": "Kruimelpad",
+      "show_more": "Meer items in kruimelpad tonen"
+    },
+    "common": {
+      "more_actions": "Meer acties",
+      "remove": "Verwijderen"
+    },
+    "color_picker": {
+      "open": "Kleurkiezer openen",
+      "swatches": "Vooraf ingestelde kleuren",
+      "hex_input": "Hexkleur"
     }
   }
 }

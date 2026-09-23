@@ -8,6 +8,7 @@
   "submit": "Submit",
   "cancel": "Cancel",
   "loading": "Loading",
+  "searching": "Searching...",
   "error": "Error",
   "success": "Success",
   "warning": "Warning",
@@ -303,6 +304,9 @@
   "create_new_label": "Create new label",
   "label_name": "Label name",
   "failed_to_create_label": "Failed to create label. Please try again.",
+  "no_matching_labels": "No matching labels",
+  "adding_label": "Adding \"{name}\"",
+  "add_label_to_labels": "Add \"{name}\" to labels",
   "start_date": "Start date",
   "end_date": "End date",
   "due_date": "Due date",
@@ -619,7 +623,8 @@
       "enable": "Enable",
       "disable": "Disable",
       "copy_markdown": "Copy markdown",
-      "reply": "Reply"
+      "reply": "Reply",
+      "add_reaction": "Add reaction"
     },
     "name": "Name",
     "discard": "Discard",
@@ -867,5 +872,6 @@
       "description": "Export work items to a JSON file.",
       "short_description": "Export as json"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# label} other {# labels}}"
 }

@@ -8,6 +8,7 @@
   "submit": "제출",
   "cancel": "취소",
   "loading": "로딩 중",
+  "searching": "검색 중...",
   "error": "오류",
   "success": "성공",
   "warning": "경고",
@@ -303,6 +304,9 @@
   "create_new_label": "새 레이블 생성",
   "label_name": "레이블 이름",
   "failed_to_create_label": "레이블 생성에 실패했습니다. 다시 시도해 주세요.",
+  "no_matching_labels": "일치하는 레이블 없음",
+  "adding_label": "\"{name}\" 추가 중",
+  "add_label_to_labels": "\"{name}\"을(를) 레이블에 추가",
   "start_date": "시작 날짜",
   "end_date": "종료 날짜",
   "due_date": "마감일",
@@ -619,7 +623,8 @@
       "enable": "활성화",
       "disable": "비활성화",
       "copy_markdown": "마크다운 복사",
-      "reply": "답글"
+      "reply": "답글",
+      "add_reaction": "반응 추가"
     },
     "name": "이름",
     "discard": "폐기",
@@ -867,5 +872,6 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {레이블 #개} other {레이블 #개}}"
 }
