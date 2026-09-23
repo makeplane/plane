@@ -239,10 +239,19 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         # `<project_identifier>-<issue_identifier>` splits a path segment on its
         # last hyphen, so a UUID in that position leaves a non-numeric
         # `issue_identifier`. Filtering `sequence_id` on it raises ValueError,
-        # which surfaces as a 500 rather than a 404. isdecimal() is used over
-        # isdigit() because the latter also accepts superscript digits, which
-        # int() then rejects.
-        if not (project_identifier and issue_identifier and issue_identifier.isdecimal()):
+        # which surfaces as a 500 rather than a 404.
+        sequence_id = None
+        if project_identifier and issue_identifier:
+            try:
+                # isdecimal() rather than isdigit(), which also accepts
+                # superscript digits that int() then rejects. int() covers the
+                # remaining case: CPython refuses to convert decimal strings
+                # longer than 4300 digits.
+                sequence_id = int(issue_identifier) if issue_identifier.isdecimal() else None
+            except ValueError:
+                sequence_id = None
+
+        if sequence_id is None:
             return Response(
                 {"error": "The requested resource does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
@@ -256,7 +265,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         ).get(
             workspace__slug=slug,
             project__identifier=project_identifier,
-            sequence_id=issue_identifier,
+            sequence_id=sequence_id,
         )
         return Response(
             IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
