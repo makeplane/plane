@@ -6,10 +6,13 @@
 
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { DragDropOutline, EditOutline } from "@makeplane/propel/icons";
-import { EIconSize } from "@plane/constants";
 // plane imports
 import { StateGroupIcon } from "@plane/blocks/icons";
+import { EIconSize } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 // local imports
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -35,6 +38,8 @@ export type TStateItemTitleProps = TEnabledStateItemTitleProps | TDisabledStateI
 
 export const StateItemTitle = observer(function StateItemTitle(props: TStateItemTitleProps) {
   const { stateCount, setUpdateStateModal, disabled, state, shouldShowDescription = true } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getStatePercentageInGroup } = useProjectState();
   // derived values
@@ -72,12 +77,14 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           </div>
           {/* state edit options */}
           <div className="flex items-center gap-1 transition-all">
-            <button
-              className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm text-secondary transition-colors hover:bg-layer-1 hover:text-primary"
+            <IconButton
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-label={t("common.actions.edit")}
               onClick={() => setUpdateStateModal(true)}
-            >
-              <EditOutline className="h-3 w-3" />
-            </button>
+              icon={<Icon icon={EditOutline} />}
+            />
             <StateDelete
               totalStates={stateCount}
               state={state}

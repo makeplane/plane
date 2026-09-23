@@ -103,9 +103,6 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
     });
-    void updateProjectPromise.then(() => {
-      return undefined;
-    });
   };
 
   return (
