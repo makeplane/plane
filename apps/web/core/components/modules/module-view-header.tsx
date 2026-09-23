@@ -105,13 +105,13 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           <IconButton
             variant="ghost"
             size="md"
-            render={<button className="p- -mr-1" />}
+            render={<button className="-mr-1" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
             icon={<Icon icon={SearchOutline} />}
-            aria-label="Search"
+            aria-label={t("common.search.label")}
           />
         )}
         <div
