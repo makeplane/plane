@@ -180,7 +180,9 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     });
   }, [projectPublishSettings, reset]);
 
-  const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
+  const SPACE_APP_URL =
+    (SPACE_BASE_URL.trim() === "" && typeof window !== "undefined" ? window.location.origin : SPACE_BASE_URL) +
+    SPACE_BASE_PATH;
   const publishLink = `${SPACE_APP_URL}/issues/${projectPublishSettings?.anchor}`;
 
   const handleCopyLink = () =>
