@@ -69,13 +69,11 @@ export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerK
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      // Cmd/Ctrl+K closes palette
+      // Cmd/Ctrl+K is toggled by the document-level ShortcutHandler, which this event still
+      // reaches. Preventing the default only keeps cmdk's Ctrl+K vim binding from moving the
+      // selection first.
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        // The Dialog is portaled, so this stops the native event at the portal container
-        // before the document-level ShortcutHandler can re-open the palette.
-        e.stopPropagation();
-        onClose();
         return;
       }
 
