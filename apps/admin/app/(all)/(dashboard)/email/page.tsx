@@ -76,7 +76,13 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
             <Skeleton.Item width="24px" height="16px" className="rounded-full" />
           </Skeleton>
         ) : (
-          <Switch aria-label="Enable SMTP email" checked={isSMTPEnabled} onCheckedChange={handleToggle} size="sm" disabled={isSubmitting} />
+          <Switch
+            aria-label="Enable SMTP email"
+            checked={isSMTPEnabled}
+            onCheckedChange={handleToggle}
+            size="sm"
+            disabled={isSubmitting}
+          />
         ),
       }}
     >
