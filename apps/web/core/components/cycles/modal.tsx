@@ -10,12 +10,11 @@ import { mutate } from "swr";
 import { setToast } from "@plane/blocks/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 // hooks
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
-import useKeypress from "@/hooks/use-keypress";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -178,21 +177,27 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
       setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
   }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
-  useKeypress("Escape", () => {
-    if (isOpen) handleClose();
-  });
-
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <CycleForm
-        handleFormSubmit={handleFormSubmit}
-        handleClose={handleClose}
-        status={!!data}
-        projectId={activeProject ?? ""}
-        setActiveProject={setActiveProject}
-        data={data}
-        isMobile={isMobile}
-      />
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      // The legacy modal shell had no `handleClose`, so an outside press never dismissed it and
+      // Escape came from `useKeypress`; Base UI's own Escape now reaches the same handler.
+      disablePointerDismissal
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <CycleForm
+          handleFormSubmit={handleFormSubmit}
+          handleClose={handleClose}
+          status={!!data}
+          projectId={activeProject ?? ""}
+          setActiveProject={setActiveProject}
+          data={data}
+          isMobile={isMobile}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

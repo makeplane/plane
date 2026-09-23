@@ -14,9 +14,21 @@ import {
   TransferWorkItemOutline,
   WarningCircleOutline,
 } from "@makeplane/propel/icons";
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogCloseGroup,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import { EIssuesStoreType } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 
@@ -30,6 +42,8 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   const { isOpen, handleClose, cycleId } = props;
   // states
   const [query, setQuery] = useState("");
+  // plane hooks
+  const { t } = useTranslation();
 
   // store hooks
   const { currentProjectIncompleteCycleIds, getCycleById, fetchActiveCycleProgress } = useCycle();
@@ -82,70 +96,87 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   });
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <div className="flex flex-col gap-4 py-5">
-        <div className="flex items-center justify-between px-5">
-          <div className="flex items-center gap-1">
-            <TransferWorkItemOutline className="w-5 fill-primary" />
-            <h4 className="text-18 font-medium text-primary">Transfer work items</h4>
-          </div>
-          <button onClick={handleClose}>
-            <CloseOutline className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="flex items-center gap-2 border-b border-subtle px-5 pb-3">
-          <SearchOutline className="h-4 w-4 text-secondary" />
-          <input
-            className="text-13 outline-none"
-            placeholder="Search for a cycle..."
-            onChange={(e) => setQuery(e.target.value)}
-            value={query}
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <DialogCloseGroup>
+          <IconButton
+            variant="ghost"
+            size="xs"
+            aria-label={t("close")}
+            icon={<CloseOutline />}
+            render={<DialogClose />}
           />
-        </div>
-        <div className="flex w-full flex-col items-start gap-2 px-5">
-          {filteredOptions ? (
-            filteredOptions.length > 0 ? (
-              filteredOptions.map((optionId) => {
-                const cycleDetails = getCycleById(optionId);
+        </DialogCloseGroup>
+        <DialogMain>
+          <DialogHeader>
+            <div className="flex items-center gap-1">
+              <TransferWorkItemOutline className="w-5 fill-primary" />
+              <DialogHeading>
+                <DialogTitle>Transfer work items</DialogTitle>
+              </DialogHeading>
+            </div>
+          </DialogHeader>
+          <div className="flex items-center gap-2 border-b border-subtle pb-3">
+            <SearchOutline className="h-4 w-4 text-secondary" />
+            <input
+              className="text-13 outline-none"
+              placeholder="Search for a cycle..."
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+            />
+          </div>
+          <DialogBody tabIndex={0}>
+            <div className="flex w-full flex-col items-start gap-2">
+              {filteredOptions ? (
+                filteredOptions.length > 0 ? (
+                  filteredOptions.map((optionId) => {
+                    const cycleDetails = getCycleById(optionId);
 
-                if (!cycleDetails) return;
+                    if (!cycleDetails) return;
 
-                return (
-                  <button
-                    key={optionId}
-                    className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
-                    onClick={() => {
-                      transferIssue({
-                        new_cycle_id: optionId,
-                      });
-                      handleClose();
-                    }}
-                  >
-                    <CyclesOutline className="h-5 w-5" />
-                    <div className="flex w-full justify-between truncate">
-                      <span className="truncate">{cycleDetails?.name}</span>
-                      {cycleDetails.status && (
-                        <span className="flex flex-shrink-0 items-center rounded-full bg-layer-1 px-2 capitalize">
-                          {cycleDetails.status.toLocaleLowerCase()}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })
-            ) : (
-              <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
-                <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
-                <span className="text-center text-secondary">
-                  You don’t have any current cycle. Please create one to transfer the work items.
-                </span>
-              </div>
-            )
-          ) : (
-            <p className="text-center text-secondary">Loading...</p>
-          )}
-        </div>
-      </div>
-    </ModalCore>
+                    return (
+                      <button
+                        key={optionId}
+                        className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
+                        onClick={() => {
+                          transferIssue({
+                            new_cycle_id: optionId,
+                          });
+                          handleClose();
+                        }}
+                      >
+                        <CyclesOutline className="h-5 w-5" />
+                        <div className="flex w-full justify-between truncate">
+                          <span className="truncate">{cycleDetails?.name}</span>
+                          {cycleDetails.status && (
+                            <span className="flex flex-shrink-0 items-center rounded-full bg-layer-1 px-2 capitalize">
+                              {cycleDetails.status.toLocaleLowerCase()}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
+                    <WarningCircleOutline className="h-3.5 w-3.5 text-secondary" />
+                    <span className="text-center text-secondary">
+                      You don’t have any current cycle. Please create one to transfer the work items.
+                    </span>
+                  </div>
+                )
+              ) : (
+                <p className="text-center text-secondary">Loading...</p>
+              )}
+            </div>
+          </DialogBody>
+        </DialogMain>
+      </DialogContent>
+    </Dialog>
   );
 });
