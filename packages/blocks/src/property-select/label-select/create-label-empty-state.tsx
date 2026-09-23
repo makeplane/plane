@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -37,7 +37,7 @@ export function CreateLabelEmptyState({ query, canCreate, onCreateLabel, onCreat
   // select context
   const { close } = useSelectContext();
 
-  const handleCreate = useCallback(async () => {
+  const handleCreate = async () => {
     if (isCreating || !onCreateLabel) return;
     try {
       setIsCreating(true);
@@ -53,7 +53,10 @@ export function CreateLabelEmptyState({ query, canCreate, onCreateLabel, onCreat
     } finally {
       setIsCreating(false);
     }
-  }, [isCreating, onCreateLabel, query, onCreated, close, t]);
+  };
+
+  // Reads the latest query and callbacks without re-subscribing the Enter listener on every keystroke.
+  const onEnterKey = useEffectEvent(() => void handleCreate());
 
   useEffect(() => {
     if (!canCreate || !onCreateLabel || isCreating) return;
@@ -61,11 +64,11 @@ export function CreateLabelEmptyState({ query, canCreate, onCreateLabel, onCreat
       if (e.key !== "Enter") return;
       e.preventDefault();
       e.stopPropagation();
-      void handleCreate();
+      onEnterKey();
     };
     document.addEventListener("keydown", handleKeyDown, true);
     return () => document.removeEventListener("keydown", handleKeyDown, true);
-  }, [canCreate, onCreateLabel, handleCreate, isCreating, query]);
+  }, [canCreate, onCreateLabel, isCreating]);
 
   if (!canCreate || !onCreateLabel) {
     return <div className="px-2 py-1.5 text-body-xs-regular text-secondary">{t("no_matching_labels")}</div>;
