@@ -9,7 +9,8 @@ import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ProjectsOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

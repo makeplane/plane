@@ -25,7 +25,8 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
 import { Header } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // components
@@ -138,7 +139,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2">
-            <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+            <Breadcrumbs isLoading={loader === "init-loader"}>
               <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
               <Breadcrumbs.Item
                 component={

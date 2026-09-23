@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import { MultipleStickyOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane ui
 import { WorkItemsOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -17,13 +17,11 @@ import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 
 export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();
   // store hooks
   const { getProjectById, loader } = useProject();
@@ -40,7 +38,7 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+        <Breadcrumbs isLoading={loader === "init-loader"}>
           <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={

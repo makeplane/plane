@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { AnalyticsOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

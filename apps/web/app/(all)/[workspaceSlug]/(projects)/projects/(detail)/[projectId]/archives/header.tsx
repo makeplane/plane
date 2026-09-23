@@ -10,14 +10,13 @@ import { ArchiveOutline, CyclesOutline, ModuleOutline, WorkItemsOutline } from "
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
@@ -53,7 +52,6 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
 export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
   const { activeTab } = props;
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
@@ -72,7 +70,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          <Breadcrumbs isLoading={loader === "init-loader"}>
             <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={

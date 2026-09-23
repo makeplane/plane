@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@makeplane/propel/elements/button";
 import { ModuleOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -21,13 +21,11 @@ import { ModuleViewHeader } from "@/components/modules";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
@@ -47,7 +45,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          <Breadcrumbs isLoading={loader === "init-loader"}>
             <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={

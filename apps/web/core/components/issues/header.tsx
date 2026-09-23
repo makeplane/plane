@@ -15,7 +15,7 @@ import { Button } from "@makeplane/propel/elements/button";
 import { NewTabOutline, WorkItemsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -28,14 +28,12 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 
 export const IssuesHeader = observer(function IssuesHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
@@ -65,7 +63,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
     <Header>
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
+          <Breadcrumbs isLoading={loader === "init-loader"} className="flex-grow-0">
             <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={

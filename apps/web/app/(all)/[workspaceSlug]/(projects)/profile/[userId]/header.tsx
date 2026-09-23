@@ -11,7 +11,7 @@ import { ChevronDownOutline, RightSidePaneOutline, YourWorkOutline } from "@make
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { CustomMenu } from "@plane/blocks/dropdowns";
 import { Header } from "@plane/blocks/layout";
 // components

@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { CyclesOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

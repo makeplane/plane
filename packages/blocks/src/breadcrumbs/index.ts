@@ -4,5 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export * from "./breadcrumbs";
 export * from "./navigation-search-dropdown";

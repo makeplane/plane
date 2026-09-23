@@ -20,7 +20,8 @@ import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

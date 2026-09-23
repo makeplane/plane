@@ -15,7 +15,7 @@ import { PagesOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { TPage } from "@plane/types";
 // plane ui
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // helpers
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

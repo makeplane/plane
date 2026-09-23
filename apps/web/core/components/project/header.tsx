@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@makeplane/propel/elements/button";
 import { ProjectsOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs } from "@plane/blocks/breadcrumbs";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
