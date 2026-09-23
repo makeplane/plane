@@ -27,7 +27,7 @@ import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { setToast } from "@plane/blocks/toast";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
-import { Select } from "@plane/blocks/select";
+import { Select, SelectDropdownPlacementContext } from "@plane/blocks/select";
 import { Spinner } from "@plane/blocks/spinner";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -73,6 +73,8 @@ const roleOptions: TRoleOption[] = Object.entries(ROLE_DETAILS).map(([key, detai
   i18n_title: details.i18n_title,
   i18n_description: details.i18n_description,
 }));
+// legacy role picker opened at bottom-end (right-column trigger), so align the panel to its end edge
+const ROLE_SELECT_PLACEMENT = { side: "bottom", align: "end" } as const;
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const placeholderEmails = [
@@ -170,30 +172,32 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             name={`emails.${index}.role`}
             rules={{ required: true }}
             render={({ field: { value, onChange } }) => (
-              <Select<TRoleOption>
-                value={roleOptions.find((role) => role.key === value) ?? null}
-                onChange={(val) => {
-                  onChange(Number(val) as EUserPermissions);
-                  setValue(`emails.${index}.role_active`, true);
-                }}
-                getValues={() => roleOptions}
-                getOptionValue={(role) => String(role.key)}
-                getOptionLabel={(role) => t(role.i18n_title)}
-                getOptionDescription={(role) => t(role.i18n_description)}
-                showSearch={false}
-                pinSelected={false}
-              >
-                <Select.Trigger<TRoleOption> variant="select-2xl">
-                  <span
-                    className={cn(
-                      "min-w-0 flex-1 truncate text-left text-13",
-                      getValues(`emails.${index}.role_active`) ? "text-primary" : "text-placeholder"
-                    )}
-                  >
-                    {ROLE[value]}
-                  </span>
-                </Select.Trigger>
-              </Select>
+              <SelectDropdownPlacementContext.Provider value={ROLE_SELECT_PLACEMENT}>
+                <Select<TRoleOption>
+                  value={roleOptions.find((role) => role.key === value) ?? null}
+                  onChange={(val) => {
+                    onChange(Number(val) as EUserPermissions);
+                    setValue(`emails.${index}.role_active`, true);
+                  }}
+                  getValues={() => roleOptions}
+                  getOptionValue={(role) => String(role.key)}
+                  getOptionLabel={(role) => t(role.i18n_title)}
+                  getOptionDescription={(role) => t(role.i18n_description)}
+                  showSearch={false}
+                  pinSelected={false}
+                >
+                  <Select.Trigger<TRoleOption> variant="select-2xl">
+                    <span
+                      className={cn(
+                        "min-w-0 flex-1 truncate text-left text-13",
+                        getValues(`emails.${index}.role_active`) ? "text-primary" : "text-placeholder"
+                      )}
+                    >
+                      {ROLE[value]}
+                    </span>
+                  </Select.Trigger>
+                </Select>
+              </SelectDropdownPlacementContext.Provider>
             )}
           />
         </div>
