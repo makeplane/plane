@@ -17,11 +17,40 @@ import {
 } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { createCopyMenuWithDuplication } from "./copy-menu-helper";
+
+/**
+ * The quick-action menus sit inside clickable rows (ControlLink anchors, row `onClick`s). The legacy
+ * menu's root swallowed clicks for them; Propel's `Menu` renders no element, so the trigger carries
+ * the guard (click + Enter/Space) and the portalled popup stops item clicks from bubbling up the React
+ * tree to the row. Base UI still runs its own trigger handler, so the menu opens as before.
+ */
+export const quickActionTriggerGuard = {
+  onClick: (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  },
+  onKeyDown: (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+  },
+};
+
+/**
+ * `MenuTrigger` defaults to `nativeButton`, so a caller's `customActionButton` that isn't a real
+ * `<button>` (e.g. a `<div>`) would get no role/tabIndex and trip Base UI's native-button check.
+ * Returns the `nativeButton` flag for the rendered trigger: true for the IconButton fallback and
+ * `<button>` elements, false otherwise so Base UI adds `role="button"` + `tabIndex` + key handling.
+ */
+export const isNativeQuickActionTrigger = (customActionButton: React.ReactElement | undefined) =>
+  !customActionButton || customActionButton.type === "button";
+
+export const stopQuickActionPropagation = (e: React.SyntheticEvent) => {
+  e.stopPropagation();
+};
 
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters
@@ -51,7 +80,7 @@ export function handleOptionalAction<T>(
     }
   } else {
     setToast({
-      type: TOAST_TYPE.ERROR,
+      type: "error",
       title: "Action not available",
       message: `${actionName} action is not implemented.`,
     });
@@ -106,7 +135,7 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(workItemLink).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link copied",
         message: "Work item link copied to clipboard",
       })
@@ -123,14 +152,14 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
       // oxlint-disable-next-line promise/always-return
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Restore success",
           message: "Your work item can be found in project work items.",
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Work item could not be restored. Please try again.",
         });
@@ -234,8 +263,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     title: t("common.actions.archive"),
     description: isInArchivableGroup ? undefined : t("issue.archive.description"),
     icon: ArchiveOutline,
-    className: "items-start",
-    iconClassName: "mt-1",
     action: () => handleOptionalAction(setArchiveIssueModal, "Archive", true),
     disabled: !isInArchivableGroup,
     shouldRender: isArchivingAllowed,

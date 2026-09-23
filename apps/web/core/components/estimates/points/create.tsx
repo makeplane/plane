@@ -10,10 +10,10 @@ import { observer } from "mobx-react";
 import { CloseOutline, InfoOutline, TickOutline } from "@makeplane/propel/icons";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { Spinner } from "@plane/ui";
+import { Spinner } from "@plane/blocks/spinner";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
@@ -123,7 +123,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
               setLoader(false);
               handleEstimatePointError && handleEstimatePointError(estimateInputValue, undefined, "delete");
               setToast({
-                type: TOAST_TYPE.SUCCESS,
+                type: "success",
                 title: t("project_settings.estimates.toasts.created.success.title"),
                 message: t("project_settings.estimates.toasts.created.success.message"),
               });
@@ -136,7 +136,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
                   t("project_settings.estimates.validation.unable_to_process")
                 );
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("project_settings.estimates.toasts.created.error.title"),
                 message: t("project_settings.estimates.toasts.created.error.message"),
               });

@@ -10,7 +10,7 @@ import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { AddOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -61,7 +61,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
           .create(currentFile)
           .catch(() => {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: "Error!",
               message: "File could not be attached. Try uploading again.",
             });
@@ -75,7 +75,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
       }
 
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message:
           totalAttachedFiles > 1

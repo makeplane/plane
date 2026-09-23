@@ -6,7 +6,7 @@
 
 import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TProjectLink } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 
@@ -43,7 +43,7 @@ export const useLinks = (workspaceSlug: string) => {
           await createLink(workspaceSlug, data);
           setToast({
             message: t("links.toasts.created.message"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("links.toasts.created.title"),
           });
           toggleLinkModal(false);
@@ -51,7 +51,7 @@ export const useLinks = (workspaceSlug: string) => {
           console.error("error", error?.data?.error);
           setToast({
             message: error?.data?.error ?? t("links.toasts.not_created.message"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("links.toasts.not_created.title"),
           });
           throw error;
@@ -63,14 +63,14 @@ export const useLinks = (workspaceSlug: string) => {
           await updateLink(workspaceSlug, linkId, data);
           setToast({
             message: t("links.toasts.updated.message"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("links.toasts.updated.title"),
           });
           toggleLinkModal(false);
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? t("links.toasts.not_updated.message"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("links.toasts.not_updated.title"),
           });
           throw error;
@@ -82,13 +82,13 @@ export const useLinks = (workspaceSlug: string) => {
           await removeLink(workspaceSlug, linkId);
           setToast({
             message: t("links.toasts.removed.message"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("links.toasts.removed.message"),
           });
         } catch (error: any) {
           setToast({
             message: error?.data?.error ?? t("links.toasts.not_removed.message"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("links.toasts.not_removed.title"),
           });
         }

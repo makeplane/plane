@@ -7,16 +7,21 @@
 import { observer } from "mobx-react";
 // plane imports
 import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Select, SelectDropdownPlacementContext } from "@plane/blocks/select";
+import { setToast } from "@plane/blocks/toast";
 import type { EStartOfTheWeek } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
 // components
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-const getStartOfWeekLabel = (startOfWeek: EStartOfTheWeek) =>
-  START_OF_THE_WEEK_OPTIONS.find((option) => option.value === startOfWeek)?.label;
+type TStartOfWeekOption = (typeof START_OF_THE_WEEK_OPTIONS)[number];
+
+const getStartOfWeekOption = (startOfWeek: EStartOfTheWeek) =>
+  START_OF_THE_WEEK_OPTIONS.find((option) => option.value === startOfWeek) ?? null;
+
+// The dropdown opens flush with the control's right edge, as `placement="bottom-end"` did.
+const DROPDOWN_PLACEMENT = { side: "bottom", align: "end" } as const;
 
 export const StartOfWeekPreference = observer(function StartOfWeekPreference(props: {
   option: { title: string; description: string };
@@ -27,34 +32,36 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
   const handleStartOfWeekChange = async (val: number) => {
     try {
       await updateUserProfile({ start_of_the_week: val });
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Success", message: "First day of the week updated successfully" });
+      setToast({ type: "success", title: "Success", message: "First day of the week updated successfully" });
     } catch (_error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
+      setToast({ type: "error", title: "Update failed", message: "Please try again later." });
     }
   };
+
+  // derived values
+  const selectedOption = getStartOfWeekOption(userProfile.start_of_the_week);
 
   return (
     <SettingsControlItem
       title={props.option.title}
       description={props.option.description}
       control={
-        <CustomSelect
-          value={userProfile.start_of_the_week}
-          label={getStartOfWeekLabel(userProfile.start_of_the_week)}
-          onChange={handleStartOfWeekChange}
-          buttonClassName="border border-subtle-1"
-          input
-          maxHeight="lg"
-          placement="bottom-end"
-        >
-          <>
-            {START_OF_THE_WEEK_OPTIONS.map((day) => (
-              <CustomSelect.Option key={day.value} value={day.value}>
-                {day.label}
-              </CustomSelect.Option>
-            ))}
-          </>
-        </CustomSelect>
+        <SelectDropdownPlacementContext.Provider value={DROPDOWN_PLACEMENT}>
+          <Select<TStartOfWeekOption>
+            getValues={() => START_OF_THE_WEEK_OPTIONS}
+            value={selectedOption}
+            onChange={(val) => void handleStartOfWeekChange(Number(val))}
+            getOptionValue={(option) => String(option.value)}
+            getOptionLabel={(option) => option.label}
+            showSearch={false}
+            pinSelected={false}
+            contentSizing="anchor"
+          >
+            <Select.Trigger<TStartOfWeekOption> variant="select-md" className="w-42 max-w-full border-subtle-1">
+              {(options) => <span className="min-w-0 grow truncate text-left">{options[0]?.label}</span>}
+            </Select.Trigger>
+          </Select>
+        </SelectDropdownPlacementContext.Provider>
       }
     />
   );

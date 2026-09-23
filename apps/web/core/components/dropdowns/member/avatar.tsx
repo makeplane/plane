@@ -7,13 +7,11 @@
 import { observer } from "mobx-react";
 import type { ComponentType, SVGProps } from "react";
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
 import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
 import { MembersOutline } from "@makeplane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
-// plane utils
-// helpers
 // hooks
-import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { useMember } from "@/hooks/store/use-member";
 
 type AvatarProps = {
@@ -23,29 +21,34 @@ type AvatarProps = {
   size?: AvatarGroupSize;
 };
 
+const MAX_GROUP_AVATARS = 2;
+
 export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
-  const { userIds, icon: Icon, size = "xs" } = props;
+  const { showTooltip, userIds, icon: Icon, size = "xs" } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
   if (Array.isArray(userIds)) {
-    if (userIds.length > 0)
+    // Count only members that resolve, as the legacy overflow did: an id missing from the member map
+    // (not loaded yet, or no longer a member) must neither inflate the "+N" nor hide a face after it.
+    const members = userIds.flatMap((userId) => {
+      const userDetails = getUserDetails(userId);
+      return userDetails ? [{ userId, userDetails }] : [];
+    });
+    if (members.length > 0)
+      // Render at most `max + 1` avatars: `AvatarGroup` shows the extra face only when it replaces a "+1" and
+      // counts the rest from `total`. The parent's own tooltip replaces the per-avatar name tooltips.
       return (
-        <AvatarGroupOverflow size={size}>
-          {userIds.map((userId) => {
-            const userDetails = getUserDetails(userId);
-
-            if (!userDetails) return;
-            return (
-              <Avatar
-                key={userId}
-                src={getFileURL(userDetails.avatar_url)}
-                alt={userDetails.display_name}
-                fallback={userDetails.display_name?.[0]?.toUpperCase()}
-              />
-            );
-          })}
-        </AvatarGroupOverflow>
+        <AvatarGroup size={size} max={MAX_GROUP_AVATARS} total={members.length}>
+          {members.slice(0, MAX_GROUP_AVATARS + 1).map(({ userId, userDetails }) => (
+            <Avatar
+              key={userId}
+              src={getFileURL(userDetails.avatar_url)}
+              alt={userDetails.display_name}
+              tooltip={!showTooltip}
+            />
+          ))}
+        </AvatarGroup>
       );
   } else {
     if (userIds) {
@@ -54,8 +57,8 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
         <Avatar
           src={getFileURL(userDetails?.avatar_url ?? "")}
           alt={userDetails?.display_name}
-          fallback={userDetails?.display_name?.[0]?.toUpperCase()}
           size={size}
+          tooltip={!showTooltip}
         />
       );
     }

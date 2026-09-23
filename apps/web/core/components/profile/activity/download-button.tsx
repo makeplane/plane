@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 // services
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // helpers
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { UserService } from "@/services/user.service";
@@ -58,8 +58,15 @@ export function DownloadActivityButton() {
   };
 
   return (
-    <Button onClick={handleDownload} loading={isDownloading}>
-      {isDownloading ? t("profile.stats.recent_activity.button_loading") : t("profile.stats.recent_activity.button")}
-    </Button>
+    <Button
+      variant="primary"
+      size="sm"
+      stretch="auto"
+      label={
+        isDownloading ? t("profile.stats.recent_activity.button_loading") : t("profile.stats.recent_activity.button")
+      }
+      onClick={handleDownload}
+      loading={isDownloading}
+    />
   );
 }

@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 import { DeleteOutline, EditOutline, LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { LinkItemBlock } from "@plane/ui";
+import { setToast } from "@plane/blocks/toast";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { LinkItemBlock } from "./link-item-block";
 // plane utils
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -49,7 +49,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
     if (!linkUrl) return;
     copyTextToClipboard(linkUrl).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("link_copied"),
         message: t("view_link_copied_to_clipboard"),
       });

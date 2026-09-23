@@ -15,7 +15,7 @@ import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { Skeleton } from "@/components/common/skeleton";
-import { setPromiseToast } from "@/providers/toast";
+import { setPromiseToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -74,6 +74,7 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
           icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
           config={
             <Switch
+              aria-label="Enable Gitea authentication"
               checked={isGiteaEnabled}
               onCheckedChange={() => {
                 updateConfig("IS_GITEA_ENABLED", isGiteaEnabled ? "0" : "1");

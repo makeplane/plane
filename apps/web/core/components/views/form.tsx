@@ -13,8 +13,16 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { Button } from "@makeplane/propel/components/button";
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { ViewsOutline } from "@makeplane/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
@@ -106,203 +114,220 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(handleCreateUpdateView)}>
-      <div className="space-y-5 p-5">
-        <h3 className="text-18 font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
-        <div className="space-y-3">
-          <div className="flex w-full items-start gap-2">
-            <EmojiPicker
-              iconType="lucide"
-              isOpen={isOpen}
-              handleToggle={(val: boolean) => setIsOpen(val)}
-              className="flex-shrink0 flex items-center justify-center"
-              buttonClassName="flex items-center justify-center"
-              label={
-                <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
-                  <>
-                    {logoValue?.in_use ? (
-                      <Logo logo={logoValue} size={18} type="lucide" />
-                    ) : (
-                      <ViewsOutline className="h-4 w-4 text-tertiary" />
-                    )}
-                  </>
-                </span>
-              }
-              // TODO: fix types
-              onChange={(val: any) => {
-                // oxlint-disable-next-line no-shadow
-                let logoValue = {};
+    <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit(handleCreateUpdateView)}>
+      <DialogMain>
+        <DialogHeader>
+          <DialogHeading>
+            <DialogTitle>{data ? t("view.update.label") : t("view.create.label")}</DialogTitle>
+          </DialogHeading>
+        </DialogHeader>
+        <DialogBody tabIndex={0}>
+          <div className="space-y-3">
+            <div className="flex w-full items-start gap-2">
+              <EmojiPicker
+                iconType="lucide"
+                isOpen={isOpen}
+                handleToggle={(val: boolean) => setIsOpen(val)}
+                className="flex-shrink0 flex items-center justify-center"
+                buttonClassName="flex items-center justify-center"
+                label={
+                  <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
+                    <>
+                      {logoValue?.in_use ? (
+                        <Logo logo={logoValue} size={18} type="lucide" />
+                      ) : (
+                        <ViewsOutline className="h-4 w-4 text-tertiary" />
+                      )}
+                    </>
+                  </span>
+                }
+                // TODO: fix types
+                onChange={(val: any) => {
+                  // oxlint-disable-next-line no-shadow
+                  let logoValue = {};
 
-                if (val?.type === "emoji")
-                  logoValue = {
-                    value: val.value,
-                  };
-                else if (val?.type === "icon") logoValue = val.value;
+                  if (val?.type === "emoji")
+                    logoValue = {
+                      value: val.value,
+                    };
+                  else if (val?.type === "icon") logoValue = val.value;
 
-                setValue("logo_props", {
-                  in_use: val?.type,
-                  [val?.type]: logoValue,
-                });
-                setIsOpen(false);
-              }}
-              defaultIconColor={logoValue?.in_use && logoValue?.in_use === "icon" ? logoValue?.icon?.color : undefined}
-              defaultOpen={
-                logoValue?.in_use && logoValue?.in_use === "emoji"
-                  ? EmojiIconPickerTypes.EMOJI
-                  : EmojiIconPickerTypes.ICON
-              }
-            />
-            <div className="flew-grow w-full space-y-1">
-              <Controller
-                control={control}
-                name="name"
-                rules={{
-                  required: t("form.title.required"),
-                  maxLength: {
-                    value: 255,
-                    message: t("form.title.max_length", { length: 255 }),
-                  },
+                  setValue("logo_props", {
+                    in_use: val?.type,
+                    [val?.type]: logoValue,
+                  });
+                  setIsOpen(false);
                 }}
+                defaultIconColor={
+                  logoValue?.in_use && logoValue?.in_use === "icon" ? logoValue?.icon?.color : undefined
+                }
+                defaultOpen={logoValue?.in_use && logoValue?.in_use === "emoji" ? "emoji" : "icon"}
+              />
+              <div className="flew-grow w-full space-y-1">
+                <Controller
+                  control={control}
+                  name="name"
+                  rules={{
+                    required: t("form.title.required"),
+                    maxLength: {
+                      value: 255,
+                      message: t("form.title.max_length", { length: 255 }),
+                    },
+                  }}
+                  render={({ field: { value, onChange } }) => (
+                    <Field name="name" invalid={Boolean(errors.name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="name"
+                          type="name"
+                          name="name"
+                          value={value}
+                          onChange={onChange}
+                          placeholder={t("common.title")}
+                          tabIndex={getIndex("name")}
+                          // oxlint-disable-next-line jsx_a11y/no-autofocus
+                          autoFocus
+                        />
+                      </InputGroup>
+                    </Field>
+                  )}
+                />
+                <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
+              </div>
+            </div>
+            <div>
+              <Controller
+                name="description"
+                control={control}
                 render={({ field: { value, onChange } }) => (
-                  <Field name="name" invalid={Boolean(errors.name)}>
-                    <InputGroup size="2xl">
-                      <Input
-                        size="2xl"
-                        id="name"
-                        type="name"
-                        name="name"
+                  <Field name="description" invalid={Boolean(errors?.description)}>
+                    <TextAreaGroup resize="none">
+                      <TextArea
+                        size="lg"
+                        surface="field"
+                        autoResize
+                        maxRows={8}
+                        id="description"
+                        name="description"
+                        placeholder={t("common.description")}
                         value={value}
                         onChange={onChange}
-                        placeholder={t("common.title")}
-                        tabIndex={getIndex("name")}
-                        // oxlint-disable-next-line jsx_a11y/no-autofocus
-                        autoFocus
+                        tabIndex={getIndex("descriptions")}
                       />
-                    </InputGroup>
+                    </TextAreaGroup>
                   </Field>
                 )}
               />
-              <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
+            </div>
+            <div className="flex gap-2">
+              <Controller
+                control={control}
+                name="display_filters"
+                render={({ field: { onChange: onDisplayFiltersChange, value: displayFilters } }) => (
+                  <>
+                    {/* layout dropdown */}
+                    <LayoutDropDown
+                      onChange={(selectedValue: EIssueLayoutTypes) =>
+                        onDisplayFiltersChange({
+                          ...displayFilters,
+                          layout: selectedValue,
+                        })
+                      }
+                      value={displayFilters.layout}
+                    />
+                    {/* display filters dropdown */}
+                    <Controller
+                      control={control}
+                      name="display_properties"
+                      render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
+                        <FiltersDropdown title={t("common.display")}>
+                          <DisplayFiltersSelection
+                            layoutDisplayFiltersOptions={
+                              ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[displayFilters.layout]
+                            }
+                            displayFilters={displayFilters ?? {}}
+                            handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+                              onDisplayFiltersChange({
+                                ...displayFilters,
+                                ...updatedDisplayFilter,
+                              });
+                            }}
+                            displayProperties={displayProperties ?? {}}
+                            handleDisplayPropertiesUpdate={(
+                              updatedDisplayProperties: Partial<IIssueDisplayProperties>
+                            ) => {
+                              onDisplayPropertiesChange({
+                                ...displayProperties,
+                                ...updatedDisplayProperties,
+                              });
+                            }}
+                            cycleViewDisabled={!projectDetails?.cycle_view}
+                            moduleViewDisabled={!projectDetails?.module_view}
+                          />
+                        </FiltersDropdown>
+                      )}
+                    />
+                  </>
+                )}
+              />
+            </div>
+            <div>
+              {/* filters dropdown */}
+              <Controller
+                control={control}
+                name="rich_filters"
+                render={({ field: { onChange: onFiltersChange } }) => (
+                  <ProjectLevelWorkItemFiltersHOC
+                    entityId={data?.id}
+                    entityType={EIssuesStoreType.PROJECT_VIEW}
+                    filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
+                    initialWorkItemFilters={workItemFilters}
+                    isTemporary
+                    updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
+                    projectId={projectId}
+                    showOnMount
+                    workspaceSlug={workspaceSlug}
+                  >
+                    {({ filter: projectViewWorkItemsFilter }) =>
+                      projectViewWorkItemsFilter && (
+                        <WorkItemFiltersRow filter={projectViewWorkItemsFilter} variant="modal" />
+                      )
+                    }
+                  </ProjectLevelWorkItemFiltersHOC>
+                )}
+              />
             </div>
           </div>
-          <div>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <Field name="description" invalid={Boolean(errors?.description)}>
-                  <TextAreaGroup resize="none">
-                    <TextArea
-                      size="lg"
-                      surface="field"
-                      autoResize
-                      maxRows={8}
-                      id="description"
-                      name="description"
-                      placeholder={t("common.description")}
-                      value={value}
-                      onChange={onChange}
-                      tabIndex={getIndex("descriptions")}
-                    />
-                  </TextAreaGroup>
-                </Field>
-              )}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Controller
-              control={control}
-              name="display_filters"
-              render={({ field: { onChange: onDisplayFiltersChange, value: displayFilters } }) => (
-                <>
-                  {/* layout dropdown */}
-                  <LayoutDropDown
-                    onChange={(selectedValue: EIssueLayoutTypes) =>
-                      onDisplayFiltersChange({
-                        ...displayFilters,
-                        layout: selectedValue,
-                      })
-                    }
-                    value={displayFilters.layout}
-                  />
-                  {/* display filters dropdown */}
-                  <Controller
-                    control={control}
-                    name="display_properties"
-                    render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
-                      <FiltersDropdown title={t("common.display")}>
-                        <DisplayFiltersSelection
-                          layoutDisplayFiltersOptions={
-                            ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[displayFilters.layout]
-                          }
-                          displayFilters={displayFilters ?? {}}
-                          handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-                            onDisplayFiltersChange({
-                              ...displayFilters,
-                              ...updatedDisplayFilter,
-                            });
-                          }}
-                          displayProperties={displayProperties ?? {}}
-                          handleDisplayPropertiesUpdate={(
-                            updatedDisplayProperties: Partial<IIssueDisplayProperties>
-                          ) => {
-                            onDisplayPropertiesChange({
-                              ...displayProperties,
-                              ...updatedDisplayProperties,
-                            });
-                          }}
-                          cycleViewDisabled={!projectDetails?.cycle_view}
-                          moduleViewDisabled={!projectDetails?.module_view}
-                        />
-                      </FiltersDropdown>
-                    )}
-                  />
-                </>
-              )}
-            />
-          </div>
-          <div>
-            {/* filters dropdown */}
-            <Controller
-              control={control}
-              name="rich_filters"
-              render={({ field: { onChange: onFiltersChange } }) => (
-                <ProjectLevelWorkItemFiltersHOC
-                  entityId={data?.id}
-                  entityType={EIssuesStoreType.PROJECT_VIEW}
-                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
-                  initialWorkItemFilters={workItemFilters}
-                  isTemporary
-                  updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
-                  projectId={projectId}
-                  showOnMount
-                  workspaceSlug={workspaceSlug}
-                >
-                  {({ filter: projectViewWorkItemsFilter }) =>
-                    projectViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={projectViewWorkItemsFilter} variant="modal" />
-                    )
-                  }
-                </ProjectLevelWorkItemFiltersHOC>
-              )}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          {t("common.cancel")}
-        </Button>
-        <Button variant="primary" size="lg" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? t("common.updating")
-              : t("view.update.label")
-            : isSubmitting
-              ? t("common.creating")
-              : t("view.create.label")}
-        </Button>
-      </div>
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <Button
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label={t("common.cancel")}
+          onClick={handleClose}
+          tabIndex={getIndex("cancel")}
+        />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          type="submit"
+          label={
+            data
+              ? isSubmitting
+                ? t("common.updating")
+                : t("view.update.label")
+              : isSubmitting
+                ? t("common.creating")
+                : t("view.create.label")
+          }
+          tabIndex={getIndex("submit")}
+          loading={isSubmitting}
+        />
+      </DialogActions>
     </form>
   );
 });

@@ -7,13 +7,14 @@
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { ChevronDownOutline, ChevronUpOutline, WarningCircleOutline } from "@makeplane/propel/icons";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { WarningCircleOutline } from "@makeplane/propel/icons";
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TModulePlotType } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { CustomSelect, Spinner } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
+import { Spinner } from "@plane/blocks/spinner";
 // components
 // constants
 // helpers
@@ -31,7 +32,9 @@ type TModuleAnalyticsProgress = {
   moduleId: string;
 };
 
-const moduleBurnDownChartOptions = [
+type PlotTypeOption = { value: string; i18n_label: string };
+
+const moduleBurnDownChartOptions: PlotTypeOption[] = [
   { value: "burndown", i18n_label: "issues" },
   { value: "points", i18n_label: "points" },
 ];
@@ -97,6 +100,8 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   const isModuleEndDateValid = moduleStartDate && moduleEndDate && moduleEndDate >= moduleStartDate;
   const isModuleDateValid = isModuleStartDateValid && isModuleEndDateValid;
   const isArchived = !!moduleDetails?.archived_at;
+  // state
+  const [isOpen, setIsOpen] = useState(!!isModuleDateValid);
 
   // handlers
   const onChange = async (value: TModulePlotType) => {
@@ -117,119 +122,107 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
   };
 
   if (!moduleDetails) return <></>;
+
+  const progressBody = (
+    <div className="space-y-4">
+      {/* progress burndown chart */}
+      <div>
+        {moduleStartDate && moduleEndDate && completionChartDistributionData && (
+          <Fragment>
+            {plotType === "points" ? (
+              <ProgressChart
+                distribution={completionChartDistributionData}
+                totalIssues={totalEstimatePoints}
+                plotTitle={"points"}
+              />
+            ) : (
+              <ProgressChart
+                distribution={completionChartDistributionData}
+                totalIssues={totalIssues}
+                plotTitle={"work items"}
+              />
+            )}
+          </Fragment>
+        )}
+      </div>
+
+      {/* progress detailed view */}
+      {chartDistributionData && (
+        <div className="w-full border-t border-subtle pt-5">
+          <ModuleProgressStats
+            distribution={chartDistributionData}
+            groupedIssues={groupedIssues}
+            handleFiltersUpdate={updateFilterValueFromSidebar.bind(
+              updateFilterValueFromSidebar,
+              EIssuesStoreType.MODULE,
+              moduleId
+            )}
+            isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
+            moduleId={moduleId}
+            plotType={plotType}
+            selectedFilters={{
+              assignees: selectedAssignees,
+              labels: selectedLabels,
+              stateGroups: selectedStateGroups,
+            }}
+            totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+          />
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-4 border-t border-subtle px-3 py-4">
-      <Disclosure defaultOpen={isModuleDateValid ? true : false}>
-        {({ open }) => (
-          <div className="space-y-6">
-            {/* progress bar header */}
-            {isModuleDateValid ? (
-              <div className="relative flex w-full items-center justify-between gap-2">
-                <Disclosure.Button className="relative flex w-full items-center gap-2">
-                  <div className="text-13 font-medium text-secondary">{t("common.progress")}</div>
-                  {progressHeaderPercentage > 0 && (
-                    <div className="bg-amber-500/20 text-amber-500 flex h-5 w-9 items-center justify-center rounded-sm text-11 font-medium">{`${progressHeaderPercentage}%`}</div>
-                  )}
-                </Disclosure.Button>
-                {isCurrentEstimateTypeIsPoints && (
-                  <>
-                    <div>
-                      <CustomSelect
-                        value={plotType}
-                        label={
-                          <span>
-                            {t(moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label || "none")}
-                          </span>
-                        }
-                        onChange={onChange}
-                        maxHeight="lg"
-                      >
-                        {moduleBurnDownChartOptions.map((item) => (
-                          <CustomSelect.Option key={item.value} value={item.value}>
-                            {t(item.i18n_label)}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    </div>
-                    {loader && <Spinner className="h-3 w-3" />}
-                  </>
-                )}
-                <Disclosure.Button className="ml-auto">
-                  {open ? (
-                    <ChevronUpOutline className="h-3.5 w-3.5" aria-hidden="true" />
-                  ) : (
-                    <ChevronDownOutline className="h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
+      {/* progress bar header */}
+      {isModuleDateValid ? (
+        <Collapsible
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          trigger={
+            <span className="relative flex w-full items-center gap-2">
+              <span className="text-13 font-medium text-secondary">{t("common.progress")}</span>
+              {progressHeaderPercentage > 0 && (
+                <span className="bg-amber-500/20 text-amber-500 flex h-5 w-9 items-center justify-center rounded-sm text-11 font-medium">{`${progressHeaderPercentage}%`}</span>
+              )}
+            </span>
+          }
+          trailing={
+            isCurrentEstimateTypeIsPoints ? (
+              <div className="flex items-center gap-2">
+                <Select<PlotTypeOption>
+                  getValues={() => moduleBurnDownChartOptions}
+                  value={moduleBurnDownChartOptions.find((v) => v.value === plotType) ?? null}
+                  onChange={(val) => void onChange(val as TModulePlotType)}
+                  getOptionValue={(option) => option.value}
+                  getOptionLabel={(option) => t(option.i18n_label)}
+                  showSearch={false}
+                  pinSelected={false}
+                >
+                  <Select.Trigger variant="select-md" className="w-auto">
+                    <span>{t(moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label || "none")}</span>
+                  </Select.Trigger>
+                </Select>
+                {loader && <Spinner className="h-3 w-3" />}
               </div>
-            ) : (
-              <div className="relative flex w-full items-center justify-between gap-2">
-                <div className="text-13 font-medium text-secondary">Progress</div>
-                <div className="flex items-center gap-1">
-                  <WarningCircleOutline height={14} width={14} className="text-secondary" />
-                  <span className="text-11 text-secondary italic">
-                    {moduleDetails?.start_date && moduleDetails?.target_date
-                      ? t("project_module.empty_state.sidebar.in_active")
-                      : t("project_module.empty_state.sidebar.invalid_date")}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            <Transition as="div" show={open}>
-              <Disclosure.Panel className="space-y-4">
-                {/* progress burndown chart */}
-                <div>
-                  {moduleStartDate && moduleEndDate && completionChartDistributionData && (
-                    <Fragment>
-                      {plotType === "points" ? (
-                        <ProgressChart
-                          distribution={completionChartDistributionData}
-                          totalIssues={totalEstimatePoints}
-                          plotTitle={"points"}
-                        />
-                      ) : (
-                        <ProgressChart
-                          distribution={completionChartDistributionData}
-                          totalIssues={totalIssues}
-                          plotTitle={"work items"}
-                        />
-                      )}
-                    </Fragment>
-                  )}
-                </div>
-
-                {/* progress detailed view */}
-                {chartDistributionData && (
-                  <div className="w-full border-t border-subtle pt-5">
-                    <ModuleProgressStats
-                      distribution={chartDistributionData}
-                      groupedIssues={groupedIssues}
-                      handleFiltersUpdate={updateFilterValueFromSidebar.bind(
-                        updateFilterValueFromSidebar,
-                        EIssuesStoreType.MODULE,
-                        moduleId
-                      )}
-                      isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
-                      moduleId={moduleId}
-                      noBackground={false}
-                      plotType={plotType}
-                      roundedTab={false}
-                      selectedFilters={{
-                        assignees: selectedAssignees,
-                        labels: selectedLabels,
-                        stateGroups: selectedStateGroups,
-                      }}
-                      size="xs"
-                      totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                    />
-                  </div>
-                )}
-              </Disclosure.Panel>
-            </Transition>
+            ) : undefined
+          }
+        >
+          {progressBody}
+        </Collapsible>
+      ) : (
+        <div className="relative flex w-full items-center justify-between gap-2">
+          <div className="text-13 font-medium text-secondary">Progress</div>
+          <div className="flex items-center gap-1">
+            <WarningCircleOutline height={14} width={14} className="text-secondary" />
+            <span className="text-11 text-secondary italic">
+              {moduleDetails?.start_date && moduleDetails?.target_date
+                ? t("project_module.empty_state.sidebar.in_active")
+                : t("project_module.empty_state.sidebar.invalid_date")}
+            </span>
           </div>
-        )}
-      </Disclosure>
+        </div>
+      )}
     </div>
   );
 });

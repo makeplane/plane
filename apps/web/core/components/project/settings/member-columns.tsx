@@ -8,12 +8,16 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { CircleMinus } from "lucide-react";
-import { Disclosure } from "@headlessui/react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Select } from "@plane/blocks/select";
+import { setToast } from "@plane/blocks/toast";
 import { ROLE, EUserPermissions } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
 import type { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
-import { CustomMenu, CustomSelect } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -31,6 +35,11 @@ type NameProps = {
   setRemoveMemberModal: (rowData: RowData) => void;
 };
 
+type TRoleOption = {
+  key: string;
+  label: string;
+};
+
 type AccountTypeProps = {
   rowData: RowData;
   currentProjectRole: EUserPermissions | undefined;
@@ -40,61 +49,67 @@ type AccountTypeProps = {
 
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
 
   return (
-    <Disclosure>
-      {({}) => (
-        <div className="group relative">
-          <div className="flex w-72 items-center gap-2">
-            <div className="flex flex-1 items-center gap-x-2 gap-y-2">
-              {avatar_url && avatar_url.trim() !== "" ? (
-                <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
-                    <img
-                      src={getFileURL(avatar_url)}
-                      className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                      alt={display_name || email}
-                    />
-                  </span>
-                </Link>
-              ) : (
-                <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-on-color capitalize">
-                    {(email ?? display_name ?? "?")[0]}
-                  </span>
-                </Link>
-              )}
-              {first_name} {last_name}
-            </div>
-            {(isAdmin || id === currentUser?.id) && (
-              <CustomMenu
-                ellipsis
-                buttonClassName="p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                optionsClassName="p-1.5"
-                placement="bottom-end"
-              >
-                <CustomMenu.MenuItem>
-                  <div
-                    className="flex cursor-pointer items-center gap-x-1 font-medium text-danger-primary"
-                    onClick={() => setRemoveMemberModal(rowData)}
-                  >
-                    <CircleMinus className="size-3.5 flex-shrink-0" />
-                    {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
-                  </div>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            )}
-          </div>
+    <div className="group relative">
+      <div className="flex w-72 items-center gap-2">
+        <div className="flex flex-1 items-center gap-x-2 gap-y-2">
+          {avatar_url && avatar_url.trim() !== "" ? (
+            <Link href={`/${workspaceSlug}/profile/${id}`}>
+              <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
+                <img
+                  src={getFileURL(avatar_url)}
+                  className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
+                  alt={display_name || email}
+                />
+              </span>
+            </Link>
+          ) : (
+            <Link href={`/${workspaceSlug}/profile/${id}`}>
+              <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-on-color capitalize">
+                {(email ?? display_name ?? "?")[0]}
+              </span>
+            </Link>
+          )}
+          {first_name} {last_name}
         </div>
-      )}
-    </Disclosure>
+        {(isAdmin || id === currentUser?.id) && (
+          <Menu>
+            <div className="opacity-0 transition-opacity group-hover:opacity-100">
+              <MenuTrigger
+                render={
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("aria_labels.common.more_actions")}
+                    icon={<Icon icon={MoreHorizontalOutline} />}
+                  />
+                }
+              />
+            </div>
+            <MenuContent side="bottom" align="end">
+              <MenuItem
+                variant="danger"
+                icon={<Icon icon={CircleMinus} />}
+                label={rowData.member?.id === currentUser?.id ? t("leave") : t("remove")}
+                onClick={() => setRemoveMemberModal(rowData)}
+              />
+            </MenuContent>
+          </Menu>
+        )}
+      </div>
+    </div>
   );
 }
 
 export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, projectId, workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
     project: { updateMemberRole },
@@ -148,41 +163,50 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
           name="role"
           control={control}
           rules={{ required: "Role is required." }}
-          render={() => (
-            <CustomSelect
-              value={rowData.original_role}
-              onChange={async (value: EUserProjectRoles) => {
-                if (!workspaceSlug) return;
-                await updateMemberRole(workspaceSlug.toString(), projectId.toString(), rowData.member.id, value).catch(
-                  (err) => {
-                    console.log(err, "err");
-                    const error = err.error;
-                    const errorString = Array.isArray(error) ? error[0] : error;
+          render={() => {
+            const roleOptions: TRoleOption[] = Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(
+              ([key, label]) => ({ key, label })
+            );
+            return (
+              <div className="w-32">
+                <Select<TRoleOption>
+                  getValues={() => roleOptions}
+                  value={roleOptions.find((option) => option.key === String(rowData.original_role)) ?? null}
+                  onChange={(value) => {
+                    if (!workspaceSlug || !value) return;
+                    void updateMemberRole(
+                      workspaceSlug.toString(),
+                      projectId.toString(),
+                      rowData.member.id,
+                      Number(value) as EUserProjectRoles
+                    ).catch((err) => {
+                      console.log(err, "err");
+                      const error = err.error;
+                      const errorString = Array.isArray(error) ? error[0] : error;
 
-                    setToast({
-                      type: TOAST_TYPE.ERROR,
-                      title: "You can’t change this role yet.",
-                      message: errorString ?? "An error occurred while updating member role. Please try again.",
+                      setToast({
+                        type: "error",
+                        title: "You can’t change this role yet.",
+                        message: errorString ?? "An error occurred while updating member role. Please try again.",
+                      });
                     });
-                  }
-                );
-              }}
-              label={
-                <div className="flex">
-                  <span>{roleLabel}</span>
-                </div>
-              }
-              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
-              className="w-32 rounded-md p-0"
-              input
-            >
-              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => (
-                <CustomSelect.Option key={key} value={key}>
-                  {label}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
-          )}
+                  }}
+                  getOptionValue={(option) => option.key}
+                  getOptionLabel={(option) => option.label}
+                  placeholder={t("role")}
+                  showSearch={false}
+                  pinSelected={false}
+                >
+                  <Select.Trigger<TRoleOption>
+                    variant="select-ghost-md"
+                    className={errors.role ? "border border-danger-strong" : undefined}
+                  >
+                    <span className="min-w-0 grow truncate text-left">{roleLabel}</span>
+                  </Select.Trigger>
+                </Select>
+              </div>
+            );
+          }}
         />
       ) : (
         <div className="flex w-32">

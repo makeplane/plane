@@ -16,8 +16,8 @@ import {
   ViewsOutline,
 } from "@makeplane/propel/icons";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 // hooks
@@ -66,18 +66,15 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       role: formData.role,
     };
     try {
-      await Promise.all([
-        updateUserProfile(profileUpdatePayload),
-        // totalSteps > 2 && stepChange({ profile_complete: true }),
-      ]);
+      [await updateUserProfile(profileUpdatePayload)];
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success",
         message: "Profile setup completed!",
       });
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "Profile setup failed. Please try again!",
       });
@@ -152,12 +149,15 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       </div>
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-          Continue
-        </Button>
-        <Button variant="ghost" onClick={handleSkip} className="w-full text-tertiary" size="xl">
-          Skip
-        </Button>
+        <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
+        <Button
+          variant="ghost"
+          onClick={handleSkip}
+          stretch="full"
+          size="lg"
+          render={<button type="button" className="text-tertiary" />}
+          label="Skip"
+        />
       </div>
     </form>
   );

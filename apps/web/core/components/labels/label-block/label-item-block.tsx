@@ -8,13 +8,17 @@ import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 // plane helpers
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { CloseOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
-import type { ISvgIcons } from "@plane/propel/icons";
-import { CloseOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import type { ISvgIcons } from "@plane/blocks/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // ui
-import { CustomMenu, DragHandle } from "@plane/ui";
+import { DragHandle } from "@plane/blocks/common";
 // helpers
 import { cn } from "@plane/utils";
 // components
@@ -50,6 +54,8 @@ export function LabelItemBlock(props: ILabelItemBlock) {
     disabled = false,
     draggable = true,
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isMenuActive, setIsMenuActive] = useState(true);
   // refs
@@ -80,22 +86,37 @@ export function LabelItemBlock(props: ILabelItemBlock) {
               : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
           } ${isLabelGroup && "-top-0.5"}`}
         >
-          <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
-            {customMenuItems.map(
-              ({ isVisible, onClick, CustomIcon, text, key }) =>
-                isVisible && (
-                  <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
-                    <span className="flex items-center justify-start gap-2">
-                      <CustomIcon className="size-4" />
-                      <span>{text}</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                )
-            )}
-          </CustomMenu>
+          <Menu onOpenChange={(open) => setIsMenuActive(open)}>
+            <MenuTrigger
+              render={
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  aria-label={t("aria_labels.common.more_actions")}
+                  icon={<Icon icon={MoreHorizontalOutline} />}
+                />
+              }
+            />
+            <MenuContent>
+              {customMenuItems.map(
+                ({ isVisible, onClick, CustomIcon, text, key }) =>
+                  isVisible && (
+                    <MenuItem
+                      key={key}
+                      variant={key === "delete_label" ? "danger" : "neutral"}
+                      label={text}
+                      icon={<CustomIcon className="size-4" />}
+                      onClick={() => onClick(label)}
+                    />
+                  )
+              )}
+            </MenuContent>
+          </Menu>
           {!isLabelGroup && (
             <div className="py-0.5">
               <button
+                type="button"
+                aria-label={t("delete")}
                 className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"
                 onClick={() => {
                   handleLabelDelete(label);

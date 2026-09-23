@@ -29,6 +29,19 @@
       "hide_password": "パスワードを非表示",
       "close_alert": "アラートを閉じる",
       "close_popover": "ポップオーバーを閉じる"
+    },
+    "breadcrumb": {
+      "trail": "パンくずリスト",
+      "show_more": "パンくずリストをさらに表示"
+    },
+    "common": {
+      "more_actions": "その他の操作",
+      "remove": "削除"
+    },
+    "color_picker": {
+      "open": "カラーピッカーを開く",
+      "swatches": "プリセットカラー",
+      "hex_input": "16 進数カラー"
     }
   }
 }

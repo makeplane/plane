@@ -5,11 +5,10 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { PillButton } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
@@ -25,8 +24,15 @@ type Props = {
   isArchived?: boolean;
 };
 
-const MEMBERS_FILTERS = ["lead", "members"];
+const MEMBERS_FILTERS = new Set(["lead", "members"]);
 const DATE_FILTERS = ["start_date", "target_date"];
+
+/**
+ * Container chrome for a group of filter chips plus their remove buttons (the legacy `Tag`
+ * outline), shared by the "Clear all" control so it reads as one more chip in the row.
+ */
+const FILTER_GROUP_CLASSNAME =
+  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary";
 
 export function ModuleAppliedFiltersList(props: Props) {
   const {
@@ -55,10 +61,7 @@ export function ModuleAppliedFiltersList(props: Props) {
           if (Array.isArray(value) && value.length === 0) return;
 
           return (
-            <div
-              key={filterKey}
-              className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
-            >
+            <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
                 {filterKey === "status" && (
@@ -75,7 +78,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                     values={value}
                   />
                 )}
-                {MEMBERS_FILTERS.includes(filterKey) && (
+                {MEMBERS_FILTERS.has(filterKey) && (
                   <AppliedMembersFilters
                     editable={isEditingAllowed}
                     handleRemove={(val) => handleRemoveFilter(filterKey, val)}
@@ -123,14 +126,12 @@ export function ModuleAppliedFiltersList(props: Props) {
           </div>
         )}
         {isEditingAllowed && (
-          <PillButton
-            type="button"
-            size="md"
-            variant="outline"
-            label={t("common.clear_all")}
-            endIcon={<CloseOutline height={12} width={12} />}
-            onClick={handleClearAllFilters}
-          />
+          <button type="button" onClick={handleClearAllFilters}>
+            <span className={FILTER_GROUP_CLASSNAME}>
+              {t("common.clear_all")}
+              <CloseOutline height={12} width={12} />
+            </span>
+          </button>
         )}
       </div>
     </Header>

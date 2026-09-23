@@ -10,10 +10,10 @@ import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -73,43 +73,43 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
     if (!authorized) {
       setToast({
         title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message:
           PROJECT_ERROR_MESSAGES.permissionError.i18n_message && t(PROJECT_ERROR_MESSAGES.permissionError.i18n_message),
       });
       onClose();
       return;
     }
-    if (onSubmit)
-      await onSubmit()
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("common.success"),
-            message: t("entity.delete.success", {
-              entity: isSubIssue ? t("common.sub_work_item") : isEpic ? t("common.epic") : t("common.work_item"),
-            }),
-          });
-          onClose();
-        })
-        .catch((errors) => {
-          const isPermissionError =
-            errors?.error ===
-            `Only admin or creator can delete the ${isSubIssue ? "sub-work item" : isEpic ? "epic" : "work item"}`;
-          const currentError = isPermissionError
-            ? PROJECT_ERROR_MESSAGES.permissionError
-            : PROJECT_ERROR_MESSAGES.issueDeleteError;
-          setToast({
-            title: t(currentError.i18n_title),
-            type: TOAST_TYPE.ERROR,
-            message: currentError.i18n_message && t(currentError.i18n_message),
-          });
-        })
-        .finally(() => onClose());
+    if (!onSubmit) return;
+    try {
+      await onSubmit();
+      setToast({
+        type: "success",
+        title: t("common.success"),
+        message: t("entity.delete.success", {
+          entity: isSubIssue ? t("common.sub_work_item") : isEpic ? t("common.epic") : t("common.work_item"),
+        }),
+      });
+      onClose();
+    } catch (errors) {
+      const isPermissionError =
+        (errors as { error?: string } | undefined)?.error ===
+        `Only admin or creator can delete the ${isSubIssue ? "sub-work item" : isEpic ? "epic" : "work item"}`;
+      const currentError = isPermissionError
+        ? PROJECT_ERROR_MESSAGES.permissionError
+        : PROJECT_ERROR_MESSAGES.issueDeleteError;
+      setToast({
+        title: t(currentError.i18n_title),
+        type: "error",
+        message: currentError.i18n_message && t(currentError.i18n_message),
+      });
+    } finally {
+      onClose();
+    }
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={onClose}
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}

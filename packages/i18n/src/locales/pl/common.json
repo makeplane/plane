@@ -8,6 +8,7 @@
   "submit": "Wyślij",
   "cancel": "Anuluj",
   "loading": "Ładowanie",
+  "searching": "Wyszukiwanie...",
   "error": "Błąd",
   "success": "Sukces",
   "warning": "Ostrzeżenie",
@@ -303,6 +304,9 @@
   "create_new_label": "Utwórz nową etykietę",
   "label_name": "Nazwa etykiety",
   "failed_to_create_label": "Nie udało się utworzyć etykiety. Spróbuj ponownie.",
+  "no_matching_labels": "Brak pasujących etykiet",
+  "adding_label": "Dodawanie „{name}\"",
+  "add_label_to_labels": "Dodaj „{name}\" do etykiet",
   "start_date": "Data rozpoczęcia",
   "end_date": "Data zakończenia",
   "due_date": "Termin",
@@ -522,6 +526,7 @@
       "updated_on": "Zaktualizowano dnia"
     },
     "sort": {
+      "label": "Sortuj",
       "asc": "Rosnąco",
       "desc": "Malejąco",
       "created_on": "Utworzono dnia",
@@ -619,7 +624,8 @@
       "enable": "Włącz",
       "disable": "Wyłącz",
       "copy_markdown": "Kopiuj markdown",
-      "reply": "Odpowiedz"
+      "reply": "Odpowiedz",
+      "add_reaction": "Dodaj reakcję"
     },
     "name": "Nazwa",
     "discard": "Odrzuć",
@@ -867,5 +873,6 @@
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# etykieta} few {# etykiety} many {# etykiet} other {# etykiety}}"
 }

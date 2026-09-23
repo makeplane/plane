@@ -9,10 +9,11 @@ import { useParams } from "next/navigation";
 
 // ui
 import { useTranslation } from "@plane/i18n";
-import { LayerStackIcon } from "@plane/propel/icons";
+import { LayerStackIcon } from "@plane/blocks/icons";
 import { AddOutline, UserOutline } from "@makeplane/propel/icons";
 import type { IUserProfileData } from "@plane/types";
-import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
+import { Card } from "@plane/blocks/card";
+import { Loader } from "@plane/blocks/skeleton";
 // types
 
 type Props = {
@@ -52,7 +53,7 @@ export function ProfileStats({ userProfile }: Props) {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {overviewCards.map((card) => (
             <Link key={card.route} href={`/${workspaceSlug}/profile/${userId}/${card.route}`}>
-              <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM} className="h-full">
+              <Card direction="row" spacing="sm" className="h-full">
                 <div className="grid h-11 w-11 place-items-center rounded-sm bg-surface-2">
                   <card.icon className="h-5 w-5" />
                 </div>

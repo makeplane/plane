@@ -10,10 +10,11 @@ import { useRouter } from "next/navigation";
 import { LogOutOutline, SettingsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { CustomMenu } from "@plane/ui";
+import { setToast } from "@plane/blocks/toast";
 import { getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
@@ -41,7 +42,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   const handleSignOut = () => {
     signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("auth.sign_out.toast.error.title"),
         message: t("auth.sign_out.toast.error.message"),
       })
@@ -55,96 +56,92 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   }, [isUserMenuOpen, toggleAnySidebarDropdown]);
 
   return (
-    <CustomMenu
-      className="flex items-center"
-      customButton={
-        <AppSidebarItem
-          variant="button"
-          item={{
-            icon: (
-              <Avatar
-                alt={currentUser?.display_name}
-                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
-                src={getFileURL(currentUser?.avatar_url ?? "")}
-                size="xs"
+    <div className="flex items-center">
+      <Menu onOpenChange={setIsUserMenuOpen}>
+        {/* propel: `AppSidebarItem` takes no arbitrary props, so it cannot be the Base UI trigger
+            — the popup would have no element to anchor to. The trigger is a plain button wearing
+            the same chrome, with the item's own icon part inside it. */}
+        <MenuTrigger
+          render={
+            <button
+              type="button"
+              className="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
+              aria-label={t("aria_labels.projects_sidebar.open_user_menu")}
+            >
+              <AppSidebarItem.Icon
+                icon={
+                  <Avatar
+                    alt={currentUser?.display_name}
+                    fallback={currentUser?.display_name?.[0]?.toUpperCase()}
+                    src={getFileURL(currentUser?.avatar_url ?? "")}
+                    size="xs"
+                  />
+                }
+                highlight={isUserMenuOpen}
               />
-            ),
-            isActive: isUserMenuOpen,
-          }}
+            </button>
+          }
         />
-      }
-      menuButtonOnClick={() => !isUserMenuOpen && setIsUserMenuOpen(true)}
-      onMenuClose={() => setIsUserMenuOpen(false)}
-      placement="bottom-end"
-      maxHeight="2xl"
-      optionsClassName="w-72 p-3 flex flex-col gap-y-3"
-      closeOnSelect
-    >
-      <div className="relative h-29 w-full rounded-lg">
-        <CoverImage
-          src={currentUser?.cover_image_url ?? undefined}
-          alt={currentUser?.display_name}
-          className="h-29 w-full rounded-lg"
-          showDefaultWhenEmpty
-        />
-        <div className="absolute inset-0 bg-layer-1/50" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="flex flex-col items-center gap-y-2">
-            <div>
-              <Avatar
+        <MenuContent side="bottom" align="end">
+          <div className="flex w-72 max-w-full flex-col gap-y-3 p-2">
+            <div className="relative h-29 w-full rounded-lg">
+              <CoverImage
+                src={currentUser?.cover_image_url ?? undefined}
                 alt={currentUser?.display_name}
-                fallback={currentUser?.display_name?.[0]?.toUpperCase()}
-                src={getFileURL(currentUser?.avatar_url ?? "")}
-                size="xl"
+                className="h-29 w-full rounded-lg"
+                showDefaultWhenEmpty
+              />
+              <div className="absolute inset-0 bg-layer-1/50" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="flex flex-col items-center gap-y-2">
+                  <div>
+                    <Avatar
+                      alt={currentUser?.display_name}
+                      fallback={currentUser?.display_name?.[0]?.toUpperCase()}
+                      src={getFileURL(currentUser?.avatar_url ?? "")}
+                      size="xl"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-body-sm-medium">
+                      {currentUser?.first_name} {currentUser?.last_name}
+                    </p>
+                    <p className="text-caption-md-regular">{currentUser?.email}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <MenuItem
+                icon={<Icon icon={SettingsOutline} />}
+                label={t("settings")}
+                onClick={() =>
+                  toggleProfileSettingsModal({
+                    activeTab: "general",
+                    isOpen: true,
+                  })
+                }
+              />
+              <MenuItem
+                icon={<Icon icon={SettingsOutline} />}
+                label={t("preferences")}
+                onClick={() =>
+                  toggleProfileSettingsModal({
+                    activeTab: "preferences",
+                    isOpen: true,
+                  })
+                }
               />
             </div>
-            <div className="text-center">
-              <p className="text-body-sm-medium">
-                {currentUser?.first_name} {currentUser?.last_name}
-              </p>
-              <p className="text-caption-md-regular">{currentUser?.email}</p>
+            <div>
+              <MenuItem icon={<Icon icon={LogOutOutline} />} label={t("sign_out")} onClick={handleSignOut} />
+              {isUserInstanceAdmin && (
+                <MenuItem variant="accent" label={t("enter_god_mode")} onClick={() => router.push(GOD_MODE_URL)} />
+              )}
             </div>
           </div>
-        </div>
-      </div>
-      <div>
-        <CustomMenu.MenuItem
-          onClick={() =>
-            toggleProfileSettingsModal({
-              activeTab: "general",
-              isOpen: true,
-            })
-          }
-          className="flex items-center gap-2"
-        >
-          <SettingsOutline className="size-3.5 shrink-0" />
-          {t("settings")}
-        </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() =>
-            toggleProfileSettingsModal({
-              activeTab: "preferences",
-              isOpen: true,
-            })
-          }
-          className="flex items-center gap-2"
-        >
-          <SettingsOutline className="size-3.5 shrink-0" />
-          {t("preferences")}
-        </CustomMenu.MenuItem>
-      </div>
-      <CustomMenu.MenuItem onClick={handleSignOut} className="flex items-center gap-2">
-        <LogOutOutline className="size-3.5 shrink-0" />
-        {t("sign_out")}
-      </CustomMenu.MenuItem>
-      {isUserInstanceAdmin && (
-        <CustomMenu.MenuItem
-          onClick={() => router.push(GOD_MODE_URL)}
-          className="bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary"
-        >
-          {t("enter_god_mode")}
-        </CustomMenu.MenuItem>
-      )}
-    </CustomMenu>
+        </MenuContent>
+      </Menu>
+    </div>
   );
 });

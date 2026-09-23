@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import type { IState } from "@plane/types";
 // components
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";

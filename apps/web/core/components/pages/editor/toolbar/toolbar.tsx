@@ -7,10 +7,17 @@
 import React, { useEffect, useState, useCallback } from "react";
 import type { EditorRefApi } from "@plane/editor";
 // plane imports
-import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem } from "@makeplane/propel/components/menu";
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  ToolbarMenuTrigger,
+  ToolbarSeparator,
+  ToolbarToggle,
+} from "@makeplane/propel/components/toolbar";
+import { Tooltip, TooltipProvider } from "@makeplane/propel/components/tooltip";
 // constants
 import type { ToolbarMenuItem } from "@plane/editor";
 import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS } from "@plane/editor";
@@ -21,43 +28,38 @@ type Props = {
   editorRef: EditorRefApi;
 };
 
-type ToolbarButtonProps = {
+type ToolbarItemProps = {
   item: ToolbarMenuItem;
   isActive: boolean;
+  // insert actions (table, image, attachment) are plain buttons, not pressed-state toggles
+  isInsertAction: boolean;
   executeCommand: EditorRefApi["executeMenuItemCommand"];
 };
 
-const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProps) {
-  const { item, isActive, executeCommand } = props;
+const ToolbarItem = React.memo(function ToolbarItem(props: ToolbarItemProps) {
+  const { item, isActive, isInsertAction, executeCommand } = props;
+
+  const handleClick = () =>
+    // TODO: update this while toolbar homogenization
+    // @ts-expect-error type mismatch here
+    executeCommand({
+      itemKey: item.itemKey,
+      ...item.extraProps,
+    });
+  const icon = <Icon icon={item.icon} />;
 
   return (
     <Tooltip label={item.name} shortcut={item.shortcut?.join(" + ")}>
-      <button
-        type="button"
-        onClick={() =>
-          // TODO: update this while toolbar homogenization
-          // @ts-expect-error type mismatch here
-          executeCommand({
-            itemKey: item.itemKey,
-            ...item.extraProps,
-          })
-        }
-        className={cn("grid size-7 shrink-0 place-items-center rounded-sm text-tertiary", {
-          "bg-layer-transparent-selected text-primary hover:bg-layer-transparent-selected": isActive,
-          "hover:bg-layer-transparent-hover": !isActive,
-        })}
-      >
-        <item.icon
-          className={cn("size-4 transition-transform duration-200", {
-            "text-primary": isActive,
-          })}
-        />
-      </button>
+      {isInsertAction ? (
+        <ToolbarButton aria-label={item.name} icon={icon} onClick={handleClick} />
+      ) : (
+        <ToolbarToggle aria-label={item.name} icon={icon} pressed={!!isActive} onPressedChange={handleClick} />
+      )}
     </Tooltip>
   );
 });
 
-ToolbarButton.displayName = "ToolbarButton";
+ToolbarItem.displayName = "ToolbarItem";
 
 const toolbarItems = TOOLBAR_ITEMS.document;
 
@@ -78,8 +80,6 @@ export function PageToolbar(props: Props) {
       });
     return initialStates;
   });
-
-  const [isTypographyMenuOpen, setIsTypographyMenuOpen] = useState(false);
 
   const updateActiveStates = useCallback(() => {
     const newActiveStates: Record<string, boolean> = {};
@@ -109,81 +109,63 @@ export function PageToolbar(props: Props) {
   );
 
   return (
-    <div className="animate-in fade-in flex items-center divide-x divide-subtle-1 overflow-x-scroll duration-200">
-      <CustomMenu
-        customButton={
-          <span
-            className={cn(
-              "flex h-7 w-24 items-center justify-between gap-2 rounded-sm border-[0.5px] border-strong px-2 text-left text-13 whitespace-nowrap",
-              {
-                "bg-layer-1-selected text-primary": isTypographyMenuOpen,
-                "text-tertiary hover:bg-layer-1-hover": !isTypographyMenuOpen,
-              }
-            )}
-          >
-            {activeTypography?.name || "Text"}
-            <ChevronDownOutline className="size-3 shrink-0" />
-          </span>
-        }
-        className="pr-2"
-        placement="bottom-start"
-        closeOnSelect
-        maxHeight="lg"
-        menuButtonOnClick={() => setIsTypographyMenuOpen((prev) => !prev)}
-        onMenuClose={() => setIsTypographyMenuOpen(false)}
-      >
-        {TYPOGRAPHY_ITEMS.map((item) => (
-          <CustomMenu.MenuItem
-            key={item.renderKey}
-            className={cn("flex items-center justify-between gap-2", {
-              "bg-layer-transparent-selected text-primary": activeTypography?.itemKey === item.itemKey,
-              "hover:bg-layer-transparent-hover": !(activeTypography?.itemKey === item.itemKey),
-            })}
-            onClick={() => {
-              if (activeTypography?.itemKey !== item.itemKey) {
-                editorRef.executeMenuItemCommand({
-                  itemKey: item.itemKey,
-                  ...item.extraProps,
-                });
-              }
-            }}
-          >
-            <span className="flex items-center gap-2">
-              <item.icon className="size-3" />
-              {item.name}
-            </span>
-            {activeTypography?.itemKey === item.itemKey && <TickOutline className="size-3 shrink-0 text-tertiary" />}
-          </CustomMenu.MenuItem>
-        ))}
-      </CustomMenu>
-      <div className="shrink-0">
-        <ColorDropdown
-          handleColorSelect={(key, color) =>
-            editorRef.executeMenuItemCommand({
-              itemKey: key,
-              color,
-            })
-          }
-          isColorActive={(key, color) =>
-            editorRef.isMenuItemActive({
-              itemKey: key,
-              color,
-            })
-          }
-        />
-      </div>
-      {Object.keys(toolbarItems).map((key) => (
-        <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
-          {toolbarItems[key].map((item) => (
-            <ToolbarButton
-              key={item.renderKey}
-              item={item}
-              isActive={activeStates[item.renderKey]}
-              executeCommand={editorRef.executeMenuItemCommand}
-            />
+    <TooltipProvider>
+      <div className="animate-in fade-in flex items-center overflow-x-auto duration-200">
+        <Toolbar size="md" elevation="flat" aria-label="Formatting toolbar">
+          <Menu>
+            <ToolbarMenuTrigger label={activeTypography?.name || "Text"} />
+            <MenuContent side="bottom" align="start">
+              {TYPOGRAPHY_ITEMS.map((item) => (
+                <MenuItem
+                  key={item.renderKey}
+                  label={item.name}
+                  icon={<Icon icon={item.icon} />}
+                  selected={activeTypography?.itemKey === item.itemKey}
+                  onClick={() => {
+                    if (activeTypography?.itemKey !== item.itemKey) {
+                      editorRef.executeMenuItemCommand({
+                        itemKey: item.itemKey,
+                        ...item.extraProps,
+                      });
+                    }
+                  }}
+                />
+              ))}
+            </MenuContent>
+          </Menu>
+          <ToolbarSeparator />
+          <ColorDropdown
+            handleColorSelect={(key, color) =>
+              editorRef.executeMenuItemCommand({
+                itemKey: key,
+                color,
+              })
+            }
+            isColorActive={(key, color) =>
+              editorRef.isMenuItemActive({
+                itemKey: key,
+                color,
+              })
+            }
+          />
+          {Object.keys(toolbarItems).map((key) => (
+            <React.Fragment key={key}>
+              <ToolbarSeparator />
+              <ToolbarGroup>
+                {toolbarItems[key].map((item) => (
+                  <ToolbarItem
+                    key={item.renderKey}
+                    item={item}
+                    isActive={activeStates[item.renderKey]}
+                    isInsertAction={key === "complex"}
+                    executeCommand={editorRef.executeMenuItemCommand}
+                  />
+                ))}
+              </ToolbarGroup>
+            </React.Fragment>
           ))}
-        </div>
-      ))}
-    </div>
+        </Toolbar>
+      </div>
+    </TooltipProvider>
   );
 }

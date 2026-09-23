@@ -16,7 +16,7 @@ import { cn, resolveGeneralTheme } from "@plane/utils";
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { Skeleton } from "@/components/common/skeleton";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@/providers/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 // helpers
 import { canDisableAuthMethod } from "@/helpers/authentication";
 // hooks
@@ -55,7 +55,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
 
           if (!canDisable) {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: "Cannot disable authentication",
               message:
                 "At least one authentication method must remain enabled. Please enable another method before disabling this one.",
@@ -132,6 +132,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
                 <Switch
+                  aria-label="Allow anyone to sign up even without an invite"
                   checked={Boolean(parseInt(enableSignUpConfig))}
                   onCheckedChange={() => {
                     if (Boolean(parseInt(enableSignUpConfig)) === true) {

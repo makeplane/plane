@@ -8,15 +8,26 @@ import { memo } from "react";
 import { SortAscendingOutline, SortDescendingOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
-import { IconButton } from "@plane/propel/icon-button";
+import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export type TActivitySortRoot = {
   sortOrder: E_SORT_ORDER;
   toggleSort: () => void;
 };
 export const ActivitySortRoot = memo(function ActivitySortRoot(props: TActivitySortRoot) {
+  const { t } = useTranslation();
   const SortIcon = props.sortOrder === E_SORT_ORDER.ASC ? SortAscendingOutline : SortDescendingOutline;
-  return <IconButton variant="tertiary" icon={SortIcon} onClick={props.toggleSort} />;
+  return (
+    <IconButton
+      variant="tertiary"
+      size="sm"
+      icon={<Icon icon={SortIcon} />}
+      aria-label={t("common.sort.label")}
+      onClick={props.toggleSort}
+    />
+  );
 });
 
 ActivitySortRoot.displayName = "ActivitySortRoot";

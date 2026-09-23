@@ -8,10 +8,10 @@ import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { Collapsible } from "@base-ui/react/collapsible";
 import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
@@ -102,74 +102,66 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
   const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
 
   if (!cycleDetails) return <></>;
+
+  const progressTitle = (
+    <span className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</span>
+  );
+
+  const progressBody = (
+    <div className="flex flex-col divide-y divide-subtle-1">
+      {cycleStartDate && cycleEndDate ? (
+        <>
+          {isCycleDateValid && <SidebarChart workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />}
+          {/* progress detailed view */}
+          {chartDistributionData && (
+            <div className="w-full py-4">
+              <CycleProgressStats
+                cycleId={cycleId}
+                distribution={chartDistributionData}
+                groupedIssues={groupedIssues}
+                handleFiltersUpdate={updateFilterValueFromSidebar.bind(
+                  updateFilterValueFromSidebar,
+                  EIssuesStoreType.CYCLE,
+                  cycleId
+                )}
+                isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
+                plotType={plotType}
+                selectedFilters={{
+                  assignees: selectedAssignees,
+                  labels: selectedLabels,
+                  stateGroups: selectedStateGroups,
+                }}
+                totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="my-2 w-full rounded-md bg-surface-2 px-2 py-2 text-13 text-tertiary">{t("no_data_yet")}</div>
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-4 border-t border-subtle py-5">
-      <Disclosure defaultOpen>
-        {({ open }) => (
-          <div className="flex flex-col">
-            {/* progress bar header */}
-            {isCycleDateValid ? (
-              <div className="relative flex w-full items-center justify-between gap-2">
-                <Disclosure.Button className="relative flex w-full items-center gap-2">
-                  <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
-                </Disclosure.Button>
-                <Disclosure.Button className="ml-auto">
-                  {open ? (
-                    <ChevronUpOutline className="h-3.5 w-3.5" aria-hidden="true" />
-                  ) : (
-                    <ChevronDownOutline className="h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
-              </div>
-            ) : (
-              <div className="relative flex w-full items-center justify-between gap-2">
-                <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
-              </div>
-            )}
-            <Transition as="div" show={open}>
-              <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
-                {cycleStartDate && cycleEndDate ? (
-                  <>
-                    {isCycleDateValid && (
-                      <SidebarChart workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
-                    )}
-                    {/* progress detailed view */}
-                    {chartDistributionData && (
-                      <div className="w-full py-4">
-                        <CycleProgressStats
-                          cycleId={cycleId}
-                          distribution={chartDistributionData}
-                          groupedIssues={groupedIssues}
-                          handleFiltersUpdate={updateFilterValueFromSidebar.bind(
-                            updateFilterValueFromSidebar,
-                            EIssuesStoreType.CYCLE,
-                            cycleId
-                          )}
-                          isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
-                          noBackground={false}
-                          plotType={plotType}
-                          roundedTab={false}
-                          selectedFilters={{
-                            assignees: selectedAssignees,
-                            labels: selectedLabels,
-                            stateGroups: selectedStateGroups,
-                          }}
-                          size="xs"
-                          totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                        />
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="my-2 w-full rounded-md bg-surface-2 px-2 py-2 text-13 text-tertiary">
-                    {t("no_data_yet")}
-                  </div>
-                )}
-              </Disclosure.Panel>
-            </Transition>
-          </div>
-        )}
-      </Disclosure>
+      {/* progress bar header */}
+      {isCycleDateValid ? (
+        <Collapsible.Root defaultOpen className="flex flex-col">
+          <Collapsible.Trigger className="group relative flex w-full items-center justify-between gap-2">
+            {progressTitle}
+            <span className="ml-auto">
+              <ChevronUpOutline className="hidden h-3.5 w-3.5 group-data-[panel-open]:block" aria-hidden="true" />
+              <ChevronDownOutline className="h-3.5 w-3.5 group-data-[panel-open]:hidden" aria-hidden="true" />
+            </span>
+          </Collapsible.Trigger>
+          <Collapsible.Panel>{progressBody}</Collapsible.Panel>
+        </Collapsible.Root>
+      ) : (
+        <div className="flex flex-col">
+          <div className="relative flex w-full items-center justify-between gap-2">{progressTitle}</div>
+          {progressBody}
+        </div>
+      )}
     </div>
   );
 });

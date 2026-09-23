@@ -4,23 +4,25 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
-import { ChevronUpOutline, MoreVerticalOutline, TickOutline } from "@makeplane/propel/icons";
-import { Popover, Transition } from "@headlessui/react";
-// hooks
-// ui
-// icons
+import {
+  Menu,
+  MenuCheckboxItem,
+  MenuContent,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+  MenuTrigger,
+} from "@makeplane/propel/components/menu";
+import { ChevronUpOutline, MoreVerticalOutline } from "@makeplane/propel/icons";
+// plane imports
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
-import { EIssueFilterType } from "@plane/constants";
+import { CALENDAR_LAYOUTS, EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
-import { Switch } from "@makeplane/propel/components/switch";
-// types
-// constants
-import { CALENDAR_LAYOUTS } from "@plane/constants";
+// hooks
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
@@ -47,28 +49,19 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
   const issueCalendarView = useCalendarView();
   const [windowWidth] = useSize();
 
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // states
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "auto",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  // derived values
+  const isMobile = windowWidth <= 768;
 
   const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
-  const handleLayoutChange = (layout: TCalendarLayouts, closePopover: any) => {
+  const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!updateFilters) return;
 
-    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    void updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
@@ -80,15 +73,12 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
         ? issueCalendarView.calendarFilters.activeMonthDate
         : issueCalendarView.calendarFilters.activeWeekDate
     );
-    if (windowWidth <= 768) closePopover(); // close the popover on mobile
   };
 
   const handleToggleWeekends = () => {
-    const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
-
     if (!updateFilters) return;
 
-    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    void updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         show_weekends: !showWeekends,
@@ -97,77 +87,51 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
   };
 
   return (
-    <Popover className="relative flex items-center">
-      {({ open, close: closePopover }) => (
-        <>
-          <Popover.Button as={React.Fragment}>
-            <button type="button" ref={setReferenceElement}>
+    // A single-choice layout group plus a standalone toggle, so Menu rows rather than a Select,
+    // whose one selection axis cannot hold both.
+    <Menu open={isOpen} onOpenChange={setIsOpen}>
+      <MenuTrigger
+        aria-label={t("common.options")}
+        render={
+          <button type="button">
+            <div
+              className={`hidden items-center gap-1.5 rounded-sm bg-layer-1 px-2.5 py-1 text-11 outline-none hover:bg-layer-1 md:flex ${
+                isOpen ? "text-primary" : "text-secondary"
+              }`}
+            >
+              <div className="font-medium">{t("common.options")}</div>
               <div
-                className={`hidden items-center gap-1.5 rounded-sm bg-layer-1 px-2.5 py-1 text-11 outline-none hover:bg-layer-1 md:flex ${
-                  open ? "text-primary" : "text-secondary"
-                }`}
+                className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${isOpen ? "" : "rotate-180"}`}
               >
-                <div className="font-medium">{t("common.options")}</div>
-                <div
-                  className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
-                >
-                  <ChevronUpOutline width={12} />
-                </div>
+                <ChevronUpOutline width={12} />
               </div>
-              <div className="md:hidden">
-                <MoreVerticalOutline className="h-4 text-secondary" />
-              </div>
-            </button>
-          </Popover.Button>
-          <Transition
-            as={React.Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-y-1"
-            enterTo="opacity-100 translate-y-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-1"
-          >
-            <Popover.Panel className="fixed z-50">
-              <div
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
-              >
-                <div>
-                  {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
-                    <button
-                      key={layout}
-                      type="button"
-                      className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
-                      onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
-                    >
-                      {layoutDetails.title}
-                      {calendarLayout === layout && <TickOutline width={12} height={12} />}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
-                    onClick={handleToggleWeekends}
-                  >
-                    {t("common.actions.show_weekends")}
-                    <Switch
-                      size="sm"
-                      checked={showWeekends}
-                      onCheckedChange={() => {
-                        if (windowWidth <= 768) closePopover();
-                      }}
-                      aria-label={t("common.actions.show_weekends")}
-                    />
-                  </button>
-                </div>
-              </div>
-            </Popover.Panel>
-          </Transition>
-        </>
-      )}
-    </Popover>
+            </div>
+            <div className="md:hidden">
+              <MoreVerticalOutline className="h-4 text-secondary" />
+            </div>
+          </button>
+        }
+      />
+      <MenuContent side="bottom" align="end" collisionPadding={12}>
+        {/* `marker="radio"` because the weekends checkbox shares this popup. Mobile still closes the
+            panel on a pick, as the legacy `closePopover` call did. */}
+        <MenuRadioGroup
+          marker="radio"
+          value={calendarLayout}
+          onValueChange={(value) => handleLayoutChange(value as TCalendarLayouts)}
+        >
+          {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
+            <MenuRadioItem key={layout} value={layout} label={layoutDetails.title} closeOnClick={isMobile} />
+          ))}
+        </MenuRadioGroup>
+        <MenuSeparator />
+        <MenuCheckboxItem
+          label={t("common.actions.show_weekends")}
+          checked={showWeekends}
+          onCheckedChange={handleToggleWeekends}
+          closeOnClick={isMobile}
+        />
+      </MenuContent>
+    </Menu>
   );
 });

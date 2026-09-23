@@ -7,9 +7,9 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
-import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
+import { stringToEmoji } from "@plane/blocks/emoji-icon-picker";
+import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
+import type { EmojiReactionType } from "@plane/blocks/emoji-reaction";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 // helpers
 // local imports

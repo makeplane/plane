@@ -9,10 +9,19 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // types
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IUserLite } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -53,42 +62,56 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
   const currentProjectDetails = getProjectById(projectId.toString());
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="bg-surface-1 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div className="sm:flex sm:items-start">
-          <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-danger-subtle sm:mx-0 sm:h-10 sm:w-10">
-            <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
-          </div>
-          <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 className="text-16 leading-6 font-medium text-primary">
-              {isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}
-            </h3>
-            <div className="mt-2">
-              <p className="text-13 text-secondary">
-                {isCurrentUser ? (
-                  <>
-                    Are you sure you want to leave the <span className="font-bold">{currentProjectDetails?.name}</span>{" "}
-                    project? You will be able to join the project if invited again or if it{"'"}s public.
-                  </>
-                ) : (
-                  <>
-                    Are you sure you want to remove member- <span className="font-bold">{data?.display_name}</span>?
-                    They will no longer have access to this project. This action cannot be undone.
-                  </>
-                )}
-              </p>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <DialogMain>
+          <DialogHeader>
+            <div className="sm:flex sm:items-start">
+              <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-danger-subtle sm:mx-0 sm:h-10 sm:w-10">
+                <WarningTriangleOutline className="h-6 w-6 text-danger-primary" aria-hidden="true" />
+              </div>
+              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                <DialogHeading>
+                  <DialogTitle>{isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}</DialogTitle>
+                </DialogHeading>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-end gap-2 p-4 sm:px-6">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-          {isCurrentUser ? (isDeleteLoading ? "Leaving..." : "Leave") : isDeleteLoading ? "Removing..." : "Remove"}
-        </Button>
-      </div>
-    </ModalCore>
+          </DialogHeader>
+          <DialogBody>
+            <p className="text-13 text-secondary">
+              {isCurrentUser ? (
+                <>
+                  Are you sure you want to leave the <span className="font-bold">{currentProjectDetails?.name}</span>{" "}
+                  project? You will be able to join the project if invited again or if it{"'"}s public.
+                </>
+              ) : (
+                <>
+                  Are you sure you want to remove member- <span className="font-bold">{data?.display_name}</span>? They
+                  will no longer have access to this project. This action cannot be undone.
+                </>
+              )}
+            </p>
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button
+            variant="danger"
+            size="md"
+            stretch="auto"
+            label={
+              isCurrentUser ? (isDeleteLoading ? "Leaving..." : "Leave") : isDeleteLoading ? "Removing..." : "Remove"
+            }
+            onClick={handleDeletion}
+            loading={isDeleteLoading}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 });

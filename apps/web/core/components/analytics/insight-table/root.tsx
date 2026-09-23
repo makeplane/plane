@@ -7,7 +7,8 @@
 import type { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { DownloadOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import type { AnalyticsTableDataMap, TAnalyticsTabsBase } from "@plane/types";
 import { DataTable } from "./data-table";
 import { TableLoader } from "./loader";
@@ -39,11 +40,13 @@ export function InsightTable<T extends Exclude<TAnalyticsTabsBase, "overview">>(
         actions={(table: Table<AnalyticsTableDataMap[T]>) => (
           <Button
             variant="secondary"
-            prependIcon={<DownloadOutline className="h-3.5 w-3.5" />}
+            size="sm"
+            stretch="auto"
+            label={t("exporter.csv.short_description")}
+            icon={<Icon icon={DownloadOutline} />}
+            iconPosition="start"
             onClick={() => onExport?.(table.getFilteredRowModel().rows)}
-          >
-            <div>{t("exporter.csv.short_description")}</div>
-          </Button>
+          />
         )}
       />
     </div>

@@ -12,7 +12,7 @@ import useSWR from "swr";
 import { ProjectsOutline, UserOutline } from "@makeplane/propel/icons";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 // plane package imports
 import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components

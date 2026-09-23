@@ -8,9 +8,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PillButton } from "@makeplane/propel/components/pill";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
@@ -48,23 +49,21 @@ export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFi
           const isSelected = filters?.type?.[filter?.value] || false;
           if (!isSelected) return <></>;
           return (
-            <PillButton
+            <Pill
               key={filter.value}
-              type="button"
               size="md"
               variant="outline"
               label={t(filter.i18n_label)}
-              endIcon={<CloseOutline className="h-3 w-3" />}
+              endIcon={<Icon icon={CloseOutline} />}
               onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
             />
           );
         })}
-        <PillButton
-          type="button"
+        <Pill
           size="md"
           variant="outline"
           label={t("common.clear_all")}
-          endIcon={<CloseOutline height={12} width={12} />}
+          endIcon={<Icon icon={CloseOutline} />}
           onClick={handleClearFilters}
         />
       </Header.LeftItem>

@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import type { TModuleFilters } from "@plane/types";
 // components
 import { calculateTotalFilters } from "@plane/utils";

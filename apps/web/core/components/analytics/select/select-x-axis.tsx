@@ -4,9 +4,19 @@
  * See the LICENSE file for details.
  */
 
+import { useMemo } from "react";
 // plane package imports
+import { Select } from "@plane/blocks/select";
 import type { ChartXAxisProperty } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+
+/** `null` is a real selectable value here (`allowNoValue`), so it needs an id the Select can key on. */
+const NO_VALUE_ID = "__no_value__";
+
+type XAxisOption = {
+  id: string;
+  label: string;
+  value: ChartXAxisProperty | null;
+};
 
 type Props = {
   value?: ChartXAxisProperty;
@@ -20,17 +30,32 @@ type Props = {
 
 export function SelectXAxis(props: Props) {
   const { value, onChange, options, hiddenOptions, allowNoValue, label } = props;
+  // derived values
+  const selectOptions = useMemo<XAxisOption[]>(() => {
+    const hidden = new Set(hiddenOptions);
+    const visible = options
+      .filter((item) => !hidden.has(item.value))
+      .map((item) => ({ id: item.value, label: item.label, value: item.value }));
+    return allowNoValue ? [{ id: NO_VALUE_ID, label: "No value", value: null }, ...visible] : visible;
+  }, [options, hiddenOptions, allowNoValue]);
+  const selected = useMemo(
+    () => selectOptions.find((option) => option.value === value) ?? null,
+    [selectOptions, value]
+  );
+
   return (
-    <CustomSelect value={value} label={label} onChange={onChange} maxHeight="lg">
-      {allowNoValue && <CustomSelect.Option value={null}>No value</CustomSelect.Option>}
-      {options.map((item) => {
-        if (hiddenOptions?.includes(item.value)) return null;
-        return (
-          <CustomSelect.Option key={item.value} value={item.value}>
-            {item.label}
-          </CustomSelect.Option>
-        );
-      })}
-    </CustomSelect>
+    <Select<XAxisOption>
+      getValues={() => selectOptions}
+      value={selected}
+      onChange={(id) => onChange(selectOptions.find((option) => option.id === id)?.value ?? null)}
+      getOptionValue={(option) => option.id}
+      getOptionLabel={(option) => option.label}
+      showSearch={false}
+      pinSelected={false}
+    >
+      <Select.Trigger variant="select-md" className="w-auto">
+        {label}
+      </Select.Trigger>
+    </Select>
   );
 }

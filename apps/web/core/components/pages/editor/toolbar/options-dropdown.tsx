@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ClipboardOutline, ExportOutline, HistoryOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -52,29 +52,23 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         {
           key: "full-screen",
           action: () => handleFullWidth(!isFullWidth),
+          title: "Full width",
+          // The row itself does the toggling; the switch is the state readout at the row's end.
           customContent: (
-            <>
-              Full width
-              <Switch size="sm" checked={isFullWidth} onCheckedChange={() => {}} aria-label="Full width" />
-            </>
+            <span className="pointer-events-none">
+              <Switch size="sm" checked={isFullWidth} aria-hidden tabIndex={-1} />
+            </span>
           ),
-          className: "flex items-center justify-between gap-2",
         },
         {
           key: "sticky-toolbar",
           action: () => handleStickyToolbar(!isStickyToolbarEnabled),
+          title: "Sticky toolbar",
           customContent: (
-            <>
-              Sticky toolbar
-              <Switch
-                size="sm"
-                checked={isStickyToolbarEnabled}
-                onCheckedChange={() => {}}
-                aria-label="Sticky toolbar"
-              />
-            </>
+            <span className="pointer-events-none">
+              <Switch size="sm" checked={isStickyToolbarEnabled} aria-hidden tabIndex={-1} />
+            </span>
           ),
-          className: "flex items-center justify-between gap-2",
           shouldRender: isContentEditable,
         },
         {
@@ -83,7 +77,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
             if (!editorRef) return;
             editorRef.copyMarkdownToClipboard();
             setToast({
-              type: TOAST_TYPE.SUCCESS,
+              type: "success",
               title: "Success!",
               message: "Markdown copied to clipboard.",
             });

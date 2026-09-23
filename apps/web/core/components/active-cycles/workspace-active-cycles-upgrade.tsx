@@ -10,8 +10,8 @@ import { AlertOctagonOutline, BarOutline, FolderOutline, SearchOutline } from "@
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
-import { ContentWrapper } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { ContentWrapper } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // assets
 import ctaL1Dark from "@/app/assets/workspace-active-cycles/cta-l-1-dark.webp?url";
@@ -91,15 +91,17 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
             <p className="text-14 font-medium text-tertiary">{t("active_cycles_description")}</p>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              className={`${getButtonStyling("primary", "base")} cursor-pointer`}
-              href={MARKETING_PRICING_PAGE_LINK}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <ProIcon className="h-3.5 w-3.5 text-on-color" />
-              {t("upgrade")}
-            </a>
+            <Button
+              variant="primary"
+              size="sm"
+              stretch="auto"
+              nativeButton={false}
+              render={
+                <a href={MARKETING_PRICING_PAGE_LINK} target="_blank" rel="noreferrer" aria-label={t("upgrade")} />
+              }
+              icon={<ProIcon className="h-3.5 w-3.5 text-on-color" />}
+              label={t("upgrade")}
+            />
           </div>
           <span className="absolute top-0 left-0">
             <img

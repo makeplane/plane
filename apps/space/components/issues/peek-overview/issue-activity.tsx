@@ -9,7 +9,7 @@ import { Link } from "react-router";
 import { usePathname } from "next/navigation";
 import { LockOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // components
 import { AddComment } from "@/components/issues/peek-overview/comment/add-comment";
 import { CommentCard } from "@/components/issues/peek-overview/comment/comment-detail-card";
@@ -62,9 +62,14 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
                 <LockOutline className="size-3 shrink-0" />
                 Sign in to add your comment
               </p>
-              <Link to={`/?next_path=${pathname}`}>
-                <Button variant="primary">Sign in</Button>
-              </Link>
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                nativeButton={false}
+                render={<Link to={`/?next_path=${pathname}`} />}
+                label="Sign in"
+              />
             </div>
           ))}
       </div>

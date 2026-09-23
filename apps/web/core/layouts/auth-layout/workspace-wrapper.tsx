@@ -12,11 +12,10 @@ import useSWR from "swr";
 // ui
 import { LogOutOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { PlaneLogo } from "@plane/blocks/icons";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "@plane/utils";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
@@ -130,7 +129,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Failed to sign out. Please try again.",
       })
@@ -159,14 +158,16 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-13 font-medium">{currentUser?.email}</div>
-              <div
-                className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
-                onClick={handleSignOut}
-              >
-                <Tooltip label={"Sign out"} alignOffset={8} disabled={isMobile}>
+              <Tooltip label="Sign out" alignOffset={8} disabled={isMobile}>
+                <button
+                  type="button"
+                  aria-label="Sign out"
+                  className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
+                  onClick={() => void handleSignOut()}
+                >
                   <LogOutOutline width={14} height={14} />
-                </Tooltip>
-              </div>
+                </button>
+              </Tooltip>
             </div>
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
@@ -179,19 +180,24 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
-                <Link href="/" className={cn(getButtonStyling("primary", "base"))}>
+                <ButtonElement variant="primary" size="sm" stretch="auto" render={<Link href="/" />}>
                   Go Home
-                </Link>
+                </ButtonElement>
               )}
               {allWorkspaces?.length > 0 && (
-                <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
+                <ButtonElement
+                  variant="secondary"
+                  size="sm"
+                  stretch="auto"
+                  render={<Link href="/settings/profile/general/" />}
+                >
                   Visit Profile
-                </Link>
+                </ButtonElement>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
+                <ButtonElement variant="secondary" size="sm" stretch="auto" render={<Link href="/create-workspace/" />}>
                   Create new workspace
-                </Link>
+                </ButtonElement>
               )}
             </div>
           </div>
@@ -216,16 +222,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <Link href="/invitations">
-                <span>
-                  <Button variant="secondary">Check pending invites</Button>
-                </span>
-              </Link>
-              <Link href="/create-workspace">
-                <span>
-                  <Button variant="primary">Create new workspace</Button>
-                </span>
-              </Link>
+              <ButtonElement variant="secondary" size="sm" stretch="auto" render={<Link href="/invitations" />}>
+                Check pending invites
+              </ButtonElement>
+              <ButtonElement variant="primary" size="sm" stretch="auto" render={<Link href="/create-workspace" />}>
+                Create new workspace
+              </ButtonElement>
             </div>
           </div>
         </div>

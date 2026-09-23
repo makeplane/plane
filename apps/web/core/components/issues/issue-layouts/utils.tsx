@@ -28,9 +28,9 @@ import {
 // plane types
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import type { ISvgIcons } from "@plane/propel/icons";
-import { CycleGroupIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import type { ISvgIcons } from "@plane/blocks/icons";
+import { CycleGroupIcon, PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,

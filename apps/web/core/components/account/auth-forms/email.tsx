@@ -13,9 +13,8 @@ import { CloseCircleOutline, WarningCircleOutline } from "@makeplane/propel/icon
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { IEmailCheckData } from "@plane/types";
-import { Spinner } from "@plane/ui";
 import { checkEmailValidity } from "@plane/utils";
 // helpers
 type TAuthEmailForm = {
@@ -101,9 +100,15 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
-      </Button>
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        stretch="full"
+        disabled={isButtonDisabled}
+        loading={isSubmitting}
+        label={t("common.continue")}
+      />
     </form>
   );
 });

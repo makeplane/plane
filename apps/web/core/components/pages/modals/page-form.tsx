@@ -9,13 +9,22 @@ import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 
 // plane imports
-import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { Button } from "@makeplane/propel/components/button";
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { GlobeOutline, LockOutline, PagesOutline } from "@makeplane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 import type { TPage } from "@plane/types";
 
 import { getTabIndex } from "@plane/utils";
@@ -67,101 +76,109 @@ export function PageForm(props: Props) {
   const isTitleLengthMoreThan255Character = formData.name ? formData.name.length > 255 : false;
 
   return (
-    <form onSubmit={handlePageFormSubmit}>
-      <div className="space-y-5 p-5">
-        <h3 className="text-18 font-medium text-secondary">Create page</h3>
-        <div className="flex h-9 w-full items-start gap-2">
-          <EmojiPicker
-            isOpen={isOpen}
-            handleToggle={(val: boolean) => setIsOpen(val)}
-            className="flex-shrink0 flex items-center justify-center"
-            buttonClassName="flex items-center justify-center bg-layer-2 hover:bg-layer-2-hover rounded-md"
-            label={
-              <span className="grid h-9 w-9 place-items-center rounded-md">
-                <>
-                  {formData?.logo_props?.in_use ? (
-                    <Logo logo={formData?.logo_props} size={18} type="lucide" />
-                  ) : (
-                    <PagesOutline className="h-4 w-4 text-tertiary" />
-                  )}
-                </>
-              </span>
-            }
-            onChange={(val: any) => {
-              let logoValue = {};
+    <form onSubmit={handlePageFormSubmit} className="flex min-h-0 flex-1 flex-col">
+      <DialogMain>
+        <DialogHeader>
+          <DialogHeading>
+            <DialogTitle>Create page</DialogTitle>
+          </DialogHeading>
+        </DialogHeader>
+        <DialogBody tabIndex={0}>
+          <div className="flex h-9 w-full items-start gap-2">
+            <EmojiPicker
+              isOpen={isOpen}
+              handleToggle={(val: boolean) => setIsOpen(val)}
+              className="flex-shrink0 flex items-center justify-center"
+              buttonClassName="flex items-center justify-center bg-layer-2 hover:bg-layer-2-hover rounded-md"
+              label={
+                <span className="grid h-9 w-9 place-items-center rounded-md">
+                  <>
+                    {formData?.logo_props?.in_use ? (
+                      <Logo logo={formData?.logo_props} size={18} type="lucide" />
+                    ) : (
+                      <PagesOutline className="h-4 w-4 text-tertiary" />
+                    )}
+                  </>
+                </span>
+              }
+              onChange={(val: any) => {
+                let logoValue = {};
 
-              if (val?.type === "emoji")
-                logoValue = {
-                  value: val.value,
-                  url: undefined,
-                };
-              else if (val?.type === "icon") logoValue = val.value;
+                if (val?.type === "emoji")
+                  logoValue = {
+                    value: val.value,
+                    url: undefined,
+                  };
+                else if (val?.type === "icon") logoValue = val.value;
 
-              handleFormData("logo_props", {
-                in_use: val?.type,
-                [val?.type]: logoValue,
-              });
-              setIsOpen(false);
-            }}
-            defaultIconColor={
-              formData?.logo_props?.in_use && formData?.logo_props?.in_use === "icon"
-                ? formData?.logo_props?.icon?.color
-                : undefined
-            }
-            defaultOpen={
-              formData?.logo_props?.in_use && formData?.logo_props?.in_use === "emoji"
-                ? EmojiIconPickerTypes.EMOJI
-                : EmojiIconPickerTypes.ICON
-            }
-          />
-          <div className="flew-grow w-full space-y-1">
-            <InputGroup size="2xl">
-              <Input
-                size="2xl"
+                handleFormData("logo_props", {
+                  in_use: val?.type,
+                  [val?.type]: logoValue,
+                });
+                setIsOpen(false);
+              }}
+              defaultIconColor={
+                formData?.logo_props?.in_use && formData?.logo_props?.in_use === "icon"
+                  ? formData?.logo_props?.icon?.color
+                  : undefined
+              }
+              defaultOpen={formData?.logo_props?.in_use && formData?.logo_props?.in_use === "emoji" ? "emoji" : "icon"}
+            />
+            <div className="flew-grow w-full space-y-1">
+              <InputField
                 id="name"
                 type="text"
+                size="2xl"
+                orientation="vertical"
                 value={formData.name}
                 onChange={(e) => handleFormData("name", e.target.value)}
                 placeholder="Title"
+                error={
+                  isTitleLengthMoreThan255Character
+                    ? "Max length of the name should be less than 255 characters"
+                    : undefined
+                }
                 tabIndex={getIndex("name")}
                 required
+                // the title is the dialog's only field; focus it on open as the legacy form did
+                // oxlint-disable-next-line jsx_a11y/no-autofocus
                 autoFocus
               />
-            </InputGroup>
-            {isTitleLengthMoreThan255Character && (
-              <span className="text-11 text-danger-primary">
-                Max length of the name should be less than 255 characters
-              </span>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <div className="flex items-center gap-2">
-          <AccessField
-            onChange={(access) => handleFormData("access", access)}
-            value={formData?.access ?? EPageAccess.PUBLIC}
-            accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
-            isMobile={isMobile}
-          />
-          <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
-        </div>
-        <div className="flex items-center justify-end gap-2">
-          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            size="lg"
-            type="submit"
-            loading={isSubmitting}
-            disabled={isTitleLengthMoreThan255Character}
-            tabIndex={getIndex("submit")}
-          >
-            {isSubmitting ? "Creating" : "Create Page"}
-          </Button>
-        </div>
-      </div>
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <DialogInfo>
+          <div className="flex items-center gap-2">
+            <AccessField
+              onChange={(access) => handleFormData("access", access)}
+              value={formData?.access ?? EPageAccess.PUBLIC}
+              accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
+              isMobile={isMobile}
+            />
+            <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
+          </div>
+        </DialogInfo>
+        <Button
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label="Cancel"
+          onClick={handleModalClose}
+          tabIndex={getIndex("cancel")}
+        />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          type="submit"
+          label={isSubmitting ? "Creating" : "Create Page"}
+          loading={isSubmitting}
+          disabled={isTitleLengthMoreThan255Character}
+          tabIndex={getIndex("submit")}
+        />
+      </DialogActions>
     </form>
   );
 }

@@ -13,10 +13,10 @@ import { AiStar1Outline } from "@makeplane/propel/icons";
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/skeleton";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popover";
@@ -97,7 +97,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
       onClose();
     } else {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Editor is still processing changes. Please wait before proceeding.",
       });
@@ -127,7 +127,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
       .then((res) => {
         if (res.response === "")
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message:
               "Work item title isn't informative enough to generate the description. Please try with a different title.",
@@ -139,13 +139,13 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
 
         if (err.status === 429)
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message: error || "Some error occurred. Please try again.",
           });
@@ -222,7 +222,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                     return asset_id;
                   } catch (error) {
                     console.log("Error in uploading issue asset:", error);
-                    throw new Error("Asset upload failed. Please try again later.");
+                    throw new Error("Asset upload failed. Please try again later.", { cause: error });
                   }
                 }}
                 duplicateFile={async (assetId: string) => {

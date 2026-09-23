@@ -7,12 +7,14 @@
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { DeleteOutline } from "@makeplane/propel/icons";
+import { DeleteOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 //
@@ -54,6 +56,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
   return (
     <>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -87,18 +90,42 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
               </>
             )}
 
-            <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  toggleDeleteAttachmentModal(attachmentId);
-                }}
-              >
-                <div className="flex items-center gap-2">
-                  <DeleteOutline className="h-3.5 w-3.5" />
-                  <span>{t("common.actions.delete")}</span>
-                </div>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            {/* The whole row is a button that opens the attachment, so the menu's own
+                activation must not reach it. */}
+            <div
+              role="presentation"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+              }}
+            >
+              <Menu>
+                {/* Icon-only trigger, so it needs an explicit accessible name. */}
+                <MenuTrigger
+                  render={
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      disabled={disabled}
+                      aria-label={t("aria_labels.common.more_actions")}
+                      icon={<Icon icon={MoreHorizontalOutline} />}
+                    />
+                  }
+                />
+                <MenuContent side="bottom" align="end">
+                  <MenuItem
+                    icon={<Icon icon={DeleteOutline} />}
+                    label={t("common.actions.delete")}
+                    onClick={() => {
+                      toggleDeleteAttachmentModal(attachmentId);
+                    }}
+                  />
+                </MenuContent>
+              </Menu>
+            </div>
           </div>
         </div>
       </button>

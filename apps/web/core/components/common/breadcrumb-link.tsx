@@ -7,7 +7,7 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -19,13 +19,13 @@ type Props = {
 };
 
 const IconWrapper = React.memo(function IconWrapper({ icon }: { icon: React.ReactNode }) {
-  return <div className="flex size-4 items-center justify-center overflow-hidden !text-16">{icon}</div>;
+  return <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>;
 });
 
 IconWrapper.displayName = "IconWrapper";
 
 const LabelWrapper = React.memo(function LabelWrapper({ label }: { label: React.ReactNode }) {
-  return <div className="relative line-clamp-1 block max-w-[150px] truncate overflow-hidden text-primary">{label}</div>;
+  return <div className="relative line-clamp-1 block max-w-[150px] truncate overflow-hidden">{label}</div>;
 });
 
 LabelWrapper.displayName = "LabelWrapper";
@@ -59,7 +59,7 @@ const ItemWrapper = React.memo(function ItemWrapper({
 ItemWrapper.displayName = "ItemWrapper";
 
 export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
-  const { href, label, icon, disableTooltip = false, isLast = false } = props;
+  const { href, label, icon, disableTooltip = false, isLast } = props;
   const { isMobile } = usePlatformOS();
 
   const itemWrapperProps = useMemo(
@@ -76,7 +76,10 @@ export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
 
   if (href) {
     return (
-      <Link href={href}>
+      <Link
+        href={href}
+        className="flex rounded-md outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-strong focus-visible:outline-solid"
+      >
         <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>
       </Link>
     );

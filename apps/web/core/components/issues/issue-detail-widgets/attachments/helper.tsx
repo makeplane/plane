@@ -5,7 +5,7 @@
  */
 
 import { useMemo } from "react";
-import { setPromiseToast, TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // hooks
@@ -62,13 +62,13 @@ export const useAttachmentOperations = (
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
           setToast({
             message: "The attachment has been successfully removed",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Attachment removed",
           });
         } catch (_error) {
           setToast({
             message: "The Attachment could not be removed",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Attachment not removed",
           });
         }

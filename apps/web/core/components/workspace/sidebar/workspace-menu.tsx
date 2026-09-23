@@ -7,9 +7,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 // plane imports
 import { AnalyticsOutline, CyclesOutline, ProjectsOutline, ViewsOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -20,6 +21,8 @@ import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
 export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   // router params
   const { workspaceSlug } = useParams();
+  // translation
+  const { t } = useTranslation();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
@@ -57,26 +60,20 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   ];
 
   return (
-    <Disclosure as="div" defaultOpen>
-      <SidebarWorkspaceMenuHeader isWorkspaceMenuOpen={isWorkspaceMenuOpen} toggleWorkspaceMenu={toggleWorkspaceMenu} />
-      <Transition
-        as="div"
-        show={isWorkspaceMenuOpen}
-        enter="transition duration-100 ease-out"
-        enterFrom="transform scale-95 opacity-0"
-        enterTo="transform scale-100 opacity-100"
-        leave="transition duration-75 ease-out"
-        leaveFrom="transform scale-100 opacity-100"
-        leaveTo="transform scale-95 opacity-0"
-      >
-        {isWorkspaceMenuOpen && (
-          <Disclosure.Panel as="div" className="mt-0.5 flex flex-col gap-0.5" static>
-            {SIDEBAR_WORKSPACE_MENU_ITEMS.map((item) => (
-              <SidebarWorkspaceMenuItem key={item.key} item={item} />
-            ))}
-          </Disclosure.Panel>
-        )}
-      </Transition>
-    </Disclosure>
+    <Collapsible
+      // the group marker lives on the root: CollapsibleHeader takes no className
+      render={<div className="group/workspace-button mt-2.5" />}
+      placement="sidebar"
+      open={isWorkspaceMenuOpen}
+      onOpenChange={toggleWorkspaceMenu}
+      trigger={<span className="text-13 font-semibold text-placeholder">{t("common.workspace")}</span>}
+      trailing={<SidebarWorkspaceMenuHeader />}
+    >
+      <div className="mt-0.5 flex flex-col gap-0.5">
+        {SIDEBAR_WORKSPACE_MENU_ITEMS.map((item) => (
+          <SidebarWorkspaceMenuItem key={item.key} item={item} />
+        ))}
+      </div>
+    </Collapsible>
   );
 });

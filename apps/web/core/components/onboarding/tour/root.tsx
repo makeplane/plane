@@ -7,8 +7,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { PlaneLockup } from "@plane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
+import { PlaneLockup } from "@plane/blocks/icons";
 import { CloseOutline } from "@makeplane/propel/icons";
 // assets
 import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
@@ -110,12 +110,13 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                 <div className="mt-12 flex items-center gap-6">
                   <Button
                     variant="primary"
+                    size="sm"
+                    stretch="auto"
+                    label="Take a Product Tour"
                     onClick={() => {
                       setStep("work-items");
                     }}
-                  >
-                    Take a Product Tour
-                  </Button>
+                  />
                   <button
                     type="button"
                     className="bg-transparent text-11 font-medium text-accent-primary outline-subtle-1"
@@ -154,26 +155,35 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
-                      Back
-                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      stretch="auto"
+                      label="Back"
+                      onClick={() => setStep(currentStep.prevStep ?? "welcome")}
+                    />
                   )}
                   {currentStep?.nextStep && (
-                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
-                      Next
-                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      stretch="auto"
+                      label="Next"
+                      onClick={() => setStep(currentStep.nextStep ?? "work-items")}
+                    />
                   )}
                 </div>
                 {currentStepIndex === TOUR_STEPS.length - 1 && (
                   <Button
                     variant="primary"
+                    size="sm"
+                    stretch="auto"
+                    label="Create your first project"
                     onClick={() => {
                       onComplete();
                       toggleCreateProjectModal(true);
                     }}
-                  >
-                    Create your first project
-                  </Button>
+                  />
                 )}
               </div>
             </div>

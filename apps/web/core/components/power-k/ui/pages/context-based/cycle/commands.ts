@@ -11,7 +11,7 @@ import { LinkOutline, StarOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -44,7 +44,7 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
       else addCycleToFavorites(workspaceSlug.toString(), cycleDetails.project_id, cycleDetails.id);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Some error occurred",
       });
     }
@@ -55,13 +55,13 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
     copyTextToClipboard(url.href)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("power_k.contextual_actions.cycle.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("power_k.contextual_actions.cycle.copy_url_toast_error"),
         });
       });

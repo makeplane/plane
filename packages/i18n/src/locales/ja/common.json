@@ -8,6 +8,7 @@
   "submit": "送信",
   "cancel": "キャンセル",
   "loading": "読み込み中",
+  "searching": "検索中…",
   "error": "エラー",
   "success": "成功",
   "warning": "警告",
@@ -303,6 +304,9 @@
   "create_new_label": "新規ラベルを作成",
   "label_name": "ラベル名",
   "failed_to_create_label": "ラベルの作成に失敗しました。もう一度お試しください。",
+  "no_matching_labels": "一致するラベルがありません",
+  "adding_label": "「{name}」を追加中",
+  "add_label_to_labels": "「{name}」をラベルに追加",
   "start_date": "開始日",
   "end_date": "終了日",
   "due_date": "期限",
@@ -522,6 +526,7 @@
       "updated_on": "更新日"
     },
     "sort": {
+      "label": "並べ替え",
       "asc": "昇順",
       "desc": "降順",
       "created_on": "作成日",
@@ -619,7 +624,8 @@
       "enable": "有効化",
       "disable": "無効化",
       "copy_markdown": "マークダウンをコピー",
-      "reply": "返信"
+      "reply": "返信",
+      "add_reaction": "リアクションを追加"
     },
     "name": "名前",
     "discard": "破棄",
@@ -867,5 +873,6 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {#件のラベル} other {#件のラベル}}"
 }

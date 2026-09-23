@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { ShowOutline, WarningTriangleOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
 import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // helpers
@@ -59,14 +59,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
     await handleRestore(versionDetails?.description_html ?? "<p></p>")
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Page version restored.",
         });
         handleClose();
       })
       .catch(() =>
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Failed to restore page version.",
         })
       )
@@ -93,9 +93,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-16 font-semibold">Something went wrong!</h6>
               <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
             </div>
-            <Button variant="link" onClick={handleRetry} loading={isRetrying}>
-              Try again
-            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              stretch="auto"
+              label="Try again"
+              onClick={() => void handleRetry()}
+              loading={isRetrying}
+            />
           </div>
         </div>
       ) : (
@@ -113,9 +118,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               </span>
             </div>
             {restoreEnabled && (
-              <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
-                {isRestoring ? "Restoring" : "Restore"}
-              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label={isRestoring ? "Restoring" : "Restore"}
+                onClick={() => void handleRestoreVersion()}
+                loading={isRestoring}
+              />
             )}
           </div>
           <div className="vertical-scrollbar scrollbar-sm h-full overflow-y-scroll pt-8">

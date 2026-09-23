@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import { Transition } from "@headlessui/react";
 // plane imports
 import type { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
@@ -39,28 +38,25 @@ export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedO
   }
 
   return (
-    <div className="flex h-full items-center overflow-hidden">
-      {selectedOptions.slice(0, displayCount).map((option, index) => (
-        <React.Fragment key={index}>
-          <div className="flex items-center whitespace-nowrap">
-            {option?.icon && <span className={cn("mr-1", option.iconClassName)}>{option.icon}</span>}
-            <span className="max-w-24 truncate">{option?.label}</span>
-          </div>
-          {index < Math.min(displayCount, selectedOptions.length) - 1 && <span className="mx-1 text-tertiary">,</span>}
-        </React.Fragment>
-      ))}
+    <div className="flex h-full w-full items-center overflow-hidden">
+      <div className="flex min-w-0 items-center overflow-hidden">
+        {selectedOptions.slice(0, displayCount).map((option, index) => (
+          <React.Fragment key={String(option.value)}>
+            <div className="flex min-w-0 items-center whitespace-nowrap">
+              {option?.icon && <span className={cn("mr-1 shrink-0", option.iconClassName)}>{option.icon}</span>}
+              <span className="max-w-24 truncate">{option?.label}</span>
+            </div>
+            {index < Math.min(displayCount, selectedOptions.length) - 1 && (
+              <span className="mx-1 shrink-0 text-tertiary">,</span>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
       {remainingCount > 0 && (
-        <Transition
-          as="div"
-          show
-          appear
-          enter="transition-opacity duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          className="ml-1 whitespace-nowrap text-tertiary"
-        >
+        // Was a Headless UI `Transition show appear` doing nothing but a fade-in on mount (Ruling 36).
+        <span className="ml-1 shrink-0 animate-fade-in whitespace-nowrap text-tertiary motion-reduce:animate-none">
           +{remainingCount} more
-        </Transition>
+        </span>
       )}
     </div>
   );

@@ -7,10 +7,12 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { ChevronDownOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
@@ -50,6 +52,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
   } = props;
 
   // states
+  const [isOpen, setIsOpen] = useState(true);
   const [isEditLabelForm, setEditLabelForm] = useState(false);
 
   const customMenuItems: ICustomMenuItem[] = [
@@ -80,86 +83,78 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
         <div
           className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
-          <Disclosure
-            as="div"
+          {/* propel: the ready-made `Collapsible` puts the label inside the trigger button, and this header
+              already carries a menu button, so the disclosure is hand-rolled instead. */}
+          <div
             className={`rounded-sm text-primary ${
               !isDroppingInLabel ? "border-[0.5px] border-subtle" : ""
             } ${isDragging ? "bg-layer-1" : "bg-surface-1"}`}
-            defaultOpen
           >
-            {({ open }) => (
-              <>
-                <div className={`py-3 pr-3 pl-1 ${!isUpdating && "max-h-full overflow-y-hidden"}`}>
-                  <>
-                    <div className="relative flex cursor-pointer items-center justify-between gap-2">
-                      {isEditLabelForm ? (
-                        <CreateUpdateLabelInline
-                          labelForm={isEditLabelForm}
-                          setLabelForm={setEditLabelForm}
-                          isUpdating
-                          labelToUpdate={label}
-                          labelOperationsCallbacks={labelOperationsCallbacks}
-                          onClose={() => {
-                            setEditLabelForm(false);
-                            setIsUpdating(false);
-                          }}
-                        />
-                      ) : (
-                        <LabelItemBlock
-                          label={label}
-                          isDragging={isDragging}
-                          customMenuItems={customMenuItems}
-                          handleLabelDelete={handleLabelDelete}
-                          isLabelGroup
-                          dragHandleRef={dragHandleRef}
-                        />
-                      )}
+            <div className={`py-3 pr-3 pl-1 ${!isUpdating && "max-h-full overflow-y-hidden"}`}>
+              <div className="relative flex cursor-pointer items-center justify-between gap-2">
+                {isEditLabelForm ? (
+                  <CreateUpdateLabelInline
+                    labelForm={isEditLabelForm}
+                    setLabelForm={setEditLabelForm}
+                    isUpdating
+                    labelToUpdate={label}
+                    labelOperationsCallbacks={labelOperationsCallbacks}
+                    onClose={() => {
+                      setEditLabelForm(false);
+                      setIsUpdating(false);
+                    }}
+                  />
+                ) : (
+                  <LabelItemBlock
+                    label={label}
+                    isDragging={isDragging}
+                    customMenuItems={customMenuItems}
+                    handleLabelDelete={handleLabelDelete}
+                    isLabelGroup
+                    dragHandleRef={dragHandleRef}
+                  />
+                )}
 
-                      <Disclosure.Button>
-                        <span>
-                          <ChevronDownOutline
-                            className={`h-4 w-4 text-placeholder ${!open ? "rotate-90 transform" : ""}`}
-                          />
-                        </span>
-                      </Disclosure.Button>
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  aria-label={label.name}
+                  aria-expanded={isOpen}
+                  onClick={() => setIsOpen((prev) => !prev)}
+                  icon={
+                    <Icon
+                      icon={
+                        <ChevronDownOutline
+                          className={cn("h-4 w-4 text-placeholder transition-transform", !isOpen && "rotate-90")}
+                        />
+                      }
+                    />
+                  }
+                />
+              </div>
+              {isOpen && (
+                <div className="ml-6">
+                  {labelChildren.map((child, index) => (
+                    <div key={child.id} className={`group flex w-full items-center text-13`}>
+                      <div className="w-full">
+                        <ProjectSettingLabelItem
+                          label={child}
+                          handleLabelDelete={() => handleLabelDelete(child)}
+                          setIsUpdating={setIsUpdating}
+                          isParentDragging={isDragging}
+                          isChild
+                          isLastChild={index === labelChildren.length - 1}
+                          onDrop={onDrop}
+                          isEditable={isEditable}
+                          labelOperationsCallbacks={labelOperationsCallbacks}
+                        />
+                      </div>
                     </div>
-                    <Transition
-                      as="div"
-                      show={open}
-                      enter="transition duration-100 ease-out"
-                      enterFrom="transform opacity-0"
-                      enterTo="transform opacity-100"
-                      leave="transition duration-75 ease-out"
-                      leaveFrom="transform opacity-100"
-                      leaveTo="transform opacity-0"
-                    >
-                      <Disclosure.Panel>
-                        <div className="ml-6">
-                          {labelChildren.map((child, index) => (
-                            <div key={child.id} className={`group flex w-full items-center text-13`}>
-                              <div className="w-full">
-                                <ProjectSettingLabelItem
-                                  label={child}
-                                  handleLabelDelete={() => handleLabelDelete(child)}
-                                  setIsUpdating={setIsUpdating}
-                                  isParentDragging={isDragging}
-                                  isChild
-                                  isLastChild={index === labelChildren.length - 1}
-                                  onDrop={onDrop}
-                                  isEditable={isEditable}
-                                  labelOperationsCallbacks={labelOperationsCallbacks}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </Disclosure.Panel>
-                    </Transition>
-                  </>
+                  ))}
                 </div>
-              </>
-            )}
-          </Disclosure>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </LabelDndHOC>

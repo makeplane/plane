@@ -16,7 +16,8 @@ import {
 } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu } from "@plane/ui";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 
 type Props = {
   workspaceSlug: string;
@@ -44,77 +45,53 @@ export function ProjectActionsMenu({
   // translation
   const { t } = useTranslation();
   // refs
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   // router
   const navigate = useNavigate();
 
   return (
-    <CustomMenu
-      customButton={
-        <span
-          ref={actionSectionRef}
-          className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
-          onClick={() => setIsMenuActive(!isMenuActive)}
-        >
-          <MoreHorizontalOutline className="size-4" />
-        </span>
-      }
-      className="flex-shrink-0"
-      customButtonClassName="grid place-items-center"
-      placement="bottom-start"
-      ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-      useCaptureForOutsideClick
-      closeOnSelect
-      onMenuClose={() => setIsMenuActive(false)}
-    >
-      {/* Publish project settings */}
-      {isAdmin && (
-        <CustomMenu.MenuItem onClick={onPublishModal}>
-          <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-            <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
-              <ShareAltOutline className="h-3.5 w-3.5 stroke-[1.5]" />
-            </div>
-            <div>{t("publish_project")}</div>
-          </div>
-        </CustomMenu.MenuItem>
-      )}
-      <CustomMenu.MenuItem onClick={onCopyText}>
-        <span className="flex items-center justify-start gap-2">
-          <LinkOutline className="h-3.5 w-3.5 stroke-[1.5]" />
-          <span>{t("copy_link")}</span>
-        </span>
-      </CustomMenu.MenuItem>
-      {isAuthorized && (
-        <CustomMenu.MenuItem
-          onClick={() => {
-            navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
-          }}
-        >
-          <div className="flex cursor-pointer items-center justify-start gap-2">
-            <ArchiveOutline className="h-3.5 w-3.5 stroke-[1.5]" />
-            <span>{t("archives")}</span>
-          </div>
-        </CustomMenu.MenuItem>
-      )}
-      <CustomMenu.MenuItem
-        onClick={() => {
-          navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
-        }}
-      >
-        <div className="flex cursor-pointer items-center justify-start gap-2">
-          <SettingsOutline className="h-3.5 w-3.5 stroke-[1.5]" />
-          <span>{t("settings")}</span>
-        </div>
-      </CustomMenu.MenuItem>
-      {/* Leave project */}
-      {!isAuthorized && (
-        <CustomMenu.MenuItem onClick={onLeaveProject}>
-          <div className="flex items-center justify-start gap-2">
-            <LogOutOutline className="h-3.5 w-3.5 stroke-[1.5]" />
-            <span>{t("leave_project")}</span>
-          </div>
-        </CustomMenu.MenuItem>
-      )}
-    </CustomMenu>
+    <div className="shrink-0">
+      <Menu open={isMenuActive} onOpenChange={setIsMenuActive}>
+        <MenuTrigger
+          render={
+            <button
+              type="button"
+              ref={actionSectionRef}
+              className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+              aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
+            >
+              <MoreHorizontalOutline className="size-4" />
+            </button>
+          }
+        />
+        <MenuContent side="bottom" align="start">
+          {/* Publish project settings */}
+          {isAdmin && (
+            <MenuItem icon={<Icon icon={ShareAltOutline} />} label={t("publish_project")} onClick={onPublishModal} />
+          )}
+          <MenuItem icon={<Icon icon={LinkOutline} />} label={t("copy_link")} onClick={onCopyText} />
+          {isAuthorized && (
+            <MenuItem
+              icon={<Icon icon={ArchiveOutline} />}
+              label={t("archives")}
+              onClick={() => {
+                void navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+              }}
+            />
+          )}
+          <MenuItem
+            icon={<Icon icon={SettingsOutline} />}
+            label={t("settings")}
+            onClick={() => {
+              void navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
+            }}
+          />
+          {/* Leave project */}
+          {!isAuthorized && (
+            <MenuItem icon={<Icon icon={LogOutOutline} />} label={t("leave_project")} onClick={onLeaveProject} />
+          )}
+        </MenuContent>
+      </Menu>
+    </div>
   );
 }

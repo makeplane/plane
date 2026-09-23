@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
 import type { TModuleStatus } from "@plane/types";
 // local imports
 import { PowerKModalCommandItem } from "../../../modal/command-item";

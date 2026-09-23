@@ -14,12 +14,13 @@ import { useParams } from "next/navigation";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { ControlLink, DropIndicator } from "@plane/ui";
+import { ControlLink } from "@plane/blocks/layout";
+import { DropIndicator } from "@plane/blocks/common";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
@@ -65,15 +66,17 @@ interface IssueDetailsBlockProps {
 const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
   // refs
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const menuActionRef = useRef<HTMLButtonElement | null>(null);
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
 
   const customActionButton = (
-    // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-    <div
+    // The quick-action menu grafts its trigger behaviour (and accessible name) onto this element via
+    // MenuTrigger render, so it has to be a real button.
+    <button
+      type="button"
       ref={menuActionRef}
       className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
         isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
@@ -81,7 +84,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
       <MoreHorizontalOutline className="h-3.5 w-3.5" />
-    </div>
+    </button>
   );
 
   // oxlint-disable-next-line unicorn/consistent-function-scoping
@@ -248,7 +251,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           if (isDragAllowed) setIsCurrentBlockDragging(true);
           else {
             setToast({
-              type: TOAST_TYPE.WARNING,
+              type: "warning",
               title: "Cannot move work item",
               message: !canEditIssueProperties
                 ? "You are not allowed to move this work item"

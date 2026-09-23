@@ -171,12 +171,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           page={page}
         />
         {showContentTooLargeBanner && (
-          <Banner
-            placement="page"
-            variant="warning"
-            title={t("page_content_limit_banner.message")}
-            render={<div className="px-page-x" />}
-          />
+          <Banner placement="page" variant="warning" title={t("page_content_limit_banner.message")} />
         )}
         <PageEditorBody
           config={config}

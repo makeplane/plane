@@ -14,7 +14,7 @@ import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { Skeleton } from "@/components/common/skeleton";
-import { setPromiseToast } from "@/providers/toast";
+import { setPromiseToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 // types
@@ -73,6 +73,7 @@ const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthent
           icon={<img src={GitlabLogo} height={24} width={24} alt="GitLab Logo" />}
           config={
             <Switch
+              aria-label="Enable GitLab authentication"
               checked={Boolean(parseInt(enableGitlabConfig))}
               onCheckedChange={() => {
                 if (Boolean(parseInt(enableGitlabConfig)) === true) {

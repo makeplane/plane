@@ -5,7 +5,7 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 
 export function StickiesEmptyState() {
   const { t } = useTranslation();

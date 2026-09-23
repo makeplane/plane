@@ -7,9 +7,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ViewsOutline } from "@makeplane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ViewListHeader } from "@/components/views/view-list-header";
@@ -18,9 +19,11 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { loader } = useProject();
@@ -30,7 +33,11 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
@@ -47,9 +54,13 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
         <Header.RightItem>
           <ViewListHeader />
           <div>
-            <Button variant="primary" size="lg" onClick={() => toggleCreateViewModal(true)}>
-              Add view
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label="Add view"
+              onClick={() => toggleCreateViewModal(true)}
+            />
           </div>
         </Header.RightItem>
       </Header>

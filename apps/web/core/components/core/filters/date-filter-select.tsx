@@ -7,8 +7,8 @@
 import React from "react";
 import { CalendarOutline } from "@makeplane/propel/icons";
 // ui
-import { CalendarAfterIcon, CalendarBeforeIcon } from "@plane/propel/icons";
-import { CustomSelect } from "@plane/ui";
+import { CalendarAfterIcon, CalendarBeforeIcon } from "@plane/blocks/icons";
+import { Select } from "@plane/blocks/select";
 
 type Props = {
   title: string;
@@ -19,7 +19,7 @@ type Props = {
 type DueDate = {
   name: string;
   value: string;
-  icon: any;
+  icon: React.ReactNode;
 };
 
 const dueDateRange: DueDate[] = [
@@ -40,28 +40,29 @@ const dueDateRange: DueDate[] = [
   },
 ];
 
+const formatOptionLabel = (title: string, name: string) => `${title} ${name}`;
+
 export function DateFilterSelect({ title, value, onChange }: Props) {
+  const selected = dueDateRange.find((item) => item.value === value) ?? null;
+
   return (
-    <CustomSelect
-      value={value}
-      label={
-        <div className="flex items-center gap-2 text-11">
-          {dueDateRange.find((item) => item.value === value)?.icon}
-          <span>
-            {title} {dueDateRange.find((item) => item.value === value)?.name}
-          </span>
-        </div>
-      }
+    <Select<DueDate>
+      getValues={() => dueDateRange}
+      value={selected}
       onChange={onChange}
+      getOptionValue={(option) => option.value}
+      getOptionLabel={(option) => formatOptionLabel(title, option.name)}
+      getOptionIcon={(option) => option.icon}
+      showSearch={false}
+      pinSelected={false}
+      placeholder={formatOptionLabel(title, "")}
     >
-      {dueDateRange.map((option, index) => (
-        <CustomSelect.Option key={index} value={option.value}>
-          <div className="flex items-center gap-2">
-            <span>{option.icon}</span>
-            {title} {option.name}
-          </div>
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
+      <Select.Trigger variant="select-md">
+        <span className="flex items-center gap-2 text-11">
+          {selected?.icon}
+          <span>{formatOptionLabel(title, selected?.name ?? "")}</span>
+        </span>
+      </Select.Trigger>
+    </Select>
   );
 }

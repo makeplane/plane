@@ -10,34 +10,51 @@ import { FilterOutline } from "@makeplane/propel/icons";
 import type { ENotificationFilterType } from "@plane/constants";
 import { FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuCheckboxItem, MenuContent, MenuTrigger } from "@makeplane/propel/components/menu";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { PopoverMenu } from "@plane/ui";
 // hooks
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// local imports
-import { NotificationFilterOptionItem } from "./menu-option-item";
-import { IconButton } from "@plane/propel/icon-button";
 
 export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
+  const { filters, updateFilters } = useWorkspaceNotifications();
 
-  const translatedFilterTypeOptions = FILTER_TYPE_OPTIONS.map((filter) => ({
-    ...filter,
-    label: t(filter.i18n_label),
-  }));
+  const handleFilterTypeChange = (filterType: ENotificationFilterType, filterValue: boolean) =>
+    updateFilters("type", {
+      ...filters.type,
+      [filterType]: filterValue,
+    });
 
   return (
-    <PopoverMenu
-      data={translatedFilterTypeOptions}
-      button={
-        <Tooltip label={t("notification.options.filters")} side="bottom" disabled={isMobile}>
-          <IconButton size="base" variant="ghost" icon={FilterOutline} />
-        </Tooltip>
-      }
-      keyExtractor={(item: { label: string; value: ENotificationFilterType }) => item.value}
-      render={(item) => <NotificationFilterOptionItem {...item} />}
-    />
+    // A toggle list: checkbox rows keep the menu open, as the legacy popover did.
+    <Menu>
+      <Tooltip label={t("notification.options.filters")} side="bottom" disabled={isMobile}>
+        <MenuTrigger
+          render={
+            <IconButton
+              size="sm"
+              variant="ghost"
+              icon={<Icon icon={FilterOutline} />}
+              aria-label={t("notification.options.filters")}
+            />
+          }
+        />
+      </Tooltip>
+      <MenuContent side="bottom" align="end">
+        {FILTER_TYPE_OPTIONS.map((filter) => (
+          <MenuCheckboxItem
+            key={filter.value}
+            label={t(filter.i18n_label)}
+            checked={filters?.type?.[filter.value] || false}
+            onCheckedChange={(checked) => handleFilterTypeChange(filter.value, checked)}
+          />
+        ))}
+      </MenuContent>
+    </Menu>
   );
 });

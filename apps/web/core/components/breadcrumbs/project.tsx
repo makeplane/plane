@@ -5,84 +5,80 @@
  */
 
 import { observer } from "mobx-react";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectsOutline } from "@makeplane/propel/icons";
 // plane imports
-import type { ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
+import type { BreadcrumbNavigationItem, TCrumbLabelProps } from "@plane/blocks/breadcrumb";
+import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { useTranslation } from "@plane/i18n";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import type { TProject } from "@plane/types";
 
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;
   projectId: string;
   handleOnClick?: () => void;
-};
+} & TCrumbLabelProps;
 
 export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TProjectBreadcrumbProps) {
-  const { workspaceSlug, projectId, handleOnClick } = props;
+  const { workspaceSlug, projectId, handleOnClick, ...crumbProps } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // store hooks
   const { joinedProjectIds, getPartialProjectById } = useProject();
   const currentProjectDetails = getPartialProjectById(projectId);
 
-  // store hooks
-
   if (!currentProjectDetails) return null;
 
   // derived values
   const switcherOptions = joinedProjectIds
-    // oxlint-disable-next-line no-shadow
-    .map((projectId) => {
-      const project = getPartialProjectById(projectId);
+    .map<BreadcrumbNavigationItem | undefined>((id) => {
+      const project = getPartialProjectById(id);
+      if (!project) return undefined;
       return {
-        value: projectId,
-        query: project?.name,
+        key: id,
+        label: project.name,
         content: (
           <SwitcherLabel
-            name={project?.name}
-            logo_props={project?.logo_props}
+            name={project.name}
+            logo_props={project.logo_props}
             LabelIcon={ProjectsOutline}
             type="material"
           />
         ),
       };
     })
-    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
-
-  // helpers
-  // oxlint-disable-next-line unicorn/consistent-function-scoping
-  const renderIcon = (projectDetails: TProject) => (
-    <span className="grid size-4 flex-shrink-0 place-items-center">
-      <Logo logo={projectDetails.logo_props} size={14} />
-    </span>
-  );
+    .filter((option) => option !== undefined);
 
   return (
-    <>
-      <Breadcrumbs.Item
-        component={
-          <BreadcrumbNavigationSearchDropdown
-            selectedItem={currentProjectDetails.id}
-            navigationItems={switcherOptions}
-            onChange={(value: string) => {
-              router.push(`/${workspaceSlug}/projects/${value}/issues`);
-            }}
-            title={currentProjectDetails?.name}
-            icon={renderIcon(currentProjectDetails)}
-            handleOnClick={() => {
-              if (handleOnClick) handleOnClick();
-              else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
-            }}
-            shouldTruncate
-          />
-        }
-        showSeparator={false}
-      />
-    </>
+    <Breadcrumbs.Item
+      // The crumb's name is behind `BreadcrumbNavigationSelect`, deeper than the collapsed-crumb
+      // extractor's depth cap, so name it explicitly.
+      showSeparator={false}
+      label={currentProjectDetails.name}
+      {...crumbProps}
+      component={
+        <BreadcrumbNavigationSelect
+          selectedItemKey={currentProjectDetails.id}
+          navigationItems={switcherOptions}
+          onChange={(value: string) => {
+            router.push(`/${workspaceSlug}/projects/${value}/issues`);
+          }}
+          label={currentProjectDetails.name}
+          icon={<Logo logo={currentProjectDetails.logo_props} size={14} />}
+          handleOnClick={() => {
+            if (handleOnClick) handleOnClick();
+            else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
+          }}
+          placeholder={t("common.project")}
+          searchPlaceholder={t("common.search.label")}
+          emptyMessage={t("common.search.no_matches_found")}
+        />
+      }
+    />
   );
 });

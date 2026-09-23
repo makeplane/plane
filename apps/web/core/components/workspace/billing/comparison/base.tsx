@@ -7,7 +7,8 @@
 import { observer } from "mobx-react";
 import { ArrowDownOutline, TopArrowOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
 import { cn } from "@plane/utils";
 // constants
 import type { TPlanePlans } from "@/components/workspace/billing/comparison/plans";
@@ -127,13 +128,15 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
         <div className="my-4 flex items-center justify-center gap-1 pb-2">
           <Button
             variant="ghost"
+            size="sm"
+            stretch="auto"
+            label={isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}
-            appendIcon={isCompareAllFeaturesSectionOpen ? <TopArrowOutline /> : <ArrowDownOutline />}
-          >
-            {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
-          </Button>
+            icon={<Icon icon={isCompareAllFeaturesSectionOpen ? TopArrowOutline : ArrowDownOutline} />}
+            iconPosition="end"
+          />
         </div>
       </div>
     </div>

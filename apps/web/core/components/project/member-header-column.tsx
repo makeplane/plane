@@ -6,13 +6,13 @@
 
 // ui
 import { observer } from "mobx-react";
-import { Eraser } from "lucide-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import {
-  ArrowNarrowRightOutline,
   ChevronDownOutline,
+  EraserOutline,
   SortAscendingOutline,
   SortDescendingOutline,
-  TickOutline,
 } from "@makeplane/propel/icons";
 // constants
 import type { IProjectMemberDisplayProperties, TMemberOrderByOptions } from "@plane/constants";
@@ -20,7 +20,6 @@ import { MEMBER_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { CustomMenu } from "@plane/ui";
 import type { IMemberFilters } from "@/store/member/utils";
 
 interface Props {
@@ -49,80 +48,58 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
   if (!propertyDetails) return null;
 
   return (
-    <CustomMenu
-      customButtonClassName="clickable !w-full"
-      customButtonTabIndex={-1}
-      className="!w-full"
-      customButton={
-        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
-          <span>{t(propertyDetails.i18n_title)}</span>
-          <div className="ml-3 flex">
-            {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
-              activeSortingProperty === propertyDetails.descendingOrderKey) && (
-              <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
-                {propertyDetails.ascendingOrderKey === activeSortingProperty ? (
-                  <SortDescendingOutline className="h-3 w-3" />
-                ) : (
-                  <SortAscendingOutline className="h-3 w-3" />
-                )}
-              </div>
-            )}
-            <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
-          </div>
-        </div>
-      }
-      placement="bottom-end"
-      closeOnSelect
-    >
-      {propertyDetails.isSortingAllowed && (
-        <>
-          <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
-            <div
-              className={`flex items-center justify-between gap-1.5 px-1 ${
-                activeSortingProperty === propertyDetails.ascendingOrderKey
-                  ? "text-primary"
-                  : "text-secondary hover:text-primary"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <SortDescendingOutline className="h-3 w-3 stroke-[1.5]" />
-                <span>{propertyDetails.ascendingOrderTitle}</span>
-                <ArrowNarrowRightOutline className="h-3 w-3" />
-                <span>{propertyDetails.descendingOrderTitle}</span>
-              </div>
-              {activeSortingProperty === propertyDetails.ascendingOrderKey && <TickOutline className="h-3 w-3" />}
-            </div>
-          </CustomMenu.MenuItem>
-
-          <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
-            <div
-              className={`flex items-center justify-between gap-1.5 px-1 ${
-                activeSortingProperty === propertyDetails.descendingOrderKey
-                  ? "text-primary"
-                  : "text-secondary hover:text-primary"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <SortAscendingOutline className="h-3 w-3 stroke-[1.5]" />
-                <span>{propertyDetails.descendingOrderTitle}</span>
-                <ArrowNarrowRightOutline className="h-3 w-3" />
-                <span>{propertyDetails.ascendingOrderTitle}</span>
-              </div>
-              {activeSortingProperty === propertyDetails.descendingOrderKey && <TickOutline className="h-3 w-3" />}
-            </div>
-          </CustomMenu.MenuItem>
-
+    <Menu>
+      <MenuTrigger
+        tabIndex={-1}
+        render={
+          <button
+            type="button"
+            className="clickable flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary"
+          />
+        }
+      >
+        <span>{t(propertyDetails.i18n_title)}</span>
+        <div className="ml-3 flex">
           {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
             activeSortingProperty === propertyDetails.descendingOrderKey) && (
-            <CustomMenu.MenuItem className="mt-0.5" key={property} onClick={handleClearSorting}>
-              <div className="flex items-center gap-2 px-1">
-                <Eraser className="h-3 w-3" />
-                <span>{t("common.actions.clear_sorting")}</span>
-              </div>
-            </CustomMenu.MenuItem>
+            <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
+              {propertyDetails.ascendingOrderKey === activeSortingProperty ? (
+                <SortDescendingOutline className="h-3 w-3" />
+              ) : (
+                <SortAscendingOutline className="h-3 w-3" />
+              )}
+            </div>
           )}
-        </>
-      )}
-    </CustomMenu>
+          <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
+        </div>
+      </MenuTrigger>
+      <MenuContent side="bottom" align="end">
+        {propertyDetails.isSortingAllowed && (
+          <>
+            <MenuItem
+              icon={<Icon icon={SortDescendingOutline} />}
+              label={`${propertyDetails.ascendingOrderTitle} \u2192 ${propertyDetails.descendingOrderTitle}`}
+              selected={activeSortingProperty === propertyDetails.ascendingOrderKey}
+              onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}
+            />
+            <MenuItem
+              icon={<Icon icon={SortAscendingOutline} />}
+              label={`${propertyDetails.descendingOrderTitle} \u2192 ${propertyDetails.ascendingOrderTitle}`}
+              selected={activeSortingProperty === propertyDetails.descendingOrderKey}
+              onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}
+            />
+            {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
+              activeSortingProperty === propertyDetails.descendingOrderKey) && (
+              <MenuItem
+                key={property}
+                icon={<Icon icon={EraserOutline} />}
+                label={t("common.actions.clear_sorting")}
+                onClick={handleClearSorting}
+              />
+            )}
+          </>
+        )}
+      </MenuContent>
+    </Menu>
   );
 });

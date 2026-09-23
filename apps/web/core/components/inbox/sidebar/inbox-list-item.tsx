@@ -10,9 +10,9 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/layout";
 import { cn, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -90,7 +90,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
 
               {issue.priority && (
                 <Tooltip label={`Priority: ${issue.priority ?? "None"}`}>
-                  <PriorityIcon priority={issue.priority} withContainer className="h-3 w-3" />
+                  <PriorityIcon priority={issue.priority} />
                 </Tooltip>
               )}
 

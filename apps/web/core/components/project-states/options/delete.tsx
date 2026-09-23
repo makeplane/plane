@@ -6,12 +6,15 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { CloseOutline, LoadingOutline } from "@makeplane/propel/icons";
 // plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { ConfirmDialog } from "@plane/blocks/dialog";
+import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
-import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -24,6 +27,8 @@ type TStateDelete = {
 
 export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const { totalStates, state, deleteStateCallback } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
   // states
@@ -44,14 +49,14 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       const errorStatus = error as { status: number; data: { error: string } };
       if (errorStatus.status === 400) {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message:
             "This state contains some work items within it, please move them to some other state to delete this state.",
         });
       } else {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "State could not be deleted. Please try again.",
         });
@@ -62,7 +67,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
 
   return (
     <>
-      <AlertModalCore
+      <ConfirmDialog
         handleClose={() => setIsDeleteModal(false)}
         handleSubmit={handleDeleteState}
         isSubmitting={isDelete}
@@ -76,29 +81,32 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         }
       />
 
-      <button
-        type="button"
-        className={cn(
-          "flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-colors focus:outline-none",
-          isDeleteDisabled ? "bg-surface-2 text-secondary" : "text-danger-primary hover:bg-layer-1"
-        )}
-        disabled={isDeleteDisabled}
-        onClick={() => setIsDeleteModal(true)}
+      <Tooltip
+        label={
+          state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
+        }
+        layout="stacked"
+        disabled={!isDeleteDisabled || isMobile}
       >
-        <Tooltip
-          label={
-            state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
+        {/* Not `disabled`: a disabled button would never show the tooltip that explains why. */}
+        <IconButton
+          variant="ghost"
+          size="xs"
+          aria-label={t("common.delete")}
+          aria-disabled={isDeleteDisabled}
+          icon={
+            isDelete ? (
+              <Icon icon={<LoadingOutline className="animate-spin text-secondary" />} />
+            ) : (
+              <Icon icon={<CloseOutline className={cn({ "text-danger-primary": !isDeleteDisabled })} />} />
+            )
           }
-          layout="stacked"
-          disabled={!isDeleteDisabled || isMobile}
-        >
-          {isDelete ? (
-            <LoadingOutline className="h-3.5 w-3.5 text-secondary" />
-          ) : (
-            <CloseOutline className="h-3.5 w-3.5" />
-          )}
-        </Tooltip>
-      </button>
+          onClick={() => {
+            if (isDeleteDisabled) return;
+            setIsDeleteModal(true);
+          }}
+        />
+      </Tooltip>
     </>
   );
 });

@@ -6,7 +6,7 @@
 
 import { useRouter } from "next/navigation";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { PagesOutline } from "@makeplane/propel/icons";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";

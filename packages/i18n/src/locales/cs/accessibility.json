@@ -29,6 +29,19 @@
       "hide_password": "Skrýt heslo",
       "close_alert": "Zavřít upozornění",
       "close_popover": "Zavřít vyskakovací okno"
+    },
+    "breadcrumb": {
+      "trail": "Drobečková navigace",
+      "show_more": "Zobrazit další položky drobečkové navigace"
+    },
+    "common": {
+      "more_actions": "Další akce",
+      "remove": "Odebrat"
+    },
+    "color_picker": {
+      "open": "Otevřít výběr barvy",
+      "swatches": "Přednastavené barvy",
+      "hex_input": "Hexadecimální barva"
     }
   }
 }

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { IntakeOutline, LeftSidePaneOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { EInboxIssueCurrentTab } from "@plane/types";
 import { cn } from "@plane/utils";
 // components

@@ -6,7 +6,7 @@
 
 // plane imports
 import { CyclesOutline, ModuleOutline, PagesOutline, ViewsOutline, WorkItemsOutline } from "@makeplane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 // types
 import type { TTourSteps } from "./root";
 

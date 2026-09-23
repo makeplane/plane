@@ -11,14 +11,13 @@ import { Controller, useForm } from "react-hook-form";
 import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { DateRangeSelect } from "@plane/blocks/property-select";
+import { setToast } from "@plane/blocks/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
-// components
-import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUserPermissions, useUserProfile } from "@/hooks/store/user";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 // services
 import { CycleService } from "@/services/cycle.service";
@@ -42,6 +41,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
   // hooks
   const { allowPermissions } = useUserPermissions();
+  const { data: userProfile } = useUserProfile();
   const { updateCycleDetails } = useCycle();
   const { t } = useTranslation();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
@@ -99,13 +99,13 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
     if (isDateValid) {
       submitChanges(payload);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("project_cycles.action.update.success.title"),
         message: t("project_cycles.action.update.success.description"),
       });
     } else {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("project_cycles.action.update.failed.title"),
         message: t("project_cycles.action.update.error.already_exists"),
       });
@@ -155,34 +155,37 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
                 control={control}
                 name="end_date"
                 render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                  <DateRangeDropdown
-                    className="h-7"
-                    buttonVariant="border-with-text"
-                    minDate={new Date()}
-                    value={{
-                      from: getDate(startDateValue),
-                      to: getDate(endDateValue),
-                    }}
-                    onSelect={async (val) => {
-                      const isDateValid = await handleDateChange(val?.from, val?.to);
-                      if (isDateValid) {
-                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                      }
-                    }}
-                    placeholder={{
-                      from: t("project_cycles.start_date"),
-                      to: t("project_cycles.end_date"),
-                    }}
-                    customTooltipHeading={t("project_cycles.in_your_timezone")}
-                    customTooltipContent={`${renderFormattedDateInUserTimezone(
-                      cycleDetails.start_date ?? ""
-                    )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
-                    mergeDates
-                    showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date} // show tooltip only if both start and end date are present
-                    required={cycleDetails.status !== "draft"}
-                    disabled={!isEditingAllowed || isArchived || isCompleted}
-                  />
+                  <div className="h-7">
+                    <DateRangeSelect
+                      variant="pill-sm"
+                      minDate={new Date()}
+                      value={{
+                        from: getDate(startDateValue) ?? null,
+                        to: getDate(endDateValue) ?? null,
+                      }}
+                      onChange={(range) => {
+                        void (async () => {
+                          const from = range.from ?? undefined;
+                          const to = range.to ?? undefined;
+                          const isDateValid = await handleDateChange(from, to);
+                          if (isDateValid) {
+                            onChangeStartDate(from ? renderFormattedPayloadDate(from) : null);
+                            onChangeEndDate(to ? renderFormattedPayloadDate(to) : null);
+                          }
+                        })();
+                      }}
+                      placeholder={`${t("project_cycles.start_date")} - ${t("project_cycles.end_date")}`}
+                      tooltipHeading={t("project_cycles.in_your_timezone")}
+                      tooltipContent={`${renderFormattedDateInUserTimezone(
+                        cycleDetails.start_date ?? ""
+                      )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
+                      mergeDates
+                      // show tooltip only if both start and end date are present
+                      showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date}
+                      disabled={!isEditingAllowed || isArchived || isCompleted}
+                      weekStartsOn={userProfile?.start_of_the_week}
+                    />
+                  </div>
                 )}
               />
               {projectUTCOffset && (

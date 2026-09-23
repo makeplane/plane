@@ -16,7 +16,7 @@ import {
   PROFILE_SETTINGS_CATEGORY_LABELS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 import type { TProfileSettingsTabs } from "@plane/types";
 // local imports
 import { SettingsSidebarItem } from "../../sidebar/item";

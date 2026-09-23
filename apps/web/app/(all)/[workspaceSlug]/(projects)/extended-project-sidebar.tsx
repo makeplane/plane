@@ -10,10 +10,12 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { AddOutline, SearchOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
@@ -62,7 +64,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("something_went_wrong"),
         });
@@ -87,7 +89,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });
@@ -128,15 +130,18 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               </Tooltip>
             )}
           </div>
-          <div className="ml-auto flex w-full items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1">
-            <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
-            <input
-              className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
-              placeholder={t("search")}
-              value={searchQuery}
-              autoFocus
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="w-full">
+            <InputGroup size="lg">
+              <Icon icon={SearchOutline} tint="placeholder" />
+              <Input
+                size="lg"
+                type="text"
+                placeholder={t("search")}
+                value={searchQuery}
+                autoFocus
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </InputGroup>
           </div>
         </div>
         {filteredProjects.length === 0 ? (

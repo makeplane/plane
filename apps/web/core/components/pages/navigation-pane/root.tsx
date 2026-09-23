@@ -113,7 +113,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
           // Row wrapper: Propel's Tabs root omits className, so it takes its full height by
           // stretching as a flex item.
           <div className="flex h-full w-full">
-            <Tabs variant="contained" value={activeTab} onValueChange={handleTabChange}>
+            <Tabs variant="contained" stretch="full" value={activeTab} onValueChange={handleTabChange}>
               <div className="flex h-full w-full flex-col">
                 <PageNavigationPaneTabsList />
                 <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />

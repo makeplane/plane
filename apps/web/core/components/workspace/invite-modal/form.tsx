@@ -5,7 +5,14 @@
  */
 
 import { observer } from "mobx-react";
-import { Dialog } from "@headlessui/react";
+import {
+  DialogBody,
+  DialogDescription,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 
 type TInvitationFormProps = {
   title: string;
@@ -13,22 +20,27 @@ type TInvitationFormProps = {
   children: React.ReactNode;
   onSubmit: () => void;
   actions: React.ReactNode;
-  className?: string;
 };
 
 export const InvitationForm = observer(function InvitationForm(props: TInvitationFormProps) {
-  const { title, description, children, actions, onSubmit, className } = props;
+  const { title, description, children, actions, onSubmit } = props;
 
   return (
-    <form onSubmit={onSubmit} className={className}>
-      <div className="space-y-4">
-        <Dialog.Title as="h3" className="text-body-md-medium leading-6 text-primary">
-          {title}
-        </Dialog.Title>
-        <div className="text-body-xs-regular text-secondary">{description}</div>
-        {children}
-      </div>
-      {actions}
+    <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
+      <DialogMain>
+        <DialogHeader>
+          <DialogHeading>
+            <DialogTitle>{title}</DialogTitle>
+            {/* propel `DialogDescription` is a `<p>` by default; the description is typed as a node, so
+                the slot renders as a `div`. */}
+            {description && <DialogDescription render={<div />}>{description}</DialogDescription>}
+          </DialogHeading>
+        </DialogHeader>
+        <DialogBody tabIndex={0}>{children}</DialogBody>
+        {/* The actions row keeps its own layout (add-more link at the start, buttons at the end), so it
+            sits inside the main gutter rather than in a `DialogActions` bar. */}
+        {actions}
+      </DialogMain>
     </form>
   );
 });

@@ -4,17 +4,28 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 // plane imports
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxSearch,
+} from "@makeplane/propel/components/combobox";
+import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
-import { getOperatorForPayload } from "@plane/utils";
+import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExternalFilter> = {
   customButton: React.ReactNode;
+  /** Names the trigger when `customButton` has no visible text (the icon-only add-filter button). */
+  triggerAriaLabel?: string;
   buttonConfig?: {
     className?: string;
     defaultOpen?: boolean;
@@ -28,38 +39,20 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
   P extends TFilterProperty,
   E extends TExternalFilter,
 >(props: TAddFilterDropdownProps<P, E>) {
-  const { filter, customButton, buttonConfig } = props;
+  const { filter, customButton, triggerAriaLabel, buttonConfig } = props;
   const { className, defaultOpen = false, isDisabled = false } = buttonConfig || {};
-
-  // Transform available filter configs to CustomSearchSelect options format
-  const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
-    value: config.id,
-    content: (
-      <div className="flex items-center justify-between gap-2 text-secondary transition-all duration-200 ease-in-out">
-        <div className="flex items-center gap-2">
-          {config.icon && (
-            <config.icon className="size-4 text-tertiary transition-transform duration-200 ease-in-out" />
-          )}
-          <span>{config.label}</span>
-        </div>
-        {config.rightContent}
-      </div>
-    ),
-    query: config.label.toLowerCase(),
-  }));
-
-  // If all filters are applied, show disabled options
-  const allFiltersApplied = filterOptions.length === 0;
-  const displayOptions = allFiltersApplied
-    ? [
-        {
-          value: "all_filters_applied",
-          content: <div className="text-placeholder italic">All filters applied</div>,
-          query: "all filters applied",
-          disabled: true,
-        },
-      ]
-    : filterOptions;
+  // states
+  const [searchQuery, setSearchQuery] = useState("");
+  // plane hooks
+  const { t } = useTranslation();
+  // derived values
+  const availableConfigs = filter.configManager.allAvailableConfigs;
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleConfigs = normalizedQuery
+    ? availableConfigs.filter((config) => config.label.toLowerCase().includes(normalizedQuery))
+    : availableConfigs;
+  // Every filter already applied reads differently from a search that matched nothing.
+  const emptyLabel = availableConfigs.length === 0 ? "All filters applied" : t("common.search.no_matching_results");
 
   const handleFilterSelect = (property: P) => {
     const config = filter.configManager.getConfigByProperty(property);
@@ -70,25 +63,62 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
       setToast({
         title: "Filter configuration error",
         message: "This filter is not properly configured and cannot be applied",
-        type: TOAST_TYPE.ERROR,
+        type: "error",
       });
     }
   };
 
   return (
-    <div className="relative transition-all duration-200 ease-in-out">
-      <CustomSearchSelect
+    <div className="relative flex-shrink-0 text-left transition-all duration-200 ease-in-out">
+      <Combobox
+        value=""
+        onValueChange={(value) => {
+          if (typeof value === "string" && value) handleFilterSelect(value as P);
+        }}
         defaultOpen={defaultOpen}
-        value={""}
-        onChange={handleFilterSelect}
-        options={displayOptions}
-        optionsClassName="w-56"
-        maxHeight="2xl"
-        placement="bottom-start"
         disabled={isDisabled}
-        customButtonClassName={className}
-        customButton={customButton}
-      />
+        onOpenChange={(open) => {
+          if (!open) setSearchQuery("");
+        }}
+      >
+        {/* The caller's button is content, not a button: the trigger stays the one interactive element. */}
+        <BaseCombobox.Trigger
+          aria-label={triggerAriaLabel}
+          className={cn(
+            "flex w-full items-center justify-between gap-1 text-11 outline-none",
+            isDisabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover",
+            className
+          )}
+        >
+          {customButton}
+        </BaseCombobox.Trigger>
+        <ComboboxContent
+          sizing="auto"
+          aria-label={t("common.filters")}
+          search={
+            <ComboboxSearch
+              placeholder={t("search")}
+              aria-label={t("search")}
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+          }
+        >
+          <ComboboxList aria-label={t("common.filters")}>
+            {visibleConfigs.map((config) => (
+              <ComboboxItem
+                key={config.id}
+                value={config.id}
+                label={config.label}
+                icon={config.icon ? <config.icon className="size-4 text-tertiary" /> : undefined}
+                trailing={config.rightContent ? <>{config.rightContent}</> : undefined}
+              />
+            ))}
+            {/* Stays mounted, children conditional: a polite live region announces unreliably when swapped in and out. */}
+            <ComboboxEmpty>{visibleConfigs.length === 0 ? emptyLabel : null}</ComboboxEmpty>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
     </div>
   );
 });

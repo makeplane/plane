@@ -33,6 +33,7 @@ export const PasswordLoginConfiguration = observer(function PasswordLoginConfigu
         updateConfig("ENABLE_EMAIL_PASSWORD", newEnableEmailPassword);
       }}
       size="sm"
+      aria-label="Enable login with passwords"
       disabled={disabled}
     />
   );

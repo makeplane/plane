@@ -40,10 +40,13 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
   const { name, control, type, label, description, placeholder, error, required } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
+  const descriptionId = description ? `${name}-description` : undefined;
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-13 text-tertiary">{label}</h4>
+      <label htmlFor={name} className="text-13 text-tertiary">
+        {label}
+      </label>
       <InputGroup size="lg">
         <Controller
           control={control}
@@ -59,6 +62,7 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
               onChange={onChange}
               ref={ref}
               aria-invalid={error}
+              aria-describedby={descriptionId}
               placeholder={placeholder}
             />
           )}
@@ -84,7 +88,11 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
             </button>
           ))}
       </InputGroup>
-      {description && <p className="pt-0.5 text-11 text-tertiary">{description}</p>}
+      {description && (
+        <p id={descriptionId} className="pt-0.5 text-11 text-tertiary">
+          {description}
+        </p>
+      )}
     </div>
   );
 }

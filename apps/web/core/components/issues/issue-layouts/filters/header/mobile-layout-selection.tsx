@@ -4,12 +4,13 @@
  * See the LICENSE file for details.
  */
 
+import { Icon as PropelIcon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Button as ButtonChrome } from "@makeplane/propel/elements/button";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { EIssueLayoutTypes } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
 
 export function MobileLayoutSelection({
@@ -23,34 +24,37 @@ export function MobileLayoutSelection({
   isMobile?: boolean;
 }) {
   const { t } = useTranslation();
+  const allowedLayouts = new Set(layouts);
   return (
-    <CustomMenu
-      maxHeight={"md"}
-      className="flex flex-grow justify-center text-13 text-secondary"
-      placement="bottom-start"
-      customButton={
-        <Button variant="secondary" className="relative px-2">
-          {activeLayout && (
-            <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
-          )}
-          <ChevronDownOutline className="my-auto size-3 text-secondary" />
-        </Button>
-      }
-      customButtonClassName="flex flex-grow justify-center text-secondary text-13"
-      closeOnSelect
-    >
-      {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout, index) => (
-        <CustomMenu.MenuItem
-          key={index}
-          onClick={() => {
-            onChange(layout.key);
-          }}
-          className="flex items-center gap-2"
+    // Propel's `Menu` renders no element of its own; this host keeps the legacy menu root's grow-and-center slot.
+    <div className="flex flex-grow justify-center text-13 text-secondary">
+      <Menu>
+        {/* The trigger fills the grown cell (legacy `customButtonClassName`) so the whole cell opens the menu. */}
+        <MenuTrigger
+          aria-label={t("common.layout")}
+          render={<button type="button" className="flex flex-grow justify-center text-13 text-secondary" />}
         >
-          <IssueLayoutIcon layout={layout.key} className="h-3 w-3" />
-          <div className="text-tertiary">{t(layout.i18n_label)}</div>
-        </CustomMenu.MenuItem>
-      ))}
-    </CustomMenu>
+          {/* `MenuTrigger` supplies the real button, so this is chrome only. */}
+          <ButtonChrome variant="secondary" size="sm" stretch="auto" render={<span />}>
+            {activeLayout && (
+              <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className="h-3.5 w-3.5" />
+            )}
+            <ChevronDownOutline className="my-auto size-3 text-secondary" />
+          </ButtonChrome>
+        </MenuTrigger>
+        <MenuContent side="bottom" align="start">
+          {ISSUE_LAYOUTS.filter((l) => allowedLayouts.has(l.key)).map((layout) => (
+            <MenuItem
+              key={layout.key}
+              icon={<PropelIcon icon={<IssueLayoutIcon layout={layout.key} className="h-3 w-3" />} />}
+              label={t(layout.i18n_label)}
+              onClick={() => {
+                onChange(layout.key);
+              }}
+            />
+          ))}
+        </MenuContent>
+      </Menu>
+    </div>
   );
 }

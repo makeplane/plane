@@ -16,14 +16,17 @@ import {
   // ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
 // import { Tooltip } from "@makeplane/propel/components/tooltip";
 // import { EIssuesStoreType } from "@plane/types";
 import type { TWorkItemFilterExpression } from "@plane/types";
-import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 // import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+// components
+import { ProjectSelect } from "@/components/dropdowns/project/project-select";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ProjectExportService } from "@/services/project/project-export.service";
@@ -81,20 +84,11 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
     ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
-  const options = wsProjectIdsWithCreatePermisisons?.map((projectId) => {
-    const projectDetails = getProjectById(projectId);
-
-    return {
-      value: projectDetails?.id,
-      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <span className="flex-shrink-0 text-10 text-secondary">{projectDetails?.identifier}</span>
-          <span className="truncate">{projectDetails?.name}</span>
-        </div>
-      ),
-    };
-  });
+  const wsProjectIdsWithCreatePermissionsSet = new Set(wsProjectIdsWithCreatePermisisons);
+  const exporterOptions = EXPORTERS_LIST.map((service) => ({
+    label: t(service.i18n_title),
+    value: service.provider,
+  }));
 
   // handlers
   async function ExportCSVToMail(formData: FormData) {
@@ -111,7 +105,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         mutateServices();
         setExportLoading(false);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
           message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
             entity:
@@ -127,7 +121,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       } catch (_error) {
         setExportLoading(false);
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("error"),
           message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
         });
@@ -150,33 +144,37 @@ export const ExportForm = observer(function ExportForm(props: Props) {
           className="rounded-none border-0 border-b"
           title={t("workspace_settings.settings.exports.exporting_projects")}
           control={
-            <Controller
-              control={control}
-              name="project"
-              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-              render={({ field: { value, onChange } }) => (
-                <CustomSearchSelect
-                  value={value ?? []}
-                  onChange={(val: string[]) => onChange(val)}
-                  options={options}
-                  input
-                  label={
-                    value && value.length > 0
-                      ? value
-                          .map((projectId) => {
-                            const projectDetails = getProjectById(projectId);
-
-                            return projectDetails?.identifier;
-                          })
-                          .join(", ")
-                      : "All projects"
-                  }
-                  optionsClassName="max-w-48 sm:max-w-[532px]"
-                  placement="bottom-end"
-                  multiple
-                />
-              )}
-            />
+            <div className="w-72 max-w-full">
+              <Controller
+                control={control}
+                name="project"
+                disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+                render={({ field: { value, onChange, disabled } }) => (
+                  <ProjectSelect
+                    multiple
+                    projectList="all"
+                    value={value ?? []}
+                    onChange={onChange}
+                    variant="select-md"
+                    disabled={disabled}
+                    filterOption={(projectId) => wsProjectIdsWithCreatePermissionsSet.has(projectId)}
+                    // Preserve selected ids even if their project is unloaded or removed from the available options.
+                    resolveProject={(projectId) => {
+                      const project = getProjectById(projectId);
+                      if (!project) return { id: projectId, name: projectId };
+                      return {
+                        id: project.id,
+                        name: project.name,
+                        identifier: project.identifier,
+                        logo_props: project.logo_props,
+                      };
+                    }}
+                    placeholder="All projects"
+                    className="w-full"
+                  />
+                )}
+              />
+            </div>
           }
         />
         {/* Format Selector */}
@@ -188,29 +186,40 @@ export const ExportForm = observer(function ExportForm(props: Props) {
               control={control}
               name="provider"
               disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  onChange={onChange}
-                  label={t(value.i18n_title)}
-                  optionsClassName="max-w-48 sm:max-w-[532px]"
-                  placement="bottom-end"
-                  buttonClassName="py-2 text-13"
-                >
-                  {EXPORTERS_LIST.map((service) => (
-                    <CustomSelect.Option key={service.provider} className="flex items-center gap-2" value={service}>
-                      <span className="truncate">{t(service.i18n_title)}</span>
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
+              render={({ field: { value, onChange, disabled } }) => (
+                <div className="w-72 max-w-full">
+                  <Select<string>
+                    items={exporterOptions}
+                    value={value.provider}
+                    onValueChange={(provider) => {
+                      const service = EXPORTERS_LIST.find((item) => item.provider === provider);
+                      if (service) onChange(service);
+                    }}
+                    disabled={disabled}
+                  >
+                    <SelectTrigger size="md" placeholder={t("workspace_settings.settings.exports.format")} />
+                    <SelectContent side="bottom" align="end">
+                      <SelectList>
+                        {exporterOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value} size="md" label={option.label} />
+                        ))}
+                      </SelectList>
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
             />
           }
         />
         <div className="px-4 py-3">
-          <Button variant="primary" size="lg" type="submit" loading={exportLoading}>
-            {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            type="submit"
+            loading={exportLoading}
+            label={exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
+          />
         </div>
       </div>
       {/* Rich Filters */}

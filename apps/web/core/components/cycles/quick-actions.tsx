@@ -10,11 +10,13 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, CustomMenu } from "@plane/ui";
-import { copyUrlToClipboard, cn } from "@plane/utils";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { setToast } from "@plane/blocks/toast";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
+import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCycleMenuItems } from "@/components/common/quick-actions-helper";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -59,7 +61,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const handleCopyText = () =>
     copyUrlToClipboard(cycleLink).then(() => {
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
@@ -70,7 +72,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     await restoreCycle(workspaceSlug, projectId, cycleId)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("project_cycles.action.restore.success.title"),
           message: t("project_cycles.action.restore.success.description"),
         });
@@ -78,7 +80,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("project_cycles.action.restore.failed.title"),
           message: t("project_cycles.action.restore.failed.description"),
         });
@@ -139,47 +141,45 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
-      <CustomMenu
-        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontalOutline} />}
-        placement="bottom-end"
-        closeOnSelect
-        maxHeight="lg"
-        buttonClassName={customClassName}
-      >
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={() => {
-                item.action();
-              }}
-              className={cn(
-                "flex items-center gap-2",
-                {
-                  "text-placeholder": item.disabled,
-                },
-                item.className
-              )}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3 flex-shrink-0", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("whitespace-pre-line text-tertiary", {
-                      "text-placeholder": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+      {/* propel: the trigger takes no className — the caller's box classes ride on the wrapper */}
+      <span className={customClassName}>
+        <Menu>
+          <MenuTrigger
+            render={
+              <IconButton
+                variant="tertiary"
+                size="md"
+                icon={<Icon icon={MoreHorizontalOutline} />}
+                aria-label={t("common.options")}
+                // the legacy menu root swallowed clicks so list rows / links around it never navigated
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+                }}
+              />
+            }
+          />
+          <MenuContent side="bottom" align="end">
+            {getRenderableItems(MENU_ITEMS).map((item) => (
+              <MenuItem
+                key={item.key}
+                variant={resolveItemVariant(item)}
+                icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+                label={item.title ?? ""}
+                description={item.description}
+                disabled={item.disabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  item.action();
+                }}
+              />
+            ))}
+          </MenuContent>
+        </Menu>
+      </span>
     </>
   );
 });

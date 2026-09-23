@@ -7,8 +7,8 @@
 import { SignalHigh } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // types
-import { PriorityIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { PriorityIcon } from "@plane/blocks/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // constants
 import { cn, getIssuePriorityFilters } from "@plane/utils";
@@ -35,7 +35,7 @@ export function IssueBlockPriority({
   if (priority_detail === null) return <></>;
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
+    <Tooltip label={`Priority: ${t(priority_detail?.titleTranslationKey || "")}`}>
       <div
         className={cn(
           "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 text-11",
@@ -51,16 +51,8 @@ export function IssueBlockPriority({
         {priority ? (
           <PriorityIcon
             priority={priority}
-            size={12}
-            className={cn("flex-shrink-0", {
-              // increase the icon size if text is hidden
-              "h-3.5 w-3.5": !shouldShowName,
-              // centre align the icons if text is hidden
-              "translate-x-[0.0625rem]": !shouldShowName && priority === "high",
-              "translate-x-0.5": !shouldShowName && priority === "medium",
-              "translate-x-1": !shouldShowName && priority === "low",
-              // highlight the icon if priority is urgent
-            })}
+            // increase the icon size if text is hidden
+            className={cn("size-3", { "size-3.5": !shouldShowName })}
           />
         ) : (
           <SignalHigh className="size-3" />

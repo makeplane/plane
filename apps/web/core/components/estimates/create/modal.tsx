@@ -9,11 +9,22 @@ import { observer } from "mobx-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { ChevronLeftOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogProgression,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // local imports
@@ -101,7 +112,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
         await createEstimate(workspaceSlug, projectId, payload);
         setButtonLoader(false);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("project_settings.estimates.toasts.created.success.title"),
           message: t("project_settings.estimates.toasts.created.success.message"),
         });
@@ -109,7 +120,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
       } catch {
         setButtonLoader(false);
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: t("project_settings.estimates.toasts.created.error.title"),
           message: t("project_settings.estimates.toasts.created.error.message"),
         });
@@ -142,74 +153,96 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
   // }, [estimatePointError]);
 
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <div className="relative space-y-6 py-5">
-        {/* heading */}
-        <div className="relative flex items-center justify-between gap-2 px-5">
-          <div className="relative flex items-center gap-1">
-            {estimatePoints && (
-              <div
-                onClick={() => {
-                  setEstimateSystem(EEstimateSystem.POINTS);
-                  handleUpdatePoints(undefined);
-                }}
-                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center"
-              >
-                <ChevronLeftOutline className="h-4 w-4" />
-              </div>
-            )}
-            <div className="text-18 font-medium text-primary">{t("project_settings.estimates.new")}</div>
-          </div>
-          <div className="text-gray-400 text-11">
-            {t("project_settings.estimates.create.step", {
-              step: renderEstimateStepsCount,
-              total: 2,
-            })}
-          </div>
-        </div>
+    <Dialog
+      open={isOpen}
+      disablePointerDismissal
+      onOpenChange={(open, eventDetails) => {
+        if (open) return;
+        // The legacy modal took no `handleClose`, so Escape was swallowed: only Cancel closed it.
+        if (eventDetails.reason === "escape-key") return;
+        handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <DialogMain>
+          {/* heading */}
+          <DialogHeader>
+            <DialogProgression>
+              {estimatePoints && (
+                <IconButton
+                  variant="ghost"
+                  size="xs"
+                  aria-label={t("common.go_back")}
+                  icon={<ChevronLeftOutline />}
+                  onClick={() => {
+                    setEstimateSystem(EEstimateSystem.POINTS);
+                    handleUpdatePoints(undefined);
+                  }}
+                />
+              )}
+              {t("project_settings.estimates.create.step", {
+                step: renderEstimateStepsCount,
+                total: 2,
+              })}
+            </DialogProgression>
+            <DialogHeading>
+              <DialogTitle>{t("project_settings.estimates.new")}</DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
 
-        {/* estimate steps */}
-        <div className="px-5">
-          {!estimatePoints && (
-            <EstimateCreateStageOne
-              estimateSystem={estimateSystem}
-              handleEstimateSystem={setEstimateSystem}
-              handleEstimatePoints={(templateType: string) =>
-                handleUpdatePoints(ESTIMATE_SYSTEMS[estimateSystem].templates[templateType].values)
-              }
-            />
-          )}
-          {estimatePoints && (
-            <EstimatePointCreateRoot
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              estimateId={undefined}
-              estimateType={estimateSystem}
-              estimatePoints={estimatePoints}
-              setEstimatePoints={setEstimatePoints}
-              estimatePointError={estimatePointError}
-              handleEstimatePointError={handleEstimatePointError}
-            />
-          )}
-          {/* {isEstimatePointError && (
-            <div className="pt-5 text-13 text-danger-primary">
+          {/* estimate steps */}
+          <DialogBody tabIndex={0}>
+            {!estimatePoints && (
+              <EstimateCreateStageOne
+                estimateSystem={estimateSystem}
+                handleEstimateSystem={setEstimateSystem}
+                handleEstimatePoints={(templateType: string) =>
+                  handleUpdatePoints(ESTIMATE_SYSTEMS[estimateSystem].templates[templateType].values)
+                }
+              />
+            )}
+            {estimatePoints && (
+              <EstimatePointCreateRoot
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                estimateId={undefined}
+                estimateType={estimateSystem}
+                estimatePoints={estimatePoints}
+                setEstimatePoints={setEstimatePoints}
+                estimatePointError={estimatePointError}
+                handleEstimatePointError={handleEstimatePointError}
+              />
+            )}
+            {/* {isEstimatePointError && (
+            <div className="pt-5 text-body-xs-regular text-danger-primary">
               Estimate points can&apos;t be empty. Enter a value in each field or remove those you don&apos;t have
               values for.
             </div>
           )} */}
-        </div>
+          </DialogBody>
+        </DialogMain>
 
-        <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
-          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
-            {t("common.cancel")}
-          </Button>
+        <DialogActions>
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={handleClose}
+            disabled={buttonLoader}
+            stretch="auto"
+            label={t("common.cancel")}
+          />
           {estimatePoints && (
-            <Button variant="primary" size="lg" onClick={handleCreateEstimate} disabled={buttonLoader}>
-              {buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleCreateEstimate}
+              disabled={buttonLoader}
+              stretch="auto"
+              label={buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
+            />
           )}
-        </div>
-      </div>
-    </ModalCore>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 });

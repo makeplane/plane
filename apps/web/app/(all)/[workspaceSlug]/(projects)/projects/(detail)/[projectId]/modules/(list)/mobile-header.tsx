@@ -8,7 +8,8 @@ import { observer } from "mobx-react";
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronDownOutline } from "@makeplane/propel/icons";
-import { CustomMenu, Row } from "@plane/ui";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { ModuleLayoutIcon } from "@/components/modules";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
@@ -20,34 +21,36 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
 
   return (
     <div className="flex justify-start md:hidden">
-      <CustomMenu
-        maxHeight={"md"}
-        className="flex flex-grow justify-start border-b border-subtle bg-surface-1 py-2 text-13 text-secondary"
-        // placement="bottom-start"
-        customButton={
-          <Row className="flex flex-grow justify-center gap-2 text-13 text-secondary">
-            <span>Layout</span> <ChevronDownOutline className="my-auto h-4 w-4 text-secondary" />
-          </Row>
-        }
-        customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"
-        closeOnSelect
-      >
-        {MODULE_VIEW_LAYOUTS.map((layout) => {
-          if (layout.key == "gantt") return;
-          return (
-            <CustomMenu.MenuItem
-              key={layout.key}
-              onClick={() => {
-                updateDisplayFilters(currentProjectDetails!.id.toString(), { layout: layout.key });
-              }}
-              className="flex items-center gap-2"
-            >
-              <ModuleLayoutIcon layoutType={layout.key} />
-              <div className="text-tertiary">{t(layout.i18n_title)}</div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+      <Menu>
+        <div className="flex flex-grow justify-start border-b border-subtle bg-surface-1 py-2 text-13 text-secondary">
+          <MenuTrigger
+            render={
+              <button
+                type="button"
+                className="flex flex-grow items-center justify-center gap-2 px-page-x text-13 text-secondary"
+              />
+            }
+          >
+            <span>{t("common.layout")}</span>
+            <ChevronDownOutline className="my-auto h-4 w-4 text-secondary" />
+          </MenuTrigger>
+        </div>
+        <MenuContent side="bottom" align="start">
+          {MODULE_VIEW_LAYOUTS.map((layout) => {
+            if (layout.key == "gantt") return null;
+            return (
+              <MenuItem
+                key={layout.key}
+                label={t(layout.i18n_title)}
+                icon={<Icon icon={<ModuleLayoutIcon layoutType={layout.key} />} />}
+                onClick={() => {
+                  updateDisplayFilters(currentProjectDetails!.id.toString(), { layout: layout.key });
+                }}
+              />
+            );
+          })}
+        </MenuContent>
+      </Menu>
     </div>
   );
 });
