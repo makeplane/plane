@@ -34,7 +34,8 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
   // states
   const [isUpdating, setIsUpdating] = useState(false);
   // refs — serialize operations so a second call waits for the first to finish
-  const pendingOp = useRef<Promise<void>>(Promise.resolve());
+  // (null until the first change, so no resolved promise is allocated on every render)
+  const pendingOp = useRef<Promise<void> | null>(null);
   // store hooks
   const {
     issue: { getIssueById },
@@ -47,11 +48,13 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
   const handleChange = useCallback(
     (newModuleIds: string[]) => {
       setIsUpdating(true);
-      pendingOp.current = pendingOp.current
+      pendingOp.current = (pendingOp.current ?? Promise.resolve())
         .then(async () => {
           const current = getIssueById(issueId)?.module_ids ?? [];
-          const modulesToAdd = newModuleIds.filter((id) => !current.includes(id));
-          const modulesToRemove = current.filter((id) => !newModuleIds.includes(id));
+          const currentSet = new Set(current);
+          const nextSet = new Set(newModuleIds);
+          const modulesToAdd = newModuleIds.filter((id) => !currentSet.has(id));
+          const modulesToRemove = current.filter((id) => !nextSet.has(id));
           if (modulesToAdd.length === 0 && modulesToRemove.length === 0) return;
           return await issueOperations.changeModulesInIssue?.(
             workspaceSlug,
