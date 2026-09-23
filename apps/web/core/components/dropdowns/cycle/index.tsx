@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -68,6 +68,16 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+
+  // On React 19 the trigger button's ref callback can be dropped after a
+  // disrupted render, leaving referenceElement null and the popper dead.
+  // Recover by locating the trigger button from the container DOM.
+  useEffect(() => {
+    if (isOpen && !referenceElement && dropdownRef.current) {
+      const btn = dropdownRef.current.querySelector<HTMLButtonElement>("button");
+      if (btn) setReferenceElement(btn);
+    }
+  }, [isOpen, referenceElement]);
 
   const selectedName = value ? getCycleNameById(value) : null;
 
@@ -144,6 +154,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
     >
       {isOpen && projectId && (
         <CycleOptions
+          onHitSelect={(v: string) => dropdownOnChange(v as never)}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}

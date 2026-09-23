@@ -30,6 +30,7 @@ interface Props {
   memberIds?: string[];
   onDropdownOpen?: () => void;
   optionsClassName?: string;
+  onHitSelect?: (value: string) => void;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
   value?: string[] | string | null;
@@ -42,6 +43,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     memberIds,
     onDropdownOpen,
     optionsClassName = "",
+    onHitSelect,
     placement,
     referenceElement,
     value,
@@ -73,6 +75,31 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
       },
     ],
   });
+
+  // On React 19 the panel div's ref callback can be dropped after a
+  // disrupted render, leaving popperElement null forever: popper never runs
+  // and the panel collapses. Recover by locating the mounted panel in the DOM.
+  // Multi-select combobox panels may carry an empty data-headlessui-state, so
+  // prefer the aria-labelledby link back to the trigger button.
+  useEffect(() => {
+    if (popperElement) return;
+    const find = () => {
+      let el: HTMLDivElement | null = null;
+      if (referenceElement?.id) {
+        el = document.querySelector<HTMLDivElement>(`ul[aria-labelledby="${referenceElement.id}"] > div`);
+      }
+      if (!el) {
+        el = document.querySelector<HTMLDivElement>('ul[data-headlessui-state="open"] > div, ul[data-open] > div');
+      }
+      if (el) setPopperElement(el);
+      return !!el;
+    };
+    if (!find()) {
+      const t1 = setTimeout(find, 50);
+      const t2 = setTimeout(find, 300);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+  }, [popperElement, referenceElement]);
 
   useEffect(() => {
     if (isOpen) {
@@ -142,6 +169,26 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           ...styles.popper,
         }}
         {...attributes.popper}
+            onClickCapture={(e) => {
+              // React 19 hit-testing sometimes resolves option clicks to this
+              // panel container instead of the option elements. Resolve the
+              // intended option by click coordinates and report it upward.
+              const root = e.currentTarget as HTMLElement;
+              const items = Array.from(root.querySelectorAll<HTMLElement>("li, [role='option']")).filter(
+                (el) => el.getBoundingClientRect().height > 0
+              );
+              const option = items.find((el) => {
+                const r = el.getBoundingClientRect();
+                return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+              });
+              if (!option || !onHitSelect) return;
+              const idx = items.indexOf(option);
+              if (idx >= 0 && filteredOptions?.[idx]) {
+                e.preventDefault();
+                e.stopPropagation();
+                onHitSelect(filteredOptions[idx].value);
+              }
+            }}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
           <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
