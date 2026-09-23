@@ -181,7 +181,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               <SidebarPropertyListItem icon={EstimateOutline} label={t("common.estimate")}>
                 <EstimateSelect
                   value={issue?.estimate_point ?? undefined}
-                  onChange={(val: string | undefined) =>
+                  onChange={(val: string | null) =>
                     issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
                   }
                   projectId={projectId}

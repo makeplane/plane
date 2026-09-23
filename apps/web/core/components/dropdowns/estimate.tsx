@@ -17,7 +17,7 @@ type Props = TDropdownProps & {
   dropdownArrow?: boolean;
   /** @deprecated No effect. */
   dropdownArrowClassName?: string;
-  onChange: (val: string | undefined) => void;
+  onChange: (val: string | null) => void;
   onClose?: () => void;
   projectId: string | undefined;
   value: string | undefined | null;

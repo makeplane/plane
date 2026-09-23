@@ -22,7 +22,8 @@ import type { IEstimate } from "@/store/estimates/estimate";
 
 type Props = {
   value: string | undefined | null;
-  onChange: (val: string | undefined) => void;
+  /** Receives `null` when "No estimate" is picked, so the PATCH payload clears the field server-side. */
+  onChange: (val: string | null) => void;
   projectId: string | undefined;
   variant: SelectVariant;
   disabled?: boolean;
@@ -106,7 +107,9 @@ export const EstimateSelect = observer(function EstimateSelect(props: Props) {
     <EstimateSelectBlock
       getValues={getValues}
       value={selected}
-      onChange={(id) => onChange(id || undefined)}
+      // CE change: a clear emits `null`, not `undefined` — JSON serialization drops `undefined` keys,
+      // so the server would otherwise keep the old estimate.
+      onChange={(id) => onChange(id || null)}
       variant={variant}
       disabled={disabled}
       placeholder={placeholder}

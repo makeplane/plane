@@ -121,7 +121,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
       target_date: date ? (renderFormattedPayloadDate(date) ?? undefined) : undefined,
     });
 
-  const handleEstimate = (value: string | undefined) =>
+  const handleEstimate = (value: string | null) =>
     issue?.project_id && updateIssue && updateIssue(issue.project_id, issue.id, { estimate_point: value });
 
   if (!issue.project_id) return null;

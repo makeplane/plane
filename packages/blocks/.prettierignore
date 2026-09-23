@@ -8,4 +8,3 @@ node_modules/
 out/
 pnpm-lock.yaml
 storybook-static/
-src/types/keys.generated.ts

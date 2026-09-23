@@ -165,7 +165,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       });
   };
 
-  const handleEstimate = async (value: string | undefined) => {
+  const handleEstimate = async (value: string | null) => {
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { estimate_point: value });
   };
 
