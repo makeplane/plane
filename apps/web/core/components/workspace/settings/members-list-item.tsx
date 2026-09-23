@@ -10,8 +10,8 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceMember } from "@plane/types";
-import { Table } from "@plane/blocks/tables";
 // components
+import { DataTable } from "@/components/common/data-table";
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 import type { RowData } from "@/components/workspace/settings/member-columns";
@@ -91,7 +91,9 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
   if (isEmpty(columns)) return <MembersLayoutLoader />;
 
   return (
-    <div className="grid border-t border-subtle">
+    // propel: a bounded flex column so the Table frame shrinks to the settings page's height and
+    // scrolls in its own viewport (the sticky header sticks to that viewport).
+    <div className="flex min-h-0 grow flex-col">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}
@@ -103,17 +105,12 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
           onSubmit={() => handleRemove(removeMemberModal.member.id)}
         />
       )}
-      <Table<RowData>
+      <DataTable<RowData>
         columns={columns ?? []}
         data={
           (memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as unknown as RowData[]
         }
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
-        tHeadClassName="border-b border-subtle"
-        thClassName="text-left font-medium divide-x-0 text-placeholder"
-        tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-10 text-secondary"
-        tHeadTrClassName="divide-x-0"
       />
     </div>
   );
