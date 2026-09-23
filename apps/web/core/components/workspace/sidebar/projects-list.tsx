@@ -9,8 +9,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { AddOutline, ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { AddOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -170,23 +170,16 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         })}
       >
         <>
-          <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div className="group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-placeholder hover:bg-layer-transparent-hover">
-              <Disclosure.Button
-                as="button"
-                type="button"
-                className="flex w-full items-center gap-1 text-left text-13 font-semibold whitespace-nowrap text-placeholder"
-                onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
-                aria-label={t(
-                  isAllProjectsListOpen
-                    ? "aria_labels.projects_sidebar.close_projects_menu"
-                    : "aria_labels.projects_sidebar.open_projects_menu"
-                )}
-              >
-                <span className="text-13 font-semibold">{t("projects")}</span>
-              </Disclosure.Button>
-              <div className="flex items-center gap-1">
-                {isAuthorizedUser && (
+          <Collapsible
+            placement="sidebar"
+            // the group marker lives on the root: CollapsibleHeader takes no className
+            render={<div className="group/projects-section" />}
+            open={isAllProjectsListOpen}
+            onOpenChange={toggleListDisclosure}
+            trigger={<span className="text-13 font-semibold whitespace-nowrap text-placeholder">{t("projects")}</span>}
+            trailing={
+              isAuthorizedUser ? (
+                <span className="hidden text-placeholder group-focus-within/projects-section:inline-flex group-hover/projects-section:inline-flex">
                   <Tooltip label={t("create_project")}>
                     <IconButton
                       variant="ghost"
@@ -195,86 +188,54 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
-                      render={<button className="hidden text-placeholder group-hover:inline-flex" />}
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                     />
                   </Tooltip>
-                )}
-                <IconButton
-                  variant="ghost"
-                  size="xs"
-                  icon={
-                    <ChevronRightOutline
-                      className={cn("size-3.5 transition-transform", {
-                        "rotate-90": isAllProjectsListOpen,
-                      })}
-                    />
-                  }
-                  onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
-                  render={<button className="text-placeholder" />}
-                  aria-label={t(
-                    isAllProjectsListOpen
-                      ? "aria_labels.projects_sidebar.close_projects_menu"
-                      : "aria_labels.projects_sidebar.open_projects_menu"
-                  )}
-                />
-              </div>
-            </div>
-            <Transition
-              as="div"
-              show={isAllProjectsListOpen}
-              enter="transition duration-100 ease-out"
-              enterFrom="transform scale-95 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform scale-100 opacity-100"
-              leaveTo="transform scale-95 opacity-0"
-            >
+                </span>
+              ) : null
+            }
+          >
+            <div className="flex flex-col gap-0.5">
               {loader === "init-loader" && (
                 <Loader className="w-full space-y-1.5">
                   {Array.from({ length: 4 }).map((_, index) => (
+                    // oxlint-disable-next-line react/no-array-index-key
                     <Loader.Item key={index} height="28px" />
                   ))}
                 </Loader>
               )}
-              {isAllProjectsListOpen && (
-                <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
-                  <>
-                    {displayedProjects.map((projectId, index) => (
-                      <SidebarProjectsListItem
-                        key={projectId}
-                        projectId={projectId}
-                        handleCopyText={() => handleCopyText(projectId)}
-                        projectListType={"JOINED"}
-                        disableDrag={false}
-                        disableDrop={false}
-                        isLastChild={index === displayedProjects.length - 1}
-                        handleOnProjectDrop={handleOnProjectDrop}
-                      />
-                    ))}
-                    {hasMoreProjects && (
-                      <SidebarNavItem>
-                        <button
-                          type="button"
-                          onClick={() => toggleExtendedProjectSidebar()}
-                          className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
-                          id="extended-project-sidebar-toggle"
-                          aria-label={t(
-                            isExtendedProjectSidebarOpened
-                              ? "aria_labels.app_sidebar.close_extended_sidebar"
-                              : "aria_labels.app_sidebar.open_extended_sidebar"
-                          )}
-                        >
-                          <MoreHorizontalOutline className="size-4 flex-shrink-0" />
-                          <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
-                        </button>
-                      </SidebarNavItem>
+              {displayedProjects.map((projectId, index) => (
+                <SidebarProjectsListItem
+                  key={projectId}
+                  projectId={projectId}
+                  handleCopyText={() => handleCopyText(projectId)}
+                  projectListType={"JOINED"}
+                  disableDrag={false}
+                  disableDrop={false}
+                  isLastChild={index === displayedProjects.length - 1}
+                  handleOnProjectDrop={handleOnProjectDrop}
+                />
+              ))}
+              {hasMoreProjects && (
+                <SidebarNavItem>
+                  <button
+                    type="button"
+                    onClick={() => toggleExtendedProjectSidebar()}
+                    className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
+                    id="extended-project-sidebar-toggle"
+                    aria-label={t(
+                      isExtendedProjectSidebarOpened
+                        ? "aria_labels.app_sidebar.close_extended_sidebar"
+                        : "aria_labels.app_sidebar.open_extended_sidebar"
                     )}
-                  </>
-                </Disclosure.Panel>
+                  >
+                    <MoreHorizontalOutline className="size-4 flex-shrink-0" />
+                    <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
+                  </button>
+                </SidebarNavItem>
               )}
-            </Transition>
-          </Disclosure>
+            </div>
+          </Collapsible>
         </>
 
         {isAuthorizedUser && joinedProjects?.length === 0 && (
