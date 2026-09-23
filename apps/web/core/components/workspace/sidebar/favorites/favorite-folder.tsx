@@ -26,14 +26,14 @@ import {
   MoreHorizontalOutline,
   StarFilled,
 } from "@makeplane/propel/icons";
-import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { FavoriteFolderIcon } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { DropIndicator, DragHandle } from "@plane/blocks/common";
 // helpers
 import { cn } from "@plane/utils";
@@ -61,6 +61,7 @@ export function FavoriteFolder(props: Props) {
   const { workspaceSlug } = useParams();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [folderToRename, setFolderToRename] = useState<string | boolean | null>(null);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
@@ -154,145 +155,141 @@ export function FavoriteFolder(props: Props) {
     />
   ) : (
     <>
-      <Disclosure key={`${favorite.id}`} ref={elementRef} defaultOpen={false}>
-        {({ open }) => (
-          <div
-            // id={`sidebar-${projectId}-${projectListType}`}
-            className={cn("relative", {
-              "bg-layer-1 opacity-60": isDragging,
-              "border-[2px] border-accent-strong": instruction === "make-child",
-            })}
-          >
-            {/* draggable drop top indicator */}
-            <DropIndicator isVisible={instruction === "reorder-above"} />
+      <div
+        key={`${favorite.id}`}
+        ref={elementRef}
+        // id={`sidebar-${projectId}-${projectListType}`}
+        className={cn("relative", {
+          "bg-layer-1 opacity-60": isDragging,
+          "border-[2px] border-accent-strong": instruction === "make-child",
+        })}
+      >
+        {/* draggable drop top indicator */}
+        <DropIndicator isVisible={instruction === "reorder-above"} />
+        <div
+          className={cn(
+            "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-1-hover",
+            {
+              "bg-surface-2": isMenuActive,
+            }
+          )}
+        >
+          {/* draggable indicator */}
+
+          <div className="absolute left-0 hidden h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs bg-surface-2 text-secondary transition-colors group-hover:flex hover:text-primary">
+            <DragDropOutline className="h-3 w-3" />
+          </div>
+
+          <>
+            <Tooltip label={`${favorite.name}`} layout="stacked" side="right" sideOffset={40} disabled={isMobile}>
+              <div className="flex flex-grow truncate">
+                <button
+                  type="button"
+                  className="flex w-full flex-grow items-center gap-1.5 text-left select-none"
+                  aria-expanded={isOpen}
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <Tooltip
+                    label={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+                    align="end"
+                    disabled={isDragging || isMobile}
+                  >
+                    <button
+                      type="button"
+                      className={cn(
+                        "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
+                        {
+                          "cursor-not-allowed opacity-60": favorite.sort_order === null,
+                          "cursor-grabbing": isDragging,
+                        }
+                      )}
+                    >
+                      <DragHandle className="bg-transparent" />
+                    </button>
+                  </Tooltip>
+                  <div className="grid size-5 flex-shrink-0 place-items-center">
+                    <FavoriteFolderIcon />
+                  </div>
+                  <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
+                </button>
+              </div>
+            </Tooltip>
             <div
+              ref={actionSectionRef}
               className={cn(
-                "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-1-hover",
+                "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                 {
-                  "bg-surface-2": isMenuActive,
+                  "pointer-events-auto opacity-100": isMenuActive,
                 }
               )}
             >
-              {/* draggable indicator */}
-
-              <div className="absolute left-0 hidden h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs bg-surface-2 text-secondary transition-colors group-hover:flex hover:text-primary">
-                <DragDropOutline className="h-3 w-3" />
-              </div>
-
-              <>
-                <Tooltip label={`${favorite.name}`} layout="stacked" side="right" sideOffset={40} disabled={isMobile}>
-                  <div className="flex flex-grow truncate">
-                    <Disclosure.Button
-                      as="button"
+              <Menu onOpenChange={setIsMenuActive}>
+                <MenuTrigger
+                  render={
+                    <button
                       type="button"
-                      className="flex w-full flex-grow items-center gap-1.5 text-left select-none"
-                    >
-                      <Tooltip
-                        label={favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
-                        align="end"
-                        disabled={isDragging || isMobile}
-                      >
-                        <button
-                          type="button"
-                          className={cn(
-                            "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
-                            {
-                              "cursor-not-allowed opacity-60": favorite.sort_order === null,
-                              "cursor-grabbing": isDragging,
-                            }
-                          )}
-                        >
-                          <DragHandle className="bg-transparent" />
-                        </button>
-                      </Tooltip>
-                      <div className="grid size-5 flex-shrink-0 place-items-center">
-                        <FavoriteFolderIcon />
-                      </div>
-                      <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
-                    </Disclosure.Button>
-                  </div>
-                </Tooltip>
-                <CustomMenu
-                  customButton={
-                    <span
-                      ref={actionSectionRef}
                       className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+                      aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
                     >
                       <MoreHorizontalOutline className="size-3" />
-                    </span>
+                    </button>
                   }
-                  menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
-                  className={cn(
-                    "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
-                    {
-                      "pointer-events-auto opacity-100": isMenuActive,
-                    }
-                  )}
-                  customButtonClassName="grid place-items-center"
-                  placement="bottom-start"
-                  ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-                >
-                  <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
-                    <span className="flex items-center justify-start gap-2">
-                      <StarFilled className="text-yellow-500 h-3.5 w-3.5" />
-                      <span>Remove from favorites</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
-                    <div className="flex items-center justify-start gap-2">
-                      <DraftsOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
-                      <span>Rename Folder</span>
-                    </div>
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className={cn("hidden rounded-sm p-0.5 group-hover/project-item:inline-block hover:bg-layer-1", {
-                    "inline-block": isMenuActive,
-                  })}
-                  aria-label={t(
-                    open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
-                  )}
-                >
-                  <ChevronRightOutline
-                    className={cn("size-3 flex-shrink-0 text-placeholder transition-transform", {
-                      "rotate-90": open,
-                    })}
+                />
+                <MenuContent side="bottom" align="start">
+                  <MenuItem
+                    icon={<Icon icon={<StarFilled className="text-yellow-500" />} />}
+                    label={t("remove_from_favorites")}
+                    onClick={() => handleRemoveFromFavorites(favorite)}
                   />
-                </Disclosure.Button>
-              </>
+                  <MenuItem
+                    icon={<Icon icon={DraftsOutline} tint="tertiary" />}
+                    label="Rename Folder"
+                    onClick={() => setFolderToRename(favorite.id)}
+                  />
+                </MenuContent>
+              </Menu>
             </div>
-            {favorite.children && favorite.children.length > 0 && (
-              <Transition
-                as="div"
-                enter="transition duration-100 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-75 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-              >
-                <Disclosure.Panel as="div" className="mt-1 flex flex-col gap-0.5 px-2">
-                  {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
-                    <FavoriteRoot
-                      key={child.id}
-                      workspaceSlug={workspaceSlug.toString()}
-                      favorite={child}
-                      isLastChild={index === favorite.children.length - 1}
-                      parentId={favorite.id}
-                      handleRemoveFromFavorites={handleRemoveFromFavorites}
-                      handleDrop={handleDrop}
-                    />
-                  ))}
-                </Disclosure.Panel>
-              </Transition>
-            )}
-            {/* draggable drop bottom indicator */}
-            {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
+            <button
+              type="button"
+              className={cn("hidden rounded-sm p-0.5 group-hover/project-item:inline-block hover:bg-layer-1", {
+                "inline-block": isMenuActive,
+              })}
+              aria-expanded={isOpen}
+              aria-label={t(
+                isOpen ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
+              )}
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <ChevronRightOutline
+                className={cn("size-3 flex-shrink-0 text-placeholder transition-transform", {
+                  "rotate-90": isOpen,
+                })}
+              />
+            </button>
+          </>
+        </div>
+        {/* Headless UI `Transition` replaced by the propel `fade-in` keyframe (Ruling 36); the
+                close direction unmounts immediately, as there is no exit animation to hang off. */}
+        {isOpen && favorite.children && favorite.children.length > 0 && (
+          <div className="animate-fade-in">
+            <div className="mt-1 flex flex-col gap-0.5 px-2">
+              {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
+                <FavoriteRoot
+                  key={child.id}
+                  workspaceSlug={workspaceSlug.toString()}
+                  favorite={child}
+                  isLastChild={index === favorite.children.length - 1}
+                  parentId={favorite.id}
+                  handleRemoveFromFavorites={handleRemoveFromFavorites}
+                  handleDrop={handleDrop}
+                />
+              ))}
+            </div>
           </div>
         )}
-      </Disclosure>
+        {/* draggable drop bottom indicator */}
+        {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
+      </div>
     </>
   );
 }

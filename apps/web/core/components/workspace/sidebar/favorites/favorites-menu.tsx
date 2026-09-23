@@ -15,8 +15,8 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRightOutline, CreateFolderOutline } from "@makeplane/propel/icons";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { CreateFolderOutline } from "@makeplane/propel/icons";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -54,7 +54,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   const isFavoriteMenuOpen = !!storedValue;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLSpanElement>(null);
 
   const handleMoveToFolder = (sourceId: string, destinationId: string) => {
     moveFavoriteToFolder(workspaceSlug.toString(), sourceId, {
@@ -180,32 +180,24 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
 
   return (
     <>
-      <Disclosure as="div" defaultOpen ref={containerRef}>
-        <div
-          ref={elementRef}
-          className={cn(
-            "group/favorites-button flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-placeholder hover:bg-layer-transparent-hover"
-          )}
-        >
-          <Disclosure.Button
-            as="button"
-            type="button"
-            className={cn(
-              "flex w-full items-center gap-1 text-left text-13 font-semibold whitespace-nowrap text-placeholder",
-              {
-                "bg-layer-1 opacity-60": isDragging,
-              }
-            )}
-            onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
-            aria-label={t(
-              isFavoriteMenuOpen
-                ? "aria_labels.projects_sidebar.close_favorites_menu"
-                : "aria_labels.projects_sidebar.open_favorites_menu"
-            )}
+      <Collapsible
+        // the group marker lives on the root: CollapsibleHeader takes no className
+        render={<div ref={containerRef} className="group/favorites-button" />}
+        placement="sidebar"
+        open={isFavoriteMenuOpen}
+        onOpenChange={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
+        trigger={
+          <span
+            ref={elementRef}
+            className={cn("text-13 font-semibold whitespace-nowrap text-placeholder", {
+              "bg-layer-1 opacity-60": isDragging,
+            })}
           >
-            <span className="text-13 font-semibold">{t("favorites")}</span>
-          </Disclosure.Button>
-          <div className="pointer-events-none flex items-center opacity-0 group-hover/favorites-button:pointer-events-auto group-hover/favorites-button:opacity-100">
+            {t("favorites")}
+          </span>
+        }
+        trailing={
+          <span className="pointer-events-none flex items-center opacity-0 group-hover/favorites-button:pointer-events-auto group-hover/favorites-button:opacity-100">
             <Tooltip label={t("create_folder")}>
               <IconButton
                 variant="ghost"
@@ -218,72 +210,43 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                 icon={<Icon icon={CreateFolderOutline} />}
               />
             </Tooltip>
-            <Disclosure.Button
-              as="button"
-              type="button"
-              className="grid flex-shrink-0 place-items-center rounded-sm p-0.5 hover:bg-layer-transparent-hover"
-              onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
-              aria-label={t(
-                isFavoriteMenuOpen
-                  ? "aria_labels.projects_sidebar.close_favorites_menu"
-                  : "aria_labels.projects_sidebar.open_favorites_menu"
-              )}
-            >
-              <ChevronRightOutline
-                className={cn("size-3 flex-shrink-0 transition-all", {
-                  "rotate-90": isFavoriteMenuOpen,
-                })}
-              />
-            </Disclosure.Button>
-          </div>
-        </div>
-        <Transition
-          as="div"
-          show={isFavoriteMenuOpen}
-          enter="transition duration-100 ease-out"
-          enterFrom="transform scale-95 opacity-0"
-          enterTo="transform scale-100 opacity-100"
-          leave="transition duration-75 ease-out"
-          leaveFrom="transform scale-100 opacity-100"
-          leaveTo="transform scale-95 opacity-0"
-        >
-          {isFavoriteMenuOpen && (
-            <Disclosure.Panel as="div" className="mt-0.5 flex flex-col gap-0.5" static>
-              {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {Object.keys(groupedFavorites).length === 0 ? (
+          </span>
+        }
+      >
+        <div className="mt-0.5 flex flex-col gap-0.5">
+          {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
+          {Object.keys(groupedFavorites).length === 0 ? (
+            <>
+              <span className="px-8 py-1.5 text-11 font-medium text-placeholder">{t("no_favorites_yet")}</span>
+            </>
+          ) : (
+            orderBy(Object.values(groupedFavorites), "sequence", "desc")
+              .filter((fav) => !fav.parent)
+              .map((fav, index, { length }) => (
                 <>
-                  <span className="px-8 py-1.5 text-11 font-medium text-placeholder">{t("no_favorites_yet")}</span>
+                  {fav?.is_folder ? (
+                    <FavoriteFolder
+                      favorite={fav}
+                      isLastChild={index === length - 1}
+                      handleRemoveFromFavorites={handleRemoveFromFavorites}
+                      handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                      handleDrop={handleDrop}
+                    />
+                  ) : (
+                    <FavoriteRoot
+                      workspaceSlug={workspaceSlug.toString()}
+                      favorite={fav}
+                      isLastChild={index === length - 1}
+                      parentId={undefined}
+                      handleRemoveFromFavorites={handleRemoveFromFavorites}
+                      handleDrop={handleDrop}
+                    />
+                  )}
                 </>
-              ) : (
-                orderBy(Object.values(groupedFavorites), "sequence", "desc")
-                  .filter((fav) => !fav.parent)
-                  .map((fav, index, { length }) => (
-                    <>
-                      {fav?.is_folder ? (
-                        <FavoriteFolder
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          handleDrop={handleDrop}
-                        />
-                      ) : (
-                        <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          parentId={undefined}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleDrop={handleDrop}
-                        />
-                      )}
-                    </>
-                  ))
-              )}
-            </Disclosure.Panel>
+              ))
           )}
-        </Transition>
-      </Disclosure>
+        </div>
+      </Collapsible>
     </>
   );
 });

@@ -6,11 +6,12 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { MoreHorizontalOutline, StarFilled } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IFavorite } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -28,29 +29,35 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
   const { t } = useTranslation();
 
   return (
-    <CustomMenu
-      customButton={
-        <span ref={ref} className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1">
-          <MoreHorizontalOutline className="size-4" />
-        </span>
-      }
-      menuButtonOnClick={() => onChange(!isMenuActive)}
+    <div
+      ref={ref}
       className={cn(
         "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
         {
           "pointer-events-auto opacity-100": isMenuActive,
         }
       )}
-      customButtonClassName="grid place-items-center"
-      placement="bottom-start"
-      ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
     >
-      <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
-        <span className="flex items-center justify-start gap-2">
-          <StarFilled className="text-yellow-500 h-3.5 w-3.5 flex-shrink-0" />
-          <span>Remove from favorites</span>
-        </span>
-      </CustomMenu.MenuItem>
-    </CustomMenu>
+      <Menu onOpenChange={onChange}>
+        <MenuTrigger
+          render={
+            <button
+              type="button"
+              className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
+              aria-label={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
+            >
+              <MoreHorizontalOutline className="size-4" />
+            </button>
+          }
+        />
+        <MenuContent side="bottom" align="start">
+          <MenuItem
+            icon={<Icon icon={<StarFilled className="text-yellow-500" />} />}
+            label={t("remove_from_favorites")}
+            onClick={() => handleRemoveFromFavorites(favorite)}
+          />
+        </MenuContent>
+      </Menu>
+    </div>
   );
 });
