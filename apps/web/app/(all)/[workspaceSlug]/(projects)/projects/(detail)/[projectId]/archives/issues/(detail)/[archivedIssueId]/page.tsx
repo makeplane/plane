@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Banner } from "@makeplane/propel/components/banner";
+import { Icon } from "@makeplane/propel/components/icon";
 import { ArchiveOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
@@ -73,7 +74,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             placement="page"
             variant="warning"
             title={t("issue.archive.banner_message")}
-            icon={<ArchiveOutline />}
+            icon={<Icon icon={ArchiveOutline} />}
             actions={
               <Button
                 variant="secondary"

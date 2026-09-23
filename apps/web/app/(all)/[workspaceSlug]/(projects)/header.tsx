@@ -8,7 +8,9 @@ import { observer } from "mobx-react";
 import { HomeOutline, WidgetOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
@@ -37,16 +39,25 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <Button
-            variant="secondary"
-            size="md"
-            stretch="auto"
-            onClick={() => toggleWidgetSettings(true)}
-            render={<button className="my-auto mb-0" />}
-          >
-            <WidgetOutline />
-            <div className="hidden sm:hidden md:block">{t("home.manage_widgets")}</div>
-          </Button>
+          <div className="my-auto mb-0 md:hidden">
+            <IconButton
+              variant="secondary"
+              size="md"
+              onClick={() => toggleWidgetSettings(true)}
+              icon={<Icon icon={WidgetOutline} />}
+              aria-label={t("home.manage_widgets")}
+            />
+          </div>
+          <div className="my-auto mb-0 hidden md:block">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              onClick={() => toggleWidgetSettings(true)}
+              icon={<Icon icon={WidgetOutline} />}
+              label={t("home.manage_widgets")}
+            />
+          </div>
         </Header.RightItem>
       </Header>
     </>
