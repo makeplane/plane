@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // constants
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -68,7 +68,7 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}

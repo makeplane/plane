@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { Calendar } from "@makeplane/propel/components/calendar";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import { Dialog, DialogActions, DialogBody, DialogContent, DialogMain } from "@makeplane/propel/components/dialog";
 
 export type InboxIssueSnoozeModalProps = {
   isOpen: boolean;
@@ -26,40 +26,45 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
   const { t } = useTranslation();
 
   return (
-    <ModalCore
-      isOpen={isOpen}
-      handleClose={handleClose}
-      position={EModalPosition.CENTER}
-      width={EModalWidth.SM}
-      className="w-auto"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
     >
-      <div className="flex h-full w-full flex-col gap-y-1 px-5 py-8 sm:p-6">
-        <Calendar
-          selected={date ? new Date(date) : undefined}
-          defaultMonth={date ? new Date(date) : undefined}
-          onSelect={(date: Date | undefined) => {
-            if (!date) return;
-            setDate(date);
-          }}
-          mode="single"
-          showOutsideDays
-          disabled={[
-            {
-              before: new Date(),
-            },
-          ]}
-        />
-        <Button
-          variant="primary"
-          size="sm"
-          stretch="auto"
-          onClick={() => {
-            handleClose();
-            onConfirm(date);
-          }}
-          label={t("inbox_issue.actions.snooze")}
-        />
-      </div>
-    </ModalCore>
+      <DialogContent size="xs" aria-label={t("inbox_issue.actions.snooze")}>
+        <DialogMain>
+          <DialogBody>
+            <Calendar
+              selected={date ? new Date(date) : undefined}
+              defaultMonth={date ? new Date(date) : undefined}
+              onSelect={(date: Date | undefined) => {
+                if (!date) return;
+                setDate(date);
+              }}
+              mode="single"
+              showOutsideDays
+              disabled={[
+                {
+                  before: new Date(),
+                },
+              ]}
+            />
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
+          <Button
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            onClick={() => {
+              handleClose();
+              onConfirm(date);
+            }}
+            label={t("inbox_issue.actions.snooze")}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 }

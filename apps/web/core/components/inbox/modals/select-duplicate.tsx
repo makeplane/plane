@@ -7,14 +7,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchOutline } from "@makeplane/propel/icons";
+import { Combobox, ComboboxItem, ComboboxList, ComboboxSearch } from "@makeplane/propel/components/combobox";
+import { Dialog, DialogContent, DialogMain } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -87,39 +86,30 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
   const issueList =
     filteredIssues.length > 0 ? (
-      <div className="p-2">
-        {query === "" && <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">Select work item</h2>}
-        <ul className="text-13 text-primary">
-          {filteredIssues.map((issue) => {
-            const stateColor = issue.state__color || "";
-
-            return (
-              <Combobox.Option
-                key={issue.id}
-                as="li"
-                value={issue.id}
-                className={({ active, selected }) =>
-                  `flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-secondary select-none ${
-                    active || selected ? "bg-layer-1 text-primary" : ""
-                  } `
-                }
-              >
-                <div className="flex items-center gap-2">
+      <div>
+        {query === "" && <h2 className="mb-2 text-11 font-semibold text-primary">Select work item</h2>}
+        <ComboboxList aria-label={t("inbox_issue.actions.mark_as_duplicate")}>
+          {filteredIssues.map((issue) => (
+            <ComboboxItem
+              key={issue.id}
+              value={issue.id}
+              label={issue.name}
+              icon={
+                <span className="flex flex-shrink-0 items-center gap-2">
                   <span
                     className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                     style={{
-                      backgroundColor: stateColor,
+                      backgroundColor: issue.state__color || "",
                     }}
                   />
                   <span className="flex-shrink-0 text-11 text-secondary">
                     {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                   </span>
-                  <span className="text-secondary">{issue.name}</span>
-                </div>
-              </Combobox.Option>
-            );
-          })}
-        </ul>
+                </span>
+              }
+            />
+          ))}
+        </ComboboxList>
       </div>
     ) : (
       <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
@@ -132,39 +122,50 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
     );
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <Combobox
-        value={value}
-        onChange={(selected: string | null) => {
-          if (selected !== null) handleSubmit(selected);
-        }}
-      >
-        <div className="relative m-1">
-          <SearchOutline
-            className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
-            aria-hidden="true"
-          />
-          <input
-            type="text"
-            className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
-            placeholder="Search..."
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-
-        <Combobox.Options as="ul" static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
-          {isSearching ? (
-            <Loader className="space-y-3 p-3">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
-          ) : (
-            <>{issueList}</>
-          )}
-        </Combobox.Options>
-      </Combobox>
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        {/* `inline` renders the list in place (the dialog is the surface) instead of in a popup
+            positioner. Values are work item ids, so the selection is id-first (Ruling 46). */}
+        <Combobox<string>
+          inline
+          open={isOpen}
+          onOpenChange={(open) => {
+            if (!open) handleClose();
+          }}
+          value={value ?? null}
+          onValueChange={(next) => {
+            if (next) handleSubmit(next);
+          }}
+          inputValue={query}
+          onInputValueChange={(next, details) => {
+            // Base UI clears the query itself after a pick; letting that through would re-run the
+            // debounced server search.
+            if (details.reason === "input-clear") return;
+            setQuery(next);
+          }}
+        >
+          <ComboboxSearch placeholder={t("common.search.placeholder")} />
+          <DialogMain>
+            <div className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+              {isSearching ? (
+                <Loader className="space-y-3 p-3">
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                </Loader>
+              ) : (
+                issueList
+              )}
+            </div>
+          </DialogMain>
+        </Combobox>
+      </DialogContent>
+    </Dialog>
   );
 }
