@@ -17,7 +17,7 @@ import { Button } from "@makeplane/propel/elements/button";
 import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 import { Spinner } from "@plane/blocks/spinner";
 import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
@@ -242,25 +242,28 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               control={control}
               rules={{ required: t("common.errors.required") }}
               render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
+                <Select<string>
+                  value={ORGANIZATION_SIZE.find((item) => item === value) ?? null}
                   onChange={onChange}
-                  label={
-                    ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-placeholder">
-                        {t("workspace_creation.form.organization_size.placeholder")}
-                      </span>
-                    )
-                  }
-                  buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
-                  input
+                  getValues={() => ORGANIZATION_SIZE}
+                  getOptionValue={(item) => item}
+                  getOptionLabel={(item) => item}
+                  showSearch={false}
+                  pinSelected={false}
+                  placeholder={t("workspace_creation.form.organization_size.placeholder")}
                 >
-                  {ORGANIZATION_SIZE.map((item) => (
-                    <CustomSelect.Option key={item} value={item}>
-                      {item}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
+                  <Select.Trigger<string> id="organization_size" variant="select-xl">
+                    {(selected) => (
+                      <span className="grow truncate text-left">
+                        {selected[0] ?? (
+                          <span className="text-placeholder">
+                            {t("workspace_creation.form.organization_size.placeholder")}
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </Select.Trigger>
+                </Select>
               )}
             />
             {errors.organization_size && (

@@ -83,7 +83,15 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           isExpanded && "pb-1"
         )}
+        role="button"
+        tabIndex={0}
         onClick={handleToggleExpand}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleToggleExpand();
+          }
+        }}
       >
         <div className="flex items-center gap-1 text-tertiary">
           <LockOutline className="size-3" />
@@ -100,6 +108,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
         <div className="flex transform flex-col gap-2 pt-1 transition-all duration-300 ease-in-out">
           <PasswordInput
             id="password"
+            label="Password"
             value={passwordState.password}
             onChange={(value) => handlePasswordChange("password", value)}
             placeholder="Set a password"
@@ -109,15 +118,11 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
         </div>
 
         <div className="flex flex-col gap-2 pb-2">
-          {/* Confirm password label */}
-          <div className="transform text-13 font-medium text-tertiary transition-all delay-75 duration-300 ease-in-out">
-            Confirm password
-          </div>
-
           {/* Confirm password input */}
           <div className="transform transition-all delay-100 duration-300 ease-in-out">
             <PasswordInput
               id="confirm-password"
+              label="Confirm password"
               value={passwordState.confirmPassword}
               onChange={(value) => handlePasswordChange("confirmPassword", value)}
               placeholder="Confirm password"
