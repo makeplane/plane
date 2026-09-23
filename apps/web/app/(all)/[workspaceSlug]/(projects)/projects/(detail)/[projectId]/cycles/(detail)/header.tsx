@@ -49,6 +49,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 /** The breadcrumb switcher offers every cycle of the project, completed ones included. */
 const ALL_CYCLE_STATUSES: TCycleGroups[] = CYCLE_STATUS.map((status) => status.value);
@@ -61,6 +62,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -129,7 +131,11 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+              <CommonProjectBreadcrumbs
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                {...projectCrumb}
+              />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink

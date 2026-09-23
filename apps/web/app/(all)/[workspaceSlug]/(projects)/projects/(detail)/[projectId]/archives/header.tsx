@@ -20,6 +20,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
@@ -53,6 +54,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
   const { activeTab } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -71,7 +73,11 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

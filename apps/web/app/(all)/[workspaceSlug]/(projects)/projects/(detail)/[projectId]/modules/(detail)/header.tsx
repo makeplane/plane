@@ -48,6 +48,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // refs
@@ -57,6 +58,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId: routerModuleId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -122,7 +124,11 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+              <CommonProjectBreadcrumbs
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                {...projectCrumb}
+              />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink

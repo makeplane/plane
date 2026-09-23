@@ -20,6 +20,7 @@ import { ISSUE_DETAILS } from "@plane/constants";
 import { useProject } from "@/hooks/store/use-project";
 // plane web
 import { ProjectBreadcrumb } from "@/components/breadcrumbs/project";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -28,6 +29,7 @@ const issueService = new IssueService();
 export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchivedIssueDetailsHeader() {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { currentProjectDetails, loader } = useProject();
 
@@ -42,7 +44,11 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <ProjectBreadcrumb
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            {...projectCrumb}
+          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

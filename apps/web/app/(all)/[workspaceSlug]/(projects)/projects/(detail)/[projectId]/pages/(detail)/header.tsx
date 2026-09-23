@@ -20,6 +20,7 @@ import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label"
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -37,6 +38,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { loader } = useProject();
   const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
@@ -71,7 +73,11 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

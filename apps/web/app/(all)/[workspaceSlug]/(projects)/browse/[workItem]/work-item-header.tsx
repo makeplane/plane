@@ -19,6 +19,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   // router
@@ -32,6 +33,7 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   const issueId = getIssueIdByIdentifier(workItem?.toString());
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
   const projectId = issueDetails ? issueDetails?.project_id : undefined;
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
 
   if (!workspaceSlug || !projectId || !issueId) return null;
@@ -39,7 +41,11 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            {...projectCrumb}
+          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
