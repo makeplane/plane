@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 
 import { SearchOutline, InfoOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
@@ -53,6 +53,7 @@ export function IconRoot(props: IconRootProps) {
     }
   }
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const hexLabelId = useId();
   // use shared search query from parent
   const query = searchQuery ?? "";
 
@@ -91,10 +92,13 @@ export function IconRoot(props: IconRootProps) {
                   backgroundColor: `#${hexValue}`,
                 }}
               />
-              <span className="flex-shrink-0 text-caption-sm-regular text-tertiary">HEX</span>
+              <span id={hexLabelId} className="flex-shrink-0 text-caption-sm-regular text-tertiary">
+                HEX
+              </span>
               <span className="-mr-1 flex-shrink-0 text-caption-sm-regular text-secondary">#</span>
               <input
                 type="text"
+                aria-labelledby={hexLabelId}
                 value={hexValue}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -110,6 +114,7 @@ export function IconRoot(props: IconRootProps) {
               <button
                 key={curCol}
                 type="button"
+                aria-label={curCol}
                 className="grid size-5 place-items-center"
                 onClick={() => {
                   setActiveColor(curCol);
@@ -122,6 +127,8 @@ export function IconRoot(props: IconRootProps) {
           )}
           <button
             type="button"
+            aria-label={t("aria_labels.color_picker.hex_input")}
+            aria-pressed={showHexInput}
             className={cn("grid h-4 w-4 place-items-center rounded-full border border-transparent", {
               "border-strong-1": !showHexInput,
             })}

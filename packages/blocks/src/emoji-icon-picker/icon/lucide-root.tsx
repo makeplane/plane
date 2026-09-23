@@ -24,6 +24,7 @@ export function LucideIconsList(props: LucideIconsListProps) {
         <button
           key={icon.name}
           type="button"
+          aria-label={icon.name}
           className="grid h-9 w-9 place-items-center rounded-sm text-body-md-regular select-none hover:bg-layer-1"
           onClick={() => {
             onChange({
@@ -32,7 +33,7 @@ export function LucideIconsList(props: LucideIconsListProps) {
             });
           }}
         >
-          <icon.element style={{ color: activeColor }} className="size-4" />
+          <icon.element aria-hidden="true" style={{ color: activeColor }} className="size-4" />
         </button>
       ))}
     </>
