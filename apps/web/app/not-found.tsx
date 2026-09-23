@@ -32,11 +32,16 @@ function PageNotFound() {
               temporarily unavailable.
             </p>
           </div>
-          <Link href="/">
-            <span className="flex justify-center">
-              <Button variant="secondary" size="md" stretch="auto" label="Go to Home" />
-            </span>
-          </Link>
+          <div className="flex justify-center">
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              label="Go to Home"
+              nativeButton={false}
+              render={<Link href="/" />}
+            />
+          </div>
         </div>
       </div>
     </div>
