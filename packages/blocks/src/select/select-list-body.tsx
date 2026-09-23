@@ -176,11 +176,9 @@ function InfiniteListBody<T>(
   // Selection snapshot, adopted from the first non-empty resolution (the caller may resolve the
   // selected rows async). Frozen after that so rows don't reorder mid-interaction; deselected rows
   // drop out on the next mount, matching SelectRoot's open-time snapshot rule.
+  // Adopted during render (a guarded update, not an effect) so the first paint is already pinned.
   const [pinnedSelected, setPinnedSelected] = useState<T[]>([]);
-  useEffect(() => {
-    if (pinnedSelected.length === 0 && pinnedOptions?.length) setPinnedSelected(pinnedOptions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- adopt-once; later selection changes must not re-pin
-  }, [pinnedOptions]);
+  if (pinnedSelected.length === 0 && pinnedOptions?.length) setPinnedSelected(pinnedOptions);
   // Same empty-base rule as SelectRoot: zero server matches must read as "nothing matched", not a
   // list of already-selected rows.
   const listItems = items.length === 0 ? items : pinSelected(items, pinnedSelected, getOptionValue);
