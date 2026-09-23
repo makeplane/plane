@@ -105,11 +105,13 @@ export const CycleSelect = observer(function CycleSelect(props: CycleSelectWebPr
         cycleIds = getProjectCycleIds(projectId);
       }
       const query = search?.trim().toLowerCase();
+      const excluded = new Set(excludeIds);
+      const statuses = new Set(allowedStatuses);
       const results = (cycleIds ?? [])
-        .filter((cycleId) => !excludeIds?.includes(cycleId))
+        .filter((cycleId) => !excluded.has(cycleId))
         .map((cycleId) => getCycleById(cycleId))
         .filter((cycle): cycle is ICycle => !!cycle)
-        .filter((cycle) => allowedStatuses.includes(getCycleStatus(cycle)))
+        .filter((cycle) => statuses.has(getCycleStatus(cycle)))
         .filter((cycle) => !query || cycle.name.toLowerCase().includes(query))
         .map(toOption);
       return { results, next_page_results: false };
