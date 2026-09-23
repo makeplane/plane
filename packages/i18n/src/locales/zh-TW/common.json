@@ -526,6 +526,7 @@
       "updated_on": "更新於"
     },
     "sort": {
+      "label": "排序",
       "asc": "遞增",
       "desc": "遞減",
       "created_on": "建立於",

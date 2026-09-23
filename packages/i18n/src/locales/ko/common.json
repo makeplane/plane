@@ -526,6 +526,7 @@
       "updated_on": "업데이트일"
     },
     "sort": {
+      "label": "정렬",
       "asc": "오름차순",
       "desc": "내림차순",
       "created_on": "생성일",

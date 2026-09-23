@@ -526,6 +526,7 @@
       "updated_on": "Güncellenme tarihi"
     },
     "sort": {
+      "label": "Sırala",
       "asc": "Artan",
       "desc": "Azalan",
       "created_on": "Oluşturulma tarihi",

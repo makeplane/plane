@@ -526,6 +526,7 @@
       "updated_on": "Actualizat la"
     },
     "sort": {
+      "label": "Sortează",
       "asc": "Crescător",
       "desc": "Descrescător",
       "created_on": "Creată la",

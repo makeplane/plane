@@ -526,6 +526,7 @@
       "updated_on": "Bijgewerkt op"
     },
     "sort": {
+      "label": "Sorteren",
       "asc": "Oplopend",
       "desc": "Aflopend",
       "created_on": "Aangemaakt op",

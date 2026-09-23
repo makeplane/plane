@@ -526,6 +526,7 @@
       "updated_on": "Aktualizováno dne"
     },
     "sort": {
+      "label": "Seřadit",
       "asc": "Vzestupně",
       "desc": "Sestupně",
       "created_on": "Vytvořeno dne",

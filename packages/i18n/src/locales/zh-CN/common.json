@@ -526,6 +526,7 @@
       "updated_on": "更新时间"
     },
     "sort": {
+      "label": "排序",
       "asc": "升序",
       "desc": "降序",
       "created_on": "创建时间",

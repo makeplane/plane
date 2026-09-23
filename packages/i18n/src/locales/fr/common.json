@@ -526,6 +526,7 @@
       "updated_on": "Mis à jour le"
     },
     "sort": {
+      "label": "Trier",
       "asc": "Croissant",
       "desc": "Décroissant",
       "created_on": "Créé le",

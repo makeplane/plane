@@ -526,6 +526,7 @@
       "updated_on": "Diperbarui pada"
     },
     "sort": {
+      "label": "Urutkan",
       "asc": "Menaik",
       "desc": "Menurun",
       "created_on": "Dibuat pada",

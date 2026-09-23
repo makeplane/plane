@@ -526,6 +526,7 @@
       "updated_on": "Cập nhật vào"
     },
     "sort": {
+      "label": "Sắp xếp",
       "asc": "Tăng dần",
       "desc": "Giảm dần",
       "created_on": "Thời gian tạo",

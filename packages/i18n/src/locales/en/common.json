@@ -526,6 +526,7 @@
       "updated_on": "Updated on"
     },
     "sort": {
+      "label": "Sort",
       "asc": "Ascending",
       "desc": "Descending",
       "created_on": "Created on",
