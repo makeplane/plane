@@ -12,7 +12,6 @@ import { LinkOutline, TickOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
-import { cn } from "@plane/utils";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -62,10 +61,9 @@ export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page 
       <IconButton
         variant="ghost"
         size="md"
-        icon={<Icon icon={isCopied ? TickOutline : LinkOutline} />}
+        icon={isCopied ? <Icon icon={<TickOutline className="text-success-primary" />} /> : <Icon icon={LinkOutline} />}
         onClick={handleCopy}
         aria-label={isCopied ? "Copied link" : "Copy link"}
-        render={<button className={cn(isCopied && "text-success-primary")} />}
       />
     </Tooltip>
   );
