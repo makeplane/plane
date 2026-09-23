@@ -49,7 +49,6 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
     try {
       await deleteModule(workspaceSlug.toString(), projectId.toString(), data.id);
       if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
-      handleClose();
       setToast({
         type: "success",
         title: "Success!",
@@ -67,7 +66,8 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
         message: currentError.i18n_message && t(currentError.i18n_message),
       });
     } finally {
-      handleClose();
+      setIsDeleteLoading(false);
+      onClose();
     }
   };
 
