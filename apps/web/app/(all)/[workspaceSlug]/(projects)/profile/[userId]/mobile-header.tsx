@@ -22,7 +22,8 @@ import type {
 } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
@@ -85,36 +86,30 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
 
   return (
     <div className="flex justify-evenly border-b border-subtle py-2 md:hidden">
-      <CustomMenu
-        maxHeight={"md"}
-        className="flex flex-grow justify-center text-13 text-secondary"
-        placement="bottom-start"
-        customButton={
-          <div className="flex-center flex text-13 text-secondary">
-            {t("common.layout")}
-            <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" />
-          </div>
-        }
-        customButtonClassName="flex flex-center text-secondary text-13"
-        closeOnSelect
-      >
-        {ISSUE_LAYOUTS.map((layout, index) => {
-          if (layout.key === "spreadsheet" || layout.key === "gantt_chart" || layout.key === "calendar") return;
-          return (
-            <CustomMenu.MenuItem
-              key={index}
-              onClick={() => {
-                handleLayoutChange(ISSUE_LAYOUTS[index].key);
-              }}
-              className="flex items-center gap-2"
-            >
-              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-tertiary">{t(layout.i18n_title)}</div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
-      <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+      <Menu>
+        <MenuTrigger
+          render={<button type="button" className="flex grow items-center justify-center text-13 text-secondary" />}
+        >
+          {t("common.layout")}
+          <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" />
+        </MenuTrigger>
+        <MenuContent side="bottom" align="start">
+          {ISSUE_LAYOUTS.map((layout) => {
+            if (layout.key === "spreadsheet" || layout.key === "gantt_chart" || layout.key === "calendar") return null;
+            return (
+              <MenuItem
+                key={layout.key}
+                label={t(layout.i18n_title)}
+                icon={<Icon icon={<IssueLayoutIcon layout={layout.key} className="size-3" />} />}
+                onClick={() => {
+                  handleLayoutChange(layout.key);
+                }}
+              />
+            );
+          })}
+        </MenuContent>
+      </Menu>
+      <div className="flex grow items-center justify-center border-l border-subtle text-13 text-secondary">
         <FiltersDropdown
           title={t("common.display")}
           placement="bottom-end"
