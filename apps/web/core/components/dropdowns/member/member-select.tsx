@@ -135,11 +135,23 @@ export const MemberSelect = observer(function MemberSelect(props: MemberSelectWe
         if (!member) continue;
         const searchText = `${member.display_name} ${member.first_name} ${member.last_name}`.toLowerCase();
         if (query && !searchText.includes(query)) continue;
-        results.push(toOption(id));
+        // Legacy CE ordering: the current user leads the roster (the block then pins the selected ones).
+        if (id === currentUser?.id) results.unshift(toOption(id));
+        else results.push(toOption(id));
       }
       return { results, next_page_results: false };
     },
-    [memberIds, projectId, slug, workspaceMemberIds, getProjectMemberIds, fetchProjectMembers, getUserDetails, toOption]
+    [
+      memberIds,
+      projectId,
+      slug,
+      workspaceMemberIds,
+      getProjectMemberIds,
+      fetchProjectMembers,
+      getUserDetails,
+      toOption,
+      currentUser?.id,
+    ]
   );
 
   const filterOption = useCallback((option: MemberOption) => !excludeSet?.has(option.id), [excludeSet]);
