@@ -28,18 +28,19 @@ export function MobileLayoutSelection({
     // Propel's `Menu` renders no element of its own; this host keeps the legacy menu root's grow-and-center slot.
     <div className="flex flex-grow justify-center text-13 text-secondary">
       <Menu>
+        {/* The trigger fills the grown cell (legacy `customButtonClassName`) so the whole cell opens the menu. */}
         <MenuTrigger
           aria-label={t("common.layout")}
-          render={
-            // `MenuTrigger` supplies the button behaviour; the Propel element is the chrome.
-            <ButtonChrome variant="secondary" size="sm" stretch="auto">
-              {activeLayout && (
-                <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className="h-3.5 w-3.5" />
-              )}
-              <ChevronDownOutline className="my-auto size-3 text-secondary" />
-            </ButtonChrome>
-          }
-        />
+          render={<button type="button" className="flex flex-grow justify-center text-13 text-secondary" />}
+        >
+          {/* `MenuTrigger` supplies the real button, so this is chrome only. */}
+          <ButtonChrome variant="secondary" size="sm" stretch="auto" render={<span />}>
+            {activeLayout && (
+              <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className="h-3.5 w-3.5" />
+            )}
+            <ChevronDownOutline className="my-auto size-3 text-secondary" />
+          </ButtonChrome>
+        </MenuTrigger>
         <MenuContent side="bottom" align="start">
           {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
             <MenuItem
