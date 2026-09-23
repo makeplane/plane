@@ -212,7 +212,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                               <span className="truncate text-13 text-primary">{issue.name}</span>
                             </Tooltip>
                           </div>
-                          <PriorityIcon priority={issue.priority} withContainer size={12} />
+                          <PriorityIcon priority={issue.priority} />
                           <div className="flex flex-shrink-0 items-center gap-1.5">
                             <StateDropdown
                               value={issue.state_id}

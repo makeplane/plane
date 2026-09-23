@@ -6,14 +6,24 @@
 
 import * as React from "react";
 
-import { EIconSize } from "@plane/constants";
 import { BacklogGroupIcon } from "./backlog-group-icon";
 import { CancelledGroupIcon } from "./cancelled-group-icon";
 import { CompletedGroupIcon } from "./completed-group-icon";
-import type { IStateGroupIcon } from "./helper";
-import { STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
+import type { StateGroup, StateIconSize } from "./helper";
+import { getStateIconSize, STATE_GROUP_COLORS } from "./helper";
 import { StartedGroupIcon } from "./started-group-icon";
 import { UnstartedGroupIcon } from "./unstarted-group-icon";
+
+export type StateGroupIconProps = {
+  className?: string;
+  color?: string;
+  percentage?: number;
+  stateGroup: StateGroup;
+  size?: StateIconSize;
+};
+
+/** @deprecated Use StateGroupIconProps instead. */
+export type IStateGroupIcon = StateGroupIconProps;
 
 const iconComponents = {
   backlog: BacklogGroupIcon,
@@ -23,21 +33,16 @@ const iconComponents = {
   unstarted: UnstartedGroupIcon,
 };
 
-export function StateGroupIcon({
-  className = "",
-  color,
-  stateGroup,
-  size = EIconSize.SM,
-  percentage,
-}: IStateGroupIcon) {
+export function StateGroupIcon({ className = "", color, percentage, stateGroup, size = "sm" }: StateGroupIconProps) {
   const StateIconComponent = iconComponents[stateGroup] || UnstartedGroupIcon;
+  const iconSize = getStateIconSize(size);
 
   return (
     <StateIconComponent
-      height={STATE_GROUP_SIZES[size]}
-      width={STATE_GROUP_SIZES[size]}
+      height={iconSize}
+      width={iconSize}
       color={color ?? STATE_GROUP_COLORS[stateGroup]}
-      className={`flex-shrink-0 ${className}`}
+      className={`shrink-0 ${className}`}
       percentage={percentage}
     />
   );

@@ -6,9 +6,13 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "./type";
+export type FavoriteFolderIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function FavoriteFolderIcon({ className = "text-current", color = "#a3a3a3", ...rest }: ISvgIcons) {
+export function FavoriteFolderIcon({
+  className = "text-current",
+  color = "#a3a3a3",
+  ...rest
+}: FavoriteFolderIconProps) {
   return (
     <svg
       width="16"

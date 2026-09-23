@@ -6,9 +6,10 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type PlaneLockupProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function PlaneLockup({ width = "253", height = "53", className, color = "currentColor" }: ISvgIcons) {
+export function PlaneLockup({ width = "253", height = "53", className, color = "currentColor" }: PlaneLockupProps) {
+  const clipPathId = React.useId();
   return (
     <svg
       width={width}
@@ -18,7 +19,7 @@ export function PlaneLockup({ width = "253", height = "53", className, color = "
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      <g clipPath="url(#clip0_27_76)">
+      <g clipPath={`url(#${clipPathId})`}>
         <path
           d="M217.077 51.4468H210.972L210.98 31.4317C210.717 27.7545 208.786 25.1545 205.03 24.6199C198.587 23.7006 194.663 27.8828 194.21 34.0258L194.218 51.4468H188.041V20.2543H192.158L194.255 26.8846H194.6C195.825 22.8701 198.684 20.4831 202.898 19.5757C210.126 18.0231 216.643 22.2724 217.079 29.8239V51.4468H217.077Z"
           fill={color}
@@ -42,7 +43,7 @@ export function PlaneLockup({ width = "253", height = "53", className, color = "
         />
       </g>
       <defs>
-        <clipPath id="clip0_27_76">
+        <clipPath id={clipPathId}>
           <rect width="252" height="53" fill="white" />
         </clipPath>
       </defs>

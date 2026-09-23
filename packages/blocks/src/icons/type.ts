@@ -4,7 +4,11 @@
  * See the LICENSE file for details.
  */
 
-export interface ISvgIcons extends React.SVGAttributes<SVGElement> {
-  className?: string | undefined;
-  percentage?: number;
-}
+/** @deprecated Use the component-specific icon prop type instead. */
+export type SvgIconConfig = React.ComponentPropsWithoutRef<"svg">;
+
+/** @deprecated Use the component-specific icon prop type instead. */
+export type SvgIconProps = SvgIconConfig;
+
+/** @deprecated Use the component-specific icon prop type instead. */
+export type ISvgIcons = SvgIconConfig;

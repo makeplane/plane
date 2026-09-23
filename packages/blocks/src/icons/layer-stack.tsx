@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "./type";
+export type LayerStackIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function LayerStackIcon({ className = "text-current", ...rest }: ISvgIcons) {
+export function LayerStackIcon({ className = "text-current", ...rest }: LayerStackIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"

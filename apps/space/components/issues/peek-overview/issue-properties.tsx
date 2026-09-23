@@ -99,7 +99,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                         : "border-priority-none text-priority-none"
               }`}
             >
-              {priority && <PriorityIcon priority={priority?.key} size={12} className="flex-shrink-0" />}
+              {priority && <PriorityIcon priority={priority?.key} className="size-3" />}
               <span>{t(priority?.titleTranslationKey || "common.none")}</span>
             </div>
           </div>

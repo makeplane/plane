@@ -13,16 +13,19 @@ import { ModuleInProgressIcon } from "./in-progress";
 import { ModulePausedIcon } from "./paused";
 import { ModulePlannedIcon } from "./planned";
 
-export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
+export type ModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
 
-type Props = {
-  status: TModuleStatus;
+/** @deprecated Use ModuleStatus instead. */
+export type TModuleStatus = ModuleStatus;
+
+export type ModuleStatusIconProps = {
+  status: ModuleStatus;
   className?: string;
   height?: string;
   width?: string;
 };
 
-export function ModuleStatusIcon({ status, className, height = "12px", width = "12px" }: Props) {
+export function ModuleStatusIcon({ status, className, height = "12px", width = "12px" }: ModuleStatusIconProps) {
   if (status === "backlog") return <ModuleBacklogIcon className={className} height={height} width={width} />;
   else if (status === "cancelled") return <ModuleCancelledIcon className={className} height={height} width={width} />;
   else if (status === "completed") return <ModuleCompletedIcon className={className} height={height} width={width} />;

@@ -6,9 +6,10 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type TriageGroupIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function TriageGroupIcon({ width = "20", height = "20", className, color = "#4E5355" }: ISvgIcons) {
+export function TriageGroupIcon({ width = "20", height = "20", className, color = "#4E5355" }: TriageGroupIconProps) {
+  const clipPathId = React.useId();
   // SVG parameters
   const viewBoxSize = 16;
   return (
@@ -20,7 +21,7 @@ export function TriageGroupIcon({ width = "20", height = "20", className, color 
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
     >
-      <g clipPath="url(#clip0_3870_37)">
+      <g clipPath={`url(#${clipPathId})`}>
         <path
           d="M0.75 8C0.75 3.99594 3.99594 0.75 8 0.75C8.32217 0.75 8.58333 1.01117 8.58333 1.33333C8.58333 1.6555 8.32217 1.91667 8 1.91667C4.64027 1.91667 1.91667 4.64027 1.91667 8C1.91667 11.3597 4.64027 14.0833 8 14.0833C8.32217 14.0833 8.58333 14.3445 8.58333 14.6667C8.58333 14.9888 8.32217 15.25 8 15.25C3.99594 15.25 0.75 12.0041 0.75 8Z"
           fill={color}
@@ -39,7 +40,7 @@ export function TriageGroupIcon({ width = "20", height = "20", className, color 
         />
       </g>
       <defs>
-        <clipPath id="clip0_3870_37">
+        <clipPath id={clipPathId}>
           <rect width="16" height="16" fill="white" />
         </clipPath>
       </defs>

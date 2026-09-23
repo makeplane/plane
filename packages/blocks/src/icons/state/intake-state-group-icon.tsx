@@ -6,25 +6,30 @@
 
 import * as React from "react";
 
-import { EIconSize } from "@plane/constants";
-import type { IIntakeStateGroupIcon } from "./helper";
-import { INTAKE_STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
+import type { IntakeStateGroup, StateIconSize } from "./helper";
+import { getStateIconSize, INTAKE_STATE_GROUP_COLORS } from "./helper";
 import { TriageGroupIcon } from "./triage-group-icon";
+
+export type IntakeStateGroupIconProps = {
+  className?: string;
+  color?: string;
+  stateGroup: IntakeStateGroup;
+  size?: StateIconSize;
+};
+
+/** @deprecated Use IntakeStateGroupIconProps instead. */
+export type IIntakeStateGroupIcon = IntakeStateGroupIconProps;
 
 const iconComponents = { triage: TriageGroupIcon };
 
-export function IntakeStateGroupIcon({
-  className = "",
-  color,
-  stateGroup,
-  size = EIconSize.SM,
-}: IIntakeStateGroupIcon) {
+export function IntakeStateGroupIcon({ className = "", color, stateGroup, size = "sm" }: IntakeStateGroupIconProps) {
   const IntakeStateIconComponent = iconComponents[stateGroup] || TriageGroupIcon;
+  const iconSize = getStateIconSize(size);
 
   return (
     <IntakeStateIconComponent
-      height={STATE_GROUP_SIZES[size]}
-      width={STATE_GROUP_SIZES[size]}
+      height={iconSize}
+      width={iconSize}
       color={color ?? INTAKE_STATE_GROUP_COLORS[stateGroup]}
       className={`flex-shrink-0 ${className}`}
     />

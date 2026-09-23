@@ -90,7 +90,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
 
               {issue.priority && (
                 <Tooltip label={`Priority: ${issue.priority ?? "None"}`}>
-                  <PriorityIcon priority={issue.priority} withContainer className="h-3 w-3" />
+                  <PriorityIcon priority={issue.priority} />
                 </Tooltip>
               )}
 

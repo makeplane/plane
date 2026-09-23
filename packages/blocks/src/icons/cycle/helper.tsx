@@ -4,18 +4,13 @@
  * See the LICENSE file for details.
  */
 
-export interface ICycleGroupIcon {
-  className?: string;
-  color?: string;
-  cycleGroup: TCycleGroups;
-  height?: string;
-  width?: string;
-}
+export type CycleGroup = "current" | "upcoming" | "completed" | "draft";
 
-export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
+/** @deprecated Use CycleGroup instead. */
+export type TCycleGroups = CycleGroup;
 
 export const CYCLE_GROUP_COLORS: {
-  [key in TCycleGroups]: string;
+  [key in CycleGroup]: string;
 } = {
   current: "#F59E0B",
   upcoming: "#3F76FF",
@@ -24,7 +19,7 @@ export const CYCLE_GROUP_COLORS: {
 };
 
 export const CYCLE_GROUP_I18N_LABELS: {
-  [key in TCycleGroups]: string;
+  [key in CycleGroup]: string;
 } = {
   current: "current",
   upcoming: "common.upcoming",

@@ -6,9 +6,12 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
 import { DashedCircle } from "./dashed-circle";
 import { ProgressCircle } from "./progress-circle";
+
+export type StartedGroupIconProps = React.ComponentPropsWithoutRef<"svg"> & {
+  percentage?: number;
+};
 
 // StateIcon component implementation
 export function StartedGroupIcon({
@@ -17,7 +20,7 @@ export function StartedGroupIcon({
   className,
   color = "#F59E0B",
   percentage = 100,
-}: ISvgIcons) {
+}: StartedGroupIconProps) {
   // Ensure percentage is between 0 and 100
   const normalized =
     typeof percentage === "number"
@@ -51,7 +54,7 @@ export function StartedGroupIcon({
         strokeWidth={1.5}
         strokeLinecap="round"
         fill="none"
-        transform={`rotate(-90 8 6)`}
+        transform="rotate(-90 8 6)"
         strokeDasharray={circumference}
         strokeDashoffset={dashOffsetSmall}
         stroke={color}

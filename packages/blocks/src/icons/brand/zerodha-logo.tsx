@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type ZerodhaLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function ZerodhaLogo({ width = "64", height = "16", className, color = "currentColor" }: ISvgIcons) {
+export function ZerodhaLogo({ width = "64", height = "16", className, color = "currentColor" }: ZerodhaLogoProps) {
   return (
     <svg
       width={width}

@@ -6,13 +6,13 @@
 
 import * as React from "react";
 
-interface DashedCircleProps {
+type DashedCircleProps = {
   center: number;
   radius: number;
   color: string;
   percentage: number;
   totalSegments?: number;
-}
+};
 
 export function DashedCircle({ center, color, percentage, totalSegments = 15 }: DashedCircleProps) {
   // Ensure percentage is between 0 and 100

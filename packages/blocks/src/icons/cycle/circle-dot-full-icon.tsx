@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type CircleDotFullIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function CircleDotFullIcon({ className = "text-current", ...rest }: ISvgIcons) {
+export function CircleDotFullIcon({ className = "text-current", ...rest }: CircleDotFullIconProps) {
   return (
     <svg
       viewBox="0 0 24 24"

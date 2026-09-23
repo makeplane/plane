@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "./type";
+export type MonospaceIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function MonospaceIcon({ className = "text-current", ...rest }: ISvgIcons) {
+export function MonospaceIcon({ className = "text-current", ...rest }: MonospaceIconProps) {
   return (
     <svg viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...rest}>
       <path

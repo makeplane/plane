@@ -6,9 +6,14 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type ModuleInProgressIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function ModuleInProgressIcon({ width = "20", height = "20", className, color = "#f39e1f" }: ISvgIcons) {
+export function ModuleInProgressIcon({
+  width = "20",
+  height = "20",
+  className,
+  color = "#f39e1f",
+}: ModuleInProgressIconProps) {
   return (
     <svg
       height={height}

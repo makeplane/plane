@@ -6,14 +6,14 @@
 
 import * as React from "react";
 
-interface ProgressCircleProps {
+type ProgressCircleProps = {
   center: number;
   radius: number;
   color: string;
   strokeWidth: number;
   circumference: number;
   dashOffset: number;
-}
+};
 
 export function ProgressCircle({ center, radius, color, strokeWidth, circumference, dashOffset }: ProgressCircleProps) {
   return (

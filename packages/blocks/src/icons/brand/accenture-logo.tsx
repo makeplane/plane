@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type AccentureLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function AccentureLogo({ width = "51", height = "16", className, color = "currentColor" }: ISvgIcons) {
+export function AccentureLogo({ width = "51", height = "16", className, color = "currentColor" }: AccentureLogoProps) {
   return (
     <svg
       width={width}

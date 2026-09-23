@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type ModuleCompletedIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function ModuleCompletedIcon({ width = "20", height = "20", className }: ISvgIcons) {
+export function ModuleCompletedIcon({ width = "20", height = "20", className }: ModuleCompletedIconProps) {
   return (
     <svg
       width={width}

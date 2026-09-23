@@ -5,18 +5,29 @@
  */
 
 import * as React from "react";
-import { CircleDotDashed, Circle } from "lucide-react";
 
 import { CycleIcon } from "../project/cycle-icon";
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
-import type { ICycleGroupIcon } from "./helper";
+import type { CycleGroup } from "./helper";
 import { CYCLE_GROUP_COLORS } from "./helper";
+import { CycleUpcoming, CircleOutline } from "@makeplane/propel/icons";
+
+export type CycleGroupIconProps = {
+  className?: string;
+  color?: string;
+  cycleGroup: CycleGroup;
+  height?: string;
+  width?: string;
+};
+
+/** @deprecated Use CycleGroupIconProps instead. */
+export type ICycleGroupIcon = CycleGroupIconProps;
 
 const iconComponents = {
   current: CycleIcon,
-  upcoming: CircleDotDashed,
+  upcoming: CycleUpcoming,
   completed: CircleDotFullIcon,
-  draft: Circle,
+  draft: CircleOutline,
 };
 
 export function CycleGroupIcon({
@@ -25,7 +36,7 @@ export function CycleGroupIcon({
   cycleGroup,
   height = "12px",
   width = "12px",
-}: ICycleGroupIcon) {
+}: CycleGroupIconProps) {
   const CycleIconComponent = iconComponents[cycleGroup] || CycleIcon;
 
   return (

@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type ModulePlannedIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function ModulePlannedIcon({ width = "20", height = "20", className }: ISvgIcons) {
+export function ModulePlannedIcon({ width = "20", height = "20", className }: ModulePlannedIconProps) {
   return (
     <svg
       width={width}

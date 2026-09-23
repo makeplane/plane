@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type DolbyLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function DolbyLogo({ width = "40", height = "16", className, color = "currentColor" }: ISvgIcons) {
+export function DolbyLogo({ width = "40", height = "16", className, color = "currentColor" }: DolbyLogoProps) {
   return (
     <svg
       width={width}

@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type PlaneLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function PlaneLogo({ width = "85", height = "52", className, color = "currentColor" }: ISvgIcons) {
+export function PlaneLogo({ width = "85", height = "52", className, color = "currentColor" }: PlaneLogoProps) {
   return (
     <svg
       width={width}

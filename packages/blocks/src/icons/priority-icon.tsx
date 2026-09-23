@@ -5,80 +5,50 @@
  */
 
 import * as React from "react";
-import { AlertCircle, Ban, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { cn } from "@plane/utils";
+import { PriorityUrgent, PriorityNone, PriorityHigh, PriorityLow, PriorityMedium } from "@makeplane/propel/icons";
 
-export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
+export type IssuePriority = "urgent" | "high" | "medium" | "low" | "none";
 
-interface IPriorityIcon {
+/** @deprecated Use IssuePriority instead. */
+export type TIssuePriorities = IssuePriority;
+
+export type PriorityIconProps = {
   className?: string;
-  containerClassName?: string;
-  priority: TIssuePriorities | undefined | null;
-  size?: number;
-  withContainer?: boolean;
-}
+  priority: IssuePriority | undefined | null;
+};
 
-export function PriorityIcon(props: IPriorityIcon) {
-  const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
+/** @deprecated Use PriorityIconProps instead. */
+export type IPriorityIcon = PriorityIconProps;
 
-  const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent",
-    high: "bg-layer-2 text-priority-high border-priority-high",
-    medium: "bg-layer-2 text-priority-medium border-priority-medium",
-    low: "bg-layer-2 text-priority-low border-priority-low",
-    none: "bg-layer-2 text-priority-none border-priority-none",
-  };
+export function PriorityIcon(props: PriorityIconProps) {
+  const { priority, className = "size-3.5" } = props;
 
   // get priority icon
   const icons = {
-    urgent: AlertCircle,
-    high: SignalHigh,
-    medium: SignalMedium,
-    low: SignalLow,
-    none: Ban,
+    urgent: PriorityUrgent,
+    high: PriorityHigh,
+    medium: PriorityMedium,
+    low: PriorityLow,
+    none: PriorityNone,
   };
   const Icon = icons[priority ?? "none"];
 
   if (!Icon) return null;
 
   return (
-    <>
-      {withContainer ? (
-        <div
-          className={cn(
-            "flex flex-shrink-0 items-center justify-center rounded-sm border p-0.5",
-            priorityClasses[priority ?? "none"],
-            containerClassName
-          )}
-        >
-          <Icon
-            size={size}
-            className={cn(
-              {
-                "translate-x-[0.0625rem]": priority === "high",
-                "translate-x-0.5": priority === "medium",
-                "translate-x-1": priority === "low",
-              },
-              className
-            )}
-          />
-        </div>
-      ) : (
-        <Icon
-          size={size}
-          className={cn(
-            "flex-shrink-0",
-            {
-              "text-priority-urgent": priority === "urgent",
-              "text-priority-high": priority === "high",
-              "text-priority-medium": priority === "medium",
-              "text-priority-low": priority === "low",
-              "text-priority-none": priority === "none",
-            },
-            className
-          )}
-        />
+    <Icon
+      className={cn(
+        "shrink-0",
+        {
+          "text-priority-urgent": priority === "urgent",
+          "text-priority-high": priority === "high",
+          "text-priority-medium": priority === "medium",
+          "text-priority-low": priority === "low",
+          "text-priority-none": priority === "none",
+        },
+        className
       )}
-    </>
+    />
   );
 }

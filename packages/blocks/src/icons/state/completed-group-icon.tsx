@@ -6,7 +6,7 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type CompletedGroupIconProps = React.ComponentPropsWithoutRef<"svg">;
 
 export function CompletedGroupIcon({
   className = "",
@@ -14,7 +14,7 @@ export function CompletedGroupIcon({
   height = "20",
   width = "20",
   ...rest
-}: ISvgIcons) {
+}: CompletedGroupIconProps) {
   return (
     <svg
       height={height}

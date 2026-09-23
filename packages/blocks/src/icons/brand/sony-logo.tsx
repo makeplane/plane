@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "../type";
+export type SonyLogoProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function SonyLogo({ width = "44", height = "16", className, color = "currentColor" }: ISvgIcons) {
+export function SonyLogo({ width = "44", height = "16", className, color = "currentColor" }: SonyLogoProps) {
   return (
     <svg
       width={width}

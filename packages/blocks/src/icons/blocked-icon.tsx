@@ -6,9 +6,9 @@
 
 import * as React from "react";
 
-import type { ISvgIcons } from "./type";
+export type BlockedIconProps = React.ComponentPropsWithoutRef<"svg">;
 
-export function BlockedIcon({ height = "24", width = "24", className = "", ...rest }: ISvgIcons) {
+export function BlockedIcon({ height = "24", width = "24", className = "", ...rest }: BlockedIconProps) {
   return (
     <svg
       height={height}
