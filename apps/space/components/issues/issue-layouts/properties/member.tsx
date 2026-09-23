@@ -34,20 +34,22 @@ export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps)
 
   if (Array.isArray(members)) {
     if (members.length > 1) {
+      const resolvedMembers = members.filter(Boolean);
       return (
-        <AvatarGroup size="xs" label={members.map((member) => member?.member__display_name).join(", ")}>
-          {members.map((member) => {
-            if (!member) return;
-            return (
-              <Avatar
-                key={member.id}
-                src={member.member__avatar}
-                alt={member.member__display_name}
-                fallback={member.member__display_name?.[0]?.toUpperCase()}
-                tooltip={!showTooltip}
-              />
-            );
-          })}
+        <AvatarGroup
+          size="xs"
+          label={resolvedMembers.map((member) => member.member__display_name).join(", ")}
+          overflowTooltip={showTooltip ? undefined : `${resolvedMembers.length} total`}
+        >
+          {resolvedMembers.map((member) => (
+            <Avatar
+              key={member.id}
+              src={member.member__avatar}
+              alt={member.member__display_name}
+              fallback={member.member__display_name?.[0]?.toUpperCase()}
+              tooltip={!showTooltip}
+            />
+          ))}
         </AvatarGroup>
       );
     } else if (members.length === 1) {
