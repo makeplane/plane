@@ -4,15 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { ChevronDownOutline, SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { ChevronDownOutline, SortDescendingOutline, SortAscendingOutline } from "@makeplane/propel/icons";
 import type { TModuleOrderByOptions } from "@plane/types";
-// ui
-import { CustomMenu } from "@plane/blocks/dropdowns";
-// types
-// constants
 
 type Props = {
   onChange: (value: TModuleOrderByOptions) => void;
@@ -30,54 +27,46 @@ export function ModuleOrderByDropdown(props: Props) {
   const isManual = value?.includes("sort_order");
 
   return (
-    <CustomMenu
-      customButton={
-        <Button variant="secondary" size="md" stretch="auto" render={<div className="px-2 text-tertiary" />}>
-          {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
-          {orderByDetails && t(orderByDetails?.i18n_label)}
-          <ChevronDownOutline className="size-3" />
-        </Button>
-      }
-      placement="bottom-end"
-      maxHeight="lg"
-      closeOnSelect
-    >
-      {MODULE_ORDER_BY_OPTIONS.map((option) => (
-        <CustomMenu.MenuItem
-          key={option.key}
-          className="flex items-center justify-between gap-2"
-          onClick={() => {
-            if (isDescending && !isManual) onChange(`-${option.key}` as TModuleOrderByOptions);
-            else onChange(option.key);
-          }}
-        >
-          {t(option.i18n_label)}
-          {value?.includes(option.key) && <TickOutline className="h-3 w-3" />}
-        </CustomMenu.MenuItem>
-      ))}
-      {!isManual && (
-        <>
-          <hr className="my-2 border-subtle" />
-          <CustomMenu.MenuItem
-            className="flex items-center justify-between gap-2"
+    <Menu>
+      {/* propel: `getButtonStyling` has no counterpart, so the trigger borrows the styled button
+          element and Base UI grafts the menu behavior onto it. */}
+      <MenuTrigger render={<ButtonElement variant="secondary" size="md" stretch="auto" />}>
+        {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
+        {orderByDetails && t(orderByDetails?.i18n_label)}
+        <ChevronDownOutline className="size-3" />
+      </MenuTrigger>
+      <MenuContent side="bottom" align="end">
+        {MODULE_ORDER_BY_OPTIONS.map((option) => (
+          <MenuItem
+            key={option.key}
+            label={t(option.i18n_label)}
+            selected={value?.includes(option.key) ?? false}
             onClick={() => {
-              if (isDescending) onChange(value.slice(1) as TModuleOrderByOptions);
+              if (isDescending && !isManual) onChange(`-${option.key}` as TModuleOrderByOptions);
+              else onChange(option.key);
             }}
-          >
-            Ascending
-            {!isDescending && <TickOutline className="h-3 w-3" />}
-          </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem
-            className="flex items-center justify-between gap-2"
-            onClick={() => {
-              if (!isDescending) onChange(`-${value}` as TModuleOrderByOptions);
-            }}
-          >
-            Descending
-            {isDescending && <TickOutline className="h-3 w-3" />}
-          </CustomMenu.MenuItem>
-        </>
-      )}
-    </CustomMenu>
+          />
+        ))}
+        {!isManual && (
+          <>
+            <MenuSeparator />
+            <MenuItem
+              label={t("common.sort.asc")}
+              selected={!isDescending}
+              onClick={() => {
+                if (isDescending) onChange(value.slice(1) as TModuleOrderByOptions);
+              }}
+            />
+            <MenuItem
+              label={t("common.sort.desc")}
+              selected={isDescending ?? false}
+              onClick={() => {
+                if (!isDescending) onChange(`-${value}` as TModuleOrderByOptions);
+              }}
+            />
+          </>
+        )}
+      </MenuContent>
+    </Menu>
   );
 }

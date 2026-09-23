@@ -8,15 +8,15 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // Plane imports
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IModule } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // components
 import { ModuleForm } from "@/components/modules";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
-import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -39,6 +39,8 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
   const { isOpen, onClose, data, workspaceSlug, projectId } = props;
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
@@ -129,21 +131,29 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
       setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
   }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
-  useKeypress("Escape", () => {
-    if (isOpen) handleClose();
-  });
-
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <ModuleForm
-        handleFormSubmit={handleFormSubmit}
-        handleClose={handleClose}
-        status={data ? true : false}
-        projectId={activeProject ?? ""}
-        setActiveProject={setActiveProject}
-        data={data}
-        isMobile={isMobile}
-      />
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+      disablePointerDismissal
+    >
+      {/* ModuleForm renders its own visible heading; the dialog carries the same text as its name. */}
+      <DialogContent
+        size="md"
+        aria-label={`${data ? t("common.update") : t("common.create")} ${t("common.module").toLowerCase()}`}
+      >
+        <ModuleForm
+          handleFormSubmit={handleFormSubmit}
+          handleClose={handleClose}
+          status={data ? true : false}
+          projectId={activeProject ?? ""}
+          setActiveProject={setActiveProject}
+          data={data}
+          isMobile={isMobile}
+        />
+      </DialogContent>
+    </Dialog>
   );
 });

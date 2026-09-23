@@ -10,7 +10,6 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import {
   AddOutline,
-  ChevronDownOutline,
   ChevronRightOutline,
   InfoOutline,
   MembersOutline,
@@ -18,7 +17,7 @@ import {
   UserAltOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -26,20 +25,22 @@ import { ModuleStatusIcon } from "@plane/blocks/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { DateRangeSelect } from "@plane/blocks/property-select";
+import { Select } from "@plane/blocks/select";
 import { Loader } from "@plane/blocks/skeleton";
 import { TextArea } from "@makeplane/propel/components/text-area";
 // components
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
-import { DateRangeDropdown } from "@/components/dropdowns/date-range";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUserPermissions, useUserProfile } from "@/hooks/store/user";
 // plane web constants
+type ModuleStatusOption = (typeof MODULE_STATUS)[number];
+
 const defaultValues: Partial<IModule> = {
   lead_id: "",
   member_ids: [],
@@ -47,6 +48,88 @@ const defaultValues: Partial<IModule> = {
   target_date: null,
   status: "backlog",
 };
+
+type TModuleLinksCollapsibleProps = {
+  moduleDetails: IModule;
+  moduleId: string;
+  isEditingAllowed: boolean;
+  isArchived: boolean;
+  handleEditLink: (link: ILinkDetails) => void;
+  handleDeleteLink: (linkId: string) => Promise<void>;
+  setModuleLinkModal: (value: boolean) => void;
+};
+
+// Its own observer so the open state initialises from the loaded links and MobX tracks the list.
+const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible(props: TModuleLinksCollapsibleProps) {
+  const {
+    moduleDetails,
+    moduleId,
+    isEditingAllowed,
+    isArchived,
+    handleEditLink,
+    handleDeleteLink,
+    setModuleLinkModal,
+  } = props;
+  // states
+  const [isOpen, setIsOpen] = useState(!!moduleDetails?.link_module?.length);
+  // plane hooks
+  const { t } = useTranslation();
+
+  return (
+    <div className="relative flex h-full w-full flex-col">
+      <Collapsible
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        trigger={<span className="text-13 font-medium text-secondary">{t("common.links")}</span>}
+      >
+        <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
+          {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+            <>
+              {isEditingAllowed && !isArchived && (
+                <div className="flex w-full items-center justify-end">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
+                    onClick={() => setModuleLinkModal(true)}
+                  >
+                    <AddOutline className="h-3 w-3" />
+                    {t("add_link")}
+                  </button>
+                </div>
+              )}
+
+              {moduleId && (
+                <ModuleLinksList
+                  moduleId={moduleId}
+                  handleEditLink={handleEditLink}
+                  handleDeleteLink={handleDeleteLink}
+                  disabled={!isEditingAllowed || isArchived}
+                />
+              )}
+            </>
+          ) : (
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <InfoOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
+              </div>
+              {isEditingAllowed && !isArchived && (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
+                  onClick={() => setModuleLinkModal(true)}
+                >
+                  <AddOutline className="h-3 w-3" />
+                  {t("add_link")}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </Collapsible>
+    </div>
+  );
+});
 
 type Props = {
   moduleId: string;
@@ -66,6 +149,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   // store hooks
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
+  const { data: userProfile } = useUserProfile();
 
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
@@ -203,12 +287,29 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               control={control}
               name="status"
               render={({ field: { value } }) => (
-                <CustomSelect
-                  customButton={
+                <Select<ModuleStatusOption>
+                  getValues={() => MODULE_STATUS}
+                  value={MODULE_STATUS.find((status) => status.value === value) ?? null}
+                  onChange={(val) => {
+                    void submitChanges({ status: val as IModule["status"] });
+                  }}
+                  getOptionValue={(status) => status.value}
+                  getOptionLabel={(status) => t(status.i18n_label)}
+                  getOptionIcon={(status) => <ModuleStatusIcon status={status.value} />}
+                  disabled={!isEditingAllowed || isArchived}
+                  showSearch={false}
+                  pinSelected={false}
+                >
+                  {/* The chip carries the status colour (a runtime hex), so the trigger chrome is
+                      neutralised and the coloured surface stays on the inner span. */}
+                  <Select.Trigger
+                    variant="pill-md"
+                    className={`h-6 border-none bg-transparent p-0 hover:bg-transparent active:bg-transparent ${
+                      isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
+                    }`}
+                  >
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${
-                        isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className="flex h-6 w-20 items-center justify-center rounded-xs text-center text-11"
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -216,22 +317,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     >
                       {(moduleStatus && t(moduleStatus?.i18n_label)) ?? t("project_modules.status.backlog")}
                     </span>
-                  }
-                  value={value}
-                  onChange={(value: any) => {
-                    submitChanges({ status: value });
-                  }}
-                  disabled={!isEditingAllowed || isArchived}
-                >
-                  {MODULE_STATUS.map((status) => (
-                    <CustomSelect.Option key={status.value} value={status.value}>
-                      <div className="flex items-center gap-2">
-                        <ModuleStatusIcon status={status.value} />
-                        {t(status.i18n_label)}
-                      </div>
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
+                  </Select.Trigger>
+                </Select>
               )}
             />
           </div>
@@ -259,22 +346,19 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                       const startDate = getDate(startDateValue);
                       const endDate = getDate(endDateValue);
                       return (
-                        <DateRangeDropdown
-                          buttonContainerClassName="w-full"
-                          buttonVariant="background-with-text"
+                        <DateRangeSelect
+                          variant="select-ghost-md"
                           value={{
-                            from: startDate,
-                            to: endDate,
+                            from: startDate ?? null,
+                            to: endDate ?? null,
                           }}
-                          onSelect={(val) => {
-                            onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                            onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                            handleDateChange(val?.from, val?.to);
+                          onChange={(range) => {
+                            onChangeStartDate(range.from ? renderFormattedPayloadDate(range.from) : null);
+                            onChangeEndDate(range.to ? renderFormattedPayloadDate(range.to) : null);
+                            void handleDateChange(range.from ?? undefined, range.to ?? undefined);
                           }}
-                          placeholder={{
-                            from: t("start_date"),
-                            to: t("end_date"),
-                          }}
+                          placeholder={`${t("start_date")} - ${t("end_date")}`}
+                          weekStartsOn={userProfile?.start_of_the_week}
                           disabled={!isEditingAllowed || isArchived}
                         />
                       );
@@ -294,17 +378,16 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               name="lead_id"
               render={({ field: { value } }) => (
                 <div className="h-7 w-3/5">
-                  <MemberDropdown
+                  <MemberSelect
                     value={value ?? null}
                     onChange={(val) => {
-                      submitChanges({ lead_id: val });
+                      void submitChanges({ lead_id: val });
                     }}
                     projectId={projectId?.toString() ?? ""}
                     multiple={false}
-                    buttonVariant="background-with-text"
                     placeholder={t("lead")}
                     disabled={!isEditingAllowed || isArchived}
-                    icon={UserAltOutline}
+                    variant="select-ghost-md"
                   />
                 </div>
               )}
@@ -320,16 +403,17 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               name="member_ids"
               render={({ field: { value } }) => (
                 <div className="h-7 w-3/5">
-                  <MemberDropdown
+                  <MemberSelect
                     value={value ?? []}
                     onChange={(val: string[]) => {
-                      submitChanges({ member_ids: val });
+                      void submitChanges({ member_ids: val });
                     }}
                     multiple
                     projectId={projectId?.toString() ?? ""}
-                    buttonVariant={value && value?.length > 0 ? "transparent-without-text" : "background-with-text"}
-                    buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
+                    placeholder={t("members")}
                     disabled={!isEditingAllowed || isArchived}
+                    variant="select-ghost-md"
+                    showLabel={(value ?? []).length <= 1}
                   />
                 </div>
               )}
@@ -371,70 +455,15 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
 
         <div className="flex flex-col">
           <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-subtle px-1.5 py-5">
-            {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
-            <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
-              {({ open }) => (
-                <div className={`relative flex h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                  <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
-                    <div className="flex items-center justify-start gap-2 text-13">
-                      <span className="font-medium text-secondary">{t("common.links")}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <ChevronDownOutline
-                        className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
-                        aria-hidden="true"
-                      />
-                    </div>
-                  </Disclosure.Button>
-                  <Transition as="div" show={open}>
-                    <Disclosure.Panel>
-                      <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
-                          <>
-                            {isEditingAllowed && !isArchived && (
-                              <div className="flex w-full items-center justify-end">
-                                <button
-                                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
-                                  onClick={() => setModuleLinkModal(true)}
-                                >
-                                  <AddOutline className="h-3 w-3" />
-                                  {t("add_link")}
-                                </button>
-                              </div>
-                            )}
-
-                            {moduleId && (
-                              <ModuleLinksList
-                                moduleId={moduleId}
-                                handleEditLink={handleEditLink}
-                                handleDeleteLink={handleDeleteLink}
-                                disabled={!isEditingAllowed || isArchived}
-                              />
-                            )}
-                          </>
-                        ) : (
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <InfoOutline className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
-                              <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
-                            </div>
-                            {isEditingAllowed && !isArchived && (
-                              <button
-                                className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
-                                onClick={() => setModuleLinkModal(true)}
-                              >
-                                <AddOutline className="h-3 w-3" />
-                                {t("add_link")}
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </Disclosure.Panel>
-                  </Transition>
-                </div>
-              )}
-            </Disclosure>
+            <ModuleLinksCollapsible
+              moduleDetails={moduleDetails}
+              moduleId={moduleId}
+              isEditingAllowed={isEditingAllowed}
+              isArchived={!!isArchived}
+              handleEditLink={handleEditLink}
+              handleDeleteLink={handleDeleteLink}
+              setModuleLinkModal={setModuleLinkModal}
+            />
           </div>
         </div>
       </>

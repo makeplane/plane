@@ -6,9 +6,8 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@makeplane/propel/components/button";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -40,47 +39,37 @@ export function ArchiveModuleModal(props: Props) {
 
   const handleArchiveModule = async () => {
     setIsArchiving(true);
-    await archiveModule(workspaceSlug, projectId, moduleId)
-      .then(() => {
-        setToast({
-          type: "success",
-          title: "Archive success",
-          message: "Your archives can be found in project archives.",
-        });
-        onClose();
-        router.push(`/${workspaceSlug}/projects/${projectId}/modules`);
-        return;
-      })
-      .catch(() =>
-        setToast({
-          type: "error",
-          title: "Error!",
-          message: "Module could not be archived. Please try again.",
-        })
-      )
-      .finally(() => setIsArchiving(false));
+    try {
+      await archiveModule(workspaceSlug, projectId, moduleId);
+      setToast({
+        type: "success",
+        title: "Archive success",
+        message: "Your archives can be found in project archives.",
+      });
+      onClose();
+      router.push(`/${workspaceSlug}/projects/${projectId}/modules`);
+    } catch {
+      setToast({
+        type: "error",
+        title: "Error!",
+        message: "Module could not be archived. Please try again.",
+      });
+    } finally {
+      setIsArchiving(false);
+    }
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
-      <div className="px-5 py-4">
-        <h3 className="text-18 font-medium 2xl:text-20">Archive module {moduleName}</h3>
-        <p className="mt-3 text-13 text-secondary">
-          Are you sure you want to archive the module? All your archives can be restored later.
-        </p>
-        <div className="mt-3 flex justify-end gap-2">
-          <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label="Cancel" />
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            tabIndex={1}
-            onClick={handleArchiveModule}
-            loading={isArchiving}
-            label={isArchiving ? "Archiving" : "Archive"}
-          />
-        </div>
-      </div>
-    </ModalCore>
+    <ConfirmDialog
+      isOpen={isOpen}
+      handleClose={onClose}
+      handleSubmit={handleArchiveModule}
+      isSubmitting={isArchiving}
+      variant="primary"
+      title={`Archive module ${moduleName}`}
+      content="Are you sure you want to archive the module? All your archives can be restored later."
+      primaryButtonText={{ loading: "Archiving", default: "Archive" }}
+      secondaryButtonText="Cancel"
+    />
   );
 }
