@@ -18,7 +18,7 @@ import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 const smallButton = <FilterOutline className="size-3" />;
 
 const largeButton = (
-  <Button variant="secondary" size="sm" stretch="auto" render={<div className="px-2 text-tertiary" />}>
+  <Button variant="secondary" size="sm" stretch="auto" render={<span />}>
     <FilterOutline className="size-3" />
     <span>Filters</span>
     <ChevronDownOutline className="size-3" />
