@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
 import { CyclesOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
@@ -59,17 +59,30 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
       {canUserCreateCycle && currentProjectDetails ? (
         <Header.RightItem>
           <CyclesViewHeader projectId={currentProjectDetails.id} />
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            onClick={() => {
-              toggleCreateCycleModal(true);
-            }}
-          >
-            <div className="block sm:hidden">{t("add")}</div>
-            <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
-          </Button>
+          <div className="flex">
+            <div className="block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("add")}
+                onClick={() => {
+                  toggleCreateCycleModal(true);
+                }}
+              />
+            </div>
+            <div className="hidden sm:block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("project_cycles.add_cycle")}
+                onClick={() => {
+                  toggleCreateCycleModal(true);
+                }}
+              />
+            </div>
+          </div>
         </Header.RightItem>
       ) : (
         <></>

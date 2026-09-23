@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@makeplane/propel/elements/button";
+import { Button } from "@makeplane/propel/components/button";
 import { ModuleOutline } from "@makeplane/propel/icons";
 import { Breadcrumbs } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
@@ -64,17 +64,30 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.RightItem>
         <ModuleViewHeader />
         {canUserCreateModule ? (
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            onClick={() => {
-              toggleCreateModuleModal(true);
-            }}
-          >
-            <div className="block sm:hidden">{t("add")}</div>
-            <div className="hidden sm:block">{t("project_module.add_module")}</div>
-          </Button>
+          <div className="flex">
+            <div className="block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("add")}
+                onClick={() => {
+                  toggleCreateModuleModal(true);
+                }}
+              />
+            </div>
+            <div className="hidden sm:block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("project_module.add_module")}
+                onClick={() => {
+                  toggleCreateModuleModal(true);
+                }}
+              />
+            </div>
+          </div>
         ) : (
           <></>
         )}
