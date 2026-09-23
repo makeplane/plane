@@ -24,6 +24,8 @@ import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExternalFilter> = {
   customButton: React.ReactNode;
+  /** Names the trigger when `customButton` has no visible text (the icon-only add-filter button). */
+  triggerAriaLabel?: string;
   buttonConfig?: {
     className?: string;
     defaultOpen?: boolean;
@@ -37,7 +39,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
   P extends TFilterProperty,
   E extends TExternalFilter,
 >(props: TAddFilterDropdownProps<P, E>) {
-  const { filter, customButton, buttonConfig } = props;
+  const { filter, customButton, triggerAriaLabel, buttonConfig } = props;
   const { className, defaultOpen = false, isDisabled = false } = buttonConfig || {};
   // states
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,6 +83,7 @@ export const AddFilterDropdown = observer(function AddFilterDropdown<
       >
         {/* The caller's button is content, not a button: the trigger stays the one interactive element. */}
         <BaseCombobox.Trigger
+          aria-label={triggerAriaLabel}
           className={cn(
             "flex w-full items-center justify-between gap-1 text-11 outline-none",
             isDisabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover",
