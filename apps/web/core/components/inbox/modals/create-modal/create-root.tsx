@@ -13,6 +13,15 @@ import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
 import type { TIssue } from "@plane/types";
@@ -178,76 +187,89 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
-    <div className="flex w-full gap-2 bg-transparent">
-      <div className="w-full rounded-lg">
-        <form ref={formRef} onSubmit={handleFormSubmit} className="flex w-full flex-col">
-          <div className="space-y-5 rounded-t-lg bg-surface-1 p-5">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
-            </div>
-            <div className="space-y-3">
-              <InboxIssueTitle
-                data={formData}
-                handleData={handleFormData}
-                isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
-              />
-              <InboxIssueDescription
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                workspaceId={workspaceId}
-                data={formData}
-                handleData={handleFormData}
-                editorRef={descriptionEditorRef}
-                containerClassName="bg-layer-2 border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
-                onEnterKeyPress={() => submitBtnRef?.current?.click()}
-                onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
-              />
-              <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
-            </div>
-          </div>
-          <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
-            <div
-              className="inline-flex cursor-pointer items-center gap-1.5"
-              onClick={() => setCreateMore((prevData) => !prevData)}
-              role="button"
-              tabIndex={getIndex("create_more")}
-            >
-              <Switch size="sm" checked={createMore} onCheckedChange={() => {}} aria-label={t("create_more")} />
-              <span className="text-11">{t("create_more")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="secondary"
-                size="md"
-                stretch="auto"
-                type="button"
-                onClick={() => {
-                  if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
-                    handleModalClose();
-                  } else {
-                    setToast({
-                      type: "error",
-                      title: "Error!",
-                      message: "Editor is still processing changes. Please wait before proceeding.",
-                    });
-                  }
-                }}
-                tabIndex={getIndex("discard_button")}
-                label={t("discard")}
-              />
-              <Button
-                variant="primary"
-                ref={submitBtnRef}
-                type="submit"
-                loading={formSubmitting}
-                disabled={isTitleLengthMoreThan255Character}
-                tabIndex={getIndex("submit_button")}
-                size="md"
-                stretch="auto"
-                label={formSubmitting ? t("creating") : t("create_work_item")}
-              />
-            </div>
-          </div>
+    // The dialog popup is the card (surface, border, radius, shadow), so this tree no longer draws
+    // the rounded/background chrome it needed inside the transparent legacy modal.
+    <div className="flex min-h-0 w-full flex-1 gap-2">
+      <div className="flex min-h-0 w-full flex-1 flex-col">
+        <form ref={formRef} onSubmit={handleFormSubmit} className="flex min-h-0 w-full flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>{t("inbox_issue.modal.title")}</DialogTitle>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody tabIndex={0}>
+              <div className="space-y-3">
+                <InboxIssueTitle
+                  data={formData}
+                  handleData={handleFormData}
+                  isTitleLengthMoreThan255Character={isTitleLengthMoreThan255Character}
+                />
+                <InboxIssueDescription
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  workspaceId={workspaceId}
+                  data={formData}
+                  handleData={handleFormData}
+                  editorRef={descriptionEditorRef}
+                  containerClassName="bg-layer-2 border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
+                  onEnterKeyPress={() => submitBtnRef?.current?.click()}
+                  onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
+                />
+                <InboxIssueProperties
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  data={formData}
+                  handleData={handleFormData}
+                />
+              </div>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <DialogInfo>
+              {/* A label (not a role="button" div) so clicking the switch or the text toggles once. */}
+              <label className="inline-flex cursor-pointer items-center gap-1.5">
+                <Switch
+                  size="sm"
+                  checked={createMore}
+                  onCheckedChange={() => setCreateMore((prevData) => !prevData)}
+                  tabIndex={getIndex("create_more")}
+                  aria-label={t("create_more")}
+                />
+                <span className="text-11">{t("create_more")}</span>
+              </label>
+            </DialogInfo>
+            <Button
+              variant="secondary"
+              size="md"
+              stretch="auto"
+              type="button"
+              onClick={() => {
+                if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
+                  handleModalClose();
+                } else {
+                  setToast({
+                    type: "error",
+                    title: "Error!",
+                    message: "Editor is still processing changes. Please wait before proceeding.",
+                  });
+                }
+              }}
+              tabIndex={getIndex("discard_button")}
+              label={t("discard")}
+            />
+            <Button
+              variant="primary"
+              ref={submitBtnRef}
+              type="submit"
+              loading={formSubmitting}
+              disabled={isTitleLengthMoreThan255Character}
+              tabIndex={getIndex("submit_button")}
+              size="md"
+              stretch="auto"
+              label={formSubmitting ? t("creating") : t("create_work_item")}
+            />
+          </DialogActions>
         </form>
       </div>
     </div>
