@@ -126,18 +126,21 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (
-        <Button
-          variant="secondary"
-          size="md"
-          stretch="auto"
-          onClick={() => setAnalyticsModal(true)}
-          render={<button type="button" className="hidden px-2 md:block" />}
-        >
-          <div className="hidden @4xl:flex">{t("common.analytics")}</div>
-          <div className="flex @4xl:hidden">
-            <BarOutline className="size-3.5" />
-          </div>
-        </Button>
+        <div className="hidden md:flex">
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            aria-label={t("common.analytics")}
+            onClick={() => setAnalyticsModal(true)}
+          >
+            <span className="hidden @4xl:flex">{t("common.analytics")}</span>
+            <span className="flex @4xl:hidden">
+              <BarOutline className="size-3.5" />
+            </span>
+          </Button>
+        </div>
       ) : (
         <></>
       )}
