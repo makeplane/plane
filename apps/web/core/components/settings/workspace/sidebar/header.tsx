@@ -40,7 +40,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
           variant="ghost"
           size="sm"
           icon={<Icon icon={ArrowNarrowLeftOutline} />}
-          aria-label="Back to workspace"
+          aria-label={t("back_to_workspace")}
           onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
         />
         <p>Workspace settings</p>
