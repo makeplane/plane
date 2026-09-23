@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { useTranslation } from "@plane/i18n";
 
 const isMacPlatform = (): boolean =>
   typeof window !== "undefined" && /Mac|iPhone|iPad|iPod/i.test(window.navigator.userAgent);
@@ -90,6 +91,8 @@ export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
 }
 
 export function KeySequenceBadge({ sequence }: { sequence: string | undefined }) {
+  // translation
+  const { t } = useTranslation();
   if (!sequence) return null;
 
   // Cumulative prefix stays unique for repeated keys such as "gg"
@@ -106,7 +109,9 @@ export function KeySequenceBadge({ sequence }: { sequence: string | undefined })
           <kbd className="inline-flex h-5 items-center justify-center rounded-sm border border-strong bg-surface-1 px-1.5 font-code text-10 font-medium text-tertiary">
             {char.toUpperCase()}
           </kbd>
-          {!isLast && <span className="text-10 text-placeholder">then</span>}
+          {!isLast && (
+            <span className="text-10 text-placeholder">{t("power_k.shortcuts_modal.sequence_separator")}</span>
+          )}
         </React.Fragment>
       ))}
     </div>

@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Nível do espaço de trabalho"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Pesquisar atalhos do teclado",
+      "no_results": "Nenhum atalho do teclado encontrado para \"{query}\"",
+      "sequence_separator": "depois"
+    },
     "group_titles": {
       "actions": "Ações",
       "contextual": "Contextual",

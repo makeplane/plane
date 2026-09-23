@@ -102,12 +102,7 @@ export function ShortcutRenderer(props: Props) {
         ))
       ) : (
         <p className="flex justify-center text-center text-13 text-secondary">
-          No shortcuts found for{" "}
-          <span className="font-semibold italic">
-            {`"`}
-            {searchQuery}
-            {`"`}
-          </span>
+          {t("power_k.shortcuts_modal.no_results", { query: searchQuery })}
         </p>
       )}
     </div>

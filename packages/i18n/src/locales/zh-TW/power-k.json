@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "工作區層級"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "搜尋鍵盤快速鍵",
+      "no_results": "找不到「{query}」的鍵盤快速鍵",
+      "sequence_separator": "然後"
+    },
     "group_titles": {
       "actions": "操作",
       "contextual": "情境",
