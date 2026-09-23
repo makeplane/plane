@@ -7,7 +7,6 @@
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { AddFilterOutline } from "@makeplane/propel/icons";
-import { Transition } from "@headlessui/react";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
 import type { IFilterInstance } from "@plane/shared-state";
@@ -19,6 +18,7 @@ import { cn } from "@plane/utils";
 import type { TAddFilterButtonProps } from "./add-filters/button";
 import { AddFilterButton } from "./add-filters/button";
 import { FilterItem } from "./filter-item/root";
+import { ElementTransition, RowTransition } from "./transition-components";
 
 export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: TAddFilterButtonProps<K, E>["buttonConfig"];
@@ -87,7 +87,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
           stretch="auto"
           label={filter.clearFilterOptions?.label ?? "Clear all"}
           onClick={filter.clearFilters}
-          render={<button className={COMMON_OPERATION_BUTTON_CLASSNAME} />}
         />
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
@@ -97,7 +96,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
           stretch="auto"
           label={filter.saveViewOptions?.label ?? "Save view"}
           onClick={filter.saveView}
-          render={<button className={COMMON_OPERATION_BUTTON_CLASSNAME} />}
         />
       </ElementTransition>
       <ElementTransition show={filter.canUpdateView}>
@@ -109,7 +107,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
           onClick={handleUpdate}
           loading={isUpdating}
           disabled={isUpdating}
-          render={<button className={COMMON_OPERATION_BUTTON_CLASSNAME} />}
         />
       </ElementTransition>
     </>
@@ -149,50 +146,4 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   }
 
   return <RowTransition show={filter.isVisible}>{variant === "modal" ? ModalVariant : HeaderVariant}</RowTransition>;
-});
-
-const COMMON_OPERATION_BUTTON_CLASSNAME = "py-1";
-
-type TElementTransitionProps = {
-  children: React.ReactNode;
-  show: boolean;
-};
-
-const ElementTransition = observer(function ElementTransition(props: TElementTransitionProps) {
-  return (
-    <Transition
-      as="div"
-      show={props.show}
-      enter="transition ease-out duration-200"
-      enterFrom="opacity-0 scale-95"
-      enterTo="opacity-100 scale-100"
-      leave="transition ease-in duration-150"
-      leaveFrom="opacity-100 scale-100"
-      leaveTo="opacity-0 scale-95"
-    >
-      {props.children}
-    </Transition>
-  );
-});
-
-type TRowTransitionProps = {
-  children: React.ReactNode;
-  show: boolean;
-};
-
-const RowTransition = observer(function RowTransition(props: TRowTransitionProps) {
-  return (
-    <Transition
-      as="div"
-      show={props.show}
-      enter="transition-all duration-150 ease-out"
-      enterFrom="opacity-0 -translate-y-1"
-      enterTo="opacity-100 translate-y-0"
-      leave="transition-all duration-100 ease-in"
-      leaveFrom="opacity-100 translate-y-0"
-      leaveTo="opacity-0 -translate-y-1"
-    >
-      {props.children}
-    </Transition>
-  );
 });
