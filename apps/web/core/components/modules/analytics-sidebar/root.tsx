@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -181,23 +181,26 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload);
   };
 
-  const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId) return;
-    try {
-      await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
-      setToast({
-        type: "success",
-        title: "Success!",
-        message: "Module link deleted successfully.",
-      });
-    } catch (_error) {
-      setToast({
-        type: "error",
-        title: "Error!",
-        message: "Some error occurred",
-      });
-    }
-  };
+  const handleDeleteLink = useCallback(
+    async (linkId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      try {
+        await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
+        setToast({
+          type: "success",
+          title: "Success!",
+          message: "Module link deleted successfully.",
+        });
+      } catch (_error) {
+        setToast({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
+      }
+    },
+    [workspaceSlug, projectId, moduleId, deleteModuleLink]
+  );
 
   const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
     submitChanges({
@@ -218,10 +221,10 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       });
   }, [moduleDetails, reset]);
 
-  const handleEditLink = (link: ILinkDetails) => {
+  const handleEditLink = useCallback((link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setModuleLinkModal(true);
-  };
+  }, []);
 
   if (!moduleDetails)
     return (
