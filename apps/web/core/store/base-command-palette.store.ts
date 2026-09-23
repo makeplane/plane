@@ -14,11 +14,6 @@ import { EIssuesStoreType } from "@plane/types";
 // lib
 import { store } from "@/lib/store-context";
 
-export interface ModalData {
-  store: EIssuesStoreType;
-  viewId: string;
-}
-
 export interface IBaseCommandPaletteStore {
   // computed
   isAnyModalOpen: boolean;
