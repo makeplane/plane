@@ -52,6 +52,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
   // derived values
   const roleOptions = memberType === "project" ? PROJECT_ROLE_OPTIONS : WORKSPACE_ROLE_OPTIONS;
   const appliedFiltersCount = appliedFilters?.length ?? 0;
+  const appliedFilterSet = new Set(appliedFilters);
 
   return (
     <Menu>
@@ -77,7 +78,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
             <MenuCheckboxItem
               key={`role-${role.value}`}
               label={role.label}
-              checked={appliedFilters?.includes(role.value) ?? false}
+              checked={appliedFilterSet.has(role.value)}
               onCheckedChange={() => handleUpdate(role.value)}
             />
           ))}
