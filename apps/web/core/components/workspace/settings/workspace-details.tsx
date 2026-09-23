@@ -16,7 +16,7 @@ import { Button } from "@makeplane/propel/components/button";
 import { EditOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from "@makeplane/propel/components/select";
 import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
@@ -227,23 +227,23 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 name="organization_size"
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      ORGANIZATION_SIZE.find((c) => c === value) ??
-                      t("workspace_settings.settings.general.errors.company_size.select_a_range")
-                    }
-                    buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
-                    input
+                  <Select<string>
+                    value={value || null}
+                    onValueChange={(next) => onChange(next ?? "")}
                     disabled={!isAdmin}
                   >
-                    {ORGANIZATION_SIZE.map((item) => (
-                      <CustomSelect.Option key={item} value={item}>
-                        {item}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
+                    <SelectTrigger
+                      size="2xl"
+                      placeholder={t("workspace_settings.settings.general.errors.company_size.select_a_range")}
+                    />
+                    <SelectContent side="bottom" align="end">
+                      <SelectList>
+                        {ORGANIZATION_SIZE.map((item) => (
+                          <SelectItem key={item} value={item} size="lg" label={item} />
+                        ))}
+                      </SelectList>
+                    </SelectContent>
+                  </Select>
                 )}
               />
             </div>
