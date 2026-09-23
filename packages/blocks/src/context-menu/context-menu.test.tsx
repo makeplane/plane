@@ -271,7 +271,10 @@ describe("ContextMenu nested rows", () => {
     // While the pointer travels into a hover-opened submenu, Floating UI's safe polygon sets
     // `pointer-events: none` on <body> and `auto` on the surface; jsdom's computed style does not
     // resolve that override, so user-event's pointer-events guard would reject the nested row.
-    const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never });
+    // `delay: null` runs each pointer sequence without yielding to timers: the trail from the
+    // trigger to a nested row otherwise leaves room for the submenu's hover-out close to fire under
+    // a loaded test run, and the click then lands on a detached row.
+    const user = userEvent.setup({ pointerEventsCheck: PointerEventsCheckLevel.Never, delay: null });
     const onBacklog = vi.fn();
     render(<Harness items={nested(onBacklog)} />);
     await openMenu();
