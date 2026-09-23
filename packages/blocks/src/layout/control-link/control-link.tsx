@@ -31,13 +31,14 @@ export const ControlLink = React.forwardRef(function ControlLink(
     }
   };
 
-  // if disabled but still has a ref or a className then it has to be rendered without a href
+  // if disabled but still has a ref or a className then it has to be rendered as a non-link wrapper:
+  // an href-less anchor is unreachable by keyboard yet still reads as a link. The ref only ever needs
+  // plain HTMLElement behaviour (measuring, outside clicks, drag handles), which a span provides.
   if (disabled && (ref || className))
     return (
-      // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- a disabled link deliberately renders without an href
-      <a ref={ref} className={className}>
+      <span ref={ref as React.ForwardedRef<HTMLElement>} className={className}>
         {children}
-      </a>
+      </span>
     );
 
   // else if just disabled return without the parent wrapper
