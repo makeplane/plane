@@ -86,7 +86,6 @@
     "react-dom": "catalog:",
     "react-popper": "catalog:",
     "recharts": "catalog:",
-    "tailwind-merge": "catalog:",
     "use-font-face-observer": "catalog:"
   },
   "devDependencies": {
