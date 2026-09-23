@@ -205,7 +205,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             stretch="auto"
             label={t("common.cancel")}
             onClick={handleClose}
-            tabIndex={1}
+            tabIndex={0}
           />
           {!isRestoreDisabled && (
             <Button
