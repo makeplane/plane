@@ -4,18 +4,17 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TickOutline } from "@makeplane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
-import { Button } from "@makeplane/propel/elements/button";
-import { Dropdown } from "@plane/blocks/dropdowns";
-import { cn } from "@plane/utils";
+import { Select } from "@plane/blocks/select";
 // components
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
+
+type TLayoutOption = { key: EIssueLayoutTypes; i18n_label: string };
 
 type TLayoutDropDown = {
   onChange: (value: EIssueLayoutTypes) => void;
@@ -28,57 +27,34 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
   // plane i18n
   const { t } = useTranslation();
   // derived values
-  const availableLayouts = useMemo(
-    () => Object.values(ISSUE_LAYOUT_MAP).filter((layout) => !disabledLayouts.includes(layout.key)),
+  const options = useMemo<TLayoutOption[]>(
+    () =>
+      Object.values(ISSUE_LAYOUT_MAP)
+        .filter((layout) => !disabledLayouts.includes(layout.key))
+        .map((layout) => ({ key: layout.key, i18n_label: layout.i18n_label })),
     [disabledLayouts]
   );
-
-  const options = useMemo(
-    () =>
-      availableLayouts.map((issueLayout) => ({
-        data: issueLayout.key,
-        value: issueLayout.key,
-      })),
-    [availableLayouts]
-  );
-
-  const buttonContent = useCallback((isOpen: boolean, buttonValue: string | string[] | undefined) => {
-    const dropdownValue = ISSUE_LAYOUT_MAP[buttonValue as EIssueLayoutTypes];
-    return (
-      <Button variant="secondary" size="md" stretch="auto" render={<div />}>
-        <div className="flex items-center gap-2 text-secondary">
-          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-secondary`} />
-          <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
-        </div>
-      </Button>
-    );
-  }, []);
-
-  const itemContent = useCallback((props: { value: string; selected: boolean }) => {
-    const dropdownValue = ISSUE_LAYOUT_MAP[props.value as EIssueLayoutTypes];
-
-    return (
-      <div className={cn("flex w-full items-center justify-between gap-2 text-secondary")}>
-        <div className="flex items-center gap-2">
-          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
-          <span className="text-11 font-medium">{t(dropdownValue.i18n_label)}</span>
-        </div>
-        {props.selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
-      </div>
-    );
-  }, []);
-
-  const keyExtractor = useCallback((option: any) => option.value, []);
+  const selected = options.find((option) => option.key === value) ?? null;
 
   return (
-    <Dropdown
-      onChange={onChange as (value: string) => void}
-      value={value?.toString()}
-      keyExtractor={keyExtractor}
-      options={options}
-      buttonContent={buttonContent}
-      renderItem={itemContent}
-      disableSearch
-    />
+    <Select<TLayoutOption>
+      getValues={() => options}
+      value={selected}
+      onChange={(next) => onChange(next as EIssueLayoutTypes)}
+      getOptionValue={(option) => option.key}
+      getOptionLabel={(option) => t(option.i18n_label)}
+      getOptionIcon={(option) => <IssueLayoutIcon layout={option.key} className="size-4 shrink-0 text-primary" />}
+      showSearch={false}
+      pinSelected={false}
+    >
+      <Select.Trigger variant="pill-lg" className="w-auto">
+        {selected && (
+          <>
+            <IssueLayoutIcon layout={selected.key} className="size-3.5 text-secondary" />
+            <span className="truncate">{t(selected.i18n_label)}</span>
+          </>
+        )}
+      </Select.Trigger>
+    </Select>
   );
 });
