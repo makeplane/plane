@@ -2590,3 +2590,69 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             serializer_class(refetched_relations, many=True).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+    """Issue Relation Remove Endpoint"""
+
+    serializer_class = IssueRelationSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_relation_docs(
+        operation_id="remove_work_item_relation",
+        summary="Remove work item relation",
+        description="Remove a relationship between work items.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        responses={
+            204: OpenApiResponse(
+                description="Work item relation removed successfully",
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Remove work item relation"""
+        related_issue = request.data.get("related_issue") or request.query_params.get("related_issue")
+        if not related_issue:
+            return Response(
+                {"error": "related_issue is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        matching_relations = IssueRelation.objects.filter(
+            workspace__slug=slug,
+        ).filter(
+            Q(issue_id=related_issue, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue)
+        )
+        issue_relation = matching_relations.first()
+        if not issue_relation:
+            return Response(
+                {"error": "Relation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        current_instance = json.dumps(
+            IssueRelationSerializer(issue_relation).data, cls=DjangoJSONEncoder
+        )
+        matching_relations.delete()
+        issue_activity.delay(
+            type="issue_relation.activity.deleted",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete(self, request, slug, project_id, issue_id):
+        """Allow HTTP DELETE method as well"""
+        return self.post(request, slug, project_id, issue_id)
