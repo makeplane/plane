@@ -32,7 +32,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
-import { useArchivedIssueMenuItems } from "./helper";
+import { useArchivedIssueMenuItems, quickActionTriggerGuard, stopQuickActionPropagation } from "./helper";
 
 export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickActions(props: IQuickActionProps) {
   const {
@@ -100,6 +100,7 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <Menu>
         <MenuTrigger
+          {...quickActionTriggerGuard}
           render={
             customActionButton ?? (
               // Icon-only fallback trigger, so it needs an explicit accessible name.
@@ -112,7 +113,7 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
             )
           }
         />
-        <MenuContent {...toSideAndAlign(placements)}>
+        <MenuContent {...toSideAndAlign(placements)} onClick={stopQuickActionPropagation}>
           {getRenderableItems(MENU_ITEMS).map((item) => {
             const nestedItems = getRenderableItems(item.nestedMenuItems);
             if (nestedItems.length > 0) {

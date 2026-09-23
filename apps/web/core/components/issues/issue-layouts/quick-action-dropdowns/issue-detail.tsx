@@ -38,7 +38,7 @@ import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
-import { useWorkItemDetailMenuItems } from "./helper";
+import { useWorkItemDetailMenuItems, quickActionTriggerGuard, stopQuickActionPropagation } from "./helper";
 
 type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   toggleEditIssueModal?: (value: boolean) => void;
@@ -238,6 +238,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <Menu>
         <MenuTrigger
+          {...quickActionTriggerGuard}
           render={
             <IconButton
               size="md"
@@ -247,7 +248,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
             />
           }
         />
-        <MenuContent {...toSideAndAlign(placements)}>
+        <MenuContent {...toSideAndAlign(placements)} onClick={stopQuickActionPropagation}>
           {getRenderableItems(MENU_ITEMS).map((item) => {
             const nestedItems = getRenderableItems(item.nestedMenuItems);
             if (nestedItems.length > 0) {

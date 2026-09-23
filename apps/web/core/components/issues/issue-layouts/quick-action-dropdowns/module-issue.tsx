@@ -38,7 +38,7 @@ import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
-import { useModuleIssueMenuItems } from "./helper";
+import { useModuleIssueMenuItems, quickActionTriggerGuard, stopQuickActionPropagation } from "./helper";
 
 export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions(props: IQuickActionProps) {
   const {
@@ -152,6 +152,7 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <Menu>
         <MenuTrigger
+          {...quickActionTriggerGuard}
           render={
             customActionButton ?? (
               // Icon-only fallback trigger, so it needs an explicit accessible name.
@@ -164,7 +165,7 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
             )
           }
         />
-        <MenuContent {...toSideAndAlign(placements)}>
+        <MenuContent {...toSideAndAlign(placements)} onClick={stopQuickActionPropagation}>
           {getRenderableItems(MENU_ITEMS).map((item) => {
             const nestedItems = getRenderableItems(item.nestedMenuItems);
             if (nestedItems.length > 0) {

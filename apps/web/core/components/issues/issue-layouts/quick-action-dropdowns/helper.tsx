@@ -23,6 +23,26 @@ import type { TContextMenuItem } from "@plane/blocks/context-menu";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { createCopyMenuWithDuplication } from "./copy-menu-helper";
 
+/**
+ * The quick-action menus sit inside clickable rows (ControlLink anchors, row `onClick`s). The legacy
+ * menu's root swallowed clicks for them; Propel's `Menu` renders no element, so the trigger carries
+ * the guard (click + Enter/Space) and the portalled popup stops item clicks from bubbling up the React
+ * tree to the row. Base UI still runs its own trigger handler, so the menu opens as before.
+ */
+export const quickActionTriggerGuard = {
+  onClick: (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  },
+  onKeyDown: (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+  },
+};
+
+export const stopQuickActionPropagation = (e: React.SyntheticEvent) => {
+  e.stopPropagation();
+};
+
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters
 export function handleOptionalAction(
