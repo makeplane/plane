@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useEffectEvent } from "react";
 
 export const useOutsideClickDetector = (
   ref: { readonly current: Element | null },
@@ -12,18 +12,11 @@ export const useOutsideClickDetector = (
   useCapture = false,
   enabled = true
 ) => {
-  // Keep the latest callback/useCapture in refs so the document listener binds once per
-  // consumer instead of re-attaching on every render.
-  const callbackRef = useRef(callback);
-  const useCaptureRef = useRef(useCapture);
-
-  useLayoutEffect(() => {
-    callbackRef.current = callback;
-    useCaptureRef.current = useCapture;
-  });
+  // Reads the latest callback without re-attaching the document listener on every render.
+  const onOutsideClick = useEffectEvent(callback);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) return undefined;
 
     const handleClick = (event: MouseEvent) => {
       // Frozen at dispatch — live-DOM contains()/closest() can miss a node that another
@@ -48,14 +41,13 @@ export const useOutsideClickDetector = (
         if (path.some((el) => el.hasAttribute("data-base-ui-portal") && !el.contains(node))) {
           return;
         }
-        callbackRef.current();
+        onOutsideClick();
       }
     };
 
-    const capture = useCaptureRef.current;
-    document.addEventListener("mousedown", handleClick, capture);
+    document.addEventListener("mousedown", handleClick, useCapture);
     return () => {
-      document.removeEventListener("mousedown", handleClick, capture);
+      document.removeEventListener("mousedown", handleClick, useCapture);
     };
   }, [ref, enabled, useCapture]);
 };

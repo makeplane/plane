@@ -37,13 +37,28 @@ import { VirtualListBody } from "./virtual-list-body";
  * render; the selection derived from them feeds `SelectContext`, `applyOpenSideEffects` and
  * base-ui's selection-index effect, so a fresh identity re-renders every trigger for nothing.
  */
-function useStableItems<T>(next: T[]): T[] {
-  const ref = useRef(next);
-  const previous = ref.current;
-  if (previous !== next && (previous.length !== next.length || previous.some((item, index) => item !== next[index]))) {
-    ref.current = next;
+// Stable per-object ids, so an array's contents can be compared by a string key without holding
+// the previous array in a ref (refs must not be written during render).
+const itemIds = new WeakMap<object, number>();
+let lastItemId = 0;
+function getItemKey(item: unknown): string {
+  if ((typeof item === "object" && item !== null) || typeof item === "function") {
+    let id = itemIds.get(item);
+    if (id === undefined) {
+      lastItemId += 1;
+      id = lastItemId;
+      itemIds.set(item, id);
+    }
+    return `o${id}`;
   }
-  return ref.current;
+  return `${typeof item}:${String(item)}`;
+}
+
+function useStableItems<T>(next: T[]): T[] {
+  const contentKey = next.map(getItemKey).join("\u0000");
+  // Identity follows contents: `contentKey` changes exactly when an item (by identity) changes.
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => next, [contentKey]);
 }
 
 export function SelectRoot<T>(props: SelectProps<T>) {

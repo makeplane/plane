@@ -78,12 +78,16 @@ export function NestedSubmenuRoot(props: NestedSubmenuProps) {
 
   // Reset the child level when this flyout closes, whatever caused it — own hover-away, sibling
   // steal, Escape, or a controlling parent. The panel (and the group that adopted the state)
-  // unmounts on close, but the state lives here; in-render adjustment, no effect needed. The
-  // reason goes with it: a closed flyout must never re-open into a pending deferred close.
+  // unmounts on close, but the state lives here; in-render adjustment, no effect needed.
   if (!open && childActiveId !== null) {
-    childCloseReasonRef.current = null;
     setChildActiveId(null);
   }
+  // The recorded close reason goes with it: a closed flyout must never re-open into a pending
+  // deferred close. Cleared after commit (refs are not written during render); the effect below
+  // that reads it bails while the flyout is closed, so nothing observes the stale value.
+  useEffect(() => {
+    if (!open) childCloseReasonRef.current = null;
+  }, [open]);
 
   // Pointer presence over this flyout's own region (trigger row or panel) + the deferred close
   // the child's hover-away re-arms. Refs, not state — nothing renders off them.
