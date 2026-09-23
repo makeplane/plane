@@ -4,6 +4,7 @@
   "globalEnv": [
     "APP_VERSION",
     "DEV",
+    "PROD",
     "LOG_LEVEL",
     "NODE_ENV",
     "SENTRY_DSN",
