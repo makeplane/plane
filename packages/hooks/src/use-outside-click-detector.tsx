@@ -4,11 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import type React from "react";
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 export const useOutsideClickDetector = (
-  ref: React.RefObject<HTMLElement | null> | any,
+  ref: { readonly current: Element | null },
   callback: () => void,
   useCapture = false,
   enabled = true
@@ -27,16 +26,28 @@ export const useOutsideClickDetector = (
     if (!enabled) return;
 
     const handleClick = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as any)) {
-        // check for the closest element with attribute name data-prevent-outside-click
-        const preventOutsideClickElement = (event.target as unknown as HTMLElement | undefined)?.closest(
-          "[data-prevent-outside-click]"
-        );
-        // if the closest element with attribute name data-prevent-outside-click is found, return
+      // Frozen at dispatch — live-DOM contains()/closest() can miss a node that another
+      // mousedown listener for this same click (e.g. a menu closing itself) has detached.
+      const path = event.composedPath().filter((node): node is Element => node instanceof Element);
+      const node = ref.current;
+      if (node && !path.includes(node)) {
+        const preventOutsideClickElement = path.find((el) => el.hasAttribute("data-prevent-outside-click"));
         if (preventOutsideClickElement) {
+          // Only prevent the callback if the ref is NOT inside the same prevent-outside-click container.
+          // This allows normal outside click detection for elements within the same container
+          // (e.g., dropdowns inside a floating panel should still close on outside click within that panel)
+          if (!preventOutsideClickElement.contains(node)) {
+            return;
+          }
+        }
+        // Propel popups (Select, Menu, nested Dialog) render in a Base UI portal on
+        // <body>, so the press path is outside `node` even when the popup was opened
+        // from this consumer. Skip those. Do not skip the consumer's own dialog portal
+        // (`portal.contains(node)`): clicking another field inside the same dialog must
+        // still close a local dropdown.
+        if (path.some((el) => el.hasAttribute("data-base-ui-portal") && !el.contains(node))) {
           return;
         }
-        // else call the callback
         callbackRef.current();
       }
     };
