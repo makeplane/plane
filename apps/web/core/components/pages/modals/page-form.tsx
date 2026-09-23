@@ -140,6 +140,8 @@ export function PageForm(props: Props) {
                 }
                 tabIndex={getIndex("name")}
                 required
+                // the title is the dialog's only field; focus it on open as the legacy form did
+                // oxlint-disable-next-line jsx_a11y/no-autofocus
                 autoFocus
               />
             </div>

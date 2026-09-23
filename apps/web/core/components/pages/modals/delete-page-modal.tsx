@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import { setToast } from "@plane/blocks/toast";
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 import { getPageName } from "@plane/utils";
 // constants
 // plane web hooks
@@ -47,34 +47,33 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
   const handleDelete = async () => {
     if (!pageId) return;
     setIsDeleting(true);
-    await removePage({ pageId })
-      .then(() => {
-        handleClose();
-        setToast({
-          type: "success",
-          title: "Success!",
-          message: "Page deleted successfully.",
-        });
-
-        if (routePageId) {
-          router.back();
-        }
-      })
-      .catch(() => {
-        setToast({
-          type: "error",
-          title: "Error!",
-          message: "Page could not be deleted. Please try again.",
-        });
+    try {
+      await removePage({ pageId });
+      handleClose();
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: "Page deleted successfully.",
       });
 
-    setIsDeleting(false);
+      if (routePageId) {
+        router.back();
+      }
+    } catch {
+      setToast({
+        type: "error",
+        title: "Error!",
+        message: "Page could not be deleted. Please try again.",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (!page || !page.id) return null;
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
