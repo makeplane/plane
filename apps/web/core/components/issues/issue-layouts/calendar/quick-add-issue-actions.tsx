@@ -15,7 +15,7 @@ import { AddOutline } from "@makeplane/propel/icons";
 import { setPromiseToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { cn } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -117,28 +117,25 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
               }
             )}
           >
-            <CustomMenu
-              placement="bottom-start"
-              menuButtonOnClick={() => setIsMenuOpen(true)}
-              onMenuClose={() => setIsMenuOpen(false)}
-              className="w-full"
-              customButtonClassName="w-full"
-              customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-tertiary hover:text-tertiary">
-                  <AddOutline className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span className="flex-shrink-0 text-13 font-medium">
-                    {isEpic ? t("epic.add.label") : t("issue.add.label")}
-                  </span>
-                </div>
-              }
-            >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>
-                {isEpic ? t("epic.add.label") : t("issue.add.label")}
-              </CustomMenu.MenuItem>
-              {!isEpic && (
-                <CustomMenu.MenuItem onClick={handleExistingIssue}>{t("issue.add.existing")}</CustomMenu.MenuItem>
-              )}
-            </CustomMenu>
+            <Menu onOpenChange={setIsMenuOpen}>
+              <MenuTrigger
+                render={
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-tertiary hover:text-tertiary"
+                  >
+                    <AddOutline className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="flex-shrink-0 text-13 font-medium">
+                      {isEpic ? t("epic.add.label") : t("issue.add.label")}
+                    </span>
+                  </button>
+                }
+              />
+              <MenuContent side="bottom" align="start">
+                <MenuItem label={isEpic ? t("epic.add.label") : t("issue.add.label")} onClick={handleNewIssue} />
+                {!isEpic && <MenuItem label={t("issue.add.existing")} onClick={handleExistingIssue} />}
+              </MenuContent>
+            </Menu>
           </div>
         }
         isEpic={isEpic}

@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
 import type { TIssue } from "@plane/types";
 import { ControlLink } from "@plane/blocks/layout";
@@ -43,9 +44,10 @@ export const CalendarIssueBlock = observer(
     const [isMenuActive, setIsMenuActive] = useState(false);
     // refs
     const blockRef = useRef(null);
-    const menuActionRef = useRef<HTMLDivElement | null>(null);
+    const menuActionRef = useRef<HTMLButtonElement | null>(null);
     // hooks
     const { workspaceSlug } = useParams();
+    const { t } = useTranslation();
     const { getProjectStates } = useProjectState();
     const { getIsIssuePeeked } = useIssueDetail();
     const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
@@ -64,18 +66,19 @@ export const CalendarIssueBlock = observer(
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
     const customActionButton = (
-      // CustomMenu renders this inside its own <button>, which already carries the
-      // interactive semantics and keyboard handling — this div is presentational.
-      <div
-        role="presentation"
+      // The quick-action menu grafts its trigger behaviour onto this element (MenuTrigger render),
+      // so it has to be a real button.
+      <button
+        type="button"
         ref={menuActionRef}
         className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
           isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
         }`}
+        aria-label={t("aria_labels.common.more_actions")}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
         <MoreHorizontalOutline className="h-3.5 w-3.5" />
-      </div>
+      </button>
     );
 
     const isMenuActionRefAboveScreenBottom =
