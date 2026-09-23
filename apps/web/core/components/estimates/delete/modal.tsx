@@ -9,7 +9,16 @@ import { observer } from "mobx-react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
 import { setToast } from "@plane/blocks/toast";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
@@ -59,41 +68,54 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
   };
 
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <div className="relative space-y-6 py-5">
-        {/* heading */}
-        <div className="relative flex items-center justify-between gap-2 px-5">
-          <div className="text-18 font-medium text-primary">Delete Estimate System</div>
-        </div>
+    <Dialog
+      open={isOpen}
+      disablePointerDismissal
+      onOpenChange={(open, eventDetails) => {
+        if (open) return;
+        // The legacy modal took no `handleClose`, so Escape was swallowed: only Cancel closed it.
+        if (eventDetails.reason === "escape-key") return;
+        handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <DialogMain>
+          {/* heading */}
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>Delete Estimate System</DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
 
-        {/* estimate steps */}
-        <div className="px-5">
-          <div className="text-14 text-secondary">
-            Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
-            &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
-            estimates again, you will need to update all the work items.
-          </div>
-        </div>
+          {/* estimate steps */}
+          <DialogBody tabIndex={0}>
+            <div className="text-14 text-secondary">
+              Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
+              &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
+              estimates again, you will need to update all the work items.
+            </div>
+          </DialogBody>
+        </DialogMain>
 
-        <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
+        <DialogActions>
           <Button
             variant="secondary"
             size="md"
-            stretch="auto"
             onClick={handleClose}
             disabled={buttonLoader}
+            stretch="auto"
             label="Cancel"
           />
           <Button
             variant="danger"
             size="md"
-            stretch="auto"
             onClick={handleDeleteEstimate}
             disabled={buttonLoader}
+            stretch="auto"
             label={buttonLoader ? "Deleting" : "Delete Estimate"}
           />
-        </div>
-      </div>
-    </ModalCore>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 });

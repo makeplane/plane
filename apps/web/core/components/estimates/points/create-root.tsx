@@ -180,7 +180,6 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
           icon={<Icon icon={AddOutline} />}
           iconPosition="start"
           onClick={handleCreate}
-          render={<button className="px-0 text-link-primary underline" />}
         />
       )}
     </div>
