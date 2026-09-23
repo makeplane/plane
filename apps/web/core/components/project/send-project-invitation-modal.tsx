@@ -4,20 +4,29 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
-import { Avatar } from "@makeplane/propel/components/avatar";
 import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { AddOutline, ChevronDownOutline, CloseOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
-import { CustomSelect, CustomSearchSelect } from "@plane/blocks/dropdowns";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
-// helpers
-import { getFileURL } from "@plane/utils";
+import { Select } from "@plane/blocks/select";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+// components
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -37,6 +46,11 @@ type member = {
 
 type FormValues = {
   members: member[];
+};
+
+type TRoleOption = {
+  key: EUserPermissions;
+  label: string;
 };
 
 const defaultValues: FormValues = {
@@ -73,11 +87,13 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
   });
   // derived values
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
-    const projectMemberDetails = getProjectMemberDetails(userId, projectId);
-    const isInvited = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
-    return !isInvited;
-  });
+  const uninvitedPeople =
+    workspaceMemberIds?.filter((userId) => {
+      if (!getWorkspaceMemberDetails(userId)?.member) return false;
+      const projectMemberDetails = getProjectMemberDetails(userId, projectId);
+      const isInvited = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
+      return !isInvited;
+    }) ?? [];
 
   const onSubmit = async (formData: FormValues) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
@@ -129,42 +145,6 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople
-    ?.map((userId) => {
-      const memberDetails = getWorkspaceMemberDetails(userId);
-
-      if (!memberDetails?.member) return;
-      return {
-        value: `${memberDetails?.member.id}`,
-        query: `${memberDetails?.member.first_name} ${
-          memberDetails?.member.last_name
-        } ${memberDetails?.member.display_name.toLowerCase()}`,
-        content: (
-          <div className="flex w-full items-center gap-2">
-            <div className="shrink-0 pt-0.5">
-              <Avatar
-                alt={memberDetails?.member.display_name}
-                fallback={memberDetails?.member.display_name?.[0]?.toUpperCase()}
-                src={getFileURL(memberDetails?.member.avatar_url)}
-                size="xs"
-              />
-            </div>
-            <div className="truncate">
-              {memberDetails?.member.display_name} (
-              {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
-            </div>
-          </div>
-        ),
-      };
-    })
-    .filter((option) => !!option) as
-    | {
-        value: string;
-        query: string;
-        content: React.ReactNode;
-      }[]
-    | undefined;
-
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
@@ -178,150 +158,150 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     );
   };
 
-  return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <form onSubmit={handleSubmit(onSubmit)} className="p-5">
-        <div className="space-y-5">
-          <h3 className="text-16 leading-6 font-medium text-primary">
-            {t("project_settings.members.invite_members.title")}
-          </h3>
-          <div className="mt-2">
-            <p className="text-13 text-secondary">{t("project_settings.members.invite_members.sub_heading")}</p>
-          </div>
+  const getRoleOptions = (memberId: string): TRoleOption[] =>
+    Object.entries(checkCurrentOptionWorkspaceRole(memberId))
+      .filter(([key]) => parseInt(key) <= (currentProjectRole ?? EUserPermissions.GUEST))
+      .map(([key, label]) => ({ key: parseInt(key) as EUserPermissions, label }));
 
-          <div className="mb-3 space-y-4">
-            {fields.map((field, index) => (
-              <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
-                <div className="flex w-full grow flex-col gap-1">
-                  <Controller
-                    control={control}
-                    name={`members.${index}.member_id`}
-                    rules={{ required: "Please select a member" }}
-                    render={({ field: { value, onChange } }) => {
-                      const selectedMember = getWorkspaceMemberDetails(value);
-                      return (
-                        <CustomSearchSelect
-                          value={value}
-                          customButton={
-                            <button className="shadow-sm flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
-                              {value && value !== "" ? (
-                                <div className="flex items-center gap-2">
-                                  <Avatar
-                                    alt={selectedMember?.member.display_name}
-                                    fallback={selectedMember?.member.display_name?.[0]?.toUpperCase()}
-                                    src={getFileURL(selectedMember?.member.avatar_url ?? "")}
-                                    size="xs"
-                                  />
-                                  {selectedMember?.member.display_name}
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
-                              )}
-                              <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
-                            </button>
-                          }
-                          onChange={(val: string) => {
-                            onChange(val);
-                            // Update the role to the workspace role when member ID changes
-                            const workspaceMemberDetails = getWorkspaceMemberDetails(val);
-                            const workspaceRole = workspaceMemberDetails?.role ?? 5;
-                            const newValue = ROLE[workspaceRole].toUpperCase();
-                            setValue(
-                              `members.${index}.role`,
-                              EUserPermissions[newValue as keyof typeof EUserPermissions]
+  const handleMemberChange = (index: number, memberId: string, onChange: (val: string) => void) => {
+    onChange(memberId);
+    // Update the role to the workspace role when member ID changes
+    const workspaceMemberDetails = getWorkspaceMemberDetails(memberId);
+    const workspaceRole = workspaceMemberDetails?.role ?? 5;
+    const newValue = ROLE[workspaceRole].toUpperCase();
+    setValue(`members.${index}.role`, EUserPermissions[newValue as keyof typeof EUserPermissions]);
+  };
+
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>{t("project_settings.members.invite_members.title")}</DialogTitle>
+                <DialogDescription>{t("project_settings.members.invite_members.sub_heading")}</DialogDescription>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody tabIndex={0}>
+              <div className="space-y-4">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
+                    <div className="flex w-full grow flex-col gap-1">
+                      <Controller
+                        control={control}
+                        name={`members.${index}.member_id`}
+                        rules={{ required: "Please select a member" }}
+                        render={({ field: { value, onChange } }) => (
+                          <MemberSelect
+                            value={value || null}
+                            onChange={(val: string) => handleMemberChange(index, val, onChange)}
+                            variant="select-lg"
+                            memberIds={uninvitedPeople}
+                            placeholder="Select co-worker"
+                          />
+                        )}
+                      />
+                      {errors.members && errors.members[index]?.member_id && (
+                        <span className="px-1 text-13 text-danger-primary">
+                          {errors.members[index]?.member_id?.message}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex shrink-0 items-center justify-between gap-2">
+                      <div className="flex flex-col gap-1">
+                        <Controller
+                          name={`members.${index}.role`}
+                          control={control}
+                          rules={{ required: "Select Role" }}
+                          render={({ field: { value, onChange } }) => {
+                            const roleOptions = getRoleOptions(watch(`members.${index}.member_id`));
+                            return (
+                              <div className="w-32">
+                                <Select<TRoleOption>
+                                  getValues={() => roleOptions}
+                                  value={roleOptions.find((role) => role.key === value) ?? null}
+                                  onChange={(key) => onChange(parseInt(key))}
+                                  getOptionValue={(role) => String(role.key)}
+                                  getOptionLabel={(role) => role.label}
+                                  placeholder="Select role"
+                                  showSearch={false}
+                                  pinSelected={false}
+                                >
+                                  <Select.Trigger<TRoleOption>
+                                    variant="pill-md"
+                                    appendIcon={<ChevronDownOutline />}
+                                    tooltip={{ emptyContent: "Select role" }}
+                                  >
+                                    <span className="min-w-0 grow truncate text-left capitalize">
+                                      {value ? ROLE[value] : "Select role"}
+                                    </span>
+                                  </Select.Trigger>
+                                </Select>
+                              </div>
                             );
                           }}
-                          options={options}
-                          optionsClassName="w-48"
                         />
-                      );
-                    }}
-                  />
-                  {errors.members && errors.members[index]?.member_id && (
-                    <span className="px-1 text-13 text-danger-primary">
-                      {errors.members[index]?.member_id?.message}
-                    </span>
-                  )}
-                </div>
+                        {errors.members && errors.members[index]?.role && (
+                          <span className="px-1 text-13 text-danger-primary">
+                            {errors.members[index]?.role?.message}
+                          </span>
+                        )}
+                      </div>
 
-                <div className="flex shrink-0 items-center justify-between gap-2">
-                  <div className="flex flex-col gap-1">
-                    <Controller
-                      name={`members.${index}.role`}
-                      control={control}
-                      rules={{ required: "Select Role" }}
-                      render={({ field }) => (
-                        <CustomSelect
-                          {...field}
-                          customButton={
-                            <div className="shadow-sm flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
-                              <span className="capitalize">{field.value ? ROLE[field.value] : "Select role"}</span>
-                              <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />
-                            </div>
-                          }
-                          input
-                        >
-                          {Object.entries(checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))).map(
-                            ([key, label]) => {
-                              if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
-
-                              return (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {label}
-                                </CustomSelect.Option>
-                              );
-                            }
-                          )}
-                        </CustomSelect>
+                      {fields.length > 1 && (
+                        <div className="flex-item flex w-6">
+                          <button
+                            type="button"
+                            aria-label={t("remove")}
+                            className="place-items-center self-center rounded-sm"
+                            onClick={() => remove(index)}
+                          >
+                            <CloseOutline className="h-4 w-4 text-secondary" />
+                          </button>
+                        </div>
                       )}
-                    />
-                    {errors.members && errors.members[index]?.role && (
-                      <span className="px-1 text-13 text-danger-primary">{errors.members[index]?.role?.message}</span>
-                    )}
-                  </div>
-
-                  {fields.length > 1 && (
-                    <div className="flex-item flex w-6">
-                      <button
-                        type="button"
-                        className="place-items-center self-center rounded-sm"
-                        onClick={() => remove(index)}
-                      >
-                        <CloseOutline className="h-4 w-4 text-secondary" />
-                      </button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="mt-5 flex items-center justify-between gap-2">
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
-            onClick={appendField}
-          >
-            <AddOutline className="h-4 w-4" />
-            {t("common.add_more")}
-          </button>
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
-            <Button
-              variant="primary"
-              size="md"
-              stretch="auto"
-              type="submit"
-              label={
-                isSubmitting
-                  ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
-                  : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`
-              }
-              loading={isSubmitting}
-            />
-          </div>
-        </div>
-      </form>
-    </ModalCore>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <div className="flex w-full items-center justify-between gap-2">
+              <button
+                type="button"
+                className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
+                onClick={appendField}
+              >
+                <AddOutline className="h-4 w-4" />
+                {t("common.add_more")}
+              </button>
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
+                <Button
+                  variant="primary"
+                  size="md"
+                  stretch="auto"
+                  type="submit"
+                  label={
+                    isSubmitting
+                      ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
+                      : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`
+                  }
+                  loading={isSubmitting}
+                />
+              </div>
+            </div>
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });
