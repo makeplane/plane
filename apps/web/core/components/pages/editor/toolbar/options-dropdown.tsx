@@ -52,29 +52,23 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         {
           key: "full-screen",
           action: () => handleFullWidth(!isFullWidth),
+          title: "Full width",
+          // The row itself does the toggling; the switch is the state readout at the row's end.
           customContent: (
-            <>
-              Full width
-              <Switch size="sm" checked={isFullWidth} onCheckedChange={() => {}} aria-label="Full width" />
-            </>
+            <span className="pointer-events-none">
+              <Switch size="sm" checked={isFullWidth} aria-hidden tabIndex={-1} />
+            </span>
           ),
-          className: "flex items-center justify-between gap-2",
         },
         {
           key: "sticky-toolbar",
           action: () => handleStickyToolbar(!isStickyToolbarEnabled),
+          title: "Sticky toolbar",
           customContent: (
-            <>
-              Sticky toolbar
-              <Switch
-                size="sm"
-                checked={isStickyToolbarEnabled}
-                onCheckedChange={() => {}}
-                aria-label="Sticky toolbar"
-              />
-            </>
+            <span className="pointer-events-none">
+              <Switch size="sm" checked={isStickyToolbarEnabled} aria-hidden tabIndex={-1} />
+            </span>
           ),
-          className: "flex items-center justify-between gap-2",
           shouldRender: isContentEditable,
         },
         {

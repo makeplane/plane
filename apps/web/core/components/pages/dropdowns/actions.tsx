@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { isValidElement, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import {
@@ -16,18 +16,21 @@ import {
   LinkOutline,
   LockOutline,
   LockedOutline,
+  MoreHorizontalOutline,
   NewTabOutline,
   RestoreOutline,
   UnlockedOutline,
 } from "@makeplane/propel/icons";
 // constants
 import { EPageAccess } from "@plane/constants";
-// plane editor
 // plane ui
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
-import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
+import { useTranslation } from "@plane/i18n";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
 // components
-import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
@@ -62,6 +65,8 @@ type Props = {
 
 export const PageActions = observer(function PageActions(props: Props) {
   const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -196,28 +201,45 @@ export const PageActions = observer(function PageActions(props: Props) {
         storeType={storeType}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={arrangedOptions} />}
-      <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
-        {arrangedOptions.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
+      <Menu>
+        <MenuTrigger
+          render={
+            <IconButton
+              variant="ghost"
+              size="sm"
+              aria-label={t("aria_labels.common.more_actions")}
+              icon={<Icon icon={MoreHorizontalOutline} />}
+              // the list row is a link: keep the trigger from navigating or bubbling to it
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+              }}
+            />
+          }
+        />
+        <MenuContent side="bottom" align="end">
+          {getRenderableItems(arrangedOptions).map((item) => (
+            <MenuItem
               key={item.key}
-              onClick={() => {
+              variant={resolveItemVariant(item)}
+              label={item.title ?? ""}
+              description={item.description}
+              icon={item.icon && <Icon icon={item.icon} />}
+              // `customContent` (the full-width / sticky-toolbar switches) sits at the row's inline end.
+              trailing={isValidElement(item.customContent) ? item.customContent : undefined}
+              disabled={item.disabled}
+              closeOnClick={item.closeOnClick}
+              onClick={(e) => {
+                e.stopPropagation();
                 item.action?.();
               }}
-              className={cn("flex items-center gap-2", item.className)}
-              disabled={item.disabled}
-            >
-              {item.customContent ?? (
-                <>
-                  {item.icon && <item.icon className="size-3" />}
-                  {item.title}
-                </>
-              )}
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+            />
+          ))}
+        </MenuContent>
+      </Menu>
     </>
   );
 });
