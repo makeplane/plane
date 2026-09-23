@@ -111,7 +111,7 @@ export function PageToolbar(props: Props) {
   return (
     <TooltipProvider>
       <div className="animate-in fade-in flex items-center overflow-x-auto duration-200">
-        <Toolbar size="md" elevation="flat">
+        <Toolbar size="md" elevation="flat" aria-label="Formatting toolbar">
           <Menu>
             <ToolbarMenuTrigger label={activeTypography?.name || "Text"} />
             <MenuContent side="bottom" align="start">

@@ -98,9 +98,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               size="sm"
               stretch="auto"
               label="Try again"
-              onClick={handleRetry}
+              onClick={() => void handleRetry()}
               loading={isRetrying}
-              render={<button className="px-0 text-link-primary underline" />}
             />
           </div>
         </div>
@@ -124,9 +123,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
                 size="sm"
                 stretch="auto"
                 label={isRestoring ? "Restoring" : "Restore"}
-                onClick={handleRestoreVersion}
+                onClick={() => void handleRestoreVersion()}
                 loading={isRestoring}
-                render={<button className="flex-shrink-0" />}
               />
             )}
           </div>
