@@ -86,6 +86,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           </p>
           <button
             type="button"
+            aria-label={t("common.actions.copy_link")}
             onClick={() => {
               void copyTextToClipboard(linkDetail.url);
               setToast({

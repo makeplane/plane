@@ -29,7 +29,7 @@ export type TIssueLabel = {
   issueServiceType?: TIssueServiceType;
 };
 
-export type TLabelOperations = {
+type TLabelOperations = {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
 };
 

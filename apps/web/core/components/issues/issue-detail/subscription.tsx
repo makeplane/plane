@@ -86,7 +86,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
         variant="secondary"
         size="md"
         stretch="auto"
-        render={<button type="button" className="hover:!bg-accent-primary/20" />}
+        render={<button type="button" />}
         onClick={handleSubscription}
         disabled={!isEditable || loading}
       >
