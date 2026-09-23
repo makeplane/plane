@@ -75,9 +75,9 @@ export function EmptyStateDetailed({
             : actions &&
               actions.length > 0 && (
                 <div className="flex flex-col gap-4 sm:flex-row">
-                  {actions.map((action, index) => (
+                  {actions.map((action) => (
                     // propel: old `xl` (32px) is Propel's `lg`
-                    <EmptyStateActionButton key={index} action={action} size="lg" />
+                    <EmptyStateActionButton key={action.label} action={action} size="lg" />
                   ))}
                 </div>
               )}

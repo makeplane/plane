@@ -73,9 +73,9 @@ export function EmptyStateCompact({
                     "justify-center": align === "center",
                   })}
                 >
-                  {actions.map((action, index) => (
+                  {actions.map((action) => (
                     // propel: old `base` (24px) is Propel's `sm`
-                    <EmptyStateActionButton key={index} action={action} size="sm" />
+                    <EmptyStateActionButton key={action.label} action={action} size="sm" />
                   ))}
                 </div>
               )}
