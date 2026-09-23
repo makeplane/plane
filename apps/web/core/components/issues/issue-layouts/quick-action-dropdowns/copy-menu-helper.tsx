@@ -5,7 +5,7 @@
  */
 
 import type { ISvgIcons } from "@plane/blocks/icons";
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
 
 export interface CopyMenuHelperProps {
   baseItem: {

@@ -19,7 +19,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { createCopyMenuWithDuplication } from "./copy-menu-helper";
 
@@ -234,8 +234,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     title: t("common.actions.archive"),
     description: isInArchivableGroup ? undefined : t("issue.archive.description"),
     icon: ArchiveOutline,
-    className: "items-start",
-    iconClassName: "mt-1",
     action: () => handleOptionalAction(setArchiveIssueModal, "Archive", true),
     disabled: !isInArchivableGroup,
     shouldRender: isArchivingAllowed,
