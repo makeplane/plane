@@ -10,7 +10,6 @@ import { Link } from "react-router";
 import { usePathname, useSearchParams } from "next/navigation";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -107,11 +106,13 @@ export const UserAvatar = observer(function UserAvatar() {
         </div>
       ) : (
         <div className="flex-shrink-0">
-          <AnchorButton
+          <Button
             variant="secondary"
             size="sm"
-            label="Sign in"
+            stretch="auto"
+            nativeButton={false}
             render={<Link to={`/?next_path=${pathName}?${queryParam}`} />}
+            label="Sign in"
           />
         </div>
       )}
