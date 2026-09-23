@@ -105,6 +105,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                     }
                   }}
                   size="sm"
+                  aria-label="Prevent anyone else from creating a workspace"
                   disabled={isSubmitting}
                 />
               </div>

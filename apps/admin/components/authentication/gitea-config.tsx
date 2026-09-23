@@ -43,6 +43,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
                 : updateConfig("IS_GITEA_ENABLED", "1");
             }}
             size="sm"
+            aria-label="Enable Gitea"
             disabled={disabled}
           />
         </div>

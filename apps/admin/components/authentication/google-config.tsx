@@ -41,6 +41,7 @@ export const GoogleConfiguration = observer(function GoogleConfiguration(props: 
               updateConfig("IS_GOOGLE_ENABLED", newEnableGoogleConfig);
             }}
             size="sm"
+            aria-label="Enable Google"
             disabled={disabled}
           />
         </div>

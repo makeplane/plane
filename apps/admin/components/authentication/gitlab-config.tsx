@@ -41,6 +41,7 @@ export const GitlabConfiguration = observer(function GitlabConfiguration(props: 
               updateConfig("IS_GITLAB_ENABLED", newEnableGitlabConfig);
             }}
             size="sm"
+            aria-label="Enable GitLab"
             disabled={disabled}
           />
         </div>

@@ -33,6 +33,7 @@ export const EmailCodesConfiguration = observer(function EmailCodesConfiguration
         updateConfig("ENABLE_MAGIC_LINK_LOGIN", newEnableMagicLogin);
       }}
       size="sm"
+      aria-label="Enable login with email codes"
       disabled={disabled}
     />
   );

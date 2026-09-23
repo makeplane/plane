@@ -41,6 +41,7 @@ export const GithubConfiguration = observer(function GithubConfiguration(props: 
               updateConfig("IS_GITHUB_ENABLED", newEnableGithubConfig);
             }}
             size="sm"
+            aria-label="Enable GitHub"
             disabled={disabled}
           />
         </div>
