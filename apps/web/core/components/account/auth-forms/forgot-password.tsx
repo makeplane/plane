@@ -15,7 +15,7 @@ import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { setToast } from "@plane/blocks/toast";
 
 import { checkEmailValidity } from "@plane/utils";
@@ -135,14 +135,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
           disabled={!isValid}
           loading={isSubmitting || resendTimerCode > 0}
         />
-        <ButtonElement
-          variant="ghost"
-          size="md"
-          stretch="auto"
-          render={<Link href="/" className="w-full px-0 text-link-primary underline" />}
-        >
-          {t("auth.common.back_to_sign_in")}
-        </ButtonElement>
+        <AnchorButton variant="primary" size="lg" render={<Link href="/" />} label={t("auth.common.back_to_sign_in")} />
       </form>
     </FormContainer>
   );

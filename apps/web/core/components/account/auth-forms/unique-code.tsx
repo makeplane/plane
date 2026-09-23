@@ -9,8 +9,7 @@ import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/elements/button";
-import { Spinner } from "@plane/blocks/spinner";
+import { Button } from "@makeplane/propel/components/button";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
@@ -165,15 +164,15 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? (
-            t("auth.common.unique_code.sending_code")
-          ) : isSubmitting ? (
-            <Spinner height="20px" width="20px" />
-          ) : (
-            t("common.continue")
-          )}
-        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          stretch="full"
+          disabled={isButtonDisabled}
+          loading={isSubmitting}
+          label={isRequestingNewCode ? t("auth.common.unique_code.sending_code") : t("common.continue")}
+        />
       </div>
     </form>
   );

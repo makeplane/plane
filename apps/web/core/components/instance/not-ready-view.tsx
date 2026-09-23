@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import Link from "next/link";
 import { GOD_MODE_URL } from "@plane/constants";
 // assets
 import GradientLogo from "@/app/assets/auth/gradient-logo.webp?url";

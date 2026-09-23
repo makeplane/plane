@@ -15,9 +15,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { PasswordStrengthIndicator } from "@plane/blocks/auth";
-import { Spinner } from "@plane/blocks/spinner";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
@@ -274,15 +272,15 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <div className="space-y-2.5">
           {mode === EAuthModes.SIGN_IN ? (
             <>
-              <ButtonElement type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
-                {isSubmitting ? (
-                  <Spinner height="20px" width="20px" />
-                ) : isSMTPConfigured ? (
-                  t("common.continue")
-                ) : (
-                  t("common.go_to_workspace")
-                )}
-              </ButtonElement>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                stretch="full"
+                disabled={isButtonDisabled}
+                loading={isSubmitting}
+                label={isSMTPConfigured ? t("common.continue") : t("common.go_to_workspace")}
+              />
               {isSMTPConfigured && (
                 <Button
                   type="button"
@@ -295,9 +293,15 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               )}
             </>
           ) : (
-            <ButtonElement type="submit" variant="primary" size="lg" stretch="full" disabled={isButtonDisabled}>
-              {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
-            </ButtonElement>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              stretch="full"
+              disabled={isButtonDisabled}
+              loading={isSubmitting}
+              label="Create account"
+            />
           )}
         </div>
       </form>
