@@ -11,13 +11,15 @@ import { CalendarOutline } from "@makeplane/propel/icons";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CustomSearchSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 // types
 import type { TDropdownProps } from "@/components/dropdowns/types";
 
+type TDurationOption = (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number];
+
 type Props = TDropdownProps & {
   value: string | null;
-  onChange: (val: (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number]["value"]) => void;
+  onChange: (val: TDurationOption["value"]) => void;
   //optional
   button?: ReactNode;
   dropdownArrow?: boolean;
@@ -27,30 +29,31 @@ type Props = TDropdownProps & {
   tabIndex?: number;
 };
 
+const getDurationOption = (value: string | null) =>
+  ANALYTICS_DURATION_FILTER_OPTIONS.find((option) => option.value === value) ?? null;
+
 function DurationDropdown({ placeholder = "Duration", onChange, value }: Props) {
   useTranslation();
 
-  const options = ANALYTICS_DURATION_FILTER_OPTIONS.map((option) => ({
-    value: option.value,
-    query: option.name,
-    content: (
-      <div className="flex max-w-[300px] items-center gap-2">
-        <span className="flex-grow truncate">{option.name}</span>
-      </div>
-    ),
-  }));
+  // derived values
+  const selectedOption = getDurationOption(value);
+
   return (
-    <CustomSearchSelect
-      value={value ? [value] : []}
-      onChange={onChange}
-      options={options}
-      label={
-        <div className="flex items-center gap-2 p-1">
-          <CalendarOutline className="h-4 w-4" />
-          {value ? ANALYTICS_DURATION_FILTER_OPTIONS.find((opt) => opt.value === value)?.name : placeholder}
-        </div>
-      }
-    />
+    <Select<TDurationOption>
+      getValues={() => [...ANALYTICS_DURATION_FILTER_OPTIONS]}
+      value={selectedOption}
+      onChange={(val) => {
+        const option = getDurationOption(val);
+        if (option) onChange(option.value);
+      }}
+      getOptionValue={(option) => option.value}
+      getOptionLabel={(option) => option.name}
+      pinSelected={false}
+    >
+      <Select.Trigger<TDurationOption> variant="select-md" prependIcon={<CalendarOutline aria-hidden="true" />}>
+        {(selected) => <span className="truncate">{selected[0]?.name ?? placeholder}</span>}
+      </Select.Trigger>
+    </Select>
   );
 }
 
