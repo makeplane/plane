@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useOutsideClickDetector } from "./use-outside-click-detector";
 
 type Props<T extends HTMLElement> = {
@@ -21,23 +21,23 @@ const openDialogStack: symbol[] = [];
 /** Escape closes only the topmost dialog; outside click only fires `onOutsideClick` if provided. */
 export const useDialogDismissal = <T extends HTMLElement = HTMLElement>(props: Props<T>) => {
   const { isOpen, handleClose, onOutsideClick, panelRef } = props;
-  const idRef = useRef<symbol>(Symbol());
+  // One identity per mounted dialog, created once (a Symbol() argument would be re-evaluated every render).
+  const [dialogId] = useState(() => Symbol("dialog"));
 
   useEffect(() => {
     if (!isOpen) return;
-    const id = idRef.current;
-    openDialogStack.push(id);
+    openDialogStack.push(dialogId);
     return () => {
-      const index = openDialogStack.indexOf(id);
+      const index = openDialogStack.indexOf(dialogId);
       if (index !== -1) openDialogStack.splice(index, 1);
     };
-  }, [isOpen]);
+  }, [isOpen, dialogId]);
 
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      const isTopmost = openDialogStack[openDialogStack.length - 1] === idRef.current;
+      const isTopmost = openDialogStack[openDialogStack.length - 1] === dialogId;
       if (!isTopmost) return;
       event.preventDefault();
       event.stopPropagation();
@@ -45,7 +45,7 @@ export const useDialogDismissal = <T extends HTMLElement = HTMLElement>(props: P
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, handleClose]);
+  }, [isOpen, handleClose, dialogId]);
 
   useOutsideClickDetector(panelRef, () => onOutsideClick?.(), false, isOpen && !!onOutsideClick);
 };
