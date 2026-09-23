@@ -24,6 +24,7 @@ export function MobileLayoutSelection({
   isMobile?: boolean;
 }) {
   const { t } = useTranslation();
+  const allowedLayouts = new Set(layouts);
   return (
     // Propel's `Menu` renders no element of its own; this host keeps the legacy menu root's grow-and-center slot.
     <div className="flex flex-grow justify-center text-13 text-secondary">
@@ -42,7 +43,7 @@ export function MobileLayoutSelection({
           </ButtonChrome>
         </MenuTrigger>
         <MenuContent side="bottom" align="start">
-          {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
+          {ISSUE_LAYOUTS.filter((l) => allowedLayouts.has(l.key)).map((layout) => (
             <MenuItem
               key={layout.key}
               icon={<PropelIcon icon={<IssueLayoutIcon layout={layout.key} className="h-3 w-3" />} />}
