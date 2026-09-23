@@ -6,7 +6,7 @@
 
 // Same entry point as `./draggable`: a monitor only sees drags registered on its own adapter instance.
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import React, { Fragment, useEffect, useId, useMemo } from "react";
+import React, { Fragment, useEffect, useEffectEvent, useId, useMemo } from "react";
 import { Draggable } from "./draggable";
 
 type TEnhancedData<T> = T & { __uuid__?: string };
@@ -78,6 +78,15 @@ export function Sortable<T>({
   const instanceId = useId();
   const listId = id ? id : instanceId;
 
+  // Callers pass `keyExtractor` and `onChange` inline; the effect event reads the latest ones (and `data`) at drop time,
+  // so the monitor is registered once per list instead of on every render.
+  const handleDrop = useEffectEvent(
+    (source: TEnhancedData<T>, destination: TEnhancedData<T> & Record<symbol, string>) => {
+      const { newData, movedItem } = moveItem(data, source, destination, keyExtractor);
+      onChange(newData, movedItem);
+    }
+  );
+
   useEffect(() => {
     const unsubscribe = monitorForElements({
       // Only drags that started in this list; the shared adapter also reports every other element drag in the app.
@@ -91,13 +100,7 @@ export function Sortable<T>({
           return;
         }
 
-        const { newData, movedItem } = moveItem(
-          data,
-          source.data as TEnhancedData<T>,
-          destination.data as TEnhancedData<T> & { closestEdge: string },
-          keyExtractor
-        );
-        onChange(newData, movedItem);
+        handleDrop(source.data as TEnhancedData<T>, destination.data as TEnhancedData<T> & Record<symbol, string>);
       },
     });
 
@@ -105,7 +108,7 @@ export function Sortable<T>({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [data, keyExtractor, onChange, listId]);
+  }, [listId]);
 
   const enhancedData = useMemo(() => data.map((item) => ({ ...item, __uuid__: listId })), [data, listId]);
 

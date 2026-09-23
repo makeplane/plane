@@ -8,7 +8,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { isEqual } from "lodash-es";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useEffectEvent, useRef, useState } from "react";
 import { DropIndicator } from "../drop-indicator";
 import { cn } from "@plane/utils";
 
@@ -26,6 +26,13 @@ function Draggable({ children, data, className, allowExternalDrop, onExternalDro
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
   const [closestEdge, setClosestEdge] = useState<string | null>(null);
+
+  // Callers pass `onExternalDrop` inline; reading it through an effect event keeps it out of the registration deps.
+  const handleExternalDrop = useEffectEvent(
+    (externalData: Record<string | symbol, unknown>, position: "top" | "bottom") =>
+      onExternalDrop?.(externalData, position)
+  );
+
   useEffect(() => {
     const el = ref.current;
 
@@ -52,9 +59,9 @@ function Draggable({ children, data, className, allowExternalDrop, onExternalDro
             setClosestEdge(null);
 
             // Handle external drops
-            if (args.source.data.isExternal && onExternalDrop) {
+            if (args.source.data.isExternal) {
               const edge = extractClosestEdge(args.self.data);
-              onExternalDrop(args.source.data, edge as "top" | "bottom");
+              handleExternalDrop(args.source.data, edge as "top" | "bottom");
             }
           },
           canDrop: ({ source }) => {
@@ -74,7 +81,7 @@ function Draggable({ children, data, className, allowExternalDrop, onExternalDro
         })
       );
     }
-  }, [data, allowExternalDrop, onExternalDrop]);
+  }, [data, allowExternalDrop]);
 
   return (
     <div ref={ref} className={cn(dragging && "opacity-25", className)}>

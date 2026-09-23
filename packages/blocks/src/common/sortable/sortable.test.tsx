@@ -93,4 +93,36 @@ describe("Sortable", () => {
     });
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  it("keeps its registrations across re-renders with fresh inline callbacks", () => {
+    const renderWith = (onChange: (data: TItem[], movedItem?: TItem) => void) => (
+      <Sortable
+        data={items}
+        id="list"
+        keyExtractor={(item) => item.key}
+        onChange={onChange}
+        onExternalAdd={() => undefined}
+        render={(item) => item.label}
+      />
+    );
+    const firstOnChange = vi.fn();
+    const { rerender } = render(renderWith(firstOnChange));
+    const monitorCount = adapter.monitors.length;
+
+    const latestOnChange = vi.fn();
+    rerender(renderWith(latestOnChange));
+
+    expect(adapter.draggableCount).toBe(items.length);
+    expect(adapter.monitors.length).toBe(monitorCount);
+
+    // The monitor registered on the first render still reaches the latest `onChange`.
+    adapter.monitors.at(-1)?.onDrop({
+      source: { data: { ...items[0], __uuid__: "list" } },
+      location: {
+        current: { dropTargets: [{ data: { ...items[1], __uuid__: "list", [Symbol("closestEdge")]: "bottom" } }] },
+      },
+    });
+    expect(firstOnChange).not.toHaveBeenCalled();
+    expect(latestOnChange).toHaveBeenCalledWith([items[1], items[0], items[2]], items[0]);
+  });
 });
