@@ -50,7 +50,7 @@ export function InputColorPicker(props: InputColorPickerProps) {
         </InputGroup>
       </Field>
 
-      {/* The react-color SketchPicker popover is gone: the blocks ColorPicker opens the platform's own
+      {/* The sketch-picker popover is gone: the blocks ColorPicker opens the platform's own
           colour dialog, so the field is the hex editor and the swatch button is the free-form picker. */}
       <div className="absolute top-1/2 right-2 z-10 -translate-y-1/2">
         <ColorPicker value={pickerValue} onChange={onChange} />

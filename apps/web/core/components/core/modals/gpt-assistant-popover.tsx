@@ -207,7 +207,7 @@ export function GptAssistantPopover(props: Props) {
           {button}
         </PopoverTrigger>
         {/* The popover owns the portal, positioning, enter/leave and the panel surface, so
-            react-popper, the Headless UI `Transition` and the hand-rolled chrome all go. */}
+            the old popper positioning, enter/leave transition and hand-rolled chrome all go. */}
         <PopoverContent variant="rich" side={side} align={align}>
           <div className={cn("flex min-h-0 w-200 max-w-full flex-1 flex-col space-y-4 overflow-hidden", className)}>
             <PopoverBody tabIndex={0}>
