@@ -19,7 +19,7 @@ import {
 import { isEqual } from "lodash-es";
 import React, { useEffect, useRef, useState } from "react";
 import { DropIndicator } from "./drop-indicator";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 
 type Props = {
   children: React.ReactNode;

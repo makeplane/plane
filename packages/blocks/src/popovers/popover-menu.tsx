@@ -6,7 +6,7 @@
 
 import React, { Fragment } from "react";
 // components
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import { Popover } from "./popover";
 // helpers
 // types

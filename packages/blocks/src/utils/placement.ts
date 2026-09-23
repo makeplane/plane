@@ -5,7 +5,7 @@
  */
 
 // types
-export type TPlacement =
+export type Placement =
   | "auto"
   | "auto-start"
   | "auto-end"
@@ -22,11 +22,21 @@ export type TPlacement =
   | "right"
   | "left";
 
-export type TSide = "top" | "bottom" | "left" | "right";
-export type TAlign = "start" | "center" | "end";
+/** @deprecated Use Placement instead. */
+export type TPlacement = Placement;
+
+export type Side = "top" | "bottom" | "left" | "right";
+
+/** @deprecated Use Side instead. */
+export type TSide = Side;
+
+export type Align = "start" | "center" | "end";
+
+/** @deprecated Use Align instead. */
+export type TAlign = Align;
 
 // placement conversion map
-const PLACEMENT_MAP = new Map<TPlacement, { side: TSide; align: TAlign }>([
+const PLACEMENT_MAP = new Map<Placement, { side: Side; align: Align }>([
   ["auto", { side: "bottom", align: "center" }],
   ["auto-start", { side: "bottom", align: "start" }],
   ["auto-end", { side: "bottom", align: "end" }],
@@ -45,9 +55,9 @@ const PLACEMENT_MAP = new Map<TPlacement, { side: TSide; align: TAlign }>([
 ]);
 
 // conversion function
-export function convertPlacementToSideAndAlign(placement: TPlacement): {
-  side: TSide;
-  align: TAlign;
+export function convertPlacementToSideAndAlign(placement: Placement): {
+  side: Side;
+  align: Align;
 } {
   return PLACEMENT_MAP.get(placement) || { side: "bottom", align: "center" };
 }

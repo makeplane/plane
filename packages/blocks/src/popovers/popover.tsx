@@ -10,7 +10,7 @@ import type { Ref } from "react";
 import React, { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 // types
 import type { TPopover } from "./types";
 

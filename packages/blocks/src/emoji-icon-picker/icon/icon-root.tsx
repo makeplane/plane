@@ -7,7 +7,7 @@
 import React, { useEffect, useState } from "react";
 import { InfoIcon } from "lucide-react";
 import { SearchOutline } from "@makeplane/propel/icons";
-import { cn } from "../../utils/classname";
+import { cn } from "@plane/utils";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
 import { MaterialIconList } from "./material-root";

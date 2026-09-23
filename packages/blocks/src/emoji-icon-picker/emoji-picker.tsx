@@ -7,7 +7,7 @@
 import { useMemo, useCallback } from "react";
 import { Tabs } from "@base-ui/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
-import { cn } from "../utils/classname";
+import { cn } from "@plane/utils";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import { EmojiRoot } from "./emoji/emoji";
 import type { TCustomEmojiPicker } from "./helper";

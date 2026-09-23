@@ -8,7 +8,7 @@ import React from "react";
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 // types
 import type { TAvatarSize } from "./helper";
 import { getSizeInfo, isAValidNumber } from "./helper";

@@ -7,7 +7,7 @@
 import { Combobox } from "@headlessui/react";
 import React, { Fragment } from "react";
 // helper
-import { cn } from "../../../utils";
+import { cn } from "@plane/utils";
 import type { IMultiSelectDropdownButton, ISingleSelectDropdownButton } from "../dropdown";
 
 export function DropdownButton(props: IMultiSelectDropdownButton | ISingleSelectDropdownButton) {

@@ -5,7 +5,7 @@
  */
 
 import * as React from "react";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import type { TRowVariant } from "./helper";
 import { ERowVariant, rowStyle } from "./helper";
 

@@ -7,7 +7,7 @@
 import { MoreVerticalOutline } from "@makeplane/propel/icons";
 import React, { forwardRef } from "react";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 
 interface IDragHandle {
   className?: string;

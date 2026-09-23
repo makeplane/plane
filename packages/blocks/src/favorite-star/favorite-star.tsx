@@ -7,7 +7,7 @@
 import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 import React from "react";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 
 type Props = {
   buttonClassName?: string;

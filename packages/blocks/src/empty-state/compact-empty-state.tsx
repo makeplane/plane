@@ -6,7 +6,7 @@
 
 import React from "react";
 import { Button, getButtonVariant } from "./button";
-import { cn } from "../utils/classname";
+import { cn } from "@plane/utils";
 import { getCompactAsset } from "./assets/asset-registry";
 import type { CompactAssetType } from "./assets/asset-types";
 import type { BaseEmptyStateCommonProps } from "./types";

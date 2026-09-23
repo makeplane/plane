@@ -6,7 +6,7 @@
 
 import React from "react";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 // types
 import type { TTableData } from "./types";
 

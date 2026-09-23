@@ -13,7 +13,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // plane helpers
 // helpers
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 // hooks
 // types
 import type {

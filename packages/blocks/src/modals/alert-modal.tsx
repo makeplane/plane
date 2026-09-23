@@ -9,7 +9,7 @@ import React from "react";
 // components
 import type { ButtonVariant } from "@makeplane/propel/components/button";
 import { Button } from "@makeplane/propel/components/button";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import { EModalPosition, EModalWidth } from "./constants";
 import { ModalCore } from "./modal-core";
 // constants

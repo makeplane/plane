@@ -14,7 +14,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import type { ICustomSearchSelectProps } from "./helper";
 
 export function CustomSearchSelect(props: ICustomSearchSelectProps) {

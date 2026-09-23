@@ -6,7 +6,7 @@
 
 // local imports
 import { Button, getButtonVariant } from "./button";
-import { cn } from "../utils/classname";
+import { cn } from "@plane/utils";
 import { getDetailedAsset } from "./assets/asset-registry";
 import type { DetailedAssetType } from "./assets/asset-types";
 import type { BaseEmptyStateCommonProps } from "./types";

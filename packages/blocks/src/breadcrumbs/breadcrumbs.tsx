@@ -7,7 +7,7 @@
 import * as React from "react";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 
 type BreadcrumbsProps = {
   className?: string;

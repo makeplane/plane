@@ -5,7 +5,7 @@
  */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import type { TTabNavigationItemProps } from "./tab-navigation-types";
 
 export function TabNavigationItem({ children, isActive, className }: TTabNavigationItemProps) {

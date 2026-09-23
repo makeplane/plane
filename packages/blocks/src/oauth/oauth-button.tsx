@@ -5,7 +5,7 @@
  */
 
 import * as React from "react";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 
 export interface OAuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;

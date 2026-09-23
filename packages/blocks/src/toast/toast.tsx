@@ -9,7 +9,7 @@ import { Toast as BaseToast } from "@base-ui/react/toast";
 import { CloseOutline, InfoOutline, TickOutline, WarningTriangleOutline } from "@makeplane/propel/icons";
 // spinner
 import { CircularBarSpinner } from "../spinner/circular-bar-spinner";
-import { cn } from "../utils/classname";
+import { cn } from "@plane/utils";
 
 export enum TOAST_TYPE {
   SUCCESS = "success",

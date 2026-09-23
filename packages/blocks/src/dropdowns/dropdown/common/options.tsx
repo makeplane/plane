@@ -9,7 +9,7 @@ import { Combobox } from "@headlessui/react";
 import React from "react";
 import { TickOutline } from "@makeplane/propel/icons";
 // helpers
-import { cn } from "../../../utils";
+import { cn } from "@plane/utils";
 // types
 import type { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "../dropdown";
 // components

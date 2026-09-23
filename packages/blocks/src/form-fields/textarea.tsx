@@ -7,7 +7,7 @@
 import React, { useRef } from "react";
 // helpers
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 // hooks
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {

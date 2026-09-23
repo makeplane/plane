@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "../dropdowns";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import { Breadcrumbs } from "./breadcrumbs";
 
 type TBreadcrumbNavigationSearchDropdownProps = {

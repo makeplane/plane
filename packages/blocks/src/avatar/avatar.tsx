@@ -7,7 +7,7 @@
 // ui
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import type { TAvatarSize } from "./helper";
 import { getBorderRadius, getSizeInfo, isAValidNumber } from "./helper";
 

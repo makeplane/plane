@@ -8,7 +8,7 @@ import React, { useState, useRef, useContext } from "react";
 import { usePopper } from "react-popper";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 // helpers
-import { cn } from "../../utils";
+import { cn } from "@plane/utils";
 // types
 import type { TContextMenuItem } from "./root";
 import { ContextMenuContext, Portal } from "./root";

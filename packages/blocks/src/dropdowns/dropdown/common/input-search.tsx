@@ -8,7 +8,7 @@ import { Combobox } from "@headlessui/react";
 import React, { useEffect, useRef } from "react";
 import { SearchOutline } from "@makeplane/propel/icons";
 // helpers
-import { cn } from "../../../utils";
+import { cn } from "@plane/utils";
 
 interface IInputSearch {
   isOpen: boolean;

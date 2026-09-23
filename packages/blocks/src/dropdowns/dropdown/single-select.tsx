@@ -12,7 +12,7 @@ import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
 import { useDropdownKeyPressed } from "../../hooks/use-dropdown-key-pressed";
-import { cn } from "../../utils";
+import { cn } from "@plane/utils";
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
 import type { ISingleSelectDropdown } from "./dropdown";

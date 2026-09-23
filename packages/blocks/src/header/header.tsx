@@ -6,7 +6,7 @@
 
 import * as React from "react";
 import { ERowVariant, Row } from "../row";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import type { THeaderVariant } from "./helper";
 import { EHeaderVariant, getHeaderStyle } from "./helper";
 

@@ -11,7 +11,7 @@ import { ReactionOutline } from "@makeplane/propel/icons";
 import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { IconButton } from "@makeplane/propel/components/icon-button";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 
 export interface EmojiReactionType {
   emoji: string;

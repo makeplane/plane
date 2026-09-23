@@ -5,7 +5,7 @@
  */
 
 import { LayoutGroup } from "framer-motion";
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 import type { TTabNavigationListProps } from "./tab-navigation-types";
 
 export function TabNavigationList({ children, className }: TTabNavigationListProps) {

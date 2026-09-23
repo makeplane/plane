@@ -4,5 +4,7 @@
  * See the LICENSE file for details.
  */
 
-export * from "./circular-spinner";
-export * from "./circular-bar-spinner";
+export { Spinner } from "./circular-spinner";
+export type { ISpinner } from "./circular-spinner";
+export { CircularBarSpinner } from "./circular-bar-spinner";
+export type { ICircularBarSpinner } from "./circular-bar-spinner";

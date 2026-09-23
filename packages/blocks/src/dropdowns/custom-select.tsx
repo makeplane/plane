@@ -15,7 +15,7 @@ import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
-import { cn } from "../utils";
+import { cn } from "@plane/utils";
 // types
 import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
