@@ -10,10 +10,20 @@ import { useDropzone } from "react-dropzone";
 // plane imports
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { Button } from "@makeplane/propel/components/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import { UserOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
 // services
 import { FileService } from "@/services/file.service";
@@ -94,77 +104,92 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
-      <div className="space-y-5 px-5 py-8 sm:p-6">
-        <h3 className="text-16 leading-6 font-medium text-primary">Upload Image</h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-center gap-3">
-            <div
-              {...getRootProps()}
-              className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
-                (image === null && isDragActive) || !value
-                  ? "border-2 border-dashed border-subtle hover:bg-surface-2"
-                  : ""
-              }`}
-            >
-              {image !== null || (value && value !== "") ? (
-                <>
-                  <button
-                    type="button"
-                    className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="sm">
+        <DialogMain>
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>Upload Image</DialogTitle>
+            </DialogHeading>
+          </DialogHeader>
+          <DialogBody tabIndex={0}>
+            <div className="space-y-5">
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-3">
+                  <div
+                    {...getRootProps()}
+                    className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 focus:outline-none ${
+                      (image === null && isDragActive) || !value
+                        ? "border-2 border-dashed border-subtle hover:bg-surface-2"
+                        : ""
+                    }`}
                   >
-                    Edit
-                  </button>
-                  <img
-                    src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
-                    alt="image"
-                    className="absolute top-0 left-0 h-full w-full rounded-md object-cover"
-                  />
-                </>
-              ) : (
-                <div>
-                  <UserOutline className="mx-auto h-16 w-16 text-secondary" />
-                  <span className="mt-2 block text-13 font-medium text-secondary">
-                    {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
-                  </span>
-                </div>
-              )}
+                    {image !== null || (value && value !== "") ? (
+                      <>
+                        <button
+                          type="button"
+                          className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
+                        >
+                          Edit
+                        </button>
+                        <img
+                          src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
+                          alt="image"
+                          className="absolute top-0 left-0 h-full w-full rounded-md object-cover"
+                        />
+                      </>
+                    ) : (
+                      <div>
+                        <UserOutline className="mx-auto h-16 w-16 text-secondary" />
+                        <span className="mt-2 block text-13 font-medium text-secondary">
+                          {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
+                        </span>
+                      </div>
+                    )}
 
-              <input {...getInputProps()} />
+                    <input {...getInputProps()} />
+                  </div>
+                </div>
+                {fileRejections.length > 0 && (
+                  <p className="text-13 text-danger-primary">
+                    {fileRejections[0].errors[0].code === "file-too-large"
+                      ? "The image size cannot exceed 5 MB."
+                      : "Please upload a file in a valid format."}
+                  </p>
+                )}
+              </div>
+              <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
             </div>
-          </div>
-          {fileRejections.length > 0 && (
-            <p className="text-13 text-danger-primary">
-              {fileRejections[0].errors[0].code === "file-too-large"
-                ? "The image size cannot exceed 5 MB."
-                : "Please upload a file in a valid format."}
-            </p>
-          )}
-        </div>
-        <p className="my-4 text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
-        <div className="flex items-center justify-between">
-          <Button
-            variant="danger"
-            size="md"
-            stretch="auto"
-            label={isRemoving ? "Removing" : "Remove"}
-            onClick={handleImageRemove}
-            disabled={!value}
-          />
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          </DialogBody>
+        </DialogMain>
+        <DialogActions>
+          <DialogInfo>
             <Button
-              variant="primary"
+              variant="danger"
               size="md"
               stretch="auto"
-              label={isImageUploading ? "Uploading" : "Upload & Save"}
-              onClick={handleSubmit}
-              disabled={!image}
-              loading={isImageUploading}
+              label={isRemoving ? "Removing" : "Remove"}
+              onClick={handleImageRemove}
+              disabled={!value}
             />
-          </div>
-        </div>
-      </div>
-    </ModalCore>
+          </DialogInfo>
+          <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={isImageUploading ? "Uploading" : "Upload & Save"}
+            onClick={handleSubmit}
+            disabled={!image}
+            loading={isImageUploading}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 });
