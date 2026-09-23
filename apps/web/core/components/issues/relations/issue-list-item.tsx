@@ -7,14 +7,16 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { CloseOutline, DeleteOutline, EditOutline, LinkOutline } from "@makeplane/propel/icons";
+import { CloseOutline, DeleteOutline, EditOutline, LinkOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueRelationTypes } from "@plane/types";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { ControlLink } from "@plane/blocks/layout";
-import { CustomMenu } from "@plane/blocks/dropdowns";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -93,14 +95,14 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
     handleRedirection(workspaceSlug, issue, isMobile);
   };
 
-  const handleEditIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleEditIssue = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
     handleIssueCrudState("update", relationIssueId, { ...issue });
     toggleCreateIssueModal(true);
   };
 
-  const handleDeleteIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleDeleteIssue = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
     handleIssueCrudState("delete", relationIssueId, issue);
@@ -108,13 +110,13 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
     handleIssueCrudState("removeRelation", issueId, issue, relationKey, relationIssueId);
   };
 
-  const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleCopyIssueLink = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
     issueOperations.copyLink(workItemLink);
   };
 
-  const handleRemoveRelation = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleRemoveRelation = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
     removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
@@ -149,11 +151,17 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
+            {/* The row's ControlLink activates on click and on Enter/Space, so a property picker's
+                own activation must not reach it. */}
             <div
+              role="presentation"
               className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") e.stopPropagation();
               }}
             >
               <RelationIssueProperty
@@ -164,42 +172,60 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="flex-shrink-0 pl-2 text-13">
-              <CustomMenu placement="bottom-end" ellipsis>
-                {!disabled && (
-                  <CustomMenu.MenuItem onClick={handleEditIssue}>
-                    <div className="flex items-center gap-2">
-                      <EditOutline className="h-3.5 w-3.5" />
-                      <span>{t("common.actions.edit")}</span>
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-
-                <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
-                  <div className="flex items-center gap-2">
-                    <LinkOutline className="h-3.5 w-3.5" />
-                    <span>{t("common.actions.copy_link")}</span>
-                  </div>
-                </CustomMenu.MenuItem>
-
-                {!disabled && (
-                  <CustomMenu.MenuItem onClick={handleRemoveRelation}>
-                    <div className="flex items-center gap-2">
-                      <CloseOutline className="h-3.5 w-3.5" />
-                      <span>{t("common.actions.remove_relation")}</span>
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-
-                {!disabled && (
-                  <CustomMenu.MenuItem onClick={handleDeleteIssue}>
-                    <div className="flex items-center gap-2">
-                      <DeleteOutline className="h-3.5 w-3.5" />
-                      <span>{t("common.actions.delete")}</span>
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-              </CustomMenu>
+            {/* The row's ControlLink activates on click and on Enter/Space, so the menu's own
+                activation must not reach it. */}
+            <div
+              role="presentation"
+              className="flex-shrink-0 pl-2 text-13"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+              }}
+            >
+              <Menu>
+                {/* Icon-only trigger, so it needs an explicit accessible name. */}
+                <MenuTrigger
+                  render={
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      aria-label={t("aria_labels.common.more_actions")}
+                      icon={<Icon icon={MoreHorizontalOutline} />}
+                    />
+                  }
+                />
+                <MenuContent side="bottom" align="end">
+                  {!disabled && (
+                    <MenuItem
+                      icon={<Icon icon={EditOutline} />}
+                      label={t("common.actions.edit")}
+                      onClick={handleEditIssue}
+                    />
+                  )}
+                  <MenuItem
+                    icon={<Icon icon={LinkOutline} />}
+                    label={t("common.actions.copy_link")}
+                    onClick={handleCopyIssueLink}
+                  />
+                  {!disabled && (
+                    <MenuItem
+                      icon={<Icon icon={CloseOutline} />}
+                      label={t("common.actions.remove_relation")}
+                      onClick={handleRemoveRelation}
+                    />
+                  )}
+                  {!disabled && (
+                    <MenuItem
+                      icon={<Icon icon={DeleteOutline} />}
+                      label={t("common.actions.delete")}
+                      onClick={handleDeleteIssue}
+                    />
+                  )}
+                </MenuContent>
+              </Menu>
             </div>
           </div>
         )}
