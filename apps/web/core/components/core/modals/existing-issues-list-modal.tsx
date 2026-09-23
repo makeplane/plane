@@ -5,8 +5,16 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { CloseOutline, RocketOutline, SearchOutline } from "@makeplane/propel/icons";
-import { Combobox } from "@headlessui/react";
+import { Combobox, ComboboxItem, ComboboxList, ComboboxSearch } from "@makeplane/propel/components/combobox";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { CloseOutline, RocketOutline } from "@makeplane/propel/icons";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -17,7 +25,6 @@ import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/ty
 // ui
 import { Switch } from "@makeplane/propel/components/switch";
 import { Loader } from "@plane/blocks/skeleton";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -137,194 +144,201 @@ export function ExistingIssuesListModal(props: Props) {
   const filteredIssues = issues.filter((issue) => !shouldHideIssue?.(issue));
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <Combobox
-        as="div"
-        onChange={(val: ISearchIssueResponse | null) => {
-          if (val === null) return;
-          if (selectedIssues.some((i) => i.id === val.id))
-            setSelectedIssues((prevData) => prevData.filter((i) => i.id !== val.id));
-          else setSelectedIssues((prevData) => [...prevData, val]);
-        }}
-      >
-        <div className="relative m-1">
-          <SearchOutline
-            className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
-            aria-hidden="true"
-          />
-          <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        {/* The search field is the only visible chrome, so the dialog's accessible name is carried
+            by a visually hidden title. */}
+        <div className="sr-only">
+          <DialogTitle>{t("issue.add.existing")}</DialogTitle>
+        </div>
+        {/* `inline` + `open` renders the list in place: the dialog is the surface, so there is no
+            popup positioner. */}
+        <Combobox<ISearchIssueResponse, true>
+          inline
+          multiple
+          // Bound to the dialog so the combobox resets its transient state when the modal closes.
+          open={isOpen}
+          onOpenChange={(open) => {
+            if (!open) handleClose();
+          }}
+          value={selectedIssues}
+          onValueChange={(next) => setSelectedIssues(next)}
+          // Re-searching returns fresh objects, so rows are matched to the selection by id.
+          isItemEqualToValue={(itemValue, value) => itemValue.id === value.id}
+          itemToStringLabel={(issue) => issue.name}
+          inputValue={searchTerm}
+          onInputValueChange={(next, details) => {
+            // Base UI clears the query after every pick in multiple mode; letting that through
+            // would re-run the debounced server search on each toggle.
+            if (details.reason === "input-clear") return;
+            setSearchTerm(next);
+          }}
+        >
+          <ComboboxSearch
             placeholder={t("common.search.placeholder")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label={t("issue.add.existing")}
             tabIndex={baseTabIndex}
           />
-        </div>
-
-        <div className="flex flex-col-reverse gap-4 p-2 text-13 text-secondary sm:flex-row sm:items-center sm:justify-between">
-          {selectedIssues.length > 0 ? (
-            <div className="mt-1 flex flex-wrap items-center gap-2">
-              {selectedIssues.map((issue) => (
-                <div
-                  key={issue.id}
-                  className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 whitespace-nowrap text-primary"
-                >
-                  <IssueIdentifier
-                    projectId={issue.project_id}
-                    issueTypeId={issue.type_id}
-                    projectIdentifier={issue.project__identifier}
-                    issueSequenceId={issue.sequence_id}
-                    size="xs"
-                    variant="secondary"
-                  />
-                  <button
-                    type="button"
-                    className="group p-1"
-                    onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
-                  >
-                    <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-11 whitespace-nowrap">
-              {t("issue.select.empty")}
-            </div>
-          )}
-          {workspaceLevelToggle && (
-            <Tooltip label="Toggle workspace level search" disabled={isMobile}>
-              <div
-                className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
-                  isWorkspaceLevel ? "text-primary" : "text-secondary"
-                }`}
-              >
-                <Switch
-                  size="sm"
-                  checked={isWorkspaceLevel}
-                  onCheckedChange={setIsWorkspaceLevel}
-                  aria-label={t("common.workspace_level")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                  className="flex-shrink-0"
-                >
-                  {t("common.workspace_level")}
-                </button>
-              </div>
-            </Tooltip>
-          )}
-        </div>
-
-        <Combobox.Options
-          as="ul"
-          static
-          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
-        >
-          {/* TODO: Translate here */}
-          {searchTerm !== "" && (
-            <h5 className="mx-2 text-13 text-secondary">
-              Search results for{" "}
-              <span className="text-primary">
-                {'"'}
-                {searchTerm}
-                {'"'}
-              </span>{" "}
-              in project:
-            </h5>
-          )}
-
-          {isSearching || isLoading ? (
-            <Loader className="space-y-3 p-3">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
-          ) : (
-            <>
-              {filteredIssues.length === 0 ? (
-                <IssueSearchModalEmptyState
-                  debouncedSearchTerm={debouncedSearchTerm}
-                  isSearching={isSearching}
-                  issues={filteredIssues}
-                  searchTerm={searchTerm}
-                />
-              ) : (
-                <ul className={`text-13 text-primary ${filteredIssues.length > 0 ? "p-2" : ""}`}>
-                  {filteredIssues.map((issue) => {
-                    const selected = selectedIssues.some((i) => i.id === issue.id);
-
-                    return (
-                      <Combobox.Option
-                        key={issue.id}
-                        as="label"
-                        htmlFor={`issue-${issue.id}`}
-                        value={issue}
-                        className={({ active }) =>
-                          `group my-0.5 flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 text-secondary select-none ${
-                            active ? "bg-layer-1 text-primary" : ""
-                          } ${selected ? "text-primary" : ""}`
-                        }
+          <DialogMain>
+            <div className="flex flex-shrink-0 flex-col-reverse gap-4 text-13 text-secondary sm:flex-row sm:items-center sm:justify-between">
+              {selectedIssues.length > 0 ? (
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {selectedIssues.map((issue) => (
+                    <div
+                      key={issue.id}
+                      className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 whitespace-nowrap text-primary"
+                    >
+                      <IssueIdentifier
+                        projectId={issue.project_id}
+                        issueTypeId={issue.type_id}
+                        projectIdentifier={issue.project__identifier}
+                        issueSequenceId={issue.sequence_id}
+                        size="xs"
+                        variant="secondary"
+                      />
+                      <button
+                        type="button"
+                        className="group p-1"
+                        onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                       >
-                        <div className="flex items-center gap-2 truncate">
-                          <input type="checkbox" checked={selected} readOnly />
-                          <span
-                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                            style={{
-                              backgroundColor: issue.state__color,
-                            }}
-                          />
-                          <span className="flex-shrink-0">
-                            <IssueIdentifier
-                              projectId={issue.project_id}
-                              issueTypeId={issue.type_id}
-                              projectIdentifier={issue.project__identifier}
-                              issueSequenceId={issue.sequence_id}
-                              size="xs"
-                              variant="secondary"
-                            />
-                          </span>
-                          <span className="truncate">{issue.name}</span>
-                        </div>
-                        <a
-                          href={generateWorkItemLink({
-                            workspaceSlug,
-                            projectId: issue?.project_id,
-                            issueId: issue?.id,
-                            projectIdentifier: issue.project__identifier,
-                            sequenceId: issue?.sequence_id,
-                          })}
-                          target="_blank"
-                          className="relative z-1 hidden flex-shrink-0 text-secondary group-hover:block hover:text-primary"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <RocketOutline className="h-4 w-4" />
-                        </a>
-                      </Combobox.Option>
-                    );
-                  })}
-                </ul>
+                        <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-11 whitespace-nowrap">
+                  {t("issue.select.empty")}
+                </div>
               )}
-            </>
-          )}
-        </Combobox.Options>
-      </Combobox>
-      <div className="flex items-center justify-between p-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          stretch="auto"
-          label={
-            selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")
-          }
-          render={<button className={`px-0 text-link-primary underline ${filteredIssues.length === 0 ? "p-0" : ""}`} />}
-          onClick={handleSelectIssues}
-          disabled={filteredIssues.length === 0}
-        />
-        <div className="flex items-center justify-end gap-2">
+              {workspaceLevelToggle && (
+                <Tooltip label="Toggle workspace level search" disabled={isMobile}>
+                  <div
+                    className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
+                      isWorkspaceLevel ? "text-primary" : "text-secondary"
+                    }`}
+                  >
+                    <Switch
+                      size="sm"
+                      checked={isWorkspaceLevel}
+                      onCheckedChange={setIsWorkspaceLevel}
+                      aria-label={t("common.workspace_level")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                      className="flex-shrink-0"
+                    >
+                      {t("common.workspace_level")}
+                    </button>
+                  </div>
+                </Tooltip>
+              )}
+            </div>
+
+            <div className="vertical-scrollbar scrollbar-md max-h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto overscroll-contain">
+              {/* TODO: Translate here */}
+              {searchTerm !== "" && (
+                <h5 className="text-13 text-secondary">
+                  Search results for{" "}
+                  <span className="text-primary">
+                    {'"'}
+                    {searchTerm}
+                    {'"'}
+                  </span>{" "}
+                  in project:
+                </h5>
+              )}
+
+              {isSearching || isLoading ? (
+                <Loader className="space-y-3 p-3">
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                </Loader>
+              ) : (
+                <>
+                  {filteredIssues.length === 0 ? (
+                    <IssueSearchModalEmptyState
+                      debouncedSearchTerm={debouncedSearchTerm}
+                      isSearching={isSearching}
+                      issues={filteredIssues}
+                      searchTerm={searchTerm}
+                    />
+                  ) : (
+                    <ComboboxList aria-label={t("issue.add.existing")}>
+                      {filteredIssues.map((issue) => (
+                        // `selection="checkbox"` replaces the hand-placed checkbox and the
+                        // `as="label"` wrapper the old row needed to make it clickable.
+                        <ComboboxItem
+                          key={issue.id}
+                          value={issue}
+                          selection="checkbox"
+                          label={issue.name}
+                          icon={
+                            <span className="flex flex-shrink-0 items-center gap-2">
+                              <span
+                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                style={{
+                                  backgroundColor: issue.state__color,
+                                }}
+                              />
+                              <IssueIdentifier
+                                projectId={issue.project_id}
+                                issueTypeId={issue.type_id}
+                                projectIdentifier={issue.project__identifier}
+                                issueSequenceId={issue.sequence_id}
+                                size="xs"
+                                variant="secondary"
+                              />
+                            </span>
+                          }
+                          trailing={
+                            <a
+                              href={generateWorkItemLink({
+                                workspaceSlug,
+                                projectId: issue?.project_id,
+                                issueId: issue?.id,
+                                projectIdentifier: issue.project__identifier,
+                                sequenceId: issue?.sequence_id,
+                              })}
+                              target="_blank"
+                              className="relative z-1 hidden flex-shrink-0 text-secondary group-hover/item:block hover:text-primary"
+                              rel="noopener noreferrer"
+                              aria-label={t("common.actions.open_in_new_tab")}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <RocketOutline className="h-4 w-4" />
+                            </a>
+                          }
+                        />
+                      ))}
+                    </ComboboxList>
+                  )}
+                </>
+              )}
+            </div>
+          </DialogMain>
+        </Combobox>
+        <DialogActions>
+          <DialogInfo>
+            <Button
+              variant="ghost"
+              size="sm"
+              stretch="auto"
+              label={
+                selectedIssues.length === issues.length ? t("issue.select.deselect_all") : t("issue.select.select_all")
+              }
+              onClick={handleSelectIssues}
+              disabled={filteredIssues.length === 0}
+            />
+          </DialogInfo>
           <Button variant="secondary" size="md" stretch="auto" label={t("common.cancel")} onClick={handleClose} />
           <Button
             variant="primary"
@@ -335,8 +349,8 @@ export function ExistingIssuesListModal(props: Props) {
             loading={isSubmitting}
             disabled={isSubmitting || selectedIssues.length === 0}
           />
-        </div>
-      </div>
-    </ModalCore>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 }
