@@ -4,13 +4,24 @@
  * See the LICENSE file for details.
  */
 
-import { useState, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { useState } from "react";
 // plane imports
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogCloseGroup,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
-import { ScrollArea } from "@makeplane/propel/components/scroll-area";
-
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
@@ -25,6 +36,8 @@ export function ShortcutsModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
   const [query, setQuery] = useState("");
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { commandRegistry } = usePowerK();
 
@@ -37,68 +50,54 @@ export function ShortcutsModal(props: Props) {
   };
 
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={handleClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-30 overflow-y-auto">
-          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative flex h-full items-center justify-center">
-                <div className="flex h-[61vh] w-full flex-col space-y-4 overflow-hidden rounded-lg bg-surface-1 py-5 shadow-raised-200 transition-all sm:w-[28rem]">
-                  <Dialog.Title as="h3" className="flex justify-between px-5">
-                    <span className="text-16 font-medium">Keyboard shortcuts</span>
-                    <button type="button" onClick={handleClose}>
-                      <CloseOutline className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
-                    </button>
-                  </Dialog.Title>
-                  <div className="px-5">
-                    <InputGroup size="2xl">
-                      <SearchOutline className="h-3.5 w-3.5 text-secondary" />
-                      <Input
-                        size="2xl"
-                        id="search"
-                        name="search"
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search for shortcuts"
-                        aria-label="Search for shortcuts"
-                        autoFocus
-                        tabIndex={1}
-                      />
-                    </InputGroup>
-                  </div>
-
-                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-5">
-                    <ScrollArea orientation="vertical">
-                      <ShortcutRenderer searchQuery={query} commands={allCommandsWithShortcuts} />
-                    </ScrollArea>
-                  </div>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        // Legacy headless `Dialog onClose={handleClose}`: Escape and outside press both close.
+        if (!open) handleClose();
+      }}
+    >
+      {/* legacy panel was `sm:w-[28rem]` (448px) -> `xs` (480px); the fixed `61vh` height lives on
+          the wrapper so the sheet does not shrink while filtering. */}
+      <DialogContent size="xs">
+        <DialogCloseGroup>
+          <IconButton
+            variant="ghost"
+            size="xs"
+            aria-label={t("close")}
+            icon={<Icon icon={CloseOutline} />}
+            render={<DialogClose />}
+          />
+        </DialogCloseGroup>
+        <div className="flex h-[61vh] min-h-0 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>{t("keyboard_shortcuts")}</DialogTitle>
+              </DialogHeading>
+            </DialogHeader>
+            {/* search row stays pinned above the scrolling list, as in the legacy layout */}
+            <InputGroup size="2xl">
+              <Icon icon={SearchOutline} tint="secondary" />
+              <Input
+                size="2xl"
+                id="search"
+                name="search"
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search for shortcuts"
+                aria-label="Search for shortcuts"
+                // oxlint-disable-next-line jsx-a11y/no-autofocus -- the shortcut sheet opens on the search field
+                autoFocus
+              />
+            </InputGroup>
+            <DialogBody tabIndex={0}>
+              <ShortcutRenderer searchQuery={query} commands={allCommandsWithShortcuts} />
+            </DialogBody>
+          </DialogMain>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </DialogContent>
+    </Dialog>
   );
 }
