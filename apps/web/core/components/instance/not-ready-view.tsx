@@ -50,8 +50,7 @@ export function InstanceNotReady() {
                 size="lg"
                 stretch="full"
                 nativeButton={false}
-                // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label into this anchor
-                render={<a href={GOD_MODE_URL} />}
+                render={<a href={GOD_MODE_URL}>Get started</a>}
                 label="Get started"
               />
             </div>

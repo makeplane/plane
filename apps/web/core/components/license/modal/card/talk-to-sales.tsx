@@ -77,8 +77,11 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               size="md"
               stretch="full"
               nativeButton={false}
-              // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label into this anchor
-              render={<a href={href} target="_blank" rel="noreferrer" />}
+              render={
+                <a href={href} target="_blank" rel="noreferrer">
+                  Talk to Sales
+                </a>
+              }
               label="Talk to Sales"
             />
           </div>

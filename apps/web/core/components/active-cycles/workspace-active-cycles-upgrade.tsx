@@ -96,8 +96,9 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
               size="sm"
               stretch="auto"
               nativeButton={false}
-              // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label and icon into this anchor
-              render={<a href={MARKETING_PRICING_PAGE_LINK} target="_blank" rel="noreferrer" />}
+              render={
+                <a href={MARKETING_PRICING_PAGE_LINK} target="_blank" rel="noreferrer" aria-label={t("upgrade")} />
+              }
               icon={<ProIcon className="h-3.5 w-3.5 text-on-color" />}
               label={t("upgrade")}
             />

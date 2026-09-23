@@ -388,8 +388,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                   size="md"
                   stretch="auto"
                   nativeButton={false}
-                  // oxlint-disable-next-line jsx-a11y/anchor-has-content -- Button renders the label and icon into this anchor
-                  render={<a href={workItemLink} target="_self" />}
+                  render={<a href={workItemLink} target="_self" aria-label={t("inbox_issue.actions.open")} />}
                   onClick={handleOpenIssueLink}
                   icon={<Icon icon={NewTabOutline} />}
                   iconPosition="start"
