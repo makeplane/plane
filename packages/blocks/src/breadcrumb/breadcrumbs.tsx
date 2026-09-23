@@ -216,6 +216,16 @@ function resolveCollapsedCrumb(child: React.ReactNode): TCollapsedCrumb {
 }
 
 /**
+ * A stable key for one entry of `React.Children.toArray(children)`. `toArray` already keys every element
+ * by its slot in the original children (`.0`, `.$id`), so a crumb keeps its identity when a sibling
+ * before it is conditionally dropped. Text children carry no key, so they fall back to their text.
+ */
+function getCrumbKey(child: React.ReactNode): React.Key {
+  if (React.isValidElement(child) && child.key !== null) return child.key;
+  return `text:${String(child)}`;
+}
+
+/**
  * Turns a collapsed crumb into a real menu row, so the crumbs behind the ellipsis are
  * `role="menuitem"` and reachable with the arrow keys rather than inert markup in a `role="menu"`.
  */
@@ -273,8 +283,8 @@ function Breadcrumbs(props: BreadcrumbsProps) {
   const collapsedCrumbs = isCollapsed
     ? childrenArray
         .slice(0, -1)
-        .map(resolveCollapsedCrumb)
-        .filter((crumb) => crumb.label.trim() !== "")
+        .map((child) => ({ key: getCrumbKey(child), crumb: resolveCollapsedCrumb(child) }))
+        .filter(({ crumb }) => crumb.label.trim() !== "")
     : [];
   const lastChild = childrenArray[childrenArray.length - 1];
 
@@ -301,8 +311,9 @@ function Breadcrumbs(props: BreadcrumbsProps) {
         <BreadcrumbList>
           {!isCollapsed &&
             childrenArray.map((child, index) => (
-              // oxlint-disable-next-line react/no-array-index-key -- crumbs are positional; children carry no stable id
-              <React.Fragment key={index}>{renderCrumb(child, index === childrenArray.length - 1)}</React.Fragment>
+              <React.Fragment key={getCrumbKey(child)}>
+                {renderCrumb(child, index === childrenArray.length - 1)}
+              </React.Fragment>
             ))}
           {isCollapsed && (
             <>
@@ -312,9 +323,8 @@ function Breadcrumbs(props: BreadcrumbsProps) {
                     <Menu>
                       <BreadcrumbEllipsisTrigger aria-label={overflowLabel} />
                       <MenuContent side="bottom" align="start">
-                        {collapsedCrumbs.map((crumb, index) => (
-                          // oxlint-disable-next-line react/no-array-index-key -- crumbs are positional; children carry no stable id
-                          <CollapsedCrumbRow key={index} crumb={crumb} />
+                        {collapsedCrumbs.map(({ key, crumb }) => (
+                          <CollapsedCrumbRow key={key} crumb={crumb} />
                         ))}
                       </MenuContent>
                     </Menu>
