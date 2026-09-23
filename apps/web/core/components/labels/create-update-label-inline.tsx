@@ -6,16 +6,16 @@
 
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
-import { TwitterPicker } from "react-color";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
-import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { ColorSwatchPicker } from "@plane/blocks/common";
 import { setToast } from "@plane/blocks/toast";
 import type { IIssueLabel } from "@plane/types";
 
@@ -90,41 +90,37 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (isSubmitting) return;
 
-      await labelOperationsCallbacks
-        .createLabel(formData)
-        .then((_res) => {
-          handleClose();
-          reset(defaultValues);
-        })
-        .catch((error) => {
-          const errorMessage = getErrorMessage(error, "create");
-          setToast({
-            title: "Error!",
-            type: "error",
-            message: errorMessage,
-          });
-          reset(formData);
+      try {
+        await labelOperationsCallbacks.createLabel(formData);
+        handleClose();
+        reset(defaultValues);
+      } catch (error) {
+        const errorMessage = getErrorMessage(error, "create");
+        setToast({
+          title: "Error!",
+          type: "error",
+          message: errorMessage,
         });
+        reset(formData);
+      }
     };
 
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!labelToUpdate?.id || isSubmitting) return;
 
-      await labelOperationsCallbacks
-        .updateLabel(labelToUpdate.id, formData)
-        .then((_res) => {
-          reset(defaultValues);
-          handleClose();
-        })
-        .catch((error) => {
-          const errorMessage = getErrorMessage(error, "update");
-          setToast({
-            title: "Oops!",
-            type: "error",
-            message: errorMessage,
-          });
-          reset(formData);
+      try {
+        await labelOperationsCallbacks.updateLabel(labelToUpdate.id, formData);
+        reset(defaultValues);
+        handleClose();
+      } catch (error) {
+        const errorMessage = getErrorMessage(error, "update");
+        setToast({
+          title: "Oops!",
+          type: "error",
+          message: errorMessage,
         });
+        reset(formData);
+      }
     };
 
     const handleFormSubmit = (formData: IIssueLabel) => {
@@ -165,48 +161,35 @@ export const CreateUpdateLabelInline = observer(
           className={`flex w-full scroll-m-8 items-center gap-2 bg-surface-1 ${labelForm ? "" : "hidden"}`}
         >
           <div className="flex-shrink-0">
-            <Popover className="relative z-10 flex h-full w-full items-center justify-center">
-              {({ open }) => (
-                <>
-                  <Popover.Button
-                    className={`group inline-flex items-center text-14 font-medium focus:outline-none ${
-                      open ? "text-primary" : "text-secondary"
-                    }`}
-                  >
-                    <span
-                      className="h-4 w-4 rounded-full"
-                      style={{
-                        backgroundColor: watch("color"),
-                      }}
-                    />
-                  </Popover.Button>
-
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
-                      <Controller
-                        name="color"
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <TwitterPicker
-                            colors={LABEL_COLOR_OPTIONS}
-                            color={value}
-                            onChange={(value) => onChange(value.hex)}
-                          />
-                        )}
-                      />
-                    </Popover.Panel>
-                  </Transition>
-                </>
+            <Controller
+              name="color"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <button
+                        type="button"
+                        aria-label={t("aria_labels.color_picker.open")}
+                        className="group inline-flex items-center text-14 font-medium text-secondary focus:outline-none data-popup-open:text-primary"
+                      >
+                        <span
+                          className="h-4 w-4 rounded-full"
+                          style={{
+                            backgroundColor: watch("color"),
+                          }}
+                        />
+                      </button>
+                    }
+                  />
+                  <PopoverContent variant="rich" side="bottom" align="start">
+                    <div className="w-80 max-w-xs">
+                      <ColorSwatchPicker colors={LABEL_COLOR_OPTIONS} value={value} onChange={onChange} />
+                    </div>
+                  </PopoverContent>
+                </Popover>
               )}
-            </Popover>
+            />
           </div>
           <div className="flex flex-1 flex-col justify-center">
             <Controller

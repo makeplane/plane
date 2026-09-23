@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { setToast } from "@plane/blocks/toast";
 import type { IIssueLabel } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 
@@ -40,23 +40,25 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
 
     setIsDeleteLoading(true);
 
-    await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
-      .then(() => {
-        handleClose();
-      })
-      .catch((err) => {
-        setIsDeleteLoading(false);
-        const error = err?.error || "Label could not be deleted. Please try again.";
-        setToast({
-          type: "error",
-          title: "Error!",
-          message: error,
-        });
+    try {
+      await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id);
+      handleClose();
+    } catch (err) {
+      setIsDeleteLoading(false);
+      const error =
+        err && typeof err === "object" && "error" in err && typeof err.error === "string" && err.error
+          ? err.error
+          : "Label could not be deleted. Please try again.";
+      setToast({
+        type: "error",
+        title: "Error!",
+        message: error,
       });
+    }
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
