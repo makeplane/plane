@@ -9,8 +9,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
-import { DeleteOutline, EditOutline } from "@makeplane/propel/icons";
-import { CustomMenu } from "@plane/blocks/dropdowns";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { DeleteOutline, EditOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { truncateText } from "@plane/utils";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
@@ -27,6 +30,8 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   // router
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getViewDetailsById } = useGlobalView();
   // derived data
@@ -50,28 +55,47 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <CustomMenu ellipsis>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setUpdateViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <EditOutline width={14} height={14} />
-                        <span>Edit View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setDeleteViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <DeleteOutline width={14} height={14} />
-                        <span>Delete View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
+                  <Menu>
+                    <MenuTrigger
+                      render={
+                        <IconButton
+                          variant="ghost"
+                          size="sm"
+                          aria-label={t("aria_labels.common.more_actions")}
+                          icon={<Icon icon={MoreHorizontalOutline} />}
+                          // the row is a link: keep the trigger from navigating
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+                          }}
+                        />
+                      }
+                    />
+                    <MenuContent side="bottom" align="end">
+                      {/* React events bubble through the portal to the row link, so the rows stop them too. */}
+                      <MenuItem
+                        icon={<Icon icon={EditOutline} />}
+                        label="Edit View"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setUpdateViewModal(true);
+                        }}
+                      />
+                      <MenuItem
+                        icon={<Icon icon={DeleteOutline} />}
+                        label="Delete View"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDeleteViewModal(true);
+                        }}
+                      />
+                    </MenuContent>
+                  </Menu>
                 </div>
               </div>
             </div>

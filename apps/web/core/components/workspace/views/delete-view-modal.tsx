@@ -8,10 +8,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane Imports
-import { useTranslation } from "@plane/i18n";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceView } from "@plane/types";
-import { AlertModalCore } from "@plane/blocks/modals";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 
@@ -53,13 +53,13 @@ export const DeleteGlobalViewModal = observer(function DeleteGlobalViewModal(pro
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
       title={t("workspace_views.delete_view.title")}
-      content={<>{t("workspace_views.delete_view.content")}</>}
+      content={t("workspace_views.delete_view.content")}
     />
   );
 });

@@ -8,14 +8,17 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { LinkOutline, MoreHorizontalOutline, NewTabOutline } from "@makeplane/propel/icons";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
 import { setToast } from "@plane/blocks/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
-import { CustomMenu } from "@plane/blocks/dropdowns";
-import { copyUrlToClipboard, cn } from "@plane/utils";
-// helpers
+import { copyUrlToClipboard } from "@plane/utils";
+
 type Props = {
   workspaceSlug: string;
   view: {
@@ -30,14 +33,18 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
   const { t } = useTranslation();
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
-  const handleCopyText = () =>
-    copyUrlToClipboard(viewLink).then(() => {
+  const handleCopyText = async () => {
+    try {
+      await copyUrlToClipboard(viewLink);
       setToast({
         type: "success",
         title: "Link Copied!",
         message: "View link copied to clipboard.",
       });
-    });
+    } catch (error) {
+      console.error("Failed to copy the view link:", error);
+    }
+  };
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
   const MENU_ITEMS: TContextMenuItem[] = [
@@ -49,54 +56,39 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
     },
     {
       key: "copy-link",
-      action: handleCopyText,
+      action: () => void handleCopyText(),
       title: t("copy_link"),
       icon: LinkOutline,
     },
   ];
 
   return (
-    <>
-      <CustomMenu
-        ellipsis
-        placement="bottom-end"
-        closeOnSelect
-        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
-      >
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={() => {
-                item.action();
-              }}
-              className={cn(
-                "flex items-center gap-2",
-                {
-                  "text-placeholder": item.disabled,
-                },
-                item.className
-              )}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-              <div>
-                <h5>{t(item.title || "")}</h5>
-                {item.description && (
-                  <p
-                    className={cn("whitespace-pre-line text-tertiary", {
-                      "text-placeholder": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
-    </>
+    <Menu>
+      <MenuTrigger
+        render={
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label={t("aria_labels.common.more_actions")}
+            icon={<Icon icon={MoreHorizontalOutline} />}
+          />
+        }
+      />
+      <MenuContent side="bottom" align="end">
+        {getRenderableItems(MENU_ITEMS).map((item) => (
+          <MenuItem
+            key={item.key}
+            variant={resolveItemVariant(item)}
+            icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+            label={t(item.title || "")}
+            description={item.description}
+            disabled={item.disabled}
+            onClick={() => {
+              item.action();
+            }}
+          />
+        ))}
+      </MenuContent>
+    </Menu>
   );
 });

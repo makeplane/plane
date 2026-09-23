@@ -7,10 +7,11 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceView } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
@@ -31,6 +32,8 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
   const { resetExpression } = useWorkItemFilters();
@@ -104,14 +107,22 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
 
   if (!workspaceSlug) return null;
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <WorkspaceViewForm
-        handleFormSubmit={handleFormSubmit}
-        handleClose={handleClose}
-        data={data}
-        preLoadedData={preLoadedData}
-        workspaceSlug={workspaceSlug}
-      />
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      {/* The form draws its own heading, so the dialog takes its accessible name from the same copy. */}
+      <DialogContent size="md" aria-label={data ? t("view.update.label") : t("view.create.label")}>
+        <WorkspaceViewForm
+          handleFormSubmit={handleFormSubmit}
+          handleClose={handleClose}
+          data={data}
+          preLoadedData={preLoadedData}
+          workspaceSlug={workspaceSlug}
+        />
+      </DialogContent>
+    </Dialog>
   );
 });
