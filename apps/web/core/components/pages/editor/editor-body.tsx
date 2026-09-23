@@ -74,6 +74,37 @@ type Props = {
   onCollaborationStateChange?: (state: CollaborationState) => void;
 };
 
+/**
+ * Builds the collaboration WebSocket config from `window.location`. Web is a client-only app
+ * (`ssr: false` in react-router.config.ts), so this never runs without a window, and the first
+ * render already gets the config instead of switching to it after mount.
+ */
+function buildRealtimeConfig(webhookConnectionParams: TWebhookConnectionQueryParams): TRealtimeConfig | undefined {
+  // Construct the WebSocket Collaboration URL
+  try {
+    const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
+    const WS_LIVE_URL = new URL(LIVE_SERVER_BASE_URL);
+    const isSecureEnvironment = window.location.protocol === "https:";
+    WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
+    WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
+
+    // Append query parameters to the URL
+    Object.entries(webhookConnectionParams)
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .forEach(([key, value]) => {
+        WS_LIVE_URL.searchParams.set(key, String(value));
+      });
+
+    // Construct realtime config
+    return {
+      url: WS_LIVE_URL.toString(),
+    };
+  } catch (error) {
+    console.error("Error creating realtime config", error);
+    return undefined;
+  }
+}
+
 export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const {
     config,
@@ -187,36 +218,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     [setSyncingStatus, onCollaborationStateChange]
   );
 
-  const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
-    // The collaboration URL is derived from window.location, so it can only be
-    // built on the client. There is no socket to connect to during SSR anyway —
-    // the config is recomputed on hydration.
-    if (typeof window === "undefined") return undefined;
-
-    // Construct the WebSocket Collaboration URL
-    try {
-      const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
-      const WS_LIVE_URL = new URL(LIVE_SERVER_BASE_URL);
-      const isSecureEnvironment = window.location.protocol === "https:";
-      WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
-      WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
-
-      // Append query parameters to the URL
-      Object.entries(webhookConnectionParams)
-        .filter(([_, value]) => value !== undefined && value !== null)
-        .forEach(([key, value]) => {
-          WS_LIVE_URL.searchParams.set(key, String(value));
-        });
-
-      // Construct realtime config
-      return {
-        url: WS_LIVE_URL.toString(),
-      };
-    } catch (error) {
-      console.error("Error creating realtime config", error);
-      return undefined;
-    }
-  }, [webhookConnectionParams]);
+  const realtimeConfig = useMemo(() => buildRealtimeConfig(webhookConnectionParams), [webhookConnectionParams]);
 
   const userConfig = useMemo(
     () => ({
