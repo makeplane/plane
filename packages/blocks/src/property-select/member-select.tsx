@@ -8,7 +8,8 @@ import { useMemo } from "react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
 import type { AvatarGroupSize } from "@makeplane/propel/components/avatar-group";
-import { AssigneeOutline, UserAltOutline } from "@makeplane/propel/icons";
+import { Badge } from "@makeplane/propel/components/badge";
+import { AssigneeOutline, DeactivatedUserOutline, UserAltOutline } from "@makeplane/propel/icons";
 import type { TPaginatedResponse } from "@plane/types";
 import { Select } from "../select/select";
 import type { SelectPaginationParams, SelectTooltip, SelectTriggerSize, SelectVariant } from "../select/types";
@@ -24,6 +25,13 @@ export type MemberOption = {
   name?: string;
   /** Final avatar URL (the client applies `getFileURL`); empty/undefined falls back to initials. */
   avatar_url?: string | null;
+  /**
+   * A suspended (deactivated) workspace member. The row stays in the list — greyed, with a
+   * deactivated-user glyph and a trailing {@link MemberSelectCommonProps.suspendedLabel} badge — but
+   * it cannot be picked; the keyboard walks past it. A suspended member who is already selected
+   * keeps an enabled row so the selection can still be removed, and the trigger shows them as usual.
+   */
+  suspended?: boolean;
 };
 
 export type MemberSelectVariant = SelectVariant | `avatar-group-${SelectTriggerSize}`;
@@ -106,6 +114,8 @@ type MemberSelectCommonProps = {
   tabIndex?: number;
   /** Re-filters the rendered list every render — unlike `getValues`, also catches an already-fetched, still-open list. */
   filterOption?: (member: MemberOption) => boolean;
+  /** Badge text on a {@link MemberOption.suspended} row. Defaults to "Suspended". */
+  suspendedLabel?: string;
 };
 
 export type MemberSelectProps = MemberSelectCommonProps &
@@ -156,6 +166,7 @@ export function MemberSelect(props: MemberSelectProps) {
     filterOption,
     testId,
     tabIndex,
+    suspendedLabel = "Suspended",
   } = props;
   const clearable = !props.multiple && !!props.clearable;
 
@@ -223,11 +234,19 @@ export function MemberSelect(props: MemberSelectProps) {
         <span className={OPTION_ICON_SLOT_CLASSNAME}>
           <UserAltOutline className="h-4 w-4 text-primary" />
         </span>
+      ) : member.suspended ? (
+        <span className={OPTION_ICON_SLOT_CLASSNAME}>
+          <DeactivatedUserOutline className="h-3.5 w-3.5 text-placeholder" />
+        </span>
       ) : (
         <span className={OPTION_ICON_SLOT_CLASSNAME}>
           <Avatar alt={memberAvatarAlt(member)} src={member.avatar_url ?? ""} size="xs" />
         </span>
       ),
+    // Suspended members cannot be newly picked; an already-selected one stays toggleable so it can be removed.
+    getOptionDisabled: (member: MemberOption) => !!member.suspended && !selectedIds.has(member.id),
+    getOptionTrailing: (member: MemberOption) =>
+      member.suspended ? <Badge variant="neutral" size="xs" label={suspendedLabel} /> : undefined,
     renderChip: (member: MemberOption) => (
       <>
         <Avatar alt={memberAvatarAlt(member)} src={member.avatar_url ?? ""} size="2xs" />
