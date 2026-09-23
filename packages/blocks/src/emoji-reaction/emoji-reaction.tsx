@@ -75,6 +75,7 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
   const button = (
     <button
       ref={ref}
+      type="button"
       onClick={handleClick}
       className={cn(
         "inline-flex items-center gap-0.5 rounded-full border px-1.5 text-caption-sm-regular transition-all duration-200",
