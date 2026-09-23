@@ -37,13 +37,15 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
         onClick={onClick}
         className="flex h-full min-w-0 flex-1 cursor-pointer items-center gap-4 pl-4 text-left"
       >
-        <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-surface-2 p-2">
+        <span className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-surface-2 p-2">
           <Icon className="size-4 stroke-2 text-tertiary group-hover:text-primary" />
-        </div>
-        <div className="flex-1 truncate">
-          <div className="truncate text-13 font-medium">{title}</div>
-          {createdAt && <div className="text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</div>}
-        </div>
+        </span>
+        <span className="block flex-1 truncate">
+          <span className="block truncate text-13 font-medium">{title}</span>
+          {createdAt && (
+            <span className="block text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</span>
+          )}
+        </span>
       </button>
       {menuItems && (
         <div className="hidden group-focus-within:block group-hover:block has-[[data-popup-open]]:block">

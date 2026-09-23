@@ -24,7 +24,10 @@ export function AllStickiesModal(props: TProps) {
     >
       {/* the visible "Your stickies" heading lives inside `Stickies` as plain text, so name the popup here */}
       <DialogContent size="xl" aria-label={t("stickies.title")}>
-        <Stickies handleClose={handleClose} />
+        {/* the popup is height-capped and clips overflow, so scroll the panel here as the legacy modal overlay did */}
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <Stickies handleClose={handleClose} />
+        </div>
       </DialogContent>
     </Dialog>
   );
