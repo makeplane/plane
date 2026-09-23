@@ -93,9 +93,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       success: {
         title: "Success!",
         message: () => "Project added to favorites.",
+        // propel: the callback exists for its side effect; a toast action is data, and there is
+        // none here, so it returns an empty list rather than an empty fragment.
         actionItems: () => {
           if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-          return <></>;
+          return [];
         },
       },
       error: {

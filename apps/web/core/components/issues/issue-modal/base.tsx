@@ -27,7 +27,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local imports
-import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
+import { useCreateIssueToastActions } from "../create-issue-toast-action-items";
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
@@ -79,6 +79,8 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   const { getProjectByIdentifier } = useProject();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
+  // propel: toast actions cross the boundary as data, never as JSX
+  const buildCreateIssueToastActions = useCreateIssueToastActions();
   // derived values
   const routerProjectIdentifier = workItem?.toString().split("-")[0];
   const projectIdFromRouter = getProjectByIdentifier(routerProjectIdentifier)?.id;
@@ -237,13 +239,10 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
         message: `${is_draft_issue ? t("draft_created") : t("issue_created_successfully")} `,
-        actionItems: !is_draft_issue && response?.project_id && (
-          <CreateIssueToastActionItems
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={response?.project_id}
-            issueId={response.id}
-          />
-        ),
+        actionItems:
+          !is_draft_issue && response?.project_id
+            ? buildCreateIssueToastActions({ workspaceSlug: workspaceSlug.toString(), issueId: response.id })
+            : undefined,
       });
       if (!createMore) handleClose();
       if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
@@ -345,13 +344,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         title: t("success"),
         message: t("issue_updated_successfully"),
         actionItems:
-          showActionItemsOnUpdate && payload.project_id ? (
-            <CreateIssueToastActionItems
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={payload.project_id}
-              issueId={data.id}
-            />
-          ) : undefined,
+          showActionItemsOnUpdate && payload.project_id
+            ? buildCreateIssueToastActions({ workspaceSlug: workspaceSlug.toString(), issueId: data.id })
+            : undefined,
       });
       handleClose();
     } catch (error: any) {

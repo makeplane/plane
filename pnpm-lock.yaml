@@ -582,12 +582,18 @@ importers:
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.7.3(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
+      '@plane/blocks':
+        specifier: workspace:*
+        version: link:../../packages/blocks
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
       '@plane/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
+      '@plane/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@plane/services':
         specifier: workspace:*
         version: link:../../packages/services
