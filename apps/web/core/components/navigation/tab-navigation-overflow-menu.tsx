@@ -35,7 +35,13 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
   return (
     <Menu>
       <MenuTrigger
-        render={<div className="flex items-center justify-center rounded-md p-1 transition-colors hover:bg-layer-1" />}
+        render={
+          <button
+            type="button"
+            aria-label={t("aria_labels.common.more_actions")}
+            className="flex items-center justify-center rounded-md p-1 transition-colors hover:bg-layer-1"
+          />
+        }
       >
         <MoreHorizontalOutline className="h-4 w-4 text-secondary" />
       </MenuTrigger>

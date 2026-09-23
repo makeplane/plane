@@ -7,7 +7,7 @@
 "use client";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { SettingsOutline, TickOutline } from "@makeplane/propel/icons";
+import { SettingsOutline } from "@makeplane/propel/icons";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -71,12 +71,12 @@ export const AppRailRoot = observer(() => {
           <ContextMenuItem
             onClick={() => updateDisplayMode("icon_only")}
             label="Icon only"
-            trailing={preferences.displayMode === "icon_only" ? <TickOutline className="size-3.5" /> : undefined}
+            selected={preferences.displayMode === "icon_only"}
           />
           <ContextMenuItem
             onClick={() => updateDisplayMode("icon_with_label")}
             label="Icon with name"
-            trailing={preferences.displayMode === "icon_with_label" ? <TickOutline className="size-3.5" /> : undefined}
+            selected={preferences.displayMode === "icon_with_label"}
           />
           <ContextMenuSeparator />
           <ContextMenuItem onClick={toggleAppRail} label={isCollapsed ? "Dock App Rail" : "Undock App Rail"} />
