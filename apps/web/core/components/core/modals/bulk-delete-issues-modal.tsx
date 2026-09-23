@@ -10,16 +10,15 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { SearchOutline } from "@makeplane/propel/icons";
+import { Combobox, ComboboxList, ComboboxSearch } from "@makeplane/propel/components/combobox";
+import { Dialog, DialogActions, DialogContent, DialogMain, DialogTitle } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -132,20 +131,16 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
   const issueList =
     issues.length > 0 ? (
-      <li className="p-2">
+      <div className="p-2">
         {query === "" && (
           <h2 className="mt-4 mb-2 px-3 text-11 font-semibold text-primary">Select work items to delete</h2>
         )}
-        <ul className="text-13 text-secondary">
+        <ComboboxList aria-label={t("power_k.actions_commands.bulk_delete_work_items")}>
           {issues.map((issue) => (
-            <BulkDeleteIssuesModalItem
-              issue={issue}
-              canDeleteIssueIds={watch("delete_issue_ids").includes(issue.id)}
-              key={issue.id}
-            />
+            <BulkDeleteIssuesModalItem issue={issue} key={issue.id} />
           ))}
-        </ul>
-      </li>
+        </ComboboxList>
+      </div>
     ) : (
       <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
         {query === "" ? (
@@ -157,61 +152,73 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     );
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <form>
-        <Combobox
-          onChange={(val: string | null) => {
-            if (val === null) return;
-            const selectedIssues = watch("delete_issue_ids");
-            if (selectedIssues.includes(val))
-              setValue(
-                "delete_issue_ids",
-                selectedIssues.filter((i) => i !== val)
-              );
-            else setValue("delete_issue_ids", [...selectedIssues, val]);
-          }}
-        >
-          <div className="relative m-1">
-            <SearchOutline
-              className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
-              aria-hidden="true"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        {/* The search field is the only visible chrome, so the dialog's accessible name is carried
+            by a visually hidden title. */}
+        <div className="sr-only">
+          <DialogTitle>{t("power_k.actions_commands.bulk_delete_work_items")}</DialogTitle>
+        </div>
+        <form className="flex min-h-0 flex-1 flex-col">
+          {/* `inline` + `open` renders the list in place: the dialog is the surface, so there is no
+              popup positioner. */}
+          <Combobox<string, true>
+            inline
+            multiple
+            // Bound to the dialog so the combobox resets its transient state when the modal closes.
+            open={isOpen}
+            onOpenChange={(open) => {
+              if (!open) handleClose();
+            }}
+            value={watch("delete_issue_ids")}
+            onValueChange={(ids) => setValue("delete_issue_ids", ids)}
+            inputValue={query}
+            onInputValueChange={(next, details) => {
+              // Base UI clears the query after every pick in multiple mode; letting that through
+              // would re-run the debounced server search on each toggle.
+              if (details.reason === "input-clear") return;
+              setQuery(next);
+            }}
+          >
+            <ComboboxSearch
+              placeholder={t("common.search.placeholder")}
+              aria-label={t("power_k.actions_commands.bulk_delete_work_items")}
             />
-            <input
-              type="text"
-              className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-primary outline-none focus:ring-0 sm:text-13"
-              placeholder="Search..."
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </div>
-
-          <Combobox.Options as="ul" static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
-            {isSearching ? (
-              <Loader className="space-y-3 p-3">
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-              </Loader>
-            ) : (
-              <>{issueList}</>
-            )}
-          </Combobox.Options>
-        </Combobox>
-
-        {issues.length > 0 && (
-          <div className="flex items-center justify-end gap-2 p-3">
-            <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
-            <Button
-              variant="danger"
-              size="md"
-              stretch="auto"
-              label={isSubmitting ? "Deleting..." : "Delete selected work items"}
-              onClick={handleSubmit(handleDelete)}
-              loading={isSubmitting}
-            />
-          </div>
-        )}
-      </form>
-    </ModalCore>
+            <DialogMain>
+              <div className="max-h-80 scroll-py-2 overflow-x-hidden overflow-y-auto overscroll-contain">
+                {isSearching ? (
+                  <Loader className="space-y-3 p-3">
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                  </Loader>
+                ) : (
+                  <>{issueList}</>
+                )}
+              </div>
+            </DialogMain>
+          </Combobox>
+          {issues.length > 0 && (
+            <DialogActions>
+              <Button variant="secondary" size="md" stretch="auto" label="Cancel" onClick={handleClose} />
+              <Button
+                variant="danger"
+                size="md"
+                stretch="auto"
+                label={isSubmitting ? "Deleting..." : "Delete selected work items"}
+                onClick={() => void handleSubmit(handleDelete)()}
+                loading={isSubmitting}
+              />
+            </DialogActions>
+          )}
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 });
