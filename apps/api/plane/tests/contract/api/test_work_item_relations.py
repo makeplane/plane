@@ -150,3 +150,31 @@ class TestWorkItemRelationRemove:
         response = api_key_client.post(url, {"related_issue": "invalid-uuid"}, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_remove_relation_cross_project_scoped_to_route_project(
+        self, api_key_client, workspace, project, issue1, issue2, create_user
+    ):
+        other_project = Project.objects.create(
+            name="Other Project",
+            identifier="OP",
+            workspace=workspace,
+            created_by=create_user,
+        )
+        relation = IssueRelation.objects.create(
+            issue=issue1,
+            related_issue=issue2,
+            relation_type="relates_to",
+            project=other_project,
+            workspace=workspace,
+            created_by=create_user,
+            updated_by=create_user,
+        )
+
+        # Attempt to delete relation owned by other_project through project URL
+        url = self.get_url(workspace.slug, project.id, issue1.id)
+        response = api_key_client.post(url, {"related_issue": str(issue2.id)}, format="json")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert IssueRelation.objects.filter(id=relation.id).exists()
+

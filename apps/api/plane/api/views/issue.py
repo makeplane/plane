@@ -2637,33 +2637,47 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
         related_issue = serializer.validated_data["related_issue"]
 
         matching_relations = IssueRelation.objects.filter(
+            project_id=project_id,
             workspace__slug=slug,
         ).filter(
             Q(issue_id=related_issue, related_issue_id=issue_id)
             | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
-        issue_relation = matching_relations.first()
-        if not issue_relation:
+        issue_relations = list(matching_relations)
+        if not issue_relations:
             return Response(
                 {"error": "Relation not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        current_instance = json.dumps(
-            IssueRelationSerializer(issue_relation).data, cls=DjangoJSONEncoder
-        )
         matching_relations.delete()
-        issue_activity.delay(
-            type="issue_relation.activity.deleted",
-            requested_data=json.dumps(data, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
-            project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
+        for issue_relation in issue_relations:
+            other_issue_id = str(
+                issue_relation.related_issue_id
+                if str(issue_relation.issue_id) == str(issue_id)
+                else issue_relation.issue_id
+            )
+            activity_requested_data = json.dumps(
+                {
+                    "related_issue": other_issue_id,
+                    "relation_type": issue_relation.relation_type,
+                },
+                cls=DjangoJSONEncoder,
+            )
+            issue_activity.delay(
+                type="issue_relation.activity.deleted",
+                requested_data=activity_requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    IssueRelationSerializer(issue_relation).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, issue_id):
