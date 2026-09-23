@@ -81,16 +81,10 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
   const handleEstimatePointCreate = (mode: "add" | "remove", value: TEstimatePointsObject) => {
     switch (mode) {
       case "add":
-        setEstimatePointCreate((prevValue) => {
-          prevValue = prevValue ? [...prevValue] : [];
-          return [...prevValue, value];
-        });
+        setEstimatePointCreate((prevValue) => [...(prevValue ?? []), value]);
         break;
       case "remove":
-        setEstimatePointCreate((prevValue) => {
-          prevValue = prevValue ? [...prevValue] : [];
-          return prevValue.filter((item) => item.key !== value.key);
-        });
+        setEstimatePointCreate((prevValue) => (prevValue ?? []).filter((item) => item.key !== value.key));
         break;
       default:
         break;
