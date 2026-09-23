@@ -6,10 +6,10 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, useLocation, Link, useNavigate } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TabNavigationList, TabNavigationItem } from "@plane/blocks/tab-navigation";
+import { Tabs, TabsList } from "@makeplane/propel/components/tabs";
 import type { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -23,6 +23,7 @@ import { ProjectHeader } from "./project-header";
 import { TabNavigationOverflowMenu } from "./tab-navigation-overflow-menu";
 import { DEFAULT_TAB_KEY } from "./tab-navigation-utils";
 import { TabNavigationVisibleItem } from "./tab-navigation-visible-item";
+import { UnderlineTabLink } from "./underline-tab-link";
 import { useActiveTab } from "./use-active-tab";
 import { useProjectActions } from "./use-project-actions";
 import { useResponsiveTabLayout } from "./use-responsive-tab-layout";
@@ -194,60 +195,63 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
         <div className="h-5 w-1 shrink-0 border-l border-subtle" />
 
         <div ref={containerRef} className="flex h-full min-w-0 flex-1 items-center overflow-hidden">
-          <TabNavigationList className="h-full">
-            {/* Render visible tab items */}
-            {visibleItems.map((item) => {
-              const itemIsActive = isActive(item);
-              const originalIndex = allNavigationItems.indexOf(item);
+          <Tabs variant="underline" value={activeItem?.key ?? null}>
+            <div className="-mb-3">
+              <TabsList>
+                {/* Render visible tab items */}
+                {visibleItems.map((item) => {
+                  const originalIndex = allNavigationItems.indexOf(item);
 
-              return (
-                <TabNavigationVisibleItem
-                  key={item.key}
-                  item={item}
-                  isActive={itemIsActive}
-                  tabPreferences={tabPreferences}
-                  onToggleDefault={handleToggleDefaultTab}
-                  onHide={handleHideTab}
-                  itemRef={(el) => {
-                    itemRefs.current[originalIndex] = el;
-                  }}
-                />
-              );
-            })}
+                  return (
+                    <TabNavigationVisibleItem
+                      key={item.key}
+                      item={item}
+                      tabPreferences={tabPreferences}
+                      onToggleDefault={handleToggleDefaultTab}
+                      onHide={handleHideTab}
+                      itemRef={(el) => {
+                        itemRefs.current[originalIndex] = el;
+                      }}
+                    />
+                  );
+                })}
 
-            {/* Render overflow menu if needed */}
-            {hasOverflow && (
-              <TabNavigationOverflowMenu
-                overflowItems={overflowItems}
-                isActive={isActive}
-                tabPreferences={tabPreferences}
-                onToggleDefault={handleToggleDefaultTab}
-                onShow={handleShowTab}
-              />
-            )}
-          </TabNavigationList>
+                {/* Render overflow menu if needed */}
+                {hasOverflow && (
+                  <TabNavigationOverflowMenu
+                    overflowItems={overflowItems}
+                    isActive={isActive}
+                    tabPreferences={tabPreferences}
+                    onToggleDefault={handleToggleDefaultTab}
+                    onShow={handleShowTab}
+                  />
+                )}
+              </TabsList>
+            </div>
+          </Tabs>
 
           {hasOverflow && (
             <div className="pointer-events-none absolute -z-10 opacity-0">
-              {visibleNavigationItems.map((item: TNavigationItem) => {
-                const itemIsActive = isActive(item);
-                const originalIndex = allNavigationItems.indexOf(item);
-                return (
-                  <div
-                    key={`measure-hidden-${item.key}`}
-                    ref={(el) => {
-                      itemRefs.current[originalIndex] = el;
-                    }}
-                    className="inline-block"
-                  >
-                    <Link to={item.href}>
-                      <TabNavigationItem isActive={itemIsActive}>
-                        <span>{t(item.i18n_key)}</span>
-                      </TabNavigationItem>
-                    </Link>
-                  </div>
-                );
-              })}
+              <Tabs variant="underline" value={activeItem?.key ?? null}>
+                <div className="-mb-3">
+                  <TabsList>
+                    {visibleNavigationItems.map((item: TNavigationItem) => {
+                      const originalIndex = allNavigationItems.indexOf(item);
+                      return (
+                        <div
+                          key={`measure-hidden-${item.key}`}
+                          ref={(el) => {
+                            itemRefs.current[originalIndex] = el;
+                          }}
+                          className="inline-block"
+                        >
+                          <UnderlineTabLink value={item.key} label={t(item.i18n_key)} to={item.href} />
+                        </div>
+                      );
+                    })}
+                  </TabsList>
+                </div>
+              </Tabs>
             </div>
           )}
         </div>

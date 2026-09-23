@@ -7,15 +7,16 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { ProjectsOutline } from "@makeplane/propel/icons";
-import type { ICustomSearchSelectOption } from "@plane/types";
-import { CustomSearchSelect } from "@plane/blocks/dropdowns";
+import type { TLogoProps } from "@plane/types";
+import { Select } from "@plane/blocks/select";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { SwitcherLabel } from "../common/switcher-label";
+import { SwitcherIcon } from "../common/switcher-label";
 import { ProjectHeaderButton } from "./project-header-button";
 import { getTabUrl } from "./tab-navigation-utils";
 import { useTabPreferences } from "./use-tab-preferences";
@@ -26,8 +27,16 @@ type TProjectHeaderProps = {
   projectId: string;
 };
 
+type TProjectSwitcherOption = {
+  value: string;
+  query: string;
+  logo_props: TLogoProps | undefined;
+};
+
 export const ProjectHeader = observer(function ProjectHeader(props: TProjectHeaderProps) {
   const { workspaceSlug, projectId } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // store hooks
@@ -61,27 +70,20 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
   );
 
   // Memoize switcher options to prevent recalculation on every render
-  const switcherOptions = useMemo<ICustomSearchSelectOption[]>(
+  const switcherOptions = useMemo<TProjectSwitcherOption[]>(
     () =>
       joinedProjectIds
-        .map((id): ICustomSearchSelectOption | null => {
+        .map((id): TProjectSwitcherOption | null => {
           const project = getPartialProjectById(id);
           if (!project) return null;
 
           return {
             value: id,
             query: project.name,
-            content: (
-              <SwitcherLabel
-                name={project.name}
-                logo_props={project.logo_props}
-                LabelIcon={ProjectsOutline}
-                type="material"
-              />
-            ),
+            logo_props: project.logo_props,
           };
         })
-        .filter((option): option is ICustomSearchSelectOption => option !== null),
+        .filter((option): option is TProjectSwitcherOption => option !== null),
     [joinedProjectIds, getPartialProjectById]
   );
 
@@ -99,13 +101,25 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
   if (!currentProjectDetails) return null;
 
   return (
-    <CustomSearchSelect
-      options={switcherOptions}
-      value={currentProjectDetails.id}
+    <Select<TProjectSwitcherOption>
+      value={switcherOptions.find((option) => option.value === currentProjectDetails.id) ?? null}
       onChange={handleProjectChange}
-      customButton={currentProjectDetails ? <ProjectHeaderButton project={currentProjectDetails} /> : null}
-      className="h-full rounded"
-      customButtonClassName="group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full"
-    />
+      getValues={() => switcherOptions}
+      getOptionValue={(option) => option.value}
+      getOptionLabel={(option) => option.query}
+      getOptionIcon={(option) => (
+        <SwitcherIcon logo_props={option.logo_props} LabelIcon={ProjectsOutline} type="material" size={16} />
+      )}
+      placeholder={t("common.projects")}
+    >
+      {/* The switcher button carries its own layout; the ghost chrome contributes the hover/active
+          fill and the hover-revealed chevron (which is why `ProjectHeaderButton` draws none). */}
+      <Select.Trigger
+        variant="select-ghost-md"
+        className="h-full cursor-pointer gap-0.5 rounded-sm px-0 py-0 hover:bg-surface-2"
+      >
+        <ProjectHeaderButton project={currentProjectDetails} />
+      </Select.Trigger>
+    </Select>
   );
 });
