@@ -5,9 +5,12 @@
  */
 
 import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
-import type { TIllustrationAssetProps } from "../helper";
 
-export function EpicHorizontalStackIllustration({ className }: TIllustrationAssetProps) {
+export type EpicHorizontalStackIllustrationProps = {
+  className?: string;
+};
+
+export function EpicHorizontalStackIllustration({ className }: EpicHorizontalStackIllustrationProps) {
   return (
     <svg
       width="81"

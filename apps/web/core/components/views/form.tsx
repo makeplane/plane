@@ -14,7 +14,7 @@ import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area"
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { ViewsOutline } from "@makeplane/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
@@ -146,11 +146,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                 setIsOpen(false);
               }}
               defaultIconColor={logoValue?.in_use && logoValue?.in_use === "icon" ? logoValue?.icon?.color : undefined}
-              defaultOpen={
-                logoValue?.in_use && logoValue?.in_use === "emoji"
-                  ? EmojiIconPickerTypes.EMOJI
-                  : EmojiIconPickerTypes.ICON
-              }
+              defaultOpen={logoValue?.in_use && logoValue?.in_use === "emoji" ? "emoji" : "icon"}
             />
             <div className="flew-grow w-full space-y-1">
               <Controller

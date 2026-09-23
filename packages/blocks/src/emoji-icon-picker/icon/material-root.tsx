@@ -33,7 +33,7 @@ export function MaterialIconList(props: MaterialIconListProps) {
         <button
           key={icon.name}
           type="button"
-          className="grid h-9 w-9 place-items-center rounded-sm text-16 select-none hover:bg-layer-1"
+          className="grid h-9 w-9 place-items-center rounded-sm text-body-md-regular select-none hover:bg-layer-1"
           onClick={() => {
             onChange({
               name: icon.name,
@@ -42,7 +42,7 @@ export function MaterialIconList(props: MaterialIconListProps) {
           }}
         >
           {isMaterialSymbolsFontLoaded ? (
-            <span style={{ color: activeColor }} className="material-symbols-rounded text-20! leading-5!">
+            <span style={{ color: activeColor }} className="material-symbols-rounded text-h4-regular! leading-5!">
               {icon.name}
             </span>
           ) : (

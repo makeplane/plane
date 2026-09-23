@@ -18,13 +18,19 @@ import {
   ProjectHorizontalStackIllustration,
   SettingsHorizontalStackIllustration,
   StateHorizontalStackIllustration,
+  StateSquareHorizontalStackIllustration,
   TemplateHorizontalStackIllustration,
   TokenHorizontalStackIllustration,
   UnknownHorizontalStackIllustration,
   UpdateHorizontalStackIllustration,
   WebhookHorizontalStackIllustration,
+  WorkflowHorizontalStackIllustration,
   WorkItemHorizontalStackIllustration,
   WorklogHorizontalStackIllustration,
+  RunnerScriptsHorizontalStackIllustration,
+  RunnerFunctionsHorizontalStackIllustration,
+  CustomPropertiesHorizontalStackIllustration,
+  SearchHorizontalStackIllustration,
 } from "./";
 
 export const HorizontalStackAssetsMap = [
@@ -73,12 +79,20 @@ export const HorizontalStackAssetsMap = [
     title: "Project",
   },
   {
+    asset: <SearchHorizontalStackIllustration className="h-20 w-20" />,
+    title: "Search",
+  },
+  {
     asset: <SettingsHorizontalStackIllustration className="h-20 w-20" />,
     title: "Settings",
   },
   {
     asset: <StateHorizontalStackIllustration className="h-20 w-20" />,
     title: "State",
+  },
+  {
+    asset: <StateSquareHorizontalStackIllustration className="h-20 w-20" />,
+    title: "State Square",
   },
   {
     asset: <TemplateHorizontalStackIllustration className="h-20 w-20" />,
@@ -107,5 +121,21 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <WorklogHorizontalStackIllustration className="h-20 w-20" />,
     title: "Worklog",
+  },
+  {
+    asset: <WorkflowHorizontalStackIllustration className="h-20 w-20" />,
+    title: "Workflow",
+  },
+  {
+    asset: <RunnerScriptsHorizontalStackIllustration className="h-20 w-20" />,
+    title: "Runner Scripts",
+  },
+  {
+    asset: <RunnerFunctionsHorizontalStackIllustration className="h-20 w-20" />,
+    title: "Runner Functions",
+  },
+  {
+    asset: <CustomPropertiesHorizontalStackIllustration className="h-20 w-20" />,
+    title: "Custom Properties",
   },
 ];

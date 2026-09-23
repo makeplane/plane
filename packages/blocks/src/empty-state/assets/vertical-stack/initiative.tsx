@@ -5,9 +5,12 @@
  */
 
 import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
-import type { TIllustrationAssetProps } from "../helper";
 
-export function InitiativeVerticalStackIllustration({ className }: TIllustrationAssetProps) {
+export type InitiativeVerticalStackIllustrationProps = {
+  className?: string;
+};
+
+export function InitiativeVerticalStackIllustration({ className }: InitiativeVerticalStackIllustrationProps) {
   return (
     <svg
       width="162"

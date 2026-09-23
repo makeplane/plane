@@ -4,23 +4,37 @@
  * See the LICENSE file for details.
  */
 
-import type { TAlign } from "../utils/placement";
+import type { IconElement } from "../types";
+import type { Align } from "../utils/placement";
 import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 
 /**
- * Legacy button variants accepted by empty-state actions. Mapped internally onto
- * `@makeplane/propel` Button variants (`error-fill` → `danger`, `error-outline` →
- * `danger-outline`, `link` → `ghost`).
+ * propel: kept verbatim from the deleted `@plane/propel/button` so `EmptyState`'s public action
+ * API is unchanged; `./action-button` maps these onto Propel's six variants.
  */
-export type TButtonVariant = "primary" | "error-fill" | "error-outline" | "secondary" | "tertiary" | "ghost" | "link";
+export type ButtonVariant =
+  | "primary"
+  | "error-fill"
+  | "primary-outline"
+  | "error-outline"
+  | "success-outline"
+  | "secondary"
+  | "tertiary"
+  | "ghost"
+  | "link";
 
-export interface ActionButton extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export type ActionButton = Omit<React.ComponentPropsWithoutRef<"button">, "children"> & {
   label: string;
-  variant?: TButtonVariant;
+  variant?: ButtonVariant;
+  /** Rendered by the underlying `Button` before/after the label. */
+  prependIcon?: IconElement;
+  appendIcon?: IconElement;
+  loading?: boolean;
   [key: `data-${string}`]: string | undefined;
-}
+};
 
-export interface BaseEmptyStateCommonProps {
+/** @deprecated Use EmptyStateCompactProps, EmptyStateDetailedProps, or EmptyStateProps instead. */
+export type EmptyStateCommonConfig = {
   title?: string;
   actions?: ActionButton[];
   /** CSS classes for the content wrapper */
@@ -32,6 +46,9 @@ export interface BaseEmptyStateCommonProps {
   description?: string;
   assetKey?: CompactAssetType | DetailedAssetType;
   asset?: React.ReactNode;
-  align?: TAlign;
+  align?: Align;
   customButton?: React.ReactNode;
-}
+};
+
+/** @deprecated Use EmptyStateCompactProps, EmptyStateDetailedProps, or EmptyStateProps instead. */
+export type BaseEmptyStateCommonProps = EmptyStateCommonConfig;

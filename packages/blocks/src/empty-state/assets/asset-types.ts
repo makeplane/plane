@@ -7,25 +7,37 @@
 // Horizontal Stack Asset Types
 export type HorizontalStackAssetType =
   | "customer"
+  | "custom-properties"
   | "epic"
   | "estimate"
   | "export"
+  | "group-syncing"
   | "intake"
   | "label"
   | "link"
   | "members"
   | "note"
+  | "page"
   | "priority"
   | "project"
+  | "search-compact"
   | "settings"
+  | "script"
   | "state"
+  | "state-square"
   | "template"
   | "token"
   | "unknown"
   | "update"
   | "webhook"
   | "work-item"
-  | "worklog";
+  | "worklog"
+  | "runner-functions"
+  | "runner-scripts"
+  | "workflow"
+  | "ai-skills"
+  | "ai-agents"
+  | "memory";
 
 // Vertical Stack Asset Types
 export type VerticalStackAssetType =
@@ -39,16 +51,21 @@ export type VerticalStackAssetType =
   | "draft"
   | "epic"
   | "error-404"
+  | "inbox"
   | "initiative"
   | "invalid-link"
+  | "milestone"
   | "module"
   | "no-access"
   | "page"
+  | "property"
   | "project"
   | "server-error"
+  | "stickies"
   | "teamspace"
   | "view"
-  | "work-item";
+  | "work-item"
+  | "workflow";
 
 // Illustration Asset Types
 export type IllustrationAssetType = "inbox" | "search";

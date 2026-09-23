@@ -18,6 +18,13 @@ export const ILLUSTRATION_COLOR_TOKEN_MAP = {
   },
 };
 
-export type TIllustrationAssetProps = {
+/** @deprecated Use the component-specific illustration prop type instead. */
+export type IllustrationAssetConfig = {
   className?: string;
 };
+
+/** @deprecated Use the component-specific illustration prop type instead. */
+export type IllustrationAssetProps = IllustrationAssetConfig;
+
+/** @deprecated Use the component-specific illustration prop type instead. */
+export type TIllustrationAssetProps = IllustrationAssetConfig;

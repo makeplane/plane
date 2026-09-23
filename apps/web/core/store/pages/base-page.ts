@@ -8,7 +8,7 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import type { TChangeHandlerProps } from "@plane/blocks/emoji-icon-picker";
+import type { ChangeHandlerPayload } from "@plane/blocks/emoji-icon-picker";
 import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 // plane web store
 import { ExtendedBasePage } from "@/store/pages/extended-base-page";
@@ -37,7 +37,7 @@ export type TBasePage = TPage & {
   unlock: (params: { shouldSync?: boolean; recursive?: boolean }) => Promise<void>;
   archive: (params: { shouldSync?: boolean; archived_at?: string | null }) => Promise<void>;
   restore: (params: { shouldSync?: boolean }) => Promise<void>;
-  updatePageLogo: (value: TChangeHandlerProps) => Promise<void>;
+  updatePageLogo: (value: ChangeHandlerPayload) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
@@ -451,7 +451,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     }
   };
 
-  updatePageLogo = async (value: TChangeHandlerProps) => {
+  updatePageLogo = async (value: ChangeHandlerPayload) => {
     const originalLogoProps = { ...this.logo_props };
     try {
       let logoValue = {};

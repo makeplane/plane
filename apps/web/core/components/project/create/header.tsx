@@ -9,7 +9,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane types
 import type { IProject } from "@plane/types";
@@ -107,9 +107,7 @@ function ProjectCreateHeader(props: Props) {
                 setIsOpen(false);
               }}
               defaultIconColor={value?.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
-              defaultOpen={
-                value?.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-              }
+              defaultOpen={value?.in_use && value.in_use === "emoji" ? "emoji" : "icon"}
             />
           )}
         />

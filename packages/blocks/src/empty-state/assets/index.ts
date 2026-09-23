@@ -7,6 +7,9 @@
 export * from "./asset-registry";
 export * from "./asset-types";
 export * from "./helper";
-export * from "./horizontal-stack";
-export * from "./illustration";
-export * from "./vertical-stack";
+
+// NOTE: The illustration component barrels (./horizontal-stack, ./illustration, ./vertical-stack)
+// are intentionally NOT re-exported here. They are heavy inline-SVG components consumed exclusively
+// through the lazily code-split registries in ./asset-registry. Re-exporting them from this public
+// entry would mark every illustration as a used export, defeating the code-splitting and pulling
+// all ~50 illustrations back into whichever chunk an empty-state component lands in.

@@ -22,6 +22,7 @@
     "./common": "./dist/common/index.js",
     "./dropdowns": "./dist/dropdowns/index.js",
     "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
+    "./emoji-icon-picker/data": "./dist/emoji-icon-picker/data.js",
     "./emoji-reaction": "./dist/emoji-reaction/index.js",
     "./empty-state": "./dist/empty-state/index.js",
     "./form-fields": "./dist/form-fields/index.js",

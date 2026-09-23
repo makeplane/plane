@@ -4,37 +4,66 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useCallback } from "react";
-import { Tabs } from "@base-ui/react";
-import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { useMemo, useCallback, useState } from "react";
+import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { Tab, Tabs, TabsList, TabsPanel } from "@makeplane/propel/components/tabs";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+import type { Placement, Side, Align } from "../utils/placement";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import { EmojiRoot } from "./emoji/emoji";
-import type { TCustomEmojiPicker } from "./helper";
-import { emojiToString, EmojiIconPickerTypes } from "./helper";
+import type { ChangeHandlerPayload, EmojiIconPickerType } from "./helper";
+import { emojiToString } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
-export function EmojiPicker(props: TCustomEmojiPicker) {
+export type EmojiPickerProps = {
+  isOpen: boolean;
+  handleToggle: (value: boolean) => void;
+  buttonClassName?: string;
+  className?: string;
+  closeOnSelect?: boolean;
+  defaultIconColor?: string;
+  defaultOpen?: EmojiIconPickerType;
+  disabled?: boolean;
+  dropdownClassName?: string;
+  label: React.ReactNode;
+  onChange: (value: ChangeHandlerPayload) => void;
+  placement?: Placement;
+  searchDisabled?: boolean;
+  searchPlaceholder?: string;
+  iconType?: "material" | "lucide";
+  theme?: "light" | "dark";
+  side?: Side;
+  align?: Align;
+  showEmojiTab?: boolean;
+};
+
+export function EmojiPicker(props: EmojiPickerProps) {
   const {
     isOpen,
     handleToggle,
     buttonClassName,
     closeOnSelect = true,
     defaultIconColor = "#6d7b8a",
-    defaultOpen = EmojiIconPickerTypes.EMOJI,
+    defaultOpen = "emoji",
     disabled = false,
     dropdownClassName,
     label,
     onChange,
     placement = "bottom-start",
     searchDisabled = false,
-    searchPlaceholder = "Search",
+    searchPlaceholder,
     iconType = "lucide",
     side = "bottom",
     align = "start",
+    showEmojiTab = true,
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
-  // side and align calculations
+  const [searchQuery, setSearchQuery] = useState("");
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t("common.search.label");
+
   const { finalSide, finalAlign } = useMemo(() => {
     if (placement) {
       const converted = convertPlacementToSideAndAlign(placement);
@@ -43,42 +72,54 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
     return { finalSide: side, finalAlign: align };
   }, [placement, side, align]);
 
+  const handleOpenChange = useCallback(
+    (value: boolean) => {
+      if (!value) setSearchQuery("");
+      handleToggle(value);
+    },
+    [handleToggle]
+  );
+
   const handleEmojiChange = useCallback(
     (value: string) => {
       onChange({
-        type: EmojiIconPickerTypes.EMOJI,
+        type: "emoji",
         value: emojiToString(value),
       });
-      if (closeOnSelect) handleToggle(false);
+      if (closeOnSelect) handleOpenChange(false);
     },
-    [onChange, closeOnSelect, handleToggle]
+    [onChange, closeOnSelect, handleOpenChange]
   );
 
   const handleIconChange = useCallback(
     (value: { name: string; color: string }) => {
       onChange({
-        type: EmojiIconPickerTypes.ICON,
-        value: value,
+        type: "icon",
+        value,
       });
-      if (closeOnSelect) handleToggle(false);
+      if (closeOnSelect) handleOpenChange(false);
     },
-    [onChange, closeOnSelect, handleToggle]
+    [onChange, closeOnSelect, handleOpenChange]
   );
 
   const tabs = useMemo(
     () =>
       [
-        {
-          key: "emoji",
-          label: "Emoji",
-          content: (
-            <EmojiRoot
-              onChange={handleEmojiChange}
-              searchPlaceholder={searchPlaceholder}
-              searchDisabled={searchDisabled}
-            />
-          ),
-        },
+        showEmojiTab
+          ? {
+              key: "emoji",
+              label: "Emoji",
+              content: (
+                <EmojiRoot
+                  onChange={handleEmojiChange}
+                  searchPlaceholder={resolvedSearchPlaceholder}
+                  searchDisabled={searchDisabled}
+                  searchQuery={searchQuery}
+                  onSearchQueryChange={setSearchQuery}
+                />
+              ),
+            }
+          : null,
         {
           key: "icon",
           label: "Icon",
@@ -88,23 +129,34 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
               onChange={handleIconChange}
               searchDisabled={searchDisabled}
               iconType={iconType}
+              searchQuery={searchQuery}
+              onSearchQueryChange={setSearchQuery}
             />
           ),
         },
-      ].map((tab) => ({
-        key: tab.key,
-        label: tab.label,
-        content: tab.content,
-      })),
-    [defaultIconColor, searchDisabled, searchPlaceholder, iconType, handleEmojiChange, handleIconChange]
+      ].filter((tab): tab is NonNullable<typeof tab> => !!tab),
+    [
+      defaultIconColor,
+      searchDisabled,
+      resolvedSearchPlaceholder,
+      iconType,
+      searchQuery,
+      handleEmojiChange,
+      handleIconChange,
+      showEmojiTab,
+    ]
   );
 
   return (
-    <Popover open={isOpen} onOpenChange={handleToggle}>
-      <PopoverTrigger render={<button className={cn("outline-none", buttonClassName)} />} disabled={disabled}>
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
+      <PopoverTrigger
+        disabled={disabled}
+        render={<button type="button" className={cn("outline-none", buttonClassName)} disabled={disabled} />}
+      >
         {label}
       </PopoverTrigger>
       <PopoverContent
+        variant="rich"
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
@@ -117,38 +169,31 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
             return;
           }
           if (e.key === "Escape") {
-            handleToggle(false);
+            handleOpenChange(false);
             return;
           }
           e.stopPropagation();
         }}
       >
-        <div
-          className={cn("w-80 overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1", dropdownClassName)}
-        >
-          <Tabs.Root defaultValue={defaultOpen}>
-            <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
+        <div className={cn("flex min-h-0 flex-col", dropdownClassName)}>
+          <Tabs variant="contained" stretch="full" defaultValue={showEmojiTab ? defaultOpen : "icon"}>
+            {tabs.length > 1 && (
+              <TabsList>
+                {tabs.map((tab) => (
+                  <Tab key={tab.key} value={tab.key} label={tab.label} />
+                ))}
+              </TabsList>
+            )}
+            <PopoverBody tabIndex={0}>
               {tabs.map((tab) => (
-                <Tabs.Tab
-                  key={tab.key}
-                  value={tab.key}
-                  className={({ selected }) =>
-                    cn("rounded-sm border border-subtle bg-layer-1 py-1 text-13", {
-                      "bg-surface-1 text-primary": selected,
-                      "text-placeholder hover:bg-layer-1/60 hover:text-tertiary": !selected,
-                    })
-                  }
-                >
-                  {tab.label}
-                </Tabs.Tab>
+                // The icon tab has no inner scrollport (unlike the emoji tab's frimousse
+                // viewport), so the panel itself scrolls.
+                <TabsPanel key={tab.key} value={tab.key}>
+                  <div className="h-80 overflow-y-auto">{tab.content}</div>
+                </TabsPanel>
               ))}
-            </Tabs.List>
-            {tabs.map((tab) => (
-              <Tabs.Panel key={tab.key} value={tab.key} className="h-80 overflow-hidden overflow-y-auto">
-                {tab.content}
-              </Tabs.Panel>
-            ))}
-          </Tabs.Root>
+            </PopoverBody>
+          </Tabs>
         </div>
       </PopoverContent>
     </Popover>

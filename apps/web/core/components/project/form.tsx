@@ -14,7 +14,7 @@ import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@makeplane/propel/components/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
@@ -237,9 +237,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     setIsOpen(false);
                   }}
                   defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
-                  defaultOpen={
-                    value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-                  }
+                  defaultOpen={value.in_use && value.in_use === "emoji" ? "emoji" : "icon"}
                   disabled={!isAdmin}
                 />
               )}

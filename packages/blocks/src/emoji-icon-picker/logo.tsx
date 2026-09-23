@@ -8,19 +8,19 @@
 // should be after the imported here rather than some below helper functions as it is in the original file
 
 import useFontFaceObserver from "use-font-face-observer";
-// plane imports
-import type { TLogoProps } from "@plane/types";
+// types
+import type { Logo as LogoType } from "../types";
 // local imports
 import { getEmojiSize, stringToEmoji } from "./helper";
 import { LUCIDE_ICONS_LIST } from "./lucide-icons";
 
-type Props = {
-  logo?: TLogoProps;
+export type LogoProps = {
+  logo?: LogoType;
   size?: number;
   type?: "lucide" | "material";
 };
 
-export function Logo({ logo, size = 16, type = "material" }: Props) {
+export function Logo({ logo, size = 16, type = "material" }: LogoProps) {
   const isMaterialSymbolsFontLoaded = useFontFaceObserver([
     {
       family: "Material Symbols Rounded",

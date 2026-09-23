@@ -8,4 +8,5 @@ export * from "./emoji-picker";
 export * from "./helper";
 export * from "./logo";
 export * from "./lucide-icons";
+export { getRandomIconName } from "./random-icon";
 export * from "./material-icons";

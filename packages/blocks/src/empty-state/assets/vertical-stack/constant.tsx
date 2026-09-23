@@ -15,17 +15,21 @@ import {
   DraftVerticalStackIllustration,
   EpicVerticalStackIllustration,
   Error404VerticalStackIllustration,
+  InboxVerticalStackIllustration,
   InitiativeVerticalStackIllustration,
   InvalidLinkVerticalStackIllustration,
   ModuleVerticalStackIllustration,
   NoAccessVerticalStackIllustration,
   PageVerticalStackIllustration,
+  PropertyVerticalStackIllustration,
   ProjectVerticalStackIllustration,
   ServerErrorVerticalStackIllustration,
+  StickiesVerticalStackIllustration,
   TeamspaceVerticalStackIllustration,
   ViewVerticalStackIllustration,
   WorkItemVerticalStackIllustration,
-} from ".";
+  WorkflowVerticalStackIllustration,
+} from "./";
 
 export const VerticalStackAssetsMap = [
   {
@@ -69,6 +73,10 @@ export const VerticalStackAssetsMap = [
     title: "Error404VerticalStackIllustration",
   },
   {
+    asset: <InboxVerticalStackIllustration />,
+    title: "InboxVerticalStackIllustration",
+  },
+  {
     asset: <InitiativeVerticalStackIllustration />,
     title: "InitiativeVerticalStackIllustration",
   },
@@ -89,12 +97,20 @@ export const VerticalStackAssetsMap = [
     title: "PageVerticalStackIllustration",
   },
   {
+    asset: <PropertyVerticalStackIllustration />,
+    title: "PropertyVerticalStackIllustration",
+  },
+  {
     asset: <ProjectVerticalStackIllustration />,
     title: "ProjectVerticalStackIllustration",
   },
   {
     asset: <ServerErrorVerticalStackIllustration />,
     title: "ServerErrorVerticalStackIllustration",
+  },
+  {
+    asset: <StickiesVerticalStackIllustration />,
+    title: "StickiesVerticalStackIllustration",
   },
   {
     asset: <TeamspaceVerticalStackIllustration />,
@@ -107,5 +123,9 @@ export const VerticalStackAssetsMap = [
   {
     asset: <WorkItemVerticalStackIllustration />,
     title: "WorkItemVerticalStackIllustration",
+  },
+  {
+    asset: <WorkflowVerticalStackIllustration />,
+    title: "WorkflowVerticalStackIllustration",
   },
 ];

@@ -4,45 +4,43 @@
  * See the LICENSE file for details.
  */
 
+import { Icon as PropelIcon } from "@makeplane/propel/components/icon";
 import * as React from "react";
-import { AnimatedCounter } from "../animated-counter";
+import { AnimatedCounter } from "./animated-counter";
 import { stringToEmoji } from "../emoji-icon-picker";
 import { ReactionOutline } from "@makeplane/propel/icons";
-import { Icon } from "@makeplane/propel/components/icon";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 
-export interface EmojiReactionType {
+export type EmojiReactionType = {
   emoji: string;
   count: number;
   reacted?: boolean;
   users?: string[];
-}
+};
 
-export interface EmojiReactionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export type EmojiReactionProps = React.ComponentPropsWithRef<"button"> & {
   emoji: string;
   count: number;
   reacted?: boolean;
   users?: string[];
   onReactionClick?: (emoji: string) => void;
-  className?: string;
   showCount?: boolean;
-}
+};
 
-export interface EmojiReactionGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+export type EmojiReactionGroupProps = React.ComponentPropsWithRef<"div"> & {
   reactions: EmojiReactionType[];
   onReactionClick?: (emoji: string) => void;
   onAddReaction?: () => void;
-  className?: string;
   showAddButton?: boolean;
   maxDisplayUsers?: number;
-}
+};
 
-export interface EmojiReactionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export type EmojiReactionButtonProps = React.ComponentPropsWithRef<"button"> & {
   onAddReaction?: () => void;
-  className?: string;
-}
+};
 
 const EmojiReaction = React.forwardRef(function EmojiReaction(
   {
@@ -61,13 +59,17 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
     onReactionClick?.(emoji);
   };
 
-  const tooltipLabel = React.useMemo(() => {
+  // propel: Tooltip's `label` is a string, so the old two-line markup is flattened
+  const tooltipContent = React.useMemo(() => {
     if (!users.length) return null;
 
     const displayUsers = users.slice(0, 5);
     const remainingCount = users.length - displayUsers.length;
 
-    return `${stringToEmoji(emoji)}: ${displayUsers.join(", ")}${remainingCount > 0 ? ` and ${remainingCount} more` : ""}`;
+    return [
+      stringToEmoji(emoji),
+      `${displayUsers.join(", ")}${remainingCount > 0 ? ` and ${remainingCount} more` : ""}`,
+    ].join(": ");
   }, [emoji, users]);
 
   const button = (
@@ -75,7 +77,7 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
       ref={ref}
       onClick={handleClick}
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full border px-1.5 text-11 transition-all duration-200",
+        "inline-flex items-center gap-0.5 rounded-full border px-1.5 text-caption-sm-regular transition-all duration-200",
         reacted
           ? "border-accent-strong bg-accent-primary/10 text-accent-primary"
           : "border-subtle bg-surface-1 text-tertiary hover:border-strong hover:bg-surface-2",
@@ -83,14 +85,16 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
       )}
       {...props}
     >
-      <span className="leading-unset text-14">{emoji}</span>
-      {showCount && count > 0 && <AnimatedCounter count={count} size="sm" className="text-11 leading-normal" />}
+      <span className="leading-unset text-body-sm-regular">{emoji}</span>
+      {showCount && count > 0 && (
+        <AnimatedCounter count={count} size="sm" className="text-caption-sm-regular leading-normal" />
+      )}
     </button>
   );
 
-  if (tooltipLabel && users.length > 0) {
+  if (tooltipContent && users.length > 0) {
     return (
-      <Tooltip label={tooltipLabel} layout="stacked">
+      <Tooltip label={tooltipContent} layout="stacked">
         {button}
       </Tooltip>
     );
@@ -103,18 +107,24 @@ const EmojiReactionButton = React.forwardRef(function EmojiReactionButton(
   { onAddReaction, className, ...props }: EmojiReactionButtonProps,
   ref: React.ForwardedRef<HTMLButtonElement>
 ) {
+  // plane hooks
+  const { t } = useTranslation();
+
   return (
-    <Tooltip label="Add reaction">
-      <IconButton
-        ref={ref}
-        render={<button className={className} />}
-        aria-label="Add reaction"
-        icon={<Icon icon={ReactionOutline} />}
-        variant="ghost"
-        size="sm"
-        onClick={onAddReaction}
-        {...props}
-      />
+    // propel: `IconButton` takes an icon ELEMENT, a required `aria-label` and no className —
+    // the caller's class rides a wrapper.
+    <Tooltip label={t("common.actions.add_reaction")}>
+      <span className={className}>
+        <IconButton
+          ref={ref}
+          icon={<PropelIcon icon={<ReactionOutline className="size-3.5" />} />}
+          variant="ghost"
+          size="xs"
+          aria-label={t("common.actions.add_reaction")}
+          onClick={onAddReaction}
+          {...props}
+        />
+      </span>
     </Tooltip>
   );
 });

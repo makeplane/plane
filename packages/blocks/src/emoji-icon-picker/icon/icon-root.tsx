@@ -5,8 +5,8 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { InfoIcon } from "lucide-react";
-import { SearchOutline } from "@makeplane/propel/icons";
+
+import { SearchOutline, InfoOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
@@ -17,16 +17,19 @@ type IconRootProps = {
   defaultColor: string;
   searchDisabled?: boolean;
   iconType: "material" | "lucide";
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
 };
 
 export function IconRoot(props: IconRootProps) {
-  const { defaultColor, onChange, searchDisabled = false, iconType } = props;
+  const { defaultColor, onChange, searchDisabled = false, iconType, searchQuery, onSearchQueryChange } = props;
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
   const [showHexInput, setShowHexInput] = useState(false);
   const [hexValue, setHexValue] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [query, setQuery] = useState("");
+  // use shared search query from parent
+  const query = searchQuery ?? "";
 
   useEffect(() => {
     if (DEFAULT_COLORS.includes(defaultColor.toLowerCase() ?? "")) setShowHexInput(false);
@@ -38,11 +41,12 @@ export function IconRoot(props: IconRootProps) {
 
   return (
     <>
-      <div className="sticky top-0 flex flex-col bg-surface-1">
+      {/* Sticky inside the tab panel's scrollport — needs an opaque background or icons scroll underneath. */}
+      <div className="sticky top-0 flex flex-col bg-layer-2">
         {!searchDisabled && (
           <div className="flex w-full items-center px-2 py-[15px]">
             <div
-              className={cn("relative flex h-10 w-full items-center gap-2 rounded-lg border bg-surface-2 px-[30px]", {
+              className={cn("relative flex h-10 w-full items-center gap-2 rounded-lg border px-[30px]", {
                 "border-accent-strong": isInputFocused,
                 "border-transparent": !isInputFocused,
               })}
@@ -54,8 +58,8 @@ export function IconRoot(props: IconRootProps) {
               <input
                 placeholder="Search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="block h-full w-full rounded-md border-[0.5px] border-none border-subtle bg-transparent p-0 px-3 py-2 text-16 placeholder-(--text-color-placeholder) focus:outline-none"
+                onChange={(e) => onSearchQueryChange?.(e.target.value)}
+                className="block h-full w-full rounded-md border-[0.5px] border-none border-subtle bg-transparent p-0 px-3 py-2 text-body-md-regular placeholder-(--text-color-placeholder) focus:outline-none"
               />
             </div>
           </div>
@@ -69,8 +73,8 @@ export function IconRoot(props: IconRootProps) {
                   backgroundColor: `#${hexValue}`,
                 }}
               />
-              <span className="flex-shrink-0 text-11 text-tertiary">HEX</span>
-              <span className="-mr-1 flex-shrink-0 text-11 text-secondary">#</span>
+              <span className="flex-shrink-0 text-caption-sm-regular text-tertiary">HEX</span>
+              <span className="-mr-1 flex-shrink-0 text-caption-sm-regular text-secondary">#</span>
               <input
                 type="text"
                 value={hexValue}
@@ -79,7 +83,7 @@ export function IconRoot(props: IconRootProps) {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="block flex-grow rounded-sm border-[0.5px] border-none border-subtle bg-transparent px-3 py-2 pl-0 text-11 text-secondary placeholder-(--text-color-placeholder) ring-0 focus:outline-none"
+                className="block flex-grow rounded-sm border-[0.5px] border-none border-subtle bg-transparent px-3 py-2 pl-0 text-caption-sm-regular text-secondary placeholder-(--text-color-placeholder) ring-0 focus:outline-none"
                 autoFocus
               />
             </div>
@@ -111,13 +115,13 @@ export function IconRoot(props: IconRootProps) {
             {showHexInput ? (
               <span className="h-4 w-4 rounded-full conical-gradient" />
             ) : (
-              <span className="grid place-items-center text-10 text-tertiary">#</span>
+              <span className="grid place-items-center text-caption-xs-regular text-tertiary">#</span>
             )}
           </button>
         </div>
         <div className="flex h-6 w-full items-center gap-2 py-1 pr-3 pl-4">
-          <InfoIcon className="h-3 w-3" />
-          <p className="text-11"> Colors will be adjusted to ensure sufficient contrast.</p>
+          <InfoOutline className="h-3 w-3" />
+          <p className="text-caption-sm-regular"> Colors will be adjusted to ensure sufficient contrast.</p>
         </div>
       </div>
       <div className="mt-2 grid grid-cols-8 justify-items-center gap-1 px-2.5">

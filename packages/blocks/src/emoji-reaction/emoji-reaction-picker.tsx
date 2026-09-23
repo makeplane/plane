@@ -4,15 +4,16 @@
  * See the LICENSE file for details.
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { EmojiRoot } from "../emoji-icon-picker/emoji/emoji";
 import { emojiToString } from "../emoji-icon-picker/helper";
-import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { Popover, PopoverBody, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
-import type { TPlacement, TSide, TAlign } from "../utils/placement";
+import type { Placement, Side, Align } from "../utils/placement";
 
-export interface EmojiReactionPickerProps {
+export type EmojiReactionPickerProps = {
   isOpen: boolean;
   handleToggle: (value: boolean) => void;
   buttonClassName?: string;
@@ -21,12 +22,12 @@ export interface EmojiReactionPickerProps {
   dropdownClassName?: string;
   label: React.ReactNode;
   onChange: (emoji: string) => void;
-  placement?: TPlacement;
+  placement?: Placement;
   searchDisabled?: boolean;
   searchPlaceholder?: string;
-  side?: TSide;
-  align?: TAlign;
-}
+  side?: Side;
+  align?: Align;
+};
 
 export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
   const {
@@ -40,10 +41,21 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
     onChange,
     placement = "bottom-start",
     searchDisabled = false,
-    searchPlaceholder = "Search",
+    searchPlaceholder,
     side = "bottom",
     align = "start",
   } = props;
+  // plane hooks
+  const { t } = useTranslation();
+
+  // local search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t("common.search.label");
+
+  // clear search when picker closes
+  useEffect(() => {
+    if (!isOpen) setSearchQuery("");
+  }, [isOpen]);
 
   // side and align calculations
   const { finalSide, finalAlign } = useMemo(() => {
@@ -65,22 +77,30 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <PopoverTrigger render={<button className={cn("outline-none", buttonClassName)} />} disabled={disabled}>
+      <PopoverTrigger
+        disabled={disabled}
+        render={<button type="button" className={cn("outline-none", buttonClassName)} disabled={disabled} />}
+      >
         {label}
       </PopoverTrigger>
-      <PopoverContent side={finalSide} align={finalAlign} sideOffset={8} data-prevent-outside-click="true">
-        <div
-          className={cn(
-            "h-80 w-80 overflow-hidden overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1",
-            dropdownClassName
-          )}
-        >
-          <EmojiRoot
-            onChange={handleEmojiChange}
-            searchPlaceholder={searchPlaceholder}
-            searchDisabled={searchDisabled}
-          />
-        </div>
+      <PopoverContent
+        variant="rich"
+        side={finalSide}
+        align={finalAlign}
+        sideOffset={8}
+        data-prevent-outside-click="true"
+      >
+        <PopoverBody tabIndex={0}>
+          <div className={cn("h-80", dropdownClassName)}>
+            <EmojiRoot
+              onChange={handleEmojiChange}
+              searchPlaceholder={resolvedSearchPlaceholder}
+              searchDisabled={searchDisabled}
+              searchQuery={searchQuery}
+              onSearchQueryChange={setSearchQuery}
+            />
+          </div>
+        </PopoverBody>
       </PopoverContent>
     </Popover>
   );

@@ -8,7 +8,7 @@ import React from "react";
 import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 import { EmptyStateCompact } from "./compact-empty-state";
 import { EmptyStateDetailed } from "./detailed-empty-state";
-import type { BaseEmptyStateCommonProps } from "./types";
+import type { ActionButton } from "./types";
 
 /**
  * @deprecated Use EmptyStateCompact or EmptyStateDetailed directly with assetKey for better type safety
@@ -21,19 +21,19 @@ import type { BaseEmptyStateCommonProps } from "./types";
 
 type EmptyStateType = "detailed" | "simple";
 
-export interface EmptyStateProps {
+export type EmptyStateProps = {
   /** @deprecated Use assetKey instead */
   asset?: React.ReactNode;
   title?: string;
   description?: string;
-  actions?: BaseEmptyStateCommonProps["actions"];
+  actions?: ActionButton[];
   className?: string;
   rootClassName?: string;
   assetClassName?: string;
   type?: EmptyStateType;
   /** Type-safe asset key (use instead of asset) */
   assetKey?: CompactAssetType | DetailedAssetType;
-}
+};
 
 export function EmptyState({
   type = "detailed",

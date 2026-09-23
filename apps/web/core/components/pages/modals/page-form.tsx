@@ -13,7 +13,7 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/blocks/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
 import { GlobeOutline, LockOutline, PagesOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/blocks/icons";
 import type { TPage } from "@plane/types";
@@ -108,11 +108,7 @@ export function PageForm(props: Props) {
                 ? formData?.logo_props?.icon?.color
                 : undefined
             }
-            defaultOpen={
-              formData?.logo_props?.in_use && formData?.logo_props?.in_use === "emoji"
-                ? EmojiIconPickerTypes.EMOJI
-                : EmojiIconPickerTypes.ICON
-            }
+            defaultOpen={formData?.logo_props?.in_use && formData?.logo_props?.in_use === "emoji" ? "emoji" : "icon"}
           />
           <div className="flew-grow w-full space-y-1">
             <InputGroup size="2xl">

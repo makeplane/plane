@@ -5,9 +5,12 @@
  */
 
 import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
-import type { TIllustrationAssetProps } from "../helper";
 
-export function TeamspaceVerticalStackIllustration({ className }: TIllustrationAssetProps) {
+export type TeamspaceVerticalStackIllustrationProps = {
+  className?: string;
+};
+
+export function TeamspaceVerticalStackIllustration({ className }: TeamspaceVerticalStackIllustrationProps) {
   return (
     <svg
       width="162"

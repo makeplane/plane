@@ -4,50 +4,22 @@
  * See the LICENSE file for details.
  */
 
-import type { TPlacement, TSide, TAlign } from "../utils/placement";
-
-export const EmojiIconPickerTypes = {
-  EMOJI: "emoji",
-  ICON: "icon",
-} as const;
-
-export type TChangeHandlerProps =
+export type ChangeHandlerPayload =
   | {
-      type: typeof EmojiIconPickerTypes.EMOJI;
+      type: "emoji";
       value: string;
     }
   | {
-      type: typeof EmojiIconPickerTypes.ICON;
+      type: "icon";
       value: {
         name: string;
         color: string;
       };
     };
 
-export type TEmojiIconPickerTypes = typeof EmojiIconPickerTypes.EMOJI | typeof EmojiIconPickerTypes.ICON;
+export type EmojiIconPickerType = "emoji" | "icon";
 
-export type TCustomEmojiPicker = {
-  isOpen: boolean;
-  handleToggle: (value: boolean) => void;
-  buttonClassName?: string;
-  className?: string;
-  closeOnSelect?: boolean;
-  defaultIconColor?: string;
-  defaultOpen?: TEmojiIconPickerTypes;
-  disabled?: boolean;
-  dropdownClassName?: string;
-  label: React.ReactNode;
-  onChange: (value: TChangeHandlerProps) => void;
-  placement?: TPlacement;
-  searchDisabled?: boolean;
-  searchPlaceholder?: string;
-  iconType?: "material" | "lucide";
-  theme?: "light" | "dark";
-  side?: TSide;
-  align?: TAlign;
-};
-
-export type TIconsListProps = {
+export type IconsListConfig = {
   defaultColor: string;
   onChange: (val: { name: string; color: string }) => void;
   searchDisabled?: boolean;

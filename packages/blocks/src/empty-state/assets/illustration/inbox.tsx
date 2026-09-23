@@ -5,9 +5,12 @@
  */
 
 import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
-import type { TIllustrationAssetProps } from "../helper";
 
-export function InboxIllustration({ className }: TIllustrationAssetProps) {
+export type InboxIllustrationProps = {
+  className?: string;
+};
+
+export function InboxIllustration({ className }: InboxIllustrationProps) {
   return (
     <svg
       width="100"

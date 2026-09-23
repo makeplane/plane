@@ -5,9 +5,12 @@
  */
 
 import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
-import type { TIllustrationAssetProps } from "../helper";
 
-export function SearchIllustration({ className, ...rest }: TIllustrationAssetProps) {
+export type SearchIllustrationProps = {
+  className?: string;
+};
+
+export function SearchIllustration({ className, ...rest }: SearchIllustrationProps) {
   return (
     <svg
       width="161"

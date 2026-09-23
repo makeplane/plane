@@ -7,16 +7,16 @@
 import { useState, useEffect } from "react";
 import { cn } from "@plane/utils";
 
-export interface AnimatedCounterProps {
+export type AnimatedCounterProps = {
   count: number;
   className?: string;
   size?: "sm" | "md" | "lg";
-}
+};
 
 const sizeClasses = {
-  sm: "text-11",
-  md: "text-13",
-  lg: "text-14",
+  sm: "text-caption-sm-regular",
+  md: "text-body-xs-regular",
+  lg: "text-body-sm-regular",
 };
 
 export function AnimatedCounter({ count, className, size = "md" }: AnimatedCounterProps) {

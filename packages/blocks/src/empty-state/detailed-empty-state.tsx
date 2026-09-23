@@ -4,12 +4,27 @@
  * See the LICENSE file for details.
  */
 
+import { Suspense } from "react";
 // local imports
-import { Button, getButtonVariant } from "./button";
+import { EmptyStateActionButton } from "./action-button";
 import { cn } from "@plane/utils";
+import type { Align } from "../utils/placement";
 import { getDetailedAsset } from "./assets/asset-registry";
-import type { DetailedAssetType } from "./assets/asset-types";
-import type { BaseEmptyStateCommonProps } from "./types";
+import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
+import type { ActionButton } from "./types";
+
+export type EmptyStateDetailedProps = {
+  title?: string;
+  actions?: ActionButton[];
+  className?: string;
+  rootClassName?: string;
+  assetClassName?: string;
+  description?: string;
+  assetKey?: CompactAssetType | DetailedAssetType;
+  asset?: React.ReactNode;
+  align?: Align;
+  customButton?: React.ReactNode;
+};
 
 export function EmptyStateDetailed({
   asset,
@@ -22,7 +37,7 @@ export function EmptyStateDetailed({
   assetClassName,
   customButton,
   align = "start",
-}: BaseEmptyStateCommonProps) {
+}: EmptyStateDetailedProps) {
   // Determine which asset to use: assetKey takes precedence, fallback to custom asset
   const resolvedAsset = assetKey ? getDetailedAsset(assetKey as DetailedAssetType, assetClassName) : asset;
 
@@ -37,7 +52,11 @@ export function EmptyStateDetailed({
           className
         )}
       >
-        {resolvedAsset && <div className="flex max-w-40 items-center">{resolvedAsset}</div>}
+        {resolvedAsset && (
+          <div className="flex max-w-40 items-center">
+            <Suspense fallback={null}>{resolvedAsset}</Suspense>
+          </div>
+        )}
 
         <div
           className={cn("flex flex-col gap-4", {
@@ -46,8 +65,8 @@ export function EmptyStateDetailed({
         >
           {(title || description) && (
             <div className="flex flex-col gap-2">
-              {title && <h3 className="text-16 leading-7 font-semibold text-primary">{title}</h3>}
-              {description && <p className="text-13 leading-5 text-tertiary">{description}</p>}
+              {title && <h3 className="text-h6-semibold leading-7 text-primary">{title}</h3>}
+              {description && <p className="text-body-xs-regular leading-5 text-tertiary">{description}</p>}
             </div>
           )}
 
@@ -56,19 +75,10 @@ export function EmptyStateDetailed({
             : actions &&
               actions.length > 0 && (
                 <div className="flex flex-col gap-4 sm:flex-row">
-                  {actions.map((action, index) => {
-                    const { label, variant, ...rest } = action;
-                    return (
-                      <Button
-                        key={index}
-                        variant={getButtonVariant(variant)}
-                        size="lg"
-                        stretch="auto"
-                        label={label}
-                        {...rest}
-                      />
-                    );
-                  })}
+                  {actions.map((action, index) => (
+                    // propel: old `xl` (32px) is Propel's `lg`
+                    <EmptyStateActionButton key={index} action={action} size="lg" />
+                  ))}
                 </div>
               )}
         </div>

@@ -5,9 +5,12 @@
  */
 
 import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
-import type { TIllustrationAssetProps } from "../helper";
 
-export function CycleVerticalStackIllustration({ className }: TIllustrationAssetProps) {
+export type CycleVerticalStackIllustrationProps = {
+  className?: string;
+};
+
+export function CycleVerticalStackIllustration({ className }: CycleVerticalStackIllustrationProps) {
   return (
     <svg
       width="160"

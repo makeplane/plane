@@ -160,7 +160,9 @@ import {
   ToggleLeft,
   Search,
   User,
+  Sigma,
 } from "lucide-react";
+import { EpicOutline } from "@makeplane/propel/icons";
 
 export const LUCIDE_ICONS_LIST = [
   { name: "Activity", element: Activity },
@@ -246,6 +248,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Edit", element: Edit },
   { name: "Edit2", element: Edit2 },
   { name: "Edit3", element: Edit3 },
+  { name: "Epic", element: EpicOutline },
   { name: "ExternalLink", element: ExternalLink },
   { name: "Eye", element: Eye },
   { name: "EyeOff", element: EyeOff },
@@ -315,6 +318,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "MinusCircle", element: MinusCircle },
   { name: "MinusSquare", element: MinusSquare },
   { name: "Search", element: Search },
+  { name: "Formula", element: Sigma },
   { name: "ToggleLeft", element: ToggleLeft },
   { name: "User", element: User },
   { name: "UsersRound", element: UsersRound },
