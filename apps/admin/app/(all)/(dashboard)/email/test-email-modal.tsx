@@ -81,7 +81,7 @@ export function SendTestEmailModal(props: Props) {
         if (!open) resetState();
       }}
     >
-      <DialogContent size="md">
+      <DialogContent size="sm">
         <DialogMain>
           <DialogHeader>
             <DialogHeading>
