@@ -42,6 +42,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
   // exactly one of the two panels is ever mounted, so both share the panel ref
   const isPeekOpen = isSidePeekOpen || isModalPeekOpen;
   const panelRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (anchor && peekId) {
@@ -89,6 +90,8 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
         return;
       }
       if (event.key !== "Tab" || !panelRef.current) return;
+      // Portalled popups opened from the panel manage their own focus.
+      if (isInsideNestedPopup(document.activeElement)) return;
 
       // Keep Tab/Shift+Tab confined to the panel, as the legacy modal Dialog did.
       const focusableElements = panelRef.current.querySelectorAll<HTMLElement>(
@@ -101,13 +104,15 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
 
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
-      // Focus starts on the panel itself (tabIndex={-1}), outside the tab order — treat it as a boundary too.
-      const isPanelFocused = document.activeElement === panelRef.current;
+      // Focus starts on the panel itself (tabIndex={-1}), outside the tab order — treat it as a boundary too,
+      // as well as focus that has escaped the panel (e.g. dropped to <body> when a focused child unmounted).
+      const isAtBoundary =
+        document.activeElement === panelRef.current || !panelRef.current.contains(document.activeElement);
 
-      if (event.shiftKey && (document.activeElement === firstElement || isPanelFocused)) {
+      if (event.shiftKey && (document.activeElement === firstElement || isAtBoundary)) {
         event.preventDefault();
         lastElement.focus();
-      } else if (!event.shiftKey && (document.activeElement === lastElement || isPanelFocused)) {
+      } else if (!event.shiftKey && (document.activeElement === lastElement || isAtBoundary)) {
         event.preventDefault();
         firstElement.focus();
       }
@@ -130,17 +135,25 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
     };
   }, [handleClose, isPeekOpen]);
 
-  // Move focus into the panel on open and back to whatever triggered it on close.
+  // Remember what had focus when the peek first opened and restore it when the peek closes. This is
+  // keyed on `isPeekOpen` only, so switching peek modes does not re-capture the (unmounting) mode select.
   useEffect(() => {
     if (!isPeekOpen) return;
 
-    const previouslyFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    panelRef.current?.focus();
+    previouslyFocusedElementRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     return () => {
-      previouslyFocusedElement?.focus();
+      previouslyFocusedElementRef.current?.focus();
+      previouslyFocusedElementRef.current = null;
     };
   }, [isPeekOpen]);
+
+  // Move focus into the panel on open and whenever the mounted panel changes (side <-> modal/full),
+  // as mounting each legacy Headless UI Dialog did; otherwise focus falls to <body> and escapes the trap.
+  useEffect(() => {
+    if (!isPeekOpen) return;
+    panelRef.current?.focus();
+  }, [isPeekOpen, isSidePeekOpen, peekMode]);
 
   const panelLabel = issueDetails?.name || t("common.work_item");
 
