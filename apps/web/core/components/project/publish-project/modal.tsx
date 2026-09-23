@@ -221,7 +221,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
             </DialogHeader>
 
             {/* content */}
-            <DialogBody tabIndex={0}>
+            <DialogBody>
               {fetchSettingsLoader ? (
                 <Loader className="space-y-4">
                   <Loader.Item height="30px" />

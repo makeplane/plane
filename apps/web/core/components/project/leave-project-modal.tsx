@@ -125,7 +125,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                 </DialogHeading>
               </div>
             </DialogHeader>
-            <DialogBody tabIndex={0}>
+            <DialogBody>
               <div className="flex flex-col gap-6">
                 <p className="text-13 leading-7 text-secondary">
                   Are you sure you want to leave the project -

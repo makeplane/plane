@@ -69,15 +69,19 @@ export function CreateProjectModal(props: Props) {
     >
       <DialogContent size="lg">
         {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
-          <CreateProjectForm
-            setToFavorite={setToFavorite}
-            workspaceSlug={workspaceSlug}
-            onClose={onClose}
-            updateCoverImageStatus={handleCoverImageStatusUpdate}
-            handleNextStep={handleNextStep}
-            data={data}
-            templateId={templateId}
-          />
+          // CreateProjectForm has no DialogBody scroller of its own yet, so this wrapper keeps the
+          // whole form (including the submit footer) reachable on short viewports.
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <CreateProjectForm
+              setToFavorite={setToFavorite}
+              workspaceSlug={workspaceSlug}
+              onClose={onClose}
+              updateCoverImageStatus={handleCoverImageStatusUpdate}
+              handleNextStep={handleNextStep}
+              data={data}
+              templateId={templateId}
+            />
+          </div>
         )}
         {currentStep === EProjectCreationSteps.FEATURE_SELECTION && (
           <ProjectFeatureUpdate projectId={createdProjectId} workspaceSlug={workspaceSlug} onClose={onClose} />

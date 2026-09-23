@@ -188,7 +188,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                 <DialogDescription>{t("project_settings.members.invite_members.sub_heading")}</DialogDescription>
               </DialogHeading>
             </DialogHeader>
-            <DialogBody tabIndex={0}>
+            <DialogBody>
               <div className="space-y-4">
                 {fields.map((field, index) => (
                   <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
