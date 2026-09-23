@@ -98,14 +98,14 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
               render={
                 <Button
                   variant="secondary"
-                  size="sm"
+                  size="lg"
                   stretch="auto"
                   render={<Link href={`/${workspace.slug}/settings`} />}
                 />
               }
               onClick={handleClose}
             >
-              <SettingsOutline className="size-3.5 shrink-0" />
+              <SettingsOutline className="size-4 shrink-0" />
               {t("settings")}
             </Menu.Item>
           )}
@@ -114,14 +114,14 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
               render={
                 <Button
                   variant="secondary"
-                  size="sm"
+                  size="lg"
                   stretch="auto"
                   render={<Link href={`/${workspace.slug}/settings/members`} />}
                 />
               }
               onClick={handleClose}
             >
-              <UserPlusOutline className="size-3.5 shrink-0" />
+              <UserPlusOutline className="size-4 shrink-0" />
               {t("project_settings.members.invite_members.title")}
             </Menu.Item>
           )}
