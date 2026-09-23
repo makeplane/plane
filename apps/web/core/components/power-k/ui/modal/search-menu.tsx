@@ -44,33 +44,50 @@ export function PowerKModalSearchMenu(props: Props) {
 
   useEffect(() => {
     if (activePage || !workspaceSlug) return;
-    setIsSearching(true);
 
-    if (debouncedSearchTerm) {
+    let isRequestActive = true;
+
+    setIsSearching(true);
+    setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
+    setResultsCount(0);
+
+    const hasSearchTerm = debouncedSearchTerm.trim() !== "";
+
+    if (hasSearchTerm) {
       workspaceService
         .searchWorkspace(workspaceSlug.toString(), {
           ...(projectId ? { project_id: projectId.toString() } : {}),
           search: debouncedSearchTerm,
           workspace_search: !projectId ? true : isWorkspaceLevel,
         })
-        // oxlint-disable-next-line no-shadow oxlint-disable-next-line promise/always-return
-        .then((results) => {
-          setResults(results);
-          const count = Object.keys(results.results).reduce(
-            (accumulator, key) => results.results[key as keyof typeof results.results]?.length + accumulator,
+        .then((nextResults) => {
+          if (!isRequestActive) return nextResults;
+
+          setResults(nextResults);
+          const count = Object.keys(nextResults.results).reduce(
+            (accumulator, key) => nextResults.results[key as keyof typeof nextResults.results]?.length + accumulator,
             0
           );
           setResultsCount(count);
+          return nextResults;
         })
         .catch(() => {
+          if (!isRequestActive) return;
+
           setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
           setResultsCount(0);
         })
-        .finally(() => setIsSearching(false));
+        .finally(() => {
+          if (isRequestActive) setIsSearching(false);
+        });
     } else {
       setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
       setIsSearching(false);
     }
+
+    return () => {
+      isRequestActive = false;
+    };
   }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, activePage]);
 
   if (activePage) return null;
@@ -109,7 +126,13 @@ export function PowerKModalSearchMenu(props: Props) {
         />
       )}
 
-      {searchTerm.trim() !== "" && <PowerKModalSearchResults closePalette={handleClosePalette} results={results} />}
+      {searchTerm.trim() !== "" && (
+        <PowerKModalSearchResults
+          closePalette={handleClosePalette}
+          results={results}
+          searchTerm={debouncedSearchTerm}
+        />
+      )}
     </>
   );
 }

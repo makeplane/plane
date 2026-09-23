@@ -17,6 +17,7 @@ type Props = {
   icon?: React.ComponentType<{ className?: string }>;
   iconNode?: React.ReactNode;
   isDisabled?: boolean;
+  isMultiline?: boolean;
   isSelected?: boolean;
   keySequence?: string;
   label: string | React.ReactNode;
@@ -26,12 +27,25 @@ type Props = {
 };
 
 export function PowerKModalCommandItem(props: Props) {
-  const { icon: Icon, iconNode, isDisabled, isSelected, keySequence, label, onSelect, shortcut, value } = props;
+  const {
+    icon: Icon,
+    iconNode,
+    isDisabled,
+    isMultiline = false,
+    isSelected,
+    keySequence,
+    label,
+    onSelect,
+    shortcut,
+    value,
+  } = props;
 
   return (
     <Command.Item value={value} onSelect={onSelect} className="focus:outline-none" disabled={isDisabled}>
       <div
-        className={cn("flex items-center gap-2 text-secondary", {
+        className={cn("flex min-w-0 flex-1 gap-2 text-secondary", {
+          "items-start": isMultiline,
+          "items-center": !isMultiline,
           "opacity-70": isDisabled,
         })}
       >
