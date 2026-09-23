@@ -153,15 +153,16 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </MenuContent>
             </Menu>
           ) : (
-            // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
-            <div
+            <button
+              type="button"
+              aria-label={t("common.add")}
               className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
               onClick={() => {
                 setIsOpen(true);
               }}
             >
               <AddOutline width={14} />
-            </div>
+            </button>
           ))}
 
         {isEpic ? (
