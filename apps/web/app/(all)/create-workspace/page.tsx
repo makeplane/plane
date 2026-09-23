@@ -10,7 +10,6 @@ import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { PlaneLogo } from "@plane/blocks/icons";
 import type { IWorkspace } from "@plane/types";
 // assets
@@ -40,6 +39,7 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
   });
   // derived values
   const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
+  const requestAccessLabel = t("workspace_creation.errors.creation_disabled.request_button");
 
   // methods
   const getMailtoHref = () => {
@@ -94,9 +94,16 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
                   label={t("common.go_back")}
                   onClick={() => router.back()}
                 />
-                <ButtonElement variant="secondary" size="sm" stretch="auto" render={<a href={getMailtoHref()} />}>
-                  {t("workspace_creation.errors.creation_disabled.request_button")}
-                </ButtonElement>
+                {/* Button chrome on a mailto link: the anchor carries the label as its own content (which
+                    takes precedence over Button's label slot) so it always has an accessible name. */}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  stretch="auto"
+                  nativeButton={false}
+                  render={<a href={getMailtoHref()}>{requestAccessLabel}</a>}
+                  label={requestAccessLabel}
+                />
               </div>
             </div>
           ) : (
