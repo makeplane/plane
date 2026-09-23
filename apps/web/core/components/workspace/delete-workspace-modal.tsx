@@ -6,12 +6,9 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import type { IWorkspace } from "@plane/types";
-// ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
-// constants
-// hooks
-
+// components
 import { DeleteWorkspaceForm } from "@/components/workspace/delete-workspace-form";
 
 type Props = {
@@ -24,8 +21,15 @@ export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal(props
   const { isOpen, data, onClose } = props;
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={() => onClose()} position={EModalPosition.CENTER} width={EModalWidth.XL}>
-      <DeleteWorkspaceForm data={data} onClose={onClose} />
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent size="sm">
+        <DeleteWorkspaceForm data={data} onClose={onClose} />
+      </DialogContent>
+    </Dialog>
   );
 });

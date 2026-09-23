@@ -13,11 +13,13 @@ import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseOutline } from "@makeplane/propel/icons";
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import type { InvitationFormValues } from "@/hooks/use-workspace-invitation";
+
+type TRoleOption = { key: number; label: string };
 
 type TInvitationFieldsProps = {
   workspaceSlug: string;
@@ -43,6 +45,10 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   const { workspaceInfoBySlug } = useUserPermissions();
   // derived values
   const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
+  // A member can only invite at or below their own role.
+  const roleOptions: TRoleOption[] = Object.entries(ROLE)
+    .map(([key, label]) => ({ key: parseInt(key), label }))
+    .filter((role) => !!currentWorkspaceRole && currentWorkspaceRole >= role.key);
 
   return (
     <div className={cn("mb-3 space-y-4", className)}>
@@ -94,22 +100,23 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                 name={`emails.${index}.role`}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
-                    onChange={onChange}
-                    className="w-24 flex-grow"
-                    input
-                  >
-                    {Object.entries(ROLE).map(([key, value]) => {
-                      if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
-                        return (
-                          <CustomSelect.Option key={key} value={parseInt(key)}>
-                            {value}
-                          </CustomSelect.Option>
-                        );
-                    })}
-                  </CustomSelect>
+                  <div className="w-24 grow">
+                    <Select<TRoleOption>
+                      value={roleOptions.find((role) => role.key === value) ?? null}
+                      onChange={(val) => onChange(Number(val))}
+                      getValues={() => roleOptions}
+                      getOptionValue={(role) => String(role.key)}
+                      getOptionLabel={(role) => role.label}
+                      showSearch={false}
+                      pinSelected={false}
+                    >
+                      <Select.Trigger<TRoleOption> variant="select-2xl">
+                        <span className="min-w-0 flex-1 truncate text-left text-caption-sm-regular sm:text-body-xs-regular">
+                          {ROLE[value]}
+                        </span>
+                      </Select.Trigger>
+                    </Select>
+                  </div>
                 )}
               />
             </div>
