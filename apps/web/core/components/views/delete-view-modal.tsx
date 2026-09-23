@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { IProjectView } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // hooks
 import { useProjectView } from "@/hooks/store/use-project-view";
 
@@ -60,7 +60,7 @@ export const DeleteProjectViewModal = observer(function DeleteProjectViewModal(p
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDeleteView}
       isSubmitting={isDeleteLoading}

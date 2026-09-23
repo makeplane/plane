@@ -4,13 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
+import { SortAscendingOutline, SortDescendingOutline } from "@makeplane/propel/icons";
 // plane imports
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@makeplane/propel/elements/button";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
 import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
-import { CustomMenu } from "@plane/blocks/dropdowns";
 
 type Props = {
   onChange: (value: { key?: TViewFiltersSortKey; order?: TViewFiltersSortBy }) => void;
@@ -38,54 +38,53 @@ export function ViewOrderByDropdown(props: Props) {
   );
 
   return (
-    <CustomMenu
-      customButton={
-        isMobile ? (
-          <span className="flex w-full items-center gap-2 text-13 text-secondary">{buttonContent}</span>
-        ) : (
-          <Button variant="secondary" size="md" stretch="auto" render={<span />}>
-            {buttonContent}
-          </Button>
-        )
-      }
-      placement="bottom-end"
-      className="flex w-full justify-center"
-      maxHeight="lg"
-      closeOnSelect
-    >
-      {VIEW_SORTING_KEY_OPTIONS.map((option) => (
-        <CustomMenu.MenuItem
-          key={option.key}
-          className="flex items-center justify-between gap-2"
-          onClick={() =>
-            onChange({
-              key: option.key as TViewFiltersSortKey,
-            })
+    <Menu>
+      <div className="flex w-full justify-center">
+        {/* propel: `getButtonStyling` has no counterpart, so the desktop trigger borrows the styled
+            button element and Base UI grafts the menu behavior onto it. */}
+        <MenuTrigger
+          render={
+            isMobile ? (
+              <button type="button" className="flex w-full items-center gap-2 text-13 text-secondary" />
+            ) : (
+              <ButtonElement variant="secondary" size="md" stretch="auto" />
+            )
           }
         >
-          {t(option.i18n_label)}
-          {sortKey === option.key && <TickOutline className="h-3 w-3" />}
-        </CustomMenu.MenuItem>
-      ))}
-      <hr className="my-2 border-subtle" />
-      {VIEW_SORT_BY_OPTIONS.map((option) => {
-        const isSelected = (option.key === "asc" && !isDescending) || (option.key === "desc" && isDescending);
-        return (
-          <CustomMenu.MenuItem
+          {buttonContent}
+        </MenuTrigger>
+      </div>
+      <MenuContent side="bottom" align="end">
+        {VIEW_SORTING_KEY_OPTIONS.map((option) => (
+          <MenuItem
             key={option.key}
-            className="flex items-center justify-between gap-2"
-            onClick={() => {
-              if (!isSelected)
-                onChange({
-                  order: option.key as TViewFiltersSortBy,
-                });
-            }}
-          >
-            {t(option.i18n_label)}
-            {isSelected && <TickOutline className="h-3 w-3" />}
-          </CustomMenu.MenuItem>
-        );
-      })}
-    </CustomMenu>
+            label={t(option.i18n_label)}
+            selected={sortKey === option.key}
+            onClick={() =>
+              onChange({
+                key: option.key as TViewFiltersSortKey,
+              })
+            }
+          />
+        ))}
+        <MenuSeparator />
+        {VIEW_SORT_BY_OPTIONS.map((option) => {
+          const isSelected = (option.key === "asc" && !isDescending) || (option.key === "desc" && isDescending);
+          return (
+            <MenuItem
+              key={option.key}
+              label={t(option.i18n_label)}
+              selected={isSelected}
+              onClick={() => {
+                if (!isSelected)
+                  onChange({
+                    order: option.key as TViewFiltersSortBy,
+                  });
+              }}
+            />
+          );
+        })}
+      </MenuContent>
+    </Menu>
   );
 }

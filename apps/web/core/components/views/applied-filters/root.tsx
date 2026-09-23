@@ -5,8 +5,6 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { Icon } from "@makeplane/propel/components/icon";
-import { Pill } from "@makeplane/propel/components/pill";
 import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
@@ -24,9 +22,14 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
+/** The retired `Tag` chrome: a bordered container for one filter's label, its chips and its
+ *  remove button. Not a `Pill`: that takes a label string and cannot hold nested interactive children. */
+const FILTER_GROUP_CLASSNAME =
+  "my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary";
+
 const MEMBERS_FILTERS = new Set(["owned_by"]);
-const DATE_FILTERS = ["created_at"];
-const VIEW_ACCESS_FILTERS = ["view_type"];
+const DATE_FILTERS = new Set(["created_at"]);
+const VIEW_ACCESS_FILTERS = new Set(["view_type"]);
 
 export function ViewAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
@@ -46,19 +49,16 @@ export function ViewAppliedFiltersList(props: Props) {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <div
-            key={filterKey}
-            className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary"
-          >
+          <div key={filterKey} className={FILTER_GROUP_CLASSNAME}>
             <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-            {VIEW_ACCESS_FILTERS.includes(filterKey) && (
+            {VIEW_ACCESS_FILTERS.has(filterKey) && (
               <AppliedAccessFilters
                 editable={isEditingAllowed}
                 handleRemove={(val) => handleRemoveFilter(filterKey, val)}
                 values={Array.isArray(value) ? (value as EViewAccess[]) : []}
               />
             )}
-            {DATE_FILTERS.includes(filterKey) && (
+            {DATE_FILTERS.has(filterKey) && (
               <AppliedDateFilters
                 editable={isEditingAllowed}
                 handleRemove={(val) => handleRemoveFilter(filterKey, val)}
@@ -85,13 +85,10 @@ export function ViewAppliedFiltersList(props: Props) {
         );
       })}
       {isEditingAllowed && (
-        <Pill
-          size="md"
-          variant="outline"
-          label={t("common.clear_all")}
-          endIcon={<Icon icon={CloseOutline} />}
-          onClick={handleClearAllFilters}
-        />
+        <button type="button" className={FILTER_GROUP_CLASSNAME} onClick={handleClearAllFilters}>
+          {t("common.clear_all")}
+          <CloseOutline height={12} width={12} />
+        </button>
       )}
     </div>
   );
