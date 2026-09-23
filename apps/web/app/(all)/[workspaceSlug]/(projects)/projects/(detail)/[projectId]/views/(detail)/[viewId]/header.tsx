@@ -15,13 +15,14 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs } from "@plane/blocks/breadcrumb";
-import { BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
+import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -46,6 +47,8 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   const router = useAppRouter();
   const { workspaceSlug, projectId, viewId: routerViewId } = useParams();
   const viewId = routerViewId ? routerViewId.toString() : undefined;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -109,17 +112,17 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
 
   if (!viewDetails) return;
 
-  const switcherOptions = projectViewIds
-    ?.map((id) => {
+  const switcherOptions = (projectViewIds ?? [])
+    .map<BreadcrumbNavigationItem | undefined>((id) => {
       const _view = id === viewId ? viewDetails : getViewById(id);
       if (!_view) return;
       return {
-        value: _view.id,
-        query: _view.name,
+        key: _view.id,
+        label: _view.name,
         content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsOutline} />,
       };
     })
-    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+    .filter((option) => option !== undefined);
 
   return (
     <Header>
@@ -137,21 +140,21 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
           />
           <Breadcrumbs.Item
             component={
-              <BreadcrumbNavigationSearchDropdown
-                selectedItem={viewId?.toString() ?? ""}
+              <BreadcrumbNavigationSelect
+                selectedItemKey={viewId ?? ""}
                 navigationItems={switcherOptions}
                 onChange={(value: string) => {
                   router.push(`/${workspaceSlug}/projects/${projectId}/views/${value}`);
                 }}
-                title={viewDetails?.name}
-                icon={
-                  <Breadcrumbs.Icon>
-                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsOutline} size={16} />
-                  </Breadcrumbs.Icon>
-                }
+                label={viewDetails?.name}
+                icon={<SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsOutline} size={16} />}
+                placeholder={t("views")}
+                searchPlaceholder={t("common.search.label")}
+                emptyMessage={t("common.search.no_matches_found")}
                 isLast
               />
             }
+            isLast
           />
         </Breadcrumbs>
 

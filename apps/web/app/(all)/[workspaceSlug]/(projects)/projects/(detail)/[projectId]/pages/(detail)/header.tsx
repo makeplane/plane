@@ -8,9 +8,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { PagesOutline } from "@makeplane/propel/icons";
-import type { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs } from "@plane/blocks/breadcrumb";
-import { BreadcrumbNavigationSearchDropdown } from "@plane/blocks/breadcrumbs";
+import { useTranslation } from "@plane/i18n";
+import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
+import { Breadcrumbs, BreadcrumbNavigationSelect } from "@plane/blocks/breadcrumb";
 import { Header } from "@plane/blocks/layout";
 import { getPageName } from "@plane/utils";
 // components
@@ -32,6 +32,8 @@ export interface IPagesHeaderProps {
 const storeType = EPageStoreType.PROJECT;
 
 export const PageDetailsHeader = observer(function PageDetailsHeader() {
+  // plane hooks
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
@@ -46,12 +48,12 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 
   const switcherOptions = projectPageIds
-    .map((id) => {
+    .map<BreadcrumbNavigationItem | undefined>((id) => {
       const _page = id === pageId ? page : getPageById(id);
-      if (!_page) return;
+      if (!_page?.id) return;
       return {
-        value: _page.id,
-        query: _page.name,
+        key: _page.id,
+        label: getPageName(_page.name),
         content: (
           <div className="flex items-center justify-between gap-2">
             <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PagesOutline} />
@@ -60,7 +62,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
         ),
       };
     })
-    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+    .filter((option) => option !== undefined);
 
   if (!page) return null;
 
@@ -82,21 +84,21 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
 
             <Breadcrumbs.Item
               component={
-                <BreadcrumbNavigationSearchDropdown
-                  selectedItem={pageId?.toString() ?? ""}
+                <BreadcrumbNavigationSelect
+                  selectedItemKey={pageId?.toString() ?? ""}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${value}`);
                   }}
-                  title={getPageName(page?.name)}
-                  icon={
-                    <Breadcrumbs.Icon>
-                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={PagesOutline} size={16} />
-                    </Breadcrumbs.Icon>
-                  }
+                  label={getPageName(page?.name)}
+                  icon={<SwitcherIcon logo_props={page.logo_props} LabelIcon={PagesOutline} size={16} />}
+                  placeholder={t("pages")}
+                  searchPlaceholder={t("common.search.label")}
+                  emptyMessage={t("common.search.no_matches_found")}
                   isLast
                 />
               }
+              isLast
             />
           </Breadcrumbs>
         </div>
