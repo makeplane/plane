@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // plane imports
@@ -68,6 +68,10 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
     router.push(`/issues/${anchor}?${queryParams}`);
   }, [anchor, board, handlePeekClose, labels, priority, router, setPeekId, state]);
 
+  // Called from the document listeners below: always sees the latest `handleClose` without
+  // re-subscribing those listeners every time the query params or router change.
+  const onDismiss = useEffectEvent(() => handleClose());
+
   // propel (ruling 36): the peek was a Headless UI `Dialog` + `Transition`. Propel's `DialogContent`
   // ladder cannot express the `w-1/2` side sheet or the `h-[70%] w-3/5` / `size-[95%]` modal/full
   // geometry, so (as in EE) both panels are hand-rolled: Escape and outside-press close, Tab is
@@ -86,7 +90,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         if (event.defaultPrevented || isInsideNestedPopup(event.target)) return;
-        handleClose();
+        onDismiss();
         return;
       }
       if (event.key !== "Tab" || !panelRef.current) return;
@@ -124,7 +128,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
       if (panelRef.current?.contains(target)) return;
       if (isInsideNestedPopup(target)) return;
       if (target.closest('a[href*="peekId="]')) return;
-      handleClose();
+      onDismiss();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -133,7 +137,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [handleClose, isPeekOpen]);
+  }, [isPeekOpen]);
 
   // Remember what had focus when the peek first opened and restore it when the peek closes. This is
   // keyed on `isPeekOpen` only, so switching peek modes does not re-capture the (unmounting) mode select.
