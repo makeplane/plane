@@ -32,7 +32,10 @@ export function InputColorPicker(props: InputColorPickerProps) {
   };
 
   return (
-    <div className="relative">
+    // A caller-supplied text colour (the hex value drawn over its own swatch) has to reach the
+    // input's text, but the Propel `Input` pins `text-primary`; the wrapper lets the input
+    // inherit the colour the group's `style` sets instead.
+    <div className={cn("relative", { "[&_input]:[color:inherit]": style?.color !== undefined })}>
       {/* propel: the bare `Input` is transparent — `InputGroup` draws the box, `Field invalid`
           replaces the old `hasError`, and the caller's layout classes ride the group's render
           target because Propel components take no className. */}
