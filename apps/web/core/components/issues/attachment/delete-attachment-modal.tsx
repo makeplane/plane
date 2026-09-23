@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // helper
 import { getFileName } from "@plane/utils";
 // hooks
@@ -52,12 +52,19 @@ export const IssueAttachmentDeleteModal = observer(function IssueAttachmentDelet
 
   const handleDeletion = async (assetId: string) => {
     setLoader(true);
-    attachmentOperations.remove(assetId).finally(() => handleClose());
+    try {
+      await attachmentOperations.remove(assetId);
+    } catch (error) {
+      // the operation reports its own failures; never leave the rejection unhandled
+      console.error(error);
+    } finally {
+      handleClose();
+    }
   };
 
   if (!attachment) return <></>;
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={() => handleDeletion(attachment.id)}
       isSubmitting={loader}

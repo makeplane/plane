@@ -8,10 +8,9 @@ import { useState } from "react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { Button } from "@makeplane/propel/components/button";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -47,46 +46,36 @@ export function ArchiveIssueModal(props: Props) {
     if (!onSubmit) return;
 
     setIsArchiving(true);
-    await onSubmit()
-      .then(() => {
-        setToast({
-          type: "success",
-          title: t("issue.archive.success.label"),
-          message: t("issue.archive.success.message"),
-        });
-        onClose();
-        return;
-      })
-      .catch(() =>
-        setToast({
-          type: "error",
-          title: t("common.error.label"),
-          message: t("issue.archive.failed.message"),
-        })
-      )
-      .finally(() => setIsArchiving(false));
+    try {
+      await onSubmit();
+      setToast({
+        type: "success",
+        title: t("issue.archive.success.label"),
+        message: t("issue.archive.success.message"),
+      });
+      onClose();
+    } catch {
+      setToast({
+        type: "error",
+        title: t("common.error.label"),
+        message: t("issue.archive.failed.message"),
+      });
+    } finally {
+      setIsArchiving(false);
+    }
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
-      <div className="px-5 py-4">
-        <h3 className="text-18 font-medium 2xl:text-20">
-          {t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
-        </h3>
-        <p className="mt-3 text-13 text-secondary">{t("issue.archive.confirm_message")}</p>
-        <div className="mt-3 flex justify-end gap-2">
-          <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label={t("common.cancel")} />
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            tabIndex={1}
-            onClick={handleArchiveIssue}
-            loading={isArchiving}
-            label={isArchiving ? t("common.archiving") : t("common.archive")}
-          />
-        </div>
-      </div>
-    </ModalCore>
+    <ConfirmDialog
+      isOpen={isOpen}
+      handleClose={onClose}
+      handleSubmit={handleArchiveIssue}
+      isSubmitting={isArchiving}
+      variant="primary"
+      title={`${t("issue.archive.label")} ${projectDetails?.identifier ?? ""} ${issue.sequence_id}`}
+      content={t("issue.archive.confirm_message")}
+      primaryButtonText={{ loading: t("common.archiving"), default: t("common.archive") }}
+      secondaryButtonText={t("common.cancel")}
+    />
   );
 }
