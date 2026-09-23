@@ -7,14 +7,13 @@
 import React from "react";
 // ui
 import { Button } from "@makeplane/propel/components/button";
-import { Icon } from "@makeplane/propel/components/icon";
 
 type Props = {
   title: string;
   description?: React.ReactNode;
   image: any;
   primaryButton?: {
-    icon?: any;
+    icon?: React.ReactNode;
     text: string;
     onClick: () => void;
   };
@@ -38,7 +37,7 @@ export function EmptyState({ title, description, image, primaryButton, secondary
               size="lg"
               stretch="auto"
               label={primaryButton.text}
-              icon={primaryButton.icon ? <Icon icon={primaryButton.icon} /> : undefined}
+              icon={primaryButton.icon}
               iconPosition="start"
               onClick={primaryButton.onClick}
               disabled={disabled}
