@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast } from "@plane/blocks/toast";
 import type { TWorkspaceDraftIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
@@ -67,38 +67,38 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
       onClose();
       return;
     }
-    if (onSubmit)
-      await onSubmit()
-        .then(() => {
-          setToast({
-            type: "success",
-            title: `${t("success")}!`,
-            message: t("workspace_draft_issues.toasts.deleted.success"),
-          });
-          onClose();
-        })
-        .catch((errors) => {
-          const isPermissionError = errors?.error === "Only admin or creator can delete the work item";
-          const currentError = isPermissionError
-            ? PROJECT_ERROR_MESSAGES.permissionError
-            : PROJECT_ERROR_MESSAGES.issueDeleteError;
-          setToast({
-            title: t(currentError.i18n_title),
-            type: "error",
-            message: currentError.i18n_message && t(currentError.i18n_message),
-          });
-        })
-        .finally(() => onClose());
+    if (!onSubmit) return;
+    try {
+      await onSubmit();
+      setToast({
+        type: "success",
+        title: `${t("success")}!`,
+        message: t("workspace_draft_issues.toasts.deleted.success"),
+      });
+    } catch (errors) {
+      const isPermissionError =
+        (errors as { error?: string } | undefined)?.error === "Only admin or creator can delete the work item";
+      const currentError = isPermissionError
+        ? PROJECT_ERROR_MESSAGES.permissionError
+        : PROJECT_ERROR_MESSAGES.issueDeleteError;
+      setToast({
+        title: t(currentError.i18n_title),
+        type: "error",
+        message: currentError.i18n_message && t(currentError.i18n_message),
+      });
+    } finally {
+      onClose();
+    }
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={onClose}
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
       title={t("workspace_draft_issues.delete_modal.title")}
-      content={<>{t("workspace_draft_issues.delete_modal.description")}</>}
+      content={t("workspace_draft_issues.delete_modal.description")}
       primaryButtonText={{
         loading: t("deleting"),
         default: t("delete"),

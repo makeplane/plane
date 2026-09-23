@@ -21,6 +21,15 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
+// trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
+const handleTriggerClick = (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+};
+
 export const SubIssuesActionButton = observer(function SubIssuesActionButton(props: Props) {
   const { issueId, customButton, disabled = false, issueServiceType } = props;
   // translation
@@ -78,15 +87,6 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
       onClick: handleAddExisting,
     },
   ];
-
-  // trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
-  const handleTriggerClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
-  };
 
   return (
     <Menu>

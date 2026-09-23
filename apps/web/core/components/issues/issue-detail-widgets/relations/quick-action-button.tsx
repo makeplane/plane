@@ -26,6 +26,15 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
+// trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
+const handleTriggerClick = (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+};
+
 export const RelationActionButton = observer(function RelationActionButton(props: Props) {
   const { customButton, issueId, disabled = false, issueServiceType } = props;
   const { t } = useTranslation();
@@ -38,15 +47,6 @@ export const RelationActionButton = observer(function RelationActionButton(props
   const handleOnClick = (relationKey: TIssueRelationTypes) => {
     setRelationKey(relationKey);
     toggleRelationModal(issueId, relationKey);
-  };
-
-  // trigger guard: keep clicks and Enter/Space on the trigger from reaching clickable ancestors
-  const handleTriggerClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
   };
 
   return (

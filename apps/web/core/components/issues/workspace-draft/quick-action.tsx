@@ -7,10 +7,12 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import type { TContextMenuItem } from "@plane/blocks/dropdowns";
-import { ContextMenu, CustomMenu } from "@plane/blocks/dropdowns";
-// helpers
-import { cn } from "@plane/utils";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
 
 export interface Props {
   parentRef: React.RefObject<HTMLElement | null>;
@@ -25,45 +27,33 @@ export const WorkspaceDraftIssueQuickActions = observer(function WorkspaceDraftI
   return (
     <>
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu
-        ellipsis
-        placement="bottom-end"
-        menuItemsClassName="z-[14]"
-        maxHeight="lg"
-        useCaptureForOutsideClick
-        closeOnSelect
-      >
-        {MENU_ITEMS.map((item) => (
-          <CustomMenu.MenuItem
-            key={item.key}
-            onClick={() => {
-              item.action();
-            }}
-            className={cn(
-              "flex items-center gap-2",
-              {
-                "text-placeholder": item.disabled,
-              },
-              item.className
-            )}
-            disabled={item.disabled}
-          >
-            {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-            <div>
-              <h5>{t(item.title || "")}</h5>
-              {item.description && (
-                <p
-                  className={cn("whitespace-pre-line text-tertiary", {
-                    "text-placeholder": item.disabled,
-                  })}
-                >
-                  {item.description}
-                </p>
-              )}
-            </div>
-          </CustomMenu.MenuItem>
-        ))}
-      </CustomMenu>
+      <Menu>
+        <MenuTrigger
+          render={
+            <IconButton
+              variant="ghost"
+              size="sm"
+              aria-label={t("aria_labels.common.more_actions")}
+              icon={<Icon icon={MoreHorizontalOutline} />}
+            />
+          }
+        />
+        <MenuContent side="bottom" align="end">
+          {getRenderableItems(MENU_ITEMS).map((item) => (
+            <MenuItem
+              key={item.key}
+              variant={resolveItemVariant(item)}
+              icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+              label={t(item.title || "")}
+              description={item.description}
+              onClick={() => {
+                item.action();
+              }}
+              disabled={item.disabled}
+            />
+          ))}
+        </MenuContent>
+      </Menu>
     </>
   );
 });

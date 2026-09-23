@@ -21,7 +21,7 @@ import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { CustomSelect } from "@plane/blocks/dropdowns";
+import { Select } from "@plane/blocks/select";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -38,7 +38,9 @@ import { Icon } from "@makeplane/propel/components/icon";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
+type TPeekOption = { key: TPeekModes; icon: any; i18n_title: string };
+
+const PEEK_OPTIONS: TPeekOption[] = [
   {
     key: "side-peek",
     icon: SidePeekOutline,
@@ -179,30 +181,22 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
         </Tooltip>
         {currentMode && embedIssue === false && (
           <div className="flex flex-shrink-0 items-center gap-2">
-            <CustomSelect
+            <Select<TPeekOption>
+              getValues={() => PEEK_OPTIONS}
               value={currentMode}
-              onChange={(val: any) => setPeekMode(val)}
-              customButton={
-                <Tooltip label={t("common.toggle_peek_view_layout")} disabled={isMobile}>
-                  <button type="button" className="">
-                    <currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />
-                  </button>
-                </Tooltip>
-              }
+              onChange={(val) => setPeekMode(val as TPeekModes)}
+              getOptionValue={(mode) => mode.key}
+              getOptionLabel={(mode) => t(mode.i18n_title)}
+              getOptionIcon={(mode) => <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />}
+              showSearch={false}
+              pinSelected={false}
             >
-              {PEEK_OPTIONS.map((mode) => (
-                <CustomSelect.Option key={mode.key} value={mode.key}>
-                  <div
-                    className={`flex items-center gap-1.5 ${
-                      currentMode.key === mode.key ? "text-secondary" : "text-placeholder hover:text-secondary"
-                    }`}
-                  >
-                    <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
-                    {t(mode.i18n_title)}
-                  </div>
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+              <Select.Trigger
+                variant="icon-md"
+                prependIcon={<currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />}
+                tooltip={isMobile ? false : { heading: t("common.toggle_peek_view_layout") }}
+              />
+            </Select>
           </div>
         )}
       </div>
