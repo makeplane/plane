@@ -14,7 +14,6 @@ import {
   DeleteOutline,
   ToggleFilled,
 } from "@makeplane/propel/icons";
-import type { LucideIcon } from "lucide-react";
 // extensions
 import type { ISvgIcons } from "@plane/blocks/icons";
 import { findTable, getSelectedColumns } from "@/extensions/table/table/utilities/helpers";
@@ -25,7 +24,7 @@ import { TableDragHandleDropdownColorSelector } from "../color-selector";
 const DROPDOWN_ITEMS: {
   key: string;
   label: string;
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: React.FC<React.SVGProps<SVGSVGElement>> | React.FC<ISvgIcons>;
   action: (editor: Editor) => void;
 }[] = [
   {

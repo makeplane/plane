@@ -4,12 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import { Disclosure } from "@headlessui/react";
 import type { Editor } from "@tiptap/core";
-import { Ban } from "lucide-react";
-import { ChevronRightOutline, PaletteOutline } from "@makeplane/propel/icons";
 // plane imports
-import { cn } from "@plane/utils";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { Icon } from "@makeplane/propel/components/icon";
+import { DeactivatedOutline, PaletteOutline } from "@makeplane/propel/icons";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -45,27 +44,8 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
   const { editor, onSelect } = props;
 
   return (
-    <Disclosure defaultOpen>
-      <Disclosure.Button
-        as="button"
-        type="button"
-        className="flex w-full items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-left text-11 text-secondary hover:bg-layer-1"
-      >
-        {({ open }) => (
-          <>
-            <span className="flex items-center gap-2">
-              <PaletteOutline className="size-3 shrink-0" />
-              Color
-            </span>
-            <ChevronRightOutline
-              className={cn("size-3 shrink-0 transition-transform duration-200", {
-                "rotate-90": open,
-              })}
-            />
-          </>
-        )}
-      </Disclosure.Button>
-      <Disclosure.Panel className="mb-1.5 space-y-2 p-1">
+    <Collapsible defaultOpen icon={<Icon icon={PaletteOutline} />} trigger="Color">
+      <div className="mb-1.5 space-y-2 p-1">
         {/* <div className="space-y-1.5">
           <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center flex-wrap gap-2">
@@ -114,11 +94,11 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
                 onSelect(null);
               }}
             >
-              <Ban className="size-4" />
+              <DeactivatedOutline className="size-4" />
             </button>
           </div>
         </div>
-      </Disclosure.Panel>
-    </Disclosure>
+      </div>
+    </Collapsible>
   );
 }
