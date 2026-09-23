@@ -7,21 +7,28 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarOutline } from "@makeplane/propel/icons";
-// types
-import { Field } from "@makeplane/propel/components/field";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
-import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
-import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { setToast } from "@plane/blocks/toast";
-import type { IApiToken } from "@plane/types";
-// ui
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { Switch } from "@makeplane/propel/components/switch";
-import { CustomSelect } from "@plane/blocks/dropdowns";
-import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
-// components
-import { DateDropdown } from "@/components/dropdowns/date";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
+import { CalendarOutline } from "@makeplane/propel/icons";
+import { DateSelect } from "@plane/blocks/property-select";
+import { Select } from "@plane/blocks/select";
+import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
+import type { IApiToken } from "@plane/types";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+// hooks
+import { useUserProfile } from "@/hooks/store/user";
 // helpers
 type Props = {
   handleClose: () => void;
@@ -51,6 +58,14 @@ const EXPIRY_DATE_OPTIONS = [
     label: "1 year",
     value: { years: 1 },
   },
+];
+
+/** The expiry picker's rows: the presets plus the "Custom" row that reveals the date picker. */
+type TExpiryOption = { key: string; label: string };
+
+const EXPIRY_SELECT_OPTIONS: TExpiryOption[] = [
+  ...EXPIRY_DATE_OPTIONS.map(({ key, label }) => ({ key, label })),
+  { key: "custom", label: "Custom" },
 ];
 
 const defaultValues: Partial<IApiToken> = {
@@ -88,6 +103,8 @@ export function CreateApiTokenForm(props: Props) {
   } = useForm<IApiToken>({ defaultValues });
   // hooks
   const { t } = useTranslation();
+  // store hooks
+  const { data: userProfile } = useUserProfile();
 
   const handleFormSubmit = async (data: IApiToken) => {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
@@ -128,13 +145,15 @@ export function CreateApiTokenForm(props: Props) {
   const customDateFormatted = customDate && getFormattedDate(customDate);
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="space-y-5 p-5">
-        <h3 className="text-18 font-medium text-secondary">
-          {t("workspace_settings.settings.api_tokens.create_token")}
-        </h3>
-        <div className="space-y-3">
-          <div className="space-y-1">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="flex min-h-0 flex-1 flex-col">
+      <DialogMain>
+        <DialogHeader>
+          <DialogHeading>
+            <DialogTitle>{t("workspace_settings.settings.api_tokens.create_token")}</DialogTitle>
+          </DialogHeading>
+        </DialogHeader>
+        <DialogBody tabIndex={0}>
+          <div className="space-y-3">
             <Controller
               control={control}
               name="label"
@@ -146,139 +165,123 @@ export function CreateApiTokenForm(props: Props) {
                 },
                 validate: (val) => val.trim() !== "" || t("title_is_required"),
               }}
-              render={({ field: { value, onChange } }) => (
-                <Field name="input" invalid={Boolean(errors.label)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      placeholder={t("title")}
-                      aria-label={t("title")}
-                    />
-                  </InputGroup>
-                </Field>
+              render={({ field: { value, onChange, ref } }) => (
+                <InputField
+                  type="text"
+                  size="2xl"
+                  orientation="vertical"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  error={errors.label?.message}
+                  placeholder={t("title")}
+                  aria-label={t("title")}
+                />
               )}
             />
-            {errors.label && <span className="text-11 text-danger-primary">{errors.label.message}</span>}
-          </div>
-          <Controller
-            control={control}
-            name="description"
-            render={({ field: { value, onChange } }) => (
-              <Field name="description" invalid={Boolean(errors.description)}>
-                <TextAreaGroup resize="none">
-                  <TextArea
-                    size="lg"
-                    surface="field"
-                    autoResize
-                    maxRows={8}
-                    value={value}
-                    onChange={onChange}
-                    placeholder={t("description")}
-                  />
-                </TextAreaGroup>
-              </Field>
-            )}
-          />
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Controller
-                control={control}
-                name="expired_at"
-                render={({ field: { onChange, value } }) => {
-                  const selectedOption = EXPIRY_DATE_OPTIONS.find((option) => option.key === value);
+            <Controller
+              control={control}
+              name="description"
+              render={({ field: { value, onChange } }) => (
+                <TextAreaField
+                  size="lg"
+                  resize="none"
+                  autoResize
+                  maxRows={8}
+                  value={value}
+                  onChange={onChange}
+                  error={errors.description?.message}
+                  placeholder={t("description")}
+                  aria-label={t("description")}
+                />
+              )}
+            />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Controller
+                  control={control}
+                  name="expired_at"
+                  render={({ field: { onChange, value } }) => {
+                    const selectedOption = EXPIRY_SELECT_OPTIONS.find((option) => option.key === value) ?? null;
 
-                  return (
-                    <CustomSelect
-                      customButton={
-                        <div
-                          className={cn(
-                            "flex h-7 items-center gap-2 rounded-sm border-[0.5px] border-strong px-2 py-0.5",
-                            {
-                              "text-placeholder": neverExpires,
-                            }
-                          )}
-                        >
-                          <CalendarOutline className="h-3 w-3" />
-                          {value === "custom"
-                            ? "Custom date"
-                            : selectedOption
-                              ? selectedOption.label
-                              : "Set expiration date"}
-                        </div>
-                      }
-                      value={value}
-                      onChange={onChange}
-                      disabled={neverExpires}
-                    >
-                      {EXPIRY_DATE_OPTIONS.map((option) => (
-                        <CustomSelect.Option key={option.key} value={option.key}>
-                          {option.label}
-                        </CustomSelect.Option>
-                      ))}
-                      <CustomSelect.Option value="custom">Custom</CustomSelect.Option>
-                    </CustomSelect>
-                  );
-                }}
-              />
-              {expiredAt === "custom" && (
-                <div className="h-7">
-                  <DateDropdown
+                    return (
+                      <Select<TExpiryOption>
+                        getValues={() => EXPIRY_SELECT_OPTIONS}
+                        value={selectedOption}
+                        onChange={onChange}
+                        getOptionValue={(option) => option.key}
+                        getOptionLabel={(option) => option.label}
+                        showSearch={false}
+                        pinSelected={false}
+                        disabled={neverExpires}
+                      >
+                        {/* `select-md` rather than the pill chrome the old button matched in height:
+                          `SelectTriggerChrome` clamps every pill trigger to `max-w-40`, which clips
+                          the longest label here ("Set expiration date"). */}
+                        <Select.Trigger variant="select-md" className="w-auto" prependIcon={<CalendarOutline />}>
+                          <span className="min-w-0 grow truncate text-left">
+                            {value === "custom" ? "Custom date" : (selectedOption?.label ?? "Set expiration date")}
+                          </span>
+                        </Select.Trigger>
+                      </Select>
+                    );
+                  }}
+                />
+                {expiredAt === "custom" && (
+                  <DateSelect
                     value={customDate}
                     onChange={(date) => setCustomDate(date)}
                     minDate={tomorrow}
-                    icon={<CalendarOutline className="h-3 w-3" />}
-                    buttonVariant="border-with-text"
+                    icon={<CalendarOutline />}
                     placeholder="Set date"
                     disabled={neverExpires}
+                    clearable
+                    weekStartsOn={userProfile?.start_of_the_week}
+                    variant="pill-md"
                   />
-                </div>
+                )}
+              </div>
+              {!neverExpires && (
+                <span className="text-caption-sm-regular text-placeholder">
+                  {expiredAt === "custom"
+                    ? customDate
+                      ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
+                      : null
+                    : expiredAt
+                      ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
+                      : null}
+                </span>
               )}
             </div>
-            {!neverExpires && (
-              <span className="text-11 text-placeholder">
-                {expiredAt === "custom"
-                  ? customDate
-                    ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
-                    : null
-                  : expiredAt
-                    ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
-                    : null}
-              </span>
-            )}
           </div>
-        </div>
-      </div>
-      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
-        <div className="flex cursor-pointer items-center gap-1.5" onClick={toggleNeverExpires}>
-          <div className="flex cursor-pointer items-center justify-center">
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <DialogInfo>
+          <label className="flex cursor-pointer items-center gap-1.5">
             <Switch
               size="sm"
               checked={neverExpires}
-              onCheckedChange={() => {}}
+              onCheckedChange={toggleNeverExpires}
               aria-label={t("workspace_settings.settings.api_tokens.never_expires")}
             />
-          </div>
-          <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" stretch="auto" label={t("cancel")} onClick={handleClose} />
-          <Button
-            variant="primary"
-            type="submit"
-            size="sm"
-            stretch="auto"
-            label={
-              isSubmitting
-                ? t("workspace_settings.settings.api_tokens.generating")
-                : t("workspace_settings.settings.api_tokens.generate_token")
-            }
-            loading={isSubmitting}
-          />
-        </div>
-      </div>
+            <span>{t("workspace_settings.settings.api_tokens.never_expires")}</span>
+          </label>
+        </DialogInfo>
+        <Button variant="secondary" size="sm" stretch="auto" label={t("cancel")} onClick={handleClose} />
+        <Button
+          variant="primary"
+          type="submit"
+          size="sm"
+          stretch="auto"
+          label={
+            isSubmitting
+              ? t("workspace_settings.settings.api_tokens.generating")
+              : t("workspace_settings.settings.api_tokens.generate_token")
+          }
+          loading={isSubmitting}
+        />
+      </DialogActions>
     </form>
   );
 }

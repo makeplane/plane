@@ -6,16 +6,12 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-// types
-import { useTranslation } from "@plane/i18n";
+// plane imports
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
 import type { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
-// ui
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/blocks/modals";
-// helpers
 import { csvDownload } from "@plane/utils";
-// hooks
-import useKeypress from "@/hooks/use-keypress";
 // components
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
@@ -100,17 +96,32 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
     }, 350);
   };
 
-  useKeypress("Escape", () => {
-    if (isOpen && !generatedWebhook) handleClose();
-  });
-
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL} className="p-4 pb-0">
-      {!generatedWebhook ? (
-        <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
-      ) : (
-        <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
-      )}
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      disablePointerDismissal
+      onOpenChange={(open) => {
+        if (open) return;
+        // Escape closed the create form but not the generated-key view, so the secret key cannot be
+        // dismissed by accident; outside presses never closed either view.
+        if (generatedWebhook) return;
+        handleClose();
+      }}
+    >
+      <DialogContent
+        size="md"
+        aria-label={
+          generatedWebhook ? t("workspace_settings.key_created") : t("workspace_settings.settings.webhooks.modal.title")
+        }
+      >
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-0">
+          {!generatedWebhook ? (
+            <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
+          ) : (
+            <GeneratedHookDetails webhookDetails={generatedWebhook} handleClose={handleClose} />
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

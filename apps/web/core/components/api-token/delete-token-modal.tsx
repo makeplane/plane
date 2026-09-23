@@ -12,7 +12,7 @@ import { setToast } from "@plane/blocks/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/blocks/modals";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // fetch-keys
 import { API_TOKENS_LIST } from "@plane/constants";
 
@@ -68,7 +68,7 @@ export function DeleteApiTokenModal(props: Props) {
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isSubmitting={deleteLoading}

@@ -10,12 +10,19 @@ import { CopyOutline } from "@makeplane/propel/icons";
 import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IApiToken } from "@plane/types";
-// ui
+import {
+  DialogActions,
+  DialogBody,
+  DialogDescription,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
-// helpers
-// types
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   handleClose: () => void;
@@ -37,29 +44,35 @@ export function GeneratedTokenDetails(props: Props) {
   };
 
   return (
-    <div className="w-full p-5">
-      <div className="w-full space-y-3 text-wrap">
-        <h3 className="text-16 leading-6 font-medium text-primary">{t("workspace_settings.key_created")}</h3>
-        <p className="text-13 text-placeholder">{t("workspace_settings.copy_key")}</p>
-      </div>
-      <button
-        type="button"
-        onClick={() => copyApiToken(tokenDetails.token ?? "")}
-        className="mt-4 flex w-full items-center justify-between truncate rounded-md border-[0.5px] border-subtle px-3 py-2 text-13 font-medium outline-none"
-      >
-        <span className="truncate pr-2">{tokenDetails.token}</span>
-        <Tooltip label="Copy secret key" disabled={isMobile}>
-          <CopyOutline className="h-4 w-4 flex-shrink-0 text-placeholder" />
-        </Tooltip>
-      </button>
-      <div className="mt-6 flex items-center justify-between">
-        <p className="text-11 text-placeholder">
+    <>
+      <DialogMain>
+        <DialogHeader>
+          <DialogHeading>
+            <DialogTitle>{t("workspace_settings.key_created")}</DialogTitle>
+            <DialogDescription>{t("workspace_settings.copy_key")}</DialogDescription>
+          </DialogHeading>
+        </DialogHeader>
+        <DialogBody>
+          <button
+            type="button"
+            onClick={() => copyApiToken(tokenDetails.token ?? "")}
+            className="flex w-full items-center justify-between truncate rounded-md border-[0.5px] border-subtle px-3 py-2 text-13 font-medium outline-none"
+          >
+            <span className="truncate pr-2">{tokenDetails.token}</span>
+            <Tooltip label="Copy secret key" disabled={isMobile}>
+              <CopyOutline className="h-4 w-4 flex-shrink-0 text-placeholder" />
+            </Tooltip>
+          </button>
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <DialogInfo>
           {tokenDetails.expired_at
             ? `Expires ${renderFormattedDate(tokenDetails.expired_at)} at ${renderFormattedTime(tokenDetails.expired_at)}`
             : "Never expires"}
-        </p>
+        </DialogInfo>
         <Button variant="secondary" size="sm" stretch="auto" label={t("close")} onClick={handleClose} />
-      </div>
-    </div>
+      </DialogActions>
+    </>
   );
 }

@@ -7,8 +7,8 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
+import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
-import { AlertModalCore } from "@plane/blocks/modals";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -55,7 +55,7 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
