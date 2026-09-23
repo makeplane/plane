@@ -11,12 +11,11 @@ import { ArrowNarrowLeftOutline, ArrowNarrowRightOutline, RefreshOutline } from 
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
-import { Button as ButtonElement } from "@makeplane/propel/elements/button";
 import { Icon } from "@makeplane/propel/components/icon";
 import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IExportData } from "@plane/types";
-import { Table } from "@plane/blocks/tables";
 // components
+import { DataTable } from "@/components/common/data-table";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
 import { EXPORT_SERVICES_LIST } from "@plane/constants";
@@ -80,16 +79,14 @@ export const PrevExports = observer(function PrevExports(props: Props) {
       <div className="flex items-center justify-between border-b border-subtle pb-3.5">
         <div className="flex items-center gap-2">
           <h3 className="text-h6-medium text-primary">{t("workspace_settings.settings.exports.previous_exports")}</h3>
-          <ButtonElement
+          <Button
             variant="tertiary"
             size="sm"
             stretch="auto"
-            onClick={handleRefresh}
-            render={<button type="button" className="shrink-0" />}
-          >
-            <RefreshOutline className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? t("refreshing") : t("refresh_status")}
-          </ButtonElement>
+            onClick={() => void handleRefresh()}
+            icon={<Icon icon={<RefreshOutline className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />} />}
+            label={refreshing ? t("refreshing") : t("refresh_status")}
+          />
         </div>
         {Array.isArray(exporterServices?.results) && exporterServices.results.length > 0 && (
           <div className="flex items-center gap-2 text-11">
@@ -122,15 +119,10 @@ export const PrevExports = observer(function PrevExports(props: Props) {
         ) : Array.isArray(exporterServices.results) && exporterServices.results.length > 0 ? (
           <div>
             <div className="divide-y divide-subtle-1">
-              <Table
+              <DataTable
                 columns={columns}
                 data={exporterServices.results}
                 keyExtractor={(rowData: RowData) => rowData?.id ?? ""}
-                tHeadClassName="border-b border-subtle"
-                thClassName="text-left font-medium divide-x-0 text-placeholder"
-                tBodyClassName="divide-y-0"
-                tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
-                tHeadTrClassName="divide-x-0"
               />
             </div>
           </div>

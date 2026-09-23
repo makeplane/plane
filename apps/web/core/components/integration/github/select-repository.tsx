@@ -7,10 +7,9 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
-import type { IWorkspaceIntegration } from "@plane/types";
-// services
-// ui
-import { CustomSearchSelect } from "@plane/blocks/dropdowns";
+import { Button } from "@makeplane/propel/components/button";
+import { Select } from "@plane/blocks/select";
+import type { IGithubRepository, IWorkspaceIntegration } from "@plane/types";
 // helpers
 import { truncateText } from "@plane/utils";
 import { ProjectService } from "@/services/project";
@@ -52,40 +51,38 @@ export function SelectRepository(props: Props) {
 
   const totalCount = paginatedData && paginatedData.length > 0 ? paginatedData[0].total_count : 0;
 
-  const options =
-    userRepositories.map((repo) => ({
-      value: repo.id,
-      query: repo.full_name,
-      content: <p>{truncateText(repo.full_name, characterLimit)}</p>,
-    })) ?? [];
-
   if (userRepositories.length < 1) return null;
 
+  // derived values
+  // `value` has carried either the repository id or its `owner/name` full name.
+  const selectedRepository = userRepositories.find((repo) => repo.id === value || repo.full_name === value) ?? null;
+
   return (
-    <CustomSearchSelect
-      value={value}
-      options={options}
-      onChange={(val: string) => {
-        const repo = userRepositories.find((repo) => repo.id === val);
+    <Select<IGithubRepository>
+      getValues={() => userRepositories}
+      value={selectedRepository}
+      onChange={(val) => {
+        const repo = userRepositories.find((repository) => repository.id === val);
 
         onChange(repo);
       }}
-      label={label}
-      footerOption={
-        <>
-          {userRepositories && options.length < totalCount && (
-            <button
-              type="button"
-              className="w-full p-1 text-center text-10 text-secondary hover:bg-layer-1"
-              onClick={() => setSize(size + 1)}
-              disabled={isValidating}
-            >
-              {isValidating ? "Loading..." : "Click to load more..."}
-            </button>
-          )}
-        </>
+      getOptionValue={(repo) => repo.id}
+      getOptionLabel={(repo) => truncateText(repo.full_name, characterLimit)}
+      getOptionSearchText={(repo) => repo.full_name}
+      footer={
+        userRepositories.length < totalCount ? (
+          <Button
+            variant="ghost"
+            size="xs"
+            stretch="full"
+            onClick={() => void setSize(size + 1)}
+            disabled={isValidating}
+            label={isValidating ? "Loading..." : "Click to load more..."}
+          />
+        ) : undefined
       }
-      optionsClassName="w-48"
-    />
+    >
+      <Select.Trigger<IGithubRepository> variant="select-md">{label}</Select.Trigger>
+    </Select>
   );
 }
