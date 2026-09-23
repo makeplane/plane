@@ -8,7 +8,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import ICU from "i18next-icu";
 import resourcesToBackend from "i18next-resources-to-backend";
-import { SUPPORTED_LANGUAGES, FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "../constants/language";
+import { SUPPORTED_LANGUAGES, FALLBACK_LANGUAGE, DEFAULT_LANGUAGE, LANGUAGE_STORAGE_KEY } from "../constants/language";
 import { NAMESPACES, DEFAULT_NAMESPACE } from "../constants/namespaces";
 
 import type { i18n as I18nInstance } from "i18next";
@@ -21,7 +21,7 @@ i18nInstance
   .use(resourcesToBackend((language: string, namespace: string) => import(`../locales/${language}/${namespace}.json`)));
 
 const initialLng =
-  typeof window !== "undefined" ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || FALLBACK_LANGUAGE : FALLBACK_LANGUAGE;
+  typeof window !== "undefined" ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || DEFAULT_LANGUAGE : DEFAULT_LANGUAGE;
 
 export const initPromise = i18nInstance
   .init({

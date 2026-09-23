@@ -572,6 +572,7 @@ overrides:
   toml: '>=4.2.0 <5'
 
 patchedDependencies:
+  '@headlessui/react@2.2.10': 48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859
   react-color@2.19.3: 311b81530f5338988f8b57718f24870a7550637159d8360d69f668cba2f2033f
 
 importers:
@@ -613,7 +614,7 @@ importers:
         version: 5.2.30
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -879,7 +880,7 @@ importers:
         version: 5.2.30
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -1036,7 +1037,7 @@ importers:
         version: 5.2.30
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -1296,7 +1297,7 @@ importers:
         version: 0.27.20(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hocuspocus/provider':
         specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
@@ -1775,7 +1776,7 @@ importers:
         version: 1.1.0
       '@headlessui/react':
         specifier: 'catalog:'
-        version: 2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.2.10(patch_hash=48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@makeplane/propel':
         specifier: 'catalog:'
         version: 0.3.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.1.17)
@@ -10357,7 +10358,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@headlessui/react@2.2.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@headlessui/react@2.2.10(patch_hash=48426c8f5c3ca997cbdd4d2edc8fa39175cc76abb0a76e1422fc68646f3c5859)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-aria/focus': 3.22.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

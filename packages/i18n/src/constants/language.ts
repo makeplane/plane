@@ -6,7 +6,14 @@
 
 import type { TLanguage, ILanguageOption } from "../types";
 
+/** Locale whose strings are used when a key is missing from the active language. */
 export const FALLBACK_LANGUAGE: TLanguage = "en";
+
+/**
+ * Locale applied when the visitor has not chosen one yet: first visit, logged-out
+ * pages and right after sign-out. Missing keys still fall back to FALLBACK_LANGUAGE.
+ */
+export const DEFAULT_LANGUAGE: TLanguage = "zh-CN";
 
 export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "English", value: "en" },
