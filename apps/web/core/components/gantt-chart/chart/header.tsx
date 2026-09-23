@@ -58,6 +58,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
                 "bg-layer-transparent-selected": currentView === chartView?.key,
               }
             )}
+            aria-pressed={currentView === chartView?.key}
             onClick={() => handleChartView(chartView?.key)}
           >
             {t(chartView?.i18n_title)}
@@ -78,6 +79,8 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       <button
         type="button"
         className="flex items-center justify-center rounded-md border border-subtle bg-layer-transparent p-1 transition-all hover:bg-layer-transparent-hover"
+        aria-label={t("common.full_screen")}
+        aria-pressed={fullScreenMode}
         onClick={toggleFullScreenMode}
       >
         {fullScreenMode ? <ArrowCollapseOutline className="h-4 w-4" /> : <FullScreenOutline className="h-4 w-4" />}
