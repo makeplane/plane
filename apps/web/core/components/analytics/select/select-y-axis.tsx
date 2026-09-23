@@ -48,8 +48,9 @@ export const SelectYAxis = observer(function SelectYAxis({ value, onChange, hidd
 
   // derived values
   // computed on every render (not memoised): `isEstimateEnabled` reads observable estimate state
+  const hiddenSet = new Set(hiddenOptions);
   const selectOptions: YAxisOption[] = options.filter(
-    (item) => !hiddenOptions?.includes(item.value) && isEstimateEnabled(item.value)
+    (item) => !hiddenSet.has(item.value) && isEstimateEnabled(item.value)
   );
   const selected = useMemo(() => options.find((option) => option.value === value) ?? null, [options, value]);
 

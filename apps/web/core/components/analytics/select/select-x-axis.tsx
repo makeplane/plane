@@ -32,8 +32,9 @@ export function SelectXAxis(props: Props) {
   const { value, onChange, options, hiddenOptions, allowNoValue, label } = props;
   // derived values
   const selectOptions = useMemo<XAxisOption[]>(() => {
+    const hidden = new Set(hiddenOptions);
     const visible = options
-      .filter((item) => !hiddenOptions?.includes(item.value))
+      .filter((item) => !hidden.has(item.value))
       .map((item) => ({ id: item.value, label: item.label, value: item.value }));
     return allowNoValue ? [{ id: NO_VALUE_ID, label: "No value", value: null }, ...visible] : visible;
   }, [options, hiddenOptions, allowNoValue]);
