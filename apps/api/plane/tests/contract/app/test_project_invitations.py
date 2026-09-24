@@ -59,3 +59,28 @@ class TestProjectInvitationsAPI:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json()["error"] == "Emails are required"
+
+    @pytest.mark.django_db
+    def test_create_project_invitation_mixed_case_role_validation(self, session_client, workspace, create_user):
+        """Test that mixed-case email lookup matches existing member and enforces role check."""
+        from plane.db.models import User
+        existing_member_user = User.objects.create_user(email="guest@example.com", username="guestmember")
+        # Add user as guest (role=5) in workspace
+        WorkspaceMember.objects.create(workspace=workspace, member=existing_member_user, role=5, is_active=True)
+
+        project = Project.objects.create(name="Invite Test Project 3", identifier="ITP3", workspace=workspace)
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
+
+        url = f"/api/workspaces/{workspace.slug}/projects/{project.id}/invitations/"
+        # Attempting to invite ' Guest@Example.com ' with role 15 when workspace role is 5
+        data = {
+            "emails": [
+                {"email": " Guest@Example.com ", "role": 15}
+            ]
+        }
+
+        response = session_client.post(url, data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["error"] == "You cannot invite a user with different role than workspace role"
+

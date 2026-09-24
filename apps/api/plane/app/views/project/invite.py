@@ -65,8 +65,13 @@ class ProjectInvitationsViewset(BaseViewSet):
             return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         for email in emails:
+            raw_email = email.get("email", "") if isinstance(email, dict) else ""
+            if not raw_email or not isinstance(raw_email, str):
+                continue
+            canonical_email = raw_email.strip().lower()
+
             workspace_member = WorkspaceMember.objects.filter(
-                workspace__slug=slug, member__email=email.get("email"), is_active=True
+                workspace__slug=slug, member__email__iexact=canonical_email, is_active=True
             ).first()
 
             if workspace_member:
@@ -81,11 +86,13 @@ class ProjectInvitationsViewset(BaseViewSet):
 
         invitation_objects = []
         for email in emails:
+            raw_email = email.get("email", "") if isinstance(email, dict) else ""
             try:
-                validate_email(email.get("email"))
+                validate_email(raw_email)
+                canonical_email = raw_email.strip().lower()
                 invitation_objects.append(
                     ProjectMemberInvite(
-                        email=email.get("email").strip().lower(),
+                        email=canonical_email,
                         project_id=project_id,
                         workspace_id=workspace.id,
                         token=jwt.encode(
