@@ -8,6 +8,7 @@ from unittest.mock import patch
 import pytest
 from rest_framework import status
 
+from plane.bgtasks.issue_activities_task import delete_issue_relation_activity
 from plane.db.models import Issue, IssueRelation, Project, ProjectMember, State
 
 
@@ -119,6 +120,33 @@ class TestWorkItemRelationRemove:
             payload = json.loads(kwargs["requested_data"])
             assert payload["related_issue"] == str(issue1.id)
             assert payload["relation_type"] == "blocking"
+
+    @pytest.mark.django_db
+    def test_reverse_relation_activity_uses_inverse_issue_and_relation(
+        self, workspace, project, issue1, issue2, create_user
+    ):
+        issue_activities = []
+
+        delete_issue_relation_activity(
+            requested_data=json.dumps(
+                {
+                    "related_issue": str(issue1.id),
+                    "relation_type": "blocking",
+                }
+            ),
+            current_instance=None,
+            issue_id=str(issue2.id),
+            project_id=str(project.id),
+            workspace_id=str(workspace.id),
+            actor_id=str(create_user.id),
+            issue_activities=issue_activities,
+            epoch=0,
+        )
+
+        inverse_activity = issue_activities[1]
+        assert str(inverse_activity.issue_id) == str(issue1.id)
+        assert inverse_activity.field == "blocked_by"
+        assert str(inverse_activity.old_identifier) == str(issue2.id)
 
     @pytest.mark.django_db
     def test_remove_relation_not_found(self, api_key_client, workspace, project, issue1, issue2):
