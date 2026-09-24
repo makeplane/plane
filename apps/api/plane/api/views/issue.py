@@ -89,7 +89,10 @@ from plane.utils.order_queryset import (
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
-from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.issue_relation_mapper import (
+    get_actual_relation,
+    get_inverse_relation,
+)
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -2652,15 +2655,21 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
 
         matching_relations.delete()
         for issue_relation in issue_relations:
+            is_forward = str(issue_relation.issue_id) == str(issue_id)
             other_issue_id = str(
                 issue_relation.related_issue_id
-                if str(issue_relation.issue_id) == str(issue_id)
+                if is_forward
                 else issue_relation.issue_id
+            )
+            relation_type = (
+                issue_relation.relation_type
+                if is_forward
+                else get_inverse_relation(issue_relation.relation_type)
             )
             activity_requested_data = json.dumps(
                 {
                     "related_issue": other_issue_id,
-                    "relation_type": issue_relation.relation_type,
+                    "relation_type": relation_type,
                 },
                 cls=DjangoJSONEncoder,
             )

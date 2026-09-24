@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import json
+from unittest.mock import patch
+
 import pytest
 from rest_framework import status
 
@@ -80,11 +83,17 @@ class TestWorkItemRelationRemove:
             updated_by=create_user,
         )
 
-        url = self.get_url(workspace.slug, project.id, issue1.id)
-        response = api_key_client.post(url, {"related_issue": str(issue2.id)}, format="json")
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            url = self.get_url(workspace.slug, project.id, issue1.id)
+            response = api_key_client.post(url, {"related_issue": str(issue2.id)}, format="json")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not IssueRelation.objects.filter(id=relation.id).exists()
+            assert response.status_code == status.HTTP_204_NO_CONTENT
+            assert not IssueRelation.objects.filter(id=relation.id).exists()
+            mock_issue_activity.delay.assert_called_once()
+            kwargs = mock_issue_activity.delay.call_args.kwargs
+            payload = json.loads(kwargs["requested_data"])
+            assert payload["related_issue"] == str(issue2.id)
+            assert payload["relation_type"] == "blocked_by"
 
     @pytest.mark.django_db
     def test_remove_relation_reverse(self, api_key_client, workspace, project, issue1, issue2, create_user):
@@ -99,11 +108,17 @@ class TestWorkItemRelationRemove:
         )
 
         # Remove from the other issue's perspective
-        url = self.get_url(workspace.slug, project.id, issue2.id)
-        response = api_key_client.post(url, {"related_issue": str(issue1.id)}, format="json")
+        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+            url = self.get_url(workspace.slug, project.id, issue2.id)
+            response = api_key_client.post(url, {"related_issue": str(issue1.id)}, format="json")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not IssueRelation.objects.filter(id=relation.id).exists()
+            assert response.status_code == status.HTTP_204_NO_CONTENT
+            assert not IssueRelation.objects.filter(id=relation.id).exists()
+            mock_issue_activity.delay.assert_called_once()
+            kwargs = mock_issue_activity.delay.call_args.kwargs
+            payload = json.loads(kwargs["requested_data"])
+            assert payload["related_issue"] == str(issue1.id)
+            assert payload["relation_type"] == "blocking"
 
     @pytest.mark.django_db
     def test_remove_relation_not_found(self, api_key_client, workspace, project, issue1, issue2):
