@@ -193,3 +193,21 @@ class TestWorkItemRelationRemove:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert IssueRelation.objects.filter(id=relation.id).exists()
 
+    @pytest.mark.django_db
+    def test_remove_relation_query_parameter(self, api_key_client, workspace, project, issue1, issue2, create_user):
+        relation = IssueRelation.objects.create(
+            issue=issue1,
+            related_issue=issue2,
+            relation_type="relates_to",
+            project=project,
+            workspace=workspace,
+            created_by=create_user,
+            updated_by=create_user,
+        )
+
+        url = f"{self.get_url(workspace.slug, project.id, issue1.id)}?related_issue={issue2.id}"
+        response = api_key_client.post(url, {}, format="json")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueRelation.objects.filter(id=relation.id).exists()
+
