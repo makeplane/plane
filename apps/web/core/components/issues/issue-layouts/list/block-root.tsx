@@ -135,7 +135,12 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   // keep sub-issues ordered by the ordering currently applied on the layout (falls back to API order for manual ordering; sort_order is excluded to preserve the existing sub-issue order)
   const orderBy = "orderBy" in issuesStore ? issuesStore.orderBy : undefined;
   const orderedSubIssues =
-    subIssues && orderBy && orderBy !== "sort_order" && "issuesSortWithOrderBy" in issuesStore
+    isExpanded &&
+    !isEpic &&
+    subIssues &&
+    orderBy &&
+    orderBy !== "sort_order" &&
+    "issuesSortWithOrderBy" in issuesStore
       ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy, true)
       : subIssues;
 
