@@ -7,6 +7,7 @@
 import { useEffect, useRef } from "react";
 import { BProgress } from "@bprogress/core";
 import { useNavigation } from "react-router";
+// oxlint-disable-next-line import/no-unassigned-import -- side-effect CSS import for the progress bar
 import "@bprogress/core/css";
 
 /**

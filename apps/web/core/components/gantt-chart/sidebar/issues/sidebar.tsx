@@ -19,7 +19,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local imports
-import { useTimeLineChart } from "../../../../hooks/use-timeline-chart";
+import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
 import { IssuesSidebarBlock } from "./block";
