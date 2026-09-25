@@ -12,6 +12,7 @@ ROUTE_PREFIXES = ["issues", "work-items"]
 
 @pytest.fixture
 def project(db, workspace, create_user):
+    """Create project TP with the user as an admin member and a default state."""
     project = Project.objects.create(name="Test Project", identifier="TP", workspace=workspace, created_by=create_user)
     ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
     State.objects.create(
@@ -28,6 +29,7 @@ def project(db, workspace, create_user):
 
 @pytest.fixture
 def issue(db, project, workspace, create_user):
+    """Create one work item in project TP."""
     return Issue.objects.create(name="Existing Issue", project=project, workspace=workspace, created_by=create_user)
 
 
@@ -43,6 +45,7 @@ class TestWorkItemByIdentifierRouteContract:
     @pytest.mark.django_db
     @pytest.mark.parametrize("prefix", ROUTE_PREFIXES)
     def test_numeric_identifier_returns_work_item(self, api_key_client, workspace, issue, prefix):
+        """A valid number returns the correct work item."""
         url = f"/api/v1/workspaces/{workspace.slug}/{prefix}/TP-{issue.sequence_id}/"
 
         response = api_key_client.get(url)
@@ -53,6 +56,7 @@ class TestWorkItemByIdentifierRouteContract:
     @pytest.mark.django_db
     @pytest.mark.parametrize("method", ["get", "post"])
     def test_advanced_search_path_is_not_found(self, api_key_client, workspace, project, method):
+        """The advanced-search path does not match the route and returns 404, not 403."""
         url = f"/api/v1/workspaces/{workspace.slug}/work-items/advanced-search/"
 
         response = getattr(api_key_client, method)(url, {"query": "anything"}, format="json")
@@ -62,6 +66,7 @@ class TestWorkItemByIdentifierRouteContract:
     @pytest.mark.django_db
     @pytest.mark.parametrize("prefix", ROUTE_PREFIXES)
     def test_non_numeric_number_in_member_project_is_not_found(self, api_key_client, workspace, issue, prefix):
+        """A number that is not an integer returns 404, not 500."""
         url = f"/api/v1/workspaces/{workspace.slug}/{prefix}/TP-abc/"
 
         response = api_key_client.get(url)
@@ -71,6 +76,7 @@ class TestWorkItemByIdentifierRouteContract:
     @pytest.mark.django_db
     @pytest.mark.parametrize("prefix", ROUTE_PREFIXES)
     def test_zero_number_is_not_found(self, api_key_client, workspace, issue, prefix):
+        """Number 0 returns 404, not 500."""
         url = f"/api/v1/workspaces/{workspace.slug}/{prefix}/TP-0/"
 
         response = api_key_client.get(url)
