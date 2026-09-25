@@ -196,6 +196,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // API Abort controller
   controller: AbortController;
 
+  // Serializes API-backed issueUpdate so an earlier patch failure cannot restore
+  // an older grouped-list snapshot over a later successful update.
+  private issueUpdateQueue: Promise<void> = Promise.resolve();
+
   constructor(
     _rootStore: IIssueRootStore,
     issueFilterStore: IBaseIssueFilterStore,
@@ -560,43 +564,56 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     data: Partial<TIssue>,
     shouldSync = true
   ) {
-    // Store Before state of the issue
-    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
-    // Deep-clone list state so rollback does not share mutated array refs.
-    // Reversing via updateIssueList is unsafe after the sub-issue ADD guard:
-    // a failed sub→root (+ group) move passes the attempted root as
-    // issueBeforeUpdate, so wasAlreadySubIssue is false and the restoring ADD
-    // would be skipped — the card would vanish until refresh.
-    const groupedIssueIdsBeforeUpdate = cloneDeep(this.groupedIssueIds);
-    const groupedIssueCountBeforeUpdate = cloneDeep(this.groupedIssueCount);
-    try {
-      // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+    const performUpdate = async () => {
+      // Store Before state of the issue
+      const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+      // Deep-clone list state so rollback does not share mutated array refs.
+      // Reversing via updateIssueList is unsafe after the sub-issue ADD guard:
+      // a failed sub→root (+ group) move passes the attempted root as
+      // issueBeforeUpdate, so wasAlreadySubIssue is false and the restoring ADD
+      // would be skipped — the card would vanish until refresh.
+      const groupedIssueIdsBeforeUpdate = cloneDeep(this.groupedIssueIds);
+      const groupedIssueCountBeforeUpdate = cloneDeep(this.groupedIssueCount);
+      try {
+        // Update the Respective Stores
+        this.rootIssueStore.issues.updateIssue(issueId, data);
+        this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
 
-      // Check if should Sync
-      if (!shouldSync) return;
+        // Check if should Sync
+        if (!shouldSync) return;
 
-      // update parent stats optimistically
-      this.updateParentStats(issueBeforeUpdate, {
-        ...issueBeforeUpdate,
-        ...data,
-      } as TIssue);
+        // update parent stats optimistically
+        this.updateParentStats(issueBeforeUpdate, {
+          ...issueBeforeUpdate,
+          ...data,
+        } as TIssue);
 
-      // call API to update the issue
-      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+        // call API to update the issue
+        await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
-      // call fetch Parent Stats
-      this.fetchParentStats(workspaceSlug, projectId);
-    } catch (error) {
-      // If errored out update store again to revert the change
-      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      runInAction(() => {
-        this.groupedIssueIds = groupedIssueIdsBeforeUpdate;
-        this.groupedIssueCount = groupedIssueCountBeforeUpdate;
-      });
-      throw error;
-    }
+        // call fetch Parent Stats
+        this.fetchParentStats(workspaceSlug, projectId);
+      } catch (error) {
+        // If errored out update store again to revert the change
+        this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
+        runInAction(() => {
+          this.groupedIssueIds = groupedIssueIdsBeforeUpdate;
+          this.groupedIssueCount = groupedIssueCountBeforeUpdate;
+        });
+        throw error;
+      }
+    };
+
+    // Optimistic-only callers (shouldSync=false) skip the queue; API-backed
+    // updates must not overlap snapshot/rollback windows.
+    if (!shouldSync) return performUpdate();
+
+    const run = this.issueUpdateQueue.then(performUpdate, performUpdate);
+    this.issueUpdateQueue = run.then(
+      () => undefined,
+      () => undefined
+    );
+    return run;
   }
 
   /**
