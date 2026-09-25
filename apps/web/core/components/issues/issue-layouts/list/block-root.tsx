@@ -23,6 +23,7 @@ import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-lo
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
@@ -78,6 +79,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const { isMobile } = usePlatformOS();
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const { issues: issuesStore } = useIssuesStore();
 
   const isSubIssue = nestingLevel !== 0;
 
@@ -130,6 +132,18 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   if (!issueId || !issuesMap[issueId]?.created_at) return null;
 
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  // keep sub-issues ordered by the ordering currently applied on the layout (falls back to API order for manual ordering; sort_order is excluded to preserve the existing sub-issue order)
+  const orderBy = "orderBy" in issuesStore ? issuesStore.orderBy : undefined;
+  const orderedSubIssues =
+    isExpanded &&
+    !isEpic &&
+    subIssues &&
+    orderBy &&
+    orderBy !== "sort_order" &&
+    "issuesSortWithOrderBy" in issuesStore
+      ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy, true)
+      : subIssues;
+
   return (
     <div className="relative" ref={issueBlockRef} id={getIssueBlockId(issueId, groupId)}>
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
@@ -164,7 +178,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
 
       {isExpanded &&
         !isEpic &&
-        subIssues?.map((subIssueId) => (
+        orderedSubIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueId={subIssueId}

@@ -66,7 +66,9 @@ export interface IBaseIssuesStore {
   clear(shouldClearPaginationOptions?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
-  issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
+  // current order by value applied on the issues of this store
+  orderBy: TIssueOrderByOptions | undefined;
+  issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>, preserveUnresolvedIds?: boolean): string[];
   getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
   getIssueLoader(groupId?: string, subGroupId?: string): TLoader;
   getGroupIssueCount: (
@@ -1763,8 +1765,38 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues;
   }
 
-  issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
-    const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
+  /**
+   * Sort issue IDs by the given key. IDs whose records are missing from the (archive-filtered) issue map are
+   * dropped by default, which is required for grouped main-issue IDs. For standalone ID lists such as sub-issues,
+   * pass `preserveUnresolvedIds` so unresolved IDs are retained at the end of the sorted result.
+   */
+  issuesSortWithOrderBy = (
+    issueIds: string[],
+    key: TIssueOrderByOptions | undefined,
+    preserveUnresolvedIds: boolean = false
+  ): string[] => {
+    // default path: keep the archive-filtered lookup so grouped main-issue filtering is unchanged
+    if (!preserveUnresolvedIds) {
+      const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
+      return this.sortIssueIds(issues, key);
+    }
+
+    // preserveUnresolvedIds path: sort from every loaded record regardless of archive status, so an
+    // archived sub-issue is still ordered (and rendered) with its siblings instead of being appended
+    // as unresolved. Only IDs with no loaded record at all are treated as unresolved.
+    const loadedIssues = issueIds
+      .map((issueId) => this.rootIssueStore.issues.getIssueById(issueId))
+      .filter((issue): issue is TIssue => Boolean(issue));
+    const loadedIdSet = new Set(getIssueIds(loadedIssues));
+    const unresolvedIds = issueIds.filter((issueId) => !loadedIdSet.has(issueId));
+
+    return this.sortIssueIds(loadedIssues, key).concat(unresolvedIds);
+  };
+
+  /**
+   * Sort the given issue records by `key`, returning their IDs.
+   */
+  sortIssueIds = (issues: TIssue[], key: TIssueOrderByOptions | undefined): string[] => {
     const array = orderBy(issues, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
 
     switch (key) {

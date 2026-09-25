@@ -28,6 +28,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
@@ -76,10 +77,22 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { issueMap } = useIssues();
+  const { issues: issuesStore } = useIssuesStore();
 
   // derived values
   const issue = issueMap[issueId];
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  // keep sub-issues ordered by the ordering currently applied on the layout (falls back to API order for manual ordering; sort_order is excluded to preserve the existing sub-issue order)
+  const orderBy = "orderBy" in issuesStore ? issuesStore.orderBy : undefined;
+  const orderedSubIssues =
+    isExpanded &&
+    !isEpic &&
+    subIssues &&
+    orderBy &&
+    orderBy !== "sort_order" &&
+    "issuesSortWithOrderBy" in issuesStore
+      ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy, true)
+      : subIssues;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
 
@@ -127,7 +140,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
 
       {isExpanded &&
         !isEpic &&
-        subIssues?.map((subIssueId: string) => (
+        orderedSubIssues?.map((subIssueId: string) => (
           <SpreadsheetIssueRow
             key={subIssueId}
             issueId={subIssueId}
