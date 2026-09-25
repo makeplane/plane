@@ -236,21 +236,41 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
-        if issue_identifier and project_identifier:
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).get(
-                workspace__slug=slug,
-                project__identifier=project_identifier,
-                sequence_id=issue_identifier,
-            )
+        # `<project_identifier>-<issue_identifier>` splits a path segment on its
+        # last hyphen, so a UUID in that position leaves a non-numeric
+        # `issue_identifier`. Filtering `sequence_id` on it raises ValueError,
+        # which surfaces as a 500 rather than a 404.
+        sequence_id = None
+        if project_identifier and issue_identifier:
+            try:
+                # isdecimal() rather than isdigit(), which also accepts
+                # superscript digits that int() then rejects. int() covers the
+                # remaining case: CPython refuses to convert decimal strings
+                # longer than 4300 digits.
+                sequence_id = int(issue_identifier) if issue_identifier.isdecimal() else None
+            except ValueError:
+                sequence_id = None
+
+        if sequence_id is None:
             return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-                status=status.HTTP_200_OK,
+                {"error": "The requested resource does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
             )
+
+        issue = Issue.issue_objects.annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        ).get(
+            workspace__slug=slug,
+            project__identifier=project_identifier,
+            sequence_id=sequence_id,
+        )
+        return Response(
+            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueListCreateAPIEndpoint(BaseAPIView):
