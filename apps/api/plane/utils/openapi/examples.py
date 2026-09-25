@@ -188,20 +188,30 @@ ISSUE_COMMENT_CREATE_EXAMPLE = OpenApiExample(
     "IssueCommentCreateSerializer",
     value={
         "comment_html": "<p>New comment content</p>",
+        "mentions": ["b8f1e2a4-6c3d-4e5f-8a7b-9c0d1e2f3a4b"],
         "external_id": "1234567890",
         "external_source": "github",
     },
-    description="Example request for creating an issue comment",
+    description=(
+        "Example request for creating an issue comment. Pass a list of user ids in "
+        "'mentions' to mention those users; the server renders the mention markup into "
+        "comment_html and notifies them."
+    ),
 )
 
 ISSUE_COMMENT_UPDATE_EXAMPLE = OpenApiExample(
     "IssueCommentCreateSerializer",
     value={
         "comment_html": "<p>Updated comment content</p>",
+        "mentions": ["b8f1e2a4-6c3d-4e5f-8a7b-9c0d1e2f3a4b"],
         "external_id": "1234567890",
         "external_source": "github",
     },
-    description="Example request for updating an issue comment",
+    description=(
+        "Example request for updating an issue comment. Pass a list of user ids in "
+        "'mentions' to mention those users; the server renders the mention markup into "
+        "comment_html and notifies the newly mentioned users."
+    ),
 )
 
 # Issue Attachment Examples

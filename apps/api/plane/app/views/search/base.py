@@ -30,6 +30,7 @@ from rest_framework.response import Response
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import (
+    BotTypeEnum,
     Workspace,
     Project,
     Issue,
@@ -329,11 +330,14 @@ class SearchEndpoint(BaseAPIView):
                             q |= Q(**{f"{field}__icontains": query})
 
                     users = (
+                        # Mention candidates: human users OR service accounts
+                        # (bot_type=SERVICE), so agents are addressable from the
+                        # editor's @-autocomplete. Other bots (workspace-seed) stay
+                        # hidden. Mirrors IssueCommentCreateSerializer.validate.
                         ProjectMember.objects.filter(
-                            q,
+                            q & (Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.SERVICE)),
                             is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                             project_id=project_id,
                         )
                         .annotate(
@@ -541,11 +545,13 @@ class SearchEndpoint(BaseAPIView):
                         for field in fields:
                             q |= Q(**{f"{field}__icontains": query})
                     users = (
+                        # Mention candidates: human users OR service accounts
+                        # (bot_type=SERVICE); other bots stay hidden. Mirrors the
+                        # project branch above and IssueCommentCreateSerializer.
                         WorkspaceMember.objects.filter(
-                            q,
+                            q & (Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.SERVICE)),
                             is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                         )
                         .annotate(
                             member__avatar_url=Case(
