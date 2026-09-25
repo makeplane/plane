@@ -16,7 +16,7 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db import models
+from django.db import models, transaction
 from django.db.models.functions import Cast, Concat
 from django.utils import timezone
 
@@ -145,6 +145,16 @@ def transfer_cycle_issues(
         return {
             "success": False,
             "error": "Source cycle not found",
+        }
+
+    # Only transfer issues from cycles that have actually ended.
+    # Draft cycles (end_date is None) or active cycles (end_date >= now)
+    # have not completed, so a progress snapshot would be meaningless and
+    # bulk-moving their issues could corrupt ongoing sprint work.
+    if old_cycle.end_date is None or old_cycle.end_date >= timezone.now():
+        return {
+            "success": False,
+            "error": "Issues can only be transferred from a completed cycle",
         }
 
     # Check if project uses estimates
@@ -429,33 +439,36 @@ def transfer_cycle_issues(
             }
         ),
     }
-    current_cycle.save(update_fields=["progress_snapshot"])
+    # Wrap snapshot save and issue bulk-update in a single atomic transaction so that
+    # a process kill or DB error after the snapshot commit cannot leave issues unmoved.
+    with transaction.atomic():
+        current_cycle.save(update_fields=["progress_snapshot"])
 
-    # Get issues to transfer (only incomplete issues)
-    cycle_issues = CycleIssue.objects.filter(
-        cycle_id=cycle_id,
-        project_id=project_id,
-        workspace__slug=slug,
-        issue__archived_at__isnull=True,
-        issue__is_draft=False,
-        issue__state__group__in=["backlog", "unstarted", "started"],
-    )
-
-    updated_cycles = []
-    update_cycle_issue_activity = []
-    for cycle_issue in cycle_issues:
-        cycle_issue.cycle_id = new_cycle_id
-        updated_cycles.append(cycle_issue)
-        update_cycle_issue_activity.append(
-            {
-                "old_cycle_id": str(cycle_id),
-                "new_cycle_id": str(new_cycle_id),
-                "issue_id": str(cycle_issue.issue_id),
-            }
+        # Get issues to transfer (only incomplete issues)
+        cycle_issues = CycleIssue.objects.filter(
+            cycle_id=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+            issue__archived_at__isnull=True,
+            issue__is_draft=False,
+            issue__state__group__in=["backlog", "unstarted", "started"],
         )
 
-    # Bulk update cycle issues
-    cycle_issues = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
+        updated_cycles = []
+        update_cycle_issue_activity = []
+        for cycle_issue in cycle_issues:
+            cycle_issue.cycle_id = new_cycle_id
+            updated_cycles.append(cycle_issue)
+            update_cycle_issue_activity.append(
+                {
+                    "old_cycle_id": str(cycle_id),
+                    "new_cycle_id": str(new_cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
+            )
+
+        # Bulk update cycle issues
+        cycle_issues = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
     # Capture Issue Activity
     issue_activity.delay(
