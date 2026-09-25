@@ -313,7 +313,11 @@ AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.
 if AWS_S3_ENDPOINT_URL and USE_MINIO:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
-    AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
+    # Mirror the MINIO_ENDPOINT_SSL check that S3Storage already makes, so presigned URLs
+    # built from these settings agree with the ones S3Storage generates. Without this,
+    # deployments that terminate TLS at a proxy and leave WEB_URL on http get http://
+    # download links on an https site.
+    AWS_S3_URL_PROTOCOL = "https:" if os.environ.get("MINIO_ENDPOINT_SSL") == "1" else f"{parsed_url.scheme}:"
 
 # RabbitMQ connection settings
 RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
