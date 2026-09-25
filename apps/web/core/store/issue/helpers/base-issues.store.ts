@@ -45,6 +45,7 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import { isIssueIdInGroupedIssueIds, shouldSkipHiddenSubIssueAdd } from "./sub-issue-list-guard";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -1215,6 +1216,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Get display filters to check if 'Show sub Work items' is enabled - Do not add Work item to main list if disabled.
     const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;
 
+    // Snapshot before mutations: ADD/DELETE order must not affect whether an
+    // already-visible card (e.g. epic child in an epic-filtered view) is allowed to move.
+    const isAlreadyInGroupedList = isIssueIdInGroupedIssueIds(this.groupedIssueIds, issueId);
+
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
@@ -1224,8 +1229,18 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          const isSubIssue = issue?.parent_id;
-          if (isSubIssue && !isShowWorkItemsEnabled) continue;
+          // Skip newly appearing sub-issues when "Show sub-issues" is off, but
+          // never suppress moves of issues already in the grouped list (e.g.
+          // epic children that are the primary results of an epic-filtered view).
+          if (
+            shouldSkipHiddenSubIssueAdd({
+              isSubIssue: Boolean(issue?.parent_id),
+              isShowSubIssuesEnabled: isShowWorkItemsEnabled,
+              isAlreadyInGroupedList,
+            })
+          ) {
+            continue;
+          }
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
             this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
