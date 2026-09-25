@@ -47,6 +47,16 @@ type TProps = TStickiesLayout & {
   columnCount: number;
 };
 
+const getColumnCount = (width: number | null): number => {
+  if (width === null) return 4;
+
+  if (width < 640) return 2; // sm
+  if (width < 850) return 3; // md
+  if (width < 1024) return 4; // lg
+  if (width < 1280) return 5; // xl
+  return 6; // 2xl and above
+};
+
 export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
@@ -72,6 +82,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   const stickiesResolvedPath = resolvedTheme === "light" ? lightStickiesAsset : darkStickiesAsset;
   const stickiesSearchResolvedPath = resolvedTheme === "light" ? lightStickiesSearchAsset : darkStickiesSearchAsset;
   const masonryRef = useRef<any>(null);
+  const stickyLayoutKey = workspaceStickyIds.join(",");
 
   const handleLayout = () => {
     if (masonryRef.current) {
@@ -79,6 +90,17 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
       masonryRef.current.performLayout();
     }
   };
+
+  // Masonry measures once on mount. If that happens before the container
+  // width is known, or after column count / item list changes, notes stack
+  // in a single column until something else calls performLayout (e.g. add).
+  useEffect(() => {
+    if (loader !== "loaded") return;
+    const frame = requestAnimationFrame(() => {
+      masonryRef.current?.performLayout?.();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [columnCount, stickyLayoutKey, loader]);
 
   // Function to determine if an item is in first or last row
   const getRowPositions = (index: number) => {
@@ -194,20 +216,11 @@ export function StickiesLayout(props: TStickiesLayout) {
     return () => resizeObserver.disconnect();
   }, []);
 
-  const getColumnCount = (width: number | null): number => {
-    if (width === null) return 4;
-
-    if (width < 640) return 2; // sm
-    if (width < 850) return 3; // md
-    if (width < 1024) return 4; // lg
-    if (width < 1280) return 5; // xl
-    return 6; // 2xl and above
-  };
   const columnCount = getColumnCount(containerWidth);
 
   return (
     <div ref={ref} className="size-full">
-      <StickiesList {...props} columnCount={columnCount} />
+      {containerWidth !== null && <StickiesList {...props} columnCount={columnCount} />}
     </div>
   );
 }
