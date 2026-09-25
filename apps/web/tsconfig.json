@@ -2,16 +2,7 @@
   "compilerOptions": {
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "@/layouts/*": ["./layouts/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/services/*": ["./services/*"],
-      "@/hooks/*": ["./hooks/*"],
-      "@/store/*": ["./store/*"],
-      "@/components/*": ["./components/*"],
-      "@/*": ["./core/*"],
-      "@/app/*": ["./app/*"],
-      "@/helpers/*": ["./helpers/*"],
-      "@/styles/*": ["./styles/*"],
+      "@/*": ["./*"],
       "package.json": ["./package.json"]
     },
     "strictNullChecks": true,
