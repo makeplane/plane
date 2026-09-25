@@ -94,3 +94,65 @@ class TestIssueListOrderByInjection:
             assert response.status_code == status.HTTP_200_OK, (
                 f"order_by={value!r} got {response.status_code}: {response.data!r}"
             )
+
+
+@pytest.mark.contract
+class TestIssueListSequenceFilter:
+    """Regression tests for project-scoped work-item lookup by sequence id.
+
+    Integrations often receive the visible work-item identifier, such as
+    ``TP-2``, rather than the internal UUID. The project work-item list endpoint
+    should support filtering by the numeric sequence portion.
+    """
+
+    def get_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/work-items/"
+
+    @pytest.mark.django_db
+    def test_filters_work_items_by_sequence_id(self, api_key_client, workspace, project, state, create_user):
+        Issue.objects.create(
+            name="First Issue",
+            workspace=workspace,
+            project=project,
+            state=state,
+            created_by=create_user,
+        )
+        second_issue = Issue.objects.create(
+            name="Second Issue",
+            workspace=workspace,
+            project=project,
+            state=state,
+            created_by=create_user,
+        )
+
+        response = api_key_client.get(
+            self.get_url(workspace.slug, project.id),
+            {"sequence_id": second_issue.sequence_id},
+        )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["total_count"] == 1
+        assert [str(item["id"]) for item in response.data["results"]] == [str(second_issue.id)]
+
+    @pytest.mark.django_db
+    def test_sequence_id_filter_returns_empty_page_for_missing_sequence(
+        self, api_key_client, workspace, project, issue
+    ):
+        response = api_key_client.get(
+            self.get_url(workspace.slug, project.id),
+            {"sequence_id": issue.sequence_id + 100},
+        )
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["total_count"] == 0
+        assert response.data["results"] == []
+
+    @pytest.mark.django_db
+    def test_sequence_id_filter_rejects_invalid_values(self, api_key_client, workspace, project):
+        response = api_key_client.get(
+            self.get_url(workspace.slug, project.id),
+            {"sequence_id": "not-a-number"},
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"sequence_id": "Must be a positive integer."}

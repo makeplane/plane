@@ -330,6 +330,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
+        sequence_id = request.GET.get("sequence_id")
 
         if external_id and external_source:
             issue = Issue.objects.get(
@@ -342,6 +343,22 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
             )
+
+        parsed_sequence_id = None
+        if sequence_id:
+            try:
+                parsed_sequence_id = int(sequence_id)
+            except ValueError:
+                return Response(
+                    {"sequence_id": "Must be a positive integer."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if parsed_sequence_id < 1:
+                return Response(
+                    {"sequence_id": "Must be a positive integer."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -381,6 +398,9 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         )
 
         total_issue_queryset = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug)
+        if parsed_sequence_id is not None:
+            issue_queryset = issue_queryset.filter(sequence_id=parsed_sequence_id)
+            total_issue_queryset = total_issue_queryset.filter(sequence_id=parsed_sequence_id)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
