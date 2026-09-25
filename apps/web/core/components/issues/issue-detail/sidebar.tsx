@@ -42,6 +42,7 @@ import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/prop
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
+import { EraserIssueLinks } from "./eraser-links";
 import type { TIssueOperations } from "./root";
 
 type Props = {
@@ -239,6 +240,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
           </div>
+          <EraserIssueLinks workspaceSlug={workspaceSlug} issueId={issueId} isEditable={isEditable} />
         </div>
       </div>
     </>

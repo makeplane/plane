@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "tsc && tsdown",
+    "test": "vitest run",
     "dev": "tsdown --watch --no-clean",
     "check:lint": "oxlint --max-warnings=416 .",
     "check:types": "tsc --noEmit",
@@ -91,7 +92,8 @@
     "@types/react-dom": "catalog:",
     "postcss": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0",
