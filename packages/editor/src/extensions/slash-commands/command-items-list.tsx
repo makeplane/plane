@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { Smile } from "lucide-react";
+import { Smile, Workflow } from "lucide-react";
 import {
   ChatOutline,
   CodeOutline,
@@ -208,6 +208,16 @@ export const getSlashCommandFilteredSections =
               openEmojiPicker(editor, range);
             },
           },
+          {
+            commandKey: "external-embed",
+            key: "eraser",
+            title: "Eraser diagram",
+            description: "Embed an Eraser file or diagram",
+            searchTerms: ["eraser", "architecture", "diagram"],
+            icon: <Workflow className="size-3.5" />,
+            command: ({ editor, range }) =>
+              editor.chain().focus().deleteRange(range).insertContent({ type: "eraserEmbed" }).run(),
+          },
         ],
       },
       {
@@ -319,7 +329,8 @@ export const getSlashCommandFilteredSections =
     });
 
     const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => ({
-      ...section,
+      key: section.key,
+      title: section.title,
       items: section.items.filter((item) => {
         if (typeof query !== "string") return;
 
