@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from uuid import uuid4
+
 import pytest
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
@@ -48,13 +50,22 @@ def create_user(db, user_data):
 
 @pytest.fixture
 def api_token(db, create_user):
-    """Create and return an API token for testing the external API"""
-    token = APIToken.objects.create(
+    """Create and return an API token for testing the external API.
+
+    The value is unique per test on purpose. ``ApiKeyRateThrottle`` buckets on
+    the token itself (``api_key:<token>`` in ``plane/api/rate_limit.py``) and the
+    counter lives in redis, so it is not rolled back with the database: a fixed
+    literal put every api-key test in the repo into ONE shared 60/minute bucket
+    that accumulated across tests, across files and across runs, and a long file
+    — or the same file run twice inside a minute — started returning 429 partway
+    through. Per-test tokens also stop parallel (xdist) workers throttling each
+    other.
+    """
+    return APIToken.objects.create(
         user=create_user,
         label="Test API Token",
-        token="test-api-token-12345",
+        token=f"test-api-token-{uuid4().hex}",
     )
-    return token
 
 
 @pytest.fixture
