@@ -11,6 +11,7 @@ import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // components
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user/user-user";
 
 export type TIssueModalProviderProps = {
@@ -26,8 +27,15 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
+  const { joinedProjectIds } = useProject();
   // derived values
-  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+  // `projectsWithCreatePermissions` is keyed by project id in whatever order the
+  // permission map came back in, so deriving the list from `joinedProjectIds` keeps it in
+  // the order projects are listed in the sidebar and the project dropdown, and leaves out
+  // archived projects.
+  const projectIdsWithCreatePermissions = joinedProjectIds.filter(
+    (projectId) => !!projectsWithCreatePermissions?.[projectId]
+  );
 
   return (
     <IssueModalContext.Provider
