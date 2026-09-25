@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone, cloneDeep } from "lodash-es";
+import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
@@ -196,9 +196,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // API Abort controller
   controller: AbortController;
 
-  // Serializes API-backed issueUpdate so an earlier patch failure cannot restore
-  // an older grouped-list snapshot over a later successful update.
-  private issueUpdateQueue: Promise<void> = Promise.resolve();
+  // Bumped when the grouped view is cleared/replaced. Used so a late patch
+  // failure does not restore membership into a newer view.
+  private groupedViewGeneration = 0;
 
   constructor(
     _rootStore: IIssueRootStore,
@@ -564,56 +564,44 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     data: Partial<TIssue>,
     shouldSync = true
   ) {
-    const performUpdate = async () => {
-      // Store Before state of the issue
-      const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
-      // Deep-clone list state so rollback does not share mutated array refs.
-      // Reversing via updateIssueList is unsafe after the sub-issue ADD guard:
-      // a failed sub→root (+ group) move passes the attempted root as
-      // issueBeforeUpdate, so wasAlreadySubIssue is false and the restoring ADD
-      // would be skipped — the card would vanish until refresh.
-      const groupedIssueIdsBeforeUpdate = cloneDeep(this.groupedIssueIds);
-      const groupedIssueCountBeforeUpdate = cloneDeep(this.groupedIssueCount);
-      try {
-        // Update the Respective Stores
-        this.rootIssueStore.issues.updateIssue(issueId, data);
-        this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+    // Store Before state of the issue
+    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    const attemptedIssue = { ...issueBeforeUpdate, ...data } as TIssue;
+    // If the grouped view is replaced while the patch is in flight, skip list
+    // rollback so we do not write membership from the old view into the new one.
+    const viewGeneration = this.groupedViewGeneration;
 
-        // Check if should Sync
-        if (!shouldSync) return;
+    try {
+      // Optimistic store updates stay synchronous so callers (and DnD) see the
+      // move immediately — do not queue these behind in-flight patchIssue calls.
+      this.rootIssueStore.issues.updateIssue(issueId, data);
+      this.updateIssueList(attemptedIssue, issueBeforeUpdate);
 
-        // update parent stats optimistically
-        this.updateParentStats(issueBeforeUpdate, {
-          ...issueBeforeUpdate,
-          ...data,
-        } as TIssue);
+      // Check if should Sync
+      if (!shouldSync) return;
 
-        // call API to update the issue
-        await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      // update parent stats optimistically
+      this.updateParentStats(issueBeforeUpdate, attemptedIssue);
 
-        // call fetch Parent Stats
-        this.fetchParentStats(workspaceSlug, projectId);
-      } catch (error) {
-        // If errored out update store again to revert the change
-        this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-        runInAction(() => {
-          this.groupedIssueIds = groupedIssueIdsBeforeUpdate;
-          this.groupedIssueCount = groupedIssueCountBeforeUpdate;
+      // call API to update the issue
+      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+
+      // call fetch Parent Stats
+      this.fetchParentStats(workspaceSlug, projectId);
+    } catch (error) {
+      // Revert issue record always
+      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
+      // Per-issue reverse of list membership when the view is still the same.
+      // bypassSubIssueGuard: reverse updateIssueList can look like root→sub at
+      // the guard (attempted root as issueBeforeUpdate), which would skip the
+      // restoring ADD and hide the card until refresh.
+      if (viewGeneration === this.groupedViewGeneration) {
+        this.updateIssueList(issueBeforeUpdate, attemptedIssue, undefined, {
+          bypassSubIssueGuard: true,
         });
-        throw error;
       }
-    };
-
-    // Optimistic-only callers (shouldSync=false) skip the queue; API-backed
-    // updates must not overlap snapshot/rollback windows.
-    if (!shouldSync) return performUpdate();
-
-    const run = this.issueUpdateQueue.then(performUpdate, performUpdate);
-    this.issueUpdateQueue = run.then(
-      () => undefined,
-      () => undefined
-    );
-    return run;
+      throw error;
+    }
   }
 
   /**
@@ -1187,6 +1175,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    */
   clear(shouldClearPaginationOptions = true) {
     runInAction(() => {
+      this.groupedViewGeneration += 1;
       this.groupedIssueIds = undefined;
       this.issuePaginationData = {};
       this.groupedIssueCount = {};
@@ -1232,7 +1221,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     issue?: TIssue,
     issueBeforeUpdate?: TIssue,
     // oxlint-disable-next-line no-shadow
-    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE,
+    options?: { bypassSubIssueGuard?: boolean }
   ) {
     if (!issue && !issueBeforeUpdate) return;
 
@@ -1261,7 +1251,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           // epic children in an epic-filtered view — #9049). Do not treat prior
           // list membership alone as enough: a root→sub-issue transition that
           // also changes group key would still be in the source list at snapshot.
+          // bypassSubIssueGuard: used for patch-failure rollback that must restore
+          // membership even when reverse args look like a root→sub transition.
           if (
+            !options?.bypassSubIssueGuard &&
             shouldSkipHiddenSubIssueAdd({
               isSubIssue: Boolean(issue?.parent_id),
               isShowSubIssuesEnabled: isShowWorkItemsEnabled,

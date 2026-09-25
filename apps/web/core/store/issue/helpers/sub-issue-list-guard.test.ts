@@ -103,8 +103,8 @@ describe("shouldSkipHiddenSubIssueAdd", () => {
   });
 
   // A failed optimistic sub→root (+ group) move looks identical to root→sub at
-  // the guard: restoring via reversed updateIssueList would skip the ADD.
-  // issueUpdate must restore cloned groupedIssueIds/Count instead.
+  // the guard: restoring via reversed updateIssueList would skip the ADD unless
+  // rollback passes bypassSubIssueGuard (and only when view generation matches).
   it("documents that reverse updateIssueList args cannot restore a visible sub-issue after failed root conversion", () => {
     expect(
       shouldSkipHiddenSubIssueAdd({
