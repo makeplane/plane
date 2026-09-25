@@ -68,7 +68,7 @@ export interface IBaseIssuesStore {
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   // current order by value applied on the issues of this store
   orderBy: TIssueOrderByOptions | undefined;
-  issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
+  issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>, preserveUnresolvedIds?: boolean): string[];
   getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
   getIssueLoader(groupId?: string, subGroupId?: string): TLoader;
   getGroupIssueCount: (
@@ -1765,8 +1765,29 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues;
   }
 
-  issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
+  /**
+   * Sort issue IDs by the given key. IDs whose records are missing from the (archive-filtered) issue map are
+   * dropped by default, which is required for grouped main-issue IDs. For standalone ID lists such as sub-issues,
+   * pass `preserveUnresolvedIds` so unresolved IDs are retained at the end of the sorted result.
+   */
+  issuesSortWithOrderBy = (
+    issueIds: string[],
+    key: TIssueOrderByOptions | undefined,
+    preserveUnresolvedIds: boolean = false
+  ): string[] => {
     const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
+    if (preserveUnresolvedIds) {
+      const resolvedIdSet = new Set(getIssueIds(issues));
+      const unresolvedIds = issueIds.filter((issueId) => !resolvedIdSet.has(issueId));
+      return this.sortIssueIds(issues, key).concat(unresolvedIds);
+    }
+    return this.sortIssueIds(issues, key);
+  };
+
+  /**
+   * Sort the given issue records by `key`, returning their IDs.
+   */
+  sortIssueIds = (issues: TIssue[], key: TIssueOrderByOptions | undefined): string[] => {
     const array = orderBy(issues, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
 
     switch (key) {

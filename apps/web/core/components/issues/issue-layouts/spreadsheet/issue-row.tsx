@@ -86,7 +86,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
   const orderBy = "orderBy" in issuesStore ? issuesStore.orderBy : undefined;
   const orderedSubIssues =
     subIssues && orderBy && orderBy !== "sort_order" && "issuesSortWithOrderBy" in issuesStore
-      ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy)
+      ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy, true)
       : subIssues;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);

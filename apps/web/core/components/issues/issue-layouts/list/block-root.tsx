@@ -136,7 +136,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const orderBy = "orderBy" in issuesStore ? issuesStore.orderBy : undefined;
   const orderedSubIssues =
     subIssues && orderBy && orderBy !== "sort_order" && "issuesSortWithOrderBy" in issuesStore
-      ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy)
+      ? issuesStore.issuesSortWithOrderBy(subIssues, orderBy, true)
       : subIssues;
 
   return (
