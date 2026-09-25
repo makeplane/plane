@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
+import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone, cloneDeep } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
@@ -562,6 +562,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   ) {
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    // Deep-clone list state so rollback does not share mutated array refs.
+    // Reversing via updateIssueList is unsafe after the sub-issue ADD guard:
+    // a failed sub→root (+ group) move passes the attempted root as
+    // issueBeforeUpdate, so wasAlreadySubIssue is false and the restoring ADD
+    // would be skipped — the card would vanish until refresh.
+    const groupedIssueIdsBeforeUpdate = cloneDeep(this.groupedIssueIds);
+    const groupedIssueCountBeforeUpdate = cloneDeep(this.groupedIssueCount);
     try {
       // Update the Respective Stores
       this.rootIssueStore.issues.updateIssue(issueId, data);
@@ -584,7 +591,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     } catch (error) {
       // If errored out update store again to revert the change
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+      runInAction(() => {
+        this.groupedIssueIds = groupedIssueIdsBeforeUpdate;
+        this.groupedIssueCount = groupedIssueCountBeforeUpdate;
+      });
       throw error;
     }
   }

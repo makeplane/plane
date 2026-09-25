@@ -101,4 +101,18 @@ describe("shouldSkipHiddenSubIssueAdd", () => {
       })
     ).toBe(false);
   });
+
+  // A failed optimistic sub→root (+ group) move looks identical to root→sub at
+  // the guard: restoring via reversed updateIssueList would skip the ADD.
+  // issueUpdate must restore cloned groupedIssueIds/Count instead.
+  it("documents that reverse updateIssueList args cannot restore a visible sub-issue after failed root conversion", () => {
+    expect(
+      shouldSkipHiddenSubIssueAdd({
+        ...baseHidden,
+        isAlreadyInGroupedList: true,
+        wasAlreadySubIssue: false,
+        isExplicitAdd: false,
+      })
+    ).toBe(true);
+  });
 });
