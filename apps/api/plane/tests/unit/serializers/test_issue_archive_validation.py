@@ -151,6 +151,29 @@ class TestPublicIssueSerializerArchiveValidation:
 
         assert serializer.is_valid(), serializer.errors
 
+    @pytest.mark.django_db
+    def test_partial_update_with_explicit_null_state_and_archived_at_is_rejected(self, db, workspace, create_user):
+        """An explicitly null state clears the state, so the resulting item is not completed/cancelled."""
+        from plane.db.models import Issue
+
+        project = Project.objects.create(
+            name="Test Project", identifier="TEST", workspace=workspace, created_by=create_user
+        )
+        _, completed_state = make_states(project, workspace, create_user)
+        issue = Issue.objects.create(
+            name="Completed Issue", project=project, workspace=workspace, state=completed_state, created_by=create_user
+        )
+
+        serializer = IssueSerializer(
+            issue,
+            data={"state": None, "archived_at": timezone.now().date().isoformat()},
+            partial=True,
+            context={"project_id": project.id, "workspace_id": workspace.id},
+        )
+
+        assert not serializer.is_valid()
+        assert "archived_at" in serializer.errors
+
 
 @pytest.mark.unit
 class TestAppIssueCreateSerializerArchiveValidation:
@@ -217,3 +240,26 @@ class TestAppIssueCreateSerializerArchiveValidation:
         )
 
         assert serializer.is_valid(), serializer.errors
+
+    @pytest.mark.django_db
+    def test_partial_update_with_explicit_null_state_and_archived_at_is_rejected(self, db, workspace, create_user):
+        """An explicitly null state clears the state, so the resulting item is not completed/cancelled."""
+        from plane.db.models import Issue
+
+        project = Project.objects.create(
+            name="Test Project", identifier="TEST", workspace=workspace, created_by=create_user
+        )
+        _, completed_state = make_states(project, workspace, create_user)
+        issue = Issue.objects.create(
+            name="Completed Issue", project=project, workspace=workspace, state=completed_state, created_by=create_user
+        )
+
+        serializer = IssueCreateSerializer(
+            issue,
+            data={"state_id": None, "archived_at": timezone.now().date().isoformat()},
+            partial=True,
+            context={"project_id": project.id},
+        )
+
+        assert not serializer.is_valid()
+        assert "archived_at" in serializer.errors

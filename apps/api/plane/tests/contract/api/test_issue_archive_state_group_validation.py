@@ -157,6 +157,24 @@ class TestIssueArchiveStateGroupValidationContract:
         assert completed_issue.archived_at is None
 
     @pytest.mark.django_db
+    def test_patch_with_explicit_null_state_and_archived_at_is_rejected(
+        self, api_key_client, workspace, project, completed_issue
+    ):
+        """An explicit state=null clears the state, so the resulting item is not completed/cancelled."""
+        url = self.get_detail_url(workspace.slug, project.id, completed_issue.id)
+
+        response = api_key_client.patch(
+            url,
+            {"state": None, "archived_at": timezone.now().date().isoformat()},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "archived_at" in response.data
+        completed_issue.refresh_from_db()
+        assert completed_issue.archived_at is None
+
+    @pytest.mark.django_db
     def test_create_with_archived_at_on_backlog_state_is_rejected(
         self, api_key_client, workspace, project, backlog_state
     ):

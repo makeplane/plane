@@ -163,9 +163,12 @@ class IssueSerializer(BaseSerializer):
         # Check archived_at is only set for completed or cancelled state group issues
         # (same rule enforced by the archive and bulk-archive endpoints)
         if data.get("archived_at") is not None:
-            state = data.get("state")
-            if state is None and self.instance is not None:
+            if "state" in data:
+                state = data["state"]
+            elif self.instance is not None:
                 state = self.instance.state
+            else:
+                state = None
             if state is None or state.group not in ["completed", "cancelled"]:
                 raise serializers.ValidationError(
                     {"archived_at": ["Can only archive completed or cancelled state group issue"]}
