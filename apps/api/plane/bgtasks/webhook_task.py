@@ -87,6 +87,8 @@ def get_issue_prefetches():
     return [
         Prefetch("label_issue", queryset=IssueLabel.objects.select_related("label")),
         Prefetch("issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")),
+        Prefetch("issue_module", queryset=ModuleIssue.objects.select_related("module")),
+        Prefetch("issue_cycle", queryset=CycleIssue.objects.select_related("cycle")),
     ]
 
 
@@ -161,7 +163,7 @@ def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = Fal
                 issue_id = queryset.id
                 queryset = model.objects.filter(pk=issue_id).prefetch_related(*issue_prefetches).first()
 
-            return serializer(queryset, many=many, context={"expand": ["labels", "assignees"]}).data
+            return serializer(queryset, many=many, context={"expand": ["labels", "assignees", "module", "cycle"]}).data
         else:
             return serializer(queryset, many=many).data
     except ObjectDoesNotExist:
