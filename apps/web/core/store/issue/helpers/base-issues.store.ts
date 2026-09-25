@@ -66,6 +66,8 @@ export interface IBaseIssuesStore {
   clear(shouldClearPaginationOptions?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
+  // current order by value applied on the issues of this store
+  orderBy: TIssueOrderByOptions | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
   getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
   getIssueLoader(groupId?: string, subGroupId?: string): TLoader;
