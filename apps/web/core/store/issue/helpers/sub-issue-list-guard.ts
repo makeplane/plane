@@ -34,16 +34,32 @@ export const isIssueIdInGroupedIssueIds = (
 
 /**
  * When "Show sub-issues" is off, hide sub-issues that would newly appear in the
- * main grouped list. Do not suppress ADD for issues already in that list —
- * they are primary content (e.g. epic-filtered kanban) and must still move on
- * optimistic drag/drop updates. See makeplane/plane#9049.
+ * main grouped list.
+ *
+ * Allow ADD only when the issue is already visible AND either:
+ * - it was already a sub-issue (e.g. epic child moving between columns — #9049), or
+ * - this is an explicit ADD action (preserve prior add-to-list behavior).
+ *
+ * Do not allow ADD solely because the id is still in a source group during a
+ * root→sub-issue transition that also changes group key (e.g. state) — the
+ * snapshot would otherwise keep a newly hidden sub-issue in the destination.
  */
 export const shouldSkipHiddenSubIssueAdd = ({
   isSubIssue,
   isShowSubIssuesEnabled,
   isAlreadyInGroupedList,
+  wasAlreadySubIssue,
+  isExplicitAdd,
 }: {
   isSubIssue: boolean;
   isShowSubIssuesEnabled: boolean;
   isAlreadyInGroupedList: boolean;
-}): boolean => isSubIssue && !isShowSubIssuesEnabled && !isAlreadyInGroupedList;
+  wasAlreadySubIssue: boolean;
+  isExplicitAdd: boolean;
+}): boolean => {
+  if (!isSubIssue || isShowSubIssuesEnabled) return false;
+
+  const canMoveAsVisibleSubIssue = isAlreadyInGroupedList && (wasAlreadySubIssue || isExplicitAdd);
+
+  return !canMoveAsVisibleSubIssue;
+};

@@ -1229,14 +1229,18 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          // Skip newly appearing sub-issues when "Show sub-issues" is off, but
-          // never suppress moves of issues already in the grouped list (e.g.
-          // epic children that are the primary results of an epic-filtered view).
+          // Skip newly appearing / newly nested sub-issues when "Show sub-issues"
+          // is off. Allow moves of issues already visible as sub-issues (e.g.
+          // epic children in an epic-filtered view — #9049). Do not treat prior
+          // list membership alone as enough: a root→sub-issue transition that
+          // also changes group key would still be in the source list at snapshot.
           if (
             shouldSkipHiddenSubIssueAdd({
               isSubIssue: Boolean(issue?.parent_id),
               isShowSubIssuesEnabled: isShowWorkItemsEnabled,
               isAlreadyInGroupedList,
+              wasAlreadySubIssue: Boolean(issueBeforeUpdate?.parent_id),
+              isExplicitAdd: action === EIssueGroupedAction.ADD,
             })
           ) {
             continue;

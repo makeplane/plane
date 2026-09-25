@@ -34,22 +34,23 @@ describe("isIssueIdInGroupedIssueIds", () => {
 });
 
 describe("shouldSkipHiddenSubIssueAdd", () => {
+  const baseHidden = {
+    isSubIssue: true,
+    isShowSubIssuesEnabled: false,
+    isAlreadyInGroupedList: false,
+    wasAlreadySubIssue: false,
+    isExplicitAdd: false,
+  };
+
   it("skips newly appearing sub-issues when Show sub-issues is off", () => {
-    expect(
-      shouldSkipHiddenSubIssueAdd({
-        isSubIssue: true,
-        isShowSubIssuesEnabled: false,
-        isAlreadyInGroupedList: false,
-      })
-    ).toBe(true);
+    expect(shouldSkipHiddenSubIssueAdd(baseHidden)).toBe(true);
   });
 
   it("does not skip when Show sub-issues is on", () => {
     expect(
       shouldSkipHiddenSubIssueAdd({
-        isSubIssue: true,
+        ...baseHidden,
         isShowSubIssuesEnabled: true,
-        isAlreadyInGroupedList: false,
       })
     ).toBe(false);
   });
@@ -57,9 +58,8 @@ describe("shouldSkipHiddenSubIssueAdd", () => {
   it("does not skip root issues", () => {
     expect(
       shouldSkipHiddenSubIssueAdd({
+        ...baseHidden,
         isSubIssue: false,
-        isShowSubIssuesEnabled: false,
-        isAlreadyInGroupedList: false,
       })
     ).toBe(false);
   });
@@ -67,12 +67,37 @@ describe("shouldSkipHiddenSubIssueAdd", () => {
   // Regression for makeplane/plane#9049: epic children are primary results in
   // epic-filtered kanban even when Show sub-issues is off. Optimistic DnD must
   // still ADD them into the destination column.
-  it("does not skip sub-issues already visible in the grouped list", () => {
+  it("does not skip sub-issues already visible that were already sub-issues", () => {
     expect(
       shouldSkipHiddenSubIssueAdd({
-        isSubIssue: true,
-        isShowSubIssuesEnabled: false,
+        ...baseHidden,
         isAlreadyInGroupedList: true,
+        wasAlreadySubIssue: true,
+      })
+    ).toBe(false);
+  });
+
+  // Root → sub-issue while also changing group (e.g. state): the id is still in
+  // the source group at snapshot time, but it must not be ADDed to the destination
+  // when Show sub-issues is off.
+  it("skips when a root issue becomes a sub-issue even if still in the source group", () => {
+    expect(
+      shouldSkipHiddenSubIssueAdd({
+        ...baseHidden,
+        isAlreadyInGroupedList: true,
+        wasAlreadySubIssue: false,
+        isExplicitAdd: false,
+      })
+    ).toBe(true);
+  });
+
+  it("does not skip explicit ADD for an already-visible issue", () => {
+    expect(
+      shouldSkipHiddenSubIssueAdd({
+        ...baseHidden,
+        isAlreadyInGroupedList: true,
+        wasAlreadySubIssue: false,
+        isExplicitAdd: true,
       })
     ).toBe(false);
   });
