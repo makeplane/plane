@@ -5,6 +5,8 @@
       "@/layouts/*": ["./layouts/*"],
       "@/lib/*": ["./lib/*"],
       "@/services/*": ["./services/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/store/*": ["./store/*"],
       "@/*": ["./core/*"],
       "@/app/*": ["./app/*"],
       "@/helpers/*": ["./helpers/*"],
