@@ -219,6 +219,12 @@ export class StateStore implements IStateStore {
   fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
     const statesResponse = await this.stateService.getStates(workspaceSlug, projectId);
     runInAction(() => {
+      const incomingIds = new Set(statesResponse.map((state) => state.id));
+      Object.keys(this.stateMap).forEach((stateId) => {
+        if (this.stateMap[stateId]?.project_id === projectId && !incomingIds.has(stateId)) {
+          delete this.stateMap[stateId];
+        }
+      });
       statesResponse.forEach((state) => {
         set(this.stateMap, [state.id], state);
       });
@@ -250,6 +256,12 @@ export class StateStore implements IStateStore {
   fetchWorkspaceStates = async (workspaceSlug: string) => {
     const statesResponse = await this.stateService.getWorkspaceStates(workspaceSlug);
     runInAction(() => {
+      const incomingIds = new Set(statesResponse.map((state) => state.id));
+      Object.keys(this.stateMap).forEach((stateId) => {
+        if (!incomingIds.has(stateId)) {
+          delete this.stateMap[stateId];
+        }
+      });
       statesResponse.forEach((state) => {
         set(this.stateMap, [state.id], state);
       });
