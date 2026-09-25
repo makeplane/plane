@@ -1,0 +1,77 @@
+# Reference OpenTelemetry Collector config for Plane self-hosters.
+# Run with: otelcol --config=otel-collector.yaml
+# Replace the `debug` exporter with one targeting your backend.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  filelog:
+    include:
+      - /var/lib/docker/containers/*/*-json.log
+    operators:
+      # 1. Unwrap Docker's json-file envelope:
+      #    {"log": "<the app's JSON line>\n", "stream": "stdout", "time": "..."}
+      #    This leaves the app's own JSON as a string in attributes.log.
+      - type: json_parser
+      # 2. Parse the app's JSON out of that string, so trace_id / span_id /
+      #    service_name become real attributes. Guarded: `include` above matches
+      #    every container on the host, and plaintext lines (postgres, redis,
+      #    rabbitmq, ...) would otherwise log a parse error each. Narrowing
+      #    `include` to just the api/worker/beat containers is the tidier option
+      #    if you know their container ids.
+      - type: json_parser
+        parse_from: attributes.log
+        if: 'attributes.log != nil and attributes.log matches "^\\s*[{]"'
+      # 3. Promote them to the log record's top-level trace context. A `move`
+      #    to a non-prefixed field would target body.trace_id and never set the
+      #    real trace context — trace_parser is the operator that does.
+      - type: trace_parser
+        trace_id:
+          parse_from: attributes.trace_id
+        span_id:
+          parse_from: attributes.span_id
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+exporters:
+  # Replace `debug` with your real backend. Examples (commented):
+  #
+  # otlphttp/tempo:
+  #   endpoint: http://tempo:4318
+  #
+  # datadog:
+  #   api:
+  #     key: ${DD_API_KEY}
+  #
+  # otlphttp/honeycomb:
+  #   endpoint: https://api.honeycomb.io
+  #   headers:
+  #     x-honeycomb-team: ${HONEYCOMB_API_KEY}
+  #
+  # prometheusremotewrite:
+  #   endpoint: https://prometheus.example.com/api/v1/write
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    logs:
+      receivers: [filelog]
+      processors: [batch]
+      exporters: [debug]
