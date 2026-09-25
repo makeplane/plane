@@ -5,7 +5,7 @@
  */
 
 import type { AxiosRequestConfig } from "axios";
-import { CancelToken, isCancel } from "axios";
+import axios from "axios";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -21,7 +21,8 @@ export class FileUploadService extends APIService {
     data: FormData,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<void> {
-    this.cancelSource = CancelToken.source();
+    // oxlint-disable-next-line import/no-named-as-default-member -- CancelToken is accessed via the default export at runtime
+    this.cancelSource = axios.CancelToken.source();
     return this.post(url, data, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -32,7 +33,8 @@ export class FileUploadService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        if (isCancel(error)) {
+        // oxlint-disable-next-line import/no-named-as-default-member -- isCancel is accessed via the default export at runtime
+        if (axios.isCancel(error)) {
           console.log(error.message);
         } else {
           throw error?.response?.data;
