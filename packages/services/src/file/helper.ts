@@ -82,6 +82,34 @@ const detectMimeTypeFromSignature = async (file: File): Promise<string> => {
 };
 
 /**
+ * Extension → MIME map for text-like files that lack a binary signature.
+ * Browsers (especially on macOS) often leave File.type empty for these.
+ */
+const EXTENSION_MIME_FALLBACKS: Record<string, string> = {
+  md: "text/markdown",
+  markdown: "text/markdown",
+  mdown: "text/markdown",
+  mkd: "text/markdown",
+  txt: "text/plain",
+  text: "text/plain",
+  log: "text/plain",
+  csv: "text/csv",
+  tsv: "text/tab-separated-values",
+};
+
+/**
+ * @description Guess MIME type from filename extension when browser/signature detection fails
+ * @param {string} filename
+ * @returns {string} guessed MIME type or empty string
+ */
+const guessMimeTypeFromFilename = (filename: string): string => {
+  const parts = filename.toLowerCase().split(".");
+  if (parts.length < 2) return "";
+  const extension = parts[parts.length - 1] || "";
+  return EXTENSION_MIME_FALLBACKS[extension] || "";
+};
+
+/**
  * @description Validate and detect the MIME type of a file using signature detection
  * Also performs basic security checks on filename
  * @param {File} file
@@ -103,7 +131,17 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
-  // fallback for unknown files
+  // Browser-provided type (empty for many text files on macOS)
+  if (file.type && file.type.trim()) {
+    return file.type.trim();
+  }
+
+  // Extension fallback for text-like uploads with no magic bytes
+  const extensionType = guessMimeTypeFromFilename(file.name);
+  if (extensionType) {
+    return extensionType;
+  }
+
   return "";
 };
 
