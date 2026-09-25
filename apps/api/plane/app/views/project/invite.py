@@ -37,6 +37,9 @@ from plane.db.models.project import ProjectNetwork
 from plane.utils.host import base_host
 
 
+from plane.bgtasks.project_invitation_task import project_invitation
+
+
 class ProjectInvitationsViewset(BaseViewSet):
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite
@@ -62,22 +65,34 @@ class ProjectInvitationsViewset(BaseViewSet):
             return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         for email in emails:
-            workspace_role = WorkspaceMember.objects.filter(
-                workspace__slug=slug, member__email=email.get("email"), is_active=True
-            ).role
+            raw_email = email.get("email", "") if isinstance(email, dict) else ""
+            if not raw_email or not isinstance(raw_email, str):
+                continue
+            canonical_email = raw_email.strip().lower()
 
-            if workspace_role in [5, 20] and workspace_role != email.get("role", 5):
-                return Response({"error": "You cannot invite a user with different role than workspace role"})
+            workspace_member = WorkspaceMember.objects.filter(
+                workspace__slug=slug, member__email__iexact=canonical_email, is_active=True
+            ).first()
+
+            if workspace_member:
+                workspace_role = workspace_member.role
+                if workspace_role in [5, 20] and workspace_role != email.get("role", 5):
+                    return Response(
+                        {"error": "You cannot invite a user with different role than workspace role"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
         workspace = Workspace.objects.get(slug=slug)
 
-        project_invitations = []
+        invitation_objects = []
         for email in emails:
+            raw_email = email.get("email", "") if isinstance(email, dict) else ""
             try:
-                validate_email(email.get("email"))
-                project_invitations.append(
+                validate_email(raw_email)
+                canonical_email = raw_email.strip().lower()
+                invitation_objects.append(
                     ProjectMemberInvite(
-                        email=email.get("email").strip().lower(),
+                        email=canonical_email,
                         project_id=project_id,
                         workspace_id=workspace.id,
                         token=jwt.encode(
@@ -97,15 +112,15 @@ class ProjectInvitationsViewset(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        # Create workspace member invite
+        # Create project member invites
         project_invitations = ProjectMemberInvite.objects.bulk_create(
-            project_invitations, batch_size=10, ignore_conflicts=True
+            invitation_objects, batch_size=10, ignore_conflicts=True
         )
         current_site = base_host(request=request, is_app=True)
 
         # Send invitations
         for invitation in project_invitations:
-            project_invitations.delay(
+            project_invitation.delay(
                 invitation.email,
                 project_id,
                 invitation.token,
