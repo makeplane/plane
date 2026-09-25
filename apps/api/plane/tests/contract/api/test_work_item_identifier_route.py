@@ -67,3 +67,12 @@ class TestWorkItemByIdentifierRouteContract:
         response = api_key_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("prefix", ROUTE_PREFIXES)
+    def test_zero_number_is_not_found(self, api_key_client, workspace, issue, prefix):
+        url = f"/api/v1/workspaces/{workspace.slug}/{prefix}/TP-0/"
+
+        response = api_key_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
