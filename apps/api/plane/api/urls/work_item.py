@@ -18,6 +18,7 @@ from plane.api.views import (
     WorkspaceIssueAPIEndpoint,
     IssueSearchEndpoint,
     IssueRelationListCreateAPIEndpoint,
+    IssueRelationRemoveAPIEndpoint,
 )
 
 # Deprecated url patterns
@@ -81,6 +82,16 @@ old_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue-attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/relations/",
+        IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="issue-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/relations/remove/",
+        IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post", "delete"]),
+        name="issue-relation-remove",
     ),
 ]
 
@@ -150,6 +161,11 @@ new_url_patterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/",
         IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="work-item-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/remove/",
+        IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post", "delete"]),
+        name="work-item-relation-remove",
     ),
 ]
 

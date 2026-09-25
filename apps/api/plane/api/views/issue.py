@@ -47,6 +47,7 @@ from plane.api.serializers import (
     IssueCommentSerializer,
     IssueLinkSerializer,
     IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
     IssueRelationResponseSerializer,
     IssueRelationSerializer,
     IssueSerializer,
@@ -88,7 +89,10 @@ from plane.utils.order_queryset import (
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
-from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.issue_relation_mapper import (
+    get_actual_relation,
+    get_inverse_relation,
+)
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -2590,3 +2594,102 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             serializer_class(refetched_relations, many=True).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+    """Issue Relation Remove Endpoint"""
+
+    serializer_class = IssueRelationRemoveSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @work_item_relation_docs(
+        operation_id="remove_work_item_relation",
+        summary="Remove work item relation",
+        description="Remove a relationship between work items.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationRemoveSerializer,
+        ),
+        responses={
+            204: OpenApiResponse(
+                description="Work item relation removed successfully",
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Remove work item relation"""
+        if not isinstance(request.data, dict):
+            return Response(
+                {"error": "Invalid request body. Expected an object."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        data = request.data
+        if not data.get("related_issue") and request.query_params.get("related_issue"):
+            data = {"related_issue": request.query_params.get("related_issue")}
+
+        serializer = IssueRelationRemoveSerializer(data=data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        related_issue = serializer.validated_data["related_issue"]
+
+        matching_relations = IssueRelation.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+        ).filter(
+            Q(issue_id=related_issue, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue)
+        )
+        issue_relations = list(matching_relations)
+        if not issue_relations:
+            return Response(
+                {"error": "Relation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        matching_relations.delete()
+        for issue_relation in issue_relations:
+            is_forward = str(issue_relation.issue_id) == str(issue_id)
+            other_issue_id = str(
+                issue_relation.related_issue_id
+                if is_forward
+                else issue_relation.issue_id
+            )
+            relation_type = (
+                issue_relation.relation_type
+                if is_forward
+                else get_inverse_relation(issue_relation.relation_type)
+            )
+            activity_requested_data = json.dumps(
+                {
+                    "related_issue": other_issue_id,
+                    "relation_type": relation_type,
+                },
+                cls=DjangoJSONEncoder,
+            )
+            issue_activity.delay(
+                type="issue_relation.activity.deleted",
+                requested_data=activity_requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    IssueRelationSerializer(issue_relation).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete(self, request, slug, project_id, issue_id):
+        """Allow HTTP DELETE method as well"""
+        return self.post(request, slug, project_id, issue_id)
+
