@@ -589,16 +589,26 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
     } catch (error) {
-      // Revert issue record always
-      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      // Per-issue reverse of list membership when the view is still the same.
-      // bypassSubIssueGuard: reverse updateIssueList can look like root→sub at
-      // the guard (attempted root as issueBeforeUpdate), which would skip the
-      // restoring ADD and hide the card until refresh.
-      if (viewGeneration === this.groupedViewGeneration) {
-        this.updateIssueList(issueBeforeUpdate, attemptedIssue, undefined, {
-          bypassSubIssueGuard: true,
-        });
+      // If a newer optimistic update has changed the same issue while this
+      // patch was in flight, the store no longer reflects `attemptedIssue`.
+      // Rolling back to `issueBeforeUpdate` here would clobber that newer
+      // state, leaving the UI stale until reload. Only roll back when the
+      // current record still matches what this update attempted.
+      const currentIssue = this.rootIssueStore.issues.getIssueById(issueId);
+      const isStillThisUpdate = isEqual(currentIssue, attemptedIssue);
+
+      if (isStillThisUpdate) {
+        // Revert issue record
+        this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
+        // Per-issue reverse of list membership when the view is still the same.
+        // bypassSubIssueGuard: reverse updateIssueList can look like root→sub at
+        // the guard (attempted root as issueBeforeUpdate), which would skip the
+        // restoring ADD and hide the card until refresh.
+        if (viewGeneration === this.groupedViewGeneration) {
+          this.updateIssueList(issueBeforeUpdate, attemptedIssue, undefined, {
+            bypassSubIssueGuard: true,
+          });
+        }
       }
       throw error;
     }

@@ -4,10 +4,23 @@
  * See the LICENSE file for details.
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { EIssueLayoutTypes } from "@plane/types";
 import type { TIssue } from "@plane/types";
 import { BaseIssuesStore } from "./base-issues.store";
+
+// base-issues-utils imports `store` from @/lib/store-context, which instantiates
+// the full RootStore graph and creates a circular dependency back into
+// base-issues.store (ArchivedIssues extends BaseIssuesStore) that fails at
+// module-load time under vitest. Mock it with a minimal stand-in so the store
+// class can load in isolation. `store` is only read by getPreviousIssuesState,
+// which is not exercised by these tests.
+vi.mock("@/lib/store-context", () => ({
+  store: { issue: { issues: { issuesMap: {} } } },
+  rootStore: {},
+  StoreContext: {},
+  StoreProvider: () => null,
+}));
 
 /**
  * Minimal concrete store for exercising BaseIssuesStore.updateIssueList without
@@ -36,6 +49,9 @@ const createStore = (showSubIssues: boolean, issuesById: Record<string, Partial<
     issues: {
       getIssueById: (id: string) => issuesById[id] as TIssue | undefined,
       getIssuesByIds: (ids: string[]) => ids.map((id) => issuesById[id]).filter(Boolean) as TIssue[],
+      updateIssue: (id: string, data: Partial<TIssue>) => {
+        issuesById[id] = { ...(issuesById[id] as TIssue), ...data } as TIssue;
+      },
     },
     rootStore: {
       projectEstimate: {
@@ -123,5 +139,81 @@ describe("BaseIssuesStore.updateIssueList sub-issue visibility", () => {
 
     expect(store.groupedIssueIds?.["state-a"]).not.toContain(issueId);
     expect(store.groupedIssueIds?.["state-b"]).toContain(issueId);
+  });
+});
+
+describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
+  it("restores the issue record and list membership when the failing update is still the latest", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+    };
+
+    store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
+
+    await expect(store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" })).rejects.toThrow("patch failed");
+
+    // Record rolled back to pre-update state.
+    expect(issuesById[issueId].state_id).toBe("state-a");
+    // List membership rolled back: issue is back in state-a, not in state-b.
+    expect(store.groupedIssueIds?.["state-a"]).toContain(issueId);
+    expect(store.groupedIssueIds?.["state-b"]).not.toContain(issueId);
+  });
+
+  it("does not roll back when a newer optimistic update has changed the issue while the patch was in flight", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+      "state-c": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+      "state-c": 0,
+    };
+
+    // Update A's API call fails asynchronously.
+    store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
+
+    // Start update A: move issue to state-b. Optimistically applies, then awaits the failing patch.
+    const updateA = store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" });
+
+    // While A is in flight, a newer optimistic update B moves the issue to state-c without syncing.
+    store.issueUpdate("ws", "proj", issueId, { state_id: "state-c" }, false);
+
+    await expect(updateA).rejects.toThrow("patch failed");
+
+    // The store retains B's newer state — A's rollback must not clobber it.
+    expect(issuesById[issueId].state_id).toBe("state-c");
+    // List membership reflects B, not a rollback to A's before-state.
+    expect(store.groupedIssueIds?.["state-c"]).toContain(issueId);
+    expect(store.groupedIssueIds?.["state-a"]).not.toContain(issueId);
+    expect(store.groupedIssueIds?.["state-b"]).not.toContain(issueId);
   });
 });
