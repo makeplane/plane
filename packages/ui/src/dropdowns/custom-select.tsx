@@ -42,13 +42,14 @@ function CustomSelect(props: ICustomSelectProps) {
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
+    strategy: "fixed",
   });
 
   const openDropdown = useCallback(() => {
@@ -86,7 +87,7 @@ function CustomSelect(props: ICustomSelectProps) {
               <button
                 ref={setReferenceElement}
                 type="button"
-                className={`flex items-center justify-between gap-1 rounded text-11 ${
+                className={`flex items-center justify-between gap-1 rounded text-11 outline-none ${
                   disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                 } ${customButtonClassName}`}
                 onClick={toggleDropdown}
@@ -100,7 +101,7 @@ function CustomSelect(props: ICustomSelectProps) {
                 ref={setReferenceElement}
                 type="button"
                 className={cn(
-                  "flex w-full items-center justify-between gap-1 rounded border border-strong",
+                  "flex w-full items-center justify-between gap-1 rounded border border-strong outline-none",
                   {
                     "px-3 py-2 text-13": input,
                     "px-2 py-1 text-11": !input,
@@ -119,26 +120,27 @@ function CustomSelect(props: ICustomSelectProps) {
         </>
         {isOpen &&
           createPortal(
-            <Combobox.Options as="ul" data-prevent-outside-click>
+            <Combobox.Options
+              as="ul"
+              data-prevent-outside-click
+              static
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+              className={cn(
+                "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap outline-none",
+                optionsClassName
+              )}
+            >
               <div
-                className={cn(
-                  "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
-                  optionsClassName
-                )}
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
+                className={cn("space-y-1 overflow-y-scroll", {
+                  "max-h-60": maxHeight === "lg",
+                  "max-h-48": maxHeight === "md",
+                  "max-h-36": maxHeight === "rg",
+                  "max-h-28": maxHeight === "sm",
+                })}
               >
-                <div
-                  className={cn("space-y-1 overflow-y-scroll", {
-                    "max-h-60": maxHeight === "lg",
-                    "max-h-48": maxHeight === "md",
-                    "max-h-36": maxHeight === "rg",
-                    "max-h-28": maxHeight === "sm",
-                  })}
-                >
-                  {children}
-                </div>
+                {children}
               </div>
             </Combobox.Options>,
             document.body
