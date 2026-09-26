@@ -120,18 +120,6 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
           <SettingsOutline className="size-3.5 shrink-0" />
           {t("settings")}
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() =>
-            toggleProfileSettingsModal({
-              activeTab: "preferences",
-              isOpen: true,
-            })
-          }
-          className="flex items-center gap-2"
-        >
-          <SettingsOutline className="size-3.5 shrink-0" />
-          {t("preferences")}
-        </CustomMenu.MenuItem>
       </div>
       <CustomMenu.MenuItem onClick={handleSignOut} className="flex items-center gap-2">
         <LogOutOutline className="size-3.5 shrink-0" />
