@@ -31,17 +31,13 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.url import is_valid_link_url
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
-
-# Django imports
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
-
 
 class IssueSerializer(BaseSerializer):
     """
@@ -425,16 +421,8 @@ class IssueLinkCreateSerializer(BaseSerializer):
         ]
 
     def validate_url(self, value):
-        # Check URL format
-        validate_url = URLValidator()
-        try:
-            validate_url(value)
-        except ValidationError:
+        if not is_valid_link_url(value):
             raise serializers.ValidationError("Invalid URL format.")
-
-        # Check URL scheme
-        if not value.startswith(("http://", "https://")):
-            raise serializers.ValidationError("Invalid URL scheme.")
 
         return value
 

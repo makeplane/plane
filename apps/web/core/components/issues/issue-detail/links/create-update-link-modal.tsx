@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
+import { checkURLValidity, ensureUrlHasProtocol } from "@plane/utils";
 // plane types
 import { Button } from "@makeplane/propel/components/button";
 import type { TIssueLinkEditableFields, TIssueServiceType } from "@plane/types";
@@ -69,7 +70,7 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
   };
 
   const handleFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {
-    const parsedUrl = formData.url.startsWith("http") ? formData.url : `http://${formData.url}`;
+    const parsedUrl = ensureUrlHasProtocol(formData.url.trim());
     try {
       if (!formData || !formData.id) await linkOperations.create({ title: formData.title, url: parsedUrl });
       else await linkOperations.update(formData.id, { title: formData.title, url: parsedUrl });
@@ -103,7 +104,8 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
                 control={control}
                 name="url"
                 rules={{
-                  required: "URL is required",
+                  required: t("common.url_is_invalid"),
+                  validate: (value) => Boolean(value && checkURLValidity(value.trim())) || t("common.url_is_invalid"),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <InputField
