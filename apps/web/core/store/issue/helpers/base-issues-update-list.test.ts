@@ -320,9 +320,9 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
 
     // The reconcile fetch updates the reloaded record to the persisted state-b.
     expect(issuesById[issueId].state_id).toBe("state-b");
-
-    // Simulate the new view's load correcting the grouped membership to match.
-    store.groupedIssueIds = { "state-a": [], "state-b": [issueId], "state-c": [] };
+    // The reconcile also moves the grouped membership to state-b's group.
+    expect(store.groupedIssueIds?.["state-b"]).toContain(issueId);
+    expect(store.groupedIssueIds?.["state-a"]).not.toContain(issueId);
 
     // A post-clear update that fails must restore to the persisted state-b,
     // not the stale pre-patch state-a.
@@ -401,6 +401,77 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
     await updateA;
 
     expect(issuesById[issueId].state_id).toBe("state-c");
+  });
+
+  // Regression for CodeRabbit finding: a failed newer post-clear update must
+  // clear its token so a pending pre-clear reconcile can still apply the
+  // authoritative server state.
+  it("clears the failed update token so a pending pre-clear reconcile can proceed", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+      "state-c": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+      "state-c": 0,
+    };
+
+    let resolvePatch: ((value: unknown) => void) | undefined;
+    let resolveRetrieve: ((value: unknown) => void) | undefined;
+    store.issueService.patchIssue = vi.fn().mockReturnValue(
+      new Promise<unknown>((resolve) => {
+        resolvePatch = resolve;
+      })
+    );
+
+    // Start update A: state-a → state-b. Patch stays in flight.
+    const updateA = store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" });
+
+    // Clear the grouped view while A's patch is in flight.
+    store.clear();
+
+    // Reload raced before A's patch landed: record and grouped view show state-a.
+    issuesById[issueId] = { ...(issuesById[issueId] as TIssue), state_id: "state-a" } as TIssue;
+    store.groupedIssueIds = { "state-a": [issueId], "state-b": [], "state-c": [] };
+    store.groupedIssueCount = { "state-a": 1, "state-b": 0, "state-c": 0 };
+
+    // A's patch succeeds; reconcile retrieve stays pending.
+    store.issueService.retrieve = vi.fn().mockReturnValue(
+      new Promise<unknown>((resolve) => {
+        resolveRetrieve = resolve;
+      })
+    );
+    resolvePatch?.({});
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // A newer post-clear update D fails: it must clear its token on rollback.
+    store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
+    await expect(store.issueUpdate("ws", "proj", issueId, { state_id: "state-c" })).rejects.toThrow("patch failed");
+
+    // D failed and restored state-a; token is now cleared.
+    expect(issuesById[issueId].state_id).toBe("state-a");
+
+    // Resolve A's stale retrieve with the authoritative state-b. The guard
+    // must now pass (token cleared) and reconcile the record + membership to b.
+    resolveRetrieve?.({ ...(issuesById[issueId] as TIssue), state_id: "state-b" });
+    await updateA;
+
+    expect(issuesById[issueId].state_id).toBe("state-b");
+    expect(store.groupedIssueIds?.["state-b"]).toContain(issueId);
+    expect(store.groupedIssueIds?.["state-a"]).not.toContain(issueId);
   });
 
   // Regression for CodeRabbit finding: a shouldSync=false update persists

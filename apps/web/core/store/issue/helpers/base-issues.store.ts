@@ -642,6 +642,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           try {
             const freshIssue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
             if (canReconcile()) {
+              // Reconcile grouped membership too: the reload may have placed the
+              // card in the pre-patch group while the server now holds freshIssue.
+              const loadedIssue = this.rootIssueStore.issues.getIssueById(issueId);
+              this.updateIssueList(freshIssue as TIssue, loadedIssue as TIssue);
               this.rootIssueStore.issues.updateIssue(issueId, freshIssue as TIssue);
               this.lastSyncedIssueState[issueId] = freshIssue as TIssue;
             }
@@ -662,6 +666,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // newer optimistic update (even one that returned to an equal value) must
       // not be clobbered by a stale failure.
       if (this.issueUpdateTokens[issueId] === token) {
+        // Clear the token so a pending pre-clear reconciliation (whose
+        // canReconcile() gate checks for an undefined token) is not blocked
+        // from applying the authoritative server state after this failure.
+        delete this.issueUpdateTokens[issueId];
         // Restore to the last known persisted state, not the optimistic
         // before-state, so a later failure cannot restore an earlier optimistic
         // state that came from a rejected patch.
