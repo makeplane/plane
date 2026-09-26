@@ -45,6 +45,7 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import { isIssueIdInGroupedIssueIds, shouldSkipHiddenSubIssueAdd } from "./sub-issue-list-guard";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -194,6 +195,24 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   issueFilterStore;
   // API Abort controller
   controller: AbortController;
+
+  // Bumped when the grouped view is cleared/replaced. Used so a late patch
+  // failure does not restore membership into a newer view.
+  private groupedViewGeneration = 0;
+
+  // Per-issue identity token for the latest in-flight issueUpdate. A newer
+  // update overwrites this, so a stale failure can detect it is no longer the
+  // latest and skip rollback (value equality alone is unsafe: A→B→C→B would
+  // otherwise let A's failure clobber the newer B).
+  private issueUpdateTokens: Record<string, number> = {};
+  private issueUpdateTokenCounter = 0;
+
+  // Last known persisted (server-synced) state per issue. Seeded from the first
+  // update's before-state (which is persisted) and refreshed on every
+  // successful patch. On a failed latest update we restore to this instead of
+  // the optimistic `issueBeforeUpdate`, so a later failure cannot restore an
+  // earlier optimistic state that itself came from a rejected patch.
+  private lastSyncedIssueState: Record<string, TIssue | undefined> = {};
 
   constructor(
     _rootStore: IIssueRootStore,
@@ -561,29 +580,111 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   ) {
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    const attemptedIssue = { ...issueBeforeUpdate, ...data } as TIssue;
+    // If the grouped view is replaced while the patch is in flight, skip list
+    // rollback so we do not write membership from the old view into the new one.
+    const viewGeneration = this.groupedViewGeneration;
+    // Identity token for this update; a newer update overwrites it so a stale
+    // failure can detect it is no longer the latest.
+    const token = ++this.issueUpdateTokenCounter;
+    this.issueUpdateTokens[issueId] = token;
+    // Seed the last synced state from the first update's before-state (which is
+    // persisted). Refreshed on patch success; used as the restore target on failure.
+    if (this.lastSyncedIssueState[issueId] === undefined) {
+      this.lastSyncedIssueState[issueId] = issueBeforeUpdate;
+    }
+
     try {
-      // Update the Respective Stores
+      // Optimistic store updates stay synchronous so callers (and DnD) see the
+      // move immediately — do not queue these behind in-flight patchIssue calls.
       this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      this.updateIssueList(attemptedIssue, issueBeforeUpdate);
 
       // Check if should Sync
-      if (!shouldSync) return;
+      if (!shouldSync) {
+        // The caller persisted this change through another API path (e.g. cycle
+        // or module membership) and is only applying it locally. Record the
+        // persisted state so a later failed patchIssue does not roll back to a
+        // snapshot that predates this successful write.
+        if (viewGeneration === this.groupedViewGeneration) {
+          this.lastSyncedIssueState[issueId] = attemptedIssue;
+        }
+        return;
+      }
 
       // update parent stats optimistically
-      this.updateParentStats(issueBeforeUpdate, {
-        ...issueBeforeUpdate,
-        ...data,
-      } as TIssue);
+      this.updateParentStats(issueBeforeUpdate, attemptedIssue);
 
       // call API to update the issue
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
+      if (viewGeneration === this.groupedViewGeneration) {
+        // Same view: record the persisted state as the rollback target.
+        this.lastSyncedIssueState[issueId] = attemptedIssue;
+      } else {
+        // The grouped view was replaced (clear()) while this patch was in
+        // flight. The patch succeeded, so the server now holds attemptedIssue,
+        // but the new view may have reloaded a stale pre-patch snapshot.
+        // Reconcile the global issue record with the authoritative server
+        // state so the reloaded card and any future rollback target reflect
+        // the persisted state. Grouped membership is view-specific and is left
+        // to the new view's own load.
+        //
+        // The retrieve() is async; a newer issueUpdate() could start (setting a
+        // fresh token) or another clear() could bump the generation while it is
+        // pending. Re-check before each write so we do not clobber a newer
+        // update's optimistic state or write into a yet-newer view.
+        const reconciliationGeneration = this.groupedViewGeneration;
+        const canReconcile = () =>
+          this.groupedViewGeneration === reconciliationGeneration && this.issueUpdateTokens[issueId] === undefined;
+
+        if (canReconcile()) {
+          try {
+            const freshIssue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
+            if (canReconcile()) {
+              // Reconcile grouped membership too: the reload may have placed the
+              // card in the pre-patch group while the server now holds freshIssue.
+              const loadedIssue = this.rootIssueStore.issues.getIssueById(issueId);
+              this.updateIssueList(freshIssue as TIssue, loadedIssue as TIssue);
+              this.rootIssueStore.issues.updateIssue(issueId, freshIssue as TIssue);
+              this.lastSyncedIssueState[issueId] = freshIssue as TIssue;
+            }
+          } catch {
+            // Best-effort reconciliation; fall back to attemptedIssue so a later
+            // failure does not restore the pre-patch state.
+            if (canReconcile()) {
+              this.lastSyncedIssueState[issueId] = attemptedIssue;
+            }
+          }
+        }
+      }
+
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
     } catch (error) {
-      // If errored out update store again to revert the change
-      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+      // Only roll back when this update is still the latest for the issue. A
+      // newer optimistic update (even one that returned to an equal value) must
+      // not be clobbered by a stale failure.
+      if (this.issueUpdateTokens[issueId] === token) {
+        // Clear the token so a pending pre-clear reconciliation (whose
+        // canReconcile() gate checks for an undefined token) is not blocked
+        // from applying the authoritative server state after this failure.
+        delete this.issueUpdateTokens[issueId];
+        // Restore to the last known persisted state, not the optimistic
+        // before-state, so a later failure cannot restore an earlier optimistic
+        // state that came from a rejected patch.
+        const syncedState = this.lastSyncedIssueState[issueId] ?? issueBeforeUpdate;
+        this.rootIssueStore.issues.updateIssue(issueId, syncedState ?? {});
+        // Per-issue reverse of list membership when the view is still the same.
+        // bypassSubIssueGuard: reverse updateIssueList can look like root→sub at
+        // the guard (attempted root as issueBeforeUpdate), which would skip the
+        // restoring ADD and hide the card until refresh.
+        if (viewGeneration === this.groupedViewGeneration) {
+          this.updateIssueList(syncedState, attemptedIssue, undefined, {
+            bypassSubIssueGuard: true,
+          });
+        }
+      }
       throw error;
     }
   }
@@ -1159,9 +1260,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    */
   clear(shouldClearPaginationOptions = true) {
     runInAction(() => {
+      this.groupedViewGeneration += 1;
       this.groupedIssueIds = undefined;
       this.issuePaginationData = {};
       this.groupedIssueCount = {};
+      this.issueUpdateTokens = {};
+      this.lastSyncedIssueState = {};
       if (shouldClearPaginationOptions) {
         this.paginationOptions = undefined;
       }
@@ -1204,7 +1308,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     issue?: TIssue,
     issueBeforeUpdate?: TIssue,
     // oxlint-disable-next-line no-shadow
-    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
+    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE,
+    options?: { bypassSubIssueGuard?: boolean }
   ) {
     if (!issue && !issueBeforeUpdate) return;
 
@@ -1215,6 +1320,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Get display filters to check if 'Show sub Work items' is enabled - Do not add Work item to main list if disabled.
     const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;
 
+    // Snapshot before mutations: ADD/DELETE order must not affect whether an
+    // already-visible card (e.g. epic child in an epic-filtered view) is allowed to move.
+    const isAlreadyInGroupedList = isIssueIdInGroupedIssueIds(this.groupedIssueIds, issueId);
+
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
@@ -1224,8 +1333,25 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          const isSubIssue = issue?.parent_id;
-          if (isSubIssue && !isShowWorkItemsEnabled) continue;
+          // Skip newly appearing / newly nested sub-issues when "Show sub-issues"
+          // is off. Allow moves of issues already visible as sub-issues (e.g.
+          // epic children in an epic-filtered view — #9049). Do not treat prior
+          // list membership alone as enough: a root→sub-issue transition that
+          // also changes group key would still be in the source list at snapshot.
+          // bypassSubIssueGuard: used for patch-failure rollback that must restore
+          // membership even when reverse args look like a root→sub transition.
+          if (
+            !options?.bypassSubIssueGuard &&
+            shouldSkipHiddenSubIssueAdd({
+              isSubIssue: Boolean(issue?.parent_id),
+              isShowSubIssuesEnabled: isShowWorkItemsEnabled,
+              isAlreadyInGroupedList,
+              wasAlreadySubIssue: Boolean(issueBeforeUpdate?.parent_id),
+              isExplicitAdd: action === EIssueGroupedAction.ADD,
+            })
+          ) {
+            continue;
+          }
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
             this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
