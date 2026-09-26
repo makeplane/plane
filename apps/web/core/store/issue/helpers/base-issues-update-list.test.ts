@@ -261,4 +261,62 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
     expect(store.groupedIssueIds?.["state-b"]).not.toContain(issueId);
     expect(store.groupedIssueIds?.["state-c"]).not.toContain(issueId);
   });
+
+  // Regression for CodeRabbit finding: a pre-clear patch resolving after clear()
+  // must not pollute the post-clear lastSyncedIssueState map.
+  it("does not use a pre-clear patch's state as the restore target after clear()", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+      "state-c": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+      "state-c": 0,
+    };
+
+    // Control when the pre-clear patch resolves.
+    let resolvePatch: ((value: unknown) => void) | undefined;
+    store.issueService.patchIssue = vi.fn().mockReturnValue(
+      new Promise<unknown>((resolve) => {
+        resolvePatch = resolve;
+      })
+    );
+
+    // Start update A: state-a → state-b. Patch stays in flight.
+    const updateA = store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" });
+
+    // Clear the grouped view while A's patch is in flight: bumps generation
+    // and resets lastSyncedIssueState / issueUpdateTokens.
+    store.clear();
+
+    // Simulate a fresh load after clear: the issue is now persisted as state-c.
+    issuesById[issueId] = { ...(issuesById[issueId] as TIssue), state_id: "state-c" } as TIssue;
+    store.groupedIssueIds = { "state-c": [issueId] };
+    store.groupedIssueCount = { "state-c": 1 };
+
+    // Resolve A's pre-clear patch. Without the generation guard, this would
+    // store A's attemptedIssue (state-b) into the new lastSyncedIssueState map.
+    resolvePatch?.({});
+    await updateA;
+
+    // A post-clear update that fails must restore to the post-clear persisted
+    // state (state-c), not the stale pre-clear attemptedIssue (state-b).
+    store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
+    await expect(store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" })).rejects.toThrow("patch failed");
+
+    expect(issuesById[issueId].state_id).toBe("state-c");
+  });
 });

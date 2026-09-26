@@ -609,8 +609,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // call API to update the issue
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
-      // mark the persisted state for this issue
-      this.lastSyncedIssueState[issueId] = attemptedIssue;
+      // mark the persisted state for this issue, but only if the grouped view
+      // is still the same one this update started from. A patch that was in
+      // flight before a clear() can resolve after the view was replaced; its
+      // attemptedIssue belongs to the old view and must not be used as the
+      // restore target for a post-clear failure.
+      if (viewGeneration === this.groupedViewGeneration) {
+        this.lastSyncedIssueState[issueId] = attemptedIssue;
+      }
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
