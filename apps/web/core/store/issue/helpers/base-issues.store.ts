@@ -200,6 +200,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // failure does not restore membership into a newer view.
   private groupedViewGeneration = 0;
 
+  // Per-issue identity token for the latest in-flight issueUpdate. A newer
+  // update overwrites this, so a stale failure can detect it is no longer the
+  // latest and skip rollback (value equality alone is unsafe: A→B→C→B would
+  // otherwise let A's failure clobber the newer B).
+  private issueUpdateTokens: Record<string, number> = {};
+  private issueUpdateTokenCounter = 0;
+
+  // Last known persisted (server-synced) state per issue. Seeded from the first
+  // update's before-state (which is persisted) and refreshed on every
+  // successful patch. On a failed latest update we restore to this instead of
+  // the optimistic `issueBeforeUpdate`, so a later failure cannot restore an
+  // earlier optimistic state that itself came from a rejected patch.
+  private lastSyncedIssueState: Record<string, TIssue | undefined> = {};
+
   constructor(
     _rootStore: IIssueRootStore,
     issueFilterStore: IBaseIssueFilterStore,
@@ -570,6 +584,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // If the grouped view is replaced while the patch is in flight, skip list
     // rollback so we do not write membership from the old view into the new one.
     const viewGeneration = this.groupedViewGeneration;
+    // Identity token for this update; a newer update overwrites it so a stale
+    // failure can detect it is no longer the latest.
+    const token = ++this.issueUpdateTokenCounter;
+    this.issueUpdateTokens[issueId] = token;
+    // Seed the last synced state from the first update's before-state (which is
+    // persisted). Refreshed on patch success; used as the restore target on failure.
+    if (this.lastSyncedIssueState[issueId] === undefined) {
+      this.lastSyncedIssueState[issueId] = issueBeforeUpdate;
+    }
 
     try {
       // Optimistic store updates stay synchronous so callers (and DnD) see the
@@ -586,26 +609,27 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // call API to update the issue
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
+      // mark the persisted state for this issue
+      this.lastSyncedIssueState[issueId] = attemptedIssue;
+
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
     } catch (error) {
-      // If a newer optimistic update has changed the same issue while this
-      // patch was in flight, the store no longer reflects `attemptedIssue`.
-      // Rolling back to `issueBeforeUpdate` here would clobber that newer
-      // state, leaving the UI stale until reload. Only roll back when the
-      // current record still matches what this update attempted.
-      const currentIssue = this.rootIssueStore.issues.getIssueById(issueId);
-      const isStillThisUpdate = isEqual(currentIssue, attemptedIssue);
-
-      if (isStillThisUpdate) {
-        // Revert issue record
-        this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
+      // Only roll back when this update is still the latest for the issue. A
+      // newer optimistic update (even one that returned to an equal value) must
+      // not be clobbered by a stale failure.
+      if (this.issueUpdateTokens[issueId] === token) {
+        // Restore to the last known persisted state, not the optimistic
+        // before-state, so a later failure cannot restore an earlier optimistic
+        // state that came from a rejected patch.
+        const syncedState = this.lastSyncedIssueState[issueId] ?? issueBeforeUpdate;
+        this.rootIssueStore.issues.updateIssue(issueId, syncedState ?? {});
         // Per-issue reverse of list membership when the view is still the same.
         // bypassSubIssueGuard: reverse updateIssueList can look like root→sub at
         // the guard (attempted root as issueBeforeUpdate), which would skip the
         // restoring ADD and hide the card until refresh.
         if (viewGeneration === this.groupedViewGeneration) {
-          this.updateIssueList(issueBeforeUpdate, attemptedIssue, undefined, {
+          this.updateIssueList(syncedState, attemptedIssue, undefined, {
             bypassSubIssueGuard: true,
           });
         }
@@ -1189,6 +1213,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       this.groupedIssueIds = undefined;
       this.issuePaginationData = {};
       this.groupedIssueCount = {};
+      this.issueUpdateTokens = {};
+      this.lastSyncedIssueState = {};
       if (shouldClearPaginationOptions) {
         this.paginationOptions = undefined;
       }

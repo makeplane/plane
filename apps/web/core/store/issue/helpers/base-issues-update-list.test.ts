@@ -216,4 +216,49 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
     expect(store.groupedIssueIds?.["state-a"]).not.toContain(issueId);
     expect(store.groupedIssueIds?.["state-b"]).not.toContain(issueId);
   });
+
+  // Regression for CodeRabbit finding: failed later patch must not restore an
+  // optimistic state that came from an earlier rejected patch.
+  it("restores the persisted state when both B and C fail, with B failing first", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+      "state-c": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+      "state-c": 0,
+    };
+
+    // Both patches fail. mockRejectedValue yields already-rejected promises, so
+    // the await order determines the catch order: B awaits first, then C.
+    store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
+
+    // Start B: state-a → state-b (synced). Then start C: state-b → state-c (synced).
+    const updateB = store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" });
+    const updateC = store.issueUpdate("ws", "proj", issueId, { state_id: "state-c" });
+
+    // B fails first: it is no longer the latest (C is), so its rollback is skipped.
+    // C then fails: it is the latest, so it restores to the last synced state (state-a).
+    await expect(updateB).rejects.toThrow("patch failed");
+    await expect(updateC).rejects.toThrow("patch failed");
+
+    // Both patches failed, so the store must reflect the persisted state-a.
+    expect(issuesById[issueId].state_id).toBe("state-a");
+    expect(store.groupedIssueIds?.["state-a"]).toContain(issueId);
+    expect(store.groupedIssueIds?.["state-b"]).not.toContain(issueId);
+    expect(store.groupedIssueIds?.["state-c"]).not.toContain(issueId);
+  });
 });
