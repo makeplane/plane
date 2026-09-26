@@ -334,6 +334,75 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
     expect(store.groupedIssueIds?.["state-c"]).not.toContain(issueId);
   });
 
+  // Regression for CodeRabbit finding: a newer post-clear update that starts
+  // while the pre-clear patch's reconcile retrieve() is pending must not be
+  // clobbered by the stale freshIssue.
+  it("skips post-clear reconciliation when a newer update started during the retrieve", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+      "state-c": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+      "state-c": 0,
+    };
+
+    // Control when the pre-clear patch and the reconcile retrieve resolve.
+    let resolvePatch: ((value: unknown) => void) | undefined;
+    let resolveRetrieve: ((value: unknown) => void) | undefined;
+    store.issueService.patchIssue = vi.fn().mockReturnValue(
+      new Promise<unknown>((resolve) => {
+        resolvePatch = resolve;
+      })
+    );
+
+    // Start update A: state-a → state-b. Patch stays in flight.
+    const updateA = store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" });
+
+    // Clear the grouped view while A's patch is in flight.
+    store.clear();
+
+    // Simulate a fresh load after clear that raced before A's patch landed.
+    issuesById[issueId] = { ...(issuesById[issueId] as TIssue), state_id: "state-a" } as TIssue;
+    store.groupedIssueIds = { "state-a": [issueId], "state-b": [], "state-c": [] };
+    store.groupedIssueCount = { "state-a": 1, "state-b": 0, "state-c": 0 };
+
+    // A's patch succeeds; the reconcile retrieve stays pending.
+    store.issueService.retrieve = vi.fn().mockReturnValue(
+      new Promise<unknown>((resolve) => {
+        resolveRetrieve = resolve;
+      })
+    );
+    resolvePatch?.({});
+    // Yield so the success path runs up to the await retrieve().
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // A newer post-clear update starts while retrieve() is pending: it sets a
+    // fresh token and optimistically moves the issue to state-c.
+    store.issueUpdate("ws", "proj", issueId, { state_id: "state-c" }, false);
+    expect(issuesById[issueId].state_id).toBe("state-c");
+
+    // Resolve the stale retrieve() with state-b. The guard must skip the write
+    // so the newer optimistic state-c is not clobbered.
+    resolveRetrieve?.({ ...(issuesById[issueId] as TIssue), state_id: "state-b" });
+    await updateA;
+
+    expect(issuesById[issueId].state_id).toBe("state-c");
+  });
+
   // Regression for CodeRabbit finding: a shouldSync=false update persists
   // through another API path (e.g. cycle/module membership) and must advance
   // the rollback target so a later failed patchIssue does not undo that

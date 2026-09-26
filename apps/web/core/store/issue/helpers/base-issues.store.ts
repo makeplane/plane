@@ -629,14 +629,29 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         // state so the reloaded card and any future rollback target reflect
         // the persisted state. Grouped membership is view-specific and is left
         // to the new view's own load.
-        try {
-          const freshIssue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
-          this.rootIssueStore.issues.updateIssue(issueId, freshIssue as TIssue);
-          this.lastSyncedIssueState[issueId] = freshIssue as TIssue;
-        } catch {
-          // Best-effort reconciliation; fall back to attemptedIssue so a later
-          // failure does not restore the pre-patch state.
-          this.lastSyncedIssueState[issueId] = attemptedIssue;
+        //
+        // The retrieve() is async; a newer issueUpdate() could start (setting a
+        // fresh token) or another clear() could bump the generation while it is
+        // pending. Re-check before each write so we do not clobber a newer
+        // update's optimistic state or write into a yet-newer view.
+        const reconciliationGeneration = this.groupedViewGeneration;
+        const canReconcile = () =>
+          this.groupedViewGeneration === reconciliationGeneration && this.issueUpdateTokens[issueId] === undefined;
+
+        if (canReconcile()) {
+          try {
+            const freshIssue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
+            if (canReconcile()) {
+              this.rootIssueStore.issues.updateIssue(issueId, freshIssue as TIssue);
+              this.lastSyncedIssueState[issueId] = freshIssue as TIssue;
+            }
+          } catch {
+            // Best-effort reconciliation; fall back to attemptedIssue so a later
+            // failure does not restore the pre-patch state.
+            if (canReconcile()) {
+              this.lastSyncedIssueState[issueId] = attemptedIssue;
+            }
+          }
         }
       }
 
