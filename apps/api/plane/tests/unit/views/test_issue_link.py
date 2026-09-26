@@ -22,6 +22,9 @@ from rest_framework.test import APIRequestFactory
 from plane.app.views.issue.link import IssueLinkViewSet
 from plane.api.views.issue import IssueLinkDetailAPIEndpoint
 
+from plane.app.serializers.issue import IssueLinkSerializer as AppIssueLinkSerializer
+from plane.api.serializers.issue import IssueLinkCreateSerializer as ApiIssueLinkCreateSerializer
+
 
 @pytest.mark.unit
 class TestIssueLinkPartialUpdate:
@@ -210,3 +213,69 @@ class TestIssueLinkDetailPatch:
         assert response.status_code == status.HTTP_200_OK
         mock_crawl.delay.assert_called_once_with(self.link_id, new_url)
         mock_activity.delay.assert_called_once()
+
+
+@pytest.mark.unit
+class TestIssueLinkSerializerUrlValidation:
+    @pytest.mark.parametrize(
+        "valid_url",
+        [
+            "https://github.com/makeplane/plane",
+            "http://example.com/test",
+            "obsidian://open?vault=docs&file=my-note",
+            "vscode://file/Users/username/project/file.ts:42",
+            "vscode-insiders://file/Users/username/project/file.ts",
+            "cursor://file/path/to/code.py",
+            "slack://channel?team=T123&id=C456",
+            "linear://team/issue/ENG-123",
+            "figma://file/abc123XYZ",
+            "notion://page/1234567890",
+            "OBSIDIAN://open?vault=docs",
+            "HTTPS://example.com/test",
+        ],
+    )
+    def test_allows_valid_web_and_custom_app_urls(self, valid_url):
+        issue_id = str(uuid.uuid4())
+        app_serializer = AppIssueLinkSerializer(data={"title": "Test Link", "url": valid_url, "issue_id": issue_id})
+        assert app_serializer.is_valid(), f"AppIssueLinkSerializer failed on {valid_url}: {app_serializer.errors}"
+        assert app_serializer.validated_data["url"] == valid_url.strip()
+
+        api_serializer = ApiIssueLinkCreateSerializer(data={"title": "Test Link", "url": valid_url, "issue_id": issue_id})
+        assert api_serializer.is_valid(), f"ApiIssueLinkCreateSerializer failed on {valid_url}: {api_serializer.errors}"
+        assert api_serializer.validated_data["url"] == valid_url.strip()
+
+    def test_app_serializer_strips_whitespace(self):
+        issue_id = str(uuid.uuid4())
+        app_serializer = AppIssueLinkSerializer(
+            data={"title": "Test Link", "url": "  https://example.com/test  ", "issue_id": issue_id}
+        )
+        assert app_serializer.is_valid(), f"AppIssueLinkSerializer failed on padded url: {app_serializer.errors}"
+        assert app_serializer.validated_data["url"] == "https://example.com/test"
+
+    def test_app_serializer_prefixes_bare_domain(self):
+        issue_id = str(uuid.uuid4())
+        app_serializer = AppIssueLinkSerializer(data={"title": "Test Link", "url": "example.com", "issue_id": issue_id})
+        assert app_serializer.is_valid(), f"AppIssueLinkSerializer failed on bare domain: {app_serializer.errors}"
+        assert app_serializer.validated_data["url"] == "http://example.com"
+
+    @pytest.mark.parametrize(
+        "invalid_url",
+        [
+            "javascript:alert(1)",
+            "data:text/html,<script>alert(1)</script>",
+            "vbscript:msgbox(1)",
+            "VbScript:msgbox(1)",
+            "file:///etc/passwd",
+            "ftp://files.example.com",
+            "unknownscheme://test",
+            "not-a-url",
+            "obsidian://",
+        ],
+    )
+    def test_rejects_disallowed_or_dangerous_schemes(self, invalid_url):
+        issue_id = str(uuid.uuid4())
+        app_serializer = AppIssueLinkSerializer(data={"title": "Test Link", "url": invalid_url, "issue_id": issue_id})
+        assert not app_serializer.is_valid(), f"AppIssueLinkSerializer unexpectedly accepted {invalid_url}"
+
+        api_serializer = ApiIssueLinkCreateSerializer(data={"title": "Test Link", "url": invalid_url, "issue_id": issue_id})
+        assert not api_serializer.is_valid(), f"ApiIssueLinkCreateSerializer unexpectedly accepted {invalid_url}"
