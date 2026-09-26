@@ -58,9 +58,6 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   return (
     <div className="flex items-center">
       <Menu onOpenChange={setIsUserMenuOpen}>
-        {/* propel: `AppSidebarItem` takes no arbitrary props, so it cannot be the Base UI trigger
-            — the popup would have no element to anchor to. The trigger is a plain button wearing
-            the same chrome, with the item's own icon part inside it. */}
         <MenuTrigger
           render={
             <button
@@ -111,6 +108,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
                 </div>
               </div>
             </div>
+
             <div>
               <MenuItem
                 icon={<Icon icon={SettingsOutline} />}
@@ -122,21 +120,21 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
                   })
                 }
               />
-              <MenuItem
-                icon={<Icon icon={SettingsOutline} />}
-                label={t("preferences")}
-                onClick={() =>
-                  toggleProfileSettingsModal({
-                    activeTab: "preferences",
-                    isOpen: true,
-                  })
-                }
-              />
             </div>
+
             <div>
-              <MenuItem icon={<Icon icon={LogOutOutline} />} label={t("sign_out")} onClick={handleSignOut} />
+              <MenuItem
+                icon={<Icon icon={LogOutOutline} />}
+                label={t("sign_out")}
+                onClick={handleSignOut}
+              />
+
               {isUserInstanceAdmin && (
-                <MenuItem variant="accent" label={t("enter_god_mode")} onClick={() => router.push(GOD_MODE_URL)} />
+                <MenuItem
+                  variant="accent"
+                  label={t("enter_god_mode")}
+                  onClick={() => router.push(GOD_MODE_URL)}
+                />
               )}
             </div>
           </div>
