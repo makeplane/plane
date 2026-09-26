@@ -12,6 +12,7 @@ dj-database-url==3.0.1
 # redis
 redis==5.0.4
 django-redis==7.0.0
+redis-lua-py==0.12.0
 # cors
 django-cors-headers==4.9.0
 # celery
