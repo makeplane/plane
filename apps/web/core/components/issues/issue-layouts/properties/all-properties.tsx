@@ -14,6 +14,8 @@ import { AttachOutline, DueDateOutline, LinkOutline, StartDateOutline, ViewsOutl
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
+import type { DateRangeValue } from "@plane/blocks/property-select";
+import { DateRangeSelect, DateSelect } from "@plane/blocks/property-select";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import {
@@ -24,20 +26,19 @@ import {
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
 // components
-import { CycleDropdown } from "@/components/dropdowns/cycle";
-import { DateDropdown } from "@/components/dropdowns/date";
-import { DateRangeDropdown } from "@/components/dropdowns/date-range";
-import { EstimateDropdown } from "@/components/dropdowns/estimate";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
+import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { ModuleSelect } from "@/components/dropdowns/module/module-select";
+import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
+import { StateSelect } from "@/components/dropdowns/state/state-select";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -71,6 +72,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   } = useIssues(storeType);
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
+  const { data: userProfile } = useUserProfile();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
 
@@ -155,7 +157,15 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       await updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleEstimate = async (value: string | undefined) => {
+  const handleDateRangeUpdate = async (range: DateRangeValue) => {
+    if (updateIssue)
+      await updateIssue(issue.project_id, issue.id, {
+        start_date: range.from ? renderFormattedPayloadDate(range.from) : null,
+        target_date: range.to ? renderFormattedPayloadDate(range.to) : null,
+      });
+  };
+
+  const handleEstimate = async (value: string | null) => {
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { estimate_point: value });
   };
 
@@ -200,15 +210,13 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <StateDropdown
-            buttonContainerClassName="truncate max-w-40"
+          <StateSelect
             value={issue.state_id}
             onChange={handleState}
             projectId={issue.project_id}
             disabled={isReadOnly}
-            buttonVariant="border-with-text"
-            renderByDefault={isMobile}
-            showTooltip
+            variant="pill-sm"
+            tooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -217,13 +225,12 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <PriorityDropdown
+          <PrioritySelect
             value={issue?.priority}
             onChange={handlePriority}
             disabled={isReadOnly}
-            buttonVariant="border-without-text"
-            renderByDefault={isMobile}
-            showTooltip
+            variant="pill-sm"
+            tooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -236,30 +243,23 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       >
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateRangeDropdown
+          <DateRangeSelect
             value={{
-              from: getDate(issue.start_date) || undefined,
-              to: getDate(issue.target_date) || undefined,
+              from: getDate(issue.start_date) ?? null,
+              to: getDate(issue.target_date) ?? null,
             }}
-            onSelect={(range) => {
-              handleStartDate(range?.from ?? null);
-              handleTargetDate(range?.to ?? null);
-            }}
-            hideIcon={{
-              from: false,
-            }}
-            isClearable
+            onChange={handleDateRangeUpdate}
+            icon={<StartDateOutline />}
+            clearable
             mergeDates
-            buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={
-              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
-            }
-            clearIconClassName="text-primary!"
+            className={cn({
+              "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            })}
             disabled={isReadOnly}
-            renderByDefault={isMobile}
             showTooltip
-            renderPlaceholder={false}
-            customTooltipHeading="Date Range"
+            tooltipHeading={t("project_cycles.date_range")}
+            weekStartsOn={userProfile?.start_of_the_week}
+            variant="pill-sm"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -272,18 +272,18 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       >
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={issue.start_date ?? null}
+          <DateSelect
+            value={getDate(issue.start_date) ?? null}
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<StartDateOutline className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
-            optionsClassName="z-10"
+            icon={<StartDateOutline />}
+            clearable
             disabled={isReadOnly}
-            renderByDefault={isMobile}
             showTooltip
-            labelClassName="text-caption-sm-regular"
+            tooltipHeading={t("common.order_by.start_date")}
+            weekStartsOn={userProfile?.start_of_the_week}
+            variant="pill-sm"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -296,22 +296,21 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       >
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={issue?.target_date ?? null}
+          <DateSelect
+            value={getDate(issue?.target_date) ?? null}
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<DueDateOutline className="h-3 w-3 shrink-0" />}
-            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={
-              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
-            }
-            clearIconClassName="text-primary!"
-            optionsClassName="z-10"
+            icon={<DueDateOutline />}
+            className={cn({
+              "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            })}
+            clearable
             disabled={isReadOnly}
-            renderByDefault={isMobile}
             showTooltip
-            labelClassName="text-caption-sm-regular"
+            tooltipHeading={t("common.order_by.due_date")}
+            weekStartsOn={userProfile?.start_of_the_week}
+            variant="pill-sm"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -320,19 +319,15 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
         {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <MemberDropdown
-            projectId={issue?.project_id}
-            value={issue?.assignee_ids}
+          <MemberSelect
+            projectId={issue?.project_id ?? undefined}
+            value={issue?.assignee_ids ?? []}
             onChange={handleAssignee}
             disabled={isReadOnly}
             multiple
-            buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
-            buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
-            showTooltip={issue?.assignee_ids?.length === 0}
+            variant={issue.assignee_ids?.length ? "avatar-group-sm" : "pill-sm"}
             placeholder={t("common.assignees")}
-            optionsClassName="z-10"
-            tooltipContent=""
-            renderByDefault={isMobile}
+            tooltip={{ heading: t("common.assignees") }}
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -345,17 +340,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
                 {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
                 <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-                  <ModuleDropdown
-                    buttonContainerClassName="truncate max-w-40"
-                    projectId={issue?.project_id}
+                  <ModuleSelect
+                    multiple
+                    projectId={issue?.project_id ?? undefined}
                     value={issue?.module_ids ?? []}
                     onChange={handleModule}
                     disabled={isReadOnly}
-                    renderByDefault={isMobile}
-                    multiple
-                    buttonVariant="border-with-text"
-                    showCount
-                    showTooltip
+                    variant="pill-sm"
+                    tooltip
                   />
                 </div>
               </WithDisplayPropertiesHOC>
@@ -366,15 +358,13 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
                 {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
                 <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-                  <CycleDropdown
-                    buttonContainerClassName="truncate max-w-40"
-                    projectId={issue?.project_id}
+                  <CycleSelect
+                    projectId={issue?.project_id ?? undefined}
                     value={issue?.cycle_id}
                     onChange={handleCycle}
                     disabled={isReadOnly}
-                    buttonVariant="border-with-text"
-                    renderByDefault={isMobile}
-                    showTooltip
+                    variant="pill-sm"
+                    tooltip
                   />
                 </div>
               </WithDisplayPropertiesHOC>
@@ -388,14 +378,13 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
           {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions */}
           <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-            <EstimateDropdown
+            <EstimateSelect
               value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
               projectId={issue.project_id}
               disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              renderByDefault={isMobile}
-              showTooltip
+              variant="pill-sm"
+              tooltip
             />
           </div>
         </WithDisplayPropertiesHOC>

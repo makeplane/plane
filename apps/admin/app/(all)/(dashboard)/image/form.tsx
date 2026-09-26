@@ -9,7 +9,7 @@ import { Button } from "@makeplane/propel/components/button";
 import type { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -40,7 +40,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
     await updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success",
           message: "Image Configuration Settings updated successfully",
         })

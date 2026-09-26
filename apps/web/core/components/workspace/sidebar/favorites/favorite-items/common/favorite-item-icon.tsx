@@ -7,10 +7,10 @@
 import type { LucideIcon } from "lucide-react";
 // plane imports
 import type { TLogoProps } from "@plane/types";
-import { FavoriteFolderIcon } from "@plane/propel/icons";
+import { FavoriteFolderIcon } from "@plane/blocks/icons";
 import { CyclesOutline, ModuleOutline, PagesOutline, ProjectsOutline, ViewsOutline } from "@makeplane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import type { ISvgIcons } from "@plane/blocks/icons";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 
 const ICON_MAP: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
   page: PagesOutline,

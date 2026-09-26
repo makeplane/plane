@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 // icons
 import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";
@@ -18,9 +19,12 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const ViewListHeader = observer(function ViewListHeader() {
+  // translation
+  const { t } = useTranslation();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -58,13 +62,14 @@ export const ViewListHeader = observer(function ViewListHeader() {
         {!isSearchOpen && (
           <IconButton
             variant="ghost"
-            size="lg"
-            className="-mr-1"
+            size="md"
+            render={<button type="button" className="-mr-1" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={SearchOutline}
+            icon={<Icon icon={SearchOutline} />}
+            aria-label={t("common.search.label")}
           />
         )}
         <div

@@ -12,12 +12,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRightOutline } from "@makeplane/propel/icons";
 // types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { Spinner, ControlLink, Row } from "@plane/ui";
+import { ControlLink, Row } from "@plane/blocks/layout";
+import { Spinner } from "@plane/blocks/spinner";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
@@ -193,7 +194,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
         onDragStart={() => {
           if (!isDraggingAllowed) {
             setToast({
-              type: TOAST_TYPE.WARNING,
+              type: "warning",
               title: "Cannot move work item",
               message: !canEditIssueProperties
                 ? "You are not allowed to move this work item"

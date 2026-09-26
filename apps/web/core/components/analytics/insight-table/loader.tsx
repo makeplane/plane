@@ -6,31 +6,37 @@
 
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
-import { Loader } from "@plane/ui";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@makeplane/propel/components/table";
+import { Loader } from "@plane/blocks/skeleton";
 
 interface TableSkeletonProps {
   columns: ColumnDef<any>[];
   rows: number;
 }
 
+const getColumnKey = (column: ColumnDef<any>) => column.id ?? String(column.header ?? "");
+
 export function TableLoader({ columns, rows }: TableSkeletonProps) {
+  const rowKeys = Array.from({ length: rows }, (_, rowIndex) => `skeleton-row-${rowIndex}`);
+
   return (
-    <Table>
+    <Table variant="table">
       <TableHeader>
         <TableRow>
-          {columns.map((column, index) => (
-            <TableHead key={column.header?.toString() ?? index}>
-              {typeof column.header === "string" ? column.header : ""}
-            </TableHead>
+          {columns.map((column) => (
+            <TableHead
+              key={getColumnKey(column)}
+              pinned="none"
+              label={typeof column.header === "string" ? column.header : ""}
+            />
           ))}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {Array.from({ length: rows }).map((_, rowIndex) => (
-          <TableRow key={rowIndex}>
-            {columns.map((_, colIndex) => (
-              <TableCell key={colIndex}>
+        {rowKeys.map((rowKey) => (
+          <TableRow key={rowKey}>
+            {columns.map((column) => (
+              <TableCell key={getColumnKey(column)} pinned="none" padding="cell">
                 <Loader.Item height="20px" width="100%" />
               </TableCell>
             ))}

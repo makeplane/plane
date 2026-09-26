@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 // plane ui
 import { ModuleOutline } from "@makeplane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -27,7 +27,7 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
 
   return (
     <div className="relative flex h-full flex-wrap items-center gap-1">
-      <Tooltip tooltipHeading="Modules" tooltipContent={modulesString}>
+      <Tooltip label={`Modules: ${modulesString || "None"}`}>
         {modules.length <= 1 ? (
           <div
             key={modules?.[0]?.id}

@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Werkruimteniveau"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Sneltoetsen zoeken",
+      "no_results": "Geen sneltoetsen gevonden voor \"{query}\"",
+      "sequence_separator": "dan"
+    },
     "group_titles": {
       "actions": "Acties",
       "contextual": "Contextueel",

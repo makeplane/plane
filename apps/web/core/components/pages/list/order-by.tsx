@@ -4,12 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import { SortAscendingOutline, SortDescendingOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
+import { useTranslation } from "@plane/i18n";
+import { Button as ButtonElement } from "@makeplane/propel/elements/button";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
 // types
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
+import { SortDescendingOutline, SortAscendingOutline } from "@makeplane/propel/icons";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;
@@ -28,61 +29,55 @@ const PAGE_SORTING_KEY_OPTIONS: {
 
 export function PageOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
   const orderByDetails = PAGE_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
   const isDescending = sortBy === "desc";
 
   return (
-    <CustomMenu
-      customButton={
-        <div className={getButtonStyling("secondary", "lg")}>
-          {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
-          {orderByDetails?.label}
-        </div>
-      }
-      placement="bottom-end"
-      maxHeight="lg"
-      closeOnSelect
-    >
-      {PAGE_SORTING_KEY_OPTIONS.map((option) => (
-        <CustomMenu.MenuItem
-          key={option.key}
-          className="flex items-center justify-between gap-2"
-          onClick={() =>
-            onChange({
-              key: option.key,
-            })
-          }
-        >
-          {option.label}
-          {sortKey === option.key && <TickOutline className="h-3 w-3" />}
-        </CustomMenu.MenuItem>
-      ))}
-      <hr className="my-2 border-subtle" />
-      <CustomMenu.MenuItem
-        className="flex items-center justify-between gap-2"
-        onClick={() => {
-          if (isDescending)
-            onChange({
-              order: "asc",
-            });
-        }}
-      >
-        Ascending
-        {!isDescending && <TickOutline className="h-3 w-3" />}
-      </CustomMenu.MenuItem>
-      <CustomMenu.MenuItem
-        className="flex items-center justify-between gap-2"
-        onClick={() => {
-          if (!isDescending)
-            onChange({
-              order: "desc",
-            });
-        }}
-      >
-        Descending
-        {isDescending && <TickOutline className="h-3 w-3" />}
-      </CustomMenu.MenuItem>
-    </CustomMenu>
+    <Menu>
+      {/* propel: `getButtonStyling` has no counterpart, so the trigger borrows the styled button
+          element and Base UI grafts the menu behavior onto it. */}
+      <MenuTrigger render={<ButtonElement variant="secondary" size="md" stretch="auto" />}>
+        {!isDescending ? <SortAscendingOutline className="size-3" /> : <SortDescendingOutline className="size-3" />}
+        {orderByDetails?.label}
+      </MenuTrigger>
+      <MenuContent side="bottom" align="end">
+        {PAGE_SORTING_KEY_OPTIONS.map((option) => (
+          <MenuItem
+            key={option.key}
+            label={option.label}
+            selected={sortKey === option.key}
+            onClick={() =>
+              onChange({
+                key: option.key,
+              })
+            }
+          />
+        ))}
+        <MenuSeparator />
+        <MenuItem
+          label={t("common.sort.asc")}
+          selected={!isDescending}
+          onClick={() => {
+            if (isDescending)
+              onChange({
+                order: "asc",
+              });
+          }}
+        />
+        <MenuItem
+          label={t("common.sort.desc")}
+          selected={isDescending}
+          onClick={() => {
+            if (!isDescending)
+              onChange({
+                order: "desc",
+              });
+          }}
+        />
+      </MenuContent>
+    </Menu>
   );
 }

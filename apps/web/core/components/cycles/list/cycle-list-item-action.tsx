@@ -21,20 +21,20 @@ import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { setPromiseToast } from "@plane/propel/toast";
+import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
+import { setPromiseToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
-import { FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/blocks/common";
+import { DateRangeSelect } from "@plane/blocks/property-select";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
-import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
-import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUserPermissions, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
@@ -74,6 +74,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
   // store hooks
   const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { allowPermissions } = useUserPermissions();
+  const { data: userProfile } = useUserProfile();
 
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
@@ -238,31 +239,25 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       ) : (
         cycleDetails.start_date && (
           <>
-            <DateRangeDropdown
-              buttonVariant={"transparent-with-text"}
-              buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-tertiary rounded-sm text-11 [&>div]:hover:bg-transparent`}
-              buttonClassName="p-0"
+            <DateRangeSelect
+              variant="select-ghost-md"
+              className="flex h-6 w-full cursor-auto items-center gap-1.5 rounded-sm p-0 text-11 text-tertiary [&>div]:hover:bg-transparent"
               minDate={new Date()}
               value={{
-                from: getDate(cycleDetails.start_date),
-                to: getDate(cycleDetails.end_date),
+                from: getDate(cycleDetails.start_date) ?? null,
+                to: getDate(cycleDetails.end_date) ?? null,
               }}
-              placeholder={{
-                from: t("project_cycles.start_date"),
-                to: t("project_cycles.end_date"),
-              }}
+              onChange={() => {}}
+              placeholder={`${t("project_cycles.start_date")} - ${t("project_cycles.end_date")}`}
               showTooltip={isProjectTimeZoneDifferent()}
-              customTooltipHeading={t("project_cycles.in_your_timezone")}
-              customTooltipContent={`${renderFormattedDateInUserTimezone(
+              tooltipHeading={t("project_cycles.in_your_timezone")}
+              tooltipContent={`${renderFormattedDateInUserTimezone(
                 cycleDetails.start_date ?? ""
               )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
               mergeDates
-              required={cycleDetails.status !== "draft"}
               disabled
-              hideIcon={{
-                from: false,
-                to: false,
-              }}
+              weekStartsOn={userProfile?.start_of_the_week}
+              icon={<CalendarOutline />}
             />
           </>
         )
@@ -273,19 +268,14 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
         <Tooltip label={`${cycleDetails.assignee_ids?.length} Members`} layout="stacked" disabled={isMobile}>
           <div className="flex w-min cursor-default items-center justify-center">
             {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
-              <AvatarGroupOverflow size="xs">
+              <AvatarGroup size="xs" max={2}>
                 {cycleDetails.assignee_ids?.map((assignee_id) => {
                   const member = getUserDetails(assignee_id);
                   return (
-                    <Avatar
-                      key={member?.id}
-                      alt={member?.display_name}
-                      fallback={member?.display_name?.[0]?.toUpperCase()}
-                      src={getFileURL(member?.avatar_url ?? "")}
-                    />
+                    <Avatar key={assignee_id} alt={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} />
                   );
                 })}
-              </AvatarGroupOverflow>
+              </AvatarGroup>
             ) : (
               <MembersOutline className="h-4 w-4 text-tertiary" />
             )}

@@ -17,7 +17,7 @@ import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
 import { validateSlug, validateWorkspaceName } from "@plane/utils";
 // components
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
@@ -62,7 +62,7 @@ export function WorkspaceCreateForm() {
           await createWorkspace(formData)
             .then(async () => {
               setToast({
-                type: TOAST_TYPE.SUCCESS,
+                type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
@@ -70,7 +70,7 @@ export function WorkspaceCreateForm() {
             })
             .catch(() => {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               });
@@ -79,7 +79,7 @@ export function WorkspaceCreateForm() {
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
@@ -122,6 +122,7 @@ export function WorkspaceCreateForm() {
                     }}
                     ref={ref}
                     aria-invalid={Boolean(errors.name)}
+                    data-invalid={errors.name ? true : undefined}
                     placeholder="Something familiar and recognizable is always best."
                   />
                 </InputGroup>
@@ -132,15 +133,15 @@ export function WorkspaceCreateForm() {
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13 text-tertiary">Set your workspace&apos;s URL</h4>
-          <div className="flex w-full items-center gap-0.5 rounded-md border-[0.5px] border-subtle px-3">
-            <span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
-            <Controller
-              control={control}
-              name="slug"
-              rules={{
-                validate: (value) => validateSlug(value),
-              }}
-              render={({ field: { onChange, value, ref } }) => (
+          <Controller
+            control={control}
+            name="slug"
+            rules={{
+              validate: (value) => validateSlug(value),
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <InputGroup size="lg">
+                <span className="text-13 whitespace-nowrap text-secondary">{workspaceBaseURL}</span>
                 <Input
                   id="workspaceUrl"
                   type="text"
@@ -153,11 +154,12 @@ export function WorkspaceCreateForm() {
                   }}
                   ref={ref}
                   aria-invalid={Boolean(errors.slug)}
+                  data-invalid={errors.slug ? true : undefined}
                   placeholder="workspace-name"
                 />
-              )}
-            />
-          </div>
+              </InputGroup>
+            )}
+          />
           {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
           {invalidSlug && (
             <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
@@ -173,7 +175,7 @@ export function WorkspaceCreateForm() {
               rules={{ required: "This is a required field." }}
               render={({ field: { value, onChange } }) => (
                 <Select value={value} onValueChange={onChange}>
-                  <SelectTrigger size="lg" placeholder={<span className="text-placeholder">Select a range</span>} />
+                  <SelectTrigger size="lg" placeholder="Select a range" />
                   <SelectContent>
                     <SelectList>
                       {ORGANIZATION_SIZE.map((item) => (

@@ -33,13 +33,7 @@ export const GithubConfiguration = observer(function GithubConfiguration(props: 
     <>
       {isGithubConfigured ? (
         <div className="flex items-center gap-4">
-          <AnchorButton
-            variant="primary"
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/authentication/github" />}
-            label="Edit"
-          />
+          <AnchorButton variant="primary" size="sm" render={<Link href="/authentication/github" />} label="Edit" />
           <Switch
             checked={Boolean(parseInt(enableGithubConfig))}
             onCheckedChange={() => {
@@ -47,6 +41,7 @@ export const GithubConfiguration = observer(function GithubConfiguration(props: 
               updateConfig("IS_GITHUB_ENABLED", newEnableGithubConfig);
             }}
             size="sm"
+            aria-label="Enable GitHub"
             disabled={disabled}
           />
         </div>

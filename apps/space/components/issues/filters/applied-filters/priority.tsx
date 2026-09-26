@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/blocks/icons";
 import { CloseOutline } from "@makeplane/propel/icons";
-import type { TIssuePriorities } from "@plane/propel/icons";
+import type { TIssuePriorities } from "@plane/blocks/icons";
 
 type Props = {
   handleRemove: (val: string) => void;

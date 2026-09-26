@@ -176,6 +176,11 @@
     "footer": {
       "workspace_level": "Livello dello spazio di lavoro"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "Cerca scorciatoie da tastiera",
+      "no_results": "Nessuna scorciatoia da tastiera trovata per «{query}»",
+      "sequence_separator": "poi"
+    },
     "group_titles": {
       "actions": "Azioni",
       "contextual": "Contestuale",

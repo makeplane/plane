@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { ArchiveOutline, RestoreOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 // store
 import type { INotification } from "@/store/notifications/notification";
 // local imports
@@ -33,7 +33,7 @@ export const NotificationItemArchiveOption = observer(function NotificationItemA
       await request(workspaceSlug);
       setToast({
         title: data.archived_at ? t("notification.toasts.unarchived") : t("notification.toasts.archived"),
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
       });
     } catch (e) {
       console.error(e);

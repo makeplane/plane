@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { ScrollArea } from "@plane/propel/scrollarea";
+import { ScrollArea } from "@makeplane/propel/components/scroll-area";
 import { cn } from "@plane/utils";
 // local imports
 import { WorkspaceSettingsSidebarHeader } from "./header";
@@ -19,17 +19,16 @@ export function WorkspaceSettingsSidebarRoot(props: Props) {
   const { className } = props;
 
   return (
-    <ScrollArea
-      scrollType="hover"
-      orientation="vertical"
-      size="sm"
-      rootClassName={cn(
-        "h-full w-[250px] shrink-0 animate-fade-in overflow-y-scroll border-r border-r-subtle bg-surface-1",
+    <div
+      className={cn(
+        "flex h-full w-[250px] shrink-0 animate-fade-in flex-col overflow-hidden border-r border-r-subtle bg-surface-1",
         className
       )}
     >
-      <WorkspaceSettingsSidebarHeader />
-      <WorkspaceSettingsSidebarItemCategories />
-    </ScrollArea>
+      <ScrollArea orientation="vertical">
+        <WorkspaceSettingsSidebarHeader />
+        <WorkspaceSettingsSidebarItemCategories />
+      </ScrollArea>
+    </div>
   );
 }

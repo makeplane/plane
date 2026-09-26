@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 import { ChatOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 // store
 import type { INotification } from "@/store/notifications/notification";
 // local imports
@@ -33,7 +33,7 @@ export const NotificationItemReadOption = observer(function NotificationItemRead
       await request(workspaceSlug);
       setToast({
         title: data.read_at ? t("notification.toasts.unread") : t("notification.toasts.read"),
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
       });
     } catch (e) {
       console.error(e);

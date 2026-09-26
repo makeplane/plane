@@ -7,16 +7,17 @@
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { IconButton } from "@plane/propel/icon-button";
-import { ChevronDownOutline, EditOutline } from "@makeplane/propel/icons";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { EditOutline } from "@makeplane/propel/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/skeleton";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
@@ -90,7 +91,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+      style={profileSidebarCollapsed ? { marginLeft: "100vw" } : {}}
     >
       {userProjectsData ? (
         <>
@@ -99,7 +100,9 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               <div className="absolute top-3.5 right-3.5">
                 <IconButton
                   variant="secondary"
-                  icon={EditOutline}
+                  size="sm"
+                  icon={<Icon icon={EditOutline} />}
+                  aria-label={t("common.edit")}
                   onClick={() =>
                     toggleProfileSettingsModal({
                       activeTab: "general",
@@ -159,121 +162,106 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                 if (!projectDetails) return null;
 
                 return (
-                  <Disclosure key={project.id} as="div" className={`${index === 0 ? "pb-3" : "py-3"}`}>
-                    {({ open }) => (
-                      <div className="w-full">
-                        <Disclosure.Button className="flex w-full items-center justify-between gap-2">
-                          <div className="flex w-3/4 items-center gap-2">
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
-                              <Logo logo={projectDetails.logo_props} />
-                            </span>
-                            <div className="truncate text-13 font-medium break-words">{projectDetails.name}</div>
-                          </div>
-                          <div className="flex flex-shrink-0 items-center gap-2">
-                            {project.assigned_issues > 0 && (
-                              <Tooltip label="Completion percentage" side="left" disabled={isMobile}>
-                                <div
-                                  className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
-                                    completedIssuePercentage <= 35
-                                      ? "bg-danger-subtle text-danger-primary"
-                                      : completedIssuePercentage <= 70
-                                        ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-success-subtle text-success-primary"
-                                  }`}
-                                >
-                                  {completedIssuePercentage}%
-                                </div>
-                              </Tooltip>
-                            )}
-                            <ChevronDownOutline className="h-4 w-4" />
-                          </div>
-                        </Disclosure.Button>
-                        <Transition
-                          as="div"
-                          show={open}
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform opacity-0"
-                          enterTo="transform opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform opacity-100"
-                          leaveTo="transform opacity-0"
-                        >
-                          <Disclosure.Panel className="mt-5 pl-9">
-                            {totalIssues > 0 && (
-                              <div className="flex items-center gap-0.5">
-                                <div
-                                  className="h-1 rounded-sm"
-                                  style={{
-                                    backgroundColor: "#203b80",
-                                    width: `${(project.created_issues / totalIssues) * 100}%`,
-                                  }}
-                                />
-                                <div
-                                  className="h-1 rounded-sm"
-                                  style={{
-                                    backgroundColor: "#3f76ff",
-                                    width: `${(project.assigned_issues / totalIssues) * 100}%`,
-                                  }}
-                                />
-                                <div
-                                  className="h-1 rounded-sm"
-                                  style={{
-                                    backgroundColor: "#f59e0b",
-                                    width: `${(project.pending_issues / totalIssues) * 100}%`,
-                                  }}
-                                />
-                                <div
-                                  className="h-1 rounded-sm"
-                                  style={{
-                                    backgroundColor: "#16a34a",
-                                    width: `${(project.completed_issues / totalIssues) * 100}%`,
-                                  }}
-                                />
-                              </div>
-                            )}
-                            <div className="mt-7 space-y-5 text-13 text-secondary">
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#203b80]" />
-                                  Created
-                                </div>
-                                <div className="font-medium">
-                                  {project.created_issues} {t("issues")}
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#3f76ff]" />
-                                  Assigned
-                                </div>
-                                <div className="font-medium">
-                                  {project.assigned_issues} {t("issues")}
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#f59e0b]" />
-                                  Due
-                                </div>
-                                <div className="font-medium">
-                                  {project.pending_issues} {t("issues")}
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#16a34a]" />
-                                  Completed
-                                </div>
-                                <div className="font-medium">
-                                  {project.completed_issues} {t("issues")}
-                                </div>
-                              </div>
+                  <div key={project.id} className={index === 0 ? "pb-3" : "py-3"}>
+                    <Collapsible
+                      icon={
+                        <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                          <Logo logo={projectDetails.logo_props} />
+                        </span>
+                      }
+                      trigger={<span className="truncate text-13 font-medium break-words">{projectDetails.name}</span>}
+                      trailing={
+                        project.assigned_issues > 0 ? (
+                          <Tooltip label="Completion percentage" side="left" disabled={isMobile}>
+                            <div
+                              className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
+                                completedIssuePercentage <= 35
+                                  ? "bg-danger-subtle text-danger-primary"
+                                  : completedIssuePercentage <= 70
+                                    ? "bg-yellow-500/10 text-yellow-500"
+                                    : "bg-success-subtle text-success-primary"
+                              }`}
+                            >
+                              {completedIssuePercentage}%
                             </div>
-                          </Disclosure.Panel>
-                        </Transition>
+                          </Tooltip>
+                        ) : undefined
+                      }
+                    >
+                      <div className="mt-5 pl-9">
+                        {totalIssues > 0 && (
+                          <div className="flex items-center gap-0.5">
+                            <div
+                              className="h-1 rounded-sm"
+                              style={{
+                                backgroundColor: "#203b80",
+                                width: `${(project.created_issues / totalIssues) * 100}%`,
+                              }}
+                            />
+                            <div
+                              className="h-1 rounded-sm"
+                              style={{
+                                backgroundColor: "#3f76ff",
+                                width: `${(project.assigned_issues / totalIssues) * 100}%`,
+                              }}
+                            />
+                            <div
+                              className="h-1 rounded-sm"
+                              style={{
+                                backgroundColor: "#f59e0b",
+                                width: `${(project.pending_issues / totalIssues) * 100}%`,
+                              }}
+                            />
+                            <div
+                              className="h-1 rounded-sm"
+                              style={{
+                                backgroundColor: "#16a34a",
+                                width: `${(project.completed_issues / totalIssues) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        )}
+                        <div className="mt-7 space-y-5 text-13 text-secondary">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-2.5 w-2.5 rounded-xs bg-[#203b80]" />
+                              Created
+                            </div>
+                            <div className="font-medium">
+                              {project.created_issues} {t("issues")}
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-2.5 w-2.5 rounded-xs bg-[#3f76ff]" />
+                              Assigned
+                            </div>
+                            <div className="font-medium">
+                              {project.assigned_issues} {t("issues")}
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-2.5 w-2.5 rounded-xs bg-[#f59e0b]" />
+                              Due
+                            </div>
+                            <div className="font-medium">
+                              {project.pending_issues} {t("issues")}
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-2.5 w-2.5 rounded-xs bg-[#16a34a]" />
+                              Completed
+                            </div>
+                            <div className="font-medium">
+                              {project.completed_issues} {t("issues")}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                  </Disclosure>
+                    </Collapsible>
+                  </div>
                 );
               })}
             </div>

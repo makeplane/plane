@@ -9,7 +9,7 @@ import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
 // components
@@ -139,7 +139,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     (filterExpression: TWorkItemFilterExpression) => {
       if (!viewDetails) {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "We couldn't find the view",
           message: "The view you're trying to update doesn't exist.",
         });
@@ -152,14 +152,14 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       })
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: "Error!",
             message: "Your view could not be updated. Please try again.",
           });

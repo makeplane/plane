@@ -29,6 +29,19 @@
       "hide_password": "隐藏密码",
       "close_alert": "关闭警告",
       "close_popover": "关闭弹出框"
+    },
+    "breadcrumb": {
+      "trail": "面包屑导航",
+      "show_more": "显示更多面包屑导航"
+    },
+    "common": {
+      "more_actions": "更多操作",
+      "remove": "移除"
+    },
+    "color_picker": {
+      "open": "打开颜色选择器",
+      "swatches": "预设颜色",
+      "hex_input": "十六进制颜色"
     }
   }
 }

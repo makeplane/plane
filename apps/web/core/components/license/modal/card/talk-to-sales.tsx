@@ -7,10 +7,9 @@
 import { observer } from "mobx-react";
 // types
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Loader } from "@plane/blocks/skeleton";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
 
@@ -29,6 +28,13 @@ export type TalkToSalesCardProps = {
   renderTrialButton?: (props: { productId: string | undefined; priceId: string | undefined }) => React.ReactNode;
 };
 
+const renderPriceContent = (price: TSubscriptionPrice) => (
+  <>
+    {price.recurring === "month" && "Monthly"}
+    {price.recurring === "year" && "Yearly"}
+  </>
+);
+
 export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
   const {
     planVariant,
@@ -44,13 +50,6 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
     isTrialAllowed,
     renderTrialButton,
   } = props;
-
-  const renderPriceContent = (price: TSubscriptionPrice) => (
-    <>
-      {price.recurring === "month" && "Monthly"}
-      {price.recurring === "year" && "Yearly"}
-    </>
-  );
 
   const renderActionButton = (price: TSubscriptionPrice) => (
     <>
@@ -72,9 +71,20 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
         </Loader>
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
-          <a href={href} target="_blank" className={cn(getButtonStyling("primary", "lg"), "w-56")} rel="noreferrer">
-            Talk to Sales
-          </a>
+          <div className="w-56">
+            <Button
+              variant="primary"
+              size="md"
+              stretch="full"
+              nativeButton={false}
+              render={
+                <a href={href} target="_blank" rel="noreferrer">
+                  Talk to Sales
+                </a>
+              }
+              label="Talk to Sales"
+            />
+          </div>
           {isTrialAllowed && !isSelfHosted && (
             <div className="mt-4 h-4">
               {renderTrialButton &&

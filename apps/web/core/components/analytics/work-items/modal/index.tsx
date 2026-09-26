@@ -7,7 +7,7 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { ModalPortal, EPortalWidth, EPortalPosition } from "@plane/propel/portal";
+import { ModalPortal } from "@plane/blocks/portal";
 import type { ICycle, IModule, IProject } from "@plane/types";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // plane web components
@@ -41,9 +41,11 @@ export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
     <ModalPortal
       isOpen={isOpen}
       onClose={handleClose}
-      width={fullScreen ? EPortalWidth.FULL : EPortalWidth.THREE_QUARTER}
-      position={EPortalPosition.RIGHT}
+      width={fullScreen ? "full" : "three-quarter"}
+      position="right"
       fullScreen={fullScreen}
+      showOverlay={false}
+      onOutsideClick={handleClose}
     >
       <div
         className={`flex h-full flex-col overflow-hidden border-subtle bg-surface-1 text-left ${

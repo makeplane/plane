@@ -7,7 +7,7 @@
 import type { LucideIcon } from "lucide-react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 // plane utils
 import { cn } from "@plane/utils";

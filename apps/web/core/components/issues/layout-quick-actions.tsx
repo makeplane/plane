@@ -5,13 +5,16 @@
  */
 
 import { observer } from "mobx-react";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu } from "@plane/ui";
-import { copyUrlToClipboard, cn } from "@plane/utils";
-import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
-import { IconButton } from "@plane/propel/icon-button";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
+import { setToast } from "@plane/blocks/toast";
+import { useTranslation } from "@plane/i18n";
+import { copyUrlToClipboard } from "@plane/utils";
+import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
 
 type Props = {
   workspaceSlug: string;
@@ -21,17 +24,19 @@ type Props = {
 
 export const LayoutQuickActions = observer(function LayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId, storeType } = props;
+  // plane hooks
+  const { t } = useTranslation();
 
   const layoutLink = `${workspaceSlug}/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;
 
-  const handleCopyLink = () =>
-    copyUrlToClipboard(layoutLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link copied",
-        message: `${storeType === "EPIC" ? "Epics" : "Work items"} link copied to clipboard.`,
-      });
+  const handleCopyLink = async () => {
+    await copyUrlToClipboard(layoutLink);
+    setToast({
+      type: "success",
+      title: "Link copied",
+      message: `${storeType === "EPIC" ? "Epics" : "Work items"} link copied to clipboard.`,
     });
+  };
 
   const handleOpenInNewTab = () => window.open(`/${layoutLink}`, "_blank");
 
@@ -49,31 +54,30 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
   return (
     <>
       {additionalModals}
-      <CustomMenu
-        ellipsis
-        placement="bottom-end"
-        closeOnSelect
-        maxHeight="lg"
-        className="flex size-[26px] flex-shrink-0 items-center justify-center rounded"
-        customButton={<IconButton size="lg" variant="tertiary" icon={MoreHorizontalOutline} />}
-      >
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
+      <Menu>
+        <MenuTrigger
+          render={
+            <IconButton
+              size="md"
+              variant="tertiary"
+              icon={<Icon icon={MoreHorizontalOutline} />}
+              aria-label={t("common.options")}
+            />
+          }
+        />
+        <MenuContent side="bottom" align="end">
+          {getRenderableItems(MENU_ITEMS).map((item) => (
+            <MenuItem
               key={item.key}
+              variant={resolveItemVariant(item)}
+              icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+              label={item.title ?? ""}
               onClick={item.action}
-              className={cn("flex items-center gap-2", {
-                "text-placeholder": item.disabled,
-              })}
               disabled={item.disabled}
-            >
-              {item.icon && <item.icon className="h-3 w-3" />}
-              <span>{item.title}</span>
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+            />
+          ))}
+        </MenuContent>
+      </Menu>
     </>
   );
 });

@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // components
-import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
@@ -40,15 +40,15 @@ export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(p
 
   return (
     <div className="h-11 border-b-[0.5px] border-subtle">
-      <CycleDropdown
+      <CycleSelect
         projectId={issue.project_id ?? undefined}
         value={issue.cycle_id}
         onChange={handleCycle}
         disabled={disabled}
         placeholder="Select cycle"
-        buttonVariant="transparent-with-text"
-        buttonContainerClassName="w-full relative flex items-center p-2 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
-        buttonClassName="relative leading-4 h-4.5 bg-transparent hover:bg-transparent px-0"
+        // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
+        className="clickable"
+        variant="table-cell"
         onClose={onClose}
       />
     </div>

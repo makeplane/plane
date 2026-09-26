@@ -26,6 +26,8 @@ export function CommandRenderer(props: Props) {
   const { activeContext } = context;
   // translation
   const { t } = useTranslation();
+  // Translated once here rather than per badge, so rows don't each subscribe to i18n
+  const keySequenceSeparator = t("power_k.shortcuts_modal.sequence_separator");
 
   const commandsByGroup = commands.reduce(
     (acc, command) => {
@@ -37,6 +39,7 @@ export function CommandRenderer(props: Props) {
     {} as Record<TPowerKCommandGroup, TPowerKCommandConfig[]>
   );
 
+  // oxlint-disable-next-line unicorn/no-array-sort
   const sortedGroups = Object.keys(commandsByGroup).sort((a, b) => {
     const aPriority = POWER_K_GROUP_PRIORITY[a as TPowerKCommandGroup];
     const bPriority = POWER_K_GROUP_PRIORITY[b as TPowerKCommandGroup];
@@ -63,6 +66,7 @@ export function CommandRenderer(props: Props) {
                 iconNode={command.iconNode}
                 label={t(command.i18n_title)}
                 keySequence={command.keySequence}
+                keySequenceSeparator={keySequenceSeparator}
                 shortcut={command.shortcut || command.modifierShortcut}
                 onSelect={() => onCommandSelect(command)}
               />

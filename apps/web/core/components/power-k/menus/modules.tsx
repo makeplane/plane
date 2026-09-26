@@ -7,7 +7,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/blocks/icons";
 import type { IModule } from "@plane/types";
 // local imports
 import { PowerKMenuBuilder } from "./builder";

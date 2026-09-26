@@ -10,16 +10,17 @@ import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import type { TNetworkChoice } from "@plane/constants";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -95,7 +96,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("toast.success"),
           message: t("project_settings.general.toast.success"),
         });
@@ -112,7 +113,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           if (nameError || identifierError || nameSpecialCharError) {
             if (nameError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_name_already_taken"),
               });
@@ -120,7 +121,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
             if (identifierError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
               });
@@ -128,14 +129,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
             if (nameSpecialCharError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_name_cannot_contain_special_characters"),
               });
             }
           } else {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("toast.error"),
               message: t("something_went_wrong"),
             });
@@ -144,7 +145,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           // Fallback error handling if the error processing fails
           console.error("Error processing API error:", error);
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("something_went_wrong"),
           });
@@ -180,7 +181,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     } catch (error) {
       console.error("Error handling cover image:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: error instanceof Error ? error.message : "Failed to process cover image",
       });
@@ -237,9 +238,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     setIsOpen(false);
                   }}
                   defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
-                  defaultOpen={
-                    value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-                  }
+                  defaultOpen={value.in_use && value.in_use === "emoji" ? "emoji" : "icon"}
                   disabled={!isAdmin}
                 />
               )}
@@ -391,38 +390,40 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               render={({ field: { value, onChange } }) => {
                 const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
                 return (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      <div className="flex items-center gap-1">
-                        {selectedNetwork ? (
-                          <>
-                            <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
-                            {t(selectedNetwork.i18n_label)}
-                          </>
-                        ) : (
-                          <span className="text-placeholder">{t("select_network")}</span>
-                        )}
-                      </div>
-                    }
-                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
-                    input
+                  <Select<TNetworkChoice>
+                    getValues={() => NETWORK_CHOICES}
+                    value={selectedNetwork ?? null}
+                    onChange={(key) => onChange(Number(key))}
+                    getOptionValue={(network) => String(network.key)}
+                    getOptionLabel={(network) => t(network.i18n_label)}
+                    getOptionIcon={(network) => (
+                      <ProjectNetworkIcon iconKey={network.iconKey} className="mt-0.5 size-4 shrink-0" />
+                    )}
+                    getOptionDescription={(network) => t(network.description)}
+                    placeholder={t("select_network")}
+                    showSearch={false}
+                    pinSelected={false}
+                    contentSizing="anchor"
                     disabled={!isAdmin}
-                    // optionsClassName="w-full"
+                    estimateItemSize={64}
                   >
-                    {NETWORK_CHOICES.map((network) => (
-                      <CustomSelect.Option key={network.key} value={network.key}>
-                        <div className="flex items-start gap-2">
-                          <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
-                          <div className="-mt-1">
-                            <p>{t(network.i18n_label)}</p>
-                            <p className="text-11 text-placeholder">{t(network.description)}</p>
-                          </div>
-                        </div>
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
+                    <Select.Trigger<TNetworkChoice>
+                      variant="select-lg"
+                      className="font-medium"
+                      disabled={!isAdmin}
+                      prependIcon={(networks) =>
+                        networks[0] ? (
+                          <ProjectNetworkIcon iconKey={networks[0].iconKey} className="h-3.5 w-3.5" />
+                        ) : undefined
+                      }
+                    >
+                      {(networks) => (
+                        <span className="min-w-0 grow truncate text-left">
+                          {networks[0] ? t(networks[0].i18n_label) : t("select_network")}
+                        </span>
+                      )}
+                    </Select.Trigger>
+                  </Select>
                 );
               }}
             />
@@ -452,9 +453,15 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
-              {isLoading ? t("updating") : t("common.update_project")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              label={isLoading ? t("updating") : t("common.update_project")}
+              loading={isLoading}
+              disabled={!isAdmin}
+            />
             <span className="text-13 text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>

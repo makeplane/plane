@@ -16,7 +16,7 @@ import type {
   TFilterConditionNodeForDisplay,
   TAllAvailableOperatorsForDisplay,
 } from "@plane/types";
-import { CustomSearchSelect } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
 import { cn, getOperatorForPayload } from "@plane/utils";
 // local imports
 import { FilterValueInput } from "../filter-value-input/root";
@@ -40,13 +40,11 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
   const { condition, filter, isDisabled = false, showTransition = true } = props;
   // derived values
   const filterConfig = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
-  const operatorOptions = filterConfig
-    ?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)
-    .map((option) => ({
+  const operatorOptions =
+    filterConfig?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)?.map((option) => ({
       value: option.value,
-      content: option.label,
-      query: option.label.toLowerCase(),
-    }));
+      label: option.label,
+    })) ?? [];
   const selectedOperatorFieldConfig = filterConfig?.getOperatorConfig(condition.operator);
   const selectedOperatorOption = filterConfig?.getDisplayOperatorByValue(
     condition.operator,
@@ -96,24 +94,24 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
       />
 
       {/* Operator section */}
-      <CustomSearchSelect
-        value={condition.operator}
-        onChange={handleOperatorChange}
-        options={operatorOptions}
-        className={COMMON_FILTER_ITEM_BORDER_CLASSNAME}
-        customButtonClassName={cn(
-          "h-full px-2 text-13 font-regular",
-          isOperatorSelectionDisabled && "hover:bg-layer-2-hover"
-        )}
-        optionsClassName="w-48"
-        maxHeight="2xl"
-        disabled={isOperatorSelectionDisabled}
-        customButton={
-          <div className="flex h-full items-center" aria-disabled={isOperatorSelectionDisabled}>
+      <div className={cn("flex", COMMON_FILTER_ITEM_BORDER_CLASSNAME)}>
+        <Select<(typeof operatorOptions)[number]>
+          getValues={() => operatorOptions}
+          value={operatorOptions.find((option) => option.value === condition.operator) ?? null}
+          onChange={(operator) => handleOperatorChange(operator as TAllAvailableOperatorsForDisplay)}
+          disabled={isOperatorSelectionDisabled}
+          getOptionValue={(option) => option.value}
+          getOptionLabel={(option) => option.label}
+          pinSelected={false}
+          placeholder={filterConfig.label}
+        >
+          {/* A flat segment of the filter chip: no chevron and no own radius, so it sits flush between
+              the property and value segments like the legacy custom button did. */}
+          <Select.Trigger variant="select-ghost-md" appendIcon={null} className="h-full min-h-0 rounded-none">
             {filterConfig.getLabelForOperator(selectedOperatorOption)}
-          </div>
-        }
-      />
+          </Select.Trigger>
+        </Select>
+      </div>
 
       {/* Value section */}
       {selectedOperatorFieldConfig && (

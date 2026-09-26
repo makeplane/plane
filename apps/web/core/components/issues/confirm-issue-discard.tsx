@@ -6,8 +6,18 @@
 
 import { useState } from "react";
 // ui
-import { Button } from "@plane/propel/button";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogHeading,
+  DialogInfo,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
 
 type Props = {
   isOpen: boolean;
@@ -28,39 +38,46 @@ export function ConfirmIssueDiscard(props: Props) {
 
   const handleDeletion = async () => {
     setIsLoading(true);
-    await onConfirm();
-    setIsLoading(false);
+    try {
+      await onConfirm();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div className="sm:flex sm:items-start">
-          <div className="mt-3 text-center sm:mt-0 sm:text-left">
-            <h3 className="text-16 leading-6 font-medium text-primary">Save this draft?</h3>
-            <div className="mt-2">
-              <p className="text-13 text-secondary">
-                You can save this work item to Drafts so you can come back to it later.{" "}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-between gap-2 p-4 sm:px-6">
-        <div>
-          <Button variant="secondary" onClick={onDiscard}>
-            Discard
-          </Button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleDeletion} loading={isLoading}>
-            {isLoading ? "Saving" : "Save to Drafts"}
-          </Button>
-        </div>
-      </div>
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      <DialogContent size="md">
+        <DialogMain>
+          <DialogHeader>
+            <DialogHeading>
+              <DialogTitle>Save this draft?</DialogTitle>
+              <DialogDescription>
+                You can save this work item to Drafts so you can come back to it later.
+              </DialogDescription>
+            </DialogHeading>
+          </DialogHeader>
+        </DialogMain>
+        <DialogActions>
+          <DialogInfo>
+            <Button variant="secondary" size="sm" stretch="auto" onClick={onDiscard} label="Discard" />
+          </DialogInfo>
+          <Button variant="secondary" size="sm" stretch="auto" onClick={onClose} label="Cancel" />
+          <Button
+            variant="primary"
+            size="sm"
+            stretch="auto"
+            onClick={() => void handleDeletion()}
+            loading={isLoading}
+            label={isLoading ? "Saving" : "Save to Drafts"}
+          />
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -29,6 +29,19 @@
       "hide_password": "隱藏密碼",
       "close_alert": "關閉警告",
       "close_popover": "關閉彈出框"
+    },
+    "breadcrumb": {
+      "trail": "麵包屑導覽",
+      "show_more": "顯示更多麵包屑導覽"
+    },
+    "common": {
+      "more_actions": "更多操作",
+      "remove": "移除"
+    },
+    "color_picker": {
+      "open": "開啟色彩選擇器",
+      "swatches": "預設色彩",
+      "hex_input": "十六進位色彩"
     }
   }
 }

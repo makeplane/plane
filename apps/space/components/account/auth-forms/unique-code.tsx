@@ -8,9 +8,9 @@ import React, { useEffect, useState } from "react";
 import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 import { AuthService } from "@plane/services";
-import { Input, Spinner } from "@plane/ui";
+import { Input } from "@makeplane/propel/components/input";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // types
@@ -89,15 +89,15 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
+        <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 px-3 [&_input]:disable-autofill-style">
           <Input
             id="email"
             name="email"
             type="email"
+            size="xl"
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder`}
             autoComplete="off"
             disabled
           />
@@ -119,15 +119,19 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         <label className="text-13 font-medium text-tertiary" htmlFor="code">
           Unique code
         </label>
-        <Input
-          name="code"
-          value={uniqueCodeFormData.code}
-          onChange={(e) => handleFormChange("code", e.target.value)}
-          placeholder="123456"
-          className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
-          autoComplete="off"
-          autoFocus
-        />
+        <div className="relative flex h-10 items-center rounded-md border border-subtle bg-surface-1 pr-12 pl-3 [&_input]:disable-autofill-style">
+          <Input
+            id="code"
+            name="code"
+            size="xl"
+            value={uniqueCodeFormData.code}
+            onChange={(e) => handleFormChange("code", e.target.value)}
+            placeholder="123456"
+            autoComplete="off"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- sole primary field of a dedicated auth step; matches standard sign-in flows
+            autoFocus
+          />
+        </div>
         <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
             <TickCircleOutline height={12} width={12} />
@@ -153,9 +157,15 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
-        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          stretch="full"
+          disabled={isButtonDisabled}
+          loading={isSubmitting && !isRequestingNewCode}
+          label={isRequestingNewCode ? "Sending code" : "Continue"}
+        />
       </div>
     </form>
   );

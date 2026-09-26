@@ -11,8 +11,9 @@ import { IntakeOutline, RefreshOutline } from "@makeplane/propel/icons";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
@@ -22,12 +23,14 @@ import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
@@ -46,7 +49,11 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
       <Header.LeftItem>
         <div className="flex flex-grow items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
@@ -77,9 +84,13 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
               modalState={createIssueModal}
               handleModalClose={() => setCreateIssueModal(false)}
             />
-            <Button variant="primary" size="lg" onClick={() => setCreateIssueModal(true)}>
-              {t("add_work_item")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={t("add_work_item")}
+              onClick={() => setCreateIssueModal(true)}
+            />
           </div>
         ) : (
           <></>

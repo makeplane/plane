@@ -31,7 +31,7 @@ export function PowerKModalHeader(props: Props) {
     : t("power_k.page_placeholders.default");
 
   return (
-    <div className="border-b border-subtle">
+    <div className="shrink-0 border-b border-subtle">
       {/* Context Indicator */}
       {context.shouldShowContextBasedActions && !activePage && (
         <PowerKModalContextIndicator

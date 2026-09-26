@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 
 import { CopyOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 // plane types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ILinkDetails } from "@plane/types";
 // plane ui
@@ -40,7 +40,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
   const copyToClipboard = (text: string) => {
     copyTextToClipboard(text).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Copied to clipboard",
         message: "The URL has been successfully copied to your clipboard",
       })

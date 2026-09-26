@@ -29,6 +29,19 @@
       "hide_password": "Sembunyikan kata sandi",
       "close_alert": "Tutup peringatan",
       "close_popover": "Tutup popover"
+    },
+    "breadcrumb": {
+      "trail": "Jalur navigasi",
+      "show_more": "Tampilkan lebih banyak jalur navigasi"
+    },
+    "common": {
+      "more_actions": "Tindakan lainnya",
+      "remove": "Hapus"
+    },
+    "color_picker": {
+      "open": "Buka pemilih warna",
+      "swatches": "Warna preset",
+      "hex_input": "Warna heksadesimal"
     }
   }
 }

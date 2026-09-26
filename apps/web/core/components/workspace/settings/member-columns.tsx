@@ -7,16 +7,18 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-
-import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { DeactivatedUserOutline, DeleteOutline } from "@makeplane/propel/icons";
-import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { useTranslation } from "@plane/i18n";
+import { DeactivatedUserOutline, DeleteOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { Badge } from "@makeplane/propel/components/badge";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -37,6 +39,13 @@ type NameProps = {
   setRemoveMemberModal: (rowData: RowData) => void;
 };
 
+type TRoleOption = { key: EUserPermissions; label: string };
+
+const ROLE_OPTIONS: TRoleOption[] = Object.entries(ROLE).map(([key, label]) => ({
+  key: Number(key) as EUserPermissions,
+  label,
+}));
+
 type AccountTypeProps = {
   rowData: RowData;
   workspaceSlug: string;
@@ -44,80 +53,74 @@ type AccountTypeProps = {
 
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
   const isSuspended = rowData.is_active === false;
 
   return (
-    <Disclosure>
-      {() => (
-        <div className="group relative">
-          <div className="flex w-72 items-center justify-between gap-x-4 gap-y-2">
-            <div className="flex flex-1 items-center gap-x-2 gap-y-2">
-              {isSuspended ? (
-                <div className="rounded-full bg-layer-1">
-                  <DeactivatedUserOutline className="size-6 text-placeholder" />
-                </div>
-              ) : avatar_url && avatar_url.trim() !== "" ? (
-                <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
-                    <img
-                      src={getFileURL(avatar_url)}
-                      className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                      alt={display_name || email}
-                    />
-                  </span>
-                </Link>
-              ) : (
-                <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-tertiary capitalize">
-                    {(email ?? display_name ?? "?")[0]}
-                  </span>
-                </Link>
-              )}
-              <span className={isSuspended ? "text-placeholder" : ""}>
-                {first_name} {last_name}
-              </span>
+    <div className="group relative">
+      <div className="flex w-72 items-center justify-between gap-x-4 gap-y-2">
+        <div className="flex flex-1 items-center gap-x-2 gap-y-2">
+          {isSuspended ? (
+            <div className="rounded-full bg-layer-1">
+              <DeactivatedUserOutline className="size-6 text-placeholder" />
             </div>
-
-            {!isSuspended && (isAdmin || id === currentUser?.id) && (
-              <PopoverMenu
-                data={[""]}
-                keyExtractor={(item) => item}
-                popoverClassName="justify-end"
-                buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
-                render={() => (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className="flex cursor-pointer items-center gap-x-3"
-                    onClick={() => setRemoveMemberModal(rowData)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setRemoveMemberModal(rowData);
-                      }
-                    }}
-                  >
-                    <DeleteOutline className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
-                  </div>
-                )}
-              />
-            )}
-          </div>
+          ) : avatar_url && avatar_url.trim() !== "" ? (
+            <Link href={`/${workspaceSlug}/profile/${id}`}>
+              <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
+                <img
+                  src={getFileURL(avatar_url)}
+                  className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
+                  alt={display_name || email}
+                />
+              </span>
+            </Link>
+          ) : (
+            <Link href={`/${workspaceSlug}/profile/${id}`}>
+              <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-tertiary capitalize">
+                {(email ?? display_name ?? "?")[0]}
+              </span>
+            </Link>
+          )}
+          <span className={isSuspended ? "text-placeholder" : ""}>
+            {first_name} {last_name}
+          </span>
         </div>
-      )}
-    </Disclosure>
+
+        {!isSuspended && (isAdmin || id === currentUser?.id) && (
+          <div className="opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[data-popup-open]]:opacity-100">
+            <Menu>
+              <MenuTrigger
+                render={
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("aria_labels.common.more_actions")}
+                    icon={<Icon icon={MoreHorizontalOutline} />}
+                  />
+                }
+              />
+              <MenuContent side="bottom" align="end">
+                <MenuItem
+                  icon={<Icon icon={DeleteOutline} />}
+                  label={id === currentUser?.id ? t("leave") : t("remove")}
+                  onClick={() => setRemoveMemberModal(rowData)}
+                />
+              </MenuContent>
+            </Menu>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, workspaceSlug } = props;
   // form info
-  const {
-    control,
-    formState: { errors },
-  } = useForm();
+  const { control } = useForm();
   // store hooks
   const { allowPermissions } = useUserPermissions();
 
@@ -136,9 +139,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
     <>
       {isSuspended ? (
         <div className="flex w-32">
-          <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
-            Suspended
-          </Pill>
+          <Badge variant="neutral" size="sm" label="Suspended" />
         </div>
       ) : isRoleNonEditable ? (
         <div className="flex w-32">
@@ -149,41 +150,36 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
           name="role"
           control={control}
           rules={{ required: "Role is required." }}
-          render={({ field: { value } }) => (
-            <CustomSelect
-              value={value as EUserPermissions}
-              onChange={async (value: EUserPermissions) => {
-                if (!workspaceSlug) return;
-                try {
-                  await updateMember(workspaceSlug.toString(), rowData.member.id, {
-                    role: value as unknown as EUserPermissions,
-                  });
-                } catch (err: unknown) {
-                  const error = err as { error?: string | string[] };
-                  const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
+          render={() => (
+            <div className="w-32">
+              <Select<TRoleOption>
+                value={ROLE_OPTIONS.find((role) => role.key === rowData.role) ?? null}
+                onChange={(val) => {
+                  if (!workspaceSlug) return;
+                  updateMember(workspaceSlug.toString(), rowData.member.id, {
+                    role: Number(val) as EUserPermissions,
+                  }).catch((err: unknown) => {
+                    const error = err as { error?: string | string[] };
+                    const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
 
-                  setToast({
-                    type: TOAST_TYPE.ERROR,
-                    title: "Error!",
-                    message: errorString ?? "An error occurred while updating member role. Please try again.",
+                    setToast({
+                      type: "error",
+                      title: "Error!",
+                      message: errorString ?? "An error occurred while updating member role. Please try again.",
+                    });
                   });
-                }
-              }}
-              label={
-                <div className="flex">
-                  <span>{ROLE[rowData.role]}</span>
-                </div>
-              }
-              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
-              className="w-32 rounded-md p-0"
-              input
-            >
-              {Object.keys(ROLE).map((item) => (
-                <CustomSelect.Option key={item} value={item as unknown as EUserPermissions}>
-                  {ROLE[item as unknown as keyof typeof ROLE]}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+                }}
+                getValues={() => ROLE_OPTIONS}
+                getOptionValue={(role) => String(role.key)}
+                getOptionLabel={(role) => role.label}
+                showSearch={false}
+                pinSelected={false}
+              >
+                <Select.Trigger<TRoleOption> variant="select-ghost-md">
+                  <span className="min-w-0 flex-1 truncate text-left">{ROLE[rowData.role]}</span>
+                </Select.Trigger>
+              </Select>
+            </div>
           )}
         />
       )}

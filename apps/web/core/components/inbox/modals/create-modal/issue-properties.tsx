@@ -7,26 +7,28 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
-import { ParentOutline } from "@makeplane/propel/icons";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import { CalendarOutline, ParentOutline } from "@makeplane/propel/icons";
+import { DateSelect } from "@plane/blocks/property-select";
+import { useTranslation } from "@plane/i18n";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 // components
-import { CycleDropdown } from "@/components/dropdowns/cycle";
-import { DateDropdown } from "@/components/dropdowns/date";
-import { EstimateDropdown } from "@/components/dropdowns/estimate";
-import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
+import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
+import { IntakeStateSelect } from "@/components/dropdowns/intake-state/intake-state-select";
+import { LabelSelect } from "@/components/dropdowns/label/label-select";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { ModuleSelect } from "@/components/dropdowns/module/module-select";
+import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
-import { IssueLabelSelect } from "@/components/issues/select";
-// helpers
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useUserProfile } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueProperties = {
+  workspaceSlug: string;
   projectId: string;
   data: Partial<TIssue>;
   handleData: (issueKey: keyof Partial<TIssue>, issueValue: Partial<TIssue>[keyof Partial<TIssue>]) => void;
@@ -34,9 +36,12 @@ type TInboxIssueProperties = {
 };
 
 export const InboxIssueProperties = observer(function InboxIssueProperties(props: TInboxIssueProperties) {
-  const { projectId, data, handleData, isVisible = false } = props;
+  const { workspaceSlug, projectId, data, handleData, isVisible = false } = props;
+  // translation
+  const { t } = useTranslation();
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { data: userProfile } = useUserProfile();
   const { isMobile } = usePlatformOS();
   // states
   const [parentIssueModalOpen, setParentIssueModalOpen] = useState(false);
@@ -56,159 +61,143 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
   return (
     <div className="relative flex flex-wrap items-center gap-2">
       {/* intake state */}
-      <div className="h-7">
-        <IntakeStateDropdown
-          value={data?.state_id}
-          onChange={(stateId) => handleData("state_id", stateId)}
-          projectId={projectId}
-          buttonVariant="border-with-text"
-          tabIndex={getIndex("state_id")}
-          isForWorkItemCreation={!data?.id}
-        />
-      </div>
+      <IntakeStateSelect
+        workspaceSlug={workspaceSlug}
+        value={data?.state_id}
+        onChange={(stateId) => handleData("state_id", stateId)}
+        projectId={projectId}
+        variant="pill-md"
+        tabIndex={getIndex("state_id")}
+      />
 
       {/* priority */}
-      <div className="h-7">
-        <PriorityDropdown
-          value={data?.priority}
-          onChange={(priority) => handleData("priority", priority)}
-          buttonVariant="border-with-text"
-          tabIndex={getIndex("priority")}
-        />
-      </div>
+      <PrioritySelect
+        value={data?.priority}
+        onChange={(priority) => handleData("priority", priority)}
+        variant="pill-md"
+        tabIndex={getIndex("priority")}
+      />
 
       {/* Assignees */}
-      <div className="h-7">
-        <MemberDropdown
-          projectId={projectId}
-          value={data?.assignee_ids || []}
-          onChange={(assigneeIds) => handleData("assignee_ids", assigneeIds)}
-          buttonVariant={(data?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "border-with-text"}
-          buttonClassName={(data?.assignee_ids || [])?.length > 0 ? "hover:bg-transparent" : ""}
-          placeholder="Assignees"
-          multiple
-          tabIndex={getIndex("assignee_ids")}
-        />
-      </div>
+      <MemberSelect
+        projectId={projectId}
+        value={data?.assignee_ids || []}
+        onChange={(assigneeIds) => handleData("assignee_ids", assigneeIds)}
+        placeholder="Assignees"
+        multiple
+        variant={(data?.assignee_ids || []).length ? "avatar-group-md" : "pill-md"}
+        tabIndex={getIndex("assignee_ids")}
+      />
 
       {/* labels */}
-      <div className="h-7">
-        <IssueLabelSelect
-          value={data?.label_ids || []}
-          onChange={(labelIds) => handleData("label_ids", labelIds)}
-          projectId={projectId}
-          tabIndex={getIndex("label_ids")}
-        />
-      </div>
+      <LabelSelect
+        projectId={projectId}
+        value={data?.label_ids || []}
+        onChange={(labelIds) => handleData("label_ids", labelIds)}
+        variant="pill-md"
+        placeholder={t("labels")}
+        tabIndex={getIndex("label_ids")}
+      />
 
       {/* start date */}
       {isVisible && (
-        <div className="h-7">
-          <DateDropdown
-            value={data?.start_date || null}
-            onChange={(date) => handleData("start_date", date ? renderFormattedPayloadDate(date) : "")}
-            buttonVariant="border-with-text"
-            minDate={minDate ?? undefined}
-            placeholder="Start date"
-            tabIndex={getIndex("start_date")}
-          />
-        </div>
+        <DateSelect
+          value={getDate(data?.start_date) ?? null}
+          onChange={(date) => handleData("start_date", date ? renderFormattedPayloadDate(date) : "")}
+          minDate={minDate ?? undefined}
+          placeholder="Start date"
+          icon={<CalendarOutline />}
+          weekStartsOn={userProfile?.start_of_the_week}
+          clearable
+          clearLabel={t("common.clear")}
+          variant="pill-md"
+          tabIndex={getIndex("start_date")}
+        />
       )}
 
       {/* due date */}
-      <div className="h-7">
-        <DateDropdown
-          value={data?.target_date || null}
-          onChange={(date) => handleData("target_date", date ? renderFormattedPayloadDate(date) : "")}
-          buttonVariant="border-with-text"
-          minDate={minDate ?? undefined}
-          placeholder="Due date"
-          tabIndex={getIndex("target_date")}
-        />
-      </div>
+      <DateSelect
+        value={getDate(data?.target_date) ?? null}
+        onChange={(date) => handleData("target_date", date ? renderFormattedPayloadDate(date) : "")}
+        minDate={minDate ?? undefined}
+        placeholder="Due date"
+        icon={<CalendarOutline />}
+        weekStartsOn={userProfile?.start_of_the_week}
+        clearable
+        clearLabel={t("common.clear")}
+        variant="pill-md"
+        tabIndex={getIndex("target_date")}
+      />
 
       {/* cycle */}
       {isVisible && (
-        <div className="h-7">
-          <CycleDropdown
-            value={data?.cycle_id || ""}
-            onChange={(cycleId) => handleData("cycle_id", cycleId)}
-            projectId={projectId}
-            placeholder="Cycle"
-            buttonVariant="border-with-text"
-            tabIndex={getIndex("cycle_id")}
-          />
-        </div>
+        <CycleSelect
+          value={data?.cycle_id || null}
+          onChange={(cycleId) => handleData("cycle_id", cycleId)}
+          projectId={projectId}
+          placeholder="Cycle"
+          variant="pill-md"
+          tabIndex={getIndex("cycle_id")}
+        />
       )}
 
       {/* module */}
       {isVisible && (
-        <div className="h-7">
-          <ModuleDropdown
-            value={data?.module_ids || []}
-            onChange={(moduleIds) => handleData("module_ids", moduleIds)}
-            projectId={projectId}
-            placeholder="Modules"
-            buttonVariant="border-with-text"
-            multiple
-            showCount
-            tabIndex={getIndex("module_ids")}
-          />
-        </div>
+        <ModuleSelect
+          multiple
+          projectId={projectId}
+          value={data?.module_ids || []}
+          onChange={(moduleIds) => handleData("module_ids", moduleIds)}
+          placeholder="Modules"
+          variant="pill-md"
+          tabIndex={getIndex("module_ids")}
+        />
       )}
 
       {/* estimate */}
       {isVisible && projectId && areEstimateEnabledByProjectId(projectId) && (
-        <div className="h-7">
-          <EstimateDropdown
-            value={data?.estimate_point || undefined}
-            onChange={(estimatePoint) => handleData("estimate_point", estimatePoint)}
-            projectId={projectId}
-            buttonVariant="border-with-text"
-            placeholder="Estimate"
-            tabIndex={getIndex("estimate_point")}
-          />
-        </div>
+        <EstimateSelect
+          value={data?.estimate_point || undefined}
+          onChange={(estimatePoint) => handleData("estimate_point", estimatePoint)}
+          projectId={projectId}
+          variant="pill-md"
+          placeholder="Estimate"
+          tabIndex={getIndex("estimate_point")}
+        />
       )}
 
       {/* add parent */}
       {isVisible && (
         <div className="h-7">
           {selectedParentIssue ? (
-            <CustomMenu
-              customButton={
-                <button
-                  type="button"
-                  className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
-                >
-                  <ParentOutline className="h-3 w-3 flex-shrink-0" />
-                  <span className="whitespace-nowrap">
-                    {selectedParentIssue
-                      ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-                      : `Add parent`}
-                  </span>
-                </button>
-              }
-              placement="bottom-start"
-              className="h-full w-full"
-              customButtonClassName="h-full"
-              tabIndex={getIndex("parent_id")}
-            >
-              <>
-                <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
-                  Change parent work item
-                </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem
-                  className="!p-1"
-                  onClick={() => {
-                    handleData("parent_id", "");
-                    setSelectedParentIssue(undefined);
-                  }}
-                >
-                  Remove parent work item
-                </CustomMenu.MenuItem>
-              </>
-            </CustomMenu>
+            <div className="h-full w-full">
+              <Menu>
+                <MenuTrigger
+                  render={
+                    <button
+                      type="button"
+                      tabIndex={getIndex("parent_id")}
+                      className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
+                    >
+                      <ParentOutline className="h-3 w-3 flex-shrink-0" />
+                      <span className="whitespace-nowrap">
+                        {`${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`}
+                      </span>
+                    </button>
+                  }
+                />
+                <MenuContent side="bottom" align="start">
+                  <MenuItem label="Change parent work item" onClick={() => setParentIssueModalOpen(true)} />
+                  <MenuItem
+                    label="Remove parent work item"
+                    onClick={() => {
+                      handleData("parent_id", "");
+                      setSelectedParentIssue(undefined);
+                    }}
+                  />
+                </MenuContent>
+              </Menu>
+            </div>
           ) : (
             <button
               type="button"

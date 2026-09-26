@@ -22,13 +22,17 @@ import {
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Avatar } from "@makeplane/propel/components/avatar";
-import { Button } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IProject } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { ContextMenu, FavoriteStar } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { ContextMenu } from "@plane/blocks/context-menu";
+import { FavoriteStar } from "@plane/blocks/common";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 // hooks
@@ -38,7 +42,6 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
-import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { CoverImage } from "@/components/common/cover-image";
 import { DeleteProjectModal } from "./delete-project-modal";
 import { JoinProjectModal } from "./join-project-modal";
@@ -66,7 +69,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   // hooks
   const { isMobile } = usePlatformOS();
   // derived values
-  const projectMembersIds = project.members;
+  const projectMembers = (project.members ?? []).flatMap((memberId) => {
+    const member = getUserDetails(memberId);
+    return member ? [member] : [];
+  });
   const shouldRenderFavorite = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -92,9 +98,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       success: {
         title: "Success!",
         message: () => "Project added to favorites.",
+        // propel: the callback exists for its side effect; a toast action is data, and there is
+        // none here, so it returns an empty list rather than an empty fragment.
         actionItems: () => {
           if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-          return <></>;
+          return [];
         },
       },
       error: {
@@ -125,7 +133,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
-        type: TOAST_TYPE.INFO,
+        type: "info",
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       })
@@ -156,7 +164,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     },
     {
       key: "copy-link",
-      action: handleCopyText,
+      action: () => void handleCopyText(),
       title: "Copy link",
       icon: LinkOutline,
       shouldRender: !isArchived,
@@ -247,11 +255,13 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             {!isArchived && (
               <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
+                  type="button"
+                  aria-label="Copy link"
                   className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleCopyText();
+                    void handleCopyText();
                   }}
                 >
                   <LinkOutline className="h-3 w-3 text-on-color" />
@@ -293,22 +303,18 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 layout="stacked"
                 disabled={isMobile}
               >
-                {projectMembersIds && projectMembersIds.length > 0 ? (
+                {projectMembers.length > 0 ? (
                   <div className="flex cursor-pointer items-center gap-2 text-secondary">
-                    <AvatarGroupOverflow size="xs">
-                      {projectMembersIds.map((memberId) => {
-                        const member = getUserDetails(memberId);
-                        if (!member) return null;
-                        return (
-                          <Avatar
-                            key={member.id}
-                            alt={member.display_name}
-                            fallback={member.display_name?.[0]?.toUpperCase()}
-                            src={getFileURL(member.avatar_url)}
-                          />
-                        );
-                      })}
-                    </AvatarGroupOverflow>
+                    <AvatarGroup size="xs" max={2}>
+                      {projectMembers.map((member) => (
+                        <Avatar
+                          key={member.id}
+                          alt={member.display_name}
+                          fallback={member.display_name?.[0]?.toUpperCase()}
+                          src={getFileURL(member.avatar_url)}
+                        />
+                      ))}
+                    </AvatarGroup>
                   </div>
                 ) : (
                   <span className="text-13 text-placeholder italic">No Member Yet</span>
@@ -319,29 +325,29 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             {isArchived ? (
               hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
-                  <div
-                    className="flex items-center justify-center text-11 font-medium text-placeholder hover:text-secondary"
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    stretch="auto"
+                    label="Restore"
+                    icon={<Icon icon={RestoreOutline} />}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       setRestoreProject(true);
                     }}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <RestoreOutline className="h-3.5 w-3.5" />
-                      Restore
-                    </div>
-                  </div>
-                  <div
-                    className="flex items-center justify-center text-11 font-medium text-placeholder hover:text-secondary"
+                  />
+                  <IconButton
+                    variant="ghost"
+                    size="xs"
+                    aria-label="Delete"
+                    icon={<Icon icon={DeleteOutline} />}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       setDeleteProjectModal(true);
                     }}
-                  >
-                    <DeleteOutline className="h-3.5 w-3.5" />
-                  </div>
+                  />
                 </div>
               )
             ) : (
@@ -366,16 +372,16 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
-                      variant="link"
-                      className="!p-0 font-semibold"
+                      variant="ghost"
+                      size="sm"
+                      stretch="auto"
+                      label="Join"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setJoinProjectModal(true);
                       }}
-                    >
-                      Join
-                    </Button>
+                    />
                   </div>
                 )}
               </>

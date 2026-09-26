@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EInboxIssueSource, EInboxIssueStatus } from "@plane/types";
 // components
@@ -83,14 +83,14 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           await removeIssue(workspaceSlug, projectId, _issueId);
           setToast({
             title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             message: "Work item deleted successfully",
           });
         } catch (error) {
           console.log("Error in deleting work item:", error);
           setToast({
             title: "Error!",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: "Work item delete failed",
           });
         }
@@ -101,7 +101,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         } catch (_error) {
           setToast({
             title: "Work item update failed",
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: "Work item update failed",
           });
         }

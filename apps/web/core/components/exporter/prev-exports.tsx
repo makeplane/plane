@@ -10,11 +10,12 @@ import useSWR, { mutate } from "swr";
 import { ArrowNarrowLeftOutline, ArrowNarrowRightOutline, RefreshOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { IExportData } from "@plane/types";
-import { Table } from "@plane/ui";
 // components
+import { DataTable } from "@/components/common/data-table";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
 import { EXPORT_SERVICES_LIST } from "@plane/constants";
@@ -78,31 +79,37 @@ export const PrevExports = observer(function PrevExports(props: Props) {
       <div className="flex items-center justify-between border-b border-subtle pb-3.5">
         <div className="flex items-center gap-2">
           <h3 className="text-h6-medium text-primary">{t("workspace_settings.settings.exports.previous_exports")}</h3>
-          <Button variant="tertiary" className="shrink-0" onClick={handleRefresh}>
-            <RefreshOutline className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? t("refreshing") : t("refresh_status")}
-          </Button>
+          <Button
+            variant="tertiary"
+            size="sm"
+            stretch="auto"
+            onClick={() => void handleRefresh()}
+            icon={<Icon icon={<RefreshOutline className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />} />}
+            label={refreshing ? t("refreshing") : t("refresh_status")}
+          />
         </div>
         {Array.isArray(exporterServices?.results) && exporterServices.results.length > 0 && (
           <div className="flex items-center gap-2 text-11">
             <Button
               variant="secondary"
-              size="sm"
+              size="xs"
+              stretch="auto"
               disabled={!exporterServices?.prev_page_results}
               onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
-              prependIcon={<ArrowNarrowLeftOutline />}
-            >
-              {t("prev")}
-            </Button>
+              icon={<Icon icon={ArrowNarrowLeftOutline} />}
+              iconPosition="start"
+              label={t("prev")}
+            />
             <Button
               variant="secondary"
-              size="sm"
+              size="xs"
+              stretch="auto"
               disabled={!exporterServices?.next_page_results}
               onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
-              appendIcon={<ArrowNarrowRightOutline />}
-            >
-              {t("next")}
-            </Button>
+              icon={<Icon icon={ArrowNarrowRightOutline} />}
+              iconPosition="end"
+              label={t("next")}
+            />
           </div>
         )}
       </div>
@@ -112,15 +119,10 @@ export const PrevExports = observer(function PrevExports(props: Props) {
         ) : Array.isArray(exporterServices.results) && exporterServices.results.length > 0 ? (
           <div>
             <div className="divide-y divide-subtle-1">
-              <Table
+              <DataTable
                 columns={columns}
                 data={exporterServices.results}
                 keyExtractor={(rowData: RowData) => rowData?.id ?? ""}
-                tHeadClassName="border-b border-subtle"
-                thClassName="text-left font-medium divide-x-0 text-placeholder"
-                tBodyClassName="divide-y-0"
-                tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
-                tHeadTrClassName="divide-x-0"
               />
             </div>
           </div>

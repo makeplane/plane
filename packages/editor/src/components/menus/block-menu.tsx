@@ -15,10 +15,9 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
-import type { LucideIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CopyOutline, DeleteOutline } from "@makeplane/propel/icons";
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -34,7 +33,7 @@ type Props = {
   workItemIdentifier?: IEditorProps["workItemIdentifier"];
 };
 export type BlockMenuOption = {
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: React.FC<React.SVGProps<SVGSVGElement>> | React.FC<ISvgIcons>;
   key: string;
   label: string;
   onClick: (e: React.MouseEvent) => void;

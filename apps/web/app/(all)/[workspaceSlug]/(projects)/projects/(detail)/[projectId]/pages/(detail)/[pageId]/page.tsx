@@ -9,12 +9,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 // plane types
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/elements/button";
 import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 // plane ui
 // plane utils
-import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
@@ -165,12 +164,14 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
         <p className="mt-3 text-center text-13 text-secondary">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
-        <Link
-          href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
+        <Button
+          variant="secondary"
+          size="sm"
+          stretch="auto"
+          render={<Link href={`/${workspaceSlug}/projects/${projectId}/pages`} className="mt-5" />}
         >
           View other Pages
-        </Link>
+        </Button>
       </div>
     );
 

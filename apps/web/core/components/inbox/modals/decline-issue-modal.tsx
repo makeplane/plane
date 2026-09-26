@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { ConfirmDialog } from "@plane/blocks/dialog";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -37,11 +37,17 @@ export function DeclineIssueModal(props: Props) {
 
   const handleDecline = async () => {
     setIsDeclining(true);
-    await onSubmit().finally(() => setIsDeclining(false));
+    try {
+      await onSubmit();
+    } catch (error) {
+      console.error("Failed to decline the intake work item", error);
+    } finally {
+      setIsDeclining(false);
+    }
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDecline}
       isSubmitting={isDeclining}

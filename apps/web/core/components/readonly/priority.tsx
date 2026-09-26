@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/blocks/icons";
 import type { TIssuePriorities } from "@plane/types";
 import { cn } from "@plane/utils";
 
@@ -27,7 +27,7 @@ export const ReadonlyPriority = observer(function ReadonlyPriority(props: TReado
 
   return (
     <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-      {!hideIcon && <PriorityIcon priority={value ?? "none"} size={12} className="flex-shrink-0" withContainer />}
+      {!hideIcon && <PriorityIcon priority={value ?? "none"} className="size-4" />}
       <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder ?? t("common.none")}</span>
     </div>
   );

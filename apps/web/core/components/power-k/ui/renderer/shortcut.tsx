@@ -20,10 +20,20 @@ type Props = {
   commands: TPowerKCommandConfig[];
 };
 
+// Interpolated in place of the query so the translated sentence can be rendered around it
+const QUERY_SENTINEL = "\u0000";
+
 export function ShortcutRenderer(props: Props) {
   const { searchQuery, commands } = props;
   // translation
   const { t } = useTranslation();
+  // Translated once here rather than per badge, so rows don't each subscribe to i18n
+  const keySequenceSeparator = t("power_k.shortcuts_modal.sequence_separator");
+  // The query's position in the sentence varies by language, so split the translation on a
+  // sentinel and give only the query its emphasis
+  const [noResultsBefore, noResultsAfter] = t("power_k.shortcuts_modal.no_results", {
+    query: QUERY_SENTINEL,
+  }).split(QUERY_SENTINEL);
 
   // Apply search filter
   const filteredCommands = commands.filter((command) => substringMatch(t(command.i18n_title), searchQuery));
@@ -89,7 +99,9 @@ export function ShortcutRenderer(props: Props) {
                   <div className="flex items-center justify-between">
                     <h4 className="text-left text-11 text-secondary">{t(command.i18n_title)}</h4>
                     <div className="flex items-center gap-x-1.5">
-                      {command.keySequence && <KeySequenceBadge sequence={command.keySequence} />}
+                      {command.keySequence && (
+                        <KeySequenceBadge sequence={command.keySequence} separator={keySequenceSeparator} />
+                      )}
                       {(command.shortcut || command.modifierShortcut) && (
                         <ShortcutBadge shortcut={command.shortcut || command.modifierShortcut} />
                       )}
@@ -101,13 +113,10 @@ export function ShortcutRenderer(props: Props) {
           </div>
         ))
       ) : (
-        <p className="flex justify-center text-center text-13 text-secondary">
-          No shortcuts found for{" "}
-          <span className="font-semibold italic">
-            {`"`}
-            {searchQuery}
-            {`"`}
-          </span>
+        <p className="text-center text-13 text-secondary">
+          {noResultsBefore}
+          <span className="font-semibold italic">{searchQuery}</span>
+          {noResultsAfter}
         </p>
       )}
     </div>

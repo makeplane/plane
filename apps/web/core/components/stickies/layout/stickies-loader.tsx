@@ -5,7 +5,7 @@
  */
 
 // plane ui
-import { Loader } from "@plane/ui";
+import { Loader } from "@plane/blocks/skeleton";
 
 export function StickiesLoader() {
   return (

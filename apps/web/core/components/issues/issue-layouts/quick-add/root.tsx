@@ -13,12 +13,12 @@ import { useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { AddOutline } from "@makeplane/propel/icons";
-import { setPromiseToast } from "@plane/propel/toast";
+import { setPromiseToast } from "@plane/blocks/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
 // local imports
 import { QuickAddIssueFormRoot } from "./form";
-import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
+import { useCreateIssueToastActions } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement | null>;
@@ -67,6 +67,8 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
+  // propel: toast actions cross the boundary as data, never as JSX
+  const buildCreateIssueToastActions = useCreateIssueToastActions();
   // states
   const [isOpen, setIsOpen] = useState(isQuickAddOpen ?? false);
   // form info
@@ -115,15 +117,8 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         success: {
           title: t("common.success"),
           message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
-          actionItems: (data) => (
-            // TODO: Translate here
-            <CreateIssueToastActionItems
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              issueId={data.id}
-              isEpic={isEpic}
-            />
-          ),
+          actionItems: (data) =>
+            buildCreateIssueToastActions({ workspaceSlug: workspaceSlug.toString(), issueId: data.id, isEpic }),
         },
         error: {
           title: t("common.error.label"),

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 
 type TProductUpdatesFallbackProps = {
   description: string;

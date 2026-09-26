@@ -7,14 +7,13 @@
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { SquareStackIcon } from "lucide-react";
-import { CopyOutline, DeleteOutline, EditOutline } from "@makeplane/propel/icons";
+import { CopyOutline, DeleteOutline, EditOutline, SquareStackOutline } from "@makeplane/propel/icons";
 // plane utils
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkspaceDraftIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { Row } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -81,7 +80,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "move-to-issues",
       title: "move_to_project",
-      icon: SquareStackIcon,
+      icon: SquareStackOutline,
       action: () => {
         setMoveToIssue(true);
         setIssueToEdit(issue);
@@ -189,6 +188,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                 "md:flex": isSidebarCollapsed,
                 "lg:flex": !isSidebarCollapsed,
               })}
+              role="presentation"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

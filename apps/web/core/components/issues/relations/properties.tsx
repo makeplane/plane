@@ -6,12 +6,14 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-// components
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import type { TIssuePriorities, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+// components
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
+import { StateSelect } from "@/components/dropdowns/state/state-select";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
@@ -28,6 +30,7 @@ type Props = {
 export const RelationIssueProperty = observer(function RelationIssueProperty(props: Props) {
   const { workspaceSlug, issueId, disabled, issueOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // hooks
+  const { t } = useTranslation();
   const {
     issue: { getIssueById },
   } = useIssueDetail(issueServiceType);
@@ -59,37 +62,32 @@ export const RelationIssueProperty = observer(function RelationIssueProperty(pro
 
   return (
     <div className="relative flex items-center gap-2">
-      <div className="h-5 flex-shrink-0">
-        <StateDropdown
-          value={issue.state_id}
-          projectId={issue.project_id ?? undefined}
-          onChange={handleStateChange}
-          disabled={disabled}
-          buttonVariant="border-with-text"
-        />
-      </div>
+      <StateSelect
+        value={issue.state_id}
+        projectId={issue.project_id ?? undefined}
+        onChange={handleStateChange}
+        disabled={disabled}
+        variant="pill-sm"
+        tooltip
+      />
 
-      <div className="h-5 flex-shrink-0">
-        <PriorityDropdown
-          value={issue.priority}
-          onChange={handlePriorityChange}
-          disabled={disabled}
-          buttonVariant="border-without-text"
-          buttonClassName="border"
-        />
-      </div>
+      <PrioritySelect
+        value={issue.priority}
+        onChange={handlePriorityChange}
+        disabled={disabled}
+        variant="pill-sm"
+        tooltip
+      />
 
-      <div className="h-5 flex-shrink-0">
-        <MemberDropdown
-          value={issue.assignee_ids}
-          projectId={issue.project_id ?? undefined}
-          onChange={handleAssigneeChange}
-          disabled={disabled}
-          multiple
-          buttonVariant={(issue?.assignee_ids || []).length > 0 ? "transparent-without-text" : "border-without-text"}
-          buttonClassName={(issue?.assignee_ids || []).length > 0 ? "hover:bg-transparent px-0" : ""}
-        />
-      </div>
+      <MemberSelect
+        value={issue.assignee_ids ?? []}
+        projectId={issue.project_id ?? undefined}
+        onChange={handleAssigneeChange}
+        disabled={disabled}
+        multiple
+        variant={issue.assignee_ids?.length ? "avatar-group-sm" : "pill-sm"}
+        tooltip={{ heading: t("common.assignees") }}
+      />
     </div>
   );
 });

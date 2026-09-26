@@ -6,7 +6,7 @@
 
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/blocks/icons";
 import { CloseOutline } from "@makeplane/propel/icons";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";

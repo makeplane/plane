@@ -10,7 +10,7 @@ import Link from "next/link";
 
 import { CloseOutline, EditOutline } from "@makeplane/propel/icons";
 // Plane
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";
@@ -54,7 +54,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Please select at least one work item.",
       });

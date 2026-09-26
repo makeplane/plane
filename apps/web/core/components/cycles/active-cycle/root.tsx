@@ -4,14 +4,15 @@
  * See the LICENSE file for details.
  */
 
+import { useState } from "react";
+import { Collapsible } from "@base-ui/react/collapsible";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Disclosure } from "@headlessui/react";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { ICycle } from "@plane/types";
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/layout";
 // assets
 import darkActiveCycleAsset from "@/app/assets/empty-state/cycle/active-dark.webp?url";
 import lightActiveCycleAsset from "@/app/assets/empty-state/cycle/active-light.webp?url";
@@ -103,6 +104,8 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveC
   const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
+  // states
+  const [isExpanded, setIsExpanded] = useState(true);
   // store hooks
   const { currentProjectActiveCycleId } = useCycle();
   // derived values
@@ -118,26 +121,26 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveC
   return (
     <>
       {showHeader ? (
-        <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
-                <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
-              </Disclosure.Button>
-              <Disclosure.Panel>
-                <ActiveCyclesComponent
-                  cycleId={cycleId}
-                  activeCycle={activeCycle}
-                  activeCycleResolvedPath={activeCycleResolvedPath}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  handleFiltersUpdate={handleFiltersUpdate}
-                  cycleIssueDetails={cycleIssueDetails}
-                />
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
+        <Collapsible.Root open={isExpanded} onOpenChange={setIsExpanded} className="flex flex-shrink-0 flex-col">
+          <Collapsible.Trigger className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
+            <CycleListGroupHeader
+              title={t("project_cycles.active_cycle.label")}
+              type="current"
+              isExpanded={isExpanded}
+            />
+          </Collapsible.Trigger>
+          <Collapsible.Panel>
+            <ActiveCyclesComponent
+              cycleId={cycleId}
+              activeCycle={activeCycle}
+              activeCycleResolvedPath={activeCycleResolvedPath}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              handleFiltersUpdate={handleFiltersUpdate}
+              cycleIssueDetails={cycleIssueDetails}
+            />
+          </Collapsible.Panel>
+        </Collapsible.Root>
       ) : (
         <ActiveCyclesComponent
           cycleId={cycleId}

@@ -29,6 +29,19 @@
       "hide_password": "Ascunde parola",
       "close_alert": "Închide alerta",
       "close_popover": "Închide popover-ul"
+    },
+    "breadcrumb": {
+      "trail": "Traseu de navigare",
+      "show_more": "Afișați mai multe elemente din traseul de navigare"
+    },
+    "common": {
+      "more_actions": "Mai multe acțiuni",
+      "remove": "Elimină"
+    },
+    "color_picker": {
+      "open": "Deschide selectorul de culoare",
+      "swatches": "Culori predefinite",
+      "hex_input": "Culoare hexazecimală"
     }
   }
 }

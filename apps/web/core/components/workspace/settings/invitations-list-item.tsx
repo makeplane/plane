@@ -10,20 +10,29 @@ import { useParams } from "next/navigation";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownOutline, DeleteOutline, LinkOutline } from "@makeplane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomSelect, CustomMenu } from "@plane/ui";
-import { cn, copyTextToClipboard } from "@plane/utils";
+import { ChevronDownOutline, DeleteOutline, LinkOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
+import { Select, SelectDropdownPlacementContext } from "@plane/blocks/select";
+import { setToast } from "@plane/blocks/toast";
+import { copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 
+type TRoleOption = { key: number; label: string };
+
 type Props = {
   invitationId: string;
 };
+
+// The role list opens flush with the trigger's right edge, as `placement="bottom-end"` did.
+const ROLE_DROPDOWN_PLACEMENT = { side: "bottom", align: "end" } as const;
 
 export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitationsListItem(props: Props) {
   const { invitationId } = props;
@@ -52,6 +61,13 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+  // non-admins can only assign roles up to their own
+  const roleOptions: TRoleOption[] = Object.entries(ROLE)
+    .map(([key, label]) => ({ key: parseInt(key, 10), label }))
+    .filter(
+      (role) =>
+        !(currentWorkspaceRole && Number(currentWorkspaceRole) !== 20 && Number(currentWorkspaceRole) < role.key)
+    );
 
   const handleRemoveInvitation = async () => {
     try {
@@ -59,14 +75,14 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
 
       await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: "Invitation removed successfully.",
       });
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: error?.error || "Something went wrong. Please try again.",
       });
@@ -80,7 +96,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       const inviteLink = new URL(invitationDetails.invite_link, window.location.origin).href;
       await copyTextToClipboard(inviteLink);
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("common.link_copied"),
         message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
       });
@@ -105,8 +121,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       title: t("common.remove"),
       icon: DeleteOutline,
       shouldRender: isAdmin,
-      className: "text-danger-primary",
-      iconClassName: "text-danger-primary",
+      variant: "danger",
     },
   ];
 
@@ -134,92 +149,67 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
           <div className="flex items-center justify-center rounded-sm bg-label-yellow-bg-strong/20 px-2.5 py-1 text-center text-caption-sm-medium text-label-yellow-text">
             <p>{t("common.pending")}</p>
           </div>
-          <CustomSelect
-            customButton={
-              <div className="item-center flex gap-1 rounded-sm px-2 py-0.5">
-                <span
-                  className={`flex items-center rounded-sm text-caption-sm-medium ${
-                    hasRoleChangeAccess ? "" : "text-placeholder"
-                  }`}
-                >
-                  {ROLE[invitationDetails.role]}
-                </span>
-                {hasRoleChangeAccess && (
-                  <span className="grid place-items-center">
-                    <ChevronDownOutline className="h-3 w-3" />
-                  </span>
-                )}
-              </div>
-            }
-            value={invitationDetails.role}
-            onChange={(value: EUserPermissions) => {
-              if (!workspaceSlug || !value) return;
+          <SelectDropdownPlacementContext.Provider value={ROLE_DROPDOWN_PLACEMENT}>
+            <Select<TRoleOption>
+              value={roleOptions.find((role) => role.key === invitationDetails.role) ?? null}
+              onChange={(val) => {
+                const value = Number(val) as EUserPermissions;
+                if (!workspaceSlug || !value) return;
 
-              updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
-                role: value,
-              }).catch((err: unknown) => {
-                const error = err as { error?: string };
-                setToast({
-                  type: TOAST_TYPE.ERROR,
-                  title: "Error!",
-                  message: error?.error || "An error occurred while updating member role. Please try again.",
+                updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
+                  role: value,
+                }).catch((err: unknown) => {
+                  const error = err as { error?: string };
+                  setToast({
+                    type: "error",
+                    title: "Error!",
+                    message: error?.error || "An error occurred while updating member role. Please try again.",
+                  });
                 });
-              });
-            }}
-            disabled={!hasRoleChangeAccess}
-            placement="bottom-end"
-          >
-            {Object.keys(ROLE).map((key) => {
-              if (
-                currentWorkspaceRole &&
-                Number(currentWorkspaceRole) !== 20 &&
-                Number(currentWorkspaceRole) < parseInt(key)
-              )
-                return null;
-
-              return (
-                <CustomSelect.Option key={key} value={parseInt(key, 10)}>
-                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                </CustomSelect.Option>
-              );
-            })}
-          </CustomSelect>
+              }}
+              getValues={() => roleOptions}
+              getOptionValue={(role) => String(role.key)}
+              getOptionLabel={(role) => role.label}
+              disabled={!hasRoleChangeAccess}
+              showSearch={false}
+              pinSelected={false}
+            >
+              <Select.Trigger<TRoleOption>
+                variant="pill-sm"
+                appendIcon={hasRoleChangeAccess ? <ChevronDownOutline /> : undefined}
+              >
+                <span className="min-w-0 truncate">{ROLE[invitationDetails.role]}</span>
+              </Select.Trigger>
+            </Select>
+          </SelectDropdownPlacementContext.Provider>
           {isAdmin && (
-            <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
-              {MENU_ITEMS.map((item) => {
-                if (item.shouldRender === false) return null;
-                return (
-                  <CustomMenu.MenuItem
+            <Menu>
+              <MenuTrigger
+                render={
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("aria_labels.common.more_actions")}
+                    icon={<Icon icon={MoreHorizontalOutline} />}
+                  />
+                }
+              />
+              <MenuContent side="bottom" align="end">
+                {getRenderableItems(MENU_ITEMS).map((item) => (
+                  <MenuItem
                     key={item.key}
+                    variant={resolveItemVariant(item)}
+                    icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+                    label={item.title ?? ""}
+                    description={item.description}
+                    disabled={item.disabled}
                     onClick={() => {
                       item.action();
                     }}
-                    className={cn(
-                      "flex items-center gap-2",
-                      {
-                        "text-placeholder": item.disabled,
-                      },
-                      item.className
-                    )}
-                    disabled={item.disabled}
-                  >
-                    {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-                    <div>
-                      <h5>{item.title}</h5>
-                      {item.description && (
-                        <p
-                          className={cn("whitespace-pre-line text-tertiary", {
-                            "text-placeholder": item.disabled,
-                          })}
-                        >
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-                  </CustomMenu.MenuItem>
-                );
-              })}
-            </CustomMenu>
+                  />
+                ))}
+              </MenuContent>
+            </Menu>
           )}
         </div>
       </div>

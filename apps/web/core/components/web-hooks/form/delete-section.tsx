@@ -4,9 +4,9 @@
  * See the LICENSE file for details.
  */
 
-import { Disclosure, Transition } from "@headlessui/react";
-import { Button } from "@plane/propel/button";
-import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
+import { useState } from "react";
+import { Button } from "@makeplane/propel/components/button";
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 
 type Props = {
   openDeleteModal: () => void;
@@ -14,42 +14,25 @@ type Props = {
 
 export function WebhookDeleteSection(props: Props) {
   const { openDeleteModal } = props;
+  // states
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Disclosure as="div" className="border-t border-subtle">
-      {({ open }) => (
-        <div className="w-full">
-          <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-            <span className="text-16 tracking-tight">Danger zone</span>
-            {open ? <ChevronUpOutline className="h-5 w-5" /> : <ChevronDownOutline className="h-5 w-5" />}
-          </Disclosure.Button>
-
-          <Transition
-            as="div"
-            show={open}
-            enter="transition duration-100 ease-out"
-            enterFrom="transform opacity-0"
-            enterTo="transform opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform opacity-100"
-            leaveTo="transform opacity-0"
-          >
-            <Disclosure.Panel>
-              <div className="flex flex-col gap-8">
-                <span className="text-13 tracking-tight">
-                  Once a webhook is deleted, it cannot be restored. Future events will no longer be delivered to this
-                  webhook.
-                </span>
-                <div>
-                  <Button variant="error-fill" size="lg" onClick={openDeleteModal}>
-                    Delete webhook
-                  </Button>
-                </div>
-              </div>
-            </Disclosure.Panel>
-          </Transition>
+    <div className="w-full border-t border-subtle">
+      <Collapsible
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        trigger={<span className="text-16 tracking-tight">Danger zone</span>}
+      >
+        <div className="flex flex-col gap-8">
+          <span className="text-13 tracking-tight">
+            Once a webhook is deleted, it cannot be restored. Future events will no longer be delivered to this webhook.
+          </span>
+          <div>
+            <Button variant="danger" size="md" stretch="auto" label="Delete webhook" onClick={openDeleteModal} />
+          </div>
         </div>
-      )}
-    </Disclosure>
+      </Collapsible>
+    </div>
   );
 }

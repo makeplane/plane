@@ -21,7 +21,7 @@ export const PowerKModalFooter = observer(function PowerKModalFooter(props: Prop
   const { t } = useTranslation();
 
   return (
-    <div className="flex w-full items-center justify-between rounded-b-lg border-t border-subtle bg-surface-2/80 px-4 py-2">
+    <div className="flex w-full shrink-0 items-center justify-between rounded-b-lg border-t border-subtle bg-surface-2/80 px-4 py-2">
       <div />
       <div className="flex items-center gap-2">
         <span className="text-11 text-tertiary">{t("power_k.footer.workspace_level")}</span>

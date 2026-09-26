@@ -11,8 +11,16 @@ import { WarningTriangleOutline } from "@makeplane/propel/icons";
 import { Field } from "@makeplane/propel/components/field";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import {
+  DialogActions,
+  DialogBody,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspace } from "@plane/types";
 
 import { cn } from "@plane/utils";
@@ -69,13 +77,13 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       handleClose();
       router.push(getWorkspaceRedirectionUrl());
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: t("workspace_settings.settings.general.delete_modal.success_title"),
         message: t("workspace_settings.settings.general.delete_modal.success_message"),
       });
     } catch (_error) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("workspace_settings.settings.general.delete_modal.error_title"),
         message: t("workspace_settings.settings.general.delete_modal.error_message"),
       });
@@ -83,89 +91,96 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-        <span
-          className={cn(
-            "grid size-12 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary sm:size-10"
-          )}
-        >
-          <WarningTriangleOutline className="size-5 text-danger-primary" aria-hidden="true" />
-        </span>
-        <div>
-          <div className="text-center sm:text-left">
-            <h3 className="text-h5-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
-            <p className="mt-1 text-body-xs-regular text-secondary">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+      <DialogMain>
+        <DialogHeader>
+          <div className="flex w-full items-center justify-start gap-4">
+            <span
+              className={cn(
+                "grid size-12 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary sm:size-10"
+              )}
+            >
+              <WarningTriangleOutline className="size-5 text-danger-primary" aria-hidden="true" />
+            </span>
+            <DialogHeading>
+              <DialogTitle>{t("workspace_settings.settings.general.delete_modal.title")}</DialogTitle>
+            </DialogHeading>
+          </div>
+        </DialogHeader>
+        <DialogBody tabIndex={0}>
+          <div className="space-y-4">
+            <p className="text-body-xs-regular text-secondary">
               You are about to delete the workspace{" "}
               <span className="text-body-xs-semibold break-words">{data?.name}</span>. If you confirm, you will lose
               access to all your work data in this workspace without any way to restore it. Tread very carefully.
             </p>
+            <div className="text-secondary">
+              <p className="text-body-xs-regular break-words">Type in this workspace&apos;s name to continue.</p>
+              <Controller
+                control={control}
+                name="workspaceName"
+                render={({ field: { value, onChange, ref } }) => (
+                  <Field name="workspaceName" invalid={Boolean(errors.workspaceName)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="workspaceName"
+                        name="workspaceName"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={data?.name}
+                        autoComplete="off"
+                      />
+                    </InputGroup>
+                  </Field>
+                )}
+              />
+            </div>
+            <div className="text-secondary">
+              <p className="text-body-xs-regular">
+                For final confirmation, type{" "}
+                <span className="text-body-xs-medium text-primary">delete my workspace </span>
+                below.
+              </p>
+              <Controller
+                control={control}
+                name="confirmDelete"
+                render={({ field: { value, onChange, ref } }) => (
+                  <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="confirmDelete"
+                        name="confirmDelete"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder=""
+                        autoComplete="off"
+                      />
+                    </InputGroup>
+                  </Field>
+                )}
+              />
+            </div>
           </div>
-
-          <div className="mt-4 text-secondary">
-            <p className="text-body-xs-regular break-words">Type in this workspace&apos;s name to continue.</p>
-            <Controller
-              control={control}
-              name="workspaceName"
-              render={({ field: { value, onChange, ref } }) => (
-                <Field name="workspaceName" invalid={Boolean(errors.workspaceName)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      id="workspaceName"
-                      name="workspaceName"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      placeholder={data?.name}
-                      autoComplete="off"
-                    />
-                  </InputGroup>
-                </Field>
-              )}
-            />
-          </div>
-
-          <div className="mt-4 text-secondary">
-            <p className="text-body-xs-regular">
-              For final confirmation, type{" "}
-              <span className="text-body-xs-medium text-primary">delete my workspace </span>
-              below.
-            </p>
-            <Controller
-              control={control}
-              name="confirmDelete"
-              render={({ field: { value, onChange, ref } }) => (
-                <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
-                  <InputGroup size="2xl">
-                    <Input
-                      size="2xl"
-                      id="confirmDelete"
-                      name="confirmDelete"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      placeholder=""
-                      autoComplete="off"
-                    />
-                  </InputGroup>
-                </Field>
-              )}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          {t("cancel")}
-        </Button>
-        <Button variant="error-fill" size="lg" type="submit" disabled={!canDelete} loading={isSubmitting}>
-          {isSubmitting ? t("deleting") : t("confirm")}
-        </Button>
-      </div>
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <Button variant="secondary" size="md" stretch="auto" label={t("cancel")} onClick={handleClose} />
+        <Button
+          variant="danger"
+          size="md"
+          stretch="auto"
+          type="submit"
+          label={isSubmitting ? t("deleting") : t("confirm")}
+          disabled={!canDelete}
+          loading={isSubmitting}
+        />
+      </DialogActions>
     </form>
   );
 });
