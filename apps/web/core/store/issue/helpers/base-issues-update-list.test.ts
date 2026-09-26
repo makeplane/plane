@@ -262,9 +262,11 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
     expect(store.groupedIssueIds?.["state-c"]).not.toContain(issueId);
   });
 
-  // Regression for CodeRabbit finding: a pre-clear patch resolving after clear()
-  // must not pollute the post-clear lastSyncedIssueState map.
-  it("does not use a pre-clear patch's state as the restore target after clear()", async () => {
+  // Regression for CodeRabbit finding: a successful pre-clear patch resolving
+  // after clear() must reconcile the reloaded record with the persisted state
+  // so a later failure restores the persisted state, not the stale pre-patch
+  // state.
+  it("reconciles a successful pre-clear patch with the reloaded view and restores the persisted state on a later failure", async () => {
     const issueId = "issue-1";
     const issuesById: Record<string, Partial<TIssue>> = {
       [issueId]: {
@@ -302,21 +304,75 @@ describe("BaseIssuesStore.issueUpdate patch-failure rollback", () => {
     // and resets lastSyncedIssueState / issueUpdateTokens.
     store.clear();
 
-    // Simulate a fresh load after clear: the issue is now persisted as state-c.
-    issuesById[issueId] = { ...(issuesById[issueId] as TIssue), state_id: "state-c" } as TIssue;
-    store.groupedIssueIds = { "state-c": [issueId] };
-    store.groupedIssueCount = { "state-c": 1 };
+    // Simulate a fresh load after clear that raced before A's patch landed:
+    // the reloaded record and grouped view still reflect the pre-patch state-a.
+    issuesById[issueId] = { ...(issuesById[issueId] as TIssue), state_id: "state-a" } as TIssue;
+    store.groupedIssueIds = { "state-a": [issueId], "state-b": [], "state-c": [] };
+    store.groupedIssueCount = { "state-a": 1, "state-b": 0, "state-c": 0 };
 
-    // Resolve A's pre-clear patch. Without the generation guard, this would
-    // store A's attemptedIssue (state-b) into the new lastSyncedIssueState map.
+    // A's patch succeeds on the server, so the authoritative state is state-b.
+    store.issueService.retrieve = vi.fn().mockResolvedValue({
+      ...(issuesById[issueId] as TIssue),
+      state_id: "state-b",
+    });
     resolvePatch?.({});
     await updateA;
 
-    // A post-clear update that fails must restore to the post-clear persisted
-    // state (state-c), not the stale pre-clear attemptedIssue (state-b).
+    // The reconcile fetch updates the reloaded record to the persisted state-b.
+    expect(issuesById[issueId].state_id).toBe("state-b");
+
+    // Simulate the new view's load correcting the grouped membership to match.
+    store.groupedIssueIds = { "state-a": [], "state-b": [issueId], "state-c": [] };
+
+    // A post-clear update that fails must restore to the persisted state-b,
+    // not the stale pre-patch state-a.
+    store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
+    await expect(store.issueUpdate("ws", "proj", issueId, { state_id: "state-c" })).rejects.toThrow("patch failed");
+
+    expect(issuesById[issueId].state_id).toBe("state-b");
+    expect(store.groupedIssueIds?.["state-b"]).toContain(issueId);
+    expect(store.groupedIssueIds?.["state-c"]).not.toContain(issueId);
+  });
+
+  // Regression for CodeRabbit finding: a shouldSync=false update persists
+  // through another API path (e.g. cycle/module membership) and must advance
+  // the rollback target so a later failed patchIssue does not undo that
+  // successful write.
+  it("advances the rollback target when a shouldSync=false update persists through another API path", async () => {
+    const issueId = "issue-1";
+    const issuesById: Record<string, Partial<TIssue>> = {
+      [issueId]: {
+        id: issueId,
+        parent_id: null,
+        state_id: "state-a",
+        cycle_id: undefined,
+        sort_order: 1,
+        created_at: "2024-01-01T00:00:00.000Z",
+      },
+    };
+    const store = createStore(false, issuesById);
+    store.groupedIssueIds = {
+      "state-a": [issueId],
+      "state-b": [],
+    };
+    store.groupedIssueCount = {
+      "state-a": 1,
+      "state-b": 0,
+    };
+
+    // addIssueToCycle persists cycle_id through its own API, then applies the
+    // local change via issueUpdate(..., false).
+    store.issueUpdate("ws", "proj", issueId, { cycle_id: "cycle-1" }, false);
+    expect(issuesById[issueId].cycle_id).toBe("cycle-1");
+
+    // A later synced update moves the issue to state-b and the patch fails.
     store.issueService.patchIssue = vi.fn().mockRejectedValue(new Error("patch failed"));
     await expect(store.issueUpdate("ws", "proj", issueId, { state_id: "state-b" })).rejects.toThrow("patch failed");
 
-    expect(issuesById[issueId].state_id).toBe("state-c");
+    // The rollback must restore the pre-update state-a but keep the persisted
+    // cycle_id="cycle-1"; without advancing the rollback target, the restore
+    // would revert cycle_id to undefined and silently undo the cycle change.
+    expect(issuesById[issueId].state_id).toBe("state-a");
+    expect(issuesById[issueId].cycle_id).toBe("cycle-1");
   });
 });

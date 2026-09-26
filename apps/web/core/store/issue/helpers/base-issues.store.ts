@@ -601,7 +601,16 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       this.updateIssueList(attemptedIssue, issueBeforeUpdate);
 
       // Check if should Sync
-      if (!shouldSync) return;
+      if (!shouldSync) {
+        // The caller persisted this change through another API path (e.g. cycle
+        // or module membership) and is only applying it locally. Record the
+        // persisted state so a later failed patchIssue does not roll back to a
+        // snapshot that predates this successful write.
+        if (viewGeneration === this.groupedViewGeneration) {
+          this.lastSyncedIssueState[issueId] = attemptedIssue;
+        }
+        return;
+      }
 
       // update parent stats optimistically
       this.updateParentStats(issueBeforeUpdate, attemptedIssue);
@@ -609,13 +618,26 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       // call API to update the issue
       await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
-      // mark the persisted state for this issue, but only if the grouped view
-      // is still the same one this update started from. A patch that was in
-      // flight before a clear() can resolve after the view was replaced; its
-      // attemptedIssue belongs to the old view and must not be used as the
-      // restore target for a post-clear failure.
       if (viewGeneration === this.groupedViewGeneration) {
+        // Same view: record the persisted state as the rollback target.
         this.lastSyncedIssueState[issueId] = attemptedIssue;
+      } else {
+        // The grouped view was replaced (clear()) while this patch was in
+        // flight. The patch succeeded, so the server now holds attemptedIssue,
+        // but the new view may have reloaded a stale pre-patch snapshot.
+        // Reconcile the global issue record with the authoritative server
+        // state so the reloaded card and any future rollback target reflect
+        // the persisted state. Grouped membership is view-specific and is left
+        // to the new view's own load.
+        try {
+          const freshIssue = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
+          this.rootIssueStore.issues.updateIssue(issueId, freshIssue as TIssue);
+          this.lastSyncedIssueState[issueId] = freshIssue as TIssue;
+        } catch {
+          // Best-effort reconciliation; fall back to attemptedIssue so a later
+          // failure does not restore the pre-patch state.
+          this.lastSyncedIssueState[issueId] = attemptedIssue;
+        }
       }
 
       // call fetch Parent Stats
