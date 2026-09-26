@@ -4,8 +4,6 @@
 
 # Django imports
 from django.utils import timezone
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
 # Third Party imports
@@ -47,6 +45,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.url import is_valid_link_url, ALLOWED_CUSTOM_URL_SCHEMES
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -566,17 +565,19 @@ class IssueLinkSerializer(BaseSerializer):
     def to_internal_value(self, data):
         # Modify the URL before validation by appending http:// if missing
         url = data.get("url", "")
-        if url and not url.startswith(("http://", "https://")):
-            data["url"] = "http://" + url
+        if url and isinstance(url, str):
+            url_str = url.strip()
+            lower_str = url_str.lower()
+            if not lower_str.startswith(("http://", "https://")) and not any(
+                lower_str.startswith(f"{scheme}://") for scheme in ALLOWED_CUSTOM_URL_SCHEMES
+            ):
+                url_str = "http://" + url_str
+            data["url"] = url_str
 
         return super().to_internal_value(data)
 
     def validate_url(self, value):
-        # Use Django's built-in URLValidator for validation
-        url_validator = URLValidator()
-        try:
-            url_validator(value)
-        except ValidationError:
+        if not is_valid_link_url(value):
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
