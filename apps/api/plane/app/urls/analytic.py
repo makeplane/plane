@@ -26,6 +26,11 @@ from plane.app.views.analytic_v2 import (
     AnalyticsV2DrilldownEndpoint,
     AnalyticsV2BatchEndpoint,
 )
+from plane.app.views.dashboard import (
+    DashboardAttentionEndpoint,
+    DashboardItemsEndpoint,
+    DashboardOverviewEndpoint,
+)
 
 
 urlpatterns = [
@@ -60,6 +65,24 @@ urlpatterns = [
         "workspaces/<str:slug>/analytics/v2/batch/",
         AnalyticsV2BatchEndpoint.as_view(),
         name="analytics-v2-batch",
+    ),
+    # Team Operations Dashboard — additive singular /dashboard/ endpoints
+    # (RD-484: retired builder routes stay 404). Each endpoint returns the
+    # canonical envelope and is independently wrapped in @allow_permission.
+    path(
+        "workspaces/<str:slug>/dashboard/overview/",
+        DashboardOverviewEndpoint.as_view(),
+        name="dashboard-operations-overview",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboard/attention/",
+        DashboardAttentionEndpoint.as_view(),
+        name="dashboard-operations-attention",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboard/items/",
+        DashboardItemsEndpoint.as_view(),
+        name="dashboard-operations-items",
     ),
     path(
         "workspaces/<str:slug>/analytic-view/",

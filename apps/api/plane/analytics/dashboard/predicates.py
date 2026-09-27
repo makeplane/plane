@@ -44,6 +44,7 @@ from plane.db.models import Issue, IssueAssignee, IssueBlocker, Project
 from .contracts import (
     DEFAULT_PERIOD,
     DEFAULT_TIMEZONE,
+    PRESET_CUSTOM,
     VALID_BUSINESS_FILTERS,
     VALID_PERIOD_PRESETS,
     DashboardContractError,
@@ -58,7 +59,12 @@ from .contracts import (
 
 
 def _resolve_preset_range(
-    *, preset: str, today: date, tz_name: str
+    *,
+    preset: str,
+    today: date,
+    tz_name: str,
+    custom_start: Optional[Any] = None,
+    custom_end: Optional[Any] = None,
 ) -> Tuple[Optional[datetime], Optional[datetime]]:
     """Resolve a period preset to a half-open ``[start, end)`` window in UTC.
 
@@ -69,6 +75,7 @@ def _resolve_preset_range(
     * ``last_30_days`` = ``[today-29, tomorrow)`` — 30 calendar days inclusive
       of today.
     * ``this_month``   = ``[first-of-month, first-of-next-month)``.
+    * ``custom``       = ``[start, end)`` from explicit dates, both required.
 
     Returns ``(None, None)`` for :data:`PRESET_NONE` so snapshot queries are
     not filtered by ``created_at`` / ``completed_at``.
@@ -81,6 +88,10 @@ def _resolve_preset_range(
         )
 
     tz = pytz.timezone(tz_name or DEFAULT_TIMEZONE)
+
+    if preset == PRESET_CUSTOM:
+        return _resolve_custom_range(custom_start, custom_end, tz)
+
     if preset == PRESET_THIS_MONTH:
         start_local = tz.localize(datetime.combine(today.replace(day=1), time.min))
         if today.month == 12:
@@ -99,6 +110,51 @@ def _resolve_preset_range(
         raise DashboardContractError(f"Unhandled preset: {preset!r}")
 
     return start_local.astimezone(pytz.UTC), end_local.astimezone(pytz.UTC)
+
+
+def _resolve_custom_range(
+    custom_start: Optional[Any],
+    custom_end: Optional[Any],
+    tz: pytz.BaseTzInfo,
+) -> Tuple[datetime, datetime]:
+    """Resolve ``[start, end)`` from request payload dates/strings.
+
+    Both must be present. Strings are parsed as ISO-8601 dates
+    (``YYYY-MM-DD``) or datetimes (timezone-aware). Naive values are
+    localised in the workspace timezone. The result is UTC.
+    """
+    if custom_start is None or custom_end is None:
+        raise DashboardContractError(
+            "custom period requires both 'start' and 'end' in payload"
+        )
+
+    def _to_utc(value: Any, *, is_end: bool) -> datetime:
+        if isinstance(value, datetime):
+            dt = value
+        elif isinstance(value, date):
+            dt = datetime.combine(value, time.max if is_end else time.min)
+        elif isinstance(value, str):
+            try:
+                dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError as exc:
+                raise DashboardContractError(
+                    f"Could not parse custom date: {value!r}"
+                ) from exc
+        else:
+            raise DashboardContractError(
+                f"Unsupported custom date type: {type(value).__name__}"
+            )
+        if dt.tzinfo is None:
+            dt = tz.localize(dt)
+        return dt.astimezone(pytz.UTC)
+
+    start_utc = _to_utc(custom_start, is_end=False)
+    end_utc = _to_utc(custom_end, is_end=True)
+    if end_utc <= start_utc:
+        raise DashboardContractError(
+            "custom period end must be strictly after start"
+        )
+    return start_utc, end_utc
 
 
 # ----- Scope identity ----------------------------------------------------
@@ -161,7 +217,13 @@ def resolve_dashboard_scope(
         today = datetime.now(tz).date()
 
     preset = payload.get("period_preset") or DEFAULT_PERIOD
-    start, end = _resolve_preset_range(preset=preset, today=today, tz_name=tz_name)
+    start, end = _resolve_preset_range(
+        preset=preset,
+        today=today,
+        tz_name=tz_name,
+        custom_start=payload.get("start"),
+        custom_end=payload.get("end"),
+    )
     period = PeriodRange(start=start, end=end, today=today)
 
     visible = visible_project_ids(
@@ -217,24 +279,32 @@ def _normalise_business_filters(raw: Dict[str, Any]) -> Dict[str, List[str]]:
 
 def active_issue_base(scope: DashboardScope) -> QuerySet:
     """Return the principal's readable, non-archived, non-draft, non-triage
-    issue queryset, restricted to ``scope.visible_project_ids`` and the
-    scope's workspace.
+    issue queryset, restricted to the principal's workspace.
 
-    Distinct from :meth:`DashboardScope.base_queryset` which is the scope's
-    canonical queryset (used for filtering with business filters applied).
-    This helper exists for *predicate subqueries* that must not inherit the
-    scope's business filters — e.g. the IssueBlocker ``blocked_by`` lookup,
-    which must respect ACL but not whether the viewer happens to have an
-    active ``priority=high`` filter.
+    IMPORTANT: this base spans the **full** set of projects the principal can
+    read, NOT just the projects the request explicitly selected. The blocker
+    subquery must be allowed to reference a blocker issue in a project the
+    principal can read, even when the dashboard's target project_ids filter
+    excludes that project — otherwise selecting projectA would silently hide
+    a readable blocker in projectB.
+
+    Distinct from :meth:`DashboardScope.base_queryset`, which is the scope's
+    canonical queryset (used for the dashboard panels with business filters
+    and selected project_ids applied). This helper exists for *predicate
+    subqueries* that must not inherit those filters.
     """
-    visible = scope.visible_project_ids
-    if not visible:
+    all_readable = visible_project_ids(
+        workspace=scope.workspace,
+        principal=scope.principal,
+        project_ids=None,
+    )
+    if not all_readable:
         return Issue.objects.none()
 
     return (
         Issue.issue_objects.filter(
             workspace_id=scope.workspace.id,
-            project_id__in=visible,
+            project_id__in=all_readable,
             project__deleted_at__isnull=True,
             project__archived_at__isnull=True,
             project__network__in=[0, 1, 2],
@@ -473,6 +543,13 @@ def count_attention_union(
 
     Default rules: overdue, blocked, due_soon, unassigned_urgent_high.
     Raises :class:`MetricUnavailableError` if ``no_update`` is requested.
+
+    Implementation note: each rule predicate is applied separately, the
+    distinct issue IDs are unioned in Python, and the final length is
+    returned. This avoids the PostgreSQL COUNT(DISTINCT id) over an
+    OR-of-4-WITH-JOINs query, which has been observed to miscount when
+    the same column (e.g. state__group) is referenced across multiple
+    branches of the OR with different equality constraints.
     """
     rules_set = set(rules) if rules else {"overdue", "blocked", "due_soon", "unassigned_urgent_high"}
     if "no_update" in rules_set:
@@ -481,21 +558,24 @@ def count_attention_union(
             "(spec §13); cannot include in attention union."
         )
     qs = operational_queryset(scope)
-    predicates = []
+    seen_ids = set()
     if "overdue" in rules_set:
-        predicates.append(_overdue_q(scope.today))
+        seen_ids.update(
+            qs.filter(_overdue_q(scope.today)).values_list("id", flat=True)
+        )
     if "blocked" in rules_set:
-        predicates.append(_blocked_q(scope))
+        seen_ids.update(
+            qs.filter(_blocked_q(scope)).values_list("id", flat=True)
+        )
     if "due_soon" in rules_set:
-        predicates.append(_due_soon_q(scope.today))
+        seen_ids.update(
+            qs.filter(_due_soon_q(scope.today)).values_list("id", flat=True)
+        )
     if "unassigned_urgent_high" in rules_set:
-        predicates.append(_unassigned_urgent_high_q())
-    if not predicates:
-        return 0
-    combined = predicates[0]
-    for p in predicates[1:]:
-        combined = combined | p
-    return _count(qs.filter(combined))
+        seen_ids.update(
+            qs.filter(_unassigned_urgent_high_q()).values_list("id", flat=True)
+        )
+    return len(seen_ids)
 
 
 def list_issues(

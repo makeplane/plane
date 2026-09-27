@@ -76,6 +76,7 @@ from plane.db.models import (
     State,
     User,
     Workspace,
+    WorkspaceMember,
 )
 
 
@@ -369,6 +370,120 @@ class TestRollingPeriodBoundaries:
             .values_list("name", flat=True)
         )
         assert "Created today" in rows
+
+
+@pytest.mark.unit
+class TestCustomPeriod:
+    """Spec §9.2 supports preset OR start/end. Custom period is P0."""
+
+    def test_custom_period_resolves_to_requested_bounds(self):
+        start, end = _resolve_preset_range(
+            preset="custom",
+            today=date(2026, 9, 23),
+            tz_name="UTC",
+            custom_start="2026-09-01",
+            custom_end="2026-09-30",
+        )
+        assert start.date() == date(2026, 9, 1)
+        assert end.date() == date(2026, 9, 30)
+
+    def test_custom_period_requires_both_dates(self):
+        with pytest.raises(DashboardContractError):
+            _resolve_preset_range(
+                preset="custom",
+                today=date(2026, 9, 23),
+                tz_name="UTC",
+                custom_start="2026-09-01",
+                custom_end=None,
+            )
+
+    def test_custom_period_end_must_be_after_start(self):
+        with pytest.raises(DashboardContractError):
+            _resolve_preset_range(
+                preset="custom",
+                today=date(2026, 9, 23),
+                tz_name="UTC",
+                custom_start="2026-09-30",
+                custom_end="2026-09-01",
+            )
+
+    def test_custom_period_localises_naive_dates_in_workspace_tz(self, fixture_setup):
+        """A naive date in the payload is interpreted in the workspace TZ."""
+        workspace = fixture_setup["workspace"]
+        alice = fixture_setup["users"]["alice"]
+        # Workspace TZ is UTC; naive date 2026-09-15 → 2026-09-15 00:00 UTC.
+        scope = resolve_dashboard_scope(
+            workspace=workspace,
+            principal=alice,
+            payload={
+                "period_preset": "custom",
+                "start": "2026-09-01",
+                "end": "2026-09-30",
+            },
+            today=date(2026, 9, 23),
+        )
+        assert scope.period.start.date() == date(2026, 9, 1)
+        assert scope.period.end.date() == date(2026, 9, 30)
+
+
+@pytest.mark.unit
+class TestActiveBaseAcrossProjects:
+    """Cross-project readable blocker must count even when target projects
+    are filtered (coordinator carry-over #2)."""
+
+    def test_blocker_in_another_selected_project_still_counts(self, fixture_setup):
+        """If the target is projectA but the blocker is in projectB (both
+        readable), the issue in projectA is blocked. active_issue_base must
+        span ALL readable projects so the blocker subquery finds projectB.
+        """
+        workspace = fixture_setup["workspace"]
+        alice = fixture_setup["users"]["alice"]
+        # Create a second public project that alice is also a member of.
+        project_b = _make_public_project(workspace, alice, name="Other")
+        state_started_b = State.objects.create(
+            project=project_b, name="Started", color="#000000", group="started"
+        )
+        blocker = Issue.objects.create(
+            project=project_b, workspace=workspace, name="Blocker in B",
+            state=state_started_b, priority="medium", created_by=alice,
+        )
+        # Target issue lives in the original project (Spec).
+        victim = Issue.objects.create(
+            project=fixture_setup["project"], workspace=workspace,
+            name="Victim in A (blocked by B)",
+            state=fixture_setup["states"]["started"],
+            priority="medium", created_by=alice,
+        )
+        IssueBlocker.objects.create(
+            block=victim, blocked_by=blocker,
+            project=fixture_setup["project"], workspace=workspace,
+            created_by=alice,
+        )
+        # Scope filters to ONLY project (the Spec project, not B).
+        scope = _scope(
+            fixture_setup,
+            payload={"project_ids": [str(fixture_setup["project"].id)]},
+        )
+        names = list(
+            list_issues(scope, rule="blocked").values_list("name", flat=True)
+        )
+        # Victim must be flagged blocked even though the blocker is in a
+        # project the payload didn't select.
+        assert "Victim in A (blocked by B)" in names
+
+
+def _make_public_project(workspace, alice, *, name: str = "Other") -> Project:
+    project = Project.objects.create(
+        workspace=workspace, name=name,
+        identifier=f"O{uuid4().hex[:4].upper()}",
+        created_by=alice, updated_by=alice,
+        network=ProjectNetwork.PUBLIC.value,
+    )
+    ProjectMember.objects.create(project=project, member=alice, role=20, is_active=True)
+    WorkspaceMember.objects.get_or_create(
+        workspace=workspace, member=alice, defaults={"role": 20, "is_active": True}
+    )
+    return project
 
 
 # ----- workspace timezone boundary --------------------------------------
@@ -877,9 +992,9 @@ class TestSelectionContract:
                 selection=DashboardSelection(metric="no_update"),
             )
 
-    def test_custom_period_preset_is_p0(self, fixture_setup):
-        """Spec §4 calls custom ranges out of scope for P0; if not in
-        VALID_PERIOD_PRESETS, the resolver must reject explicitly."""
+    def test_custom_period_preset_requires_explicit_dates(self, fixture_setup):
+        """``custom`` is in VALID_PERIOD_PRESETS but needs explicit
+        start/end; otherwise the resolver must reject."""
         with pytest.raises(DashboardContractError):
             _resolve_preset_range(
                 preset="custom",

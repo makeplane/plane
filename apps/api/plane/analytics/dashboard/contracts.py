@@ -31,6 +31,7 @@ PRESET_THIS_MONTH = "this_month"
 PRESET_LAST_30_DAYS = "last_30_days"
 PRESET_LAST_7_DAYS = "last_7_days"
 PRESET_NONE = "none"
+PRESET_CUSTOM = "custom"
 
 DEFAULT_PERIOD = PRESET_THIS_MONTH
 DEFAULT_TIMEZONE = "UTC"
@@ -41,6 +42,7 @@ VALID_PERIOD_PRESETS: FrozenSet[str] = frozenset(
         PRESET_LAST_30_DAYS,
         PRESET_LAST_7_DAYS,
         PRESET_NONE,
+        PRESET_CUSTOM,
     }
 )
 
@@ -87,6 +89,13 @@ VALID_ATTENTION_RULES: FrozenSet[str] = frozenset(
 VALID_DATE_BUCKETS: FrozenSet[str] = frozenset({"day", "week", "month"})
 
 VALID_DELIVERY_BASES: FrozenSet[str] = frozenset({"created_at", "completed_at"})
+
+# Allowlisted selection dimensions. ``assignee`` triggers an IssueAssignee
+# join; ``project`` triggers a Project join; ``state_group`` is already on
+# the Issue; ``label`` triggers a label_issue join.
+VALID_DIMENSIONS: FrozenSet[str] = frozenset(
+    {"assignee", "project", "state_group", "label"}
+)
 
 # Business-filter keys (allowlisted server-side). The value list is always
 # resolved through a real relation (see DashboardScope.apply_business_filters).
@@ -162,6 +171,11 @@ class DashboardSelection:
             raise DashboardContractError(
                 f"Unknown delivery base: {self.delivery_base!r}. Allowed: {sorted(VALID_DELIVERY_BASES)}"
             )
+        for dimension in self.dimensions:
+            if dimension not in VALID_DIMENSIONS:
+                raise DashboardContractError(
+                    f"Unknown dimension: {dimension!r}. Allowed: {sorted(VALID_DIMENSIONS)}"
+                )
         for rule in self.rules:
             if rule not in VALID_ATTENTION_RULES:
                 raise DashboardContractError(
