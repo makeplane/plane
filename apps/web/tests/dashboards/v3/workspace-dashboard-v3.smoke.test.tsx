@@ -180,6 +180,7 @@ vi.mock("@/services/dashboard-operations.service", () => {
 import WorkspaceDashboardsPage from "../../../app/(all)/[workspaceSlug]/(projects)/dashboards/page";
 import { DASHBOARD_OPERATIONS_DEBOUNCE_MS } from "@/components/dashboards/operations/shell";
 import { defaultDashboardOperationsPreferences } from "@plane/shared-state";
+import { __resetDashboardOperationsStoreForTests } from "@/components/dashboards/operations/use-operations-store";
 
 const Route = WorkspaceDashboardsPage as unknown as (props: { params: { workspaceSlug: string } }) => ReactElement;
 
@@ -195,6 +196,11 @@ beforeEach(() => {
   overviewCalls.length = 0;
   attentionCalls.length = 0;
   workloadPreviewCalls.length = 0;
+  // Reset the singleton store between tests so each test starts
+  // with a fresh identity / scope / projectIds. Without this,
+  // a previous test's `setViewMode("my_work")` or similar mutation
+  // leaks into the next test and triggers effect re-fires.
+  __resetDashboardOperationsStoreForTests();
 });
 
 afterEach(() => {
@@ -254,11 +260,12 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     const attentionBefore = attentionCalls.length;
     const workloadBefore = workloadPreviewCalls.length;
     const refresh = screen.getByTestId("operations-refresh");
-    await act(async () => {
-      fireEvent.click(refresh);
-      // Wait long enough for the 250ms debounce + React effects.
-      await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
-    });
+    fireEvent.click(refresh);
+    // Wait long enough for the 250ms debounce + React effects.
+    // NOTE: we deliberately do NOT wrap the wait in `act()` — the
+    // synchronous flush it performs cancels the debounced
+    // setTimeout, leaving the click without a fetch.
+    await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
     expect(overviewCalls.length).toBe(overviewBefore + 1);
     // Previews must not refetch on a pure Refresh (no scope change).
     expect(attentionCalls.length).toBe(attentionBefore);
@@ -274,10 +281,8 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     const attentionBefore = attentionCalls.length;
     const workloadBefore = workloadPreviewCalls.length;
     const myWorkBtn = screen.getByTestId("operations-view-mode-my-work");
-    await act(async () => {
-      fireEvent.click(myWorkBtn);
-      await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
-    });
+    fireEvent.click(myWorkBtn);
+    await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
     expect(overviewCalls.length).toBe(overviewBefore + 1);
     expect(attentionCalls.length).toBe(attentionBefore + 1);
     expect(workloadPreviewCalls.length).toBe(workloadBefore + 1);
@@ -297,19 +302,12 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     // the stale response is dropped.
     //
     // We assert the wire contract: total overview calls = 2 (initial
-    // mount + refresh), and the shell's commitResponse gate rejects
-    // the stale (call #1) response — the fresh one is committed.
+    // mount + refresh). The commit gate is exercised by the
+    // shell's catch-up logic on the next render.
     await mountRoute("acme");
     const refresh = screen.getByTestId("operations-refresh");
-    await act(async () => {
-      fireEvent.click(refresh);
-      await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
-    });
-    // Total overview calls = 2 (initial mount + refresh). The
-    // commit gate is exercised by the shell's catch-up logic on
-    // the next render; we don't need to assert a specific
-    // generated_at because the mocked service returns the same
-    // envelope on every call.
+    fireEvent.click(refresh);
+    await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
     expect(overviewCalls.length).toBe(2);
   });
 });

@@ -52,6 +52,15 @@ function getStore(): DashboardOperationsStore {
   return _store;
 }
 
+/**
+ * Test-only: reset the singleton store. Production code should
+ * never call this — the store lives for the lifetime of the
+ * React tree (one store per browser session).
+ */
+export function __resetDashboardOperationsStoreForTests(): void {
+  _store = null;
+}
+
 export function useDashboardOperationsStore(): IDashboardOperationsStore {
   return useMemo(getStore, []);
 }

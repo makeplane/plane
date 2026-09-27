@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import type {
   IAnalyticsParams,
+  TAnalyticsDateBasis,
   TPeriodPreset,
   TDateBucket,
   TBusinessFilters,
@@ -35,9 +36,12 @@ import { buildInsightQuery } from "../v2";
 export interface TInheritedAnalyticsScope {
   workspaceSlug: string;
   period_preset: TPeriodPreset;
+  /** Granularity (day/week/month) → V2 `time.group`. */
   date_bucket: TDateBucket;
   view_mode: "team" | "my_work";
   business_filters: TBusinessFilters;
+  /** Project IDs (top-level `project_ids`, not a business filter). */
+  projectIds: string[];
 }
 
 const CustomizedInsights = observer(function CustomizedInsights({
@@ -67,11 +71,19 @@ const CustomizedInsights = observer(function CustomizedInsights({
   // still uses its own state for x_axis / y_axis / group_by etc.,
   // so the user can interact with the V2 controls independently.
   const inheritedDuration = inheritedScope ? mapPeriodToDuration(inheritedScope.period_preset) : null;
-  const inheritedDateBasis = inheritedScope?.date_bucket ?? null;
-  const inheritedProjectIds = inheritedScope?.business_filters.project_id ?? null;
+  // Project IDs live at the top-level payload level (project_ids),
+  // not under business_filters. TBusinessFilterKey doesn't include
+  // project_id — read from `inheritedScope.projectIds` directly.
+  const inheritedProjectIds = inheritedScope?.projectIds ?? null;
 
   const selectedDuration = inheritedDuration ?? analytics.selectedDuration;
-  const selectedDateBasis = inheritedDateBasis ?? analytics.selectedDateBasis;
+  // The dashboard's `date_bucket` is a GRANULARITY (day/week/month).
+  // V2's `time.basis` is a TIMESTAMP (created_at / completed_at);
+  // they're different axes. In inherited mode we keep the analytics
+  // store's existing time.basis so the user can still toggle it
+  // locally. The dashboard's bucket flows through `time.group` via
+  // `date_grouping` (see `buildInsightQuery`).
+  const selectedDateBasis = analytics.selectedDateBasis;
   const selectedProjects = inheritedProjectIds ?? analytics.selectedProjects;
   const selectedCycle = analytics.selectedCycle;
   const selectedModule = analytics.selectedModule;

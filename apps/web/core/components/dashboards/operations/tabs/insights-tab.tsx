@@ -19,7 +19,7 @@
  * the inherited scope only seeds the initial defaults.
  */
 
-import { useDashboardOperationsSnapshot } from "../use-operations-store";
+import { useDashboardOperationsSnapshot, useDashboardProjectIds } from "../use-operations-store";
 import CustomizedInsights from "@/components/analytics/work-items/customized-insights";
 
 interface Props {
@@ -28,17 +28,19 @@ interface Props {
 
 export function OperationsInsightsTab({ workspaceSlug }: Props): React.ReactElement {
   const snapshot = useDashboardOperationsSnapshot();
+  const projectIds = useDashboardProjectIds();
 
   // Map the dashboard scope to the inherited-scope contract that
   // CustomizedInsights accepts. We pass the same period / bucket /
-  // business_filters the dashboard has so the V2 surface starts
-  // aligned with the user's other tabs.
+  // business_filters / project_ids the dashboard has so the V2
+  // surface starts aligned with the user's other tabs.
   const inheritedScope = {
     workspaceSlug,
     period_preset: snapshot.period_preset,
     date_bucket: snapshot.date_bucket,
     view_mode: snapshot.view_mode,
     business_filters: snapshot.business_filters,
+    projectIds: [...projectIds],
   };
 
   return (
