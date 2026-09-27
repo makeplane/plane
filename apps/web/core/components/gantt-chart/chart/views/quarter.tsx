@@ -23,7 +23,10 @@ type QuarterWeekChunk = {
   label: string;
 };
 
-const getQuarterWeekChunks = (quarterBlock: IQuarterMonthBlock, startOfWeek: EStartOfTheWeek): QuarterWeekChunk[] => {
+const getQuarterWeekChunks = (
+  quarterBlock: IQuarterMonthBlock,
+  startOfWeek: EStartOfTheWeek
+): QuarterWeekChunk[] => {
   const firstMonth = quarterBlock.children[0];
   const lastMonth = quarterBlock.children[quarterBlock.children.length - 1];
   if (!firstMonth || !lastMonth) return [];

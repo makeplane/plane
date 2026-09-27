@@ -137,7 +137,10 @@ export const TimelineColumnCell = observer(function TimelineColumnCell(props: Co
       return (
         <div className="flex min-w-0 items-center gap-1.5" title={labelText}>
           {labels[0]?.color ? (
-            <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: labels[0].color }} />
+            <span
+              className="h-2 w-2 flex-shrink-0 rounded-full"
+              style={{ backgroundColor: labels[0].color }}
+            />
           ) : (
             <LabelPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-tertiary" />
           )}

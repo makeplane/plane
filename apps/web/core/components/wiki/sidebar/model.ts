@@ -60,7 +60,10 @@ export function getCollectionSubtreePages(pages: TPage[], associations: TPageCol
   return pages.filter((page) => !!page.id && included.has(page.id));
 }
 
-export function getLooseWikiPages(pages: TPage[], collectionPagesById: Record<string, TPageCollectionPage[]>): TPage[] {
+export function getLooseWikiPages(
+  pages: TPage[],
+  collectionPagesById: Record<string, TPageCollectionPage[]>
+): TPage[] {
   const claimed = new Set<string>();
   for (const associations of Object.values(collectionPagesById)) {
     for (const page of getCollectionSubtreePages(pages, associations)) {

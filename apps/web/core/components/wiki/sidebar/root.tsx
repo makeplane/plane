@@ -81,7 +81,7 @@ export const WikiSidebar = observer(function WikiSidebar({ onNavigate }: { onNav
           )}
           {workspaceCreatableScopes.length > 0 && (
             <>
-              <div className="px-1 pt-2 pb-1 text-10 font-semibold tracking-wide text-tertiary uppercase">
+              <div className="px-1 pb-1 pt-2 text-10 font-semibold tracking-wide text-tertiary uppercase">
                 {t("wiki.sidebar.workspaces")}
               </div>
               {workspaceCreatableScopes.map((scope) => (

@@ -111,7 +111,12 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
         >
           <ChevronLeftIcon height={16} width={16} strokeWidth={2} />
         </button>
-        <button type="button" className="grid place-items-center" onClick={handleNext} aria-label={t("common.next")}>
+        <button
+          type="button"
+          className="grid place-items-center"
+          onClick={handleNext}
+          aria-label={t("common.next")}
+        >
           <ChevronRightIcon height={16} width={16} strokeWidth={2} />
         </button>
         <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
