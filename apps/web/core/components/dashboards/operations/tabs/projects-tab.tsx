@@ -79,6 +79,11 @@ export function OperationsProjectsTab({ workspaceSlug, refreshRevision = 0 }: Pr
     dashboardOperationsService
       .projects(workspaceSlug, { ...payload, page }, controller.signal)
       .then((envelope: TStandaloneEnvelope<TProjectsData>) => {
+        // The effect's cleanup already aborted the previous scope's
+        // fetch. A still-resolving promise lands here AFTER abort;
+        // the first-line guard ensures we never commit a late
+        // payload to state.
+        if (controller.signal.aborted) return;
         if (
           liveScopeKey !== scopeAtFetchStart ||
           refreshRevision !== refreshAtFetchStart ||

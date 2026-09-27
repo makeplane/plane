@@ -101,6 +101,11 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
     dashboardOperationsService
       .workload(workspaceSlug, { ...payload, page }, controller.signal)
       .then((envelope: TStandaloneEnvelope<TWorkloadData>) => {
+        // The effect's cleanup already aborted the previous scope's
+        // fetch. A still-resolving promise lands here AFTER abort;
+        // the first-line guard ensures we never commit a late
+        // payload to state.
+        if (controller.signal.aborted) return;
         // Race-rejection gate: if the live scope changed, the user
         // moved on while this request was in flight. Drop the
         // response — never commit a late payload to state.
