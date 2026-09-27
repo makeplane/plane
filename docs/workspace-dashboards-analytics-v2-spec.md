@@ -1,11 +1,15 @@
 # Workspace Dashboard + Analytics V2 — Product & Implementation Spec
 
-Status: **Authoritative replacement spec / ready for implementation**  
-Implementation status: **v3 migration complete (RD-475 Phases A–F shipped; old dashboard builder retired in RD-483 / RD-484). All references below describe the v3 fixed Workspace Dashboard as it now exists in `master`.**  
+Status: **Historical V3 product specification; Analytics V2 contract reference**
+
+Implementation status: **Historical implementation notes below must be verified against current source.**
+
 Target branch: `master`  
 Scope: Community Edition fork  
 Supersedes: the previous multi-dashboard / dashboard-builder design in this file  
 Decision date: 2026-09-26
+
+> **Product direction rewritten 2026-09-27:** [Team Operations Overview spec](superpowers/specs/2026-09-27-workspace-dashboard-redesign.md) is the new review draft for Dashboard UX, layout, metrics, filters, deep views and delivery gates. It supersedes the fixed 12/13/14-card product direction below. Existing Analytics V2 contracts remain the compatibility baseline, with explicit extensions identified in the new spec. The redesign is not implemented or approved merely by this notice.
 
 > **Important implementation rule:** this document intentionally resets the Dashboard product direction. Existing Analytics V2 query logic, ACL logic, drill-down, batch-query plumbing, reusable chart renderers, matrix/table renderers, CSV helpers, and related tests are valuable assets and MUST NOT be deleted merely because the dashboard-builder product surface is being removed.
 

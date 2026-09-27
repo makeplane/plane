@@ -1,5 +1,7 @@
 # Workspace Dashboard V3 — Implementation Plan
 
+> **Historical plan — superseded 2026-09-27.** This plan targeted the earlier filter/card patch and must not be executed as the plan for the rewritten [Team Operations Overview spec](../specs/2026-09-27-workspace-dashboard-redesign.md). In particular, the 13-card layout, role-derived personal default, fixed five-column CSS assertion and frontend-only scope are obsolete. A new implementation plan is required after review of the rewritten spec.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make the Workspace Dashboard at `/{workspaceSlug}/dashboards/` production-grade for PMs, engineers, and admins — fix the filter-button-shows-no-value bug, drop the over-scoped per-widget Configure popover (keep one dimension swap on Workload by assignee), add 5 new global filters (Assignees, Labels, Cycles, Modules, Created by) plus a Comparison toggle, expose per-cell drilldown, persist filter state to localStorage, and apply a role-based smart default.
