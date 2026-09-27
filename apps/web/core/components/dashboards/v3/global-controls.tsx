@@ -23,7 +23,12 @@ import { CustomSearchSelect } from "@plane/ui";
 import type { TAnalyticsComparison, TAnalyticsTimePreset } from "@plane/types";
 import { ProjectSelect } from "@/components/analytics/select/project";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 import type { TWorkspaceDashboardGlobalScope } from "./batch-composer";
 
@@ -83,7 +88,7 @@ const STATE_GROUP_OPTIONS = [
 /** §8.3 — period-over-period comparison options mirror the engine's
  *  `TAnalyticsComparison` vocabulary. */
 const COMPARISON_OPTIONS: { value: TAnalyticsComparison; labelKey: string }[] = [
-  { value: "none", labelKey: "dashboard_v3.control.previous_period" },
+  { value: "none", labelKey: "dashboard_v3.control.no_comparison" },
   { value: "previous_period", labelKey: "dashboard_v3.control.previous_period" },
   { value: "previous_week", labelKey: "dashboard_v3.control.previous_week" },
   { value: "previous_month", labelKey: "dashboard_v3.control.previous_month" },
@@ -110,6 +115,13 @@ type Props = {
 export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: Props) {
   const { t } = useTranslation();
   const { joinedProjectIds } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { workspaceLabels } = useLabel();
+  const { cycleMap } = useCycle();
+  const { moduleMap } = useModule();
+  const { workspace: workspaceMemberStore } = useMember();
+  const workspaceSlug = currentWorkspace?.slug;
+  const workspaceId = currentWorkspace?.id;
 
   const timeOptions = toOptions(TIME_PRESET_LABEL_KEYS, t);
   const priorityOptions = toOptions(PRIORITY_OPTIONS, t);
@@ -119,6 +131,51 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
     query: option.label,
     content: <span>{option.label}</span>,
   }));
+
+  // §8.3 — viewer-scoped option lists. Labels are workspace-scoped by
+  // design (the store exposes `workspaceLabels`); cycles and modules are
+  // project-scoped entities that `fetchWorkspaceCycles` / `fetchWorkspaceModules`
+  // hydrate into the flat `cycleMap` / `moduleMap` keyed by id, so we filter
+  // by the current workspace's id. Members come from the workspace member
+  // store (no project filter — every workspace member is eligible).
+  const labelOptions = (workspaceLabels ?? [])
+    .filter((label) => !label.parent)
+    .map((label) => ({
+      value: label.id,
+      query: label.name,
+      content: <span>{label.name}</span>,
+    }));
+  const cycleOptions = workspaceId
+    ? Object.values(cycleMap ?? {})
+        .filter((cycle) => cycle?.workspace_id === workspaceId && !cycle?.archived_at)
+        .toSorted((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .map((cycle) => ({
+          value: cycle.id,
+          query: cycle.name,
+          content: <span>{cycle.name}</span>,
+        }))
+    : [];
+  const moduleOptions = workspaceId
+    ? Object.values(moduleMap ?? {})
+        .filter((module) => module?.workspace_id === workspaceId && !module?.archived_at)
+        .toSorted((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .map((module) => ({
+          value: module.id,
+          query: module.name,
+          content: <span>{module.name}</span>,
+        }))
+    : [];
+  const memberIdList: string[] = workspaceSlug ? (workspaceMemberStore.getWorkspaceMemberIds(workspaceSlug) ?? []) : [];
+  const memberOptions = memberIdList.map((memberId) => {
+    const details = workspaceMemberStore.getWorkspaceMemberDetails(memberId);
+    const user = details?.member;
+    const name = user?.display_name || `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim() || user?.email;
+    return {
+      value: memberId,
+      query: name ?? memberId,
+      content: <span>{name ?? memberId}</span>,
+    };
+  });
 
   const setFilter = (key: string, values: string[] | null) => {
     const filters = { ...scope.filters };
@@ -193,13 +250,10 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           )}
           multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
-        {/* TODO: wire `useWorkspaceMembers()` once workspaceMembers is populated
-            for the global scope; for now the option list is empty so the
-            dashboard never offers a member the engine would refuse to count. */}
         <CustomSearchSelect
           value={scope.filters.assignees ?? []}
           onChange={(value: string[]) => setFilter("assignees", value)}
-          options={[]}
+          options={memberOptions}
           label={t("dashboard_v3.control.assignees")}
           multiple
           selectedContent={(_value, option) => (
@@ -211,12 +265,10 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           )}
           multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
-        {/* TODO: wire `useLabel().workspaceLabels` once the label store is
-            hydrated for the current workspace; see `apps/web/core/store/label.store.ts`. */}
         <CustomSearchSelect
           value={scope.filters.labels ?? []}
           onChange={(value: string[]) => setFilter("labels", value)}
-          options={[]}
+          options={labelOptions}
           label={t("dashboard_v3.control.labels")}
           multiple
           selectedContent={(_value, option) => (
@@ -228,12 +280,10 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           )}
           multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
-        {/* TODO: wire `useCycle().workspaceCycles` once the cycle store exposes
-            a workspace-level list; current store shape is project-scoped. */}
         <CustomSearchSelect
           value={scope.filters.cycle ?? []}
           onChange={(value: string[]) => setFilter("cycle", value)}
-          options={[]}
+          options={cycleOptions}
           label={t("dashboard_v3.control.cycles")}
           multiple
           selectedContent={(_value, option) => (
@@ -245,12 +295,10 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           )}
           multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
-        {/* TODO: wire `useModule().workspaceModules` once the module store exposes
-            a workspace-level list; current store shape is project-scoped. */}
         <CustomSearchSelect
           value={scope.filters.module ?? []}
           onChange={(value: string[]) => setFilter("module", value)}
-          options={[]}
+          options={moduleOptions}
           label={t("dashboard_v3.control.modules")}
           multiple
           selectedContent={(_value, option) => (
@@ -262,12 +310,10 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           )}
           multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
-        {/* TODO: same backing store as Assignees (workspace members); separate
-            filter key so the engine can resolve `created_by` independently. */}
         <CustomSearchSelect
           value={scope.filters.created_by ?? []}
           onChange={(value: string[]) => setFilter("created_by", value)}
-          options={[]}
+          options={memberOptions}
           label={t("dashboard_v3.control.created_by")}
           multiple
           selectedContent={(_value, option) => (

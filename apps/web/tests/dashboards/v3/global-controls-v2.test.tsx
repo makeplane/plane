@@ -35,6 +35,63 @@ vi.mock("@/hooks/store/use-project", () => ({
   useProject: () => ({ joinedProjectIds: [] }),
 }));
 
+vi.mock("@/hooks/store/use-workspace", () => ({
+  useWorkspace: () => ({ currentWorkspace: { id: "ws-1", slug: "acme" } }),
+}));
+
+// §8.3 — the five viewer-scoped filter option lists read from these stores.
+// Mocks below hydrate them with one record each so the lists are non-empty
+// after the dashboard mounts with WorkspaceSlug="acme".
+vi.mock("@/hooks/store/use-label", () => ({
+  useLabel: () => ({
+    workspaceLabels: [{ id: "label-1", name: "Bug", parent: null, workspace_id: "ws-1", project_id: "p-1" }],
+  }),
+}));
+
+vi.mock("@/hooks/store/use-cycle", () => ({
+  useCycle: () => ({
+    cycleMap: {
+      "cycle-1": {
+        id: "cycle-1",
+        name: "Sprint 1",
+        workspace_id: "ws-1",
+        project_id: "p-1",
+        sort_order: 0,
+        archived_at: null,
+      },
+    },
+  }),
+}));
+
+vi.mock("@/hooks/store/use-module", () => ({
+  useModule: () => ({
+    moduleMap: {
+      "module-1": {
+        id: "module-1",
+        name: "Auth",
+        workspace_id: "ws-1",
+        project_id: "p-1",
+        sort_order: 0,
+        archived_at: null,
+      },
+    },
+  }),
+}));
+
+vi.mock("@/hooks/store/use-member", () => ({
+  useMember: () => ({
+    workspace: {
+      getWorkspaceMemberIds: (_slug: string) => ["user-1"],
+      getWorkspaceMemberDetails: (id: string) => ({
+        id,
+        role: 15,
+        member: { id, first_name: "Ada", last_name: "Lovelace", display_name: "Ada", email: "ada@example.com" },
+        is_active: true,
+      }),
+    },
+  }),
+}));
+
 vi.mock("@/components/analytics/select/project", () => ({
   ProjectSelect: () => <div data-testid="project-select" />,
 }));
@@ -66,7 +123,12 @@ vi.mock("@plane/ui", () => ({
       rendered = props.selectedContent(props.value[0], selectedOption);
     }
     return (
-      <button type="button" aria-label={props.label} data-testid={`combobox-${props.label}`}>
+      <button
+        type="button"
+        aria-label={props.label}
+        data-testid={`combobox-${props.label}`}
+        data-option-count={props.options?.length ?? 0}
+      >
         {rendered}
       </button>
     );
@@ -144,6 +206,25 @@ describe("global-controls — Tasks 6+7 (5 new filters + Comparison toggle)", ()
     // selectedContent renders the label + the resolved option's `query`.
     expect(btn).toHaveTextContent("dashboard_v3.control.comparison");
     expect(btn).toHaveTextContent("dashboard_v3.control.previous_week");
+  });
+
+  test("the 5 viewer-scoped filter option lists are non-empty when stores are populated", () => {
+    render(<WorkspaceDashboardGlobalControls scope={baseScope()} onChange={() => {}} onReset={() => {}} />);
+    // §8.3 — every viewer-scoped option list reads from its workspace store
+    // (Labels, Cycles, Modules, Members). When the stores are populated each
+    // combobox receives a non-empty option array.
+    const labels: string[] = [
+      "dashboard_v3.control.assignees",
+      "dashboard_v3.control.labels",
+      "dashboard_v3.control.cycles",
+      "dashboard_v3.control.modules",
+      "dashboard_v3.control.created_by",
+    ];
+    for (const label of labels) {
+      const btn = screen.getByTestId(`combobox-${label}`);
+      const count = Number(btn.getAttribute("data-option-count") ?? "0");
+      expect(count).toBeGreaterThan(0);
+    }
   });
 
   test("Comparison 'none' option renders the 'no comparison' label, not 'previous period'", () => {
