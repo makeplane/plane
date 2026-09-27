@@ -67,4 +67,30 @@ describe("CustomSearchSelect — selectedContent opt-in", () => {
     render(<CustomSearchSelect label="Pick one" value={["a"]} options={options} onChange={() => {}} />);
     expect(getTrigger()).toHaveTextContent("Pick one");
   });
+
+  test("§bug-class — single-select with array value still triggers label update", () => {
+    // Dashboard passes array values to single-select filters (e.g. `["this_quarter"]`).
+    // The component must still surface the chosen option label, not the raw label,
+    // even though Headless UI's internal single-select contract uses scalars.
+    const { rerender } = render(
+      <CustomSearchSelect
+        label="Pick one"
+        value={["a"]}
+        options={options}
+        onChange={() => {}}
+        selectedContent={(v: string) => <span>Selected {v}</span>}
+      />
+    );
+    expect(getTrigger()).toHaveTextContent("Selected a");
+    rerender(
+      <CustomSearchSelect
+        label="Pick one"
+        value={["b"]}
+        options={options}
+        onChange={() => {}}
+        selectedContent={(v: string) => <span>Selected {v}</span>}
+      />
+    );
+    expect(getTrigger()).toHaveTextContent("Selected b");
+  });
 });
