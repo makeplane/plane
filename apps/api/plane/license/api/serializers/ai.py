@@ -128,6 +128,11 @@ class AIProviderConnectionTestSerializer(serializers.Serializer):
     """
 
     base_url = serializers.CharField(max_length=500)
+    protocol = serializers.ChoiceField(
+        choices=AIProviderProfile.PROTOCOL_CHOICES,
+        required=False,
+        default=AIProviderProfile.PROTOCOL_OPENAI_COMPATIBLE,
+    )
     api_key = serializers.CharField(required=False, allow_blank=True, default="")
     model = serializers.CharField(required=False, allow_blank=True, default="")
     default_model = serializers.CharField(required=False, allow_blank=True, default="")

@@ -1,11 +1,14 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
 
-"""Instance AI provider configuration and the OpenAI-compatible adapter.
+"""Instance AI provider configuration and the outbound protocol adapters.
 
-This module deliberately uses Plane's pinned outbound transport instead of the
-OpenAI SDK for requests.  Provider URLs are administrator-controlled egress
-points, so every request must go through the same SSRF and redirect checks.
+Each provider speaks one wire protocol (OpenAI-compatible chat completions, or
+the Anthropic Messages API) served by a matching adapter selected through
+``get_adapter``.  Every adapter deliberately uses Plane's pinned outbound
+transport instead of a vendor SDK: provider URLs are administrator-controlled
+egress points, so every request must go through the same SSRF and redirect
+checks.
 """
 
 from __future__ import annotations
@@ -64,24 +67,23 @@ def validate_provider_base_url(value: str) -> str:
     if not hostname or parts.username or parts.password or parts.fragment or parts.query:
         raise ValidationError("INVALID_BASE_URL")
 
-    allow_private = getattr(settings, "AI_ALLOW_PRIVATE_ENDPOINTS", False)
-    is_local = hostname.lower() in {"localhost", "localhost.localdomain"}
-    if parts.scheme != "https" and not (parts.scheme == "http" and is_local and allow_private):
+    trust_configured = getattr(settings, "AI_ALLOW_PRIVATE_ENDPOINTS", False)
+
+    # Provider URLs are configured by an instance administrator. On a trusted
+    # deployment (typically internal), take the address as given: any http(s)
+    # host is accepted with no private-IP blocking and nothing to allowlist per
+    # address. The request is still pinned to the resolved IP at call time.
+    if trust_configured:
+        if parts.scheme not in ("http", "https"):
+            raise ValidationError("INVALID_BASE_URL")
+        return value.strip().rstrip("/")
+
+    # Default posture for public deployments: https only, and the host must not
+    # resolve to an internal/private address (SSRF protection).
+    if parts.scheme != "https":
         raise ValidationError("INVALID_BASE_URL")
-
     try:
-        address = ipaddress.ip_address(hostname)
-    except ValueError:
-        address = None
-    if (
-        not allow_private
-        and address
-        and (address.is_private or address.is_loopback or address.is_link_local or address.is_reserved)
-    ):
-        raise ValidationError("PRIVATE_ADDRESS_BLOCKED")
-
-    try:
-        validate_url(value, allowed_hosts=[hostname] if allow_private else None)
+        validate_url(value)
     except ValueError as exc:
         raise ValidationError("PRIVATE_ADDRESS_BLOCKED") from exc
 
@@ -111,8 +113,26 @@ def _response_error(response: requests.Response) -> AIProviderError:
     return AIProviderError("UPSTREAM_ERROR")
 
 
-class OpenAICompatibleAdapter:
-    protocol = "openai_compatible"
+def _extract_model_ids(payload: Any) -> list[str]:
+    """Read model ids out of a ``{"data": [{"id": ...}]}`` list response.
+
+    Both the OpenAI ``/models`` and the Anthropic ``/models`` endpoints shape
+    their catalog this way, so the two adapters share this parser.
+    """
+    try:
+        models = payload.get("data", [])
+    except AttributeError as exc:
+        raise AIProviderError("INVALID_RESPONSE") from exc
+    return [item["id"] for item in models if isinstance(item, dict) and item.get("id")]
+
+
+class _BaseAdapter:
+    """Shared pinned-transport request loop; subclasses supply auth headers."""
+
+    protocol = ""
+
+    def _auth_headers(self, provider: ProviderConfig) -> dict[str, str]:
+        return {}
 
     def _request(self, method: str, provider: ProviderConfig, path: str, **kwargs: Any) -> requests.Response:
         url = f"{provider.base_url.rstrip('/')}/{path.lstrip('/')}"
@@ -120,15 +140,12 @@ class OpenAICompatibleAdapter:
             "Accept": "application/json",
             "Content-Type": "application/json",
         }
-        if provider.api_key:
-            headers["Authorization"] = f"Bearer {provider.api_key}"
-        if provider.organization_id:
-            headers["OpenAI-Organization"] = provider.organization_id
-        if provider.project_id:
-            headers["OpenAI-Project"] = provider.project_id
+        headers.update(self._auth_headers(provider))
 
         retries = max(0, min(provider.max_retries, 3))
-        allow_private = getattr(settings, "AI_ALLOW_PRIVATE_ENDPOINTS", False)
+        # On a trusted deployment the configured host bypasses the private-IP block;
+        # the connection is still pinned to the resolved IP (no DNS rebinding).
+        trust_configured = getattr(settings, "AI_ALLOW_PRIVATE_ENDPOINTS", False)
         hostname = urlsplit(url).hostname
         for attempt in range(retries + 1):
             try:
@@ -137,7 +154,7 @@ class OpenAICompatibleAdapter:
                     url,
                     headers=headers,
                     timeout=max(5, min(provider.timeout_seconds, 120)),
-                    allowed_hosts=[hostname] if allow_private and hostname else None,
+                    allowed_hosts=[hostname] if trust_configured and hostname else None,
                     **kwargs,
                 )
             except ValueError as exc:
@@ -158,10 +175,27 @@ class OpenAICompatibleAdapter:
             return response
         raise AIProviderError("UPSTREAM_UNAVAILABLE")
 
+    def _config_for(self, provider: AIProviderProfile | ProviderConfig, model: str | None = None) -> ProviderConfig:
+        if isinstance(provider, ProviderConfig):
+            return provider
+        return provider_config_from_profile(provider, model=model)
+
+
+class OpenAICompatibleAdapter(_BaseAdapter):
+    protocol = "openai_compatible"
+
+    def _auth_headers(self, provider: ProviderConfig) -> dict[str, str]:
+        headers: dict[str, str] = {}
+        if provider.api_key:
+            headers["Authorization"] = f"Bearer {provider.api_key}"
+        if provider.organization_id:
+            headers["OpenAI-Organization"] = provider.organization_id
+        if provider.project_id:
+            headers["OpenAI-Project"] = provider.project_id
+        return headers
+
     def chat(self, provider: AIProviderProfile | ProviderConfig, model: str, prompt: str) -> str:
-        config = (
-            provider if isinstance(provider, ProviderConfig) else provider_config_from_profile(provider, model=model)
-        )
+        config = self._config_for(provider, model)
         payload: dict[str, Any] = {"model": model, "messages": [{"role": "user", "content": prompt}]}
         if config.temperature is not None:
             payload["temperature"] = config.temperature
@@ -186,15 +220,87 @@ class OpenAICompatibleAdapter:
         return content
 
     def list_models(self, provider: AIProviderProfile) -> list[str]:
-        config = provider_config_from_profile(provider)
-        response = self._request("GET", config, "/models")
+        response = self._request("GET", self._config_for(provider), "/models")
         try:
-            models = response.json().get("data", [])
-            return [item["id"] for item in models if isinstance(item, dict) and item.get("id")]
-        except (AttributeError, TypeError, ValueError) as exc:
+            return _extract_model_ids(response.json())
+        except ValueError as exc:
             raise AIProviderError("INVALID_RESPONSE") from exc
         finally:
             response.close()
+
+
+class AnthropicMessagesAdapter(_BaseAdapter):
+    """Adapter for the native Anthropic Messages API (``POST /messages``).
+
+    The base URL should include the API version segment (e.g.
+    ``https://api.anthropic.com/v1``), just like the OpenAI-compatible adapter.
+    Authentication is ``x-api-key`` rather than a bearer token, and every request
+    carries the required ``anthropic-version`` header.
+    """
+
+    protocol = "anthropic_messages"
+    ANTHROPIC_VERSION = "2023-06-01"
+    # Anthropic requires max_tokens; use the provider's cap or a safe default.
+    DEFAULT_MAX_TOKENS = 1024
+
+    def _auth_headers(self, provider: ProviderConfig) -> dict[str, str]:
+        headers = {"anthropic-version": self.ANTHROPIC_VERSION}
+        if provider.api_key:
+            headers["x-api-key"] = provider.api_key
+        return headers
+
+    def chat(self, provider: AIProviderProfile | ProviderConfig, model: str, prompt: str) -> str:
+        config = self._config_for(provider, model)
+        payload: dict[str, Any] = {
+            "model": model,
+            "max_tokens": config.max_output_tokens or self.DEFAULT_MAX_TOKENS,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        if config.temperature is not None:
+            payload["temperature"] = config.temperature
+        if config.top_p is not None:
+            payload["top_p"] = config.top_p
+        response = self._request(
+            "POST",
+            config,
+            "/messages",
+            json=payload,
+        )
+        try:
+            blocks = response.json()["content"]
+            content = next(
+                block["text"] for block in blocks if isinstance(block, dict) and block.get("type") == "text"
+            )
+        except (KeyError, IndexError, TypeError, ValueError, StopIteration) as exc:
+            raise AIProviderError("INVALID_RESPONSE") from exc
+        finally:
+            response.close()
+        if not isinstance(content, str):
+            raise AIProviderError("INVALID_RESPONSE")
+        return content
+
+    def list_models(self, provider: AIProviderProfile) -> list[str]:
+        response = self._request("GET", self._config_for(provider), "/models")
+        try:
+            return _extract_model_ids(response.json())
+        except ValueError as exc:
+            raise AIProviderError("INVALID_RESPONSE") from exc
+        finally:
+            response.close()
+
+
+_ADAPTERS: dict[str, _BaseAdapter] = {
+    OpenAICompatibleAdapter.protocol: OpenAICompatibleAdapter(),
+    AnthropicMessagesAdapter.protocol: AnthropicMessagesAdapter(),
+}
+
+
+def get_adapter(protocol: str) -> _BaseAdapter:
+    """Return the adapter for a provider protocol, or raise UNSUPPORTED_PROTOCOL."""
+    adapter = _ADAPTERS.get(protocol)
+    if adapter is None:
+        raise AIProviderError("UNSUPPORTED_PROTOCOL")
+    return adapter
 
 
 def provider_config_from_profile(provider: AIProviderProfile, *, model: str | None = None) -> ProviderConfig:

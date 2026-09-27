@@ -50,8 +50,12 @@ if SECRET_KEY in _INSECURE_SECRET_KEYS:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
-# AI provider endpoints are public HTTPS by default. Self-hosted deployments
-# may explicitly opt into localhost/private-network providers.
+# AI provider endpoints are public HTTPS by default, with SSRF protection (the
+# host must not resolve to a private/internal address). Set this to "1" on a
+# trusted deployment (typically internal) to take the administrator-configured
+# provider URL as given: any http(s) address is accepted with no private-IP
+# blocking, so a new endpoint never needs extra allowlisting. The request is
+# still pinned to the resolved IP at connect time.
 AI_ALLOW_PRIVATE_ENDPOINTS = os.environ.get("AI_ALLOW_PRIVATE_ENDPOINTS", "0") == "1"
 
 # Self-hosted mode

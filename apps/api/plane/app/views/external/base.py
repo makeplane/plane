@@ -19,7 +19,7 @@ from plane.db.models import Project, Workspace
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
 
-from .ai_provider import AIProviderError, OpenAICompatibleAdapter, get_active_provider_config
+from .ai_provider import AIProviderError, get_active_provider_config, get_adapter
 
 from ..base import BaseAPIView
 
@@ -41,13 +41,13 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
     try:
         active = get_active_provider_config()
         if active and active.api_key == api_key:
-            text = OpenAICompatibleAdapter().chat(active, model or active.model, final_text)
+            text = get_adapter(active.protocol).chat(active, model or active.model, final_text)
         else:
             # Keep the old function contract for callers that explicitly pass
             # legacy values while routing the request through the safe adapter.
             from .ai_provider import ProviderConfig
 
-            text = OpenAICompatibleAdapter().chat(
+            text = get_adapter("openai_compatible").chat(
                 ProviderConfig(
                     protocol="openai_compatible",
                     base_url=os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),

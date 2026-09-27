@@ -4,6 +4,7 @@
 
 import json
 from types import SimpleNamespace
+from django.test import override_settings
 from django.utils import timezone
 import pytest
 from unittest.mock import patch
@@ -103,6 +104,54 @@ def test_ai_provider_draft_test_connection_probes_without_persisting(session_cli
 
 @pytest.mark.contract
 @pytest.mark.django_db
+def test_ai_provider_draft_test_connection_routes_anthropic_protocol(session_client, instance_with_admin):
+    ok = _upstream_response(200, {"content": [{"type": "text", "text": "ok"}]})
+
+    with patch("plane.app.views.external.ai_provider.validate_url"), patch(
+        "plane.app.views.external.ai_provider.pinned_fetch", return_value=ok
+    ) as fetch:
+        response = session_client.post(
+            DRAFT_TEST_URL,
+            _draft_payload(
+                base_url="https://api.anthropic.com/v1",
+                protocol="anthropic_messages",
+                default_model="claude-test",
+            ),
+            format="json",
+        )
+
+    assert response.status_code == 200
+    assert response.data["success"] is True
+    # The anthropic protocol drove the request to /messages with x-api-key auth.
+    assert fetch.call_args.args[:2] == ("POST", "https://api.anthropic.com/v1/messages")
+    assert fetch.call_args.kwargs["headers"]["x-api-key"] == "draft-secret"
+    assert AIProviderProfile.objects.count() == 0
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_ai_provider_create_accepts_anthropic_protocol(session_client, instance_with_admin):
+    with patch("plane.app.views.external.ai_provider.validate_url"):
+        response = session_client.post(
+            "/api/instances/ai/providers/",
+            {
+                "name": "Anthropic",
+                "slug": "anthropic",
+                "protocol": "anthropic_messages",
+                "base_url": "https://api.anthropic.com/v1",
+                "default_model": "claude-test",
+                "api_key": "super-secret",
+            },
+            format="json",
+        )
+
+    assert response.status_code == 201
+    assert response.data["protocol"] == "anthropic_messages"
+    assert AIProviderProfile.objects.get(slug="anthropic").protocol == "anthropic_messages"
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
 def test_ai_provider_draft_test_connection_reports_upstream_failure(session_client, instance_with_admin):
     unauthorized = _upstream_response(401, {"error": {"message": "invalid api key"}})
 
@@ -120,6 +169,7 @@ def test_ai_provider_draft_test_connection_reports_upstream_failure(session_clie
 
 @pytest.mark.contract
 @pytest.mark.django_db
+@override_settings(AI_ALLOW_PRIVATE_ENDPOINTS=False)
 def test_ai_provider_draft_test_connection_rejects_private_base_url(session_client, instance_with_admin):
     response = session_client.post(DRAFT_TEST_URL, _draft_payload(base_url="https://127.0.0.1/v1"), format="json")
 

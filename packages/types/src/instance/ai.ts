@@ -6,7 +6,7 @@
 
 export type TInstanceAIConfigurationKeys = "LLM_API_KEY" | "LLM_MODEL";
 
-export type TAIProviderProtocol = "openai_compatible";
+export type TAIProviderProtocol = "openai_compatible" | "anthropic_messages";
 
 export interface IAIModelProfile {
   id: string;
@@ -73,6 +73,7 @@ export interface IAIProviderConnectionTestResult {
  */
 export interface IAIProviderDraftTestPayload {
   base_url: string;
+  protocol?: TAIProviderProtocol;
   api_key?: string;
   model?: string;
   default_model?: string;

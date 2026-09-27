@@ -84,10 +84,18 @@ class InstanceConfiguration(BaseModel):
 
 
 class AIProviderProfile(BaseModel):
-    """Instance-level configuration for an OpenAI-compatible AI provider."""
+    """Instance-level configuration for an AI provider.
+
+    Each provider speaks one wire protocol, selected by ``protocol`` and served by
+    a matching adapter in ``plane.app.views.external.ai_provider``.
+    """
 
     PROTOCOL_OPENAI_COMPATIBLE = "openai_compatible"
-    PROTOCOL_CHOICES = ((PROTOCOL_OPENAI_COMPATIBLE, "OpenAI-compatible"),)
+    PROTOCOL_ANTHROPIC_MESSAGES = "anthropic_messages"
+    PROTOCOL_CHOICES = (
+        (PROTOCOL_OPENAI_COMPATIBLE, "OpenAI-compatible"),
+        (PROTOCOL_ANTHROPIC_MESSAGES, "Anthropic Messages"),
+    )
 
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="ai_providers")
     name = models.CharField(max_length=120)

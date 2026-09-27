@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@makeplane/propel/components/button";
 import { Input, InputGroup } from "@makeplane/propel/components/input";
-import type { IAIProviderProfile, TAIProviderCreate, TAIProviderUpdate } from "@plane/types";
+import type { IAIProviderProfile, TAIProviderCreate, TAIProviderProtocol, TAIProviderUpdate } from "@plane/types";
 import { useInstance } from "@/hooks/store";
 import { TOAST_TYPE, setToast } from "@/providers/toast";
 
@@ -36,6 +36,28 @@ const providerDisplayNames: Record<string, string> = {
   "openai.com": "OpenAI",
   "anthropic.com": "Anthropic",
 };
+
+// One entry per wire protocol the backend has an adapter for. `defaults` seed the
+// base URL and model when the protocol is switched on an untouched form.
+const protocolOptions: {
+  value: TAIProviderProtocol;
+  label: string;
+  defaults: { base_url: string; default_model: string };
+}[] = [
+  {
+    value: "openai_compatible",
+    label: "OpenAI-compatible",
+    defaults: { base_url: "https://api.openai.com/v1", default_model: "gpt-4o-mini" },
+  },
+  {
+    value: "anthropic_messages",
+    label: "Anthropic Messages",
+    defaults: { base_url: "https://api.anthropic.com/v1", default_model: "claude-opus-4-8" },
+  },
+];
+
+const isKnownDefaultBaseUrl = (baseUrl: string | undefined) =>
+  protocolOptions.some((option) => option.defaults.base_url === baseUrl);
 
 /**
  * Derives a provider name and slug from the base URL, so the two fields that only
@@ -129,6 +151,22 @@ export function InstanceAIForm({ providers }: { providers: IAIProviderProfile[] 
     });
   };
 
+  const updateProtocol = (protocol: TAIProviderProtocol) => {
+    const option = protocolOptions.find((entry) => entry.value === protocol);
+    setDraft((current) => {
+      const next = { ...current, protocol };
+      // On an untouched form (base URL still a known default and identity not hand
+      // edited) move the base URL and model to the new protocol's defaults so the
+      // form is not left pointing OpenAI settings at an Anthropic endpoint.
+      if (option && !isIdentityCustomized && isKnownDefaultBaseUrl(current.base_url)) {
+        next.base_url = option.defaults.base_url;
+        next.default_model = option.defaults.default_model;
+        Object.assign(next, deriveProviderIdentity(option.defaults.base_url));
+      }
+      return next;
+    });
+  };
+
   /** The draft with name/slug filled in from the base URL when they are still empty. */
   const resolvedDraft = () => {
     const identity = deriveProviderIdentity(draft.base_url ?? "");
@@ -179,6 +217,7 @@ export function InstanceAIForm({ providers }: { providers: IAIProviderProfile[] 
     try {
       const result = await testAIDraftConnection({
         base_url: draft.base_url ?? "",
+        protocol: draft.protocol,
         api_key: draft.api_key || undefined,
         default_model: draft.default_model ?? "",
         organization_id: draft.organization_id || undefined,
@@ -305,6 +344,21 @@ export function InstanceAIForm({ providers }: { providers: IAIProviderProfile[] 
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <label htmlFor="ai-provider-protocol" className="flex flex-col gap-1 text-13 text-tertiary">
+            Protocol
+            <select
+              id="ai-provider-protocol"
+              value={draft.protocol ?? "openai_compatible"}
+              onChange={(event) => updateProtocol(event.target.value as TAIProviderProtocol)}
+              className="focus:border-accent-primary h-10 rounded border border-subtle bg-layer-1 px-3 text-13 text-primary outline-none"
+            >
+              {protocolOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <label htmlFor="ai-provider-api-key" className="flex flex-col gap-1 text-13 text-tertiary">
             API key
             {currentProvider?.has_api_key && (

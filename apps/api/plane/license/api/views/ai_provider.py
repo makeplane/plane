@@ -11,8 +11,8 @@ from rest_framework.response import Response
 
 from plane.app.views.external.ai_provider import (
     AIProviderError,
-    OpenAICompatibleAdapter,
     ProviderConfig,
+    get_adapter,
     provider_config_from_profile,
 )
 from plane.license.api.serializers.ai import (
@@ -132,7 +132,7 @@ class AIProviderTestConnectionEndpoint(BaseAPIView):
             return Response({"error_code": "MODEL_REQUIRED"}, status=status.HTTP_400_BAD_REQUEST)
         result = {"success": False, "model": model}
         try:
-            OpenAICompatibleAdapter().chat(provider, model, "Reply with the single word: ok")
+            get_adapter(provider.protocol).chat(provider, model, "Reply with the single word: ok")
             provider.last_tested_at = timezone.now()
             provider.last_test_success = True
             provider.last_test_error_code = ""
@@ -170,7 +170,7 @@ class AIProviderDraftTestConnectionEndpoint(BaseAPIView):
 
         result = {"success": False, "model": model}
         try:
-            OpenAICompatibleAdapter().chat(config, model, "Reply with the single word: ok")
+            get_adapter(config.protocol).chat(config, model, "Reply with the single word: ok")
             result.update(success=True, provider_status="ok")
         except AIProviderError as exc:
             result.update(provider_status="error", error_code=exc.code)
@@ -187,7 +187,7 @@ class AIProviderDraftTestConnectionEndpoint(BaseAPIView):
         provider_id = data.get("provider_id")
         if not provider_id or data.get("api_key"):
             return ProviderConfig(
-                protocol=AIProviderProfile.PROTOCOL_OPENAI_COMPATIBLE,
+                protocol=data.get("protocol") or AIProviderProfile.PROTOCOL_OPENAI_COMPATIBLE,
                 base_url=data["base_url"],
                 api_key=data.get("api_key", ""),
                 model=model,
@@ -211,7 +211,7 @@ class AIProviderDiscoverModelsEndpoint(BaseAPIView):
     def post(self, request, pk):
         provider = AIProviderProfile.objects.get(instance=_instance_or_404(), pk=pk)
         try:
-            models = OpenAICompatibleAdapter().list_models(provider)
+            models = get_adapter(provider.protocol).list_models(provider)
         except AIProviderError as exc:
             return Response({"success": False, "error_code": exc.code}, status=status.HTTP_200_OK)
         for model_id in models:
