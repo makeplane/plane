@@ -41,6 +41,7 @@ import {
 } from "./card-registry";
 import { WorkspaceDashboardCard } from "./dashboard-card";
 import { WorkspaceDashboardGlobalControls } from "./global-controls";
+import { useDashboardSmartDefault } from "./use-smart-default";
 
 /** §20 — coalesce a burst of control changes into one request. */
 export const DASHBOARD_BATCH_DEBOUNCE_MS = 250;
@@ -62,6 +63,9 @@ export function WorkspaceDashboardShell({ workspaceSlug }: Props) {
   const { currentWorkspace } = useWorkspace();
   const userId = currentUser?.id ?? null;
   const workspaceId = currentWorkspace?.id ?? null;
+
+  // §3 — seed viewMode + assignee scope from the viewer's role on first mount.
+  useDashboardSmartDefault();
 
   const preferences = useSyncExternalStore(
     dashboardPreferencesStore.subscribe,

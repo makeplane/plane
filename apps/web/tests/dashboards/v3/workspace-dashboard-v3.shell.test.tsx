@@ -344,4 +344,17 @@ describe("preference store wiring in the shell", () => {
     await renderShell();
     expect(screen.getByTestId("dashboard-v3-card-work_by_project")).toBeTruthy();
   });
+
+  test("smart-default hook runs on mount for MEMBER role", async () => {
+    // The default useUser mock in this file returns { data: { id: "user-1" } }
+    // with no `role` field, which the smart-default hook treats as non-ADMIN
+    // → "personal" view + assignees scoped to the current user.
+    dashboardPreferencesStore.reset();
+    expect(dashboardPreferencesStore.getViewMode()).toBeNull();
+
+    await renderShell();
+
+    expect(dashboardPreferencesStore.getViewMode()).toBe("personal");
+    expect(dashboardPreferencesStore.getGlobalScope().filters.assignees).toEqual(["user-1"]);
+  });
 });
