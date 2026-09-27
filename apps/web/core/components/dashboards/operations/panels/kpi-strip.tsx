@@ -4,12 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import type { TKpiCounts } from "@plane/types";
+import type { TKpiCounts, TSnapshotRule } from "@plane/types";
 
 interface Props {
   data: TKpiCounts | null;
   isLoading: boolean;
   error: boolean;
+  /** Click handler — opens the operational items drawer for the metric. */
+  onMetricClick?: (metric: TSnapshotRule) => void;
 }
 
 interface Kpi {
@@ -19,6 +21,8 @@ interface Kpi {
   accentClass: string;
   /** Inline SVG icon shown above the value. */
   icon: React.ReactNode;
+  /** Snapshot rule key for the items drilldown selection. */
+  metric: TSnapshotRule;
 }
 
 const KPIS: Kpi[] = [
@@ -32,6 +36,7 @@ const KPIS: Kpi[] = [
         <path d="M2 6h12M6 2v12" />
       </svg>
     ),
+    metric: "total",
   },
   {
     id: "completed",
@@ -42,6 +47,7 @@ const KPIS: Kpi[] = [
         <path d="M3 8.5l3 3 7-7" />
       </svg>
     ),
+    metric: "completed",
   },
   {
     id: "started",
@@ -53,6 +59,7 @@ const KPIS: Kpi[] = [
         <path d="M8 4v4l2.5 2.5" />
       </svg>
     ),
+    metric: "started",
   },
   {
     id: "not_started",
@@ -63,6 +70,7 @@ const KPIS: Kpi[] = [
         <circle cx="8" cy="8" r="6" />
       </svg>
     ),
+    metric: "not_started",
   },
   {
     id: "blocked",
@@ -74,6 +82,7 @@ const KPIS: Kpi[] = [
         <path d="M5 5l6 6M11 5l-6 6" />
       </svg>
     ),
+    metric: "blocked",
   },
   {
     id: "overdue",
@@ -85,10 +94,11 @@ const KPIS: Kpi[] = [
         <circle cx="8" cy="8" r="6" />
       </svg>
     ),
+    metric: "overdue",
   },
 ];
 
-export function KpiStrip({ data, isLoading, error }: Props): React.ReactElement {
+export function KpiStrip({ data, isLoading, error, onMetricClick }: Props): React.ReactElement {
   return (
     <div
       className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6"
@@ -96,7 +106,14 @@ export function KpiStrip({ data, isLoading, error }: Props): React.ReactElement 
       aria-label="Snapshot KPIs"
     >
       {KPIS.map((kpi) => (
-        <KpiCard key={kpi.id} kpi={kpi} value={data?.[kpi.id]} isLoading={isLoading} error={error} />
+        <KpiCard
+          key={kpi.id}
+          kpi={kpi}
+          value={data?.[kpi.id]}
+          isLoading={isLoading}
+          error={error}
+          onClick={onMetricClick ? () => onMetricClick(kpi.metric) : undefined}
+        />
       ))}
     </div>
   );
@@ -107,16 +124,24 @@ interface KpiCardProps {
   value: number | undefined;
   isLoading: boolean;
   error: boolean;
+  onClick: (() => void) | undefined;
 }
 
-function KpiCard({ kpi, value, isLoading, error }: KpiCardProps): React.ReactElement {
+function KpiCard({ kpi, value, isLoading, error, onClick }: KpiCardProps): React.ReactElement {
   const display = error ? "—" : isLoading || value === undefined ? "…" : formatCount(value);
-  // Period completion: the % of total work items in this bucket.
-  const total = undefined;
+  const isInteractive = onClick !== undefined;
+  const baseClasses = `flex min-h-[88px] flex-col justify-between gap-1 rounded-md border border-subtle border-t-2 ${kpi.accentClass} bg-layer-1 px-3 py-2.5`;
+  const interactiveClasses = isInteractive
+    ? "cursor-pointer transition-colors hover:bg-layer-2 focus:outline-none focus:ring-2 focus:ring-accent"
+    : "";
+  const Component = isInteractive ? "button" : "div";
   return (
-    <div
-      className={`flex min-h-[88px] flex-col justify-between gap-1 rounded-md border border-subtle border-t-2 ${kpi.accentClass} bg-layer-1 px-3 py-2.5`}
+    <Component
+      type={isInteractive ? "button" : undefined}
+      onClick={onClick}
+      className={`${baseClasses} ${interactiveClasses}`}
       data-testid={`kpi-${kpi.id}`}
+      aria-label={isInteractive ? `${kpi.label}: ${display}. Open drilldown.` : `${kpi.label}: ${display}`}
     >
       <div className="flex items-center gap-1.5">
         <span className="text-tertiary" aria-hidden="true">{kpi.icon}</span>
@@ -124,13 +149,11 @@ function KpiCard({ kpi, value, isLoading, error }: KpiCardProps): React.ReactEle
       </div>
       <div className="flex items-baseline justify-between gap-1.5">
         <span className="font-mono text-22 font-semibold tabular-nums text-primary">{display}</span>
-        {value !== undefined && !error ? (
-          <span className="text-11 tabular-nums text-tertiary" data-testid={`kpi-${kpi.id}-secondary`}>
-            {total !== undefined ? `${Math.round((value / total) * 100)}%` : null}
-          </span>
+        {isInteractive ? (
+          <span className="text-11 text-tertiary" aria-hidden="true">→</span>
         ) : null}
       </div>
-    </div>
+    </Component>
   );
 }
 

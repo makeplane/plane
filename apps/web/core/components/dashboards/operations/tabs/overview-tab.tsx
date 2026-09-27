@@ -14,7 +14,7 @@
  * so it remains unit-testable.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   TAttentionPreviewData,
   TDeliveryTrendData,
@@ -22,6 +22,7 @@ import type {
   TKpiCounts,
   TProgressData,
   TSectionStatus,
+  TSnapshotRule,
   TDashboardOverviewResponse,
   TDashboardSection,
   TTopProjectsData,
@@ -37,6 +38,7 @@ import {
   useDashboardProjectIds,
 } from "../use-operations-store";
 import { classifyDashboardError, classifySection, type TDashboardTabError } from "../error-handling";
+import { ItemDrawer } from "../item-drawer";
 import { KpiStrip } from "../panels/kpi-strip";
 import { ProgressPanel } from "../panels/progress-panel";
 import { DeliveryPanel } from "../panels/delivery-panel";
@@ -170,6 +172,18 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
     };
   }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, currentUserId, workloadReloadKey]);
 
+  // KPI drilldown: clicking a KPI opens the ItemDrawer with the
+  // matching snapshot rule. The drawer carries the canonical scope
+  // (period / business_filters / project_ids) so the drilldown
+  // resolves to the same effective scope as the KPI's row total.
+  const [drawerMetric, setDrawerMetric] = useState<TSnapshotRule | null>(null);
+  const onKpiClick = useCallback((metric: TSnapshotRule) => {
+    setDrawerMetric(metric);
+  }, []);
+  const onDrawerClose = useCallback(() => {
+    setDrawerMetric(null);
+  }, []);
+
   // Fetch attention rows for the Needs-attention panel using the
   // dedicated /attention/ endpoint, paginated, so the panel always
   // shows up-to-5 + "View all" → drawer (drawer comes in Task 6).
@@ -255,29 +269,52 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
 
   return (
     <div className="flex flex-col gap-4" data-testid="operations-overview-tab">
-      <KpiStrip data={kpis} isLoading={isLoading} error={state.status === "error"} />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <ProgressPanel data={progress} isLoading={isLoading} error={state.status === "error"} />
-        <DeliveryPanel data={delivery} isLoading={isLoading} error={state.status === "error"} />
-        <TopProjectsPanel data={topProjects} isLoading={isLoading} error={state.status === "error"} />
+      <KpiStrip
+        data={kpis}
+        isLoading={isLoading}
+        error={state.status === "error"}
+        onMetricClick={onKpiClick}
+      />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <ProgressPanel data={progress} isLoading={isLoading} error={state.status === "error"} />
+        </div>
+        <div className="lg:col-span-4">
+          <DeliveryPanel data={delivery} isLoading={isLoading} error={state.status === "error"} />
+        </div>
+        <div className="lg:col-span-3">
+          <TopProjectsPanel data={topProjects} isLoading={isLoading} error={state.status === "error"} />
+        </div>
       </div>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <WorkloadPreviewPanel
-          status={workloadSectionStatus}
-          reason={workloadSectionReason}
-          error={workloadFetchError}
-          isLoading={isLoading}
-          rows={workloadRows}
-          onRetry={() => setWorkloadReloadKey((n) => n + 1)}
-        />
-        <AttentionPreviewPanel
-          preview={attentionPreview}
-          rows={attentionRows}
-          reasonCounts={attentionStatus === "ok" ? attentionReasonCounts : null}
-          isLoading={isLoading && attentionStatus !== "ok"}
-          error={state.status === "error" || attentionStatus === "error"}
-        />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <WorkloadPreviewPanel
+            status={workloadSectionStatus}
+            reason={workloadSectionReason}
+            error={workloadFetchError}
+            isLoading={isLoading}
+            rows={workloadRows}
+            onRetry={() => setWorkloadReloadKey((n) => n + 1)}
+          />
+        </div>
+        <div className="lg:col-span-5">
+          <AttentionPreviewPanel
+            preview={attentionPreview}
+            rows={attentionRows}
+            reasonCounts={attentionStatus === "ok" ? attentionReasonCounts : null}
+            isLoading={isLoading && attentionStatus !== "ok"}
+            error={state.status === "error" || attentionStatus === "error"}
+          />
+        </div>
       </div>
+      {drawerMetric !== null ? (
+        <ItemDrawer
+          workspaceSlug={workspaceSlug}
+          open
+          onClose={onDrawerClose}
+          metric={drawerMetric}
+        />
+      ) : null}
     </div>
   );
 }

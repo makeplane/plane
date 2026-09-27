@@ -253,18 +253,12 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     const overviewBefore = overviewCalls.length;
     const attentionBefore = attentionCalls.length;
     const workloadBefore = workloadPreviewCalls.length;
-    // eslint-disable-next-line no-console
-    console.log("before click", { overviewBefore, attentionBefore, workloadBefore });
     const refresh = screen.getByTestId("operations-refresh");
-    // eslint-disable-next-line no-console
-    console.log("refresh disabled?", (refresh as HTMLButtonElement).disabled);
     await act(async () => {
       fireEvent.click(refresh);
       // Wait long enough for the 250ms debounce + React effects.
       await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
     });
-    // eslint-disable-next-line no-console
-    console.log("after click", { overviewCalls: overviewCalls.length, attentionCalls: attentionCalls.length, workloadPreviewCalls: workloadPreviewCalls.length });
     expect(overviewCalls.length).toBe(overviewBefore + 1);
     // Previews must not refetch on a pure Refresh (no scope change).
     expect(attentionCalls.length).toBe(attentionBefore);
