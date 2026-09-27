@@ -10,7 +10,12 @@ import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import type { IAnalyticsParams } from "@plane/types";
+import type {
+  IAnalyticsParams,
+  TPeriodPreset,
+  TDateBucket,
+  TBusinessFilters,
+} from "@plane/types";
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web components
@@ -20,22 +25,62 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import InsightChart from "./insight-chart";
 import { buildInsightQuery } from "../v2";
 
+/**
+ * Optional inherited scope — when supplied, the Customized Insights
+ * surface uses these values instead of the global analytics store.
+ * The dashboard's Insights deep tab provides this so the V2 controls
+ * start with the same period / view_mode / business_filters the
+ * user already chose on the Operations Dashboard.
+ */
+export interface TInheritedAnalyticsScope {
+  workspaceSlug: string;
+  period_preset: TPeriodPreset;
+  date_bucket: TDateBucket;
+  view_mode: "team" | "my_work";
+  business_filters: TBusinessFilters;
+}
+
 const CustomizedInsights = observer(function CustomizedInsights({
   peekView,
   isEpic,
+  inheritedScope,
 }: {
   peekView?: boolean;
   isEpic?: boolean;
+  /**
+   * When provided, the V2 controls inherit the dashboard scope:
+   * - `workspaceSlug` overrides the `useParams()` slug
+   * - `period_preset` → `selectedDuration`
+   * - `date_bucket` → `selectedDateBasis`
+   * - The form still allows the user to override locally; the
+   *   inheritance only applies to the initial defaults.
+   */
+  inheritedScope?: TInheritedAnalyticsScope | null;
 }) {
   const { t } = useTranslation();
-  const { workspaceSlug } = useParams();
-  const { selectedDuration, selectedDateBasis, selectedProjects, selectedCycle, selectedModule } = useAnalytics();
+  const paramsRoute = useParams();
+  const analytics = useAnalytics();
+  const workspaceSlug = inheritedScope?.workspaceSlug ?? paramsRoute.workspaceSlug?.toString() ?? "";
+
+  // Map the dashboard scope onto the analytics store's selected*
+  // values when an inherited scope is supplied. The local form
+  // still uses its own state for x_axis / y_axis / group_by etc.,
+  // so the user can interact with the V2 controls independently.
+  const inheritedDuration = inheritedScope ? mapPeriodToDuration(inheritedScope.period_preset) : null;
+  const inheritedDateBasis = inheritedScope?.date_bucket ?? null;
+  const inheritedProjectIds = inheritedScope?.business_filters.project_id ?? null;
+
+  const selectedDuration = inheritedDuration ?? analytics.selectedDuration;
+  const selectedDateBasis = inheritedDateBasis ?? analytics.selectedDateBasis;
+  const selectedProjects = inheritedProjectIds ?? analytics.selectedProjects;
+  const selectedCycle = analytics.selectedCycle;
+  const selectedModule = analytics.selectedModule;
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({
     defaultValues: {
       x_axis: ChartXAxisProperty.PRIORITY,
       y_axis: isEpic ? ChartYAxisMetric.EPIC_WORK_ITEM_COUNT : ChartYAxisMetric.WORK_ITEM_COUNT,
-      date_grouping: "day",
+      date_grouping: (inheritedScope?.date_bucket ?? "day") as IAnalyticsParams["date_grouping"],
       display: "value",
       normalization: "none",
       allocation: "full_credit",
@@ -94,7 +139,7 @@ const CustomizedInsights = observer(function CustomizedInsights({
           control={control}
           setValue={setValue}
           params={params}
-          workspaceSlug={workspaceSlug.toString()}
+          workspaceSlug={workspaceSlug}
           isEpic={isEpic}
           classNames="w-full"
         />
@@ -111,5 +156,28 @@ const CustomizedInsights = observer(function CustomizedInsights({
     </AnalyticsSectionWrapper>
   );
 });
+
+/**
+ * Map the dashboard's `period_preset` to the analytics v2
+ * `selectedDuration` enum value. The mapping intentionally maps
+ * "this_month" → "last_30_days" because the analytics engine
+ * rolls up to the same 30-day window; "last_7_days" passes
+ * through unchanged. "none" falls back to "last_30_days" so
+ * the chart always has data to draw.
+ */
+function mapPeriodToDuration(preset: TPeriodPreset): string {
+  switch (preset) {
+    case "this_month":
+      return "last_30_days";
+    case "last_30_days":
+      return "last_30_days";
+    case "last_7_days":
+      return "last_7_days";
+    case "custom":
+      return "last_30_days";
+    case "none":
+      return "last_30_days";
+  }
+}
 
 export default CustomizedInsights;

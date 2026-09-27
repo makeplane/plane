@@ -441,14 +441,25 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     this.customStart = null;
     this.customEnd = null;
     this.cachedCustomRange = null;
+    let nextPrefs: TDashboardOperationsPreferences;
     if (workspaceId === null || userId === null) {
-      this.prefs = defaultDashboardOperationsPreferences();
+      nextPrefs = defaultDashboardOperationsPreferences();
     } else if (switchedWorkspace) {
       // Spec §4 — workspace switch resets the whole store.
-      this.prefs = defaultDashboardOperationsPreferences();
+      nextPrefs = defaultDashboardOperationsPreferences();
       this.persist();
     } else {
-      this.prefs = this.load();
+      nextPrefs = this.load();
+    }
+    // Preserve the snapshot reference when the loaded prefs are
+    // structurally equal to the current ones. Without this guard,
+    // every mount replaces `this.prefs` with a fresh object and
+    // double-fires every consumer's effect (overview fetch,
+    // workload preview, attention preview). The downstream test
+    // asserts exactly one request per endpoint per scope change;
+    // this guard is the only way to honour that contract.
+    if (!dashboardOperationsPrefsEqual(this.prefs, nextPrefs)) {
+      this.prefs = nextPrefs;
     }
     this.requestGeneration += 1;
     this.lastCommittedGeneration = -1;
@@ -742,6 +753,38 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     }
     return defaultDashboardOperationsPreferences();
   }
+}
+
+/**
+ * Structural equality on the dashboard operations prefs blob. Used
+ * by `setIdentity` to avoid replacing `this.prefs` with a fresh
+ * object when the loaded value is functionally identical to the
+ * current one — a stable reference is critical for every
+ * `useSyncExternalStore` consumer and every downstream effect
+ * that depends on `snapshot`.
+ */
+function dashboardOperationsPrefsEqual(
+  a: TDashboardOperationsPreferences,
+  b: TDashboardOperationsPreferences
+): boolean {
+  if (a.view_mode !== b.view_mode) return false;
+  if (a.period_preset !== b.period_preset) return false;
+  if (a.date_bucket !== b.date_bucket) return false;
+  if (a.tab !== b.tab) return false;
+  if (a.schema_version !== b.schema_version) return false;
+  const aFilters = Object.keys(a.business_filters).sort();
+  const bFilters = Object.keys(b.business_filters).sort();
+  if (aFilters.length !== bFilters.length) return false;
+  for (let i = 0; i < aFilters.length; i++) {
+    if (aFilters[i] !== bFilters[i]) return false;
+    const aValues = (a.business_filters as Record<string, string[] | undefined>)[aFilters[i]] ?? [];
+    const bValues = (b.business_filters as Record<string, string[] | undefined>)[bFilters[i]] ?? [];
+    if (aValues.length !== bValues.length) return false;
+    for (let j = 0; j < aValues.length; j++) {
+      if (aValues[j] !== bValues[j]) return false;
+    }
+  }
+  return true;
 }
 
 function sanitizeDashboardOperationsPreferences(
