@@ -25,6 +25,7 @@ from .base import BaseAPIView
 
 SERVICE_WRITE_FIELDS = {
     "name",
+    "description_markdown",
     "description_html",
     "description_json",
     "parent",
@@ -379,12 +380,24 @@ class WikiPageLifecycleAPIEndpoint(BaseAPIView):
         elif action == "lock":
             if not page.is_locked:
                 page.is_locked = True
-                page.save()
+                page.save(update_fields=["is_locked", "updated_at"])
+                emit_wiki_event(
+                    page,
+                    WikiEvent.PAGE_LOCKED,
+                    actor=request.user,
+                    payload={"source": "service_access_token"},
+                )
         elif action == "unlock":
             if page.is_locked:
                 page.is_locked = False
-                page.save()
+                page.save(update_fields=["is_locked", "updated_at"])
+                emit_wiki_event(
+                    page,
+                    WikiEvent.PAGE_UNLOCKED,
+                    actor=request.user,
+                    payload={"source": "service_access_token"},
+                )
         else:
-            return Response({"error": "Unsupported Wiki lifecycle action."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Unsupported action"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(WikiPageAPISerializer(page).data, status=status.HTTP_200_OK)
