@@ -110,3 +110,55 @@ describe("global-controls — selected value visible", () => {
     expect(btn.textContent).toContain("dashboard_v3.control.selected_count");
   });
 });
+
+describe("global-controls — Tasks 6+7 (5 new filters + Comparison toggle)", () => {
+  test("renders Assignees, Labels, Cycles, Modules, Created by filters", () => {
+    render(<WorkspaceDashboardGlobalControls scope={baseScope()} onChange={() => {}} onReset={() => {}} />);
+    expect(screen.getByTestId("combobox-dashboard_v3.control.assignees")).toBeInTheDocument();
+    expect(screen.getByTestId("combobox-dashboard_v3.control.labels")).toBeInTheDocument();
+    expect(screen.getByTestId("combobox-dashboard_v3.control.cycles")).toBeInTheDocument();
+    expect(screen.getByTestId("combobox-dashboard_v3.control.modules")).toBeInTheDocument();
+    expect(screen.getByTestId("combobox-dashboard_v3.control.created_by")).toBeInTheDocument();
+  });
+
+  test("Comparison toggle hidden when timePreset=none", () => {
+    render(
+      <WorkspaceDashboardGlobalControls
+        scope={{ ...baseScope(), timePreset: "none" }}
+        onChange={() => {}}
+        onReset={() => {}}
+      />
+    );
+    expect(screen.queryByTestId("combobox-dashboard_v3.control.comparison")).not.toBeInTheDocument();
+  });
+
+  test("Comparison toggle shows current value via selectedContent", () => {
+    render(
+      <WorkspaceDashboardGlobalControls
+        scope={{ ...baseScope(), comparison: "previous_week" }}
+        onChange={() => {}}
+        onReset={() => {}}
+      />
+    );
+    const btn = screen.getByTestId("combobox-dashboard_v3.control.comparison");
+    // selectedContent renders the label + the resolved option's `query`.
+    expect(btn).toHaveTextContent("dashboard_v3.control.comparison");
+    expect(btn).toHaveTextContent("dashboard_v3.control.previous_week");
+  });
+
+  test("Comparison toggle hides, then shows when scope.timePreset flips", () => {
+    // rtl pattern: start with preset='this_quarter', toggle should be present
+    const { rerender } = render(
+      <WorkspaceDashboardGlobalControls scope={baseScope()} onChange={() => {}} onReset={() => {}} />
+    );
+    expect(screen.getByTestId("combobox-dashboard_v3.control.comparison")).toBeInTheDocument();
+    rerender(
+      <WorkspaceDashboardGlobalControls
+        scope={{ ...baseScope(), timePreset: "none" }}
+        onChange={() => {}}
+        onReset={() => {}}
+      />
+    );
+    expect(screen.queryByTestId("combobox-dashboard_v3.control.comparison")).not.toBeInTheDocument();
+  });
+});

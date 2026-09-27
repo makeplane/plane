@@ -20,7 +20,7 @@ import { ANALYTICS_DATE_BASIS_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CustomSearchSelect } from "@plane/ui";
-import type { TAnalyticsTimePreset } from "@plane/types";
+import type { TAnalyticsComparison, TAnalyticsTimePreset } from "@plane/types";
 import { ProjectSelect } from "@/components/analytics/select/project";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { useProject } from "@/hooks/store/use-project";
@@ -78,6 +78,17 @@ const STATE_GROUP_OPTIONS = [
   { value: "started", labelKey: "dashboard_v3.state_group.started" },
   { value: "completed", labelKey: "dashboard_v3.state_group.completed" },
   { value: "cancelled", labelKey: "dashboard_v3.state_group.cancelled" },
+];
+
+/** §8.3 — period-over-period comparison options mirror the engine's
+ *  `TAnalyticsComparison` vocabulary. */
+const COMPARISON_OPTIONS: { value: TAnalyticsComparison; labelKey: string }[] = [
+  { value: "none", labelKey: "dashboard_v3.control.previous_period" },
+  { value: "previous_period", labelKey: "dashboard_v3.control.previous_period" },
+  { value: "previous_week", labelKey: "dashboard_v3.control.previous_week" },
+  { value: "previous_month", labelKey: "dashboard_v3.control.previous_month" },
+  { value: "previous_quarter", labelKey: "dashboard_v3.control.previous_quarter" },
+  { value: "previous_year", labelKey: "dashboard_v3.control.previous_year" },
 ];
 
 const toOptions = (entries: { value: string; labelKey: string }[], t: (key: string) => string) =>
@@ -182,6 +193,107 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           )}
           multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
+        {/* TODO: wire `useWorkspaceMembers()` once workspaceMembers is populated
+            for the global scope; for now the option list is empty so the
+            dashboard never offers a member the engine would refuse to count. */}
+        <CustomSearchSelect
+          value={scope.filters.assignees ?? []}
+          onChange={(value: string[]) => setFilter("assignees", value)}
+          options={[]}
+          label={t("dashboard_v3.control.assignees")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.assignees")}
+              option={option}
+              fallback={t("dashboard_v3.control.assignees")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        {/* TODO: wire `useLabel().workspaceLabels` once the label store is
+            hydrated for the current workspace; see `apps/web/core/store/label.store.ts`. */}
+        <CustomSearchSelect
+          value={scope.filters.labels ?? []}
+          onChange={(value: string[]) => setFilter("labels", value)}
+          options={[]}
+          label={t("dashboard_v3.control.labels")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.labels")}
+              option={option}
+              fallback={t("dashboard_v3.control.labels")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        {/* TODO: wire `useCycle().workspaceCycles` once the cycle store exposes
+            a workspace-level list; current store shape is project-scoped. */}
+        <CustomSearchSelect
+          value={scope.filters.cycle ?? []}
+          onChange={(value: string[]) => setFilter("cycle", value)}
+          options={[]}
+          label={t("dashboard_v3.control.cycles")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.cycles")}
+              option={option}
+              fallback={t("dashboard_v3.control.cycles")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        {/* TODO: wire `useModule().workspaceModules` once the module store exposes
+            a workspace-level list; current store shape is project-scoped. */}
+        <CustomSearchSelect
+          value={scope.filters.module ?? []}
+          onChange={(value: string[]) => setFilter("module", value)}
+          options={[]}
+          label={t("dashboard_v3.control.modules")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.modules")}
+              option={option}
+              fallback={t("dashboard_v3.control.modules")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        {/* TODO: same backing store as Assignees (workspace members); separate
+            filter key so the engine can resolve `created_by` independently. */}
+        <CustomSearchSelect
+          value={scope.filters.created_by ?? []}
+          onChange={(value: string[]) => setFilter("created_by", value)}
+          options={[]}
+          label={t("dashboard_v3.control.created_by")}
+          multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.created_by")}
+              option={option}
+              fallback={t("dashboard_v3.control.created_by")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
+        />
+        {scope.timePreset !== "none" && (
+          <CustomSearchSelect
+            value={[scope.comparison]}
+            onChange={(value: string[]) => onChange({ comparison: value[0] as TAnalyticsComparison })}
+            options={toOptions(COMPARISON_OPTIONS, t)}
+            label={t("dashboard_v3.control.comparison")}
+            selectedContent={(_value, option) => (
+              <TriggerRow
+                label={t("dashboard_v3.control.comparison")}
+                option={option}
+                fallback={t("dashboard_v3.control.comparison")}
+              />
+            )}
+          />
+        )}
         <Button variant="tertiary" size="sm" onClick={onReset} data-testid="dashboard-v3-reset">
           {t("dashboard_v3.control.reset")}
         </Button>

@@ -899,7 +899,18 @@
       "normalization": "Normalize",
       "allocation": "Allocation",
       "date_grouping": "Date grouping",
-      "visualization": "Visualization"
+      "visualization": "Visualization",
+      "assignees": "Assignees",
+      "labels": "Labels",
+      "cycles": "Cycles",
+      "modules": "Modules",
+      "created_by": "Created by",
+      "comparison": "Comparison",
+      "previous_period": "Previous period",
+      "previous_week": "Previous week",
+      "previous_month": "Previous month",
+      "previous_quarter": "Previous quarter",
+      "previous_year": "Previous year"
     },
     "time": {
       "today": "Today",
