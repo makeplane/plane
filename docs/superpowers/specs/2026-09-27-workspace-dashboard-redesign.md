@@ -36,11 +36,13 @@ The Workspace Dashboard at `/{workspaceSlug}/dashboards/` ships with four user-v
 
 The dashboard serves three personas on the same route:
 
-| Persona       | Filter need                                         | Default behavior on mount                                                          |
-| ------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Engineer / IC | "Show me my own work"                               | `assignees=[me]` if user has any assigned work items; otherwise no assignee filter |
-| PM / Lead     | "Show me the team, with optional cycle/label focus" | No assignee filter (team-wide); Cycles and Labels available to narrow              |
-| Admin         | "Show me the workspace overview"                    | No assignee filter; Projects available                                             |
+| Persona       | Filter need                                         | Default behavior on mount                                             |
+| ------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
+| Engineer / IC | "Show me my own work"                               | `assignees=[me]` if user role is MEMBER; otherwise no assignee filter |
+| PM / Lead     | "Show me the team, with optional cycle/label focus" | No assignee filter (team-wide); Cycles and Labels available to narrow |
+| Admin         | "Show me the workspace overview"                    | No assignee filter; Projects available                                |
+
+Role determination uses `useUser().role` against the workspace membership record already loaded into the workspace store. We do NOT add a server round-trip to detect "does this user have any work items assigned"; the role check is the only input. If a MEMBER with no assigned work items lands on the dashboard, the cards correctly show 0 and the existing data-empty state handles the rest.
 
 All three personas share the same 13 cards; only the default filter differs. Users can override any filter manually and the override is what persists.
 
@@ -65,11 +67,10 @@ Single route `/home/dashboards/` (existing). Layout top-to-bottom:
 
 A new hook `useDashboardSmartDefault` runs once per (workspace, user) on first mount:
 
-1. Read current user from `useUser()`.
-2. Query the workspace members list (`/api/workspaces/{slug}/members/`) — already loaded by the workspace store.
-3. If current user appears in the members list and the workspace has any work items matching `assignees=[user.id]` (one cheap HEAD / count query against the work items endpoint), set `viewMode='personal'` and seed `global.assignees=[user.id]`.
-4. Otherwise set `viewMode='team'` with no assignee filter.
-5. Write the resolved mode into `dashboardPreferencesStore` so subsequent reloads use it without re-querying.
+1. Read current user role from `useUser().role` (already populated by the user store).
+2. If role is `MEMBER`, set `viewMode='personal'` and seed `global.assignees=[user.id]`.
+3. If role is `ADMIN`, set `viewMode='team'` with no assignee filter.
+4. Write the resolved mode into `dashboardPreferencesStore` so subsequent reloads use it without re-querying.
 
 ### Persistence
 
@@ -151,10 +152,11 @@ Remove the generic `WorkspaceDashboardCardControls` (the Configure popover). Add
 
 Exports a single hook `useDashboardSmartDefault()` that:
 
-- Reads current user + workspace members.
-- Resolves the initial `viewMode` and `global.assignees` per the table above.
+- Reads current user role from `useUser().role`.
+- Resolves the initial `viewMode` and `global.assignees` per the personas table above (MEMBER → personal + `assignees=[me]`, ADMIN → team + no assignee filter).
 - Returns `{ viewMode, isResolving }` so the dashboard can show a lightweight skeleton while it runs.
 - Skips re-resolution if a persisted scope already exists for the (workspace, user) pair.
+- Performs no extra HTTP calls — everything is read from stores already populated by the app shell.
 
 ## Data flow
 
@@ -185,15 +187,15 @@ User interactions:
 
 ## Error handling
 
-| Case                                                                 | Behavior                                                                          |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| A filter dimension not supported by the engine version               | Filter renders disabled with tooltip "Not supported by your Plane version"        |
-| A previously selected user / label no longer exists in the workspace | Strip silently from the filter, toast "Removed missing value"                     |
-| Comparison enabled but timePreset is `none`                          | Auto-hide comparison toggle (KPI cards ignore time, so comparison is meaningless) |
-| localStorage quota exceeded                                          | Catch + log + fall back to in-memory scope for that session                       |
-| Smart-default count query fails                                      | Fall back to `viewMode='team'`, no assignee filter, no error toast                |
-| Batch request fails                                                  | Existing behavior: per-card error state, dashboard never blanks (§11)             |
-| Workspace has zero members                                           | `viewMode='team'`, no assignee filter                                             |
+| Case                                                                 | Behavior                                                                                                                            |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| A filter dimension not supported by the engine version               | Filter renders disabled with tooltip "Not supported by your Plane version"                                                          |
+| A previously selected user / label no longer exists in the workspace | Strip silently from the filter, toast "Removed missing value"                                                                       |
+| Comparison enabled but timePreset is `none`                          | Auto-hide comparison toggle (KPI cards ignore time, so comparison is meaningless)                                                   |
+| localStorage quota exceeded                                          | Catch + log + fall back to in-memory scope for that session                                                                         |
+| Smart-default hook cannot read user role (store not yet populated)   | Defer the resolution to the next render; if still empty, render the dashboard with no assignee filter rather than blocking the page |
+| Batch request fails                                                  | Existing behavior: per-card error state, dashboard never blanks (§11)                                                               |
+| Workspace has zero members                                           | `viewMode='team'`, no assignee filter                                                                                               |
 
 ## Testing
 
@@ -201,7 +203,7 @@ User interactions:
 
 - `custom-search-select`: trigger renders `label` when nothing selected, `selectedContent(value)` when one item selected, `"{count} selected"` when multi. Backwards-compat: omitting the new prop yields the old label-only behaviour.
 - `dashboard-preferences.store`: hydrate/dehydrate round-trip with all 9 filter slots + comparison + viewMode; multi-workspace isolation (key per wsId + userId); quota-exceeded fallback.
-- `use-smart-default`: user has work → personal; user has no work → team; query failure → team fallback.
+- `use-smart-default`: MEMBER → personal; ADMIN → team; persisted scope exists → use persisted; resolver runs synchronously from store data.
 - `batch-composer`: comparison block included in payload when set; omitted when `none`; filters map covers all 5 new dimensions.
 - `card-registry`: new `workload_by_labels` card passes the same registry validation as the existing 12.
 
@@ -242,4 +244,4 @@ User interactions:
 - **CustomSearchSelect is shared across the app.** Changing its trigger rendering touches every consumer. The new prop is opt-in (callers that do not pass `selectedContent` see the old label-only behaviour), so the blast radius is limited to call sites we explicitly migrate. We migrate all 9 dashboard filters and leave every other call site untouched in this spec.
 - **localStorage corruption** (a user manually edits the key). Hydration wraps the read in try/catch and falls back to smart default.
 - **The 13th card shifts Workload section layout.** `lg:grid-cols-2` means the new card occupies half a row; the wide `workload_allocation_matrix` card already uses `lg:col-span-2`. Verified manually that 3 cards (H, I, M) lay out as: H + M side-by-side on row 1, I spans row 2. No grid class change required.
-- **Smart-default count query adds an extra HTTP call on first visit.** Acceptable: it's one query per (workspace, user) per session, gated behind the absence of a persisted scope.
+- **Smart-default count query adds an extra HTTP call on first visit.** Resolved by removing the query: smart default is now derived from `useUser().role`, no extra HTTP call.
