@@ -94,3 +94,27 @@ class TestIssueListOrderByInjection:
             assert response.status_code == status.HTTP_200_OK, (
                 f"order_by={value!r} got {response.status_code}: {response.data!r}"
             )
+
+
+@pytest.mark.contract
+class TestIssueByIdentifier:
+    """GET /api/v1/workspaces/{slug}/issues/{project_identifier}-{issue_identifier}/
+
+    The route also matches a bare UUID (split at its last dash), which used to
+    reach ``sequence_id=<hex>`` and raise ValueError (HTTP 500).
+    """
+
+    @pytest.mark.django_db
+    def test_uuid_returns_404(self, api_key_client, workspace, issue):
+        response = api_key_client.get(f"/api/v1/workspaces/{workspace.slug}/issues/{issue.id}/")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.django_db
+    def test_identifier_still_resolves(self, api_key_client, workspace, project, issue):
+        response = api_key_client.get(
+            f"/api/v1/workspaces/{workspace.slug}/issues/{project.identifier}-{issue.sequence_id}/"
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == str(issue.id)
