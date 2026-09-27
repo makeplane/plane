@@ -26,7 +26,7 @@ import {
   type TCardPreference,
 } from "@/components/dashboards/v3/card-registry";
 import { DEFAULT_GLOBAL_SCOPE, type TWorkspaceDashboardGlobalScope } from "@/components/dashboards/v3/batch-composer";
-import type { TAnalyticsComparison } from "@plane/types";
+import type { TAnalyticsComparison, TAnalyticsDateBasis, TAnalyticsTimePreset } from "@plane/types";
 
 /** §15.3 — bump when the stored shape changes; older payloads are discarded. */
 export const DASHBOARD_PREFERENCES_SCHEMA_VERSION = 1;
@@ -90,6 +90,47 @@ const VALID_COMPARISON: ReadonlySet<TAnalyticsComparison> = new Set([
 const sanitizeComparison = (value: unknown): TAnalyticsComparison =>
   typeof value === "string" && (VALID_COMPARISON as Set<string>).has(value) ? (value as TAnalyticsComparison) : "none";
 
+/** §8.1 — engine-accepted time preset vocab; anything else falls back to default. */
+const VALID_TIME_PRESET: ReadonlySet<TAnalyticsTimePreset> = new Set([
+  "today",
+  "yesterday",
+  "this_week",
+  "last_week",
+  "last_7_days",
+  "last_30_days",
+  "this_month",
+  "last_month",
+  "this_quarter",
+  "last_quarter",
+  "last_90_days",
+  "this_year",
+  "last_year",
+  "custom",
+  "none",
+]);
+
+const DEFAULT_TIME_PRESET: TAnalyticsTimePreset = "this_quarter";
+const DEFAULT_DATE_BASIS: TAnalyticsDateBasis = "lifecycle_overlap";
+
+const sanitizeTimePreset = (value: unknown): TAnalyticsTimePreset =>
+  typeof value === "string" && (VALID_TIME_PRESET as Set<string>).has(value)
+    ? (value as TAnalyticsTimePreset)
+    : DEFAULT_TIME_PRESET;
+
+/** §8.3 — engine-accepted date basis vocab; anything else falls back to default. */
+const VALID_DATE_BASIS: ReadonlySet<TAnalyticsDateBasis> = new Set([
+  "created_at",
+  "completed_at",
+  "start_date",
+  "target_date",
+  "lifecycle_overlap",
+]);
+
+const sanitizeDateBasis = (value: unknown): TAnalyticsDateBasis =>
+  typeof value === "string" && (VALID_DATE_BASIS as Set<string>).has(value)
+    ? (value as TAnalyticsDateBasis)
+    : DEFAULT_DATE_BASIS;
+
 const sanitizeViewMode = (value: unknown): TViewMode | null =>
   value === "personal" || value === "team" ? value : null;
 
@@ -126,8 +167,8 @@ export function sanitizeDashboardPreferences(raw: unknown): TWorkspaceDashboardP
     : undefined;
 
   const sanitizedGlobal: TWorkspaceDashboardGlobalScope = {
-    timePreset: (asString(global.timePreset) as TWorkspaceDashboardGlobalScope["timePreset"]) ?? base.global.timePreset,
-    dateBasis: (asString(global.dateBasis) as TWorkspaceDashboardGlobalScope["dateBasis"]) ?? base.global.dateBasis,
+    timePreset: sanitizeTimePreset(global.timePreset),
+    dateBasis: sanitizeDateBasis(global.dateBasis),
     filters: asStringList(global.filters),
     projectIds: asStringArray(global.projectIds),
     comparison: sanitizeComparison(global.comparison),
@@ -189,8 +230,10 @@ export class DashboardPreferencesStore {
     if (this.workspaceId === workspaceId && this.userId === userId) return;
     this.workspaceId = workspaceId;
     this.userId = userId;
-    this.state = this.read(workspaceId, userId);
-    this.emit();
+    // commit (not direct assignment) so sanitized values overwrite any
+    // previously persisted garbage and the corrected payload round-trips
+    // back to localStorage on the next persist.
+    this.commit(this.read(workspaceId, userId));
   };
 
   getSnapshot = (): TWorkspaceDashboardPreferences => this.state;
@@ -227,9 +270,13 @@ export class DashboardPreferencesStore {
 
   /** A global change invalidates every card consistently (§20). */
   setGlobalScope = (updates: Partial<TWorkspaceDashboardGlobalScope>): void => {
+    const sanitizedUpdates: Partial<TWorkspaceDashboardGlobalScope> = { ...updates };
+    if ("timePreset" in sanitizedUpdates) sanitizedUpdates.timePreset = sanitizeTimePreset(sanitizedUpdates.timePreset);
+    if ("dateBasis" in sanitizedUpdates) sanitizedUpdates.dateBasis = sanitizeDateBasis(sanitizedUpdates.dateBasis);
+    if ("comparison" in sanitizedUpdates) sanitizedUpdates.comparison = sanitizeComparison(sanitizedUpdates.comparison);
     this.commit({
       ...this.state,
-      global: { ...this.state.global, ...updates },
+      global: { ...this.state.global, ...sanitizedUpdates },
     });
   };
 

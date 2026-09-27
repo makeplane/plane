@@ -183,4 +183,37 @@ describe("preference sanitisation (§15.3)", () => {
     expect(sanitized.global.timePreset).toBe("this_quarter");
     expect(Object.keys(sanitized.cards)).toHaveLength(13);
   });
+
+  test("truncated timePreset string falls back to default", () => {
+    // A corrupted payload (e.g. from a stale Vite module, manual localStorage
+    // edit, or a future schema that stored an enum index) must not produce a
+    // value the analytics engine would reject as "Invalid query".
+    const sanitized = sanitizeDashboardPreferences({
+      schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION,
+      global: {
+        timePreset: "t",
+        dateBasis: "lifecycle_overlap",
+        filters: {},
+        projectIds: [],
+        comparison: "none",
+      },
+      cards: {},
+    });
+    expect(sanitized.global.timePreset).toBe("this_quarter");
+  });
+
+  test("truncated dateBasis string falls back to default", () => {
+    const sanitized = sanitizeDashboardPreferences({
+      schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION,
+      global: {
+        timePreset: "this_quarter",
+        dateBasis: "c",
+        filters: {},
+        projectIds: [],
+        comparison: "none",
+      },
+      cards: {},
+    });
+    expect(sanitized.global.dateBasis).toBe("lifecycle_overlap");
+  });
 });

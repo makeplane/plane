@@ -104,4 +104,77 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
     fresh.setIdentity("ws-1", "user-1");
     expect(fresh.getGlobalScope().comparison).toBe("none");
   });
+
+  test("truncated stored timePreset falls back to default", () => {
+    // §15.3 — sanitization must reject values outside the engine vocab so a
+    // previous-release or corrupted payload never reaches the analytics batch.
+    items["plane-dashboard-preferences:ws-1:user-1"] = JSON.stringify({
+      schema_version: 1,
+      viewMode: null,
+      global: {
+        timePreset: "t",
+        dateBasis: "lifecycle_overlap",
+        filters: {},
+        projectIds: [],
+        comparison: "none",
+      },
+      cards: {},
+    });
+    const fresh = new DashboardPreferencesStore({
+      getItem: (k) => items[k] ?? null,
+      setItem: (k, v) => {
+        items[k] = v;
+      },
+      removeItem: (k) => {
+        delete items[k];
+      },
+    });
+    fresh.setIdentity("ws-1", "user-1");
+    expect(fresh.getGlobalScope().timePreset).toBe("this_quarter");
+  });
+
+  test("truncated stored dateBasis falls back to default", () => {
+    items["plane-dashboard-preferences:ws-1:user-1"] = JSON.stringify({
+      schema_version: 1,
+      viewMode: null,
+      global: {
+        timePreset: "this_quarter",
+        dateBasis: "c",
+        filters: {},
+        projectIds: [],
+        comparison: "none",
+      },
+      cards: {},
+    });
+    const fresh = new DashboardPreferencesStore({
+      getItem: (k) => items[k] ?? null,
+      setItem: (k, v) => {
+        items[k] = v;
+      },
+      removeItem: (k) => {
+        delete items[k];
+      },
+    });
+    fresh.setIdentity("ws-1", "user-1");
+    expect(fresh.getGlobalScope().dateBasis).toBe("lifecycle_overlap");
+  });
+
+  test("setGlobalScope preserves fields not in the update", () => {
+    store.setGlobalScope({ filters: { assignees: ["u-1"] } });
+    const scope = store.getGlobalScope();
+    expect(scope.timePreset).toBe("this_quarter");
+    expect(scope.dateBasis).toBe("lifecycle_overlap");
+    expect(scope.comparison).toBe("none");
+    expect(scope.filters.assignees).toEqual(["u-1"]);
+  });
+
+  test("setGlobalScope rejects unknown timePreset and falls back to default", () => {
+    store.setGlobalScope({ timePreset: "t" as never });
+    expect(store.getGlobalScope().timePreset).toBe("this_quarter");
+  });
+
+  test("setGlobalScope rejects unknown dateBasis and falls back to default", () => {
+    store.setGlobalScope({ dateBasis: "c" as never });
+    expect(store.getGlobalScope().dateBasis).toBe("lifecycle_overlap");
+  });
 });
