@@ -30,6 +30,9 @@ from plane.app.views.dashboard import (
     DashboardAttentionEndpoint,
     DashboardItemsEndpoint,
     DashboardOverviewEndpoint,
+    DashboardProjectsEndpoint,
+    DashboardTimelineEndpoint,
+    DashboardWorkloadEndpoint,
 )
 
 
@@ -83,6 +86,21 @@ urlpatterns = [
         "workspaces/<str:slug>/dashboard/items/",
         DashboardItemsEndpoint.as_view(),
         name="dashboard-operations-items",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboard/workload/",
+        DashboardWorkloadEndpoint.as_view(),
+        name="dashboard-operations-workload",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboard/projects/",
+        DashboardProjectsEndpoint.as_view(),
+        name="dashboard-operations-projects",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboard/timeline/",
+        DashboardTimelineEndpoint.as_view(),
+        name="dashboard-operations-timeline",
     ),
     path(
         "workspaces/<str:slug>/analytic-view/",

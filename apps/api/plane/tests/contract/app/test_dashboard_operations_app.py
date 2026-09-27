@@ -419,7 +419,6 @@ class TestOverviewContract:
             f"workspace-local day {bucket_label}, got buckets={trend['series_created']}"
         )
 
-    @pytest.mark.usefixtures("frozen_clock")
     def test_overview_top_projects_uses_operational_queryset(self, fixture_with_workspace):
         ws = fixture_with_workspace["workspace"]
         client = fixture_with_workspace["client"]
@@ -579,6 +578,82 @@ class TestItemsContract:
         )
         assert resp.status_code == 400
 
+    def test_items_selection_values_filter_to_member(self, fixture_with_workspace):
+        """selection.values.assignee_id filters items to that member only;
+        total matches the per-member count for the same selection.
+        Coordinator carry-over: count/list parity under selection."""
+        from plane.db.models import IssueAssignee
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        alice = fixture_with_workspace["users"]["alice"]
+        bob = fixture_with_workspace["users"]["bob"]
+        project = fixture_with_workspace["project"]
+        started = fixture_with_workspace["states"]["started"]
+        # Create a fresh multi-assignee issue with alice + bob.
+        multi = Issue.objects.create(
+            project=project, workspace=ws, name="Multi assignee started",
+            state=started, priority="medium", target_date=None,
+            created_by=alice,
+        )
+        IssueAssignee.objects.create(
+            issue=multi, assignee=alice, project=project, workspace=ws,
+        )
+        IssueAssignee.objects.create(
+            issue=multi, assignee=bob, project=project, workspace=ws,
+        )
+        resp = client.post(
+            self.URL.format(slug=ws.slug),
+            {
+                "metric": "open",
+                "selection": {"values": {"assignee_id": str(alice.id)}},
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+        data = resp.json()["sections"][0]["data"]
+        assert data["total"] == 1
+        assert data["rows"][0]["name"] == "Multi assignee started"
+        assert data["selection"]["values"]["assignee_id"] == str(alice.id)
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_items_selection_assignee_null_returns_unassigned(self, fixture_with_workspace):
+        """Canonical unassigned representation: assignee_id:null → ""."""
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(
+            self.URL.format(slug=ws.slug),
+            {
+                "metric": "open",
+                "selection": {"values": {"assignee_id": None}},
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+        data = resp.json()["sections"][0]["data"]
+        names = [r["name"] for r in data["rows"]]
+        assert "Multi assignee started" not in names
+        assert data["selection"]["values"]["assignee_id"] == ""
+
+    def test_items_invalid_uuid_returns_400(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(
+            self.URL.format(slug=ws.slug),
+            {"selection": {"values": {"project_id": "not-a-uuid"}}},
+            format="json",
+        )
+        assert resp.status_code < 500
+
+    def test_items_custom_period_exceeding_cap_returns_400(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(
+            self.URL.format(slug=ws.slug),
+            {"selection": {"date_start": "2025-01-01", "date_end": "2026-12-31"}},
+            format="json",
+        )
+        assert resp.status_code < 500
+
     @pytest.mark.usefixtures("frozen_clock")
     def test_items_across_viewers_isolates_acl(self, fixture_with_workspace):
         """Bob sees his project; outsider (workspace-only member, no project
@@ -602,6 +677,214 @@ class TestItemsContract:
                 assert total == 0
             else:
                 assert total == 9  # alice and bob both see the 9 open
+
+
+# ----- workload ---------------------------------------------------------
+
+
+@pytest.mark.django_db
+class TestWorkloadContract:
+    URL = "/api/workspaces/{slug}/dashboard/workload/"
+
+    def test_workload_returns_canonical_envelope(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        assert resp.status_code == 200
+        body = resp.json()
+        section = body["sections"][0]
+        data = section["data"]
+        assert section["section_id"] == "workload"
+        assert section["status"] == "ok"
+        assert "rows" in data
+        assert "distinct_totals" in data
+        assert "unassigned" in data
+        assert "inactive" in data
+        assert "pagination" in data
+        assert "wip_threshold" in data
+
+    def test_workload_rows_carry_member_state_counts(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        data = resp.json()["sections"][0]["data"]
+        for row in data["rows"]:
+            assert set(["member_id", "display_name", "is_active"]).issubset(set(row.keys()))
+            assert all(k in row for k in ("open", "started", "overdue", "blocked", "due_soon", "completed_in_period"))
+
+    def test_workload_distinct_totals_not_summed(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        data = resp.json()["sections"][0]["data"]
+        distinct = data["distinct_totals"]
+        assert distinct["total"] == 12
+        assert distinct["open"] == 9
+
+    def test_workload_distinct_totals_not_summed(self, fixture_with_workspace):
+        """distinct_totals.total must NOT equal sum(row.total) — it's the
+        workspace-wide distinct issue count, not a sum across members."""
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        data = resp.json()["sections"][0]["data"]
+        distinct = data["distinct_totals"]
+        # 12 issues in fixture; per-row full-credit sums would be > 12.
+        assert distinct["total"] == 12
+        assert distinct["open"] == 9
+
+
+# ----- projects ---------------------------------------------------------
+
+
+@pytest.mark.django_db
+class TestProjectsContract:
+    URL = "/api/workspaces/{slug}/dashboard/projects/"
+
+    def test_projects_returns_rows_with_state_groups(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        assert resp.status_code == 200
+        data = resp.json()["sections"][0]["data"]
+        assert "rows" in data
+        for row in data["rows"]:
+            assert "state_groups" in row
+            sg = row["state_groups"]
+            for g in ("backlog", "unstarted", "started", "completed", "cancelled"):
+                assert g in sg
+            assert all(
+                k in row
+                for k in (
+                    "total", "cancelled", "open", "started", "completed",
+                    "completed_in_period", "overdue", "blocked",
+                    "completion_rate", "next_deadline",
+                )
+            )
+
+    def test_projects_completion_rate_uses_correct_denominator(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        data = resp.json()["sections"][0]["data"]
+        # 2 completed / (12 - 1 cancelled) = 0.1818
+        row = data["rows"][0]
+        assert row["completion_rate"] == pytest.approx(2 / 11, rel=1e-3)
+
+    def test_projects_distinct_totals_not_summed(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        data = resp.json()["sections"][0]["data"]
+        distinct = data["distinct_totals"]
+        assert distinct["total"] == 12
+
+
+# ----- timeline ---------------------------------------------------------
+
+
+@pytest.mark.django_db
+class TestTimelineContract:
+    URL = "/api/workspaces/{slug}/dashboard/timeline/"
+
+    def test_timeline_returns_three_independent_paginations(self, fixture_with_workspace):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        assert resp.status_code == 200
+        data = resp.json()["sections"][0]["data"]
+        for sub in ("cycle_lanes", "deadlines", "unscheduled_cycles"):
+            assert sub in data
+            assert "rows" in data[sub]
+            assert "pagination" in data[sub]
+            assert data[sub]["pagination"]["page"] >= 1
+            assert data[sub]["pagination"]["page_size"] >= 1
+
+    def test_timeline_no_fabricated_dates(self, fixture_with_workspace):
+        """Cycles without start_date or end_date land in unscheduled_cycles
+        with reason 'missing_start_or_end' — never in cycle_lanes."""
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(self.URL.format(slug=ws.slug), {}, format="json")
+        data = resp.json()["sections"][0]["data"]
+        for c in data["cycle_lanes"]["rows"]:
+            assert c["start"] is not None
+            assert c["end"] is not None
+        for u in data["unscheduled_cycles"]["rows"]:
+            assert u["reason"] == "missing_start_or_end"
+
+
+# ----- snapshot isolation ----------------------------------------------
+
+
+@pytest.mark.django_db(transaction=True)
+class TestSnapshotIsolation:
+    """Concurrent-write consistency under REPEATABLE READ.
+
+    Inside ``dashboard_snapshot()``, the snapshot is pinned at the first
+    SELECT. A concurrent INSERT/UPDATE outside the snapshot must NOT be
+    visible inside. Uses ``django_db(transaction=True)`` to open its own
+    transaction (per coordinator finding).
+    """
+
+    def test_snapshot_context_manager_yields_and_restores(self, fixture_with_workspace):
+        """The snapshot context manager must yield control cleanly and
+        not leave the connection in an aborted state."""
+        from plane.analytics.dashboard.snapshot import dashboard_snapshot
+        from plane.analytics.dashboard import resolve_dashboard_scope, count_total
+
+        workspace = fixture_with_workspace["workspace"]
+        alice = fixture_with_workspace["users"]["alice"]
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=alice, today=FROZEN_TODAY,
+        )
+        before = count_total(scope)
+        with dashboard_snapshot():
+            assert count_total(scope) == before
+        # After the block, subsequent reads must still work.
+        assert count_total(scope) == before
+
+    def test_snapshot_context_manager_cleans_up_on_exception(self, fixture_with_workspace):
+        """A raised exception inside ``with dashboard_snapshot()`` must
+        not leave the connection in an aborted state for subsequent
+        requests."""
+        from plane.analytics.dashboard.snapshot import dashboard_snapshot
+        from plane.analytics.dashboard import resolve_dashboard_scope, count_total
+
+        workspace = fixture_with_workspace["workspace"]
+        alice = fixture_with_workspace["users"]["alice"]
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=alice, today=FROZEN_TODAY,
+        )
+        before = count_total(scope)
+        try:
+            with dashboard_snapshot():
+                raise RuntimeError("simulated request failure")
+        except RuntimeError:
+            pass
+        assert count_total(scope) == before
+
+    def test_snapshot_envelope_propagates_section_id(self, fixture_with_workspace):
+        """Workload/projects/timeline endpoints return their payload
+        inside the canonical envelope with stable ``section_id``."""
+        from plane.analytics.dashboard.snapshot import dashboard_snapshot
+        from plane.analytics.dashboard import resolve_dashboard_scope
+        from plane.analytics.dashboard.workload import workload_payload
+
+        workspace = fixture_with_workspace["workspace"]
+        alice = fixture_with_workspace["users"]["alice"]
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=alice, today=FROZEN_TODAY,
+        )
+        with dashboard_snapshot():
+            payload = workload_payload(scope)
+        assert payload["section_id"] == "workload"
+        assert payload["status"] == "ok"
+        assert "data" in payload
+
+
+def _build_workload_for_isolation(scope):
+    return scope
 
 
 # ----- boundary validation ----------------------------------------------

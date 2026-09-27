@@ -15,6 +15,15 @@ overview KPI count for the same metric and unchanged read state.
 Attention: each row carries the rule keys it ACTUALLY satisfies, computed
 via ``Exists`` subqueries per predicate. The reason list is never padded
 with rules the row does not satisfy.
+
+Selection (canonical contract):
+
+    {metric, values: {project_id, assignee_id, state_group, priority,
+     label_id, cycle_id, module_id}, date_start, date_end, delivery_base,
+     date_bucket}
+
+    assignee_id == null  → unassigned selection (explicit, not omitted)
+    assignee_id absent   → no assignee selector at all
 """
 
 from __future__ import annotations
@@ -33,16 +42,12 @@ from .contracts import (
 )
 from .predicates import (
     _blocked_q,
-    _blocked_subquery_for_scope,
     _due_soon_q,
     _open_q,
     _overdue_q,
     _unassigned_urgent_high_q,
     active_issue_base,
     count_attention_union,
-    count_blocked,
-    count_due_soon,
-    count_overdue,
     list_issues,
     operational_queryset,
 )
@@ -50,6 +55,7 @@ from .predicates import (
 
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 100
+MAX_CUSTOM_PERIOD_DAYS = 366
 
 
 # Attention ruleset actually emitted (no_update is excluded — see MetricUnavailableError).
@@ -60,13 +66,33 @@ ATTENTION_RULES: FrozenSet[str] = frozenset(
 
 @dataclass(frozen=True)
 class ItemRequest:
-    """Validated items-request payload (validated by the view layer)."""
+    """Validated items-request payload (validated by the view layer).
+
+    Carries the typed ``selection.values`` fields the items endpoint must
+    filter by, so list-drilldown rows match the KPI count for the same
+    selection (count/list parity under selection). ``assignee_id == ""``
+    is the canonical "unassigned" representation (not an empty list, not
+    omitted).
+    """
 
     metric: Optional[str] = None
     attention_rules: Optional[Sequence[str]] = None
     page: int = 1
     page_size: int = DEFAULT_PAGE_SIZE
     order_by: Sequence[str] = ("-target_date", "sequence_id")
+    # Selection.values fields.
+    project_id: Optional[str] = None
+    cycle_id: Optional[str] = None
+    module_id: Optional[str] = None
+    label_id: Optional[str] = None
+    state_group: Optional[str] = None
+    priority: Optional[str] = None
+    # Use empty string "" for explicit unassigned; None means no selector.
+    assignee_id: Optional[str] = None
+    # Custom date window (overrides scope period for this list).
+    date_start: Optional[str] = None
+    date_end: Optional[str] = None
+    delivery_base: str = "created_at"
 
     def __post_init__(self) -> None:
         if self.page < 1:
@@ -77,19 +103,140 @@ class ItemRequest:
             )
 
 
+def selection_filters(request: ItemRequest) -> Dict[str, Any]:
+    """Translate a validated ItemRequest into the dashboard kwargs the
+    operational queryset understands.
+
+    ``assignee_id == ""`` is the canonical "unassigned" representation;
+    ``assignee_id is None`` means no assignee selector at all.
+    """
+    out: Dict[str, Any] = {}
+    if request.project_id:
+        out["project_id"] = [request.project_id]
+    if request.cycle_id:
+        out["cycle_id"] = [request.cycle_id]
+    if request.module_id:
+        out["module_id"] = [request.module_id]
+    if request.label_id:
+        out["label_id"] = [request.label_id]
+    if request.state_group:
+        out["state_group"] = [request.state_group]
+    if request.priority:
+        out["priority"] = [request.priority]
+    if request.assignee_id == "":
+        out["__unassigned"] = True
+    elif request.assignee_id:
+        out["assignee_id"] = [request.assignee_id]
+    return out
+
+
+def _apply_selection_filters(qs: QuerySet, request: ItemRequest) -> QuerySet:
+    """Apply ItemRequest selection.values to a queryset."""
+    if request.project_id:
+        qs = qs.filter(project_id=request.project_id)
+    if request.cycle_id:
+        from plane.db.models import CycleIssue
+        qs = qs.filter(
+            issue_cycle__cycle_id=request.cycle_id,
+            issue_cycle__deleted_at__isnull=True,
+        )
+    if request.module_id:
+        from plane.db.models import ModuleIssue
+        qs = qs.filter(
+            issue_module__module_id=request.module_id,
+            issue_module__deleted_at__isnull=True,
+        )
+    if request.label_id:
+        from plane.db.models import IssueLabel
+        qs = qs.filter(
+            label_issue__label_id=request.label_id,
+            label_issue__deleted_at__isnull=True,
+        )
+    if request.state_group:
+        qs = qs.filter(state__group=request.state_group)
+    if request.priority:
+        qs = qs.filter(priority=request.priority)
+    if request.assignee_id == "":
+        # Explicit unassigned: no active IssueAssignee row.
+        from plane.db.models import IssueAssignee
+        has_assignee = IssueAssignee.objects.filter(
+            issue=OuterRef("pk"), deleted_at__isnull=True
+        )
+        qs = qs.annotate(_has_assignee=Exists(has_assignee)).filter(_has_assignee=False)
+    elif request.assignee_id:
+        from plane.db.models import IssueAssignee
+        qs = qs.filter(
+            issue_assignee__assignee_id=request.assignee_id,
+            issue_assignee__deleted_at__isnull=True,
+        )
+    return qs
+
+
+def _resolve_custom_window(
+    request: ItemRequest, scope: DashboardScope
+) -> tuple[Optional[Any], Optional[Any]]:
+    """Return (start, end) for the items endpoint, honouring date_start/date_end
+    if provided, otherwise the scope period.
+    """
+    if not (request.date_start or request.date_end):
+        return scope.period.start, scope.period.end
+    from datetime import datetime
+    import pytz
+
+    tz = pytz.timezone(scope.timezone or "UTC")
+    try:
+        start = (
+            datetime.fromisoformat(request.date_start.replace("Z", "+00:00"))
+            if request.date_start
+            else None
+        )
+        end = (
+            datetime.fromisoformat(request.date_end.replace("Z", "+00:00"))
+            if request.date_end
+            else None
+        )
+    except ValueError as exc:
+        raise DashboardContractError(f"Invalid date_start/date_end: {exc}")
+    if start and start.tzinfo is None:
+        start = tz.localize(start)
+    if end and end.tzinfo is None:
+        end = tz.localize(end)
+    if start and end:
+        if (end - start).days > MAX_CUSTOM_PERIOD_DAYS:
+            raise DashboardContractError(
+                f"Custom period exceeds {MAX_CUSTOM_PERIOD_DAYS} days; capped to avoid huge queries"
+            )
+        if end <= start:
+            raise DashboardContractError("date_end must be strictly after date_start")
+    return start, end
+
+
 # ----- items (drilldown) -------------------------------------------------
 
 
 def list_items(scope: DashboardScope, request: ItemRequest) -> Dict[str, Any]:
-    """Return a paginated items payload (rows + total + page metadata)."""
+    """Return a paginated items payload (rows + total + page metadata).
+
+    Respects ItemRequest selection.values and custom date window. Counts
+    the same selector layer that the rows use, so the dashboard
+    ``count_*`` helpers agree with ``data.total`` for the same metric.
+    """
     selection = DashboardSelection(metric=request.metric) if request.metric else None
     qs = list_issues(scope, rule=request.metric, selection=selection)
+    qs = _apply_selection_filters(qs, request)
     qs = qs.order_by(*request.order_by)
 
+    start, end = _resolve_custom_window(request, scope)
+    if request.metric == "completed_in_period" or request.date_start or request.date_end:
+        if start is not None:
+            qs = qs.filter(completed_at__gte=start)
+        if end is not None:
+            qs = qs.filter(completed_at__lt=end)
+
     total = qs.values("id").distinct().count()
-    start = (request.page - 1) * request.page_size
-    end = start + request.page_size
-    rows = list(qs[start:end].values(*_ISSUE_FIELDS))
+    start_idx = (request.page - 1) * request.page_size
+    end_idx = start_idx + request.page_size
+    rows = list(qs.values(*_ISSUE_FIELDS)[start_idx:end_idx])
 
     return {
         "status": "ok",
@@ -99,9 +246,34 @@ def list_items(scope: DashboardScope, request: ItemRequest) -> Dict[str, Any]:
             "total": total,
             "page": request.page,
             "page_size": request.page_size,
-            "has_more": end < total,
+            "has_more": end_idx < total,
             "scope_key": scope.scope_key,
+            "selection": _echo_selection(request),
         },
+    }
+
+
+def _echo_selection(request: ItemRequest) -> Dict[str, Any]:
+    """Echo the applied selection back to the client so UI can confirm
+    count/list parity and refresh stale state on response."""
+    return {
+        "metric": request.metric,
+        "values": {
+            k: v
+            for k, v in {
+                "project_id": request.project_id,
+                "assignee_id": request.assignee_id,
+                "state_group": request.state_group,
+                "priority": request.priority,
+                "label_id": request.label_id,
+                "cycle_id": request.cycle_id,
+                "module_id": request.module_id,
+            }.items()
+            if v is not None
+        },
+        "date_start": request.date_start,
+        "date_end": request.date_end,
+        "delivery_base": request.delivery_base,
     }
 
 
@@ -165,23 +337,15 @@ def _annotate_attention_reasons(scope: DashboardScope) -> Dict[str, Exists]:
 
 
 def attention_payload(scope: DashboardScope) -> Dict[str, Any]:
-    """Attention union rows + per-rule reason counts.
-
-    Stable risk sort (overdue days desc → blocked → due_soon → ... → id)
-    so paging is deterministic. Reasons are computed per-row.
-    """
+    """Attention union rows + per-rule reason counts."""
     annotations = _annotate_attention_reasons(scope)
     qs = operational_queryset(scope)
 
-    # Per-rule reason counts via SQL Count(distinct=True). Each rule uses
-    # its own filter chain — the count shares the same predicate the row
-    # annotation uses, so sum-of-reasons is a superset of union_total.
     from django.db.models import Count
     reason_counts = {
         key: qs.filter(predicate).aggregate(c=Count("id", distinct=True))["c"]
         for key, predicate in annotations.items()
     }
-
     union_total = count_attention_union(scope)
 
     return {
@@ -202,16 +366,9 @@ def paginated_attention(
 ) -> Dict[str, Any]:
     """Paginated attention row set with per-row reasons + reason counts.
 
-    Pagination happens before serialisation so a 100+ row dataset stays
-    bounded. Stable severity-first sort so paging is deterministic across
-    requests regardless of project or locale:
-
-        overdue desc, blocked desc, due_soon desc, urgent desc,
-        target_date asc (NULL last), id asc as final tie-break.
-
-    This puts true risks ahead of mere urgency and avoids the old
-    ``-target_date`` ordering that pushed future-due issues above
-    overdue rows.
+    Severity-first sort so paging is deterministic across requests:
+    overdue desc, blocked desc, due_soon desc, urgent desc,
+    target_date asc (NULL last), id asc as final tie-break.
     """
     if page < 1:
         raise DashboardContractError("page must be >= 1")
@@ -236,26 +393,18 @@ def paginated_attention(
         "id",
     )
 
-    # Materialise page rows first, then derive total from the same base
-    # queryset. We use values("id").distinct().count() with a *fresh*
-    # queryset clone (not the one that already had .distinct() chained)
-    # so the count is not subject to queryset-cache effects.
     rows = list(
         base.values(*_ISSUE_FIELDS, *annotations.keys())[
             (page - 1) * page_size : page * page_size
         ]
     )
 
-    # Per-rule counts via SQL Count(distinct=True) — proves the canonical
-    # aggregate agrees with the row-level annotations.
     from django.db.models import Count
     reason_counts = {
         key: qs.filter(predicate).aggregate(c=Count("id", distinct=True))["c"]
         for key, predicate in annotations.items()
     }
-    total = (
-        qs.filter(union_q).aggregate(c=Count("id", distinct=True))["c"]
-    )
+    total = qs.filter(union_q).aggregate(c=Count("id", distinct=True))["c"]
     union_total = total
 
     serialised = []

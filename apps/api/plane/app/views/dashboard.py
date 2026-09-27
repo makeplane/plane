@@ -43,7 +43,11 @@ from plane.analytics.dashboard.items import (
     attention_payload,
     list_items,
 )
+from plane.analytics.dashboard.projects import projects_payload
 from plane.analytics.dashboard.service import envelope, overview_payload
+from plane.analytics.dashboard.snapshot import dashboard_snapshot
+from plane.analytics.dashboard.timeline import timeline_payload
+from plane.analytics.dashboard.workload import workload_payload
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace
@@ -207,6 +211,132 @@ class DashboardAttentionEndpoint(BaseAPIView):
 # ----- Items / drilldown endpoint --------------------------------------
 
 
+class DashboardWorkloadEndpoint(BaseAPIView):
+    """``POST /api/workspaces/{slug}/dashboard/workload/``."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request: Request, slug: str) -> Response:
+        workspace = _workspace_or_404(slug)
+        if workspace is None:
+            return _not_found()
+
+        try:
+            payload = _validate_payload(request.data or {})
+        except DashboardContractError as exc:
+            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+        with dashboard_snapshot():
+            try:
+                scope = resolve_dashboard_scope(
+                    workspace=workspace, principal=request.user, payload=payload,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+            try:
+                page = int(payload.get("page", 1))
+                page_size = int(payload.get("page_size", 25))
+            except (ValueError, TypeError) as exc:
+                return _bad_request(f"Invalid workload payload: {exc}", code="INVALID_PAYLOAD", exc=exc)
+            page = max(1, page)
+            page_size = max(1, min(page_size, 100))
+
+            wip_threshold = payload.get("wip_threshold")
+            if wip_threshold is not None:
+                try:
+                    wip_threshold = int(wip_threshold)
+                except (ValueError, TypeError):
+                    return _bad_request("wip_threshold must be an integer", code="INVALID_PAYLOAD")
+
+            try:
+                data = workload_payload(
+                    scope, page=page, page_size=page_size, wip_threshold=wip_threshold,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        return Response(envelope(scope, data), status=status.HTTP_200_OK)
+
+
+class DashboardProjectsEndpoint(BaseAPIView):
+    """``POST /api/workspaces/{slug}/dashboard/projects/``."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request: Request, slug: str) -> Response:
+        workspace = _workspace_or_404(slug)
+        if workspace is None:
+            return _not_found()
+
+        try:
+            payload = _validate_payload(request.data or {})
+        except DashboardContractError as exc:
+            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+        with dashboard_snapshot():
+            try:
+                scope = resolve_dashboard_scope(
+                    workspace=workspace, principal=request.user, payload=payload,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+            try:
+                page = int(payload.get("page", 1))
+                page_size = int(payload.get("page_size", 25))
+            except (ValueError, TypeError) as exc:
+                return _bad_request(f"Invalid projects payload: {exc}", code="INVALID_PAYLOAD", exc=exc)
+            page = max(1, page)
+            page_size = max(1, min(page_size, 100))
+
+            try:
+                data = projects_payload(scope, page=page, page_size=page_size)
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        return Response(envelope(scope, data), status=status.HTTP_200_OK)
+
+
+class DashboardTimelineEndpoint(BaseAPIView):
+    """``POST /api/workspaces/{slug}/dashboard/timeline/``."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request: Request, slug: str) -> Response:
+        workspace = _workspace_or_404(slug)
+        if workspace is None:
+            return _not_found()
+
+        try:
+            payload = _validate_payload(request.data or {})
+        except DashboardContractError as exc:
+            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+        with dashboard_snapshot():
+            try:
+                scope = resolve_dashboard_scope(
+                    workspace=workspace, principal=request.user, payload=payload,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+            try:
+                cycles_page = int(payload.get("cycles_page", 1))
+                deadlines_page = int(payload.get("deadlines_page", 1))
+                unscheduled_page = int(payload.get("unscheduled_page", 1))
+                page_size = int(payload.get("page_size", 25))
+            except (ValueError, TypeError) as exc:
+                return _bad_request(f"Invalid timeline payload: {exc}", code="INVALID_PAYLOAD", exc=exc)
+
+            try:
+                data = timeline_payload(
+                    scope,
+                    cycles_page=cycles_page,
+                    deadlines_page=deadlines_page,
+                    unscheduled_page=unscheduled_page,
+                    page_size=page_size,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        return Response(envelope(scope, data), status=status.HTTP_200_OK)
+
+
 class DashboardItemsEndpoint(BaseAPIView):
     """``POST /api/workspaces/{slug}/dashboard/items/``.
 
@@ -218,12 +348,18 @@ class DashboardItemsEndpoint(BaseAPIView):
           "page_size": 25,
           "project_ids": [...],
           "period_preset": "this_month",
-          "business_filters": {...}
+          "business_filters": {...},
+          "selection": {
+            "metric": "...",
+            "values": {"project_id": "...", "assignee_id": null, ...},
+            "date_start": "...",
+            "date_end": "..."
+          }
         }
 
-    Returns a paginated items payload (rows + total + scope_key). The
-    total equals the corresponding ``count_*`` for the same metric and
-    unchanged read state (count/list parity).
+    Returns a paginated items payload (rows + total + scope_key +
+    echoed selection). The total equals the corresponding ``count_*``
+    for the same metric and unchanged read state (count/list parity).
     """
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
@@ -256,10 +392,11 @@ class DashboardItemsEndpoint(BaseAPIView):
                 exc=exc,
             )
 
-        # Clamp page_size silently before validation so requests above the
-        # cap don't 400.
         clamped_page_size = min(max(raw_page_size, 1), MAX_PAGE_SIZE)
         clamped_page = max(raw_page, 1)
+
+        selection = payload.get("selection") or {}
+        values = selection.get("values") or {}
 
         try:
             item_request = ItemRequest(
@@ -267,6 +404,19 @@ class DashboardItemsEndpoint(BaseAPIView):
                 attention_rules=payload.get("attention_rules"),
                 page=clamped_page,
                 page_size=clamped_page_size,
+                project_id=values.get("project_id"),
+                cycle_id=values.get("cycle_id"),
+                module_id=values.get("module_id"),
+                label_id=values.get("label_id"),
+                state_group=values.get("state_group"),
+                priority=values.get("priority"),
+                # Coerce explicit None to "" so the canonical unassigned
+                # representation passes through.
+                assignee_id="" if values.get("assignee_id", "__missing__") is None
+                else values.get("assignee_id"),
+                date_start=selection.get("date_start"),
+                date_end=selection.get("date_end"),
+                delivery_base=selection.get("delivery_base", "created_at"),
             )
         except DashboardContractError as exc:
             return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
