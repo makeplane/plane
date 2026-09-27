@@ -126,13 +126,13 @@ const queryFor = (dimension: string | null, breakdown: string | null): TWorkspac
     source: "work_items",
     metrics: [{ key: "work_item_count" }],
     dimensions: [dimension, breakdown].filter((key): key is string => key !== null).map((key) => ({ key })),
-    time: { preset: "this_quarter", basis: "created_at" },
+    time: { preset: "this_month", basis: "created_at" },
     display: "value",
   }) as unknown as TWorkspaceDashboardBatchQuery;
 
 const response = (overrides: Partial<TAnalyticsQueryResponseV2> = {}): TAnalyticsQueryResponseV2 => ({
   query: { version: 1, source: "work_items", metrics: [{ key: "work_item_count" }], dimensions: [] },
-  resolved: { start: null, end: null, timezone: "UTC", preset: "this_quarter", visible_project_count: 1 },
+  resolved: { start: null, end: null, timezone: "UTC", preset: "this_month", visible_project_count: 1 },
   schema: { metrics: [], dimensions: [] },
   data: [{ group: "state-1", series: null, value: 3, percentage: 1, display: "3" }],
   totals: { work_item_count: 3 },

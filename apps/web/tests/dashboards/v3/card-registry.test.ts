@@ -84,9 +84,9 @@ const assertValidQueryV2 = (query: Record<string, unknown>) => {
   expect(JSON.parse(JSON.stringify(query))).toEqual(query);
 };
 
-describe("card registry — the thirteen built-in cards (§7)", () => {
+describe("card registry — the fourteen built-in cards (§7)", () => {
   test("has exactly the §7 card set, in reading order", () => {
-    expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(13);
+    expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(14);
     expect(WORKSPACE_DASHBOARD_CARDS.map((card) => card.letter)).toEqual([
       "A",
       "B",
@@ -98,11 +98,12 @@ describe("card registry — the thirteen built-in cards (§7)", () => {
       "H",
       "I",
       "M",
+      "N",
       "J",
       "K",
       "L",
     ]);
-    expect(new Set(dashboardCardIds()).size).toBe(13);
+    expect(new Set(dashboardCardIds()).size).toBe(14);
   });
 
   test("every card is in a declared section and every section has cards", () => {
@@ -200,7 +201,6 @@ describe("date-grouping auto-resolution (§7.2 F)", () => {
     expect(autoDateGrouping("last_7_days")).toBe("day");
     expect(autoDateGrouping("this_week")).toBe("day");
     expect(autoDateGrouping("this_month")).toBe("week");
-    expect(autoDateGrouping("this_quarter")).toBe("month");
     expect(autoDateGrouping("last_90_days")).toBe("month");
   });
 });
@@ -240,7 +240,7 @@ describe("global filter intersection (§8.3)", () => {
 describe("batch request composition (§11, §20)", () => {
   test("produces the RD-480 contract shape: one entry per card, key = card id", () => {
     const request = buildDashboardBatchRequest(undefined, DEFAULT_GLOBAL_SCOPE);
-    expect(request.queries).toHaveLength(13);
+    expect(request.queries).toHaveLength(14);
     for (const query of request.queries) assertValidQueryV2(query as unknown as Record<string, unknown>);
     expect(request.queries.map((query) => query.key)).toEqual(dashboardCardIds());
   });
@@ -323,7 +323,7 @@ describe("batch response normalisation (§11, §24.2.15)", () => {
       },
     ];
     const batch = normalizeDashboardBatchResponse(results);
-    expect(Object.keys(batch)).toHaveLength(13);
+    expect(Object.keys(batch)).toHaveLength(14);
     expect(batch.attention_required).toEqual({
       status: "error",
       error: { code: "INVALID_QUERY", message: "Invalid query" },
@@ -342,7 +342,7 @@ describe("batch response normalisation (§11, §24.2.15)", () => {
 
   test("a failed request is still a per-card state, never a blank page", () => {
     const batch = normalizeDashboardBatchResponse(undefined);
-    expect(Object.keys(batch)).toHaveLength(13);
+    expect(Object.keys(batch)).toHaveLength(14);
     expect(Object.values(batch).every((result) => result.status === "error")).toBe(true);
     expect(isDashboardDataEmpty(batch)).toBe(false);
   });

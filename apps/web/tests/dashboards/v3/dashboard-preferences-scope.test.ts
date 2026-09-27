@@ -43,7 +43,7 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
       schema_version: 1,
       viewMode: null,
       global: {
-        timePreset: "this_quarter",
+        timePreset: "this_month",
         dateBasis: "lifecycle_overlap",
         filters: {},
         projectIds: [],
@@ -84,7 +84,7 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
       schema_version: 1,
       viewMode: null,
       global: {
-        timePreset: "this_quarter",
+        timePreset: "this_month",
         dateBasis: "lifecycle_overlap",
         filters: {},
         projectIds: [],
@@ -130,7 +130,7 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
       },
     });
     fresh.setIdentity("ws-1", "user-1");
-    expect(fresh.getGlobalScope().timePreset).toBe("this_quarter");
+    expect(fresh.getGlobalScope().timePreset).toBe("this_month");
   });
 
   test("truncated stored dateBasis falls back to default", () => {
@@ -138,7 +138,7 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
       schema_version: 1,
       viewMode: null,
       global: {
-        timePreset: "this_quarter",
+        timePreset: "this_month",
         dateBasis: "c",
         filters: {},
         projectIds: [],
@@ -162,7 +162,7 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
   test("setGlobalScope preserves fields not in the update", () => {
     store.setGlobalScope({ filters: { assignees: ["u-1"] } });
     const scope = store.getGlobalScope();
-    expect(scope.timePreset).toBe("this_quarter");
+    expect(scope.timePreset).toBe("this_month");
     expect(scope.dateBasis).toBe("lifecycle_overlap");
     expect(scope.comparison).toBe("none");
     expect(scope.filters.assignees).toEqual(["u-1"]);
@@ -170,7 +170,7 @@ describe("DashboardPreferencesStore — comparison + viewMode", () => {
 
   test("setGlobalScope rejects unknown timePreset and falls back to default", () => {
     store.setGlobalScope({ timePreset: "t" as never });
-    expect(store.getGlobalScope().timePreset).toBe("this_quarter");
+    expect(store.getGlobalScope().timePreset).toBe("this_month");
   });
 
   test("setGlobalScope rejects unknown dateBasis and falls back to default", () => {

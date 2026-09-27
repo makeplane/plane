@@ -13,7 +13,7 @@
  * Mounts the real route module — `app/(all)/[workspaceSlug]/(projects)/dashboards/page.tsx`
  * — not the shell behind it, so this fails if anyone puts the old dashboard
  * list back on the route or routes `/dashboards` somewhere else. The batch
- * endpoint is mocked; the registry is the source of truth for the thirteen cards
+ * endpoint is mocked; the registry is the source of truth for the fourteen cards
  * (§7), so the test asserts the product, not a hard-coded list.
  */
 
@@ -106,12 +106,12 @@ vi.mock("@/services/analytics.service", () => {
               start: null,
               end: null,
               timezone: "UTC",
-              preset: "this_quarter",
+              preset: "this_month",
               visible_project_count: 1,
             },
             schema: { metrics: [], dimensions: [] },
-            data: [{ group: "g1", series: null, value: 12, percentage: 1, display: "12" }],
-            totals: { work_item_count: 12, estimate: 8, points: 21 },
+            data: [{ group: "g1", series: null, value: 14, percentage: 1, display: "14" }],
+            totals: { work_item_count: 14, estimate: 8, points: 21 },
             warnings: [],
           } as unknown as TAnalyticsQueryResponseV2,
         })),
@@ -157,10 +157,10 @@ describe("RD-482 cutover — /dashboards renders the v3 Workspace Dashboard", ()
     expect(document.body.textContent).not.toMatch(/create dashboard|add widget|new dashboard/i);
   });
 
-  test("all thirteen §7 cards render against a mocked batch endpoint", async () => {
+  test("all fourteen §7 cards render against a mocked batch endpoint", async () => {
     await mountRoute();
 
-    expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(13);
+    expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(14);
     for (const card of WORKSPACE_DASHBOARD_CARDS) {
       expect(screen.getByTestId(`dashboard-v3-card-frame-${card.id}`)).toBeTruthy();
       expect(screen.getByTestId(`dashboard-v3-card-${card.id}`)).toBeTruthy();
@@ -170,12 +170,12 @@ describe("RD-482 cutover — /dashboards renders the v3 Workspace Dashboard", ()
     }
   });
 
-  test("one batch request carries all thirteen card queries for the route's workspace", async () => {
+  test("one batch request carries all fourteen card queries for the route's workspace", async () => {
     await mountRoute("acme");
 
     expect(batchCalls).toHaveLength(1);
     expect(batchCalls[0].slug).toBe("acme");
-    expect(batchCalls[0].payload.queries).toHaveLength(13);
+    expect(batchCalls[0].payload.queries).toHaveLength(14);
     expect(batchCalls[0].payload.queries.map((query) => query.key).toSorted()).toEqual(
       WORKSPACE_DASHBOARD_CARDS.map((card) => card.id).toSorted()
     );

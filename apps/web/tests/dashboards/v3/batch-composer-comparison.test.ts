@@ -6,7 +6,7 @@ describe("batch-composer — comparison block wired from scope", () => {
     const req = buildDashboardBatchRequest(
       {},
       {
-        timePreset: "this_quarter",
+        timePreset: "this_month",
         dateBasis: "lifecycle_overlap",
         filters: {},
         projectIds: [],
@@ -22,7 +22,7 @@ describe("batch-composer — comparison block wired from scope", () => {
     const req = buildDashboardBatchRequest(
       {},
       {
-        timePreset: "this_quarter",
+        timePreset: "this_month",
         dateBasis: "lifecycle_overlap",
         filters: {},
         projectIds: [],
@@ -38,7 +38,7 @@ describe("batch-composer — comparison block wired from scope", () => {
     const req = buildDashboardBatchRequest(
       {},
       {
-        timePreset: "this_quarter",
+        timePreset: "this_month",
         dateBasis: "lifecycle_overlap",
         filters: {},
         projectIds: [],

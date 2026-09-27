@@ -78,7 +78,7 @@ export type TWorkspaceDashboardBatchRequest = { queries: TWorkspaceDashboardBatc
 
 /** §8.1 / §8.3 product defaults for the global control row. */
 export const DEFAULT_GLOBAL_SCOPE: TWorkspaceDashboardGlobalScope = {
-  timePreset: "this_quarter",
+  timePreset: "this_month",
   dateBasis: "lifecycle_overlap",
   filters: {},
   projectIds: [],

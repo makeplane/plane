@@ -861,7 +861,12 @@
       "delivery": "Delivery",
       "workload": "Workload",
       "distribution": "Distribution",
-      "attention": "Needs attention"
+      "attention": "Needs attention",
+      "kpi_subtitle": "Today at a glance",
+      "delivery_subtitle": "How work is moving this period",
+      "workload_subtitle": "Who is carrying what",
+      "distribution_subtitle": "Where work is concentrated",
+      "attention_subtitle": "Items that need you"
     },
     "card": {
       "open_work_items": "Open work items",
@@ -882,7 +887,8 @@
       "error": "This card could not be loaded.",
       "truncated": "Results were truncated because the query hit the work budget. Exported values may be partial.",
       "basis_override": "Counted by {basis}, regardless of the global date basis",
-      "workload_by_labels": "Workload by labels"
+      "workload_by_labels": "Workload by labels",
+      "all_members_workload": "All members workload"
     },
     "control": {
       "time_range": "Time range",
@@ -953,6 +959,17 @@
     "scope": {
       "personal": "Personal",
       "team": "Team"
+    },
+    "welcome": {
+      "greeting": "Welcome back, {name}",
+      "subtitle": "{openItems} open · {inProgress} in progress · {dueSoon} due soon"
+    },
+    "color": {
+      "open": "blue",
+      "in_progress": "amber",
+      "completed": "green",
+      "overdue": "red",
+      "blocked": "purple"
     }
   },
   "pi_chat": "Plane AI",

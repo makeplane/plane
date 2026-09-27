@@ -168,9 +168,21 @@ export function WorkspaceDashboardCard({
   // scope carries a comparison. The delta sits under the title so the number
   // body stays the click target for drill-down.
   const exportLabel = t("exporter.csv.short_description");
+  // KPI accent — give each KPI card a thin colored top stripe so the band
+  // reads as 5 distinct categories, not 5 identical tiles.
+  const kpiAccentClass =
+    card.section === "kpi"
+      ? ({
+          open_work_items: "border-t-2 border-t-accent-blue",
+          in_progress: "border-t-2 border-t-accent-amber",
+          completed: "border-t-2 border-t-accent-green",
+          overdue: "border-t-2 border-t-accent-red",
+          blocked: "border-t-2 border-t-accent-purple",
+        } as Record<string, string>)[card.id] ?? ""
+      : "";
   const header =
     card.section === "kpi" ? (
-      <div className="flex flex-col gap-2">
+      <div className={`flex flex-col gap-2 pt-1.5 ${kpiAccentClass}`}>
         <div className="flex flex-col gap-0.5">
           <h3 className="text-13 font-medium text-primary">{t(card.titleKey)}</h3>
           <CardDateBasisOverrideLabel card={card} />

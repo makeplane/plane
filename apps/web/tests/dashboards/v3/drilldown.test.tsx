@@ -9,7 +9,7 @@
 
 /**
  * Workspace Dashboard v3 — per-cell drilldown handler and KPI comparison delta
- * (spec §12, §24.2.15, §49.x).
+ * (spec §14, §24.2.15, §49.x).
  *
  * The KPI number cell is wrapped in a clickable button that opens the
  * Analytics V2 insight drill-down drawer. When comparison data is present
@@ -105,7 +105,7 @@ const stubQuery = (): TWorkspaceDashboardBatchQuery =>
 
 const stubData = (n: number): TAnalyticsQueryResponseV2 => ({
   query: { version: 1, source: "work_items", metrics: [{ key: "pending_work_items" }], dimensions: [] },
-  resolved: { start: null, end: null, timezone: "UTC", preset: "this_quarter", visible_project_count: 1 },
+  resolved: { start: null, end: null, timezone: "UTC", preset: "this_month", visible_project_count: 1 },
   schema: { metrics: [], dimensions: [] },
   data: [],
   totals: { pending_work_items: n },

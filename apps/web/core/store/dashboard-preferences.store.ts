@@ -109,7 +109,7 @@ const VALID_TIME_PRESET: ReadonlySet<TAnalyticsTimePreset> = new Set([
   "none",
 ]);
 
-const DEFAULT_TIME_PRESET: TAnalyticsTimePreset = "this_quarter";
+const DEFAULT_TIME_PRESET: TAnalyticsTimePreset = "this_month";
 const DEFAULT_DATE_BASIS: TAnalyticsDateBasis = "lifecycle_overlap";
 
 const sanitizeTimePreset = (value: unknown): TAnalyticsTimePreset =>

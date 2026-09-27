@@ -140,7 +140,7 @@ import { WorkspaceDashboardGlobalControls } from "@/components/dashboards/v3/glo
 function baseScope() {
   return {
     projectIds: [],
-    timePreset: "this_quarter" as const,
+    timePreset: "this_month" as const,
     dateBasis: "created_at" as const,
     filters: {},
     comparison: "none" as const,
@@ -152,9 +152,9 @@ describe("global-controls — selected value visible", () => {
     render(<WorkspaceDashboardGlobalControls scope={baseScope()} onChange={() => {}} onReset={() => {}} />);
     const btn = screen.getByTestId("combobox-dashboard_v3.control.time_range");
     // The mock is i18n-pass-through, so the resolved label is the i18n key
-    // "dashboard_v3.time.this_quarter" (→ "This quarter" in real builds).
+    // "dashboard_v3.time.this_month" (→ "This quarter" in real builds).
     expect(btn).toHaveTextContent("dashboard_v3.control.time_range");
-    expect(btn).toHaveTextContent("dashboard_v3.time.this_quarter");
+    expect(btn).toHaveTextContent("dashboard_v3.time.this_month");
     expect(btn.textContent).toContain("·");
   });
 
@@ -237,7 +237,7 @@ describe("global-controls — Tasks 6+7 (5 new filters + Comparison toggle)", ()
   });
 
   test("Comparison toggle hides, then shows when scope.timePreset flips", () => {
-    // rtl pattern: start with preset='this_quarter', toggle should be present
+    // rtl pattern: start with preset='this_month', toggle should be present
     const { rerender } = render(
       <WorkspaceDashboardGlobalControls scope={baseScope()} onChange={() => {}} onReset={() => {}} />
     );
