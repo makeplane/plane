@@ -10,6 +10,7 @@ import React from "react";
 import { cn } from "./utils";
 
 type Props = {
+  ariaLabel?: string;
   buttonClassName?: string;
   iconClassName?: string;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -17,10 +18,17 @@ type Props = {
 };
 
 export function FavoriteStar(props: Props) {
-  const { buttonClassName, iconClassName, onClick, selected } = props;
+  const { ariaLabel, buttonClassName, iconClassName, onClick, selected } = props;
+  const label = ariaLabel ?? (selected ? "Remove from favorites" : "Add to favorites");
 
   return (
-    <button type="button" className={cn("grid h-4 w-4 place-items-center", buttonClassName)} onClick={onClick}>
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={selected}
+      className={cn("grid h-4 w-4 place-items-center", buttonClassName)}
+      onClick={onClick}
+    >
       <Star
         className={cn(
           "h-4 w-4 text-tertiary transition-all",

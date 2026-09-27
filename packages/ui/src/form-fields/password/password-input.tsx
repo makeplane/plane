@@ -53,6 +53,8 @@ export function PasswordInput({
         <Tooltip tooltipContent={showPassword ? "Hide password" : "Show password"} position="top">
           <button
             type="button"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondary transition-colors duration-200 hover:text-primary"
           >
