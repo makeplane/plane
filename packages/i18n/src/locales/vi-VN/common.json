@@ -928,7 +928,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "Đếm theo {basis}, bất kể cơ sở ngày toàn cục"
+      "basis_override": "Đếm theo {basis}, bất kể cơ sở ngày toàn cục",
+      "workload_by_labels": "Khối lượng công việc theo nhãn"
+    },
+    "control": {
+      "assignees": "Người được giao",
+      "labels": "Nhãn",
+      "cycles": "Chu kỳ",
+      "modules": "Mô-đun",
+      "created_by": "Tạo bởi",
+      "comparison": "So sánh",
+      "previous_period": "Kỳ trước",
+      "previous_week": "Tuần trước",
+      "previous_month": "Tháng trước",
+      "previous_quarter": "Quý trước",
+      "previous_year": "Năm trước",
+      "workload_by_labels": "Theo nhãn"
+    },
+    "scope": {
+      "personal": "Cá nhân",
+      "team": "Nhóm"
+    },
+    "action": {
+      "view_work_items": "Xem hạng mục công việc",
+      "vs_previous": "so với trước"
     }
   }
 }

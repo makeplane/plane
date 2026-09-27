@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "Počítané podľa {basis}, bez ohľadu na globálny základ dátumu"
+      "basis_override": "Počítané podľa {basis}, bez ohľadu na globálny základ dátumu",
+      "workload_by_labels": "Zaťaženie podľa štítkov"
+    },
+    "control": {
+      "assignees": "Priradení",
+      "labels": "Štítky",
+      "cycles": "Cykly",
+      "modules": "Moduly",
+      "created_by": "Vytvoril",
+      "comparison": "Porovnanie",
+      "previous_period": "Predchádzajúce obdobie",
+      "previous_week": "Predchádzajúci týždeň",
+      "previous_month": "Predchádzajúci mesiac",
+      "previous_quarter": "Predchádzajúci štvrťrok",
+      "previous_year": "Predchádzajúci rok",
+      "workload_by_labels": "Zaťaženie podľa štítkov"
+    },
+    "scope": {
+      "personal": "Osobné",
+      "team": "Tím"
+    },
+    "action": {
+      "view_work_items": "Zobraziť pracovné položky",
+      "vs_previous": "vs predchádzajúce"
     }
   }
 }

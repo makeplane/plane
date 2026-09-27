@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "依 {basis} 計算，與全域日期基準無關"
+      "basis_override": "依 {basis} 計算，與全域日期基準無關",
+      "workload_by_labels": "依標籤劃分的工作量"
+    },
+    "control": {
+      "assignees": "負責人",
+      "labels": "標籤",
+      "cycles": "週期",
+      "modules": "模組",
+      "created_by": "建立者",
+      "comparison": "對比",
+      "previous_period": "上一週期",
+      "previous_week": "上週",
+      "previous_month": "上月",
+      "previous_quarter": "上季",
+      "previous_year": "上年",
+      "workload_by_labels": "依標籤"
+    },
+    "scope": {
+      "personal": "個人",
+      "team": "團隊"
+    },
+    "action": {
+      "view_work_items": "查看工作項目",
+      "vs_previous": "較上一週期"
     }
   }
 }

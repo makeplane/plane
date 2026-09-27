@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "Počítáno podle {basis}, bez ohledu na globální základnu data"
+      "basis_override": "Počítáno podle {basis}, bez ohledu na globální základnu data",
+      "workload_by_labels": "Zatížení dle štítků"
+    },
+    "control": {
+      "assignees": "Přiřazení",
+      "labels": "Štítky",
+      "cycles": "Cykly",
+      "modules": "Moduly",
+      "created_by": "Vytvořil",
+      "comparison": "Srovnání",
+      "previous_period": "Předchozí období",
+      "previous_week": "Předchozí týden",
+      "previous_month": "Předchozí měsíc",
+      "previous_quarter": "Předchozí čtvrtletí",
+      "previous_year": "Předchozí rok",
+      "workload_by_labels": "Zatížení dle štítků"
+    },
+    "scope": {
+      "personal": "Osobní",
+      "team": "Tým"
+    },
+    "action": {
+      "view_work_items": "Zobrazit pracovní položky",
+      "vs_previous": "vs předchozí"
     }
   }
 }

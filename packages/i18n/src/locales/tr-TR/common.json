@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "{basis} temelinde sayılır, küresel tarih temelinden bağımsız olarak"
+      "basis_override": "{basis} temelinde sayılır, küresel tarih temelinden bağımsız olarak",
+      "workload_by_labels": "Etiketlere göre iş yükü"
+    },
+    "control": {
+      "assignees": "Atanan",
+      "labels": "Etiketler",
+      "cycles": "Döngüler",
+      "modules": "Modüller",
+      "created_by": "Oluşturan",
+      "comparison": "Karşılaştırma",
+      "previous_period": "Önceki dönem",
+      "previous_week": "Önceki hafta",
+      "previous_month": "Önceki ay",
+      "previous_quarter": "Önceki çeyrek",
+      "previous_year": "Önceki yıl",
+      "workload_by_labels": "Etikete göre iş yükü"
+    },
+    "scope": {
+      "personal": "Kişisel",
+      "team": "Ekip"
+    },
+    "action": {
+      "view_work_items": "İş öğelerini görüntüle",
+      "vs_previous": "vs önceki"
     }
   }
 }

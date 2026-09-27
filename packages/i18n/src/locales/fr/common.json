@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "Compté selon {basis}, quelle que soit la base de dates globale"
+      "basis_override": "Compté selon {basis}, quelle que soit la base de dates globale",
+      "workload_by_labels": "Charge de travail par étiquettes"
+    },
+    "control": {
+      "assignees": "Assignés",
+      "labels": "Étiquettes",
+      "cycles": "Cycles",
+      "modules": "Modules",
+      "created_by": "Créé par",
+      "comparison": "Comparaison",
+      "previous_period": "Période précédente",
+      "previous_week": "Semaine précédente",
+      "previous_month": "Mois précédent",
+      "previous_quarter": "Trimestre précédent",
+      "previous_year": "Année précédente",
+      "workload_by_labels": "Charge par étiquettes"
+    },
+    "scope": {
+      "personal": "Personnel",
+      "team": "Équipe"
+    },
+    "action": {
+      "view_work_items": "Voir les éléments de travail",
+      "vs_previous": "par rapport au précédent"
     }
   }
 }

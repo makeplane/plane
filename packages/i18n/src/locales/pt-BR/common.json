@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "Contado por {basis}, independentemente da base de data global"
+      "basis_override": "Contado por {basis}, independentemente da base de data global",
+      "workload_by_labels": "Carga de trabalho por etiquetas"
+    },
+    "control": {
+      "assignees": "Responsáveis",
+      "labels": "Etiquetas",
+      "cycles": "Ciclos",
+      "modules": "Módulos",
+      "created_by": "Criado por",
+      "comparison": "Comparação",
+      "previous_period": "Período anterior",
+      "previous_week": "Semana anterior",
+      "previous_month": "Mês anterior",
+      "previous_quarter": "Trimestre anterior",
+      "previous_year": "Ano anterior",
+      "workload_by_labels": "Carga por etiquetas"
+    },
+    "scope": {
+      "personal": "Pessoal",
+      "team": "Equipe"
+    },
+    "action": {
+      "view_work_items": "Ver itens de trabalho",
+      "vs_previous": "vs anterior"
     }
   }
 }

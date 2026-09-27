@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "Liczone wg {basis}, niezależnie od globalnej podstawy daty"
+      "basis_override": "Liczone wg {basis}, niezależnie od globalnej podstawy daty",
+      "workload_by_labels": "Obciążenie wg etykiet"
+    },
+    "control": {
+      "assignees": "Przypisani",
+      "labels": "Etykiety",
+      "cycles": "Cykle",
+      "modules": "Moduły",
+      "created_by": "Utworzony przez",
+      "comparison": "Porównanie",
+      "previous_period": "Poprzedni okres",
+      "previous_week": "Poprzedni tydzień",
+      "previous_month": "Poprzedni miesiąc",
+      "previous_quarter": "Poprzedni kwartał",
+      "previous_year": "Poprzedni rok",
+      "workload_by_labels": "Obciążenie wg etykiet"
+    },
+    "scope": {
+      "personal": "Osobiste",
+      "team": "Zespół"
+    },
+    "action": {
+      "view_work_items": "Pokaż elementy pracy",
+      "vs_previous": "vs poprzedni"
     }
   }
 }

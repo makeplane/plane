@@ -876,7 +876,30 @@
   },
   "dashboard_v3": {
     "card": {
-      "basis_override": "グローバル日付基準にかかわらず、{basis} で集計"
+      "basis_override": "グローバル日付基準にかかわらず、{basis} で集計",
+      "workload_by_labels": "ラベル別ワークロード"
+    },
+    "control": {
+      "assignees": "担当者",
+      "labels": "ラベル",
+      "cycles": "サイクル",
+      "modules": "モジュール",
+      "created_by": "作成者",
+      "comparison": "比較",
+      "previous_period": "前期",
+      "previous_week": "前週",
+      "previous_month": "前月",
+      "previous_quarter": "前四半期",
+      "previous_year": "前年",
+      "workload_by_labels": "ラベル別"
+    },
+    "scope": {
+      "personal": "個人",
+      "team": "チーム"
+    },
+    "action": {
+      "view_work_items": "作業アイテムを表示",
+      "vs_previous": "前期比"
     }
   }
 }
