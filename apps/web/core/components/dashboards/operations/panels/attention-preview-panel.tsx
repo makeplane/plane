@@ -22,13 +22,7 @@ const REASON_LABEL: Record<TAttentionRule, string> = {
   unassigned_urgent_high: "Unassigned · urgent/high",
 };
 
-export function AttentionPreviewPanel({
-  preview,
-  rows,
-  reasonCounts,
-  isLoading,
-  error,
-}: Props): React.ReactElement {
+export function AttentionPreviewPanel({ preview, rows, reasonCounts, isLoading, error }: Props): React.ReactElement {
   return (
     <PanelSurface
       title="Needs attention"
@@ -53,7 +47,7 @@ function AttentionBody({
   reasonCounts: Record<string, number> | null;
   isLoading: boolean;
 }): React.ReactElement {
-  const effectiveRows = rows.length > 0 ? rows : preview?.preview ?? [];
+  const effectiveRows = rows.length > 0 ? rows : (preview?.preview ?? []);
   const unionTotal = preview?.union_total ?? preview?.total ?? 0;
   const counts = reasonCounts ?? preview?.reason_counts ?? null;
 
@@ -68,7 +62,7 @@ function AttentionBody({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-1.5 text-11" data-testid="attention-reason-counts">
-        <span className="font-mono tabular-nums text-primary">{unionTotal}</span>
+        <span className="font-mono text-primary tabular-nums">{unionTotal}</span>
         <span className="text-tertiary">distinct issues</span>
         {counts ? (
           <>
@@ -90,26 +84,18 @@ function AttentionBody({
 
       <ul className="flex flex-col gap-1" data-testid="attention-rows">
         {effectiveRows.slice(0, 5).map((row) => (
-          <li
-            key={row.id}
-            className="flex items-center gap-2 text-12"
-            data-testid={`attention-row-${row.id}`}
-          >
+          <li key={row.id} className="flex items-center gap-2 text-12" data-testid={`attention-row-${row.id}`}>
             <span className="font-mono text-11 text-tertiary" aria-hidden="true">
               {row.project_name ?? "—"}
             </span>
             <span className="flex-1 truncate text-primary" title={row.name}>
               {row.name}
             </span>
-            {row.target_date ? (
-              <span className="text-11 text-tertiary">
-                {row.target_date}
-              </span>
-            ) : null}
+            {row.target_date ? <span className="text-11 text-tertiary">{row.target_date}</span> : null}
             {(row.reasons ?? []).map((reason) => (
               <span
                 key={reason}
-                className="rounded-sm bg-warning-subtle px-1.5 text-11 text-warning"
+                className="text-warning rounded-sm bg-warning-subtle px-1.5 text-11"
                 data-testid={`attention-reason-${row.id}-${reason}`}
               >
                 {REASON_LABEL[reason]}

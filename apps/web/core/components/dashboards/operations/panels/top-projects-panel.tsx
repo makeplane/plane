@@ -43,10 +43,7 @@ function TopProjectsBody({ data }: { data: TTopProjectsData }): React.ReactEleme
           <span className="flex-1 truncate text-primary" title={project.name}>
             {project.name}
           </span>
-          <span
-            className="font-mono tabular-nums text-tertiary"
-            data-testid={`top-project-open-${project.project_id}`}
-          >
+          <span className="font-mono text-tertiary tabular-nums" data-testid={`top-project-open-${project.project_id}`}>
             {project.open}
           </span>
           <div
@@ -59,14 +56,17 @@ function TopProjectsBody({ data }: { data: TTopProjectsData }): React.ReactEleme
           />
           {project.overdue > 0 ? (
             <span
-              className="rounded-sm bg-danger-subtle px-1.5 text-11 text-danger"
+              className="text-danger rounded-sm bg-danger-subtle px-1.5 text-11"
               data-testid={`top-project-overdue-${project.project_id}`}
             >
               {project.overdue} overdue
             </span>
           ) : null}
           {project.blocked > 0 ? (
-            <span className="rounded-sm bg-warning-subtle px-1.5 text-11 text-warning" data-testid={`top-project-blocked-${project.project_id}`}>
+            <span
+              className="text-warning rounded-sm bg-warning-subtle px-1.5 text-11"
+              data-testid={`top-project-blocked-${project.project_id}`}
+            >
               {project.blocked} blocked
             </span>
           ) : null}

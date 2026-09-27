@@ -57,7 +57,18 @@ const overviewResponse: TDashboardOverviewResponse = {
     {
       status: "ok",
       section_id: "kpis",
-      data: { total: 12, open: 9, not_started: 5, started: 4, completed: 2, cancelled: 1, overdue: 2, due_today: 0, due_soon: 3, blocked: 3 },
+      data: {
+        total: 12,
+        open: 9,
+        not_started: 5,
+        started: 4,
+        completed: 2,
+        cancelled: 1,
+        overdue: 2,
+        due_today: 0,
+        due_soon: 3,
+        blocked: 3,
+      },
     },
     {
       status: "ok",
@@ -199,10 +210,10 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     }
   });
 
-  test("the workload preview surfaces a typed unavailable state when Task 3 is pending", async () => {
+  test("the workload preview surfaces a typed unavailable state when the server reports it", async () => {
     await mountRoute();
-    expect(screen.getByTestId("workload-preview-pending")).toBeTruthy();
-    // The pending placeholder must not display numeric counts (no fake data).
+    expect(screen.getByTestId("workload-preview-unavailable")).toBeTruthy();
+    // The unavailable placeholder must not display numeric counts (no fake data).
     expect(screen.queryByTestId("workload-preview-row")).toBeNull();
   });
 

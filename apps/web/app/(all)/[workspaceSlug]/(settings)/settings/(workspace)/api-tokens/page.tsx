@@ -70,7 +70,7 @@ function TokenListItem({
           >
             {token.is_active ? "Active" : "Revoked / expired"}
           </span>
-          <span className="rounded-xs bg-layer-1 px-2 py-0.5 font-mono text-caption-sm-regular text-tertiary">
+          <span className="font-mono rounded-xs bg-layer-1 px-2 py-0.5 text-caption-sm-regular text-tertiary">
             {token.token_prefix}…
           </span>
         </div>
@@ -86,7 +86,10 @@ function TokenListItem({
         </div>
         <div className="mt-2 flex flex-wrap gap-1">
           {token.scopes.map((scope) => (
-            <span key={scope} className="rounded bg-layer-1 px-1.5 py-0.5 font-mono text-caption-sm-regular text-tertiary">
+            <span
+              key={scope}
+              className="font-mono rounded bg-layer-1 px-1.5 py-0.5 text-caption-sm-regular text-tertiary"
+            >
               {scope}
             </span>
           ))}
@@ -179,7 +182,7 @@ function CreateServiceTokenModal({
           </div>
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-md border border-subtle px-3 py-2 font-mono text-body-xs-regular"
+            className="font-mono flex w-full items-center justify-between rounded-md border border-subtle px-3 py-2 text-body-xs-regular"
             onClick={() => {
               if (!generatedToken.token) return;
               void copyTextToClipboard(generatedToken.token).then(() =>
@@ -223,11 +226,13 @@ function CreateServiceTokenModal({
           <div className="space-y-2">
             <div className="text-body-xs-medium text-primary">Access</div>
             <div className="flex flex-wrap gap-2">
-              {([
-                ["read", "Read only"],
-                ["read-write", "Read + write"],
-                ["custom", "Custom"],
-              ] as const).map(([value, title]) => (
+              {(
+                [
+                  ["read", "Read only"],
+                  ["read-write", "Read + write"],
+                  ["custom", "Custom"],
+                ] as const
+              ).map(([value, title]) => (
                 <Button
                   key={value}
                   type="button"
@@ -243,12 +248,11 @@ function CreateServiceTokenModal({
           {preset === "custom" && (
             <div className="grid max-h-56 grid-cols-1 gap-2 overflow-y-auto rounded-md border border-subtle p-3 md:grid-cols-2">
               {ALL_SCOPES.map((scope) => (
-                <label key={scope} className="flex cursor-pointer items-center gap-2 text-body-xs-regular text-secondary">
-                  <input
-                    type="checkbox"
-                    checked={customScopes.includes(scope)}
-                    onChange={() => toggleScope(scope)}
-                  />
+                <label
+                  key={scope}
+                  className="flex cursor-pointer items-center gap-2 text-body-xs-regular text-secondary"
+                >
+                  <input type="checkbox" checked={customScopes.includes(scope)} onChange={() => toggleScope(scope)} />
                   <span className="font-mono">{scope}</span>
                 </label>
               ))}
@@ -258,7 +262,11 @@ function CreateServiceTokenModal({
             <Button variant="secondary" onClick={resetAndClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={() => void submit()} disabled={isSubmitting || !label.trim() || !scopes.length}>
+            <Button
+              variant="primary"
+              onClick={() => void submit()}
+              disabled={isSubmitting || !label.trim() || !scopes.length}
+            >
               {isSubmitting ? "Creating…" : "Create token"}
             </Button>
           </div>

@@ -27,12 +27,7 @@
  * scope that produced it".
  */
 
-import type {
-  TBusinessFilters,
-  TDateBucket,
-  TPeriodPreset,
-  TSnapshotRule,
-} from "@plane/types";
+import type { TBusinessFilters, TDateBucket, TPeriodPreset, TSnapshotRule } from "@plane/types";
 
 /** Bump when the persisted shape changes; older payloads are discarded. */
 export const DASHBOARD_OPERATIONS_SCHEMA_VERSION = 1;
@@ -42,13 +37,7 @@ const STORAGE_KEY_PREFIX = "plane-dashboard-operations-preferences";
 /** Allowed tabs on the dashboard route. */
 export type TDashboardTab = "overview" | "projects" | "workload" | "timeline" | "insights";
 
-export const DASHBOARD_TABS: TDashboardTab[] = [
-  "overview",
-  "projects",
-  "workload",
-  "timeline",
-  "insights",
-];
+export const DASHBOARD_TABS: TDashboardTab[] = ["overview", "projects", "workload", "timeline", "insights"];
 
 export interface TDashboardOperationsPreferences {
   schema_version: number;
@@ -126,18 +115,12 @@ const isPeriodPreset = (value: unknown): value is TPeriodPreset =>
   value === "none" ||
   value === "custom";
 
-const isDateBucket = (value: unknown): value is TDateBucket =>
-  value === "day" || value === "week" || value === "month";
+const isDateBucket = (value: unknown): value is TDateBucket => value === "day" || value === "week" || value === "month";
 
-const isViewMode = (value: unknown): value is "team" | "my_work" =>
-  value === "team" || value === "my_work";
+const isViewMode = (value: unknown): value is "team" | "my_work" => value === "team" || value === "my_work";
 
 const isTab = (value: unknown): value is TDashboardTab =>
-  value === "overview" ||
-  value === "projects" ||
-  value === "workload" ||
-  value === "timeline" ||
-  value === "insights";
+  value === "overview" || value === "projects" || value === "workload" || value === "timeline" || value === "insights";
 
 const ALLOWED_FILTER_KEYS = new Set<string>([
   "state_id",
@@ -255,6 +238,12 @@ export function writeDashboardUrlState(state: TDashboardUrlState): URLSearchPara
  * when every component is equal. The signature is part of the
  * `requestGeneration` counter that the shell uses to drop late
  * responses.
+ *
+ * The effective signature includes `view_mode === "my_work"` →
+ * `assignee_id: [currentUserId]` injection so the resolver hash
+ * matches what the wire payload actually carries (per spec §8
+ * "My work" semantics; backend interprets `business_filters.assignee_id`
+ * the same way regardless of view_mode).
  */
 export interface TDashboardScopeSignature {
   view_mode: "team" | "my_work";
@@ -266,28 +255,89 @@ export interface TDashboardScopeSignature {
   project_ids_key: string;
 }
 
+export interface TBuildScopeSignatureArgs {
+  prefs: TDashboardOperationsPreferences;
+  projectIds: readonly string[];
+  /** Custom half-open range; only used when period_preset === "custom". */
+  customRange?: { start: string | null; end: string | null };
+  /**
+   * Current user id; injected into `business_filters.assignee_id`
+   * when `view_mode === "my_work"` so the signature reflects the
+   * actual wire payload.
+   */
+  currentUserId?: string | null;
+}
+
 export function buildScopeSignature(
-  prefs: TDashboardOperationsPreferences,
-  projectIds: readonly string[]
+  prefsOrArgs: TDashboardOperationsPreferences | TBuildScopeSignatureArgs,
+  projectIds?: readonly string[],
+  customRange?: { start: string | null; end: string | null },
+  currentUserId?: string | null
 ): TDashboardScopeSignature {
+  // Backward-compatible overload: callers may pass either a positional
+  // pair `(prefs, projectIds)` (legacy) or an object (new). The
+  // object form carries `customRange` and `currentUserId`, both of
+  // which are required for the correct signature when the user has
+  // either a custom range or "My work" view mode.
+  let prefs: TDashboardOperationsPreferences;
+  let ids: readonly string[];
+  let range: { start: string | null; end: string | null } | undefined;
+  let userId: string | null | undefined;
+  if (
+    projectIds === undefined &&
+    typeof (prefsOrArgs as TBuildScopeSignatureArgs).prefs === "object" &&
+    Array.isArray((prefsOrArgs as TBuildScopeSignatureArgs).projectIds)
+  ) {
+    const args = prefsOrArgs as TBuildScopeSignatureArgs;
+    prefs = args.prefs;
+    ids = args.projectIds;
+    range = args.customRange;
+    userId = args.currentUserId ?? null;
+  } else {
+    prefs = prefsOrArgs as TDashboardOperationsPreferences;
+    ids = projectIds ?? [];
+    range = customRange;
+    userId = currentUserId ?? null;
+  }
+
+  const effectiveFilters = withAssigneeFilter(prefs.business_filters, prefs.view_mode, userId ?? null);
   return {
     view_mode: prefs.view_mode,
     period_preset: prefs.period_preset,
-    start: prefs.period_preset === "custom" ? computeCustomStart() : null,
-    end: prefs.period_preset === "custom" ? computeCustomEnd() : null,
+    start: prefs.period_preset === "custom" ? (range?.start ?? null) : null,
+    end: prefs.period_preset === "custom" ? (range?.end ?? null) : null,
     date_bucket: prefs.date_bucket,
-    business_filters_key: JSON.stringify(sortKeys(prefs.business_filters)),
-    project_ids_key: projectIds.slice().sort().join("|"),
+    business_filters_key: JSON.stringify(sortKeys(effectiveFilters)),
+    project_ids_key: ids.slice().sort().join("|"),
   };
 }
 
-// Placeholders — the real custom range lives on the store; this
-// helper is for tests that build a signature outside of a store.
-function computeCustomStart(): string | null {
-  return null;
-}
-function computeCustomEnd(): string | null {
-  return null;
+/**
+ * Inject `assignee_id: [currentUserId]` when view mode is "my_work".
+ *
+ * Backend interprets `business_filters.assignee_id` the same way
+ * regardless of `view_mode`, so a frontend switch from "team" to
+ * "my work" must always translate to that filter (and a switch back
+ * must remove it). When `currentUserId` is null AND view mode is
+ * "my_work", the filter is omitted; the backend will see the
+ * unassigned union.
+ */
+export function withAssigneeFilter(
+  filters: TBusinessFilters,
+  viewMode: "team" | "my_work",
+  currentUserId: string | null
+): TBusinessFilters {
+  if (viewMode !== "my_work" || currentUserId === null) {
+    if (viewMode === "team" && "assignee_id" in filters) {
+      // "team" view must not silently narrow by the user's previous
+      // "my work" assignee selection.
+      const next = { ...filters };
+      delete next.assignee_id;
+      return next;
+    }
+    return filters;
+  }
+  return { ...filters, assignee_id: [currentUserId] };
 }
 
 function sortKeys(value: unknown): unknown {
@@ -371,6 +421,10 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     end: string | null;
     dateBucket: TDateBucket;
   } | null = null;
+  // Cached custom range object — `getCustomRange` MUST return a stable
+  // reference for `useSyncExternalStore`, otherwise the hook detects a
+  // new snapshot on every call and loops.
+  private cachedCustomRange: { start: string | null; end: string | null } | null = null;
 
   constructor(storage: TDashboardOperationsStorage) {
     this.storage = storage;
@@ -386,6 +440,7 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     this.projectIds = [];
     this.customStart = null;
     this.customEnd = null;
+    this.cachedCustomRange = null;
     if (workspaceId === null || userId === null) {
       this.prefs = defaultDashboardOperationsPreferences();
     } else if (switchedWorkspace) {
@@ -425,7 +480,13 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     return this.prefs.business_filters;
   }
   getCustomRange(): { start: string | null; end: string | null } {
-    return { start: this.customStart, end: this.customEnd };
+    const cached = this.cachedCustomRange;
+    if (cached !== null && cached.start === this.customStart && cached.end === this.customEnd) {
+      return cached;
+    }
+    const next = { start: this.customStart, end: this.customEnd };
+    this.cachedCustomRange = next;
+    return next;
   }
   getPeriodSnapshot(): { preset: TPeriodPreset; start: string | null; end: string | null; dateBucket: TDateBucket } {
     const next = {
@@ -460,10 +521,7 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
   // ---- mutations ----
 
   setProjectIds(projectIds: readonly string[]): void {
-    if (
-      projectIds.length === this.projectIds.length &&
-      projectIds.every((id, i) => id === this.projectIds[i])
-    ) {
+    if (projectIds.length === this.projectIds.length && projectIds.every((id, i) => id === this.projectIds[i])) {
       return;
     }
     this.projectIds = projectIds.slice();
@@ -485,6 +543,7 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     if (preset !== "custom") {
       this.customStart = null;
       this.customEnd = null;
+      this.cachedCustomRange = null;
     }
     this.persist();
     this.requestGeneration += 1;
@@ -494,6 +553,7 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
   setCustomRange(start: string | null, end: string | null): void {
     this.customStart = start;
     this.customEnd = end;
+    this.cachedCustomRange = null;
     this.prefs = { ...this.prefs, period_preset: "custom" };
     this.persist();
     this.requestGeneration += 1;
@@ -561,6 +621,7 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     this.prefs = defaultDashboardOperationsPreferences();
     this.customStart = null;
     this.customEnd = null;
+    this.cachedCustomRange = null;
     this.projectIds = [];
     this.persist();
     this.requestGeneration += 1;
@@ -673,11 +734,7 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     if (!raw) return defaultDashboardOperationsPreferences();
     try {
       const parsed = JSON.parse(raw) as Partial<TDashboardOperationsPreferences>;
-      if (
-        parsed &&
-        typeof parsed === "object" &&
-        parsed.schema_version === DASHBOARD_OPERATIONS_SCHEMA_VERSION
-      ) {
+      if (parsed && typeof parsed === "object" && parsed.schema_version === DASHBOARD_OPERATIONS_SCHEMA_VERSION) {
         return sanitizeDashboardOperationsPreferences(parsed);
       }
     } catch {

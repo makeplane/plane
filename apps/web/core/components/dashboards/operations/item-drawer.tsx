@@ -114,7 +114,13 @@ export function ItemDrawer({
             setState((prev) => ({ ...prev, status: "error", error: "request_failed" }));
             return;
           }
-          const data = section.data as { rows?: TIssueRow[]; total?: number; page?: number; has_more?: boolean; scope_key?: string };
+          const data = section.data as {
+            rows?: TIssueRow[];
+            total?: number;
+            page?: number;
+            has_more?: boolean;
+            scope_key?: string;
+          };
           setState({
             status: "ok",
             rows: data.rows ?? [],
@@ -142,7 +148,7 @@ export function ItemDrawer({
 
   return (
     <div
-      className="fixed inset-y-0 right-0 z-40 flex w-full max-w-[640px] flex-col border-l border-subtle bg-layer-1 shadow-xl"
+      className="shadow-xl fixed inset-y-0 right-0 z-40 flex w-full max-w-[640px] flex-col border-l border-subtle bg-layer-1"
       data-testid="operations-item-drawer"
       role="dialog"
       aria-label={`Drawer for ${metric}`}
@@ -168,7 +174,7 @@ export function ItemDrawer({
         {state.status === "loading" ? (
           <div className="p-4 text-12 text-tertiary">Loading…</div>
         ) : state.status === "error" ? (
-          <div className="p-4 text-12 text-danger">Failed to load items.</div>
+          <div className="text-danger p-4 text-12">Failed to load items.</div>
         ) : state.rows.length === 0 ? (
           <div className="p-4 text-12 text-tertiary">No matching issues under this scope.</div>
         ) : (

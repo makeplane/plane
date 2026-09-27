@@ -154,9 +154,7 @@ describe("ItemDrawer", () => {
   test("close button invokes onClose", async () => {
     post.mockResolvedValueOnce({ data: itemsResponse(1, false) });
     let closed = false;
-    render(
-      <ItemDrawer workspaceSlug="ws-1" open onClose={() => (closed = true)} metric="overdue" />
-    );
+    render(<ItemDrawer workspaceSlug="ws-1" open onClose={() => (closed = true)} metric="overdue" />);
     const close = await screen.findByTestId("operations-item-drawer-close");
     fireEvent.click(close);
     expect(closed).toBe(true);

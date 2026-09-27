@@ -16,12 +16,7 @@
  */
 
 import { useCallback } from "react";
-import type {
-  TBusinessFilterKey,
-  TBusinessFilters,
-  TDateBucket,
-  TPeriodPreset,
-} from "@plane/types";
+import type { TBusinessFilterKey, TBusinessFilters, TDateBucket, TPeriodPreset } from "@plane/types";
 import {
   useDashboardBusinessFilters,
   useDashboardOperationsStore,
@@ -73,14 +68,7 @@ interface Props {
 }
 
 export function OperationsScopeControls(props: Props): React.ReactElement {
-  const {
-    updatedAt,
-    isRefreshing,
-    onRefresh,
-    onClearFilters,
-    onResetView,
-    onCreateWorkItem,
-  } = props;
+  const { updatedAt, isRefreshing, onRefresh, onClearFilters, onResetView, onCreateWorkItem } = props;
 
   const tab = useDashboardTab();
   const viewMode = useDashboardViewMode();
@@ -103,7 +91,10 @@ export function OperationsScopeControls(props: Props): React.ReactElement {
   ).length;
 
   return (
-    <div className="flex flex-col gap-3 border-b border-subtle bg-layer-1 px-5 py-3" data-testid="operations-scope-controls">
+    <div
+      className="flex flex-col gap-3 border-b border-subtle bg-layer-1 px-5 py-3"
+      data-testid="operations-scope-controls"
+    >
       {/* Tier 1: title + actions */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-baseline gap-3">
@@ -142,9 +133,7 @@ export function OperationsScopeControls(props: Props): React.ReactElement {
               type="button"
               onClick={() => setTab(tabKey)}
               className={`rounded-sm px-3 py-1.5 text-12 ${
-                tab === tabKey
-                  ? "bg-layer-3 font-medium text-primary"
-                  : "text-secondary hover:bg-layer-2"
+                tab === tabKey ? "bg-layer-3 font-medium text-primary" : "text-secondary hover:bg-layer-2"
               }`}
               data-testid={`operations-tab-${tabKey}`}
               aria-current={tab === tabKey ? "page" : undefined}
@@ -154,22 +143,16 @@ export function OperationsScopeControls(props: Props): React.ReactElement {
           ))}
         </nav>
 
-        <div className="mx-2 h-5 w-px bg-subtle" aria-hidden="true" />
+        <div className="bg-subtle mx-2 h-5 w-px" aria-hidden="true" />
 
-        <fieldset
-          className="flex items-center gap-1"
-          aria-label="Scope"
-          data-testid="operations-view-mode"
-        >
+        <fieldset className="flex items-center gap-1" aria-label="Scope" data-testid="operations-view-mode">
           {VIEW_MODE_OPTIONS.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => setViewMode(option.value)}
               className={`rounded-sm px-2.5 py-1 text-12 ${
-                viewMode === option.value
-                  ? "bg-layer-3 font-medium text-primary"
-                  : "text-secondary hover:bg-layer-2"
+                viewMode === option.value ? "bg-layer-3 font-medium text-primary" : "text-secondary hover:bg-layer-2"
               }`}
               aria-pressed={viewMode === option.value}
               data-testid={`operations-view-mode-${option.testId}`}

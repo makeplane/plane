@@ -46,12 +46,14 @@ export function ProgressPanel({ data, isLoading, error }: Props): React.ReactEle
 
 function ProgressBody({ data }: { data: TProgressData }): React.ReactElement {
   const total = data.state_groups.reduce((sum, g) => sum + g.count, 0);
-  const completionPct =
-    data.completion_rate === null ? null : Math.round((data.completion_rate ?? 0) * 100);
+  const completionPct = data.completion_rate === null ? null : Math.round((data.completion_rate ?? 0) * 100);
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex h-3 overflow-hidden rounded-sm border border-subtle bg-layer-2" aria-label="State group distribution">
+      <div
+        className="flex h-3 overflow-hidden rounded-sm border border-subtle bg-layer-2"
+        aria-label="State group distribution"
+      >
         {data.state_groups.map((entry) => {
           const pct = total === 0 ? 0 : (entry.count / total) * 100;
           return (
@@ -82,7 +84,7 @@ function ProgressBody({ data }: { data: TProgressData }): React.ReactElement {
                 aria-hidden="true"
               />
               <span>{STATE_LABELS[group]}</span>
-              <span className="font-mono tabular-nums text-primary">{entry.count}</span>
+              <span className="font-mono text-primary tabular-nums">{entry.count}</span>
               <span className="text-tertiary">({pct.toFixed(0)}%)</span>
             </span>
           );
@@ -126,14 +128,19 @@ export function PanelSurface({
         {subtitle ? <p className="text-11 text-tertiary">{subtitle}</p> : null}
       </header>
       {isLoading && !error ? (
-        <div className="flex flex-1 items-center justify-center text-12 text-tertiary" data-testid={`${testId}-loading`}>
+        <div
+          className="flex flex-1 items-center justify-center text-12 text-tertiary"
+          data-testid={`${testId}-loading`}
+        >
           Loading…
         </div>
       ) : error ? (
-        <div className="flex flex-1 items-center justify-center text-12 text-danger" data-testid={`${testId}-error`}>
+        <div className="text-danger flex flex-1 items-center justify-center text-12" data-testid={`${testId}-error`}>
           Failed to load
         </div>
-      ) : children}
+      ) : (
+        children
+      )}
     </section>
   );
 }

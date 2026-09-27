@@ -15,25 +15,31 @@
  * Data flow:
  * 1. Set identity on mount via `setIdentity(workspaceId, userId)`.
  * 2. Read the canonical scope from the store.
- * 3. Subscribe to the store; recompute the request payload on every
+ * 3. Build the request payload via the central
+ *    `buildScopePayload` helper (one place that injects
+ *    ``assignee_id`` for "My work" and ``start``/``end`` for the
+ *    custom period).
+ * 4. Subscribe to the store; recompute the request payload on every
  *    change.
- * 4. Debounce burst-of-change (250ms) per spec §9.4.
- * 5. POST `/api/workspaces/{slug}/dashboard/overview/` with the
+ * 5. Debounce burst-of-change (250ms) per spec §9.4 via a stable
+ *    string key — NOT the raw payload object — so a re-render that
+ *    doesn't change the payload never re-fires the request.
+ * 6. POST `/api/workspaces/{slug}/dashboard/overview/` with the
  *    canonical scope payload.
- * 6. Race-response rejection: a late response for an old generation is
- *    dropped, never merged into state.
- * 7. Render sections; missing sections (status: "unavailable") get a
+ * 7. Race-response rejection: a late response for an old generation
+ *    is dropped, never merged into state. The scope signature (not
+ *    the request-generation counter alone) is what makes "same
+ *    scope" stable: the shell compares both before committing.
+ * 8. Render sections; missing sections (status: "unavailable") get a
  *    typed placeholder, never fake zeros.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-  TDashboardOverviewResponse,
-  TDashboardScopePayload,
-} from "@plane/types";
+import type { TDashboardOverviewResponse } from "@plane/types";
 import { useUser } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
+import { buildRequestKey, buildScopePayload, buildScopeSignature } from "@plane/shared-state";
 import { OperationsScopeControls } from "./scope-controls";
 import { OperationsOverviewTab } from "./tabs/overview-tab";
 import { OperationsProjectsTab } from "./tabs/projects-tab";
@@ -41,12 +47,12 @@ import { OperationsWorkloadTab } from "./tabs/workload-tab";
 import { OperationsTimelineTab } from "./tabs/timeline-tab";
 import { OperationsInsightsTab } from "./tabs/insights-tab";
 import {
+  useDashboardCustomRange,
   useDashboardOperationsSnapshot,
   useDashboardOperationsStore,
-  useDashboardRequestGeneration,
+  useDashboardProjectIds,
   useDashboardTab,
 } from "./use-operations-store";
-import { buildScopeSignature } from "@plane/shared-state";
 
 /** §9.4 — coalesce a burst of control changes into one request. */
 export const DASHBOARD_OPERATIONS_DEBOUNCE_MS = 250;
@@ -70,7 +76,8 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
   const store = useDashboardOperationsStore();
   const snapshot = useDashboardOperationsSnapshot();
   const tab = useDashboardTab();
-  const generation = useDashboardRequestGeneration();
+  const projectIds = useDashboardProjectIds();
+  const customRange = useDashboardCustomRange();
 
   const [state, setState] = useState<RequestState>({
     status: "idle",
@@ -85,34 +92,52 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
     store.setIdentity(workspaceId, userId);
   }, [store, workspaceId, userId]);
 
-  // Build the canonical scope payload from the store + project IDs.
-  const request = useMemo<TDashboardScopePayload>(() => {
-    const range = store.getCustomRange();
-    const projectIds = store.getProjectIds();
-    const payload: TDashboardScopePayload = {
-      period_preset: snapshot.period_preset,
-      start: snapshot.period_preset === "custom" ? range.start : null,
-      end: snapshot.period_preset === "custom" ? range.end : null,
-      business_filters: snapshot.business_filters,
-      date_bucket: snapshot.date_bucket,
-    };
-    if (projectIds.length > 0) payload.project_ids = projectIds.slice();
-    return payload;
-  }, [
-    snapshot.business_filters,
-    snapshot.date_bucket,
-    snapshot.period_preset,
-    store,
-  ]);
-
-  const scopeSignature = useMemo(
-    () => buildScopeSignature(snapshot, store.getProjectIds()),
-    [snapshot, store]
+  // Central scope payload — every tab and every endpoint reads its
+  // request payload from this single derivation.
+  const request = useMemo(
+    () =>
+      buildScopePayload({
+        prefs: snapshot,
+        customRange,
+        projectIds,
+        currentUserId: userId,
+      }),
+    [snapshot, customRange.start, customRange.end, projectIds, userId]
   );
 
-  const debouncedRequestKey = useDebouncedValue(JSON.stringify(request), DASHBOARD_OPERATIONS_DEBOUNCE_MS);
+  // Scope signature: same inputs as the payload, but with a stable
+  // string-key form for race-response rejection.
+  const scopeSignature = useMemo(
+    () =>
+      buildScopeSignature({
+        prefs: snapshot,
+        projectIds,
+        customRange,
+        currentUserId: userId,
+      }),
+    [snapshot, customRange.start, customRange.end, projectIds, userId]
+  );
+
+  // Debounced key — drives the effect. NOT the raw request object:
+  // re-renders that don't change the payload never re-fire the
+  // request (this is the P0 fix for the prior effect-loop bug).
+  const debouncedRequestKey = useDebouncedValue(buildRequestKey(request), DASHBOARD_OPERATIONS_DEBOUNCE_MS);
+
+  // Keep the latest request on a ref so the overview effect can
+  // read it without depending on the (per-render-new) request
+  // object. The effect itself is keyed on the debounced string and
+  // on the scope signature, so it fires exactly once per settled
+  // scope change.
+  const requestRef = useRef(request);
+  requestRef.current = request;
+
+  const scopeSignatureRef = useRef(scopeSignature);
+  scopeSignatureRef.current = scopeSignature;
 
   // Fetch overview on each scope change; debounced; race-safe.
+  // The effect depends on the debounced string key (NOT `request`)
+  // so the shell fires exactly one request per settled scope and
+  // the request-generation counter is the only "request token".
   useEffect(() => {
     if (!workspaceSlug) return;
     if (debouncedRequestKey === null) return;
@@ -121,33 +146,35 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const requestGeneration = store.beginRequest(scopeSignature);
+    const requestGeneration = store.beginRequest(scopeSignatureRef.current);
     setState((prev) => ({ ...prev, status: "loading", error: null }));
 
     dashboardOperationsService
-      .overview(workspaceSlug, request, controller.signal)
+      .overview(workspaceSlug, requestRef.current, controller.signal)
       .then((response) => {
-        // Race-safe commit: only commit if the response belongs to the
-        // current request generation.
-        const committed = store.commitResponse(requestGeneration, scopeSignature);
+        // Race-safe commit: only commit if this response belongs to
+        // the current request generation AND the scope signature
+        // still matches (a user-driven scope change mid-flight would
+        // have bumped `requestGeneration` AND swapped the signature).
+        const committed = store.commitResponse(requestGeneration, scopeSignatureRef.current);
         if (!committed) return;
         lastCommittedRef.current = requestGeneration;
         setState({ status: "ok", data: response, error: null });
       })
       .catch((err) => {
-        const committed = store.commitResponse(requestGeneration, scopeSignature);
+        const committed = store.commitResponse(requestGeneration, scopeSignatureRef.current);
         if (!committed) return;
         setState({
           status: "error",
           data: null,
-          error: typeof err === "string" ? err : err?.error ?? "request_failed",
+          error: typeof err === "string" ? err : (err?.error ?? "request_failed"),
         });
       });
 
     return () => {
       controller.abort();
     };
-  }, [debouncedRequestKey, scopeSignature, store, workspaceSlug, request]);
+  }, [debouncedRequestKey, store, workspaceSlug]);
 
   const onRefresh = useCallback(() => {
     // Re-key the request payload to force a re-fetch.

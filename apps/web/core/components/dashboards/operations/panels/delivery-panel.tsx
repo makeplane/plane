@@ -34,11 +34,7 @@ export function DeliveryPanel({ data, isLoading, error }: Props): React.ReactEle
 
 function DeliveryBody({ data }: { data: TDeliveryTrendData }): React.ReactElement {
   const { series_created, series_completed, created_total, completed_total, delta } = data;
-  const maxY = Math.max(
-    1,
-    ...series_created.map((p) => p.count),
-    ...series_completed.map((p) => p.count)
-  );
+  const maxY = Math.max(1, ...series_created.map((p) => p.count), ...series_completed.map((p) => p.count));
   const width = 100;
   const height = 60;
 
@@ -57,16 +53,22 @@ function DeliveryBody({ data }: { data: TDeliveryTrendData }): React.ReactElemen
 
       <div className="flex items-center justify-between text-11 text-tertiary">
         <span className="inline-flex items-center gap-1">
-          <span className="inline-block h-2 w-2 rounded-full" style={{ background: COLORS.created }} aria-hidden="true" />
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ background: COLORS.created }}
+            aria-hidden="true"
+          />
           <span>Created {created_total}</span>
         </span>
         <span className="inline-flex items-center gap-1">
-          <span className="inline-block h-2 w-2 rounded-full" style={{ background: COLORS.completed }} aria-hidden="true" />
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ background: COLORS.completed }}
+            aria-hidden="true"
+          />
           <span>Completed {completed_total}</span>
         </span>
-        <span data-testid="delivery-delta">
-          Δ {delta > 0 ? `+${delta}` : delta === 0 ? "0" : delta}
-        </span>
+        <span data-testid="delivery-delta">Δ {delta > 0 ? `+${delta}` : delta === 0 ? "0" : delta}</span>
       </div>
     </div>
   );

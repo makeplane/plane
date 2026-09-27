@@ -27,6 +27,7 @@ import type {
   TDashboardItemsResponse,
   TDashboardOverviewResponse,
   TDashboardScopePayload,
+  TDashboardStandalonePayload,
   TStandaloneEnvelope,
   TWorkloadData,
   TProjectsData,
@@ -94,17 +95,12 @@ export class DashboardOperationsService extends APIService {
 
   /**
    * `POST /api/workspaces/{slug}/dashboard/workload/` — Task 3 endpoint.
-   * Not yet on disk; until backend ships, the call still goes through the
-   * shared envelope contract and the backend returns
-   * `status: "unavailable"` with `reason: "endpoint_pending_task_3"`.
-   *
-   * The frontend never falls back to a fabricated payload; it surfaces the
-   * typed unavailable state to the panel so the UI can show "Loading…" or
-   * "Workload pending backend" instead of fake zeros.
+   * Returns the per-member workload rows + unassigned / inactive buckets
+   * + workspace-wide distinct totals + WIP threshold rule.
    */
   async workload(
     workspaceSlug: string,
-    payload: TDashboardScopePayload = {},
+    payload: TDashboardStandalonePayload = {},
     signal?: AbortSignal
   ): Promise<TStandaloneEnvelope<TWorkloadData>> {
     const config = signal ? { signal } : undefined;
@@ -120,7 +116,7 @@ export class DashboardOperationsService extends APIService {
    */
   async projects(
     workspaceSlug: string,
-    payload: TDashboardScopePayload = {},
+    payload: TDashboardStandalonePayload = {},
     signal?: AbortSignal
   ): Promise<TStandaloneEnvelope<TProjectsData>> {
     const config = signal ? { signal } : undefined;
@@ -133,18 +129,16 @@ export class DashboardOperationsService extends APIService {
 
   /**
    * `POST /api/workspaces/{slug}/dashboard/timeline/` — Task 3 endpoint.
-   * `extras` carries the three independent paging cursors (cycles,
+   * The payload carries the three independent paging cursors (cycles,
    * deadlines, unscheduled) and a shared `page_size`.
    */
   async timeline(
     workspaceSlug: string,
-    payload: TDashboardScopePayload = {},
-    extras: { cycles_page?: number; deadlines_page?: number; unscheduled_page?: number; page_size?: number } = {},
+    payload: TDashboardStandalonePayload = {},
     signal?: AbortSignal
   ): Promise<TStandaloneEnvelope<TTimelineData>> {
-    const merged = { ...payload, ...extras };
     const config = signal ? { signal } : undefined;
-    return this.post(`/api/workspaces/${workspaceSlug}/dashboard/timeline/`, merged, config)
+    return this.post(`/api/workspaces/${workspaceSlug}/dashboard/timeline/`, payload, config)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data ?? err;

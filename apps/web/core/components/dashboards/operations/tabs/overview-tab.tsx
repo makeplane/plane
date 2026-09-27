@@ -7,11 +7,11 @@
 /**
  * Overview tab (spec §6). Renders the six-KPI strip, the 5-segment
  * progress bar, the dual delivery trend, the top-projects list, the
- * team workload preview (deferred to Task 3 — surfaces a typed
- * placeholder), and the needs-attention preview.
+ * team workload preview, and the needs-attention preview.
  *
- * Each section consumes the overview envelope and renders its own
- * typed state — never falls back to a fabricated value.
+ * The workload preview is fetched from /dashboard/workload/ at page=1
+ * size=5 by this parent component; the panel itself stays hook-free
+ * so it remains unit-testable.
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -21,12 +21,21 @@ import type {
   TIssueRow,
   TKpiCounts,
   TProgressData,
+  TSectionStatus,
   TDashboardOverviewResponse,
   TDashboardSection,
   TTopProjectsData,
+  TWorkloadData,
+  TWorkloadMemberRow,
 } from "@plane/types";
+import { buildScopePayload } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
-import { useDashboardOperationsSnapshot } from "../use-operations-store";
+import {
+  useDashboardCustomRange,
+  useDashboardOperationsSnapshot,
+  useDashboardProjectIds,
+} from "../use-operations-store";
+import { classifyDashboardError, classifySection, type TDashboardTabError } from "../error-handling";
 import { KpiStrip } from "../panels/kpi-strip";
 import { ProgressPanel } from "../panels/progress-panel";
 import { DeliveryPanel } from "../panels/delivery-panel";
@@ -47,6 +56,80 @@ interface Props {
 
 export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.ReactElement {
   const snapshot = useDashboardOperationsSnapshot();
+  const projectIds = useDashboardProjectIds();
+  const customRange = useDashboardCustomRange();
+
+  // Workload preview — fetched from /dashboard/workload/ at page=1
+  // size=5. Sorted overdue → blocked → started → open so the busiest
+  // members surface first (per spec §6.5).
+  const [workloadRows, setWorkloadRows] = useState<TWorkloadMemberRow[]>([]);
+  const [workloadSectionStatus, setWorkloadSectionStatus] = useState<TSectionStatus>("ok");
+  const [workloadSectionReason, setWorkloadSectionReason] = useState<string | undefined>(undefined);
+  const [workloadFetchError, setWorkloadFetchError] = useState<TDashboardTabError | null>(null);
+  const workloadGenerationRef = useRef(0);
+  const [workloadReloadKey, setWorkloadReloadKey] = useState(0);
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    const generation = ++workloadGenerationRef.current;
+    setWorkloadFetchError(null);
+    const payload = buildScopePayload({
+      prefs: snapshot,
+      customRange,
+      projectIds,
+      currentUserId: null,
+    });
+    dashboardOperationsService
+      .workload(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
+      .then((envelope) => {
+        if (generation !== workloadGenerationRef.current) return;
+        const section = envelope.sections.find((entry) => entry.section_id === "workload");
+        const classified = classifySection<TWorkloadData>(
+          section as
+            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TWorkloadData; reason?: string }
+            | undefined
+        );
+        if (classified.kind === "ok") {
+          if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
+            return;
+          }
+          setWorkloadSectionStatus("ok");
+          setWorkloadSectionReason(undefined);
+          const sorted = [...classified.data.rows].sort(
+            (a, b) =>
+              b.overdue - a.overdue ||
+              b.blocked - a.blocked ||
+              b.started - a.started ||
+              b.open - a.open ||
+              (a.display_name ?? "").localeCompare(b.display_name ?? "")
+          );
+          setWorkloadRows(sorted.slice(0, 5));
+          return;
+        }
+        if (classified.kind === "unavailable") {
+          setWorkloadSectionStatus("unavailable");
+          setWorkloadSectionReason(classified.reason);
+          setWorkloadRows([]);
+          return;
+        }
+        // section_error / missing section
+        setWorkloadSectionStatus("error");
+        setWorkloadSectionReason(classified.reason);
+        setWorkloadRows([]);
+      })
+      .catch((err) => {
+        if (generation !== workloadGenerationRef.current) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setWorkloadSectionStatus("error");
+        setWorkloadSectionReason(undefined);
+        setWorkloadFetchError(classifyDashboardError(err));
+        setWorkloadRows([]);
+      });
+    return () => {
+      controller.abort();
+    };
+  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, workloadReloadKey]);
 
   // Fetch attention rows for the Needs-attention panel using the
   // dedicated /attention/ endpoint, paginated, so the panel always
@@ -64,14 +147,14 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
     attentionAbortRef.current = controller;
     const generation = ++attentionGenerationRef.current;
     setAttentionStatus("loading");
-    const payload = {
-      period_preset: snapshot.period_preset,
-      business_filters: snapshot.business_filters,
-      page: 1,
-      page_size: 5,
-    };
+    const payload = buildScopePayload({
+      prefs: snapshot,
+      customRange,
+      projectIds,
+      currentUserId: null,
+    });
     dashboardOperationsService
-      .attention(workspaceSlug, payload, controller.signal)
+      .attention(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
       .then((response) => {
         if (generation !== attentionGenerationRef.current) return;
         const section = response.sections.find((entry) => entry.section_id === "attention");
@@ -79,9 +162,6 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
           setAttentionStatus("error");
           return;
         }
-        // The envelope's section.data is `TRequestMetaData | TAttentionPayloadData`;
-        // we already filtered to the attention section by id so the data
-        // is the attention payload.
         const data = section.data as { rows?: TIssueRow[]; reason_counts?: Record<string, number>; total?: number };
         setAttentionRows(data.rows ?? []);
         setAttentionReasonCounts(data.reason_counts ?? {});
@@ -91,7 +171,7 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
         if (generation !== attentionGenerationRef.current) return;
         setAttentionStatus("error");
       });
-  }, [workspaceSlug, snapshot.period_preset, snapshot.business_filters]);
+  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds]);
 
   // Resolve each section by id with type-safety.
   const kpis = useMemo<TKpiCounts | null>(() => {
@@ -103,8 +183,7 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
 
   const progress = useMemo<TProgressData | null>(() => {
     const found = state.data?.sections.find(
-      (s): s is TDashboardSection<TProgressData> & { status: "ok" } =>
-        s.section_id === "progress" && s.status === "ok"
+      (s): s is TDashboardSection<TProgressData> & { status: "ok" } => s.section_id === "progress" && s.status === "ok"
     );
     return found?.data ?? null;
   }, [state.data]);
@@ -133,10 +212,6 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
     return found?.data ?? null;
   }, [state.data]);
 
-  const workloadSection = useMemo(() => {
-    return state.data?.sections.find((s) => s.section_id === "workload_preview");
-  }, [state.data]);
-
   const isLoading = state.status === "loading" || state.status === "idle";
 
   return (
@@ -149,9 +224,12 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <WorkloadPreviewPanel
-          status={workloadSection?.status ?? "unavailable"}
-          reason={workloadSection?.reason}
+          status={workloadSectionStatus}
+          reason={workloadSectionReason}
+          error={workloadFetchError}
           isLoading={isLoading}
+          rows={workloadRows}
+          onRetry={() => setWorkloadReloadKey((n) => n + 1)}
         />
         <AttentionPreviewPanel
           preview={attentionPreview}

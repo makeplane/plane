@@ -78,7 +78,9 @@ export const AddExistingPageToCollectionModal = observer(function AddExistingPag
 
         <div className="max-h-72 overflow-y-auto rounded-md border border-subtle">
           {candidates.length === 0 ? (
-            <div className="px-4 py-8 text-center text-13 text-secondary">{t("wiki_collections.add_existing_page_modal.no_pages_available")}</div>
+            <div className="px-4 py-8 text-center text-13 text-secondary">
+              {t("wiki_collections.add_existing_page_modal.no_pages_available")}
+            </div>
           ) : (
             candidates.map((page) => (
               <button

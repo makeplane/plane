@@ -34,8 +34,7 @@ export function OperationsInsightsTab({ workspaceSlug: _workspaceSlug }: Props):
       <header className="flex flex-col gap-0.5">
         <h2 className="text-13 font-medium text-primary">Insights</h2>
         <p className="text-11 text-tertiary">
-          Customized Insights — reuses the existing Analytics V2 engine; dashboard scope is
-          inherited.
+          Customized Insights — reuses the existing Analytics V2 engine; dashboard scope is inherited.
         </p>
       </header>
       <div className="flex flex-col gap-2 text-12 text-secondary" data-testid="insights-tab-body">
@@ -44,10 +43,10 @@ export function OperationsInsightsTab({ workspaceSlug: _workspaceSlug }: Props):
           <strong>{snapshot.period_preset}</strong>, bucket <strong>{snapshot.date_bucket}</strong>.
         </p>
         <p>
-          Use dimension, metric, breakdown, date grouping, normalization, allocation, chart/table
-          and drilldown controls (existing Analytics V2). The "Open in Analytics" link is omitted
-          until a contract for deep-linking the query is shipped; date-bucket click uses the
-          operational items selection rather than the categorical Analytics drilldown.
+          Use dimension, metric, breakdown, date grouping, normalization, allocation, chart/table and drilldown controls
+          (existing Analytics V2). The "Open in Analytics" link is omitted until a contract for deep-linking the query
+          is shipped; date-bucket click uses the operational items selection rather than the categorical Analytics
+          drilldown.
         </p>
       </div>
     </div>

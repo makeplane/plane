@@ -57,7 +57,7 @@ function KpiCard({ kpi, value, isLoading, error }: KpiCardProps): React.ReactEle
       data-testid={`kpi-${kpi.id}`}
     >
       <span className="text-12 text-tertiary">{kpi.label}</span>
-      <span className="font-mono text-26 font-semibold tabular-nums text-primary">{display}</span>
+      <span className="font-mono text-26 font-semibold text-primary tabular-nums">{display}</span>
     </div>
   );
 }

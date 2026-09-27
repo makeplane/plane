@@ -5,3 +5,4 @@
  */
 
 export * from "./operations-store";
+export * from "./scope-payload";

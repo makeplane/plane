@@ -114,3 +114,29 @@ export function useDashboardRequestGeneration(): number {
     () => store.getRequestGeneration()
   );
 }
+
+/**
+ * Selected project IDs — used by the central scope payload builder.
+ */
+export function useDashboardProjectIds(): readonly string[] {
+  const store = useDashboardOperationsStore();
+  return useSyncExternalStore(
+    (listener) => store.subscribe(listener),
+    () => store.getProjectIds(),
+    () => store.getProjectIds()
+  );
+}
+
+/**
+ * Custom half-open range — used by the central scope payload
+ * builder. Empty (`{start:null,end:null}`) when the user is not on a
+ * custom period.
+ */
+export function useDashboardCustomRange(): { start: string | null; end: string | null } {
+  const store = useDashboardOperationsStore();
+  return useSyncExternalStore(
+    (listener) => store.subscribe(listener),
+    () => store.getCustomRange(),
+    () => store.getCustomRange()
+  );
+}

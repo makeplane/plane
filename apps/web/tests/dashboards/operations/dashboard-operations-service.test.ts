@@ -5,11 +5,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import type {
-  TDashboardAttentionResponse,
-  TDashboardItemsResponse,
-  TDashboardOverviewResponse,
-} from "@plane/types";
+import type { TDashboardAttentionResponse, TDashboardItemsResponse, TDashboardOverviewResponse } from "@plane/types";
 
 /**
  * The service test uses a stub axios instance so the contract is
@@ -50,7 +46,22 @@ const OVERVIEW: TDashboardOverviewResponse = {
   resolved_period: { start: null, end: null, today: "2026-09-27" },
   timezone: "UTC",
   sections: [
-    { status: "ok", section_id: "kpis", data: { total: 0, open: 0, not_started: 0, started: 0, completed: 0, cancelled: 0, overdue: 0, due_today: 0, due_soon: 0, blocked: 0 } },
+    {
+      status: "ok",
+      section_id: "kpis",
+      data: {
+        total: 0,
+        open: 0,
+        not_started: 0,
+        started: 0,
+        completed: 0,
+        cancelled: 0,
+        overdue: 0,
+        due_today: 0,
+        due_soon: 0,
+        blocked: 0,
+      },
+    },
     { status: "unavailable", section_id: "workload_preview", reason: "workload_read_model_pending_task_3" },
   ],
 };
@@ -181,7 +192,7 @@ describe("DashboardOperationsService — endpoint contract", () => {
     expect(result.sections[0].status).toBe("unavailable");
   });
 
-  test("timeline() merges request extras into the payload", async () => {
+  test("timeline() carries the three independent paging cursors", async () => {
     post.mockResolvedValueOnce({
       data: {
         version: 1,
@@ -193,11 +204,13 @@ describe("DashboardOperationsService — endpoint contract", () => {
         sections: [{ status: "unavailable", section_id: "timeline", reason: "endpoint_pending_task_3" }],
       },
     });
-    await service.timeline(
-      "ws-1",
-      { period_preset: "this_month" },
-      { cycles_page: 2, deadlines_page: 3, unscheduled_page: 1, page_size: 25 }
-    );
+    await service.timeline("ws-1", {
+      period_preset: "this_month",
+      cycles_page: 2,
+      deadlines_page: 3,
+      unscheduled_page: 1,
+      page_size: 25,
+    });
     expect(post.mock.calls[0]?.[0]).toBe("/api/workspaces/ws-1/dashboard/timeline/");
     expect(post.mock.calls[0]?.[1]).toEqual({
       period_preset: "this_month",

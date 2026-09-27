@@ -34,15 +34,9 @@ const memoryStorage = (): TDashboardOperationsStorage & { dump: () => Record<str
 
 describe("dashboard operations storage key (§15.1)", () => {
   test("is scoped by workspace and user", () => {
-    expect(dashboardOperationsStorageKey("ws-1", "user-1")).toBe(
-      "plane-dashboard-operations-preferences:ws-1:user-1"
-    );
-    expect(dashboardOperationsStorageKey("ws-1", "user-2")).not.toBe(
-      dashboardOperationsStorageKey("ws-1", "user-1")
-    );
-    expect(dashboardOperationsStorageKey("ws-2", "user-1")).not.toBe(
-      dashboardOperationsStorageKey("ws-1", "user-1")
-    );
+    expect(dashboardOperationsStorageKey("ws-1", "user-1")).toBe("plane-dashboard-operations-preferences:ws-1:user-1");
+    expect(dashboardOperationsStorageKey("ws-1", "user-2")).not.toBe(dashboardOperationsStorageKey("ws-1", "user-1"));
+    expect(dashboardOperationsStorageKey("ws-2", "user-1")).not.toBe(dashboardOperationsStorageKey("ws-1", "user-1"));
   });
 });
 
@@ -262,9 +256,7 @@ describe("dashboard operations store — URL state", () => {
     const storage = memoryStorage();
     const store = new DashboardOperationsStore(storage);
     store.setIdentity("ws-1", "user-1");
-    const url = readDashboardUrlState(
-      new URLSearchParams("tab=timeline&scope=my_work&bucket=month")
-    );
+    const url = readDashboardUrlState(new URLSearchParams("tab=timeline&scope=my_work&bucket=month"));
     store.applyUrlState(url);
     expect(store.getTab()).toBe("timeline");
     expect(store.getViewMode()).toBe("my_work");
@@ -284,14 +276,8 @@ describe("dashboard operations store — URL state", () => {
   });
 
   test("scope signatures treat project order as canonical", () => {
-    const sigA: TDashboardScopeSignature = buildScopeSignature(
-      defaultDashboardOperationsPreferences(),
-      ["p1", "p2"]
-    );
-    const sigB: TDashboardScopeSignature = buildScopeSignature(
-      defaultDashboardOperationsPreferences(),
-      ["p2", "p1"]
-    );
+    const sigA: TDashboardScopeSignature = buildScopeSignature(defaultDashboardOperationsPreferences(), ["p1", "p2"]);
+    const sigB: TDashboardScopeSignature = buildScopeSignature(defaultDashboardOperationsPreferences(), ["p2", "p1"]);
     expect(sigA.project_ids_key).toBe(sigB.project_ids_key);
   });
 });

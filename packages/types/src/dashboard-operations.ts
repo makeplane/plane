@@ -46,12 +46,7 @@ export type TDeliveryBasis = "created_at" | "completed_at";
 export type TDashboardDimension = "assignee" | "project" | "state_group" | "label";
 
 /** Period preset keys accepted by the scope payload. */
-export type TPeriodPreset =
-  | "this_month"
-  | "last_30_days"
-  | "last_7_days"
-  | "none"
-  | "custom";
+export type TPeriodPreset = "this_month" | "last_30_days" | "last_7_days" | "none" | "custom";
 
 // ----- Business filters -------------------------------------------------
 
@@ -101,6 +96,24 @@ export interface TDashboardItemsPayload extends TDashboardScopePayload {
 export interface TDashboardAttentionPayload extends TDashboardScopePayload {
   page?: number;
   page_size?: number;
+}
+
+/**
+ * Extended scope payload for the standalone read-model endpoints
+ * (workload / projects / timeline). Each one accepts the canonical
+ * scope fields plus its own pagination cursors. The shell and the
+ * deep-tab pages compose this payload from `buildScopePayload`.
+ */
+export interface TDashboardStandalonePayload extends TDashboardScopePayload {
+  /** Workload / Projects pagination. */
+  page?: number;
+  page_size?: number;
+  /** Workload-only: rule-based WIP threshold. */
+  wip_threshold?: number;
+  /** Timeline's three independent paging cursors. */
+  cycles_page?: number;
+  deadlines_page?: number;
+  unscheduled_page?: number;
 }
 
 // ----- Response envelope + sections -------------------------------------
@@ -401,11 +414,24 @@ export interface TWorkloadData {
   distinct_totals: TWorkloadDistinctTotals;
   unassigned: TWorkloadUnassignedCounters;
   inactive: TWorkloadInactiveCounters;
+  pagination: TDashboardPagination;
+  wip_threshold: number | null;
+  wip_warning_reason: string | null;
+  /** Member ids on the current page whose started count exceeds the
+   *  WIP threshold. The frontend uses this to surface the rule-based
+   *  warning badge on individual rows, not to compute productivity
+   *  scores. */
+  wip_warning_member_ids: string[];
+  /** Backend-computed scope_key — used by the panel to detect
+   *  cross-scope response leakage. */
+  scope_key: string;
+}
+
+/** Generic pagination block returned by the standalone endpoints. */
+export interface TDashboardPagination {
   page: number;
   page_size: number;
   has_more: boolean;
-  wip_threshold: number | null;
-  wip_warning_reason: string | null;
 }
 
 // ----- Projects (Task 3) ----------------------------------------------
@@ -451,9 +477,9 @@ export interface TProjectsData {
   rows: TProjectBreakdownRow[];
   total_count: number;
   distinct_totals: TProjectsDistinctTotals;
-  page: number;
-  page_size: number;
-  has_more: boolean;
+  pagination: TDashboardPagination;
+  /** Backend-computed scope_key for cross-scope response detection. */
+  scope_key: string;
 }
 
 // ----- Timeline (Task 3) ---------------------------------------------
@@ -478,9 +504,7 @@ export interface TCycleLaneRow {
 export interface TTimelineCycleLanesData {
   rows: TCycleLaneRow[];
   total: number;
-  page: number;
-  page_size: number;
-  has_more: boolean;
+  pagination: TDashboardPagination;
 }
 
 export interface TTimelineDeadlineRow {
@@ -498,9 +522,7 @@ export interface TTimelineDeadlineRow {
 export interface TTimelineDeadlinesData {
   rows: TTimelineDeadlineRow[];
   total: number;
-  page: number;
-  page_size: number;
-  has_more: boolean;
+  pagination: TDashboardPagination;
 }
 
 export type TUnscheduledCycleReason = "missing_start_or_end";
@@ -515,9 +537,7 @@ export interface TUnscheduledCycleRow {
 export interface TUnscheduledCyclesData {
   rows: TUnscheduledCycleRow[];
   total: number;
-  page: number;
-  page_size: number;
-  has_more: boolean;
+  pagination: TDashboardPagination;
 }
 
 export interface TTimelineData {
@@ -525,6 +545,8 @@ export interface TTimelineData {
   deadlines: TTimelineDeadlinesData;
   unscheduled_cycles: TUnscheduledCyclesData;
   total_cycles_in_scope: number;
+  /** Backend-computed scope_key for cross-scope response detection. */
+  scope_key: string;
 }
 
 // ----- Timeline request extras (per contract guide) -------------------

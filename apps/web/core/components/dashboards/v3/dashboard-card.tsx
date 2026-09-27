@@ -172,13 +172,15 @@ export function WorkspaceDashboardCard({
   // reads as 5 distinct categories, not 5 identical tiles.
   const kpiAccentClass =
     card.section === "kpi"
-      ? ({
-          open_work_items: "border-t-2 border-t-accent-blue",
-          in_progress: "border-t-2 border-t-accent-amber",
-          completed: "border-t-2 border-t-accent-green",
-          overdue: "border-t-2 border-t-accent-red",
-          blocked: "border-t-2 border-t-accent-purple",
-        } as Record<string, string>)[card.id] ?? ""
+      ? ((
+          {
+            open_work_items: "border-t-2 border-t-accent-blue",
+            in_progress: "border-t-2 border-t-accent-amber",
+            completed: "border-t-2 border-t-accent-green",
+            overdue: "border-t-2 border-t-accent-red",
+            blocked: "border-t-2 border-t-accent-purple",
+          } as Record<string, string>
+        )[card.id] ?? "")
       : "";
   const header =
     card.section === "kpi" ? (

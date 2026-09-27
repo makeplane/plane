@@ -178,9 +178,7 @@ export function WorkspaceDashboardShell({ workspaceSlug }: Props) {
                 {section.id === "kpi" ? null : (
                   <header className="flex flex-col gap-0.5">
                     <h2 className="text-14 font-medium text-primary">{t(section.titleKey)}</h2>
-                    {section.subtitleKey && (
-                      <p className="text-12 text-tertiary">{t(section.subtitleKey)}</p>
-                    )}
+                    {section.subtitleKey && <p className="text-12 text-tertiary">{t(section.subtitleKey)}</p>}
                   </header>
                 )}
                 <div className={section.id === "kpi" ? KPI_GRID : SECTION_GRID}>

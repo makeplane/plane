@@ -179,13 +179,7 @@ describe("TopProjectsPanel", () => {
 describe("AttentionPreviewPanel", () => {
   test("renders distinct-issue rows with reasons and union total", () => {
     render(
-      <AttentionPreviewPanel
-        preview={ATTENTION_OK}
-        rows={[]}
-        reasonCounts={null}
-        isLoading={false}
-        error={false}
-      />
+      <AttentionPreviewPanel preview={ATTENTION_OK} rows={[]} reasonCounts={null} isLoading={false} error={false} />
     );
     expect(screen.getByTestId("attention-rows")).toBeTruthy();
     expect(screen.getByTestId(`attention-row-iss-1`)).toBeTruthy();
@@ -195,30 +189,79 @@ describe("AttentionPreviewPanel", () => {
 });
 
 describe("WorkloadPreviewPanel", () => {
-  test("renders typed pending placeholder when endpoint is missing", () => {
+  test("renders typed unavailable placeholder when server says unavailable", () => {
     render(
       <WorkloadPreviewPanel
         status="unavailable"
         reason="workload_read_model_pending_task_3"
+        error={null}
         isLoading={false}
+        rows={[]}
+        onRetry={() => undefined}
       />
     );
-    expect(screen.getByTestId("workload-preview-pending")).toBeTruthy();
-    expect(screen.getByText(/Workload read model pending backend/)).toBeTruthy();
+    expect(screen.getByTestId("workload-preview-unavailable")).toBeTruthy();
+    expect(screen.getByText(/Workload unavailable/)).toBeTruthy();
+    expect(screen.getByTestId("workload-preview-retry")).toBeTruthy();
   });
 
-  test("does not surface fabricated roster rows while pending", () => {
+  test("does not surface fabricated roster rows while unavailable", () => {
     render(
       <WorkloadPreviewPanel
         status="unavailable"
         reason="workload_read_model_pending_task_3"
+        error={null}
         isLoading={false}
+        rows={[]}
+        onRetry={() => undefined}
       />
     );
     // No member rows or numeric counts are rendered while the read
-    // model is pending. The panel surfaces a typed unavailable state.
+    // model is unavailable. The panel surfaces a typed state with a
+    // retry button — never fabricated counts.
     expect(screen.queryByTestId("workload-preview-row")).toBeNull();
     expect(screen.queryByText(/\bWIP\b/)).toBeNull();
+  });
+
+  test("renders sorted roster preview when rows are supplied", () => {
+    render(
+      <WorkloadPreviewPanel
+        status="ok"
+        reason={undefined}
+        error={null}
+        isLoading={false}
+        rows={[
+          {
+            member_id: "u-1",
+            display_name: "Alice",
+            avatar_url: null,
+            is_active: true,
+            open: 5,
+            started: 4,
+            overdue: 2,
+            blocked: 1,
+            due_soon: 0,
+            completed_in_period: 0,
+          },
+          {
+            member_id: "u-2",
+            display_name: "Bob",
+            avatar_url: null,
+            is_active: true,
+            open: 3,
+            started: 2,
+            overdue: 0,
+            blocked: 0,
+            due_soon: 0,
+            completed_in_period: 1,
+          },
+        ]}
+        onRetry={() => undefined}
+      />
+    );
+    expect(screen.getByTestId("workload-preview-list")).toBeTruthy();
+    expect(screen.getByText(/Alice/)).toBeTruthy();
+    expect(screen.getByText(/Bob/)).toBeTruthy();
   });
 });
 
