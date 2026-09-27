@@ -5,17 +5,20 @@
  */
 
 /**
- * The fixed Workspace Dashboard (spec §4.1, §6, §7).
+ * The Team Operations Dashboard (spec §4, §6, §7).
  *
- * The plural URL stays — spec §4.1 allows it and it keeps existing bookmarks
- * and the sidebar link working — but the route now renders the single v3 shell
- * directly. There is no dashboard list, no builder entry point and no
- * fallback: with the feature flag off the guard in the layout sends the
- * viewer away before this module is ever reached (spec §22).
+ * The plural URL stays — spec §4.1 allows it and it keeps existing
+ * bookmarks and the sidebar link working — but the route now renders
+ * the operations shell directly. There is no dashboard list, no
+ * builder entry point and no fallback: the route guard in the layout
+ * sends the viewer away before this module is ever reached.
+ *
+ * The legacy `/:dashboardId` redirect remains so old bookmarks land
+ * on the new dashboard rather than a 404.
  */
 
 import { PageHead } from "@/components/core/page-title";
-import { WorkspaceDashboardShell } from "@/components/dashboards/v3/dashboard-shell";
+import { OperationsShell } from "@/components/dashboards/operations/shell";
 import type { Route } from "./+types/page";
 
 function WorkspaceDashboardsPage({ params }: Route.ComponentProps) {
@@ -25,7 +28,7 @@ function WorkspaceDashboardsPage({ params }: Route.ComponentProps) {
     <>
       <PageHead title="Dashboard" />
       <div className="relative h-full w-full overflow-hidden">
-        <WorkspaceDashboardShell workspaceSlug={workspaceSlug} />
+        <OperationsShell workspaceSlug={workspaceSlug} />
       </div>
     </>
   );
