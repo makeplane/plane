@@ -10,8 +10,8 @@ import {
   DashboardOperationsStore,
   type IDashboardOperationsStore,
   type TDashboardOperationsPreferences,
-  type TDashboardTab,
   type TDashboardOperationsStorage,
+  type TDashboardTab,
 } from "@plane/shared-state";
 
 /**
@@ -92,24 +92,8 @@ export function useDashboardPeriod(): {
   const store = useDashboardOperationsStore();
   return useSyncExternalStore(
     (listener) => store.subscribe(listener),
-    () => {
-      const range = store.getCustomRange();
-      return {
-        preset: store.getPeriodPreset(),
-        start: range.start,
-        end: range.end,
-        dateBucket: store.getDateBucket(),
-      };
-    },
-    () => {
-      const range = store.getCustomRange();
-      return {
-        preset: store.getPeriodPreset(),
-        start: range.start,
-        end: range.end,
-        dateBucket: store.getDateBucket(),
-      };
-    }
+    () => store.getPeriodSnapshot(),
+    () => store.getPeriodSnapshot()
   );
 }
 

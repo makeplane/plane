@@ -107,7 +107,7 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
 
   const scopeSignature = useMemo(
     () => buildScopeSignature(snapshot, store.getProjectIds()),
-    [snapshot, store, generation]
+    [snapshot, store]
   );
 
   const debouncedRequestKey = useDebouncedValue(JSON.stringify(request), DASHBOARD_OPERATIONS_DEBOUNCE_MS);

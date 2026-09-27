@@ -319,6 +319,11 @@ export interface IDashboardOperationsStore {
   getBusinessFilters(): TBusinessFilters;
   getIdentity(): { workspaceId: string | null; userId: string | null };
   getCustomRange(): { start: string | null; end: string | null };
+  /**
+   * Stable snapshot for `useSyncExternalStore`. Cached so the same
+   * object reference is returned until any of the four fields change.
+   */
+  getPeriodSnapshot(): { preset: TPeriodPreset; start: string | null; end: string | null; dateBucket: TDateBucket };
   getRequestGeneration(): number;
   getLastCommittedGeneration(): number;
   subscribe(listener: () => void): () => void;
@@ -357,6 +362,15 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
   private listeners = new Set<() => void>();
   private storage: TDashboardOperationsStorage;
   private boundEmit = (): void => this.emit();
+  // Cached derived snapshot for useSyncExternalStore. Updated only when
+  // one of the four fields actually changes; the same object reference
+  // is returned until then.
+  private cachedPeriodSnapshot: {
+    preset: TPeriodPreset;
+    start: string | null;
+    end: string | null;
+    dateBucket: TDateBucket;
+  } | null = null;
 
   constructor(storage: TDashboardOperationsStorage) {
     this.storage = storage;
@@ -412,6 +426,26 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
   }
   getCustomRange(): { start: string | null; end: string | null } {
     return { start: this.customStart, end: this.customEnd };
+  }
+  getPeriodSnapshot(): { preset: TPeriodPreset; start: string | null; end: string | null; dateBucket: TDateBucket } {
+    const next = {
+      preset: this.prefs.period_preset,
+      start: this.customStart,
+      end: this.customEnd,
+      dateBucket: this.prefs.date_bucket,
+    };
+    const cached = this.cachedPeriodSnapshot;
+    if (
+      cached !== null &&
+      cached.preset === next.preset &&
+      cached.start === next.start &&
+      cached.end === next.end &&
+      cached.dateBucket === next.dateBucket
+    ) {
+      return cached;
+    }
+    this.cachedPeriodSnapshot = next;
+    return next;
   }
   getRequestGeneration(): number {
     return this.requestGeneration;
