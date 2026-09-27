@@ -881,7 +881,8 @@
       "no_data": "No data for the current filters.",
       "error": "This card could not be loaded.",
       "truncated": "Results were truncated because the query hit the work budget. Exported values may be partial.",
-      "basis_override": "Counted by {basis}, regardless of the global date basis"
+      "basis_override": "Counted by {basis}, regardless of the global date basis",
+      "workload_by_labels": "Workload by labels"
     },
     "control": {
       "time_range": "Time range",
@@ -910,7 +911,8 @@
       "previous_week": "Previous week",
       "previous_month": "Previous month",
       "previous_quarter": "Previous quarter",
-      "previous_year": "Previous year"
+      "previous_year": "Previous year",
+      "workload_by_labels": "Workload by labels"
     },
     "time": {
       "today": "Today",
@@ -946,6 +948,10 @@
     "action": {
       "view_work_items": "View work items",
       "vs_previous": "vs previous"
+    },
+    "scope": {
+      "personal": "Personal",
+      "team": "Team"
     }
   },
   "pi_chat": "Plane AI",
