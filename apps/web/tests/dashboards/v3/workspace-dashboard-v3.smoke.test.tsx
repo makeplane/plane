@@ -13,7 +13,7 @@
  * Mounts the real route module — `app/(all)/[workspaceSlug]/(projects)/dashboards/page.tsx`
  * — not the shell behind it, so this fails if anyone puts the old dashboard
  * list back on the route or routes `/dashboards` somewhere else. The batch
- * endpoint is mocked; the registry is the source of truth for the twelve cards
+ * endpoint is mocked; the registry is the source of truth for the thirteen cards
  * (§7), so the test asserts the product, not a hard-coded list.
  */
 
@@ -160,7 +160,7 @@ describe("RD-482 cutover — /dashboards renders the v3 Workspace Dashboard", ()
   test("all twelve §7 cards render against a mocked batch endpoint", async () => {
     await mountRoute();
 
-    expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(12);
+    expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(13);
     for (const card of WORKSPACE_DASHBOARD_CARDS) {
       expect(screen.getByTestId(`dashboard-v3-card-frame-${card.id}`)).toBeTruthy();
       expect(screen.getByTestId(`dashboard-v3-card-${card.id}`)).toBeTruthy();
@@ -175,7 +175,7 @@ describe("RD-482 cutover — /dashboards renders the v3 Workspace Dashboard", ()
 
     expect(batchCalls).toHaveLength(1);
     expect(batchCalls[0].slug).toBe("acme");
-    expect(batchCalls[0].payload.queries).toHaveLength(12);
+    expect(batchCalls[0].payload.queries).toHaveLength(13);
     expect(batchCalls[0].payload.queries.map((query) => query.key).toSorted()).toEqual(
       WORKSPACE_DASHBOARD_CARDS.map((card) => card.id).toSorted()
     );

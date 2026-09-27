@@ -10,7 +10,7 @@
 /**
  * Workspace Dashboard v3 shell behaviour (spec §6, §8, §20, §24.2).
  *
- * Asserts the four acceptance behaviours the issue names: the twelve cards
+ * Asserts the four acceptance behaviours the issue names: the thirteen cards
  * render across the §7 sections at every breakpoint, one global-filter change
  * produces exactly one batch request, a card-local change moves only that
  * card's payload, and an empty workspace lands in the data-empty state.
@@ -160,7 +160,7 @@ afterEach(() => {
 });
 
 describe("Workspace Dashboard v3 shell", () => {
-  test("renders all twelve cards across the §7 sections", async () => {
+  test("renders all thirteen cards across the §7 sections", async () => {
     await renderShell();
 
     for (const card of WORKSPACE_DASHBOARD_CARDS) {
@@ -170,6 +170,23 @@ describe("Workspace Dashboard v3 shell", () => {
 
     for (const section of ["kpi", "delivery", "workload", "distribution", "attention"]) {
       expect(screen.getByTestId(`dashboard-v3-section-${section}`)).toBeTruthy();
+    }
+  });
+
+  test("§7.3 H — workload_by_assignee is the only card with a header control", async () => {
+    await renderShell();
+
+    // The mock CustomSearchSelect renders a <select>. Exactly one card ships
+    // the dimension swap: workload_by_assignee.
+    const assignsFrame = screen.getByTestId("dashboard-v3-card-frame-workload_by_assignee");
+    expect(assignsFrame.querySelector("select")).toBeTruthy();
+
+    // The other eleven cards no longer have any header select beyond the
+    // global-controls / project select mocks.
+    const otherCards = WORKSPACE_DASHBOARD_CARDS.filter((card) => card.id !== "workload_by_assignee");
+    for (const card of otherCards) {
+      const frame = screen.getByTestId(`dashboard-v3-card-frame-${card.id}`);
+      expect(frame.querySelector("select")).toBeNull();
     }
   });
 
@@ -206,7 +223,7 @@ describe("Workspace Dashboard v3 shell", () => {
 
     await flush();
     expect(batchCalls).toHaveLength(1);
-    expect(batchCalls[0].payload.queries).toHaveLength(12);
+    expect(batchCalls[0].payload.queries).toHaveLength(13);
   });
 
   test("a card-local change moves only that card's query", async () => {
@@ -290,7 +307,7 @@ describe("Workspace Dashboard v3 shell", () => {
     const second = render(<WorkspaceDashboardShell workspaceSlug="acme" />);
     await flush();
     expect(second.getByTestId("dashboard-v3-card-priority_distribution")).toBeTruthy();
-    expect(batchCalls[batchCalls.length - 1].payload.queries).toHaveLength(12);
+    expect(batchCalls[batchCalls.length - 1].payload.queries).toHaveLength(13);
   });
 
   test("the whole request failing is still per-card, never a blank page", async () => {

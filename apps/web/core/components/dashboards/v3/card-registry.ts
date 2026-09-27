@@ -56,6 +56,7 @@ export type TCardId =
   | "work_state_distribution"
   | "workload_by_assignee"
   | "workload_allocation_matrix"
+  | "workload_by_labels"
   | "priority_distribution"
   | "work_by_project"
   | "attention_required";
@@ -79,7 +80,7 @@ export interface TCardDefinition {
   /** Stable logical id — preferences attach here, never to a layout slot (§5.1). */
   id: TCardId;
   /** §7 A–L label, kept for traceability to the spec and the backend fixture. */
-  letter: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L";
+  letter: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M";
   section: TCardSection;
   titleKey: string;
   /** Full-bleed card — matrix and work-item tables need the width (§6). */
@@ -397,6 +398,30 @@ const WORKLOAD_DEFINITIONS: TCardDefinition[] = [
     // Rows are people; the column dimension is what a mono-project team swaps
     // to `labels` to read the same matrix as a product split (§7.3).
     allowedDimensions: ["assignees", "created_by", "state_group", "priority"],
+    allowedBreakdowns: CATEGORICAL_BREAKDOWNS,
+    timeDependent: false,
+    defaultTimePreset: "none",
+    filters: {},
+  },
+  {
+    id: "workload_by_labels",
+    letter: "M",
+    section: "workload",
+    titleKey: "dashboard_v3.card.workload_by_labels",
+    wide: false,
+    defaults: {
+      metric: "work_item_count",
+      dimension: "labels",
+      breakdown: null,
+      display: "value_and_percentage",
+      normalization: "group_total",
+      allocation: "full_credit",
+      renderer: "bar",
+    },
+    controls: ["metric", "dimension", "breakdown", "display", "normalization", "renderer"],
+    allowedRenderers: ["bar", "matrix", "work_item_table"],
+    allowedMetrics: ["work_item_count", "estimate_points", "pending_work_items"],
+    allowedDimensions: ["labels", "project", "state_group", "priority"],
     allowedBreakdowns: CATEGORICAL_BREAKDOWNS,
     timeDependent: false,
     defaultTimePreset: "none",

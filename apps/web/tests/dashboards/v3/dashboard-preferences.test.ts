@@ -49,7 +49,7 @@ describe("dashboard preferences store", () => {
   test("starts from product defaults for all twelve cards", () => {
     const snapshot = store.getSnapshot();
     expect(snapshot.schema_version).toBe(DASHBOARD_PREFERENCES_SCHEMA_VERSION);
-    expect(Object.keys(snapshot.cards)).toHaveLength(12);
+    expect(Object.keys(snapshot.cards)).toHaveLength(13);
     expect(snapshot.global.timePreset).toBe("this_quarter");
   });
 
@@ -163,7 +163,7 @@ describe("preference sanitisation (§15.3)", () => {
     });
     expect(sanitized.cards).not.toHaveProperty("removed_card");
     expect(sanitized.cards.work_by_project.metric).toBe("estimate_points");
-    expect(Object.keys(sanitized.cards)).toHaveLength(12);
+    expect(Object.keys(sanitized.cards)).toHaveLength(13);
   });
 
   test("a stale renderer the card dropped falls back to the product default", () => {
@@ -181,6 +181,6 @@ describe("preference sanitisation (§15.3)", () => {
       cards: "nope",
     });
     expect(sanitized.global.timePreset).toBe("this_quarter");
-    expect(Object.keys(sanitized.cards)).toHaveLength(12);
+    expect(Object.keys(sanitized.cards)).toHaveLength(13);
   });
 });

@@ -22,7 +22,7 @@ import { CHART_COLOR_PALETTES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import type { TAnalyticsDrilldownRequestV2, TAnalyticsQueryResponseV2 } from "@plane/types";
+import type { TAnalyticsDimensionKey, TAnalyticsDrilldownRequestV2, TAnalyticsQueryResponseV2 } from "@plane/types";
 import { buildInsightChartData, buildMatrixTableModel } from "@/components/analytics/v2/cells";
 import { aggregateCellsToCsvRows, downloadCsv, matrixToCsvRows } from "@/components/analytics/v2/csv";
 import { buildDrilldownRequest } from "@/components/analytics/v2/drilldown";
@@ -44,8 +44,8 @@ import { useInsightValueResolver } from "@/components/analytics/v2/use-insight-v
 
 import type { TWorkspaceDashboardBatchQuery, TWorkspaceDashboardCardResult } from "./batch-composer";
 import { isCardDataEmpty } from "./batch-composer";
+import { CardDateBasisOverrideLabel, WorkloadDimensionSwap } from "./card-controls";
 import type { TCardDefinition, TCardPreference } from "./card-registry";
-import { CardDateBasisOverrideLabel, WorkspaceDashboardCardControls } from "./card-controls";
 
 type Props = {
   card: TCardDefinition;
@@ -64,7 +64,11 @@ export function WorkspaceDashboardCard({
   result,
   workspaceSlug,
   onPreferenceChange,
-  onReset,
+  // §7 — the per-card "Reset" lived in the now-removed `WorkspaceDashboardCardControls`
+  // popover; the only remaining surface that calls it is the global Reset button in
+  // the shell (§8.4). Kept on the card's API so future header affordances can wire
+  // back to it without re-plumbing the shell.
+  onReset: _onReset,
 }: Props) {
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -154,6 +158,11 @@ export function WorkspaceDashboardCard({
   // KPI cards stack title above controls (and collapse the Export button to
   // icon-only to keep the row from wrapping); the other sections keep the
   // side-by-side header that fits their wider columns.
+  //
+  // §7.3 H — `workload_by_assignee` is the *one* card that still ships a
+  // header control: the narrow `WorkloadDimensionSwap` that lets a viewer
+  // re-read the same bar against a different row dimension (assignee →
+  // labels → project → module → cycle). Every other card shows only Export.
   const exportLabel = t("exporter.csv.short_description");
   const header =
     card.section === "kpi" ? (
@@ -163,12 +172,6 @@ export function WorkspaceDashboardCard({
           <CardDateBasisOverrideLabel card={card} />
         </div>
         <div className="flex flex-wrap items-center gap-1">
-          <WorkspaceDashboardCardControls
-            card={card}
-            preference={preference}
-            onChange={onPreferenceChange}
-            onReset={onReset}
-          />
           <Button
             variant="secondary"
             size="sm"
@@ -181,6 +184,28 @@ export function WorkspaceDashboardCard({
           />
         </div>
       </div>
+    ) : card.id === "workload_by_assignee" ? (
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h3 className="text-13 font-medium text-primary">{t(card.titleKey)}</h3>
+          <CardDateBasisOverrideLabel card={card} />
+        </div>
+        <div className="flex flex-shrink-0 flex-wrap items-center gap-1">
+          <WorkloadDimensionSwap
+            value={(preference.dimension as TAnalyticsDimensionKey | null) ?? "assignees"}
+            onChange={(dim) => onPreferenceChange({ dimension: dim })}
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            prependIcon={<Download className="h-3.5 w-3.5" />}
+            onClick={exportCsv}
+            aria-label={exportLabel}
+          >
+            {exportLabel}
+          </Button>
+        </div>
+      </div>
     ) : (
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-0.5">
@@ -188,12 +213,6 @@ export function WorkspaceDashboardCard({
           <CardDateBasisOverrideLabel card={card} />
         </div>
         <div className="flex flex-shrink-0 items-center gap-1">
-          <WorkspaceDashboardCardControls
-            card={card}
-            preference={preference}
-            onChange={onPreferenceChange}
-            onReset={onReset}
-          />
           <Button
             variant="secondary"
             size="sm"
