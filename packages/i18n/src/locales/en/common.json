@@ -942,6 +942,10 @@
       "started": "Started",
       "completed": "Completed",
       "cancelled": "Cancelled"
+    },
+    "action": {
+      "view_work_items": "View work items",
+      "vs_previous": "vs previous"
     }
   },
   "pi_chat": "Plane AI",

@@ -181,7 +181,7 @@ describe("Workspace Dashboard v3 shell", () => {
     const assignsFrame = screen.getByTestId("dashboard-v3-card-frame-workload_by_assignee");
     expect(assignsFrame.querySelector("select")).toBeTruthy();
 
-    // The other eleven cards no longer have any header select beyond the
+    // The other twelve cards no longer have any header select beyond the
     // global-controls / project select mocks.
     const otherCards = WORKSPACE_DASHBOARD_CARDS.filter((card) => card.id !== "workload_by_assignee");
     for (const card of otherCards) {
@@ -270,7 +270,7 @@ describe("Workspace Dashboard v3 shell", () => {
     }
   });
 
-  test("§11 — one failed card keeps the other eleven rendering", async () => {
+  test("§11 — one failed card keeps the other twelve rendering", async () => {
     batchResponse = (payload) => ({
       results: payload.queries.map((query, index) =>
         index === 3

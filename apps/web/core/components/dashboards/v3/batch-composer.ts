@@ -56,7 +56,7 @@ export interface TWorkspaceDashboardGlobalScope {
 }
 
 export type TWorkspaceDashboardCardResult =
-  | { status: "ok"; data: TAnalyticsQueryResponseV2 }
+  | { status: "ok"; data: TAnalyticsQueryResponseV2; comparison?: { totals: Record<string, number> } }
   | { status: "error"; error: { code: string; message: string } }
   | { status: "pending" };
 
@@ -207,10 +207,31 @@ const asQueryResponse = (data: unknown): TAnalyticsQueryResponseV2 | null => {
 };
 
 /**
+ * The engine's V2 wire response exposes a single `previous_total` scalar per
+ * query (one metric per dashboard card today, §7). The card UI wants a
+ * metric-keyed map so the same code path renders a delta for whichever
+ * metric the card is currently showing.
+ */
+const asComparisonTotals = (
+  data: unknown,
+  metricKey: string | undefined
+): { totals: Record<string, number> } | undefined => {
+  if (!data || typeof data !== "object" || !metricKey) return undefined;
+  const resolved = (data as { resolved?: { comparison?: { previous_total?: number } } }).resolved;
+  const previousTotal = resolved?.comparison?.previous_total;
+  if (typeof previousTotal !== "number") return undefined;
+  return { totals: { [metricKey]: previousTotal } };
+};
+
+/**
  * §11 / §24.2.15 — fold the response back into a card-keyed map.
  *
  * A card the engine answered with `error`, or did not answer at all, gets its
  * own error state. The rest of the dashboard keeps rendering.
+ *
+ * §12 — the engine's `resolved.comparison.previous_total` scalar is promoted
+ * into a per-metric `comparison.totals` map so the KPI band can render a
+ * delta without re-deriving the comparison window client-side.
  */
 export function normalizeDashboardBatchResponse(
   results: TAnalyticsBatchResultEntry[] | undefined
@@ -220,8 +241,10 @@ export function normalizeDashboardBatchResponse(
   for (const entry of results ?? []) {
     if (!entry || typeof entry.key !== "string") continue;
     const data = entry.status === "ok" ? asQueryResponse(entry.data) : null;
-    if (data) out[entry.key] = { status: "ok", data };
-    else {
+    if (data) {
+      const metricKey = data.query?.metrics?.[0]?.key;
+      out[entry.key] = { status: "ok", data, comparison: asComparisonTotals(entry.data, metricKey) };
+    } else {
       out[entry.key] = {
         status: "error",
         error: entry.error ?? { code: "INVALID_QUERY", message: "Invalid query" },

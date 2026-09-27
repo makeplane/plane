@@ -163,6 +163,10 @@ export function WorkspaceDashboardCard({
   // header control: the narrow `WorkloadDimensionSwap` that lets a viewer
   // re-read the same bar against a different row dimension (assignee →
   // labels → project → module → cycle). Every other card shows only Export.
+  //
+  // §12 — the KPI header also hosts the period-over-period delta when the
+  // scope carries a comparison. The delta sits under the title so the number
+  // body stays the click target for drill-down.
   const exportLabel = t("exporter.csv.short_description");
   const header =
     card.section === "kpi" ? (
@@ -170,6 +174,17 @@ export function WorkspaceDashboardCard({
         <div className="flex flex-col gap-0.5">
           <h3 className="text-13 font-medium text-primary">{t(card.titleKey)}</h3>
           <CardDateBasisOverrideLabel card={card} />
+          {result?.status === "ok" && result.comparison?.totals?.[metricKey] != null ? (
+            <p data-testid={`dashboard-v3-card-${card.id}-delta`} className="text-12 text-tertiary">
+              {(() => {
+                const current = response?.totals?.[metricKey] ?? 0;
+                const prev = result.comparison.totals[metricKey] ?? 0;
+                const delta = current - prev;
+                const sign = delta > 0 ? "+" : "";
+                return `${sign}${delta} ${t("dashboard_v3.action.vs_previous")}`;
+              })()}
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-1">
           <Button
@@ -277,7 +292,34 @@ export function WorkspaceDashboardCard({
   function renderBody(data: TAnalyticsQueryResponseV2) {
     switch (preference.renderer) {
       case "number":
-        return <NumberRenderer value={data.totals?.[metricKey] ?? data.data?.[0]?.value ?? 0} unit={unit} />;
+        // §13 — the KPI number itself is the drill-down affordance. Wrapping
+        // the renderer in a button means the whole cell opens the drawer;
+        // canDrilldown gates a *cell-scoped* drill (the engine requires a
+        // non-null group value, §25). Without a dimension the drawer still
+        // opens against the card's whole selection so the viewer can browse
+        // the work items behind the KPI.
+        return (
+          <button
+            type="button"
+            onClick={() => {
+              if (canDrilldown) openDrilldown(null, null);
+              else {
+                const { key: _cardKey, ...aggregateQuery } = query;
+                setDrilldown({
+                  query: aggregateQuery,
+                  selection: {} as TAnalyticsDrilldownRequestV2["selection"],
+                  page: 1,
+                  page_size: 25,
+                });
+              }
+            }}
+            aria-label={t("dashboard_v3.action.view_work_items")}
+            data-testid={`dashboard-v3-card-${card.id}-number`}
+            className="focus:ring-layer-transparent-active flex w-full cursor-pointer items-center justify-start rounded-sm p-1 text-left hover:bg-layer-transparent-hover focus:ring-2 focus:outline-none"
+          >
+            <NumberRenderer value={data.totals?.[metricKey] ?? data.data?.[0]?.value ?? 0} unit={unit} />
+          </button>
+        );
       case "gauge":
         return <GaugeRenderer response={data} metricKey={metricKey} unit={unit} />;
       case "bar":

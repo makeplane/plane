@@ -157,7 +157,7 @@ describe("RD-482 cutover — /dashboards renders the v3 Workspace Dashboard", ()
     expect(document.body.textContent).not.toMatch(/create dashboard|add widget|new dashboard/i);
   });
 
-  test("all twelve §7 cards render against a mocked batch endpoint", async () => {
+  test("all thirteen §7 cards render against a mocked batch endpoint", async () => {
     await mountRoute();
 
     expect(WORKSPACE_DASHBOARD_CARDS).toHaveLength(13);
@@ -170,7 +170,7 @@ describe("RD-482 cutover — /dashboards renders the v3 Workspace Dashboard", ()
     }
   });
 
-  test("one batch request carries all twelve card queries for the route's workspace", async () => {
+  test("one batch request carries all thirteen card queries for the route's workspace", async () => {
     await mountRoute("acme");
 
     expect(batchCalls).toHaveLength(1);
