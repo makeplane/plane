@@ -907,6 +907,7 @@
       "modules": "Modules",
       "created_by": "Created by",
       "comparison": "Comparison",
+      "no_comparison": "No comparison",
       "previous_period": "Previous period",
       "previous_week": "Previous week",
       "previous_month": "Previous month",

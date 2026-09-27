@@ -146,6 +146,15 @@ describe("global-controls — Tasks 6+7 (5 new filters + Comparison toggle)", ()
     expect(btn).toHaveTextContent("dashboard_v3.control.previous_week");
   });
 
+  test("Comparison 'none' option renders the 'no comparison' label, not 'previous period'", () => {
+    render(<WorkspaceDashboardGlobalControls scope={baseScope()} onChange={() => {}} onReset={() => {}} />);
+    const btn = screen.getByRole("button", { name: /comparison/i });
+    expect(btn).not.toHaveTextContent("Previous period");
+    // When comparison === "none", the resolved option's query is the i18n key
+    // for the no-comparison option — passed through verbatim by the mock t().
+    expect(btn).toHaveTextContent("dashboard_v3.control.no_comparison");
+  });
+
   test("Comparison toggle hides, then shows when scope.timePreset flips", () => {
     // rtl pattern: start with preset='this_quarter', toggle should be present
     const { rerender } = render(
