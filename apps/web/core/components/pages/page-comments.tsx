@@ -11,7 +11,7 @@ import { useForm, Controller } from "react-hook-form";
 import type { TPageComment, TPageCommentPayload } from "@plane/types";
 import { Button, Avatar } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn } from "@plane/utils";
+import { cn, sanitizeRichHTML } from "@plane/utils";
 import { LiteTextEditor } from "@/components/editor/lite-text";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
@@ -156,7 +156,10 @@ export const PageComments = observer(function PageComments(props: TPageCommentsP
                 onCancel={() => setEditingCommentId(null)}
               />
             ) : (
-              <div className="prose-sm text-sm" dangerouslySetInnerHTML={{ __html: comment.comment_html }} />
+              <div
+                className="prose-sm text-sm"
+                dangerouslySetInnerHTML={{ __html: sanitizeRichHTML(comment.comment_html) }}
+              />
             )}
             {isEditingAllowed && depth === 0 && (
               <div className="text-xs flex gap-2">

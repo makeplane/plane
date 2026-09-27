@@ -131,6 +131,61 @@ export const sanitizeHTML = (htmlString: string) => {
 };
 
 /**
+ * @description Sanitizes HTML string while preserving common safe rich text formatting tags (p, b, i, em, strong, a, ul, ol, li, code, pre, br, span, h1-h6)
+ * @param {string} htmlString
+ * @returns {string} Sanitized HTML string safe for rendering with dangerouslySetInnerHTML
+ */
+export const sanitizeRichHTML = (htmlString: string): string => {
+  if (!htmlString) return "";
+  return sanitizeHtml(htmlString, {
+    allowedTags: [
+      "p",
+      "b",
+      "i",
+      "em",
+      "strong",
+      "a",
+      "ul",
+      "ol",
+      "li",
+      "code",
+      "pre",
+      "br",
+      "span",
+      "blockquote",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "img",
+      "div",
+      "sub",
+      "sup",
+      "hr",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+    ],
+    allowedAttributes: {
+      a: ["href", "name", "target", "rel", "class"],
+      img: ["src", "alt", "title", "width", "height", "class"],
+      span: ["class", "style", "data-*"],
+      div: ["class", "style", "data-*"],
+      p: ["class", "style"],
+      code: ["class"],
+      pre: ["class"],
+      "*": ["data-*"],
+    },
+    allowedSchemes: ["http", "https", "mailto"],
+  });
+};
+
+/**
  * @description: This function will remove all the HTML tags from the string and truncate the string to the specified length
  * @param {string} html
  * @param {number} length
