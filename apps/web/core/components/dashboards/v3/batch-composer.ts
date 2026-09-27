@@ -172,7 +172,7 @@ export function buildCardQuery(
     dimensions,
     filters: intersectFilters(scope.filters, card.filters),
     time,
-    comparison: { type: "none" },
+    comparison: { type: scope.comparison },
     normalization,
     display,
     allocation: pref.allocation,
