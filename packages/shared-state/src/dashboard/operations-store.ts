@@ -437,7 +437,13 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     const switchedWorkspace = this.workspaceId !== null && this.workspaceId !== workspaceId;
     this.workspaceId = workspaceId;
     this.userId = userId;
-    this.projectIds = [];
+    // Preserve `projectIds` reference when it's already empty so
+    // useSyncExternalStore consumers don't see a new reference on
+    // a no-op reset (which double-fires the overview / attention /
+    // workload preview effects on every mount).
+    if (this.projectIds.length !== 0) {
+      this.projectIds = [];
+    }
     this.customStart = null;
     this.customEnd = null;
     this.cachedCustomRange = null;
