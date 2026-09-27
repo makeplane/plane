@@ -889,6 +889,7 @@
       "projects": "Projects",
       "priority": "Priority",
       "states": "States",
+      "selected_count": "{count} selected",
       "reset": "Reset",
       "reset_card": "Reset this card",
       "metric": "Calculate",

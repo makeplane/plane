@@ -27,6 +27,22 @@ import { useProject } from "@/hooks/store/use-project";
 
 import type { TWorkspaceDashboardGlobalScope } from "./batch-composer";
 
+/**
+ * §8 — single-value trigger label. Renders the control label, a separator,
+ * and the resolved option's `query`. When the engine returns a value the
+ * options list doesn't know about (defensive, shouldn't happen) we fall
+ * back to the label so the trigger never reads empty.
+ */
+function TriggerRow({ label, option, fallback }: { label: string; option?: { query: string }; fallback: string }) {
+  return (
+    <span className="flex items-center gap-1 truncate">
+      <span className="text-tertiary">{label}</span>
+      <span className="text-tertiary">·</span>
+      <span className="truncate font-medium">{option?.query ?? fallback}</span>
+    </span>
+  );
+}
+
 /** §8.1 — every preset the engine resolves, workspace-timezone aware. */
 const TIME_PRESET_LABEL_KEYS: { value: TAnalyticsTimePreset; labelKey: string }[] = [
   { value: "today", labelKey: "dashboard_v3.time.today" },
@@ -113,6 +129,13 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           onChange={(value: string[]) => onChange({ timePreset: value[0] as TAnalyticsTimePreset })}
           options={timeOptions}
           label={t("dashboard_v3.control.time_range")}
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.time_range")}
+              option={option}
+              fallback={t("dashboard_v3.control.time_range")}
+            />
+          )}
         />
         <CustomSearchSelect
           value={[scope.dateBasis]}
@@ -121,6 +144,13 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           }
           options={dateBasisOptions}
           label={t("dashboard_v3.control.date_basis")}
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.date_basis")}
+              option={option}
+              fallback={t("dashboard_v3.control.date_basis")}
+            />
+          )}
         />
         <CustomSearchSelect
           value={scope.filters.priority ?? []}
@@ -128,6 +158,14 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           options={priorityOptions}
           label={t("dashboard_v3.control.priority")}
           multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.priority")}
+              option={option}
+              fallback={t("dashboard_v3.control.priority")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
         <CustomSearchSelect
           value={scope.filters.state_group ?? []}
@@ -135,6 +173,14 @@ export function WorkspaceDashboardGlobalControls({ scope, onChange, onReset }: P
           options={stateGroupOptions}
           label={t("dashboard_v3.control.states")}
           multiple
+          selectedContent={(_value, option) => (
+            <TriggerRow
+              label={t("dashboard_v3.control.states")}
+              option={option}
+              fallback={t("dashboard_v3.control.states")}
+            />
+          )}
+          multipleLabel={(count) => t("dashboard_v3.control.selected_count", { count })}
         />
         <Button variant="tertiary" size="sm" onClick={onReset} data-testid="dashboard-v3-reset">
           {t("dashboard_v3.control.reset")}
