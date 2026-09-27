@@ -28,7 +28,9 @@ import type {
   TSnapshotRule,
   TIssueRow,
 } from "@plane/types";
+import { buildScopePayload } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
+import { useUser } from "@/hooks/store/user";
 import { useDashboardOperationsStore } from "./use-operations-store";
 
 interface Props {
@@ -67,6 +69,7 @@ export function ItemDrawer({
   pageSize = 25,
 }: Props): React.ReactElement | null {
   const store = useDashboardOperationsStore();
+  const { data: currentUser } = useUser();
   const [state, setState] = useState<DrawerState>({
     status: "idle",
     rows: [],
@@ -91,11 +94,17 @@ export function ItemDrawer({
         date_end: dateEnd,
       };
 
-      const scopePayload = {
-        period_preset: store.getPeriodPreset(),
-        business_filters: store.getBusinessFilters(),
-        project_ids: store.getProjectIds().length > 0 ? store.getProjectIds().slice() : undefined,
-      };
+      const scopePayload = buildScopePayload({
+        prefs: {
+          view_mode: store.getViewMode(),
+          period_preset: store.getPeriodPreset(),
+          business_filters: store.getBusinessFilters(),
+          date_bucket: "day",
+        },
+        customRange: store.getCustomRange(),
+        projectIds: store.getProjectIds(),
+        currentUserId: currentUser?.id ?? null,
+      });
 
       const payload: TDashboardItemsPayload = {
         ...scopePayload,

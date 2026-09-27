@@ -30,6 +30,7 @@ import type {
 } from "@plane/types";
 import { buildScopePayload } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
+import { useUser } from "@/hooks/store/user";
 import {
   useDashboardCustomRange,
   useDashboardOperationsSnapshot,
@@ -55,9 +56,14 @@ interface Props {
 }
 
 export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.ReactElement {
+  const { data: currentUser } = useUser();
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
   const customRange = useDashboardCustomRange();
+  // Current user id participates in the request key so a "My work"
+  // view changes assignee_id and refetches the overview + previews
+  // — this is the canonical scope parity fix (shell, tabs, drawer).
+  const currentUserId = currentUser?.id ?? null;
 
   // Workload preview — fetched from /dashboard/workload/ at page=1
   // size=5. Sorted overdue → blocked → started → open so the busiest
@@ -78,7 +84,7 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
       prefs: snapshot,
       customRange,
       projectIds,
-      currentUserId: null,
+      currentUserId,
     });
     dashboardOperationsService
       .workload(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
@@ -129,7 +135,7 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
     return () => {
       controller.abort();
     };
-  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, workloadReloadKey]);
+  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, currentUserId, workloadReloadKey]);
 
   // Fetch attention rows for the Needs-attention panel using the
   // dedicated /attention/ endpoint, paginated, so the panel always
@@ -151,7 +157,7 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
       prefs: snapshot,
       customRange,
       projectIds,
-      currentUserId: null,
+      currentUserId,
     });
     dashboardOperationsService
       .attention(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
@@ -171,7 +177,7 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
         if (generation !== attentionGenerationRef.current) return;
         setAttentionStatus("error");
       });
-  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds]);
+  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, currentUserId]);
 
   // Resolve each section by id with type-safety.
   const kpis = useMemo<TKpiCounts | null>(() => {
