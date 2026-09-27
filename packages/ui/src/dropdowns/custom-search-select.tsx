@@ -42,6 +42,8 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     tabIndex,
     noResultsMessage = "No matches found",
     defaultOpen = false,
+    selectedContent,
+    multipleLabel,
   } = props;
   const [query, setQuery] = useState("");
 
@@ -134,7 +136,16 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                   )}
                   onClick={toggleDropdown}
                 >
-                  {label}
+                  {(() => {
+                    const selectedOption = options?.find((o) => o.value === value?.[0]);
+                    if (multiple && Array.isArray(value) && value.length > 1) {
+                      return multipleLabel ? multipleLabel(value.length) : `${value.length} selected`;
+                    }
+                    if (selectedContent && Array.isArray(value) && value.length === 1) {
+                      return selectedContent(value[0], selectedOption);
+                    }
+                    return label;
+                  })()}
                   {!noChevron && !disabled && (
                     <ChevronDownIcon className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
                   )}

@@ -73,6 +73,10 @@ interface CustomSearchSelectProps {
   onClose?: () => void;
   noResultsMessage?: string;
   options?: ICustomSearchSelectOption[];
+  /** Render inside the trigger button when exactly one value is selected. */
+  selectedContent?: (value: any, option?: ICustomSearchSelectOption) => React.ReactNode;
+  /** Render inside the trigger button when more than one value is selected. */
+  multipleLabel?: (count: number) => string;
 }
 
 interface SingleValueProps {
