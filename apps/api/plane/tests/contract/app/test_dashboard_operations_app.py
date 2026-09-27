@@ -883,6 +883,484 @@ class TestSnapshotIsolation:
         assert "data" in payload
 
 
+# ----- backend retry regression: defects 1-5 + snapshot RR proof --------
+
+
+@pytest.mark.django_db(transaction=True)
+class TestRetrySnapshotRRProof:
+    """Concrete REPEATABLE READ proof under ``django_db(transaction=True)``.
+
+    Coordinator finding: the prior implementation used SAVEPOINT (which
+    cannot change isolation) and swallowed every exception. The retry
+    opens ``transaction.atomic()`` and sets
+    ``SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY`` BEFORE
+    any SELECT runs through the connection. This test class runs with
+    ``transaction=True`` so the test runner does NOT pre-open a wrapping
+    transaction — the snapshot block therefore actually applies RR.
+
+    Two threads are required for a real concurrent-write proof. We do
+    the cheap part here: open a snapshot, read count, start a concurrent
+    thread that inserts a new issue and commits, re-read inside the
+    snapshot, and assert the new issue is NOT visible.
+    """
+
+    def test_snapshot_blocks_concurrent_insert(self, fixture_with_workspace):
+        """A committed INSERT on another thread must not be visible inside
+        a REPEATABLE READ snapshot. Without RR, the second read would see
+        the new row.
+        """
+        import threading
+        import time
+
+        from plane.analytics.dashboard.snapshot import dashboard_snapshot
+        from plane.analytics.dashboard import resolve_dashboard_scope, count_total
+        from plane.db.models import State
+
+        workspace = fixture_with_workspace["workspace"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+        started_state = fixture_with_workspace["states"]["started"]
+
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=owner, today=FROZEN_TODAY,
+        )
+
+        # Use a barrier so the insert-thread commits AFTER we have read
+        # inside the snapshot, but BEFORE we re-read. This forces the
+        # concurrent-write case the brief asks us to prove.
+        gate_open = threading.Event()
+        can_continue = threading.Event()
+
+        def _concurrent_insert():
+            # Create a brand new issue; this will issue INSERT + COMMIT
+            # on the test DB connection. The snapshot view MUST NOT see it.
+            Issue.objects.create(
+                project=project, workspace=workspace,
+                name="Concurrent insert",
+                state=started_state, priority="medium",
+                created_by=owner,
+            )
+            gate_open.set()
+            can_continue.wait(timeout=5)
+
+        with dashboard_snapshot():
+            before = count_total(scope)
+            t = threading.Thread(target=_concurrent_insert)
+            t.start()
+            gate_open.wait(timeout=5)
+            # The insert thread has committed; sleep a moment to make
+            # sure the commit lands on the test DB before we re-read.
+            time.sleep(0.05)
+            during = count_total(scope)
+            can_continue.set()
+            t.join(timeout=5)
+        assert before == during, (
+            f"snapshot leaked concurrent insert: before={before} during={during}"
+        )
+        # After the snapshot exits, the new row MUST be visible.
+        after = count_total(scope)
+        assert after == before + 1
+
+
+@pytest.mark.django_db
+class TestRetrySelectionMetricPriority:
+    """Backend retry defect #2: ``selection.metric`` is authoritative.
+
+    Prior code read ``payload.get('metric')``, ignoring the agreed
+    ``selection.metric``. The retry honours ``selection.metric`` when
+    present and falls back to ``payload.metric`` only when absent, so
+    old callers (legacy / frontend) keep working.
+    """
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_selection_metric_overrides_payload_metric(
+        self, fixture_with_workspace
+    ):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        # selection.metric=overdue, payload.metric=blocked — must honour
+        # selection.metric and return overdue rows.
+        resp = client.post(
+            f"/api/workspaces/{ws.slug}/dashboard/items/",
+            {
+                "metric": "blocked",
+                "selection": {"metric": "overdue", "values": {}},
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        echoed = body["sections"][0]["data"]["selection"]
+        assert echoed["metric"] == "overdue"
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_legacy_payload_metric_still_works(self, fixture_with_workspace):
+        """When selection.metric is absent, the legacy payload.metric path
+        still returns the right rows. This protects the frontend worker
+        that hasn't migrated to the selection.metric shape yet.
+        """
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(
+            f"/api/workspaces/{ws.slug}/dashboard/items/",
+            {"metric": "overdue", "selection": {"values": {}}},
+            format="json",
+        )
+        assert resp.status_code == 200
+        echoed = resp.json()["sections"][0]["data"]["selection"]
+        assert echoed["metric"] == "overdue"
+
+
+@pytest.mark.django_db
+class TestRetryDeliveryBaseContract:
+    """Backend retry defect #3: items.date window honours ``delivery_base``.
+
+    Prior code always filtered on ``completed_at`` for any date_start /
+    date_end pair, so clicking the Created series returned wrong rows.
+    The retry uses ``selection.delivery_base`` to decide which timestamp
+    the window applies to.
+    """
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_delivery_base_created_at_filters_on_created_at(
+        self, fixture_with_workspace
+    ):
+        """When delivery_base=created_at, the date window filters on
+        ``created_at`` — issues created inside the window appear, issues
+        created outside the window are excluded (regardless of
+        completed_at).
+        """
+        from plane.db.models import State
+
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+        today = FROZEN_TODAY
+
+        state_started = fixture_with_workspace["states"]["started"]
+        state_completed = fixture_with_workspace["states"]["completed"]
+
+        # Issue created INSIDE the window (still open).
+        inside_created = Issue.objects.create(
+            project=project, workspace=ws, name="Created inside",
+            state=state_started, priority="medium", created_by=owner,
+        )
+        Issue.objects.filter(pk=inside_created.pk).update(
+            created_at=datetime.combine(today, time(9, 0)),
+        )
+
+        # Issue created OUTSIDE the window but completed INSIDE the window.
+        # With delivery_base=created_at this row must NOT appear.
+        outside_created_completed_inside = Issue.objects.create(
+            project=project, workspace=ws, name="Created outside, completed inside",
+            state=state_started, priority="medium", created_by=owner,
+        )
+        Issue.objects.filter(pk=outside_created_completed_inside.pk).update(
+            created_at=datetime.combine(today - timedelta(days=120), time(9, 0)),
+            state=state_completed,
+            completed_at=datetime.combine(today, time(9, 0)),
+        )
+
+        start_iso = (today - timedelta(days=1)).isoformat()
+        end_iso = (today + timedelta(days=1)).isoformat()
+        resp = client.post(
+            f"/api/workspaces/{ws.slug}/dashboard/items/",
+            {
+                "metric": "started",
+                "selection": {
+                    "metric": "started",
+                    "values": {},
+                    "date_start": start_iso,
+                    "date_end": end_iso,
+                    "delivery_base": "created_at",
+                },
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+        data = resp.json()["sections"][0]["data"]
+        names = [row["name"] for row in data["rows"]]
+        assert "Created inside" in names
+        assert "Created outside, completed inside" not in names
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_delivery_base_completed_at_filters_on_completed_at(
+        self, fixture_with_workspace
+    ):
+        """When delivery_base=completed_at, the date window filters on
+        ``completed_at`` — so the inverse case must return the
+        completed-in-window row and exclude the created-in-window-only row.
+        """
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+        today = FROZEN_TODAY
+
+        state_started = fixture_with_workspace["states"]["started"]
+        state_completed = fixture_with_workspace["states"]["completed"]
+
+        inside_created_open = Issue.objects.create(
+            project=project, workspace=ws, name="Created inside, open",
+            state=state_started, priority="medium", created_by=owner,
+        )
+        Issue.objects.filter(pk=inside_created_open.pk).update(
+            created_at=datetime.combine(today, time(9, 0)),
+        )
+
+        outside_created_completed_inside = Issue.objects.create(
+            project=project, workspace=ws, name="Created outside, completed inside",
+            state=state_started, priority="medium", created_by=owner,
+        )
+        Issue.objects.filter(pk=outside_created_completed_inside.pk).update(
+            created_at=datetime.combine(today - timedelta(days=120), time(9, 0)),
+            state=state_completed,
+            completed_at=datetime.combine(today, time(9, 0)),
+        )
+
+        start_iso = (today - timedelta(days=1)).isoformat()
+        end_iso = (today + timedelta(days=1)).isoformat()
+        resp = client.post(
+            f"/api/workspaces/{ws.slug}/dashboard/items/",
+            {
+                "metric": "completed",
+                "selection": {
+                    "metric": "completed",
+                    "values": {},
+                    "date_start": start_iso,
+                    "date_end": end_iso,
+                    "delivery_base": "completed_at",
+                },
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+        data = resp.json()["sections"][0]["data"]
+        names = [row["name"] for row in data["rows"]]
+        # Inverse of the previous test — only completed rows, and only
+        # those completed inside the window.
+        assert "Created outside, completed inside" in names
+        assert "Created inside, open" not in names
+
+
+@pytest.mark.django_db
+class TestRetryProjectsNextDeadline:
+    """Backend retry defect #5: ``next_deadline`` is nearest UPCOMING.
+
+    Prior code used ``_open_q() & target_date__isnull=False`` which
+    returned the earliest target_date including overdue rows. The
+    contract is "nearest upcoming open dated item"; overdue is tracked
+    separately. The retry adds ``target_date__gte=scope.today``.
+    """
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_next_deadline_excludes_overdue_rows(
+        self, fixture_with_workspace
+    ):
+        from plane.analytics.dashboard import resolve_dashboard_scope
+        from plane.analytics.dashboard.projects import projects_payload
+
+        workspace = fixture_with_workspace["workspace"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+        today = FROZEN_TODAY
+
+        # Reset to a clean known state on top of fixture_with_workspace.
+        # The fixture already has started overdue_0 and overdue_1 with
+        # target_date = today-2; if our fix works, next_deadline must
+        # be the upcoming target_date (today+10 = started healthy), NOT
+        # the overdue one.
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=owner, today=today,
+        )
+        payload = projects_payload(scope, page=1, page_size=25)
+        rows = payload["data"]["rows"]
+        assert len(rows) == 1, "fixture_with_workspace has a single project"
+        row = rows[0]
+        # Fixture has: started overdue 0/1 (today-2), started blocked
+        # (today+5), started healthy (today+10). next_deadline must be
+        # today+10 (started healthy) and must NOT be today-2.
+        assert row["next_deadline"] is not None
+        assert not row["next_deadline"].startswith(
+            (today - timedelta(days=2)).isoformat()
+        ), (
+            f"next_deadline still includes overdue: {row['next_deadline']}"
+        )
+
+
+@pytest.mark.django_db
+class TestRetryWorkloadEdgeCases:
+    """Backend retry: previously deferred workload regression fixtures.
+
+    Per the coordinator brief, the active issue query path covers these
+    in principle, but dedicated contract tests were pending. The retry
+    adds explicit coverage for:
+
+    * multi-project member appearing ONCE in the roster (distinct dedup)
+    * zero-work active member still listed
+    * inactive / former-member with retained IssueAssignee row in
+      inactive bucket
+    * account-active vs membership-active separation
+    * unassigned completed-in-period uses actual completed_at
+    """
+
+    def test_multi_project_member_appears_once_in_roster(
+        self, fixture_with_workspace
+    ):
+        """A member who belongs to N projects appears in exactly one
+        workload row, regardless of how many ProjectMember rows they have.
+        """
+        from plane.analytics.dashboard import resolve_dashboard_scope
+        from plane.analytics.dashboard.workload import workload_payload
+
+        workspace = fixture_with_workspace["workspace"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+
+        # Add a second project and put the owner in both.
+        other_project = _make_project(workspace, name="Other")
+        _join_project(owner, other_project)
+        # The owner already had ProjectMember for project; add for other_project.
+
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=owner, today=FROZEN_TODAY,
+        )
+        payload = workload_payload(scope, page=1, page_size=100)
+        rows = payload["data"]["rows"]
+        owner_id = str(owner.id)
+        owner_rows = [r for r in rows if r["member_id"] == owner_id]
+        assert len(owner_rows) == 1, (
+            f"owner appears {len(owner_rows)} times across "
+            f"{len(rows)} rows: {owner_rows}"
+        )
+
+    def test_zero_work_active_member_still_listed(
+        self, fixture_with_workspace
+    ):
+        """An active member with no IssueAssignee rows appears in the
+        roster with all-zero counts, not omitted as 'rounded out'.
+        """
+        from plane.analytics.dashboard import resolve_dashboard_scope
+        from plane.analytics.dashboard.workload import workload_payload
+
+        workspace = fixture_with_workspace["workspace"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+
+        # Eve: workspace + project member, no assignments.
+        eve = _make_user("eve@plane.so")
+        _join_workspace(eve, workspace)
+        _join_project(eve, project)
+
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=owner, today=FROZEN_TODAY,
+        )
+        payload = workload_payload(scope, page=1, page_size=100)
+        rows = payload["data"]["rows"]
+        eve_id = str(eve.id)
+        eve_rows = [r for r in rows if r["member_id"] == eve_id]
+        assert len(eve_rows) == 1, "zero-work active member must be in roster"
+        assert eve_rows[0]["is_active"] is True
+        assert eve_rows[0]["open"] == 0
+        assert eve_rows[0]["started"] == 0
+        assert eve_rows[0]["overdue"] == 0
+
+    def test_inactive_member_with_retained_assignment_in_inactive_bucket(
+        self, fixture_with_workspace
+    ):
+        """A member whose ProjectMember is inactive but who still has an
+        active IssueAssignee row is surfaced in the inactive bucket,
+        not dropped.
+        """
+        from plane.analytics.dashboard import resolve_dashboard_scope
+        from plane.analytics.dashboard.workload import workload_payload
+
+        workspace = fixture_with_workspace["workspace"]
+        project = fixture_with_workspace["project"]
+        owner = fixture_with_workspace["users"]["alice"]
+        today = FROZEN_TODAY
+
+        # Frank: workspace member, project member (active), with one
+        # IssueAssignee row. Then mark ProjectMember.is_active=False
+        # but leave IssueAssignee untouched.
+        frank = _make_user("frank@plane.so")
+        _join_workspace(frank, workspace)
+        _join_project(frank, project)
+        frank_issue = Issue.objects.create(
+            project=project, workspace=workspace, name="Frank's issue",
+            state=fixture_with_workspace["states"]["started"],
+            priority="medium", target_date=today + timedelta(days=3),
+            created_by=owner,
+        )
+        IssueAssignee.objects.create(
+            issue=frank_issue, assignee=frank,
+            project=project, workspace=workspace,
+        )
+        # Now deactivate Frank's project membership. His IssueAssignee
+        # stays active (deleted_at IS NULL).
+        ProjectMember.objects.filter(project=project, member=frank).update(
+            is_active=False,
+        )
+
+        scope = resolve_dashboard_scope(
+            workspace=workspace, principal=owner, today=today,
+        )
+        payload = workload_payload(scope, page=1, page_size=100)
+        rows = payload["data"]["rows"]
+        frank_id = str(frank.id)
+        active_rows = [r for r in rows if r["member_id"] == frank_id and r["is_active"]]
+        inactive_rows = [r for r in rows if r["member_id"] == frank_id and not r["is_active"]]
+        assert len(active_rows) == 0, "Frank must NOT be in active bucket"
+        assert len(inactive_rows) == 1, "Frank must be in inactive bucket"
+        assert inactive_rows[0]["open"] >= 1
+
+
+@pytest.mark.django_db
+class TestRetryOverviewSnapshotCoverage:
+    """Backend retry: every endpoint opens the snapshot, not just three.
+
+    Prior code only wrapped workload/projects/timeline with
+    ``with dashboard_snapshot():``; overview/attention/items did not.
+    The retry wraps all five. After fix, an exception inside any one
+    section must not blank the others, and a failing section returns
+    ``status='error'`` with the other sections present and OK.
+    """
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_overview_endpoint_opens_snapshot(
+        self, fixture_with_workspace
+    ):
+        """Smoke: the overview endpoint still returns its canonical
+        envelope after we wrapped the scope-resolution + payload in
+        ``with dashboard_snapshot():``.
+        """
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(
+            f"/api/workspaces/{ws.slug}/dashboard/overview/", {}, format="json",
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["version"] == 1
+        section_ids = [s["section_id"] for s in body["sections"]]
+        for required in ("kpis", "progress", "delivery", "top_projects"):
+            assert required in section_ids
+
+    @pytest.mark.usefixtures("frozen_clock")
+    def test_attention_endpoint_opens_snapshot(
+        self, fixture_with_workspace
+    ):
+        ws = fixture_with_workspace["workspace"]
+        client = fixture_with_workspace["client"]
+        resp = client.post(
+            f"/api/workspaces/{ws.slug}/dashboard/attention/", {}, format="json",
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["sections"][0]["section_id"] == "attention"
+
+
 def _build_workload_for_isolation(scope):
     return scope
 

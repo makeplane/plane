@@ -220,23 +220,62 @@ def list_items(scope: DashboardScope, request: ItemRequest) -> Dict[str, Any]:
     Respects ItemRequest selection.values and custom date window. Counts
     the same selector layer that the rows use, so the dashboard
     ``count_*`` helpers agree with ``data.total`` for the same metric.
+
+    Date filtering contract: ``delivery_base`` chooses WHICH timestamp
+    drives the date window. ``created_at`` clicks bucket by creation;
+    ``completed_at`` clicks bucket by completion. ``completed_in_period``
+    metric is an explicit exception (always uses completed_at) so the
+    completion-trend drilldown stays consistent with the overview KPI.
+
+    Distinct semantics: every join (cycle_id, module_id, label_id,
+    assignee_id) may duplicate rows; the queryset is forced to
+    ``.distinct()`` after joins so count/list parity and pagination are
+    consistent under multi-relation selections.
     """
     selection = DashboardSelection(metric=request.metric) if request.metric else None
     qs = list_issues(scope, rule=request.metric, selection=selection)
     qs = _apply_selection_filters(qs, request)
+    # Any join selector (cycle_id, module_id, label_id, assignee_id)
+    # can fan out rows. Apply .distinct() here so the count, the slice,
+    # and the iteration all agree on the same unique issue IDs.
+    qs = qs.distinct()
     qs = qs.order_by(*request.order_by)
 
     start, end = _resolve_custom_window(request, scope)
-    if request.metric == "completed_in_period" or request.date_start or request.date_end:
+    # Date window: only apply when the metric is completed_in_period OR
+    # the caller supplied explicit date_start/date_end. The timestamp
+    # field is driven by ``delivery_base`` so a Created-series click
+    # returns created_at-bucketed rows and a Completed-series click
+    # returns completed_at-bucketed rows.
+    if request.metric == "completed_in_period":
+        # Explicit completion metric: always bucket by completed_at
+        # regardless of delivery_base so the drilldown agrees with the
+        # overview's completed-in-period count.
+        date_field = "completed_at"
         if start is not None:
             qs = qs.filter(completed_at__gte=start)
         if end is not None:
             qs = qs.filter(completed_at__lt=end)
+    elif request.date_start or request.date_end:
+        # Custom date window from the caller — apply to whichever
+        # timestamp the caller's delivery_base chose. Default created_at
+        # so a click on the Created series returns creation rows.
+        date_field = request.delivery_base or "created_at"
+        if date_field not in ("created_at", "completed_at"):
+            date_field = "created_at"
+        if start is not None:
+            qs = qs.filter(**{f"{date_field}__gte": start})
+        if end is not None:
+            qs = qs.filter(**{f"{date_field}__lt": end})
 
     total = qs.values("id").distinct().count()
     start_idx = (request.page - 1) * request.page_size
     end_idx = start_idx + request.page_size
-    rows = list(qs.values(*_ISSUE_FIELDS)[start_idx:end_idx])
+    # Final defensive distinct before slicing — keeps the page aligned
+    # with the count even when the ORM emits a duplicate-producing join.
+    rows = list(
+        qs.values(*_ISSUE_FIELDS).distinct()[start_idx:end_idx]
+    )
 
     return {
         "status": "ok",

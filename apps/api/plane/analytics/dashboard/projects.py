@@ -78,6 +78,14 @@ def _build_projects(
     if scope.period.end is not None:
         completed_period_q &= Q(completed_at__lt=scope.period.end)
 
+    # next_deadline = nearest UPCOMING open dated item.
+    # _open_q() alone would include overdue rows; the contract is
+    # "nearest upcoming", so we restrict to target_date >= scope.today.
+    upcoming_open_q = (
+        Q(state__group__in=["backlog", "unstarted", "started"])
+        & Q(target_date__isnull=False, target_date__gte=scope.today)
+    )
+
     rows_qs = (
         base.values(
             "project_id", "project__name",
@@ -94,7 +102,7 @@ def _build_projects(
             completed_in_period=Count("id", filter=completed_period_q, distinct=True),
             total=Count("id", distinct=True),
             next_deadline_target=__import__("django.db.models", fromlist=["Min"]).Min(
-                "target_date", filter=_open_q() & Q(target_date__isnull=False)
+                "target_date", filter=upcoming_open_q
             ),
         )
     )

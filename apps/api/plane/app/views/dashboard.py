@@ -127,23 +127,24 @@ class DashboardOverviewEndpoint(BaseAPIView):
         except DashboardContractError as exc:
             return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
-        try:
-            scope = resolve_dashboard_scope(
-                workspace=workspace,
-                principal=request.user,
-                payload=payload,
-            )
-        except DashboardContractError as exc:
-            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        with dashboard_snapshot():
+            try:
+                scope = resolve_dashboard_scope(
+                    workspace=workspace,
+                    principal=request.user,
+                    payload=payload,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
-        requested_bucket = str(payload.get("date_bucket", "day"))
-        if requested_bucket not in VALID_DATE_BUCKETS:
-            return _bad_request(
-                f"date_bucket must be one of {sorted(VALID_DATE_BUCKETS)}",
-                code="INVALID_PAYLOAD",
-            )
+            requested_bucket = str(payload.get("date_bucket", "day"))
+            if requested_bucket not in VALID_DATE_BUCKETS:
+                return _bad_request(
+                    f"date_bucket must be one of {sorted(VALID_DATE_BUCKETS)}",
+                    code="INVALID_PAYLOAD",
+                )
 
-        sections = overview_payload(scope, date_bucket=requested_bucket)
+            sections = overview_payload(scope, date_bucket=requested_bucket)
         return Response(envelope(scope, sections), status=status.HTTP_200_OK)
 
 
@@ -171,25 +172,26 @@ class DashboardAttentionEndpoint(BaseAPIView):
         except DashboardContractError as exc:
             return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
-        try:
-            scope = resolve_dashboard_scope(
-                workspace=workspace,
-                principal=request.user,
-                payload=payload,
-            )
-        except DashboardContractError as exc:
-            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        with dashboard_snapshot():
+            try:
+                scope = resolve_dashboard_scope(
+                    workspace=workspace,
+                    principal=request.user,
+                    payload=payload,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
-        from plane.analytics.dashboard.items import paginated_attention
-        try:
-            page = int(payload.get("page", 1))
-            page_size = int(payload.get("page_size", 25))
-        except (ValueError, TypeError) as exc:
-            return _bad_request(f"Invalid attention payload: {exc}", code="INVALID_PAYLOAD", exc=exc)
-        page = max(1, page)
-        page_size = max(1, min(page_size, 100))
+            from plane.analytics.dashboard.items import paginated_attention
+            try:
+                page = int(payload.get("page", 1))
+                page_size = int(payload.get("page_size", 25))
+            except (ValueError, TypeError) as exc:
+                return _bad_request(f"Invalid attention payload: {exc}", code="INVALID_PAYLOAD", exc=exc)
+            page = max(1, page)
+            page_size = max(1, min(page_size, 100))
 
-        data = paginated_attention(scope, page=page, page_size=page_size)
+            data = paginated_attention(scope, page=page, page_size=page_size)
         # Wrap as a section dict for envelope consistency.
         section = {
             "status": "ok",
@@ -373,59 +375,68 @@ class DashboardItemsEndpoint(BaseAPIView):
         except DashboardContractError as exc:
             return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
-        try:
-            scope = resolve_dashboard_scope(
-                workspace=workspace,
-                principal=request.user,
-                payload=payload,
-            )
-        except DashboardContractError as exc:
-            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        with dashboard_snapshot():
+            try:
+                scope = resolve_dashboard_scope(
+                    workspace=workspace,
+                    principal=request.user,
+                    payload=payload,
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
-        try:
-            raw_page = int(payload.get("page", 1))
-            raw_page_size = int(payload.get("page_size", DEFAULT_PAGE_SIZE))
-        except (ValueError, TypeError) as exc:
-            return _bad_request(
-                f"Invalid items payload: {exc}",
-                code="INVALID_PAYLOAD",
-                exc=exc,
-            )
+            try:
+                raw_page = int(payload.get("page", 1))
+                raw_page_size = int(payload.get("page_size", DEFAULT_PAGE_SIZE))
+            except (ValueError, TypeError) as exc:
+                return _bad_request(
+                    f"Invalid items payload: {exc}",
+                    code="INVALID_PAYLOAD",
+                    exc=exc,
+                )
 
-        clamped_page_size = min(max(raw_page_size, 1), MAX_PAGE_SIZE)
-        clamped_page = max(raw_page, 1)
+            clamped_page_size = min(max(raw_page_size, 1), MAX_PAGE_SIZE)
+            clamped_page = max(raw_page, 1)
 
-        selection = payload.get("selection") or {}
-        values = selection.get("values") or {}
+            selection = payload.get("selection") or {}
+            values = selection.get("values") or {}
 
-        try:
-            item_request = ItemRequest(
-                metric=payload.get("metric"),
-                attention_rules=payload.get("attention_rules"),
-                page=clamped_page,
-                page_size=clamped_page_size,
-                project_id=values.get("project_id"),
-                cycle_id=values.get("cycle_id"),
-                module_id=values.get("module_id"),
-                label_id=values.get("label_id"),
-                state_group=values.get("state_group"),
-                priority=values.get("priority"),
-                # Coerce explicit None to "" so the canonical unassigned
-                # representation passes through.
-                assignee_id="" if values.get("assignee_id", "__missing__") is None
-                else values.get("assignee_id"),
-                date_start=selection.get("date_start"),
-                date_end=selection.get("date_end"),
-                delivery_base=selection.get("delivery_base", "created_at"),
-            )
-        except DashboardContractError as exc:
-            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+            # Agreed contract: ``selection.metric`` is the authoritative
+            # metric. ``payload.metric`` is the legacy path kept for
+            # compatibility with the prior worker; if both are present,
+            # ``selection.metric`` wins. ``selection.metric`` must validate
+            # against VALID_SNAPSHOT_RULES.
+            selection_metric = selection.get("metric")
+            payload_metric = payload.get("metric")
+            effective_metric = selection_metric if selection_metric is not None else payload_metric
 
-        try:
-            data = list_items(scope, item_request)
-        except MetricUnavailableError as exc:
-            return _conflict(str(exc), code="METRIC_UNAVAILABLE")
-        except DashboardContractError as exc:
-            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+            try:
+                item_request = ItemRequest(
+                    metric=effective_metric,
+                    attention_rules=payload.get("attention_rules"),
+                    page=clamped_page,
+                    page_size=clamped_page_size,
+                    project_id=values.get("project_id"),
+                    cycle_id=values.get("cycle_id"),
+                    module_id=values.get("module_id"),
+                    label_id=values.get("label_id"),
+                    state_group=values.get("state_group"),
+                    priority=values.get("priority"),
+                    # Coerce explicit None to "" so the canonical unassigned
+                    # representation passes through.
+                    assignee_id="" if values.get("assignee_id", "__missing__") is None
+                    else values.get("assignee_id"),
+                    date_start=selection.get("date_start"),
+                    date_end=selection.get("date_end"),
+                    delivery_base=selection.get("delivery_base", "created_at"),
+                )
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
 
+            try:
+                data = list_items(scope, item_request)
+            except MetricUnavailableError as exc:
+                return _conflict(str(exc), code="METRIC_UNAVAILABLE")
+            except DashboardContractError as exc:
+                return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
         return Response(envelope(scope, data), status=status.HTTP_200_OK)
