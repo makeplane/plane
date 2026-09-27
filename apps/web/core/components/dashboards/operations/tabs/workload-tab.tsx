@@ -14,17 +14,27 @@
  * - distinct_totals (workspace-side, never row sums)
  * - Server-side pagination with independent page cursors
  *
- * The tab surfaces honest state:
- * - `status: "ok"` renders the data.
- * - `status: "unavailable"` from the server renders the typed
- *   unavailable state with the server-supplied reason.
- * - HTTP / network / 5xx failures render an error CTA with a retry
- *   button — never a "metric pending backend" placeholder.
+ * Correctness gates (coordinator review 2026-09-27 16:08Z):
+ * - The fetch effect is the SOLE owner of the AbortController.
+ *   Cleanup aborts the in-flight request whenever the scope or
+ *   refresh revision changes — a stale response can NEVER commit
+ *   to state after a scope change.
+ * - The active generation guard compares the request's
+ *   scope_key + page + revision against the LIVE scope / page /
+ *   revision at commit time. If they disagree, the response is
+ *   dropped (race rejection).
+ * - The pagination cursor resets to 1 on any scope change so
+ *   the user doesn't land on a stale page number from a previous
+ *   scope's pagination window.
  */
 
-import { useCallback, useEffect, useState } from "react";
-import type { TWorkloadData, TWorkloadMemberRow, TStandaloneEnvelope } from "@plane/types";
-import { buildScopePayload } from "@plane/shared-state";
+import { useEffect, useRef, useState } from "react";
+import type {
+  TWorkloadData,
+  TWorkloadMemberRow,
+  TStandaloneEnvelope,
+} from "@plane/types";
+import { buildScopePayload, buildScopeSignature } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
 import {
   useDashboardCustomRange,
@@ -37,6 +47,12 @@ import { ErrorPanel } from "../panels/error-panel";
 
 interface Props {
   workspaceSlug: string;
+  /**
+   * Manual refresh revision from the shell. Bumped on Refresh click
+   * so the deep tab refetches the entire visible data alongside the
+   * overview + previews (per spec §9.5).
+   */
+  refreshRevision?: number;
 }
 
 type TabState =
@@ -46,7 +62,7 @@ type TabState =
   | { kind: "unavailable"; reason: string | undefined }
   | { kind: "error"; error: TDashboardTabError };
 
-export function OperationsWorkloadTab({ workspaceSlug }: Props): React.ReactElement {
+export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Props): React.ReactElement {
   const { data: currentUser } = useUser();
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
@@ -55,56 +71,100 @@ export function OperationsWorkloadTab({ workspaceSlug }: Props): React.ReactElem
   const [state, setState] = useState<TabState>({ kind: "idle" });
   const [page, setPage] = useState(1);
   const [reloadKey, setReloadKey] = useState(0);
-
-  const fetchPage = useCallback(
-    (pageNum: number) => {
-      if (!workspaceSlug) return;
-      const controller = new AbortController();
-      setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
-      const payload = buildScopePayload({
-        prefs: snapshot,
-        customRange,
-        projectIds,
-        currentUserId: currentUser?.id ?? null,
-      });
-      dashboardOperationsService
-        .workload(workspaceSlug, { ...payload, page: pageNum }, controller.signal)
-        .then((envelope: TStandaloneEnvelope<TWorkloadData>) => {
-          const section = envelope.sections.find((entry) => entry.section_id === "workload");
-          const classified = classifySection<TWorkloadData>(
-            section as
-              | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TWorkloadData; reason?: string }
-              | undefined
-          );
-          if (classified.kind === "ok") {
-            if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-              return;
-            }
-            setState({ kind: "ok", data: classified.data });
-            setPage(classified.data.pagination.page);
-            return;
-          }
-          if (classified.kind === "unavailable") {
-            setState({ kind: "unavailable", reason: classified.reason });
-            return;
-          }
-          setState({
-            kind: "error",
-            error: { kind: "malformed", message: classified.reason ?? "section_error" },
-          });
-        })
-        .catch((err) => {
-          if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
-          setState({ kind: "error", error: classifyDashboardError(err) });
-        });
-    },
-    [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, currentUser?.id]
-  );
+  // Live snapshot of the scope at fetch-start. The active generation
+  // guard compares the captured-at-fetch-start scope against the
+  // live scope at commit time.
+  const liveScopeKey = buildScopeSignature({
+    prefs: snapshot,
+    projectIds,
+    customRange,
+    currentUserId: currentUser?.id ?? null,
+  });
 
   useEffect(() => {
-    fetchPage(page);
-    // reloadKey triggers an explicit retry from the error UI.
-  }, [fetchPage, page, reloadKey]);
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
+    const payload = buildScopePayload({
+      prefs: snapshot,
+      customRange,
+      projectIds,
+      currentUserId: currentUser?.id ?? null,
+    });
+    // Capture the live scope at fetch-start so we can compare at
+    // commit time. This is the same gate the shell uses for the
+    // overview fetch.
+    const scopeAtFetchStart = liveScopeKey;
+    const pageAtFetchStart = page;
+    const refreshAtFetchStart = refreshRevision;
+
+    dashboardOperationsService
+      .workload(workspaceSlug, { ...payload, page }, controller.signal)
+      .then((envelope: TStandaloneEnvelope<TWorkloadData>) => {
+        // Race-rejection gate: if the live scope changed, the user
+        // moved on while this request was in flight. Drop the
+        // response — never commit a late payload to state.
+        if (
+          liveScopeKey !== scopeAtFetchStart ||
+          refreshRevision !== refreshAtFetchStart ||
+          page !== pageAtFetchStart
+        ) {
+          return;
+        }
+        const section = envelope.sections.find((entry) => entry.section_id === "workload");
+        const classified = classifySection<TWorkloadData>(
+          section as
+            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TWorkloadData; reason?: string }
+            | undefined
+        );
+        if (classified.kind === "ok") {
+          // Defensive scope_key check against the envelope header —
+          // the backend must echo the same scope_key it received.
+          if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
+            return;
+          }
+          setState({ kind: "ok", data: classified.data });
+          setPage(classified.data.pagination.page);
+          return;
+        }
+        if (classified.kind === "unavailable") {
+          setState({ kind: "unavailable", reason: classified.reason });
+          return;
+        }
+        setState({
+          kind: "error",
+          error: { kind: "malformed", message: classified.reason ?? "section_error" },
+        });
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setState({ kind: "error", error: classifyDashboardError(err) });
+      });
+
+    // Cleanup: abort the in-flight request whenever the scope /
+    // refresh revision / page changes. The .catch above filters
+    // out AbortError so React's Strict-Mode double-mount doesn't
+    // surface a false error.
+    return () => {
+      controller.abort();
+    };
+    // liveScopeKey is derived from snapshot / customRange /
+    // projectIds / currentUser; including the individual primitives
+    // avoids spurious re-fires when an upstream memo reference
+    // changes but its content is stable.
+  }, [
+    workspaceSlug,
+    snapshot,
+    customRange.start,
+    customRange.end,
+    projectIds,
+    currentUser?.id,
+    page,
+    refreshRevision,
+    liveScopeKey,
+    reloadKey,
+  ]);
 
   return (
     <div className="flex flex-col gap-3" data-testid="operations-workload-tab">

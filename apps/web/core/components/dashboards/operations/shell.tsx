@@ -269,13 +269,17 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
 
       <div className="flex flex-col gap-4 p-5" data-testid="operations-tab-content">
         {tab === "overview" ? (
-          <OperationsOverviewTab workspaceSlug={workspaceSlug} state={state} />
+          <OperationsOverviewTab
+            workspaceSlug={workspaceSlug}
+            state={state}
+            refreshRevision={refreshRevision}
+          />
         ) : tab === "projects" ? (
-          <OperationsProjectsTab workspaceSlug={workspaceSlug} />
+          <OperationsProjectsTab workspaceSlug={workspaceSlug} refreshRevision={refreshRevision} />
         ) : tab === "workload" ? (
-          <OperationsWorkloadTab workspaceSlug={workspaceSlug} />
+          <OperationsWorkloadTab workspaceSlug={workspaceSlug} refreshRevision={refreshRevision} />
         ) : tab === "timeline" ? (
-          <OperationsTimelineTab workspaceSlug={workspaceSlug} />
+          <OperationsTimelineTab workspaceSlug={workspaceSlug} refreshRevision={refreshRevision} />
         ) : (
           <OperationsInsightsTab workspaceSlug={workspaceSlug} />
         )}

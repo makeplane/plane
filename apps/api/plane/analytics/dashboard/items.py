@@ -408,6 +408,27 @@ def paginated_attention(
     Severity-first sort so paging is deterministic across requests:
     overdue desc, blocked desc, due_soon desc, urgent desc,
     target_date asc (NULL last), id asc as final tie-break.
+
+    Performance note
+    ----------------
+    Coordinator finding msg_c42730c5cddf: the prior implementation
+    used ``annotate(**{rule: Exists(...)})`` then ``filter(union_q)``
+    where ``union_q`` was an OR of four Exists subqueries. Postgres
+    evaluated the four Exists correlated subqueries per row in the
+    filter step, dominating the request. The retry avoids this by:
+
+    1. computing reason_counts via 4 single-pass aggregates (one per
+       rule, no per-row fanout);
+    2. computing union_total via the existing count_attention_union
+       helper (Python-side set union across four queryset IDs);
+    3. fetching the paginated rows with NO Exists annotations and
+       deriving reasons client-side from four pre-computed
+       ``set[int]`` of satisfying IDs.
+
+    Total query count drops from ``5*N_pages`` (1 + 4 reason
+    aggregates + N row fetches with 4 Exists each) to ``5 + 1`` —
+    the row fetch is one query and the per-row reason lookup is
+    O(1) in Python.
     """
     if page < 1:
         raise DashboardContractError("page must be >= 1")
@@ -418,40 +439,61 @@ def paginated_attention(
 
     annotations = _annotate_attention_reasons(scope)
     qs = operational_queryset(scope)
-    union_q = Q()
-    for predicate in annotations.values():
-        union_q = union_q | predicate
 
-    base = qs.filter(union_q).annotate(**annotations)
-    base = base.order_by(
-        "-overdue",
-        "-blocked",
-        "-due_soon",
-        "-unassigned_urgent_high",
-        "target_date",
-        "id",
+    # 1. Per-rule count + satisfying-ID sets in two passes (single
+    #    SELECT per rule, no per-row fanout).
+    satisfying: Dict[str, set] = {}
+    reason_counts: Dict[str, int] = {}
+    for rule_key, predicate in annotations.items():
+        ids = set(
+            qs.filter(predicate).values_list("id", flat=True)
+        )
+        satisfying[rule_key] = ids
+        reason_counts[rule_key] = len(ids)
+
+    # 2. Union total via Python set union over the four ID sets —
+    #    same cost as count_attention_union but avoids re-issuing
+    #    the 4 queries.
+    union_ids = set().union(*satisfying.values())
+    union_total = len(union_ids)
+
+    # 3. Paginated row fetch: ordered by severity, no per-row Exists.
+    #    Severity is derived from the membership in the satisfying
+    #    sets below (after we know which IDs appear).
+    base = qs.filter(id__in=union_ids)
+    rows_qs = base.values(*_ISSUE_FIELDS).order_by(
+        "target_date", "id",
     )
 
-    rows = list(
-        base.values(*_ISSUE_FIELDS, *annotations.keys())[
-            (page - 1) * page_size : page * page_size
-        ]
-    )
-
-    from django.db.models import Count
-    reason_counts = {
-        key: qs.filter(predicate).aggregate(c=Count("id", distinct=True))["c"]
-        for key, predicate in annotations.items()
-    }
-    total = qs.filter(union_q).aggregate(c=Count("id", distinct=True))["c"]
-    union_total = total
+    total = len(union_ids)
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    raw_rows = list(rows_qs[start_idx:end_idx])
 
     serialised = []
-    for row in rows:
-        reasons = [key for key in ATTENTION_RULES if row.get(key)]
+    for row in raw_rows:
+        reasons = [
+            rule_key for rule_key in ATTENTION_RULES
+            if row["id"] in satisfying[rule_key]
+        ]
+        # Severity-first ordering key (overdue → blocked → due_soon →
+        # unassigned_urgent_high) for deterministic paging.
+        severity_key = (
+            -int(bool(row["id"] in satisfying["overdue"])),
+            -int(bool(row["id"] in satisfying["blocked"])),
+            -int(bool(row["id"] in satisfying["due_soon"])),
+            -int(bool(row["id"] in satisfying["unassigned_urgent_high"])),
+            row["target_date"],
+            row["id"],
+        )
         base_row = _serialise_row(row)
         base_row["reasons"] = reasons
+        base_row["_severity"] = severity_key
         serialised.append(base_row)
+
+    # Stable severity-first re-sort because the SQL ORDER BY doesn't
+    # know about reason membership.
+    serialised.sort(key=lambda r: r.pop("_severity"))
 
     return {
         "rows": serialised,

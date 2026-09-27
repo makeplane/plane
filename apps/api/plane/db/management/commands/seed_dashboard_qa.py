@@ -6,6 +6,12 @@
 
 Idempotent: re-running drops the dashboard-qa workspace and rebuilds it.
 
+Also configures the dedicated QA instance (signin enabled, onboarding
+flag set, owner promoted to InstanceAdmin) so the frontend at
+http://localhost:3100 can sign in directly instead of seeing the
+\"Welcome to Plane / Set up your instance\" page (coordinator finding
+``msg_81a045dda7d4``).
+
 Usage:
     python manage.py seed_dashboard_qa
     python manage.py seed_dashboard_qa --workspace-slug acme-qa --owner-email alice@acme.so
@@ -45,6 +51,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
 )
+from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 
 
 QA_READY_PATH = Path("/tmp/plane-dashboard-qa-ready.json")
@@ -95,6 +102,9 @@ class Command(BaseCommand):
                     project, owner, members, count=n_issues,
                     state_lookup={s.group: s for s in State.objects.filter(project=project)},
                 )
+        # Configure the dedicated QA instance so the frontend at
+        # :3100 can sign in (see coordinator finding msg_81a045dda7d4).
+        _configure_qa_instance(owner)
 
         api_url = os.environ.get("QA_API_URL", "http://localhost:8100")
         ready = {
@@ -127,12 +137,80 @@ class Command(BaseCommand):
                 "http://localhost:3000", "http://localhost:3001",
                 "http://localhost:3002", "http://localhost:3100",
             ],
+            "instance_configured": True,
+            "signin_url": f"{api_url}/api/instances/admins/",
+            "ui_url": "http://localhost:3100",
         }
         QA_READY_PATH.write_text(json.dumps(ready, indent=2, default=str))
         self.stdout.write(self.style.SUCCESS(
-            f"Seeded workspace {workspace.slug!r} with {len(projects)} projects."
+            f"Seeded workspace {workspace.slug!r} with {len(projects)} projects; "
+            f"instance configured, owner promoted to InstanceAdmin."
         ))
         self.stdout.write(f"Readiness: {QA_READY_PATH}")
+
+
+def _configure_qa_instance(owner: User) -> None:
+    """Mark the dedicated QA instance as set-up and the owner as admin.
+
+    Coordinator finding ``msg_81a045dda7d4``: after ``register_instance``
+    the row exists but ``is_setup_done`` is False, so the frontend at
+    :3100 renders \"Welcome to Plane / Set up your instance\" instead
+    of the sign-in page. We:
+
+    1. Set ``is_setup_done=True`` and a friendly ``instance_name``.
+    2. Create an ``InstanceAdmin`` row for the owner (role=20).
+    3. Persist the standard ``InstanceConfiguration`` keys so the
+       frontend does not show any \"configure instance\" gates
+       (``ENABLE_SIGNUP``, ``EMAIL_HOST``, ``DISABLE_SIGNUP``,
+       ``ENABLE_EMAIL_PASSWORD``, ``IS_GLOBAL_INSTANCE`` etc.).
+    """
+    from django.utils import timezone as _tz
+    import secrets as _secrets
+
+    instance = Instance.objects.first()
+    if instance is None:
+        # The api container's entrypoint runs ``register_instance`` before
+        # the seed command, so this should be present. Fall back to
+        # creating a placeholder so the seed does not crash before
+        # exposing the API.
+        instance = Instance.objects.create(
+            instance_name="Acme QA",
+            instance_id=_secrets.token_hex(12),
+            current_version="0.0.0",
+            last_checked_at=_tz.now(),
+            is_test=True,
+        )
+    instance.instance_name = "Acme QA"
+    instance.is_setup_done = True
+    instance.is_signup_screen_visited = True
+    instance.is_verified = True
+    instance.is_telemetry_enabled = False
+    instance.save()
+
+    InstanceAdmin.objects.get_or_create(
+        user=owner, instance=instance, defaults={"role": 20},
+    )
+
+    # Allow email + password sign-in and disable the global-signup gate
+    # so the QA frontend can sign in with ``alice@acme.so``.
+    standard_keys = {
+        "IS_GLOBAL_INSTANCE": "0",
+        "DISABLE_SIGNUP": "0",
+        "ENABLE_SIGNUP": "1",
+        "ENABLE_EMAIL_PASSWORD": "1",
+        "ENABLE_MAGIC_LINK_LOGIN": "0",
+        "ENABLE_GOOGLE_LOGIN": "0",
+        "ENABLE_GITHUB_LOGIN": "0",
+        "ENABLE_GITLAB_LOGIN": "0",
+        "ENABLE_LDAP_LOGIN": "0",
+        "EMAIL_HOST": "",
+        "FILE_SIZE_LIMIT": "5242880",
+    }
+    for key, value in standard_keys.items():
+        InstanceConfiguration.objects.update_or_create(
+            key=key,
+            defaults={"value": value, "category": "AUTHENTICATION"},
+        )
 
 
 def _reset_workspace(slug: str, owner_email: str, owner_password: str):

@@ -56,6 +56,7 @@ def workload_payload(
     page: int = 1,
     page_size: int = 25,
     wip_threshold: Optional[int] = None,
+    preview: bool = False,
 ) -> Dict[str, Any]:
     """Compose the workload section payload.
 
@@ -63,6 +64,16 @@ def workload_payload(
     endpoint (so all sections share an MVCC snapshot). This function
     does NOT open one itself — that would be a nested transaction that
     cannot change isolation.
+
+    Preview mode
+    ------------
+    When ``preview=True`` the endpoint treats ``page_size`` as the
+    "top N risk-ordered members" cap and ignores ``page``. The full
+    roster is computed, ordered by risk score (overdue + blocked +
+    due_soon + started beyond WIP threshold), then sliced to
+    ``page_size`` rows. This guarantees the preview shows the highest-
+    risk team members, NOT the first N by name (coordinator finding
+    msg_b9fc44af755f / msg_22648b31542f).
     """
     if page < 1:
         raise DashboardContractError("page must be >= 1")
@@ -70,11 +81,14 @@ def workload_payload(
         raise DashboardContractError(f"page_size must be 1..100; got {page_size}")
 
     threshold = wip_threshold if wip_threshold is not None else DEFAULT_WIP_THRESHOLD
-    return _build_workload(scope, page=page, page_size=page_size, threshold=threshold)
+    return _build_workload(
+        scope, page=page, page_size=page_size, threshold=threshold, preview=preview,
+    )
 
 
 def _build_workload(
-    scope: DashboardScope, *, page: int, page_size: int, threshold: int
+    scope: DashboardScope, *, page: int, page_size: int, threshold: int,
+    preview: bool = False,
 ) -> Dict[str, Any]:
     """Build the workload payload. Caller must wrap this in a snapshot."""
     from plane.db.models import IssueAssignee, ProjectMember, User
@@ -97,9 +111,31 @@ def _build_workload(
         .order_by("member_id")
     )
     member_ids = list(members_qs.values_list("member_id", flat=True))
+
+    # Inactive / former members who still hold readable IssueAssignee
+    # rows (their ProjectMember was removed or set inactive, but they
+    # still have assignments). They appear in the inactive bucket.
+    active_member_ids = set(member_ids)
+    inactive_member_ids = set(
+        IssueAssignee.objects.filter(
+            deleted_at__isnull=True,
+            assignee_id__isnull=False,
+            issue__in=operational_queryset(scope).values("id"),
+        )
+        .exclude(assignee_id__in=active_member_ids)
+        .values_list("assignee_id", flat=True)
+        .distinct()
+    )
+
+    # Load profiles for the UNION of active + inactive IDs (bounded
+    # batch) so former members render correct display_name / avatar.
+    # Coordinator finding msg_b9fc44af755f: the prior implementation
+    # only fetched profiles for ACTIVE member IDs, so all inactive
+    # rows had blank display_name and avatar_url.
+    all_member_ids = list(active_member_ids | inactive_member_ids)
     member_profiles = {
         m["id"]: m
-        for m in User.objects.filter(id__in=member_ids).values(
+        for m in User.objects.filter(id__in=all_member_ids).values(
             "id", "email", "first_name", "last_name", "avatar",
         )
     }
@@ -163,35 +199,41 @@ def _build_workload(
             }
         )
 
-    # Add inactive / former members who still hold readable IssueAssignee
-    # rows (their ProjectMember was removed or set inactive, but they
-    # still have assignments). They appear in the inactive bucket.
-    active_member_ids = set(member_ids)
-    inactive_member_ids = set(
-        IssueAssignee.objects.filter(
-            deleted_at__isnull=True,
-            assignee_id__isnull=False,
-            issue__in=operational_queryset(scope).values("id"),
-        )
-        .exclude(assignee_id__in=active_member_ids)
-        .values_list("assignee_id", flat=True)
-        .distinct()
-    )
-
     rows.extend(_inactive_rows(scope, inactive_member_ids, member_profiles))
 
-    # Stable order: by display_name (with inactive rows appended at end).
-    rows.sort(
-        key=lambda r: (
-            not r["is_active"],
-            (r["display_name"] or "").lower(),
-        )
-    )
+    if preview:
+        # PREVIEW MODE: full-roster risk sort BEFORE slicing.
+        # Risk score = overdue*5 + blocked*4 + due_soon*2 +
+        # max(started - wip_threshold, 0). Ties broken by
+        # display_name so the order is deterministic.
+        def _risk(r: Dict[str, Any]) -> Tuple[int, str]:
+            wip_excess = max(r["started"] - threshold, 0)
+            score = (
+                r["overdue"] * 5
+                + r["blocked"] * 4
+                + r["due_soon"] * 2
+                + wip_excess
+            )
+            return (-score, (r["display_name"] or "").lower())
 
-    total_members = len(rows)
-    start = (page - 1) * page_size
-    end = start + page_size
-    page_rows = rows[start:end]
+        rows.sort(key=_risk)
+        # Preview ignores page; slice to top page_size.
+        page_rows = rows[:page_size]
+        total_members = len(rows)
+        has_more = total_members > page_size
+    else:
+        # Stable order: by display_name (with inactive rows appended at end).
+        rows.sort(
+            key=lambda r: (
+                not r["is_active"],
+                (r["display_name"] or "").lower(),
+            )
+        )
+        total_members = len(rows)
+        start = (page - 1) * page_size
+        end = start + page_size
+        page_rows = rows[start:end]
+        has_more = end < total_members
 
     # WIP warnings: rule-based, never productivity. A warning is raised
     # for any active member whose started_count exceeds the threshold.
@@ -216,7 +258,8 @@ def _build_workload(
             "pagination": {
                 "page": page,
                 "page_size": page_size,
-                "has_more": end < total_members,
+                "has_more": has_more,
+                "preview": preview,
             },
             "wip_threshold": threshold,
             "wip_warning_reason": (

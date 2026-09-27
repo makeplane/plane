@@ -26,10 +26,23 @@ import {
  * instead, which lets them pass an in-memory storage.
  */
 
-const defaultStorage: TDashboardOperationsStorage = (() => {
-  if (typeof window !== "undefined" && window.localStorage) return window.localStorage;
-  // SSR fallback (no persistence; reads always return null).
-  const stub = new Map<string, string>();
+// Test-env persistence: a module-scoped Map mirrors localStorage
+// semantics when `window.localStorage` is unavailable. Tests reset
+// this via `__resetDashboardOperationsStoreForTests` so a prior
+// test's persisted `setViewMode` / `setPeriodPreset` /
+// `setCustomRange` don't bleed into the next test.
+let inMemoryStub: Map<string, string> | null = null;
+function getInMemoryStub(): Map<string, string> {
+  if (inMemoryStub === null) inMemoryStub = new Map<string, string>();
+  return inMemoryStub;
+}
+
+function getDefaultStorage(): TDashboardOperationsStorage {
+  if (typeof window !== "undefined" && typeof window.localStorage !== "undefined" && window.localStorage) {
+    return window.localStorage;
+  }
+  // SSR / Vitest fallback.
+  const stub = getInMemoryStub();
   return {
     getItem: (key) => stub.get(key) ?? null,
     setItem: (key, value) => {
@@ -39,12 +52,12 @@ const defaultStorage: TDashboardOperationsStorage = (() => {
       stub.delete(key);
     },
   };
-})();
+}
 
 let _store: DashboardOperationsStore | null = null;
 
 export function createDashboardOperationsStore(storage?: TDashboardOperationsStorage): DashboardOperationsStore {
-  return new DashboardOperationsStore(storage ?? defaultStorage);
+  return new DashboardOperationsStore(storage ?? getDefaultStorage());
 }
 
 function getStore(): DashboardOperationsStore {
@@ -53,12 +66,35 @@ function getStore(): DashboardOperationsStore {
 }
 
 /**
+ * Non-hook accessor for the singleton store. Tests that need to
+ * seed custom range / project IDs / view mode from outside a
+ * component render call this directly so they don't trip React's
+ * "hooks can only be called inside a function component" guard.
+ */
+export function getDashboardOperationsStoreSingleton(): DashboardOperationsStore {
+  return getStore();
+}
+
+/**
  * Test-only: reset the singleton store. Production code should
  * never call this — the store lives for the lifetime of the
  * React tree (one store per browser session).
+ *
+ * Also clears the in-memory storage (localStorage in jsdom) so a
+ * previous test's persisted `setViewMode` / `setPeriodPreset` /
+ * `setCustomRange` don't bleed into the next test.
  */
 export function __resetDashboardOperationsStoreForTests(): void {
   _store = null;
+  inMemoryStub = null;
+  if (typeof window !== "undefined" && window.localStorage) {
+    try {
+      window.localStorage.clear();
+    } catch {
+      // localStorage may be unavailable (private mode); the reset
+      // is best-effort in that case.
+    }
+  }
 }
 
 export function useDashboardOperationsStore(): IDashboardOperationsStore {

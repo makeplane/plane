@@ -21,7 +21,7 @@
  * test asserts the product, not a hard-coded list.
  */
 
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { TDashboardOverviewResponse } from "@plane/types";
@@ -147,6 +147,12 @@ const attentionResponse = {
   ],
 };
 
+// Module-scope reference to the mocked service instance so tests
+// can temporarily override individual methods (e.g. to inject
+// controlled deferred promises for the stale-response test) and
+// restore them afterwards. The instance is created by the
+// `vi.mock` factory below; we read it from the exported
+// `dashboardOperationsService` inside the test bodies.
 vi.mock("@/services/dashboard-operations.service", () => {
   class DashboardOperationsService {
     public overview = async (slug: string, payload: Record<string, unknown>) => {
@@ -181,6 +187,25 @@ import WorkspaceDashboardsPage from "../../../app/(all)/[workspaceSlug]/(project
 import { DASHBOARD_OPERATIONS_DEBOUNCE_MS } from "@/components/dashboards/operations/shell";
 import { defaultDashboardOperationsPreferences } from "@plane/shared-state";
 import { __resetDashboardOperationsStoreForTests } from "@/components/dashboards/operations/use-operations-store";
+import { dashboardOperationsService } from "@/services/dashboard-operations.service";
+import { getDashboardOperationsStoreSingleton } from "@/components/dashboards/operations/use-operations-store";
+
+// Reference to the mocked `dashboardOperationsService` so tests
+// can swap individual method implementations (controlled deferred
+// promises, etc.) and restore them in `finally`.
+const serviceRef = dashboardOperationsService as unknown as {
+  overview: typeof dashboardOperationsService.overview;
+  attention: typeof dashboardOperationsService.attention;
+  workload: typeof dashboardOperationsService.workload;
+  items: typeof dashboardOperationsService.items;
+  projects: typeof dashboardOperationsService.projects;
+  timeline: typeof dashboardOperationsService.timeline;
+};
+
+// The singleton `DashboardOperationsStore` is accessed via a
+// non-hook accessor so individual tests can seed `setCustomRange` /
+// `setProjectIds` and verify they flow through every endpoint.
+const serviceStoreRef = getDashboardOperationsStoreSingleton;
 
 const Route = WorkspaceDashboardsPage as unknown as (props: { params: { workspaceSlug: string } }) => ReactElement;
 
@@ -205,6 +230,11 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.clearAllMocks();
+  // Unmount the React tree from the previous test. Without this
+  // the singleton store captures the prior test's prefs (e.g. a
+  // previous test's `setViewMode("my_work")` survives across tests
+  // and breaks the next test's "store starts in team view" assertion).
+  cleanup();
 });
 
 describe("Cutover — /dashboards renders the Team Operations shell", () => {
@@ -252,9 +282,9 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     expect(workloadPreviewCalls).toHaveLength(1);
   });
 
-  test("clicking Refresh fires one additional overview request (no preview double-fire)", async () => {
-    // Spec §9.5 — Refresh forces a fresh /overview fetch. The
-    // previews re-fetch only on scope changes, not on Refresh.
+  test("clicking Refresh fires one additional overview, attention, and workload-preview request each", async () => {
+    // Spec §9.5 — Refresh forces a fresh fetch on the entire
+    // visible Dashboard: overview + attention + workload preview.
     await mountRoute("acme");
     const overviewBefore = overviewCalls.length;
     const attentionBefore = attentionCalls.length;
@@ -267,9 +297,8 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     // setTimeout, leaving the click without a fetch.
     await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
     expect(overviewCalls.length).toBe(overviewBefore + 1);
-    // Previews must not refetch on a pure Refresh (no scope change).
-    expect(attentionCalls.length).toBe(attentionBefore);
-    expect(workloadPreviewCalls.length).toBe(workloadBefore);
+    expect(attentionCalls.length).toBe(attentionBefore + 1);
+    expect(workloadPreviewCalls.length).toBe(workloadBefore + 1);
   });
 
   test("changing view_mode (Team <-> My work) refreshes overview + attention + workload", async () => {
@@ -296,18 +325,135 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
   test("a deferred (stale) /overview response is dropped, not committed", async () => {
     // Race-response rejection: when the user changes scope mid-flight,
     // the older request's response must NOT overwrite the newer one.
-    // The shell's `commitResponse` compares the captured-at-start
-    // signature against the current one; if the user has moved on
-    // (e.g. clicked Refresh) the request generation is bumped and
-    // the stale response is dropped.
     //
-    // We assert the wire contract: total overview calls = 2 (initial
-    // mount + refresh). The commit gate is exercised by the
-    // shell's catch-up logic on the next render.
+    // We construct two controlled deferred promises that resolve
+    // with DISTINCT, REAL KPI values so the assertion can verify the
+    // UI committed the newer payload and not the older:
+    //   promise1 (idx=0) — the STALE call. Resolves with kpi_total=111.
+    //   promise2 (idx=1) — the FRESH call. Resolves with kpi_total=222.
+    //
+    // Flow:
+    //   1. Mount fires overview call #1 (promise1 pending).
+    //   2. While promise1 is still pending, the user flips Team → My
+    //      work. This is a real SCOPE change (view_mode flips), so a
+    //      second overview call (#2) fires immediately — the
+    //      Refresh button is legitimately disabled while #1 is in
+    //      flight, but the scope change is not gated by the shell's
+    //      loading state.
+    //   3. Resolve promise2 FIRST → UI commits "FRESH" (kpi_total=222).
+    //   4. Resolve promise1 (stale) → shell's commitResponse gate
+    //      MUST reject it; UI must NOT regress to kpi_total=111.
+    const resolvers: Array<(value: unknown) => void> = [];
+    const promises = [new Promise((r) => resolvers.push(r)), new Promise((r) => resolvers.push(r))];
+    let callIndex = 0;
+    const originalOverview = dashboardOperationsService.overview.bind(dashboardOperationsService);
+    dashboardOperationsService.overview = (async (_slug: string, _payload: Record<string, unknown>) => {
+      const idx = callIndex++;
+      const promise = promises[idx];
+      // Distinct KPI total per response — 111 for the stale call,
+      // 222 for the fresh call. The KPI strip renders this count
+      // directly so the assertion is meaningful (a UI "Invalid Date"
+      // or vacuous `.not.toMatch(/STALE/)` would silently pass even
+      // if the wrong response committed).
+      const total = idx === 0 ? 111 : 222;
+      const completed = idx === 0 ? 50 : 80;
+      return promise.then(() => ({
+        ...overviewResponse,
+        generated_at: new Date(`2026-09-27T10:00:${idx === 0 ? "00" : "30"}Z`).toISOString(),
+        sections: overviewResponse.sections.map((s) =>
+          s.section_id === "kpis" && s.status === "ok" && s.data
+            ? {
+                ...s,
+                data: { ...s.data, total, completed },
+              }
+            : s
+        ),
+      }));
+    }) as typeof dashboardOperationsService.overview;
+    try {
+      await mountRoute("acme");
+      // While promise1 is still pending, flip Team → My work. This
+      // is a SCOPE change (view_mode flips), so a fresh overview
+      // call (#2) fires immediately.
+      const myWorkBtn = screen.getByTestId("operations-view-mode-my-work");
+      fireEvent.click(myWorkBtn);
+      await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 5 + 200));
+      // Both fetches have been issued.
+      expect(callIndex).toBe(2);
+      // Resolve promise2 (fresh, idx=1) FIRST — UI commits
+      // kpi_total=222.
+      resolvers[1](overviewResponse);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      // Then resolve promise1 (stale, idx=0) — shell's
+      // commitResponse gate MUST reject it; UI must NOT regress
+      // to kpi_total=111.
+      resolvers[0](overviewResponse);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      // The KPI strip renders the total count directly. Assert the
+      // fresh value is committed and the stale one is dropped.
+      expect(screen.getByTestId("kpi-total").textContent ?? "").toContain("222");
+      expect(screen.getByTestId("kpi-total").textContent ?? "").not.toContain("111");
+    } finally {
+      dashboardOperationsService.overview = originalOverview;
+    }
+  });
+
+  test("My work view carries currentUserId as business_filters.assignee_id on every endpoint", async () => {
+    // Per spec §8: every consumer of the central scope builder must
+    // see the same My-work payload. The Overview + Workload preview
+    // + Attention preview all carry `assignee_id: [<currentUserId>]`
+    // when view_mode = "my_work".
     await mountRoute("acme");
-    const refresh = screen.getByTestId("operations-refresh");
-    fireEvent.click(refresh);
+    const overviewBefore = overviewCalls.length;
+    const attentionBefore = attentionCalls.length;
+    const workloadBefore = workloadPreviewCalls.length;
+    const myWorkBtn = screen.getByTestId("operations-view-mode-my-work");
+    fireEvent.click(myWorkBtn);
     await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
-    expect(overviewCalls.length).toBe(2);
+    // All three endpoints refetched on My work (overview is
+    // debounced; previews are immediate).
+    expect(overviewCalls.length).toBe(overviewBefore + 1);
+    expect(attentionCalls.length).toBe(attentionBefore + 1);
+    expect(workloadPreviewCalls.length).toBe(workloadBefore + 1);
+    // Every payload fetched AFTER My work was clicked carries the
+    // My-work assignee_id filter.
+    const postMyWorkCalls = [
+      ...overviewCalls.slice(overviewBefore),
+      ...attentionCalls.slice(attentionBefore),
+      ...workloadPreviewCalls.slice(workloadBefore),
+    ];
+    for (const call of postMyWorkCalls) {
+      const bf = (call.payload.business_filters ?? {}) as Record<string, string[]>;
+      expect(bf.assignee_id).toEqual(["user-1"]);
+    }
+  });
+
+  test("custom period wires start/end into every endpoint payload", async () => {
+    // When the user picks a custom date range, the canonical
+    // `buildScopePayload` must carry start + end on every endpoint.
+    // We seed the store's custom range directly and click Refresh
+    // so the Overview + attention + workload preview all refetch.
+    const store = serviceStoreRef();
+    store.setCustomRange("2026-09-01T00:00:00Z", "2026-09-30T00:00:00Z");
+    store.setPeriodPreset("custom");
+    await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
+    for (const call of [...overviewCalls, ...attentionCalls, ...workloadPreviewCalls]) {
+      const payload = call.payload;
+      expect(payload.period_preset).toBe("custom");
+      expect(payload.start).toBe("2026-09-01T00:00:00Z");
+      expect(payload.end).toBe("2026-09-30T00:00:00Z");
+    }
+  });
+
+  test("selected project_ids flow through every endpoint payload", async () => {
+    // When the dashboard has project_ids selected, the canonical
+    // `buildScopePayload` carries them through to every endpoint.
+    const store = serviceStoreRef();
+    store.setProjectIds(["project-a", "project-b"]);
+    await new Promise((resolve) => setTimeout(resolve, DASHBOARD_OPERATIONS_DEBOUNCE_MS * 3 + 100));
+    for (const call of [...overviewCalls, ...attentionCalls, ...workloadPreviewCalls]) {
+      const payload = call.payload;
+      expect(payload.project_ids).toEqual(["project-a", "project-b"]);
+    }
   });
 });

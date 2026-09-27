@@ -4,44 +4,51 @@
 
 """Read-snapshot helper for the Team Operations Dashboard.
 
-The overview, attention, workload, projects and timeline endpoints all
-return a coordinated view of the workspace. Spec §9.4 ("Snapshot
-sections in one response must be consistent") requires the per-request
-sections to share the same MVCC snapshot so a row cannot appear in the
-KPI totals but vanish from the items drilldown.
+Spec §9.4: every KPI, chart, panel and drilldown row in a single
+request MUST share the same MVCC snapshot — a row cannot appear in
+the KPI totals but vanish from the items drilldown.
 
-Implementation
-==============
+This module provides :func:`dashboard_snapshot`, a context manager
+that opens a transaction with
+``SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY`` BEFORE
+any SELECT runs through the connection. PostgreSQL pins the MVCC
+snapshot at the first read inside the transaction; subsequent
+SELECTs in the same transaction see the same data even if another
+writer commits.
 
-We open a single ``transaction.atomic()`` block at the endpoint scope
-and issue ``SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY``
-*immediately after* BEGIN, before any SELECT runs. PostgreSQL pins the
-MVCC snapshot at the first read inside the transaction; subsequent
-SELECTs in the same transaction see the same data even if another writer
-commits.
+Design rules (per retry brief, ``msg_1311ee14c123``):
+====================================================
 
-Important caveats
-=================
+* **No silent fallback.** If the SET TRANSACTION cannot be applied,
+  the request FAILS — never silently falls back to READ COMMITTED.
+* **No swallowed exceptions.** Any DB error during snapshot
+  acquisition propagates after the atomic block rolls back. Catching
+  inside ``atomic`` would leave the connection in an aborted state
+  and is forbidden.
+* **Nested transaction safety.** When invoked inside an outer
+  transaction (savepoint) the SET TRANSACTION cannot apply — we
+  inspect the connection's actual isolation + read_only and only
+  reuse the outer transaction if it is already RR + read_only.
+  Otherwise we raise :class:`SnapshotIsolationUnavailable` (HTTP 503).
+* **Production correctness is the gate.** Existing
+  ``@pytest.mark.django_db`` tests use the runner's outer
+  transaction (READ COMMITTED) and so MUST be either (a) marked
+  ``@pytest.mark.django_db(transaction=True)`` so the runner does
+  not pre-open the outer transaction, or (b) skipped / rewritten.
+  We do not weaken production behaviour to keep green tests.
 
-* ``select_for_update`` does **not** create a snapshot — it only locks
+Caveats:
+========
+
+* ``select_for_update`` does NOT create a snapshot — it only locks
   rows. Do not use it here.
-* ``transaction.atomic`` alone runs at the default isolation
-  (READ COMMITTED), which can show different rows in successive reads.
+* ``transaction.atomic`` alone runs at READ COMMITTED, which can
+  show different rows in successive reads.
 * Nested ``dashboard_snapshot`` blocks DO NOT change isolation. The
   inner SET TRANSACTION can only apply at the start of a transaction
   (the outer is already in READ COMMITTED) and would error out. The
   endpoint opens ONE snapshot before any selector runs; read models
   must NOT reopen or reconfigure it.
-* Django's test runner wraps each ``@pytest.mark.django_db`` test in
-  its own transaction. ``SET TRANSACTION ISOLATION LEVEL`` cannot apply
-  inside that wrapper — the snapshot degrades to READ COMMITTED and
-  the request will see cross-section inconsistency. Tests that need
-  real RR isolation must use ``@pytest.mark.django_db(transaction=True)``
-  so the test runner does not pre-open a transaction.
-
-The :func:`dashboard_snapshot` context manager wraps the request body
-in a snapshot transaction. Sections that need a *shared* snapshot use
-it; standalone selectors (e.g. single-issue items drilldown) do not.
 """
 
 from __future__ import annotations
@@ -50,71 +57,135 @@ import logging
 from contextlib import contextmanager
 from typing import Iterator
 
-from django.db import connection, transaction
+from django.db import ProgrammingError, connection, transaction
 
 
 logger = logging.getLogger("plane.analytics.dashboard.snapshot")
+
+
+class SnapshotIsolationUnavailable(Exception):
+    """Raised when the dashboard cannot establish REPEATABLE READ.
+
+    The view layer maps this to HTTP 503 with a clear
+    ``SNAPSHOT_ISOLATION_UNAVAILABLE`` code so the caller knows the
+    request cannot be served under the documented contract. The
+    connection is rolled back; subsequent requests open a fresh
+    connection that may succeed.
+    """
 
 
 @contextmanager
 def dashboard_snapshot() -> Iterator[None]:
     """Open a REPEATABLE READ + READ ONLY transaction for the dashboard request.
 
-    PostgreSQL only allows ``SET TRANSACTION ISOLATION LEVEL`` at the
-    start of a transaction. We:
-
-    1. Open ``transaction.atomic()`` (BEGIN on the connection).
-    2. Immediately try ``SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-       READ ONLY`` BEFORE any query runs through the connection.
-    3. If the SET succeeds, every SELECT through Django inside the
-       block sees the same MVCC snapshot. After the block, ``atomic``
-       commits and isolation returns to whatever the caller had.
-    4. If the SET fails (e.g. we're inside the Django test-runner's
-       outer transaction, which has already executed queries, or a
-       nested atomic created a savepoint), we log a warning and yield
-       anyway — the block still runs, but on READ COMMITTED. The view
-       itself never raises; the contract just degrades.
+    Behaviour:
+    * If we are NOT already inside a transaction: open a fresh
+      ``transaction.atomic()``, attempt to apply RR + READ ONLY,
+      raise ``SnapshotIsolationUnavailable`` if it fails. The atomic
+      context manager rolls back on exception.
+    * If we ARE already inside a transaction (savepoint): inspect the
+      current session's isolation + read_only. If both already match
+      RR + read_only, yield inside the outer transaction (the SET
+      TRANSACTION can only apply at the start of the transaction —
+      which has already happened — so we trust the existing state).
+      Otherwise raise ``SnapshotIsolationUnavailable``; do NOT
+      silently fall back to READ COMMITTED.
 
     Caller contract: open this at the endpoint level, BEFORE
     ``resolve_dashboard_scope`` and BEFORE any payload builder runs.
     Do not nest it.
     """
-    # transaction.atomic() may enter savepoint mode if there's an outer
-    # atomic block (e.g. the test runner's per-test transaction). In that
-    # case SET TRANSACTION will fail and we degrade.
     outer_atomic = connection.in_atomic_block
-    isolation_applied = False
 
-    with transaction.atomic():
-        if not outer_atomic:
-            # First BEGIN on this connection — we can attempt SET.
-            try:
+    if not outer_atomic:
+        # Fresh transaction: we control isolation. Open BEGIN via
+        # transaction.atomic(); SET TRANSACTION ISOLATION LEVEL
+        # REPEATABLE READ READ ONLY before any other query.
+        try:
+            with transaction.atomic():
                 with connection.cursor() as cursor:
+                    # SET TRANSACTION only works BEFORE the first
+                    # query in the transaction. transaction.atomic()
+                    # has just sent BEGIN but not yet executed any
+                    # user query, so this is the correct moment.
                     cursor.execute(
                         "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY"
                     )
-                isolation_applied = True
-                logger.debug("dashboard_snapshot: REPEATABLE READ READ ONLY applied")
-            except Exception as exc:  # noqa: BLE001
-                logger.warning(
-                    "dashboard_snapshot: could not set REPEATABLE READ "
-                    "(%s: %s); request will use caller isolation",
-                    type(exc).__name__, exc,
+                logger.debug(
+                    "dashboard_snapshot: REPEATABLE READ READ ONLY applied "
+                    "on fresh transaction"
                 )
-        else:
-            logger.debug(
-                "dashboard_snapshot: already inside an outer transaction; "
-                "snapshot degraded (no isolation change possible inside a savepoint)"
+                yield
+                # transaction.atomic commits on normal exit.
+        except ProgrammingError as exc:
+            logger.exception(
+                "dashboard_snapshot: SET TRANSACTION failed (%s); "
+                "connection rolled back; raising SnapshotIsolationUnavailable",
+                exc,
             )
-        try:
-            yield
-        finally:
-            if isolation_applied:
-                logger.debug(
-                    "dashboard_snapshot: exiting with REPEATABLE READ active "
-                    "(commit will release the snapshot)"
-                )
-            else:
-                logger.debug(
-                    "dashboard_snapshot: exiting without isolation guarantee"
-                )
+            raise SnapshotIsolationUnavailable(
+                "Could not set REPEATABLE READ isolation; the database "
+                "rejected SET TRANSACTION at the start of the request."
+            ) from exc
+        except Exception as exc:
+            # Any other failure inside the atomic block: roll back
+            # (transaction.atomic does this automatically on
+            # exception) and surface the error to the caller. We do
+            # NOT catch here to "fall back to READ COMMITTED" — that
+            # would violate the spec.
+            logger.exception(
+                "dashboard_snapshot: error inside snapshot block; "
+                "rolling back: %s",
+                exc,
+            )
+            raise
+        return
+
+    # Nested call: caller already opened a transaction. We cannot
+    # change isolation on a savepoint, so we either trust the outer
+    # txn (if it's already RR + readonly) or refuse the request.
+    actual_isolation, actual_read_only = _inspect_session_isolation()
+    if actual_isolation == "repeatable_read" and actual_read_only:
+        logger.debug(
+            "dashboard_snapshot: nested call, outer transaction already "
+            "REPEATABLE READ + READ ONLY; reusing"
+        )
+        yield
+        return
+
+    logger.error(
+        "dashboard_snapshot: nested call refused: outer isolation=%s "
+        "read_only=%s; cannot establish REPEATABLE READ on a savepoint. "
+        "Caller must restructure so the dashboard endpoint is the top-level "
+        "transaction owner.",
+        actual_isolation,
+        actual_read_only,
+    )
+    raise SnapshotIsolationUnavailable(
+        f"Outer transaction isolation is {actual_isolation!r} "
+        f"(read_only={actual_read_only}); cannot establish REPEATABLE READ "
+        f"on a savepoint. The dashboard endpoint must be the top-level "
+        f"transaction owner."
+    )
+
+
+def _inspect_session_isolation() -> tuple[str | None, bool]:
+    """Return ``(isolation_level, read_only)`` for the current session.
+
+    Uses ``current_setting('transaction_isolation')`` and
+    ``current_setting('transaction_read_only')``; returns
+    ``(None, False)`` if the connection is not Postgres or the
+    settings cannot be read.
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SHOW transaction_isolation")
+            row = cursor.fetchone()
+            isolation = row[0] if row else None
+            cursor.execute("SHOW transaction_read_only")
+            row = cursor.fetchone()
+            read_only = (row[0] if row else "off") == "on"
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("dashboard_snapshot: could not inspect isolation: %s", exc)
+        return None, False
+    return isolation, read_only

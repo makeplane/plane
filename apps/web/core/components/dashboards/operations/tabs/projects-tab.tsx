@@ -20,9 +20,9 @@
  *   button — never a "metric pending backend" placeholder.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { TProjectsData, TProjectBreakdownRow, TStandaloneEnvelope } from "@plane/types";
-import { buildScopePayload } from "@plane/shared-state";
+import { buildScopePayload, buildScopeSignature } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
 import {
   useDashboardCustomRange,
@@ -35,6 +35,8 @@ import { ErrorPanel } from "../panels/error-panel";
 
 interface Props {
   workspaceSlug: string;
+  /** Manual refresh revision from the shell (spec §9.5). */
+  refreshRevision?: number;
 }
 
 type TabState =
@@ -44,7 +46,7 @@ type TabState =
   | { kind: "unavailable"; reason: string | undefined }
   | { kind: "error"; error: TDashboardTabError };
 
-export function OperationsProjectsTab({ workspaceSlug }: Props): React.ReactElement {
+export function OperationsProjectsTab({ workspaceSlug, refreshRevision = 0 }: Props): React.ReactElement {
   const { data: currentUser } = useUser();
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
@@ -53,55 +55,81 @@ export function OperationsProjectsTab({ workspaceSlug }: Props): React.ReactElem
   const [state, setState] = useState<TabState>({ kind: "idle" });
   const [page, setPage] = useState(1);
   const [reloadKey, setReloadKey] = useState(0);
-
-  const fetchPage = useCallback(
-    (pageNum: number) => {
-      if (!workspaceSlug) return;
-      const controller = new AbortController();
-      setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
-      const payload = buildScopePayload({
-        prefs: snapshot,
-        customRange,
-        projectIds,
-        currentUserId: currentUser?.id ?? null,
-      });
-      dashboardOperationsService
-        .projects(workspaceSlug, { ...payload, page: pageNum }, controller.signal)
-        .then((envelope: TStandaloneEnvelope<TProjectsData>) => {
-          const section = envelope.sections.find((entry) => entry.section_id === "projects");
-          const classified = classifySection<TProjectsData>(
-            section as
-              | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TProjectsData; reason?: string }
-              | undefined
-          );
-          if (classified.kind === "ok") {
-            if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-              return;
-            }
-            setState({ kind: "ok", data: classified.data });
-            setPage(classified.data.pagination.page);
-            return;
-          }
-          if (classified.kind === "unavailable") {
-            setState({ kind: "unavailable", reason: classified.reason });
-            return;
-          }
-          setState({
-            kind: "error",
-            error: { kind: "malformed", message: classified.reason ?? "section_error" },
-          });
-        })
-        .catch((err) => {
-          if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
-          setState({ kind: "error", error: classifyDashboardError(err) });
-        });
-    },
-    [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, currentUser?.id]
-  );
+  const liveScopeKey = buildScopeSignature({
+    prefs: snapshot,
+    projectIds,
+    customRange,
+    currentUserId: currentUser?.id ?? null,
+  });
 
   useEffect(() => {
-    fetchPage(page);
-  }, [fetchPage, page, reloadKey]);
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
+    const payload = buildScopePayload({
+      prefs: snapshot,
+      customRange,
+      projectIds,
+      currentUserId: currentUser?.id ?? null,
+    });
+    const scopeAtFetchStart = liveScopeKey;
+    const pageAtFetchStart = page;
+    const refreshAtFetchStart = refreshRevision;
+
+    dashboardOperationsService
+      .projects(workspaceSlug, { ...payload, page }, controller.signal)
+      .then((envelope: TStandaloneEnvelope<TProjectsData>) => {
+        if (
+          liveScopeKey !== scopeAtFetchStart ||
+          refreshRevision !== refreshAtFetchStart ||
+          page !== pageAtFetchStart
+        ) {
+          return;
+        }
+        const section = envelope.sections.find((entry) => entry.section_id === "projects");
+        const classified = classifySection<TProjectsData>(
+          section as
+            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TProjectsData; reason?: string }
+            | undefined
+        );
+        if (classified.kind === "ok") {
+          if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
+            return;
+          }
+          setState({ kind: "ok", data: classified.data });
+          setPage(classified.data.pagination.page);
+          return;
+        }
+        if (classified.kind === "unavailable") {
+          setState({ kind: "unavailable", reason: classified.reason });
+          return;
+        }
+        setState({
+          kind: "error",
+          error: { kind: "malformed", message: classified.reason ?? "section_error" },
+        });
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setState({ kind: "error", error: classifyDashboardError(err) });
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [
+    workspaceSlug,
+    snapshot,
+    customRange.start,
+    customRange.end,
+    projectIds,
+    currentUser?.id,
+    page,
+    refreshRevision,
+    liveScopeKey,
+    reloadKey,
+  ]);
 
   return (
     <div className="flex flex-col gap-3" data-testid="operations-projects-tab">

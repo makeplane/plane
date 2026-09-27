@@ -21,7 +21,7 @@
  * with a retry button.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   TTimelineData,
   TStandaloneEnvelope,
@@ -29,7 +29,7 @@ import type {
   TTimelineDeadlineRow,
   TUnscheduledCycleRow,
 } from "@plane/types";
-import { buildScopePayload } from "@plane/shared-state";
+import { buildScopePayload, buildScopeSignature } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
 import {
   useDashboardCustomRange,
@@ -42,6 +42,8 @@ import { ErrorPanel } from "../panels/error-panel";
 
 interface Props {
   workspaceSlug: string;
+  /** Manual refresh revision from the shell (spec §9.5). */
+  refreshRevision?: number;
 }
 
 type TabState =
@@ -51,7 +53,7 @@ type TabState =
   | { kind: "unavailable"; reason: string | undefined }
   | { kind: "error"; error: TDashboardTabError };
 
-export function OperationsTimelineTab({ workspaceSlug }: Props): React.ReactElement {
+export function OperationsTimelineTab({ workspaceSlug, refreshRevision = 0 }: Props): React.ReactElement {
   const { data: currentUser } = useUser();
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
@@ -59,8 +61,14 @@ export function OperationsTimelineTab({ workspaceSlug }: Props): React.ReactElem
 
   const [state, setState] = useState<TabState>({ kind: "idle" });
   const [reloadKey, setReloadKey] = useState(0);
+  const liveScopeKey = buildScopeSignature({
+    prefs: snapshot,
+    projectIds,
+    customRange,
+    currentUserId: currentUser?.id ?? null,
+  });
 
-  const fetchData = useCallback(() => {
+  useEffect(() => {
     if (!workspaceSlug) return;
     const controller = new AbortController();
     setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
@@ -70,6 +78,9 @@ export function OperationsTimelineTab({ workspaceSlug }: Props): React.ReactElem
       projectIds,
       currentUserId: currentUser?.id ?? null,
     });
+    const scopeAtFetchStart = liveScopeKey;
+    const refreshAtFetchStart = refreshRevision;
+
     dashboardOperationsService
       .timeline(
         workspaceSlug,
@@ -77,6 +88,9 @@ export function OperationsTimelineTab({ workspaceSlug }: Props): React.ReactElem
         controller.signal
       )
       .then((envelope: TStandaloneEnvelope<TTimelineData>) => {
+        if (liveScopeKey !== scopeAtFetchStart || refreshRevision !== refreshAtFetchStart) {
+          return;
+        }
         const section = envelope.sections.find((entry) => entry.section_id === "timeline");
         const classified = classifySection<TTimelineData>(
           section as
@@ -100,14 +114,25 @@ export function OperationsTimelineTab({ workspaceSlug }: Props): React.ReactElem
         });
       })
       .catch((err) => {
+        if (controller.signal.aborted) return;
         if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
         setState({ kind: "error", error: classifyDashboardError(err) });
       });
-  }, [workspaceSlug, snapshot, customRange.start, customRange.end, projectIds, currentUser?.id]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData, reloadKey]);
+    return () => {
+      controller.abort();
+    };
+  }, [
+    workspaceSlug,
+    snapshot,
+    customRange.start,
+    customRange.end,
+    projectIds,
+    currentUser?.id,
+    refreshRevision,
+    liveScopeKey,
+    reloadKey,
+  ]);
 
   return (
     <div className="flex flex-col gap-3" data-testid="operations-timeline-tab">
