@@ -82,7 +82,7 @@ describe("scope parity — every consumer sees the same effective scope", () => 
     // assignee selection — that's the bug the prior implementation
     // had. Assignee_id is stripped; the rest survives.
     expect(payload.business_filters).toEqual({ priority: ["urgent"] });
-    expect("assignee_id" in payload.business_filters).toBe(false);
+    expect("assignee_id" in (payload.business_filters ?? {})).toBe(false);
   });
 
   test("custom period carries start/end in every consumer", () => {

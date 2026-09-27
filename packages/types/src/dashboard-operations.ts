@@ -110,6 +110,12 @@ export interface TDashboardStandalonePayload extends TDashboardScopePayload {
   page_size?: number;
   /** Workload-only: rule-based WIP threshold. */
   wip_threshold?: number;
+  /** Workload-only: ask the backend to sort the FULL roster by risk
+   *  and return the top N. Without `preview: true` the backend
+   *  paginates by display_name, which can hide Z-named overloaded
+   *  members on page 2+. The overview workload preview always
+   *  sends `preview: true`. */
+  preview?: boolean;
   /** Timeline's three independent paging cursors. */
   cycles_page?: number;
   deadlines_page?: number;

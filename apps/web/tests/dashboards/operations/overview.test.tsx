@@ -156,7 +156,7 @@ describe("ProgressPanel", () => {
 describe("DeliveryPanel", () => {
   test("renders the dual trend with explicit delta", () => {
     render(<DeliveryPanel data={DELIVERY_OK} isLoading={false} error={false} />);
-    expect(screen.getByTestId("delivery-chart")).toBeTruthy();
+    expect(screen.getByTestId("delivery-chart-container")).toBeTruthy();
     expect(screen.getByTestId("delivery-delta")).toBeTruthy();
     expect(screen.getByTestId("delivery-delta").textContent).toContain("+1");
   });

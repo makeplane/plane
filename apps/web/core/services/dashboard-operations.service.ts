@@ -97,6 +97,12 @@ export class DashboardOperationsService extends APIService {
    * `POST /api/workspaces/{slug}/dashboard/workload/` — Task 3 endpoint.
    * Returns the per-member workload rows + unassigned / inactive buckets
    * + workspace-wide distinct totals + WIP threshold rule.
+   *
+   * Pass `payload.preview = true` to ask the backend for a
+   * full-roster, risk-sorted preview (top 5 by overdue → blocked →
+   * started → open → name). Without `preview`, the backend paginates
+   * by display_name — a Z-named overloaded member would be hidden
+   * on page 2. The overview workload preview uses `preview: true`.
    */
   async workload(
     workspaceSlug: string,

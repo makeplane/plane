@@ -65,9 +65,18 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
   // — this is the canonical scope parity fix (shell, tabs, drawer).
   const currentUserId = currentUser?.id ?? null;
 
-  // Workload preview — fetched from /dashboard/workload/ at page=1
-  // size=5. Sorted overdue → blocked → started → open so the busiest
-  // members surface first (per spec §6.5).
+  // Workload preview — fetched from /dashboard/workload/ with the
+  // server-side risk-sorted preview contract (per coordinator
+  // finding 2026-09-27 15:21Z). Backend is expected to honour
+  // `preview: true` by sorting the FULL roster by
+  // (overdue → blocked → started → open → name) and returning
+  // the top N, so a Z-named member who is overloaded surfaces
+  // even when name-sort pagination would land them on page 2+.
+  // If the backend ignores `preview` (legacy), the client falls
+  // back to its local sort — same data, smaller cohort.
+  //
+  // The contract asserts page_size=5 against a full roster; we
+  // intentionally do NOT use page_size=100 as a silent workaround.
   const [workloadRows, setWorkloadRows] = useState<TWorkloadMemberRow[]>([]);
   const [workloadSectionStatus, setWorkloadSectionStatus] = useState<TSectionStatus>("ok");
   const [workloadSectionReason, setWorkloadSectionReason] = useState<string | undefined>(undefined);
@@ -87,7 +96,11 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
       currentUserId,
     });
     dashboardOperationsService
-      .workload(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
+      .workload(
+        workspaceSlug,
+        { ...payload, page: 1, page_size: 5, preview: true },
+        controller.signal
+      )
       .then((envelope) => {
         if (generation !== workloadGenerationRef.current) return;
         const section = envelope.sections.find((entry) => entry.section_id === "workload");
@@ -102,15 +115,35 @@ export function OperationsOverviewTab({ workspaceSlug, state }: Props): React.Re
           }
           setWorkloadSectionStatus("ok");
           setWorkloadSectionReason(undefined);
-          const sorted = [...classified.data.rows].sort(
-            (a, b) =>
-              b.overdue - a.overdue ||
-              b.blocked - a.blocked ||
-              b.started - a.started ||
-              b.open - a.open ||
-              (a.display_name ?? "").localeCompare(b.display_name ?? "")
-          );
-          setWorkloadRows(sorted.slice(0, 5));
+          // Server is authoritative for the preview ordering when
+          // it honours `preview: true` — it has the full picture, so
+          // we trust the row order it returns. The client sort
+          // below is the safety net for the legacy backend that
+          // ignores `preview` and paginates by display_name.
+          const rows = classified.data.rows;
+          const isServerRiskSorted = rows.every((row, index, all) => {
+            if (index === 0) return true;
+            const prev = all[index - 1];
+            const a = [row.overdue, row.blocked, row.started, row.open];
+            const p = [prev.overdue, prev.blocked, prev.started, prev.open];
+            for (let i = 0; i < 4; i++) {
+              if (p[i] !== a[i]) return p[i] > a[i];
+            }
+            return true;
+          });
+          if (isServerRiskSorted) {
+            setWorkloadRows(rows.slice(0, 5));
+          } else {
+            const sorted = [...rows].sort(
+              (a, b) =>
+                b.overdue - a.overdue ||
+                b.blocked - a.blocked ||
+                b.started - a.started ||
+                b.open - a.open ||
+                (a.display_name ?? "").localeCompare(b.display_name ?? "")
+            );
+            setWorkloadRows(sorted.slice(0, 5));
+          }
           return;
         }
         if (classified.kind === "unavailable") {
