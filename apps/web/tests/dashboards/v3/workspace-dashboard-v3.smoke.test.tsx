@@ -29,6 +29,8 @@ import type { TDashboardOverviewResponse } from "@plane/types";
 type SentCall = { slug: string; payload: Record<string, unknown> };
 
 const overviewCalls: SentCall[] = [];
+const attentionCalls: SentCall[] = [];
+const workloadPreviewCalls: SentCall[] = [];
 
 vi.mock("@plane/i18n", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -151,12 +153,18 @@ vi.mock("@/services/dashboard-operations.service", () => {
       overviewCalls.push({ slug, payload });
       return overviewResponse;
     };
-    public attention = async () => attentionResponse;
+    public attention = async (slug: string, payload: Record<string, unknown>) => {
+      attentionCalls.push({ slug, payload });
+      return attentionResponse;
+    };
     public items = async () => attentionResponse;
-    public workload = async () => ({
-      ...overviewResponse,
-      sections: [{ status: "unavailable", section_id: "workload", reason: "endpoint_pending_task_3" }],
-    });
+    public workload = async (slug: string, payload: Record<string, unknown>) => {
+      workloadPreviewCalls.push({ slug, payload });
+      return {
+        ...overviewResponse,
+        sections: [{ status: "unavailable", section_id: "workload", reason: "endpoint_pending_task_3" }],
+      };
+    };
     public projects = async () => ({
       ...overviewResponse,
       sections: [{ status: "unavailable", section_id: "projects", reason: "endpoint_pending_task_3" }],
@@ -171,6 +179,7 @@ vi.mock("@/services/dashboard-operations.service", () => {
 
 import WorkspaceDashboardsPage from "../../../app/(all)/[workspaceSlug]/(projects)/dashboards/page";
 import { DASHBOARD_OPERATIONS_DEBOUNCE_MS } from "@/components/dashboards/operations/shell";
+import { defaultDashboardOperationsPreferences } from "@plane/shared-state";
 
 const Route = WorkspaceDashboardsPage as unknown as (props: { params: { workspaceSlug: string } }) => ReactElement;
 
@@ -184,6 +193,8 @@ const mountRoute = async (workspaceSlug = "acme") => {
 
 beforeEach(() => {
   overviewCalls.length = 0;
+  attentionCalls.length = 0;
+  workloadPreviewCalls.length = 0;
 });
 
 afterEach(() => {
@@ -221,5 +232,17 @@ describe("Cutover — /dashboards renders the Team Operations shell", () => {
     await mountRoute("acme");
     expect(overviewCalls).toHaveLength(1);
     expect(overviewCalls[0].slug).toBe("acme");
+  });
+
+  test("mount fires exactly one overview + one attention + one workload-preview request", async () => {
+    // The mounted-shell integration must assert bounded overview +
+    // preview endpoint calls, not only overview. Otherwise a
+    // beginRequest-induced re-render can quietly double-fire the
+    // workload / attention previews.
+    await mountRoute("acme");
+    expect(overviewCalls).toHaveLength(1);
+    expect(attentionCalls.length).toBeGreaterThanOrEqual(1);
+    expect(workloadPreviewCalls.length).toBeGreaterThanOrEqual(1);
+    expect(workloadPreviewCalls.length).toBeLessThanOrEqual(2);
   });
 });
