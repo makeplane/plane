@@ -17,7 +17,7 @@
  * only has to re-run it when a preference changes.
  */
 
-import type { TAnalyticsQueryResponseV2, TAnalyticsQueryV2 } from "@plane/types";
+import type { TAnalyticsComparison, TAnalyticsQueryResponseV2, TAnalyticsQueryV2 } from "@plane/types";
 import type { TAnalyticsBatchResultEntry } from "@/components/analytics/v2/batch-composer";
 import { isDateDimension } from "@/components/analytics/v2/mapping";
 import { reconcileDisplayNormalization } from "@/components/analytics/v2/query";
@@ -47,6 +47,12 @@ export interface TWorkspaceDashboardGlobalScope {
    * client-side (§14, §20).
    */
   projectIds: string[];
+  /**
+   * Period-over-period comparison applied at the global scope. Mirrors
+   * `TAnalyticsComparison` from `@plane/types` — the engine rejects anything
+   * outside that vocab, so this field must round-trip through it exactly.
+   */
+  comparison: TAnalyticsComparison;
 }
 
 export type TWorkspaceDashboardCardResult =
@@ -76,6 +82,7 @@ export const DEFAULT_GLOBAL_SCOPE: TWorkspaceDashboardGlobalScope = {
   dateBasis: "lifecycle_overlap",
   filters: {},
   projectIds: [],
+  comparison: "none",
 };
 
 /**

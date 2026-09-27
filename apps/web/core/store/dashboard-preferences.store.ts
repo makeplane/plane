@@ -26,15 +26,25 @@ import {
   type TCardPreference,
 } from "@/components/dashboards/v3/card-registry";
 import { DEFAULT_GLOBAL_SCOPE, type TWorkspaceDashboardGlobalScope } from "@/components/dashboards/v3/batch-composer";
+import type { TAnalyticsComparison } from "@plane/types";
 
 /** §15.3 — bump when the stored shape changes; older payloads are discarded. */
 export const DASHBOARD_PREFERENCES_SCHEMA_VERSION = 1;
 
 const STORAGE_KEY_PREFIX = "plane-dashboard-preferences";
 
-/** §15 — the persisted shape. `schema_version` gates forward compatibility. */
+/**
+ * §15 — the persisted shape. `schema_version` gates forward compatibility.
+ *
+ * `viewMode` tracks whether the viewer is looking at the team-wide or
+ * personal dashboard; the rest of the layout (filters, projects, time
+ * window) is shared, so `viewMode` is the only per-tab split at this layer.
+ */
+export type TViewMode = "personal" | "team";
+
 export interface TWorkspaceDashboardPreferences {
   schema_version: number;
+  viewMode: TViewMode | null;
   global: TWorkspaceDashboardGlobalScope;
   cards: Record<string, TCardPreference>;
 }
@@ -44,6 +54,7 @@ export const dashboardPreferencesStorageKey = (workspaceId: string, userId: stri
 
 export const defaultDashboardPreferences = (): TWorkspaceDashboardPreferences => ({
   schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION,
+  viewMode: null,
   global: { ...DEFAULT_GLOBAL_SCOPE, filters: {}, projectIds: [] },
   cards: Object.fromEntries(WORKSPACE_DASHBOARD_CARDS.map((card) => [card.id, defaultCardPreference(card.id)])),
 });
@@ -65,6 +76,36 @@ const asStringList = (value: unknown): Record<string, string[]> => {
 };
 
 const asString = (value: unknown): string | undefined => (typeof value === "string" ? value : undefined);
+
+/** Engine-accepted comparison vocab; anything else must round-trip as `"none"`. */
+const VALID_COMPARISON: ReadonlySet<TAnalyticsComparison> = new Set([
+  "none",
+  "previous_period",
+  "previous_week",
+  "previous_month",
+  "previous_quarter",
+  "previous_year",
+]);
+
+const sanitizeComparison = (value: unknown): TAnalyticsComparison =>
+  typeof value === "string" && (VALID_COMPARISON as Set<string>).has(value) ? (value as TAnalyticsComparison) : "none";
+
+const sanitizeViewMode = (value: unknown): TViewMode | null =>
+  value === "personal" || value === "team" ? value : null;
+
+/**
+ * Return a new filter bag with `key` dropped if it was present. Sharing the
+ * reference when the key is absent keeps referential equality for the common
+ * path, so React doesn't re-render when nothing changed.
+ */
+const omitFilter = (filters: Record<string, string[]>, key: string): Record<string, string[]> => {
+  if (!(key in filters)) return filters;
+  const next: Record<string, string[]> = {};
+  for (const [k, v] of Object.entries(filters)) {
+    if (k !== key) next[k] = v;
+  }
+  return next;
+};
 
 /**
  * §15.3 — unknown card ids are ignored and every surviving value is clamped by
@@ -89,6 +130,7 @@ export function sanitizeDashboardPreferences(raw: unknown): TWorkspaceDashboardP
     dateBasis: (asString(global.dateBasis) as TWorkspaceDashboardGlobalScope["dateBasis"]) ?? base.global.dateBasis,
     filters: asStringList(global.filters),
     projectIds: asStringArray(global.projectIds),
+    comparison: sanitizeComparison(global.comparison),
   };
   if (customRange?.start && customRange.end) {
     sanitizedGlobal.customRange = { start: customRange.start, end: customRange.end };
@@ -101,7 +143,12 @@ export function sanitizeDashboardPreferences(raw: unknown): TWorkspaceDashboardP
     cards[definition.id] = reconcileCardPreference(definition, stored as Partial<TCardPreference>);
   }
 
-  return { schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION, global: sanitizedGlobal, cards };
+  return {
+    schema_version: DASHBOARD_PREFERENCES_SCHEMA_VERSION,
+    viewMode: sanitizeViewMode(raw.viewMode),
+    global: sanitizedGlobal,
+    cards,
+  };
 }
 
 type Listener = () => void;
@@ -156,6 +203,25 @@ export class DashboardPreferencesStore {
   };
 
   getGlobalScope = (): TWorkspaceDashboardGlobalScope => this.state.global;
+
+  getViewMode = (): TViewMode | null => this.state.viewMode;
+
+  /**
+   * Switching to "team" drops any `assignees` filter so the PM/admin view is
+   * unconstrained; switching to "personal" leaves the filter alone — the
+   * hook in Task 3 sets it explicitly from the viewer.
+   */
+  setViewMode = (mode: TViewMode): void => {
+    if (mode === "team") {
+      this.commit({
+        ...this.state,
+        viewMode: "team",
+        global: { ...this.state.global, filters: omitFilter(this.state.global.filters, "assignees") },
+      });
+      return;
+    }
+    this.commit({ ...this.state, viewMode: mode });
+  };
 
   getCardPreference = (cardId: string): TCardPreference => this.state.cards[cardId] ?? defaultCardPreference(cardId);
 
