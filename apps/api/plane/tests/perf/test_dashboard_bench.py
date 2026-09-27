@@ -129,7 +129,9 @@ class TestDashboardBenchmark:
                 f"payload_p50={stats['payload_kb_p50']}KB"
             )
             assert warm_p95 <= self.TARGET_WARM_P95_MS, (
-                f"{label}: warm p95 {warm_p95}ms > target {self.TARGET_WARM_P95_MS}ms"
+                f"{label}: warm p95 {warm_p95}ms > target {self.TARGET_WARM_P95_MS}ms "
+                f"(production-shape verification: re-measure from host "
+                f"against plane-dashboard-qa on :8100)"
             )
             assert cold_ms <= self.TARGET_COLD_MS, (
                 f"{label}: cold {cold_ms}ms > target {self.TARGET_COLD_MS}ms"
