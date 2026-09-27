@@ -873,5 +873,10 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Gezählt nach {basis}, unabhängig von der globalen Datumsbasis"
+    }
   }
 }

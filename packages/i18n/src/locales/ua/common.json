@@ -873,5 +873,10 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Підрахунок за {basis}, незалежно від глобальної бази дат"
+    }
   }
 }

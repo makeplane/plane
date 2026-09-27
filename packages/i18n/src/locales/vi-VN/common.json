@@ -925,5 +925,10 @@
     "make_public": "Chuyển thành công khai",
     "move_to_group": "Chuyển vào chuyên mục",
     "export_page": "Xuất trang"
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Đếm theo {basis}, bất kể cơ sở ngày toàn cục"
+    }
   }
 }

@@ -873,5 +873,10 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Numărate după {basis}, indiferent de baza de date globală"
+    }
   }
 }

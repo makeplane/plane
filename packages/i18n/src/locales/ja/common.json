@@ -873,5 +873,10 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "グローバル日付基準にかかわらず、{basis} で集計"
+    }
   }
 }

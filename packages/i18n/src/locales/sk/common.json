@@ -873,5 +873,10 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovať ako JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Počítané podľa {basis}, bez ohľadu na globálny základ dátumu"
+    }
   }
 }

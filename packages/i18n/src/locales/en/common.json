@@ -881,7 +881,7 @@
       "no_data": "No data for the current filters.",
       "error": "This card could not be loaded.",
       "truncated": "Results were truncated because the query hit the work budget. Exported values may be partial.",
-      "basis_override": "Counted by {{basis}}, regardless of the global date basis"
+      "basis_override": "Counted by {basis}, regardless of the global date basis"
     },
     "control": {
       "time_range": "Time range",

@@ -873,5 +873,10 @@
       "description": "將工作事項匯出為 JSON 檔案。",
       "short_description": "匯出為 JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "依 {basis} 計算，與全域日期基準無關"
+    }
   }
 }

@@ -873,5 +873,10 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Dihitung berdasarkan {basis}, terlepas dari basis tanggal global"
+    }
   }
 }

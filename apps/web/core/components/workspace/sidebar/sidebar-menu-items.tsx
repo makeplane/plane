@@ -22,7 +22,12 @@ import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // store hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useInstance } from "@/hooks/store/use-instance";
 import useLocalStorage from "@/hooks/use-local-storage";
+// helpers
+// NOTE: relative on purpose. The `@/helpers/*` tsconfig alias points at apps/web/helpers
+// while vite/vitest resolve it to core/helpers, so only a relative path is resolver-safe.
+import { isWorkspaceDashboardsEnabled } from "../../../helpers/workspace-dashboards-access";
 import {
   usePersonalNavigationPreferences,
   useWorkspaceNavigationPreferences,
@@ -38,6 +43,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   // store hooks
   const { isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
+  const { config } = useInstance();
   // hooks
   const { preferences: personalPreferences } = usePersonalNavigationPreferences();
   const { preferences: workspacePreferences } = useWorkspaceNavigationPreferences();
@@ -92,6 +98,16 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
         };
       }).sort((a, b) => a.sort_order - b.sort_order),
     [workspacePreferences]
+  );
+
+  // Workspace dashboards is an instance-level kill-switch (WORKSPACE_DASHBOARDS).
+  // Fail closed so the entry stays hidden until instance config confirms it.
+  const visiblePinnedNavigationItems = useMemo(
+    () =>
+      WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.filter(
+        (item) => item.key !== "dashboards" || isWorkspaceDashboardsEnabled(config)
+      ),
+    [config]
   );
 
   return (
@@ -149,7 +165,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           {isWorkspaceMenuOpen && (
             <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
               <>
-                {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
+                {visiblePinnedNavigationItems.map((item, _index) => (
                   // oxlint-disable-next-line react/no-array-index-key
                   <SidebarItemBase key={`static_${_index}`} item={item} />
                 ))}

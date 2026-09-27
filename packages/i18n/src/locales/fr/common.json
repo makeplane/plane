@@ -873,5 +873,10 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Compté selon {basis}, quelle que soit la base de dates globale"
+    }
   }
 }

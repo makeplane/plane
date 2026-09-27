@@ -873,5 +873,10 @@
       "description": "Esporta elementi di lavoro in un file JSON.",
       "short_description": "Esporta come JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Conteggiato per {basis}, indipendentemente dalla base dati globale"
+    }
   }
 }

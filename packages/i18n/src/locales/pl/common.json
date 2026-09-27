@@ -873,5 +873,10 @@
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "Liczone wg {basis}, niezależnie od globalnej podstawy daty"
+    }
   }
 }

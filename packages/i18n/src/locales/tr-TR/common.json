@@ -873,5 +873,10 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "{basis} temelinde sayılır, küresel tarih temelinden bağımsız olarak"
+    }
   }
 }

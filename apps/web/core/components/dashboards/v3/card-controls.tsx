@@ -16,6 +16,7 @@
 import { useState } from "react";
 import {
   ANALYTICS_ALLOCATION_OPTIONS,
+  ANALYTICS_DATE_BASIS_OPTIONS,
   ANALYTICS_DATE_GROUPING_OPTIONS,
   ANALYTICS_DISPLAY_OPTIONS,
   ANALYTICS_NORMALIZATION_OPTIONS,
@@ -234,9 +235,15 @@ export function WorkspaceDashboardCardControls({ card, preference, onChange, onR
 export function CardDateBasisOverrideLabel({ card }: { card: TCardDefinition }) {
   const { t } = useTranslation();
   if (!card.semanticDateBasis) return null;
+  // Surface the human-readable label (e.g. "Completed date") rather than the
+  // raw engine token (`completed_at`) so the i18n string interpolates into a
+  // sentence the viewer can actually read.
+  const basisLabel =
+    ANALYTICS_DATE_BASIS_OPTIONS.find((option) => option.value === card.semanticDateBasis)?.label ??
+    card.semanticDateBasis;
   return (
     <span className="text-11 text-tertiary" data-testid={`dashboard-v3-basis-${card.id}`}>
-      {t("dashboard_v3.card.basis_override", { basis: card.semanticDateBasis })}
+      {t("dashboard_v3.card.basis_override", { basis: basisLabel })}
     </span>
   );
 }

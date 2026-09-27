@@ -148,31 +148,64 @@ export function WorkspaceDashboardCard({
     downloadCsv(filename, aggregateCellsToCsvRows(response, { includeTruncationNote: true }));
   }, [card.id, matrixModel, resolve, response, seriesDim]);
 
-  const header = (
-    <div className="flex items-start justify-between gap-2">
-      <div className="flex flex-col gap-0.5">
-        <h3 className="text-13 font-medium text-primary">{t(card.titleKey)}</h3>
-        <CardDateBasisOverrideLabel card={card} />
+  // §7.1 — the KPI band renders five cards across `lg:grid-cols-5`, which at
+  // desktop widths leaves ~165px per card. A horizontal header would let
+  // "Configure" + "Export as csv" crowd the title off the right edge, so the
+  // KPI cards stack title above controls (and collapse the Export button to
+  // icon-only to keep the row from wrapping); the other sections keep the
+  // side-by-side header that fits their wider columns.
+  const exportLabel = t("exporter.csv.short_description");
+  const header =
+    card.section === "kpi" ? (
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-13 font-medium text-primary">{t(card.titleKey)}</h3>
+          <CardDateBasisOverrideLabel card={card} />
+        </div>
+        <div className="flex flex-wrap items-center gap-1">
+          <WorkspaceDashboardCardControls
+            card={card}
+            preference={preference}
+            onChange={onPreferenceChange}
+            onReset={onReset}
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            prependIcon={<Download className="h-3.5 w-3.5" />}
+            onClick={exportCsv}
+            aria-label={exportLabel}
+            // §7.1 — KPI cards have ~140px of inner width; the Export label is
+            // wider than the row. Drop the label so the icon alone fits while
+            // aria-label keeps the action accessible.
+          />
+        </div>
       </div>
-      <div className="flex items-center gap-1">
-        <WorkspaceDashboardCardControls
-          card={card}
-          preference={preference}
-          onChange={onPreferenceChange}
-          onReset={onReset}
-        />
-        <Button
-          variant="secondary"
-          size="sm"
-          prependIcon={<Download className="h-3.5 w-3.5" />}
-          onClick={exportCsv}
-          aria-label={t("exporter.csv.short_description")}
-        >
-          {t("exporter.csv.short_description")}
-        </Button>
+    ) : (
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h3 className="text-13 font-medium text-primary">{t(card.titleKey)}</h3>
+          <CardDateBasisOverrideLabel card={card} />
+        </div>
+        <div className="flex flex-shrink-0 items-center gap-1">
+          <WorkspaceDashboardCardControls
+            card={card}
+            preference={preference}
+            onChange={onPreferenceChange}
+            onReset={onReset}
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            prependIcon={<Download className="h-3.5 w-3.5" />}
+            onClick={exportCsv}
+            aria-label={exportLabel}
+          >
+            {exportLabel}
+          </Button>
+        </div>
       </div>
-    </div>
-  );
+    );
 
   if (!result || result.status === "pending") {
     return (

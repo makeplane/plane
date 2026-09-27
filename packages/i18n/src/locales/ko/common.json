@@ -873,5 +873,10 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
+  },
+  "dashboard_v3": {
+    "card": {
+      "basis_override": "전역 날짜 기준과 관계없이 {basis} 기준으로 집계됨"
+    }
   }
 }
