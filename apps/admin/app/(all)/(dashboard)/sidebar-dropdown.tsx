@@ -38,6 +38,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
   const getSidebarMenuItems = () => (
     <Menu.Items
+      modal={false}
       className={cn(
         "shadow-lg absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 outline-none",
         {

@@ -143,7 +143,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items as={Fragment}>
+              <Menu.Items modal={false} as={Fragment}>
                 <div
                   className={cn(
                     "fixed z-21 mt-1 flex w-[19rem] origin-top-left flex-col divide-y divide-subtle rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200 outline-none",

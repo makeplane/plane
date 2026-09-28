@@ -195,6 +195,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
 
   let menuItems = (
     <Menu.Items
+      modal={false}
       data-prevent-outside-click={!!portalElement}
       className={cn(
         "fixed z-30 translate-y-0",

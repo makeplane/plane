@@ -1,0 +1,20 @@
+diff --git a/dist/headlessui.dev.cjs b/dist/headlessui.dev.cjs
+index df5dd96745436001940c85b892f1807d09f63214..571a7b50ea48c1211f99192e56fef4729d8a7589 100644
+--- a/dist/headlessui.dev.cjs
++++ b/dist/headlessui.dev.cjs
+@@ -6832,7 +6832,7 @@ var import_react53 = __toESM(require("react"), 1);
+ function FrozenFn({ children, freeze }, ref) {
+   let contents = useFrozenData(freeze, children);
+   if ((0, import_react53.isValidElement)(contents)) {
+-    return (0, import_react53.cloneElement)(contents, { ref });
++    return ref == null ? contents : (0, import_react53.cloneElement)(contents, { ref });
+   }
+   return /* @__PURE__ */ import_react53.default.createElement(import_react53.default.Fragment, null, contents);
+ }
+diff --git a/dist/internal/frozen.js b/dist/internal/frozen.js
+index 6519148144e0151b4edbe631174aaa0ef15178b1..06bae83d46fab47852a97eccf954d433b0bc6aef 100644
+--- a/dist/internal/frozen.js
++++ b/dist/internal/frozen.js
+@@ -1 +1 @@
+-import r,{cloneElement as l,isValidElement as c,useState as a}from"react";function f({children:t,freeze:e},o){let n=u(e,t);return c(n)?l(n,{ref:o}):r.createElement(r.Fragment,null,n)}const s=r.forwardRef(f);function u(t,e){let[o,n]=a(e);return!t&&o!==e&&n(e),t?o:e}export{s as Frozen,u as useFrozenData};
++import r,{cloneElement as l,isValidElement as c,useState as a}from"react";function f({children:t,freeze:e},o){let n=u(e,t);return c(n)?o==null?n:l(n,{ref:o}):r.createElement(r.Fragment,null,n)}const s=r.forwardRef(f);function u(t,e){let[o,n]=a(e);return!t&&o!==e&&n(e),t?o:e}export{s as Frozen,u as useFrozenData};

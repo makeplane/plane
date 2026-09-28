@@ -282,6 +282,11 @@ minimumReleaseAgeExclude:
   - "@makeplane/propel@0.3.0"
 
 patchedDependencies:
+  # Headless UI's internal Frozen (the direct child wrapper inside Combobox.Options) does
+  # cloneElement(child, { ref }) with a null ref under React 19, wiping the child's own
+  # ref. Every dropdown hangs its usePopper ref on that child, so no dropdown was ever
+  # positioned. The patch only forwards the ref when one exists.
+  '@headlessui/react@2.2.10': patches/@headlessui__react@2.2.10.patch
   react-color@2.19.3: patches/react-color@2.19.3.patch
 
 peerDependencyRules:
