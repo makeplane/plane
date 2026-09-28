@@ -26,7 +26,7 @@ export function AttentionPreviewPanel({ preview, rows, reasonCounts, isLoading, 
   return (
     <PanelSurface
       title="Needs attention"
-      subtitle="Distinct issues, OR'd rules; one row may carry several reason badges."
+      subtitle="Issues that need a decision soon."
       isLoading={isLoading}
       error={error}
       testId="attention-preview-panel"

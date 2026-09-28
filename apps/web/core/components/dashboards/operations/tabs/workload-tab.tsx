@@ -28,12 +28,8 @@
  *   scope's pagination window.
  */
 
-import { useEffect, useRef, useState } from "react";
-import type {
-  TWorkloadData,
-  TWorkloadMemberRow,
-  TStandaloneEnvelope,
-} from "@plane/types";
+import { useEffect, useState } from "react";
+import type { TWorkloadData, TWorkloadMemberRow, TStandaloneEnvelope } from "@plane/types";
 import { buildScopePayload, buildScopeSignature } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
 import {
@@ -101,20 +97,13 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
     dashboardOperationsService
       .workload(workspaceSlug, { ...payload, page }, controller.signal)
       .then((envelope: TStandaloneEnvelope<TWorkloadData>) => {
-        // The effect's cleanup already aborted the previous scope's
-        // fetch. A still-resolving promise lands here AFTER abort;
-        // the first-line guard ensures we never commit a late
-        // payload to state.
-        if (controller.signal.aborted) return;
-        // Race-rejection gate: if the live scope changed, the user
-        // moved on while this request was in flight. Drop the
-        // response — never commit a late payload to state.
+        if (controller.signal.aborted) return undefined;
         if (
           liveScopeKey !== scopeAtFetchStart ||
           refreshRevision !== refreshAtFetchStart ||
           page !== pageAtFetchStart
         ) {
-          return;
+          return undefined;
         }
         const section = envelope.sections.find((entry) => entry.section_id === "workload");
         const classified = classifySection<TWorkloadData>(
@@ -123,23 +112,22 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
             | undefined
         );
         if (classified.kind === "ok") {
-          // Defensive scope_key check against the envelope header —
-          // the backend must echo the same scope_key it received.
           if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-            return;
+            return undefined;
           }
           setState({ kind: "ok", data: classified.data });
           setPage(classified.data.pagination.page);
-          return;
+          return undefined;
         }
         if (classified.kind === "unavailable") {
           setState({ kind: "unavailable", reason: classified.reason });
-          return;
+          return undefined;
         }
         setState({
           kind: "error",
           error: { kind: "malformed", message: classified.reason ?? "section_error" },
         });
+        return undefined;
       })
       .catch((err) => {
         if (controller.signal.aborted) return;
@@ -158,6 +146,7 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
     // projectIds / currentUser; including the individual primitives
     // avoids spurious re-fires when an upstream memo reference
     // changes but its content is stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- customRange captured via liveScopeKey + payload
   }, [
     workspaceSlug,
     snapshot,
@@ -176,7 +165,7 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
       <header className="flex flex-col gap-0.5">
         <h2 className="text-13 font-medium text-primary">Workload</h2>
         <p className="text-11 text-tertiary">
-          Per-member cells with full credit; workspace totals never sum across rows.
+          Open work by assignee — overdue, blocked, and due-soon counts use full credit per person.
         </p>
       </header>
       {state.kind === "loading" ? (

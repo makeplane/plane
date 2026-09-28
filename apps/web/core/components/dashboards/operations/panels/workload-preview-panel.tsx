@@ -42,7 +42,7 @@ export function WorkloadPreviewPanel({ status, reason, error, isLoading, rows, o
   return (
     <PanelSurface
       title="Team workload"
-      subtitle="5-person preview · sorted overdue → blocked → started."
+      subtitle="Who is carrying the most open, overdue, and blocked work."
       isLoading={isLoading && !isPending && error === null}
       error={status === "error" && error !== null}
       testId="workload-preview-panel"
@@ -72,9 +72,9 @@ export function WorkloadPreviewPanel({ status, reason, error, isLoading, rows, o
         <div className="text-12 text-tertiary">No workload in current scope.</div>
       ) : (
         <ul className="flex flex-col gap-1.5" data-testid="workload-preview-list">
-          {rows.map((row, index) => (
+          {rows.map((row) => (
             <li
-              key={row.member_id ?? `preview-${index}`}
+              key={row.member_id || "unassigned-roster"}
               className="flex items-center gap-2 text-12"
               data-testid={`workload-preview-row-${row.member_id ?? "unassigned"}`}
             >

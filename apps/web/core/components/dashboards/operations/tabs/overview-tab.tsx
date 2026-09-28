@@ -26,6 +26,7 @@ import type {
   TDashboardOverviewResponse,
   TDashboardSection,
   TTopProjectsData,
+  TTimelineData,
   TWorkloadData,
   TWorkloadMemberRow,
 } from "@plane/types";
@@ -45,6 +46,7 @@ import { DeliveryPanel } from "../panels/delivery-panel";
 import { TopProjectsPanel } from "../panels/top-projects-panel";
 import { AttentionPreviewPanel } from "../panels/attention-preview-panel";
 import { WorkloadPreviewPanel } from "../panels/workload-preview-panel";
+import { TimelinePreviewPanel } from "../panels/timeline-preview-panel";
 
 export interface OverviewRequestState {
   status: "idle" | "loading" | "ok" | "error";
@@ -65,11 +67,7 @@ interface Props {
   refreshRevision?: number;
 }
 
-export function OperationsOverviewTab({
-  workspaceSlug,
-  state,
-  refreshRevision = 0,
-}: Props): React.ReactElement {
+export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 0 }: Props): React.ReactElement {
   const { data: currentUser } = useUser();
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
@@ -99,103 +97,151 @@ export function OperationsOverviewTab({
   const [workloadReloadKey, setWorkloadReloadKey] = useState(0);
 
   // Canonical scope payload — captured once so every preview effect
-// can depend on a single object reference that changes with view_mode
-// (My work), project_ids, custom range, etc. Even when the
-// underlying store snapshot reference is preserved by the
-// snapshot-equality guard, `buildScopePayload` returns a NEW object
-// whenever any input changes — so this becomes a precise refetch
-// trigger.
-const scopePayload = useMemo(
-  () =>
-    buildScopePayload({
-      prefs: snapshot,
-      customRange,
-      projectIds,
-      currentUserId,
-    }),
-  [snapshot, customRange.start, customRange.end, projectIds, currentUserId]
-);
+  // can depend on a single object reference that changes with view_mode
+  // (My work), project_ids, custom range, etc. Even when the
+  // underlying store snapshot reference is preserved by the
+  // snapshot-equality guard, `buildScopePayload` returns a NEW object
+  // whenever any input changes — so this becomes a precise refetch
+  // trigger.
+  const scopePayload = useMemo(
+    () =>
+      buildScopePayload({
+        prefs: snapshot,
+        customRange,
+        projectIds,
+        currentUserId,
+      }),
+    [snapshot, customRange, projectIds, currentUserId]
+  );
 
-useEffect(() => {
-  if (!workspaceSlug) return;
-  const controller = new AbortController();
-  const generation = ++workloadGenerationRef.current;
-  setWorkloadFetchError(null);
-  dashboardOperationsService
-    .workload(
-      workspaceSlug,
-      { ...scopePayload, page: 1, page_size: 5, preview: true },
-      controller.signal
-    )
-    .then((envelope) => {
-      if (generation !== workloadGenerationRef.current) return;
-      const section = envelope.sections.find((entry) => entry.section_id === "workload");
-      const classified = classifySection<TWorkloadData>(
-        section as
-          | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TWorkloadData; reason?: string }
-          | undefined
-      );
-      if (classified.kind === "ok") {
-        if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-          return;
-        }
-        setWorkloadSectionStatus("ok");
-        setWorkloadSectionReason(undefined);
-        // Server is authoritative for the preview ordering when
-        // it honours `preview: true` — it has the full picture, so
-        // we trust the row order it returns. The client sort
-        // below is the safety net for the legacy backend that
-        // ignores `preview` and paginates by display_name.
-        const rows = classified.data.rows;
-        const isServerRiskSorted = rows.every((row, index, all) => {
-          if (index === 0) return true;
-          const prev = all[index - 1];
-          const a = [row.overdue, row.blocked, row.started, row.open];
-          const p = [prev.overdue, prev.blocked, prev.started, prev.open];
-          for (let i = 0; i < 4; i++) {
-            if (p[i] !== a[i]) return p[i] > a[i];
+  useEffect(() => {
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    const generation = ++workloadGenerationRef.current;
+    setWorkloadFetchError(null);
+    dashboardOperationsService
+      .workload(workspaceSlug, { ...scopePayload, page: 1, page_size: 5, preview: true }, controller.signal)
+      .then((envelope) => {
+        if (generation !== workloadGenerationRef.current) return undefined;
+        const section = envelope.sections.find((entry) => entry.section_id === "workload");
+        const classified = classifySection<TWorkloadData>(
+          section as
+            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TWorkloadData; reason?: string }
+            | undefined
+        );
+        if (classified.kind === "ok") {
+          if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
+            return undefined;
           }
-          return true;
-        });
-        if (isServerRiskSorted) {
-          setWorkloadRows(rows.slice(0, 5));
-        } else {
-          const sorted = [...rows].sort(
-            (a, b) =>
-              b.overdue - a.overdue ||
-              b.blocked - a.blocked ||
-              b.started - a.started ||
-              b.open - a.open ||
-              (a.display_name ?? "").localeCompare(b.display_name ?? "")
-          );
-          setWorkloadRows(sorted.slice(0, 5));
+          setWorkloadSectionStatus("ok");
+          setWorkloadSectionReason(undefined);
+          // Server is authoritative for the preview ordering when
+          // it honours `preview: true` — it has the full picture, so
+          // we trust the row order it returns. The client sort
+          // below is the safety net for the legacy backend that
+          // ignores `preview` and paginates by display_name.
+          const rows = classified.data.rows;
+          const isServerRiskSorted = rows.every((row, index, all) => {
+            if (index === 0) return true;
+            const prev = all[index - 1];
+            const a = [row.overdue, row.blocked, row.started, row.open];
+            const p = [prev.overdue, prev.blocked, prev.started, prev.open];
+            for (let i = 0; i < 4; i++) {
+              if (p[i] !== a[i]) return p[i] > a[i];
+            }
+            return true;
+          });
+          if (isServerRiskSorted) {
+            setWorkloadRows(rows.slice(0, 5));
+          } else {
+            const sorted = rows.toSorted(
+              (a, b) =>
+                b.overdue - a.overdue ||
+                b.blocked - a.blocked ||
+                b.started - a.started ||
+                b.open - a.open ||
+                (a.display_name ?? "").localeCompare(b.display_name ?? "")
+            );
+            setWorkloadRows(sorted.slice(0, 5));
+          }
+          return undefined;
         }
-        return;
-      }
-      if (classified.kind === "unavailable") {
-        setWorkloadSectionStatus("unavailable");
+        if (classified.kind === "unavailable") {
+          setWorkloadSectionStatus("unavailable");
+          setWorkloadSectionReason(classified.reason);
+          setWorkloadRows([]);
+          return undefined;
+        }
+        // section_error / missing section
+        setWorkloadSectionStatus("error");
         setWorkloadSectionReason(classified.reason);
         setWorkloadRows([]);
-        return;
-      }
-      // section_error / missing section
-      setWorkloadSectionStatus("error");
-      setWorkloadSectionReason(classified.reason);
-      setWorkloadRows([]);
-    })
-    .catch((err) => {
-      if (generation !== workloadGenerationRef.current) return;
-      if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
-      setWorkloadSectionStatus("error");
-      setWorkloadSectionReason(undefined);
-      setWorkloadFetchError(classifyDashboardError(err));
-      setWorkloadRows([]);
-    });
-  return () => {
-    controller.abort();
-  };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [workspaceSlug, scopePayload, workloadReloadKey, refreshRevision]);
+        return undefined;
+      })
+      .catch((err) => {
+        if (generation !== workloadGenerationRef.current) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setWorkloadSectionStatus("error");
+        setWorkloadSectionReason(undefined);
+        setWorkloadFetchError(classifyDashboardError(err));
+        setWorkloadRows([]);
+      });
+    return () => {
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceSlug, scopePayload, workloadReloadKey, refreshRevision]);
+
+  const [timelineData, setTimelineData] = useState<TTimelineData | null>(null);
+  const [timelineFetchError, setTimelineFetchError] = useState<TDashboardTabError | null>(null);
+  const timelineGenerationRef = useRef(0);
+  const [timelineReloadKey, setTimelineReloadKey] = useState(0);
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    const generation = ++timelineGenerationRef.current;
+    setTimelineFetchError(null);
+    dashboardOperationsService
+      .timeline(
+        workspaceSlug,
+        { ...scopePayload, page_size: 5, cycles_page: 1, deadlines_page: 1, unscheduled_page: 1 },
+        controller.signal
+      )
+      .then((envelope) => {
+        if (generation !== timelineGenerationRef.current) return undefined;
+        const section = envelope.sections.find((entry) => entry.section_id === "timeline");
+        const classified = classifySection<TTimelineData>(
+          section as
+            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TTimelineData; reason?: string }
+            | undefined
+        );
+        if (classified.kind === "ok") {
+          if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
+            return undefined;
+          }
+          setTimelineData(classified.data);
+          return undefined;
+        }
+        setTimelineData(null);
+        if (classified.kind === "unavailable") {
+          setTimelineFetchError({ kind: "malformed", message: classified.reason ?? "unavailable" });
+          return undefined;
+        }
+        setTimelineFetchError({ kind: "malformed", message: classified.reason ?? "section_error" });
+        return undefined;
+      })
+      .catch((err) => {
+        if (generation !== timelineGenerationRef.current) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setTimelineData(null);
+        setTimelineFetchError(classifyDashboardError(err));
+      });
+    return () => {
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceSlug, scopePayload, timelineReloadKey, refreshRevision]);
 
   // KPI drilldown: clicking a KPI opens the ItemDrawer with the
   // matching snapshot rule. The drawer carries the canonical scope
@@ -234,21 +280,23 @@ useEffect(() => {
     dashboardOperationsService
       .attention(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
       .then((response) => {
-        if (generation !== attentionGenerationRef.current) return;
+        if (generation !== attentionGenerationRef.current) return undefined;
         const section = response.sections.find((entry) => entry.section_id === "attention");
         if (!section || section.status !== "ok" || !section.data) {
           setAttentionStatus("error");
-          return;
+          return undefined;
         }
         const data = section.data as { rows?: TIssueRow[]; reason_counts?: Record<string, number>; total?: number };
         setAttentionRows(data.rows ?? []);
         setAttentionReasonCounts(data.reason_counts ?? {});
         setAttentionStatus("ok");
+        return undefined;
       })
       .catch(() => {
         if (generation !== attentionGenerationRef.current) return;
         setAttentionStatus("error");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- scopePayload captures snapshot/customRange/projectIds
   }, [workspaceSlug, scopePayload, refreshRevision]);
 
   // Resolve each section by id with type-safety.
@@ -294,12 +342,7 @@ useEffect(() => {
 
   return (
     <div className="flex flex-col gap-4" data-testid="operations-overview-tab">
-      <KpiStrip
-        data={kpis}
-        isLoading={isLoading}
-        error={state.status === "error"}
-        onMetricClick={onKpiClick}
-      />
+      <KpiStrip data={kpis} isLoading={isLoading} error={state.status === "error"} onMetricClick={onKpiClick} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <ProgressPanel data={progress} isLoading={isLoading} error={state.status === "error"} />
@@ -332,13 +375,14 @@ useEffect(() => {
           />
         </div>
       </div>
+      <TimelinePreviewPanel
+        isLoading={isLoading && timelineData === null && timelineFetchError === null}
+        data={timelineData}
+        error={timelineFetchError}
+        onRetry={() => setTimelineReloadKey((n) => n + 1)}
+      />
       {drawerMetric !== null ? (
-        <ItemDrawer
-          workspaceSlug={workspaceSlug}
-          open
-          onClose={onDrawerClose}
-          metric={drawerMetric}
-        />
+        <ItemDrawer workspaceSlug={workspaceSlug} open onClose={onDrawerClose} metric={drawerMetric} />
       ) : null}
     </div>
   );

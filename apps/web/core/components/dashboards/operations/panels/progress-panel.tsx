@@ -34,7 +34,7 @@ export function ProgressPanel({ data, isLoading, error }: Props): React.ReactEle
   return (
     <PanelSurface
       title="Progress"
-      subtitle="Five-state groups; blocked/overdue overlap, never a sixth segment."
+      subtitle="By workflow state — backlog through cancelled."
       isLoading={isLoading}
       error={error}
       testId="progress-panel"

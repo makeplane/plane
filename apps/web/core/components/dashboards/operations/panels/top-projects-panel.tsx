@@ -17,7 +17,7 @@ export function TopProjectsPanel({ data, isLoading, error }: Props): React.React
   return (
     <PanelSurface
       title="Top projects by risk"
-      subtitle="Sorted overdue → blocked → open; KPI total is workspace-wide, not top-N."
+      subtitle="Projects with the most overdue and blocked work."
       isLoading={isLoading}
       error={error}
       testId="top-projects-panel"

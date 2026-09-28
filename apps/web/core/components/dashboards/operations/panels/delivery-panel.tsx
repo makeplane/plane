@@ -42,7 +42,7 @@ export function DeliveryPanel({ data, isLoading, error }: Props): React.ReactEle
   return (
     <PanelSurface
       title="Created vs completed"
-      subtitle="Two independent date bases; reopened items is not counted as completed here."
+      subtitle="Created vs completed in the selected period."
       isLoading={isLoading}
       error={error}
       testId="delivery-panel"
@@ -75,7 +75,7 @@ function DeliveryBody({ data }: { data: TDeliveryTrendData }): React.ReactElemen
         });
       }
     }
-    return [...buckets.values()].sort((a, b) => a.bucket.localeCompare(b.bucket));
+    return [...buckets.values()].toSorted((a, b) => a.bucket.localeCompare(b.bucket));
   }, [series_created, series_completed]);
 
   return (
@@ -84,9 +84,9 @@ function DeliveryBody({ data }: { data: TDeliveryTrendData }): React.ReactElemen
         <LineChart
           className="h-full w-full"
           data={mergedPoints as unknown as Array<Record<string, string | number>>}
-          xAxis={{ key: "bucket" as "bucket" }}
+          xAxis={{ key: "bucket" as const }}
           yAxis={{
-            key: "created" as "created",
+            key: "created" as const,
             domain: [0, 0] as [number, number],
             allowDecimals: false,
           }}
@@ -131,9 +131,7 @@ function DeliveryBody({ data }: { data: TDeliveryTrendData }): React.ReactElemen
           />
           <span>Completed {completed_total}</span>
         </span>
-        <span data-testid="delivery-delta">
-          Δ {delta > 0 ? `+${delta}` : delta === 0 ? "0" : delta}
-        </span>
+        <span data-testid="delivery-delta">Δ {delta > 0 ? `+${delta}` : delta === 0 ? "0" : delta}</span>
       </div>
     </div>
   );
