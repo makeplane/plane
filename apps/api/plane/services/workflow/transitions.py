@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Transition service — spec §9, §10, §17.3, §17.4, §19, §20, §25 Phase 1.
+"""Transition service — spec §9, §10, §11.1, §17.3, §17.4, §19, §20, §25 Phase 1.
 
 The single authoritative path that mutates ``Issue.state`` once a
 workflow governs the project (§34 invariant). Every existing state
@@ -13,9 +13,11 @@ off).
 
 Public surface:
 
-- ``TransitionService.transition(...)`` — §10 transactional move.
+- ``TransitionService.transition(...)`` — §10 transactional move
+  (with §11.1 approval opening when the destination state carries an
+  approval flow).
 - ``TransitionService.compute_allowed_actions(...)`` — §17.3
-  allowed-actions response builder.
+  allowed-actions response builder (incl. §17.3 approval block).
 - ``TransitionService.validate_creation_state(...)`` — §9.2 creation
   gate.
 
@@ -244,7 +246,16 @@ class TransitionService:
                 )
             )
 
-        return AllowedActions(
+        # §17.3 — surface the pending approval, if any. The approval
+        # block is filled in by reading the snapshotted approver list
+        # so the UI can render the "can decide" indicator.
+        approval_block = _approval_block_for(
+            effective=effective,
+            issue=issue,
+            actor_id=actor_id,
+        )
+
+        actions = AllowedActions(
             workflow_id=effective.workflow_id,
             workflow_revision_id=effective.revision_id,
             workflow_version=effective.workflow_version,
@@ -252,6 +263,8 @@ class TransitionService:
             current_state_name=issue.state.name if issue.state else None,
             transitions=transitions,
         )
+        actions.approval_pending = approval_block
+        return actions
 
     # ------------------------------------------------------------------
     # Creation gate (§9.2)
@@ -503,6 +516,21 @@ class TransitionService:
         )
         issue.refresh_from_db()
 
+        # §11.1 — when the destination state has an active approval
+        # flow (rather than a transition flow), open a pending
+        # approval on this issue. The flow lookup above filtered by
+        # ``flow_type=TRANSITION``; here we look for any approval
+        # flow leaving the destination state and open one when it
+        # exists. If the approval open fails (empty resolver etc.)
+        # we roll back the entire transition.
+        if not system_bypass:
+            _maybe_open_approval_on_entry(
+                effective=effective,
+                issue=issue,
+                target_state=target_state,
+                actor_id=actor_id,
+            )
+
         # §20 — every state mutation is audited. The audit row is
         # best-effort here; the canonical activity/webhook fan-out
         # still runs through the existing ``issue_activity`` Celery
@@ -542,16 +570,9 @@ def _resolve_for_project(*, project, issue_type_id) -> Optional[EffectiveWorkflo
 
 
 def _has_pending_approval(effective: EffectiveWorkflow, issue: Issue) -> bool:
-    """Return ``True`` iff the issue has a pending approval on the bound revision.
-
-    The approvals child (P1.1) will swap this out for a real
-    ``WorkflowApproval.objects.filter(..., status='pending').exists()``
-    query once that model ships. For now we treat absence of the
-    model as "no pending approval" so the transition path is
-    operational in P0.
-    """
+    """Return ``True`` iff the issue has a pending approval on the bound revision."""
     try:
-        from plane.db.models import WorkflowApproval  # type: ignore
+        from plane.db.models import WorkflowApproval
     except ImportError:
         return False
     try:
@@ -567,7 +588,7 @@ def _has_pending_approval(effective: EffectiveWorkflow, issue: Issue) -> bool:
 
 def _pending_approval_id(effective: EffectiveWorkflow, issue: Issue) -> Optional[str]:
     try:
-        from plane.db.models import WorkflowApproval  # type: ignore
+        from plane.db.models import WorkflowApproval
     except ImportError:
         return None
     try:
@@ -583,6 +604,138 @@ def _pending_approval_id(effective: EffectiveWorkflow, issue: Issue) -> Optional
         return str(pending.id) if pending else None
     except Exception:  # pragma: no cover - defensive
         return None
+
+
+def _maybe_open_approval_on_entry(
+    *,
+    effective: EffectiveWorkflow,
+    issue: Issue,
+    target_state: State,
+    actor_id: Optional[str],
+) -> None:
+    """§11.1 — open an approval when the destination state has one.
+
+    Looks for an active ``approval`` flow whose ``source_state`` is
+    the ``WorkflowState`` row for ``target_state`` in the bound
+    revision. When one is found, delegates to
+    ``ApprovalService.open_approval``. A failure here (e.g. empty
+    resolver result) is re-raised so the caller can roll the
+    transition back.
+
+    The function is a no-op when no approval flow exists — most
+    transitions will take this branch. Per §7.5 / §10.2 the V1 API
+    permits at most one approval flow per source state.
+    """
+    try:
+        from plane.db.models import WorkflowState
+    except ImportError:  # pragma: no cover
+        return
+
+    # Find the WorkflowState row that wraps ``target_state``.
+    target_wf_state = WorkflowState.objects.filter(
+        revision=effective.revision,
+        state_id=target_state.id,
+    ).first()
+    if target_wf_state is None:
+        return
+
+    approval_flow = (
+        WorkflowFlow.objects.filter(
+            revision=effective.revision,
+            source_state=target_wf_state,
+            flow_type=WorkflowFlowType.APPROVAL,
+            is_active=True,
+        )
+        .first()
+    )
+    if approval_flow is None:
+        return
+
+    # Lazy import so an uninstalled approvals module never blocks the
+    # transition path.
+    try:
+        from .approvals import ApprovalService
+    except ImportError:  # pragma: no cover
+        return
+
+    ApprovalService.open_approval(
+        effective=effective,
+        issue=issue,
+        flow=approval_flow,
+        actor_id=actor_id,
+    )
+
+
+def _approval_block_for(
+    *,
+    effective: EffectiveWorkflow,
+    issue: Issue,
+    actor_id: Optional[str],
+) -> Optional[dict]:
+    """§17.3 — build the ``approval`` block for ``compute_allowed_actions``.
+
+    Reads the pending ``WorkflowApproval`` (if any) and reports:
+    - ``id`` — the approval id (callers need it for decide endpoints);
+    - ``status`` — always ``pending`` here;
+    - ``can_decide`` — whether the actor is on the snapshotted
+      approver list (§11.2 + §18.2);
+    - ``target_state_name`` / ``reject_state_name`` — surface the
+      destinations so the UI can render previews;
+    - ``approver_user_ids`` — the snapshot (admins only — exposed
+      here for the UI badge; non-eligible actors do not see hidden
+      membership data per §23.3 because the can_decide flag is
+      applied first).
+    """
+    try:
+        from plane.db.models import (
+            WorkflowApproval,
+            WorkflowApprovalApprover,
+            WorkflowApprovalStatus,
+        )
+    except ImportError:  # pragma: no cover - schema drift
+        return None
+
+    approval = (
+        WorkflowApproval.objects.filter(
+            issue=issue,
+            binding=effective.binding or _binding_for_issue(issue),
+            status=WorkflowApprovalStatus.PENDING,
+        )
+        .select_related("flow", "source_state", "issue")
+        .first()
+    )
+    if approval is None:
+        return None
+
+    approver_ids = list(
+        WorkflowApprovalApprover.objects.filter(
+            approval=approval,
+            deleted_at__isnull=True,
+        ).values_list("user_id", flat=True)
+    )
+    can_decide = bool(actor_id) and str(actor_id) in {str(u) for u in approver_ids}
+
+    return {
+        "id": str(approval.id),
+        "status": approval.status,
+        "source_state_id": str(approval.source_state_id),
+        "source_state_name": (
+            approval.source_state.name if approval.source_state else None
+        ),
+        "target_state_id": str(approval.flow.target_state_id),
+        "target_state_name": (
+            approval.flow.target_state.state.name
+            if approval.flow.target_state and approval.flow.target_state.state
+            else None
+        ),
+        "reject_state_id": (
+            str(approval.flow.reject_state_id)
+            if approval.flow.reject_state_id
+            else None
+        ),
+        "can_decide": can_decide,
+        "approver_user_ids": [str(u) for u in approver_ids],
+    }
 
 
 def _binding_for_issue(issue: Issue):

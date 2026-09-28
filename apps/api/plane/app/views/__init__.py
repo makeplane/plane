@@ -281,3 +281,9 @@ from .issue.workflow_runtime import (
     IssueWorkflowActionsEndpoint,
     IssueWorkflowEndpoint,
 )
+
+from .workflow_approval import (
+    IssueApprovalApproveEndpoint,
+    IssueApprovalDetailEndpoint,
+    IssueApprovalRejectEndpoint,
+)

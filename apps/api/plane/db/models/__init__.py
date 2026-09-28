@@ -92,6 +92,13 @@ from .workflow import (
     WorkflowState,
     WorkflowTypeAssignment,
 )
+from .workflow_approval import (
+    WorkflowApproval,
+    WorkflowApprovalApprover,
+    WorkflowApprovalDecision,
+    WorkflowApprovalDecisionType,
+    WorkflowApprovalStatus,
+)
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,
