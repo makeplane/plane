@@ -15,12 +15,12 @@ from plane.space.views import (
 urlpatterns = [
     path(
         "assets/v2/anchor/<str:anchor>/",
-        EntityAssetEndpoint.as_view(),
+        EntityAssetEndpoint.as_view(http_method_names=["post"]),
         name="entity-asset",
     ),
     path(
         "assets/v2/anchor/<str:anchor>/<uuid:pk>/",
-        EntityAssetEndpoint.as_view(),
+        EntityAssetEndpoint.as_view(http_method_names=["delete", "get", "patch"]),
         name="entity-asset",
     ),
     path(

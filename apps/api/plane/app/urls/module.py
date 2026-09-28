@@ -89,17 +89,17 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/archive/",
-        ModuleArchiveUnarchiveEndpoint.as_view(),
+        ModuleArchiveUnarchiveEndpoint.as_view(http_method_names=["delete", "post"]),
         name="module-archive-unarchive",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-modules/",
-        ModuleArchiveUnarchiveEndpoint.as_view(),
+        ModuleArchiveUnarchiveEndpoint.as_view(http_method_names=["get"]),
         name="module-archive-unarchive",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-modules/<uuid:pk>/",
-        ModuleArchiveUnarchiveEndpoint.as_view(),
+        ModuleArchiveUnarchiveEndpoint.as_view(http_method_names=["get"]),
         name="module-archive-unarchive",
     ),
 ]

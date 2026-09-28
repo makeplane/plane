@@ -186,12 +186,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/user-favorites/",
-        WorkspaceFavoriteEndpoint.as_view(),
+        WorkspaceFavoriteEndpoint.as_view(http_method_names=["get", "post"]),
         name="workspace-user-favorites",
     ),
     path(
         "workspaces/<str:slug>/user-favorites/<uuid:favorite_id>/",
-        WorkspaceFavoriteEndpoint.as_view(),
+        WorkspaceFavoriteEndpoint.as_view(http_method_names=["delete", "patch"]),
         name="workspace-user-favorites",
     ),
     path(
@@ -228,12 +228,12 @@ urlpatterns = [
     # Widgets
     path(
         "workspaces/<str:slug>/home-preferences/",
-        WorkspaceHomePreferenceViewSet.as_view(),
+        WorkspaceHomePreferenceViewSet.as_view(http_method_names=["get"]),
         name="workspace-home-preference",
     ),
     path(
         "workspaces/<str:slug>/home-preferences/<str:key>/",
-        WorkspaceHomePreferenceViewSet.as_view(),
+        WorkspaceHomePreferenceViewSet.as_view(http_method_names=["patch"]),
         name="workspace-home-preference",
     ),
     path(

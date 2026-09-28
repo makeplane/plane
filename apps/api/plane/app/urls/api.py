@@ -9,12 +9,12 @@ urlpatterns = [
     # API Tokens
     path(
         "users/api-tokens/",
-        ApiTokenEndpoint.as_view(),
+        ApiTokenEndpoint.as_view(http_method_names=["get", "post"]),
         name="api-tokens",
     ),
     path(
         "users/api-tokens/<uuid:pk>/",
-        ApiTokenEndpoint.as_view(),
+        ApiTokenEndpoint.as_view(http_method_names=["delete", "get", "patch"]),
         name="api-tokens-details",
     ),
     ## End API Tokens

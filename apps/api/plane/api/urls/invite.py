@@ -14,6 +14,10 @@ from plane.api.views import WorkspaceInvitationsViewset
 
 # Create router with just the invitations prefix (no workspace slug)
 router = DefaultRouter()
+# DRF appends ".<format>" variants of every route, which pass a `format` kwarg
+# the viewset handlers do not accept, so those URLs raised TypeError (HTTP 500).
+# Plane does not document format suffixes, so the routes are dropped entirely.
+router.include_format_suffixes = False
 router.register(r"invitations", WorkspaceInvitationsViewset, basename="workspace-invitations")
 
 # Wrap the router URLs with the workspace slug path
