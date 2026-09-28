@@ -18,6 +18,11 @@ behavior. The bootstrap creates:
   state);
 - a complete cross-product of ``WorkflowFlow`` transition edges so
   every existing state pair is reachable;
+- one ``WorkflowFlowActor`` of type ``ALL_PROJECT_MEMBERS`` per flow
+  so the bootstrap ships a usable actor roster out of the box. Without
+  these actors, ``authorize_actor`` (§18.2) would 403 every transition
+  even though admins have not pruned anything yet — that would silently
+  freeze the project the moment ``workflow_enabled`` flips on;
 - one ``WorkflowState.allow_new_work_items=True`` on the project's
   existing default state if there is one; otherwise on the first
   non-triage state by sequence.
@@ -42,6 +47,8 @@ from plane.db.models import (
     StateGroup,
     Workflow,
     WorkflowFlow,
+    WorkflowFlowActor,
+    WorkflowFlowActorType,
     WorkflowFlowType,
     WorkflowRevision,
     WorkflowRevisionStatus,
@@ -166,6 +173,31 @@ def _create_default_workflow(
     if flows_to_create:
         WorkflowFlow.objects.bulk_create(flows_to_create, batch_size=200)
 
+    # spec §25 Phase 2 — every bootstrap flow ships with an
+    # ``ALL_PROJECT_MEMBERS`` actor so that ``authorize_actor``
+    # (P0.3 / §18.2) does not 403 every transition out of the box.
+    # Without this, flipping ``workflow_enabled`` on a populated
+    # project would silently freeze every state mutation, and admins
+    # would have to manually attach actors before they could move a
+    # single work item.
+    created_flows = list(
+        WorkflowFlow.objects.filter(project=project, revision=revision)
+    )
+    actors_to_create = [
+        WorkflowFlowActor(
+            project=project,
+            flow=flow,
+            actor_type=WorkflowFlowActorType.ALL_PROJECT_MEMBERS,
+            config={},
+            sequence=0,
+            created_by_id=actor_id,
+            updated_by_id=actor_id,
+        )
+        for flow in created_flows
+    ]
+    if actors_to_create:
+        WorkflowFlowActor.objects.bulk_create(actors_to_create, batch_size=200)
+
     logger.info(
         "workflow.bootstrap.created",
         extra={
@@ -174,6 +206,7 @@ def _create_default_workflow(
             "revision_id": str(revision.id),
             "state_count": len(ws_by_state_id),
             "flow_count": len(flows_to_create),
+            "actor_count": len(actors_to_create),
         },
     )
 

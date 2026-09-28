@@ -6,6 +6,7 @@
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.exceptions import Throttled
+from rest_framework.response import Response
 
 # Module imports
 from plane.authentication.adapter.error import (
@@ -15,6 +16,25 @@ from plane.authentication.adapter.error import (
 
 
 def auth_exception_handler(exc, context):
+    # Workflow domain errors — spec §6, §10, §17.3, §23.5, §26. The
+    # ``WorkflowError`` dataclass carries its own HTTP status code and
+    # structured payload, so the handler short-circuits DRF's default
+    # flow before it tries to coerce the dataclass into a 500.
+    #
+    # Imported lazily so the auth handler stays usable even if the
+    # workflow service module is unavailable (matches the lazy import
+    # pattern used by the issue serializers).
+    try:
+        from plane.services.workflow.errors import WorkflowError
+    except Exception:  # pragma: no cover - import safety net
+        WorkflowError = None
+
+    if WorkflowError is not None and isinstance(exc, WorkflowError):
+        return Response(
+            exc.to_payload(),
+            status=exc.status_code,
+        )
+
     # Call the default exception handler first, to get the standard error response.
     response = exception_handler(exc, context)
     # Check if an AuthenticationFailed exception is raised.

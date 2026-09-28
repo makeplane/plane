@@ -175,3 +175,45 @@ class TestComputeAllowedActions:
         settings.ENABLE_WORKFLOWS = False
         actions = TransitionService.compute_allowed_actions(issue=workflow_issue)
         assert actions.transitions == []
+
+    def test_actor_authorization_reflected_in_allowed_actions(
+        self,
+        workflow_issue,
+        workflow_states,
+        workflow_state_rows,
+        todo_to_done_flow,
+        default_workflow,
+        default_revision,
+        enable_instance_flag,
+        monkeypatch,
+    ):
+        """RD-487 / §17.3 — ``compute_allowed_actions`` must run
+        ``authorize_actor`` and reflect the decision in the
+        ``allowed`` flag. Without this, the UI would happily render
+        a transition the service would then 403.
+        """
+        # Force ``authorize_actor`` to deny so we exercise the
+        # ``allowed=False`` branch.
+        def deny(*args, **kwargs):
+            from plane.services.workflow.errors import WorkflowActorNotAuthorized
+            raise WorkflowActorNotAuthorized("forced deny")
+
+        monkeypatch.setattr(actors, "authorize_actor", deny)
+
+        actions = TransitionService.compute_allowed_actions(
+            issue=workflow_issue,
+            actor_id=str(workflow_issue.created_by_id),
+        )
+        assert len(actions.transitions) == 1
+        assert actions.transitions[0].allowed is False
+
+        # Now unblock and verify the flag flips back to True.
+        def allow(*args, **kwargs):
+            return None
+
+        monkeypatch.setattr(actors, "authorize_actor", allow)
+        actions = TransitionService.compute_allowed_actions(
+            issue=workflow_issue,
+            actor_id=str(workflow_issue.created_by_id),
+        )
+        assert actions.transitions[0].allowed is True

@@ -104,6 +104,19 @@ class ProjectWorkflowDetailEndpoint(BaseAPIView):
                 {"error": "Workflow not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        # §7.1 + §25 Phase 2 — ``is_default`` is owned by the bootstrap
+        # service. Admins must not be able to flip a non-default workflow
+        # to default (which would break the partial-unique constraint
+        # and silently demote the project's real default), nor to flip
+        # the default to non-default (which would leave the project
+        # with no enforcement floor). Treat both directions as a single
+        # 409 — the same code the deletion path already uses — so FE
+        # can show a coherent error.
+        if "is_default" in request.data and bool(request.data.get("is_default")) != bool(workflow.is_default):
+            return Response(
+                WorkflowDefaultImmutable().to_payload(),
+                status=WorkflowDefaultImmutable.status_code,
+            )
         serializer = WorkflowUpdateSerializer(
             workflow,
             data=request.data,

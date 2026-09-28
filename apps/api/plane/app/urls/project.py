@@ -18,6 +18,7 @@ from plane.app.views import (
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
     ProjectMemberPreferenceEndpoint,
+    ProjectWorkflowToggleEndpoint,
 )
 
 
@@ -128,5 +129,13 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
         ProjectMemberPreferenceEndpoint.as_view(),
         name="project-member-preference",
+    ),
+    # spec §7.1, §23.1 — dedicated surface for the per-project
+    # workflow_enabled toggle that Project Settings → Workflows reads
+    # and writes (RD-460 / Pixel).
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflow-toggle/",
+        ProjectWorkflowToggleEndpoint.as_view(),
+        name="project-workflow-toggle",
     ),
 ]
