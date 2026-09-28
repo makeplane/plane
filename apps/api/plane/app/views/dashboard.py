@@ -528,9 +528,12 @@ class DashboardItemsEndpoint(BaseAPIView):
                 try:
                     data = list_items(scope, item_request)
                 except MetricUnavailableError as exc:
-                    return _conflict(str(exc), code="METRIC_UNAVAILABLE")
+                    logger.warning("Dashboard metric unavailable", exc_info=exc)
+                    return _conflict("Requested metric is unavailable", code="METRIC_UNAVAILABLE")
                 except DashboardContractError as exc:
-                    return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+                    logger.warning("Dashboard items contract validation failed", exc_info=exc)
+                    return _bad_request("Invalid items payload", code="INVALID_PAYLOAD")
         except SnapshotIsolationUnavailable as exc:
-            return _unavailable(str(exc))
+            logger.exception("Dashboard snapshot isolation unavailable")
+            return _unavailable("Service temporarily unavailable", code="SNAPSHOT_ISOLATION_UNAVAILABLE")
         return Response(envelope(scope, data), status=status.HTTP_200_OK)
