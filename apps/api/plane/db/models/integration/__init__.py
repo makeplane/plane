@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 from .base import Integration, WorkspaceIntegration
+from .eraser import EraserIntegration
 from .github import (
     GithubRepository,
     GithubRepositorySync,
