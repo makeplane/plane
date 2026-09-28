@@ -74,7 +74,14 @@ FROZEN_NOW = datetime(2026, 9, 23, 12, 0, tzinfo=pytz.UTC)
 
 
 def _make_user(email: str) -> User:
-    user = User.objects.create(email=email, username=email.split("@")[0])
+    # Per-test unique username + email so the contract suite can run
+    # under @pytest.mark.django_db(transaction=True) without duplicate
+    # collisions across test runs.
+    suffix = uuid4().hex[:8]
+    user = User.objects.create(
+        email=f"{suffix}-{email}",
+        username=email.split("@")[0] + "-" + suffix,
+    )
     user.set_password("pw")
     user.save()
     return user
@@ -136,9 +143,13 @@ def _build_minimal_fixture():
 
 @pytest.fixture
 def workspace_client():
-    owner = _make_user("owner-ws@plane.so")
+    # Unique owner slug per test invocation so the contract suite can
+    # run under @pytest.mark.django_db(transaction=True) without
+    # duplicate-key collisions across test runs.
+    suffix = uuid4().hex[:8]
+    owner = _make_user(f"owner-ws-{suffix}@plane.so")
     workspace = Workspace.objects.create(
-        name="AcmeWS", slug="acmews", owner=owner, timezone="UTC", created_by=owner,
+        name="AcmeWS", slug=f"acmews-{suffix}", owner=owner, timezone="UTC", created_by=owner,
     )
     WorkspaceMember.objects.create(workspace=workspace, member=owner, role=20, is_active=True)
     client = APIClient()

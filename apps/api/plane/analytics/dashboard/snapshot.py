@@ -145,7 +145,7 @@ def dashboard_snapshot() -> Iterator[None]:
     # change isolation on a savepoint, so we either trust the outer
     # txn (if it's already RR + readonly) or refuse the request.
     actual_isolation, actual_read_only = _inspect_session_isolation()
-    if actual_isolation == "repeatable_read" and actual_read_only:
+    if _is_repeatable_read_isolation(actual_isolation) and actual_read_only:
         logger.debug(
             "dashboard_snapshot: nested call, outer transaction already "
             "REPEATABLE READ + READ ONLY; reusing"
@@ -167,6 +167,14 @@ def dashboard_snapshot() -> Iterator[None]:
         f"on a savepoint. The dashboard endpoint must be the top-level "
         f"transaction owner."
     )
+
+
+def _is_repeatable_read_isolation(isolation: str | None) -> bool:
+    """True when PostgreSQL reports REPEATABLE READ for the session."""
+    if not isolation:
+        return False
+    normalized = isolation.strip().lower().replace(" ", "_").replace("-", "_")
+    return normalized == "repeatable_read"
 
 
 def _inspect_session_isolation() -> tuple[str | None, bool]:

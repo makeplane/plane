@@ -151,6 +151,7 @@ services:
       APP_BASE_PATH: ""
       GUNICORN_WORKERS: "2"
       DOCKERIZED: "1"
+      WORKSPACE_DASHBOARDS: "1"
     depends_on:
       dashboard-qa-db:
         condition: service_healthy
