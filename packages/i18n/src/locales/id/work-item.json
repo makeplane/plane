@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Item kerja tidak dapat diarsipkan. Silakan coba lagi."
-      }
+      },
+      "banner_message": "Item kerja ini telah diarsipkan. Kunjungi bagian Arsip untuk memulihkannya.",
+      "go_to_archives": "Buka arsip"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Tidak dapat memperbarui item kerja",
         "message": "Perubahan status tidak diizinkan untuk beberapa item kerja. Pastikan perubahan status diizinkan."
       }
+    },
+    "upgrade_banner": {
+      "message": "Ubah status, prioritas, dan lainnya untuk beberapa item kerja sekaligus. Hemat rata-rata tiga menit per operasi.",
+      "cta": "Tingkatkan ke One"
     }
   },
   "recurring_work_items": {

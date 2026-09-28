@@ -172,7 +172,9 @@
       },
       "failed": {
         "message": "Nie udało się zarchiwizować elementu pracy. Spróbuj ponownie."
-      }
+      },
+      "banner_message": "Ten element pracy został zarchiwizowany. Przejdź do sekcji Archiwa, aby go przywrócić.",
+      "go_to_archives": "Przejdź do archiwów"
     },
     "restore": {
       "success": {
@@ -326,6 +328,10 @@
         "title": "Nie można zaktualizować elementów pracy",
         "message": "Zmiana stanu nie jest dozwolona dla niektórych elementów pracy. Upewnij się, że zmiana stanu jest dozwolona."
       }
+    },
+    "upgrade_banner": {
+      "message": "Zmieniaj stan, priorytet i inne właściwości wielu elementów pracy jednocześnie. Zaoszczędź średnio trzy minuty na operację.",
+      "cta": "Uaktualnij do One"
     }
   },
   "recurring_work_items": {
@@ -409,7 +415,7 @@
   },
   "epic": {
     "new": "Nowy epik",
-    "label": "{count, plural, one {Epik} other {Epiki}}",
+    "label": "{count, plural, one {Epik} few {Epiki} other {Epików}}",
     "adding": "Dodawanie epiku",
     "create": {
       "success": "Epik utworzono pomyślnie"

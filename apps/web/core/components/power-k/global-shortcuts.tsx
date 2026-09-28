@@ -65,7 +65,8 @@ export const GlobalShortcutsProvider = observer(function GlobalShortcutsProvider
     handlerRef.current = new ShortcutHandler(
       commandRegistry,
       () => contextRef.current,
-      () => togglePowerKModal(true)
+      () => togglePowerKModal(true),
+      () => togglePowerKModal()
     );
 
     document.addEventListener("keydown", handlerRef.current.handleKeyDown);

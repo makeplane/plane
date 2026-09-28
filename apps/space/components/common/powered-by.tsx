@@ -6,7 +6,7 @@
 
 import { WEBSITE_URL } from "@plane/constants";
 // assets
-import { PlaneLogo } from "@plane/propel/icons";
+import { PlaneLogo } from "@plane/blocks/icons";
 
 type TPoweredBy = {
   disabled?: boolean;

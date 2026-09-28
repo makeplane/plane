@@ -6,7 +6,7 @@
 
 import { useRef, useState } from "react";
 // Plane
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IBlockUpdateDependencyData, IGanttBlock } from "@plane/types";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -15,8 +15,8 @@ import { DEFAULT_BLOCK_WIDTH, SIDEBAR_WIDTH } from "../../constants";
 
 export const useGanttResizable = (
   block: IGanttBlock,
-  resizableRef: React.RefObject<HTMLDivElement>,
-  ganttContainerRef: React.RefObject<HTMLDivElement>,
+  resizableRef: React.RefObject<HTMLDivElement | null>,
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>,
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>
 ) => {
   // refs
@@ -25,8 +25,8 @@ export const useGanttResizable = (
     width: 0,
     offsetX: 0,
   });
-  const ganttContainerDimensions = useRef<DOMRect | undefined>();
-  const currMouseEvent = useRef<MouseEvent | undefined>();
+  const ganttContainerDimensions = useRef<DOMRect | undefined>(undefined);
+  const currMouseEvent = useRef<MouseEvent | undefined>(undefined);
   // states
   const { currentViewData, updateBlockPosition, setIsDragging, getUpdatedPositionAfterDrag } = useTimeLineChartStore();
   const [isMoving, setIsMoving] = useState<"left" | "right" | "move" | undefined>();
@@ -129,7 +129,7 @@ export const useGanttResizable = (
         if (updateBlockDates) updateBlockDates(blockUpdates);
       } catch {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error",
           message: "Something went wrong while updating block dates",
         });

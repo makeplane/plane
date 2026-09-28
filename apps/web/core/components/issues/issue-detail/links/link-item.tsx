@@ -7,13 +7,15 @@
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { CopyOutline, DeleteOutline, EditOutline, LinkOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { setToast } from "@plane/blocks/toast";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks
@@ -60,9 +62,9 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
           ) : (
-            <LinkIcon className="size-4 flex-shrink-0 text-tertiary group-hover:text-primary" />
+            <LinkOutline className="size-4 flex-shrink-0 text-tertiary group-hover:text-primary" />
           )}
-          <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
+          <Tooltip label={linkDetail.url} layout="stacked" disabled={isMobile}>
             <a
               href={linkDetail.url}
               target="_blank"
@@ -82,45 +84,51 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           <p className="group-hover-text-secondary p-1 align-bottom text-caption-sm-regular leading-5 text-placeholder">
             {calculateTimeAgo(linkDetail.created_at)}
           </p>
-          <span
+          <button
+            type="button"
+            aria-label={t("common.actions.copy_link")}
             onClick={() => {
-              copyTextToClipboard(linkDetail.url);
+              void copyTextToClipboard(linkDetail.url);
               setToast({
-                type: TOAST_TYPE.SUCCESS,
+                type: "success",
                 title: t("common.link_copied"),
                 message: t("common.link_copied_to_clipboard"),
               });
             }}
             className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary hover:bg-layer-1"
           >
-            <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-          </span>
-          <CustomMenu
-            ellipsis
-            buttonClassName="text-placeholder group-hover:text-secondary"
-            placement="bottom-end"
-            closeOnSelect
-            disabled={isNotAllowed}
-          >
-            <CustomMenu.MenuItem
-              className="flex items-center gap-2"
-              onClick={() => {
-                toggleIssueLinkModal(true);
-              }}
-            >
-              <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
-              {t("common.actions.edit")}
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem
-              className="flex items-center gap-2"
-              onClick={() => {
-                linkOperations.remove(linkDetail.id);
-              }}
-            >
-              <TrashIcon className="h-3 w-3" />
-              {t("common.actions.delete")}
-            </CustomMenu.MenuItem>
-          </CustomMenu>
+            <CopyOutline className="h-3.5 w-3.5 stroke-[1.5]" />
+          </button>
+          <Menu>
+            {/* Icon-only trigger, so it needs an explicit accessible name. */}
+            <MenuTrigger
+              render={
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  disabled={isNotAllowed}
+                  aria-label={t("aria_labels.common.more_actions")}
+                  icon={<Icon icon={MoreHorizontalOutline} />}
+                />
+              }
+            />
+            <MenuContent side="bottom" align="end">
+              <MenuItem
+                icon={<Icon icon={EditOutline} />}
+                label={t("common.actions.edit")}
+                onClick={() => {
+                  toggleIssueLinkModal(true);
+                }}
+              />
+              <MenuItem
+                icon={<Icon icon={DeleteOutline} />}
+                label={t("common.actions.delete")}
+                onClick={() => {
+                  void linkOperations.remove(linkDetail.id);
+                }}
+              />
+            </MenuContent>
+          </Menu>
         </div>
       </div>
     </>

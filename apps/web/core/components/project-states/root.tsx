@@ -71,7 +71,6 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
       groupedStates={groupedProjectStates}
       stateOperationsCallbacks={stateOperationsCallbacks}
       isEditable={isEditable}
-      shouldTrackEvents
     />
   );
 });

@@ -8,6 +8,7 @@
   "submit": "Надіслати",
   "cancel": "Скасувати",
   "loading": "Завантаження",
+  "searching": "Пошук...",
   "error": "Помилка",
   "success": "Успіх",
   "warning": "Попередження",
@@ -303,6 +304,9 @@
   "create_new_label": "Створити нову мітку",
   "label_name": "Назва мітки",
   "failed_to_create_label": "Не вдалося створити мітку. Будь ласка, спробуйте ще раз.",
+  "no_matching_labels": "Немає відповідних міток",
+  "adding_label": "Додавання «{name}»",
+  "add_label_to_labels": "Додати «{name}» до міток",
   "start_date": "Дата початку",
   "end_date": "Дата завершення",
   "due_date": "Крайній термін",
@@ -522,6 +526,7 @@
       "updated_on": "Оновлено"
     },
     "sort": {
+      "label": "Сортування",
       "asc": "За зростанням",
       "desc": "За спаданням",
       "created_on": "Створено",
@@ -619,7 +624,8 @@
       "enable": "Увімкнути",
       "disable": "Вимкнути",
       "copy_markdown": "Скопіювати markdown",
-      "reply": "Відповісти"
+      "reply": "Відповісти",
+      "add_reaction": "Додати реакцію"
     },
     "name": "Назва",
     "discard": "Скасувати",
@@ -867,5 +873,6 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# мітка} few {# мітки} many {# міток} other {# мітки}}"
 }

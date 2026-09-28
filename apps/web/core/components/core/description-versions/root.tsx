@@ -50,7 +50,7 @@ export const DescriptionVersionsRoot = observer(function DescriptionVersionsRoot
     entityId && activeVersionId ? `DESCRIPTION_VERSION_DETAILS_${activeVersionId}` : null,
     entityId && activeVersionId ? () => fetchHandlers.retrieveDescriptionVersion(entityId, activeVersionId) : null
   );
-  const versions = versionsListResponse?.results;
+  const versions = Array.isArray(versionsListResponse?.results) ? versionsListResponse.results : undefined;
   const versionsCount = versions?.length ?? 0;
   const activeVersionDetails = versions?.find((version) => version.id === activeVersionId);
   const activeVersionIndex = versions?.findIndex((version) => version.id === activeVersionId);

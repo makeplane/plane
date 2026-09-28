@@ -111,5 +111,8 @@
       "success_message": "Đã xóa trang khỏi bộ sưu tập.",
       "error_message": "Không thể xóa trang khỏi bộ sưu tập. Vui lòng thử lại."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Đã đạt giới hạn nội dung và đồng bộ trực tiếp đã tắt. Tạo trang mới hoặc dùng trang lồng nhau để tiếp tục đồng bộ."
   }
 }

@@ -8,17 +8,16 @@ import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "rea
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { MoreHorizontal } from "lucide-react";
+import { ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronRightIcon } from "@plane/propel/icons";
 // types
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
-import { ControlLink, Row } from "@plane/ui";
+import { ControlLink, Row } from "@plane/blocks/layout";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
@@ -191,7 +190,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
   const cellRef = useRef(null);
-  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const menuActionRef = useRef<HTMLButtonElement | null>(null);
   // router
   const { workspaceSlug, projectId } = useParams();
   // hooks
@@ -213,15 +212,18 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
   const customActionButton = (
-    <div
+    // The quick-action menu grafts its trigger behaviour (and accessible name) onto this element via
+    // MenuTrigger render, so it has to be a real button.
+    <button
+      type="button"
       ref={menuActionRef}
       className={`flex h-full w-full cursor-pointer items-center rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
         isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
-      <MoreHorizontal className="h-3.5 w-3.5" />
-    </div>
+      <MoreHorizontalOutline className="h-3.5 w-3.5" />
+    </button>
   );
   if (!issueDetail) return null;
 
@@ -308,13 +310,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               {/* select checkbox */}
               {projectId && canSelectIssues && (
                 <Tooltip
-                  tooltipContent={
-                    <>
-                      Only work items within the current
-                      <br />
-                      project can be selected.
-                    </>
-                  }
+                  label="Only work items within the current project can be selected."
+                  layout="stacked"
                   disabled={issueDetail.project_id === projectId}
                 >
                   <div className="absolute left-1 mr-1 grid w-3.5 flex-shrink-0 place-items-center">
@@ -345,11 +342,10 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                     className="grid size-4 place-items-center rounded-xs text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRightIcon
+                    <ChevronRightOutline
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
-                      strokeWidth={2.5}
                     />
                   </button>
                 )}
@@ -358,7 +354,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               <div className="my-auto flex h-full w-full items-center justify-between gap-2 truncate">
                 <div className="line-clamp-1 w-full text-14 text-primary">
                   <div className="w-full overflow-hidden">
-                    <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
+                    <Tooltip label={issueDetail.name} layout="stacked" disabled={isMobile}>
                       <div
                         className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
                         tabIndex={-1}

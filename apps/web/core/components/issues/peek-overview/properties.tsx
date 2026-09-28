@@ -9,32 +9,33 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui icons
 import {
-  CycleIcon,
-  StatePropertyIcon,
-  ModuleIcon,
-  MembersPropertyIcon,
-  PriorityPropertyIcon,
-  StartDatePropertyIcon,
-  DueDatePropertyIcon,
-  LabelPropertyIcon,
-  UserCirclePropertyIcon,
-  EstimatePropertyIcon,
-  ParentPropertyIcon,
-} from "@plane/propel/icons";
+  CyclesOutline,
+  DueDateOutline,
+  EstimateOutline,
+  LabelsOutline,
+  MembersOutline,
+  ModuleOutline,
+  ParentOutline,
+  PriorityOutline,
+  StartDateOutline,
+  StateOutline,
+  UserOutline,
+} from "@makeplane/propel/icons";
+import { DateSelect } from "@plane/blocks/property-select";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import { DateDropdown } from "@/components/dropdowns/date";
-import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
+import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
+import { StateSelect } from "@/components/dropdowns/state/state-select";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 // helpers
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserProfile } from "@/hooks/store/user";
 // plane web components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import type { TIssueOperations } from "../issue-detail";
@@ -60,6 +61,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
+  const { data: userProfile } = useUserProfile();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -78,133 +80,117 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
     <div>
       <h6 className="text-body-xs-medium">{t("common.properties")}</h6>
       <div className={`mt-3 w-full space-y-3 ${disabled ? "opacity-60" : ""}`}>
-        <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
-          <StateDropdown
+        <SidebarPropertyListItem icon={StateOutline} label={t("common.state")}>
+          <StateSelect
+            testId="work-item-state-select"
             value={issue?.state_id}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
             projectId={projectId}
             disabled={disabled}
-            buttonVariant="transparent-with-text"
-            className="group w-full grow"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium ${issue?.state_id ? "" : "text-placeholder"}`}
-            dropdownArrow
-            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+            variant="select-ghost-md"
+            tooltip
           />
         </SidebarPropertyListItem>
 
-        <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
-          <MemberDropdown
-            value={issue?.assignee_ids ?? undefined}
+        <SidebarPropertyListItem icon={MembersOutline} label={t("common.assignees")}>
+          <MemberSelect
+            testId="work-item-assignee-select"
+            value={issue?.assignee_ids ?? []}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
             disabled={disabled}
             projectId={projectId}
             placeholder={t("issue.add.assignee")}
             multiple
-            buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
-            className="group w-full grow"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
-            hideIcon={issue.assignee_ids?.length === 0}
-            dropdownArrow
-            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+            variant="select-ghost-md"
+            showLabel={(issue?.assignee_ids?.length ?? 0) <= 1}
+            tooltip={{ heading: t("common.assignees") }}
           />
         </SidebarPropertyListItem>
 
-        <SidebarPropertyListItem icon={PriorityPropertyIcon} label={t("common.priority")}>
-          <PriorityDropdown
+        <SidebarPropertyListItem icon={PriorityOutline} label={t("common.priority")}>
+          <PrioritySelect
+            testId="work-item-priority-select"
             value={issue?.priority}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
-            buttonVariant="transparent-with-text"
-            className="h-7.5 w-full grow rounded-sm"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority || issue?.priority === "none" ? "text-placeholder" : ""}`}
+            variant="select-ghost-md"
+            tooltip
           />
         </SidebarPropertyListItem>
 
         {createdByDetails && (
-          <SidebarPropertyListItem
-            icon={UserCirclePropertyIcon}
-            label={t("common.created_by")}
-            childrenClassName="px-2"
-          >
+          <SidebarPropertyListItem icon={UserOutline} label={t("common.created_by")} childrenClassName="px-2">
             <ButtonAvatars
               showTooltip
-              userIds={createdByDetails?.display_name.includes("-intake") ? null : createdByDetails?.id}
+              userIds={createdByDetails?.display_name?.includes("-intake") ? null : createdByDetails?.id}
             />
             <span className="grow truncate text-body-xs-medium leading-5 text-secondary">
-              {createdByDetails?.display_name.includes("-intake") ? "Plane" : createdByDetails?.display_name}
+              {createdByDetails?.display_name?.includes("-intake") ? "Plane" : createdByDetails?.display_name}
             </span>
           </SidebarPropertyListItem>
         )}
 
-        <SidebarPropertyListItem icon={StartDatePropertyIcon} label={t("common.order_by.start_date")}>
-          <DateDropdown
-            value={issue.start_date}
+        <SidebarPropertyListItem icon={StartDateOutline} label={t("common.order_by.start_date")}>
+          <DateSelect
+            testId="work-item-start-date-select"
+            value={getDate(issue.start_date) ?? null}
             onChange={(val) =>
               issueOperations.update(workspaceSlug, projectId, issueId, {
                 start_date: val ? renderFormattedPayloadDate(val) : null,
               })
             }
             placeholder={t("issue.add.start_date")}
-            buttonVariant="transparent-with-text"
             maxDate={maxDate ?? undefined}
             disabled={disabled}
-            className="group w-full grow"
-            buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-medium ${issue?.start_date ? "" : "text-placeholder"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            clearable
+            weekStartsOn={userProfile?.start_of_the_week}
+            variant="select-ghost-md"
+            showTooltip
+            tooltipHeading={t("common.order_by.start_date")}
           />
         </SidebarPropertyListItem>
 
-        <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
+        <SidebarPropertyListItem icon={DueDateOutline} label={t("common.order_by.due_date")}>
           <div className="flex w-full items-center gap-2">
-            <DateDropdown
-              value={issue.target_date}
+            <DateSelect
+              testId="work-item-due-date-select"
+              value={getDate(issue.target_date) ?? null}
               onChange={(val) =>
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   target_date: val ? renderFormattedPayloadDate(val) : null,
                 })
               }
               placeholder={t("issue.add.due_date")}
-              buttonVariant="transparent-with-text"
               minDate={minDate ?? undefined}
               disabled={disabled}
-              className="group w-full grow"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={cn("text-body-xs-medium", {
-                "text-placeholder": !issue.target_date,
+              clearable
+              className={cn({
                 "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
               })}
-              hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"
+              weekStartsOn={userProfile?.start_of_the_week}
+              variant="select-ghost-md"
+              showTooltip
+              tooltipHeading={t("common.order_by.due_date")}
             />
           </div>
         </SidebarPropertyListItem>
 
         {isEstimateEnabled && (
-          <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
-            <EstimateDropdown
+          <SidebarPropertyListItem icon={EstimateOutline} label={t("common.estimate")}>
+            <EstimateSelect
               value={issue.estimate_point ?? undefined}
               onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
               projectId={projectId}
               disabled={disabled}
-              buttonVariant="transparent-with-text"
-              className="group w-full grow"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={`text-body-xs-medium ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
-              placeholder="None"
-              hideIcon
-              dropdownArrow
-              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              variant="select-ghost-md"
+              placeholder={t("common.none")}
+              tooltip
             />
           </SidebarPropertyListItem>
         )}
 
         {projectDetails?.module_view && (
-          <SidebarPropertyListItem icon={ModuleIcon} label={t("common.modules")}>
+          <SidebarPropertyListItem icon={ModuleOutline} label={t("common.modules")}>
             <IssueModuleSelect
               className="w-full grow"
               workspaceSlug={workspaceSlug}
@@ -217,7 +203,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         )}
 
         {projectDetails?.cycle_view && (
-          <SidebarPropertyListItem icon={CycleIcon} label={t("common.cycle")} appendElement={null}>
+          <SidebarPropertyListItem icon={CyclesOutline} label={t("common.cycle")} appendElement={null}>
             <IssueCycleSelect
               className="h-7.5 w-full grow"
               workspaceSlug={workspaceSlug}
@@ -229,7 +215,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           </SidebarPropertyListItem>
         )}
 
-        <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
+        <SidebarPropertyListItem icon={ParentOutline} label={t("common.parent")}>
           <IssueParentSelectRoot
             className="h-7.5 w-full grow"
             disabled={disabled}
@@ -240,7 +226,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
           />
         </SidebarPropertyListItem>
 
-        <SidebarPropertyListItem icon={LabelPropertyIcon} label={t("common.labels")}>
+        <SidebarPropertyListItem icon={LabelsOutline} label={t("common.labels")}>
           <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
         </SidebarPropertyListItem>
       </div>

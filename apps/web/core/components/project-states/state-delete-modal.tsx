@@ -8,10 +8,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { ConfirmDialog } from "@plane/blocks/dialog";
+import { setToast } from "@plane/blocks/toast";
 import type { IState } from "@plane/types";
-// ui
-import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 
@@ -39,32 +38,30 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
 
     setIsDeleteLoading(true);
 
-    await deleteState(workspaceSlug.toString(), data.project_id, data.id)
-      .then(() => {
-        handleClose();
-      })
-      .catch((err) => {
-        if (err.status === 400)
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message:
-              "This state contains some work items within it, please move them to some other state to delete this state.",
-          });
-        else
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "State could not be deleted. Please try again.",
-          });
-      })
-      .finally(() => {
-        setIsDeleteLoading(false);
-      });
+    try {
+      await deleteState(workspaceSlug.toString(), data.project_id, data.id);
+      handleClose();
+    } catch (err) {
+      if ((err as { status?: number })?.status === 400)
+        setToast({
+          type: "error",
+          title: "Error!",
+          message:
+            "This state contains some work items within it, please move them to some other state to delete this state.",
+        });
+      else
+        setToast({
+          type: "error",
+          title: "Error!",
+          message: "State could not be deleted. Please try again.",
+        });
+    } finally {
+      setIsDeleteLoading(false);
+    }
   };
 
   return (
-    <AlertModalCore
+    <ConfirmDialog
       handleClose={handleClose}
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
