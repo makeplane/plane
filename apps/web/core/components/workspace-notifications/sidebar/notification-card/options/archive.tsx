@@ -5,11 +5,10 @@
  */
 
 import { observer } from "mobx-react";
-import { ArchiveRestore } from "lucide-react";
+import { ArchiveOutline, RestoreOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 // store
 import type { INotification } from "@/store/notifications/notification";
 // local imports
@@ -34,7 +33,7 @@ export const NotificationItemArchiveOption = observer(function NotificationItemA
       await request(workspaceSlug);
       setToast({
         title: data.archived_at ? t("notification.toasts.unarchived") : t("notification.toasts.archived"),
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
       });
     } catch (e) {
       console.error(e);
@@ -49,9 +48,9 @@ export const NotificationItemArchiveOption = observer(function NotificationItemA
       callBack={handleNotificationUpdate}
     >
       {data.archived_at ? (
-        <ArchiveRestore className="h-3 w-3 text-tertiary" />
+        <RestoreOutline className="h-3 w-3 text-tertiary" />
       ) : (
-        <ArchiveIcon className="h-3 w-3 text-tertiary" />
+        <ArchiveOutline className="h-3 w-3 text-tertiary" />
       )}
     </NotificationItemOptionButton>
   );

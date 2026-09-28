@@ -5,7 +5,7 @@
  */
 
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TBaseLayoutType } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -30,12 +30,14 @@ export function LayoutSwitcher(props: Props) {
 
   return (
     <div className="flex items-center gap-1 rounded-md bg-layer-3 p-1">
-      {BASE_LAYOUTS.filter((l) => (layouts ? layouts.includes(l.key) : true)).map((layout) => {
+      {BASE_LAYOUTS.map((layout) => {
+        if (layouts && !layouts.includes(layout.key)) return null;
         const Icon = layout.icon;
         return (
-          <Tooltip key={layout.key} tooltipContent={t(layout.label)} isMobile={isMobile}>
+          <Tooltip key={layout.key} label={t(layout.label)} disabled={isMobile}>
             <button
               type="button"
+              aria-label={t(layout.label)}
               className={cn(
                 "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
                 {

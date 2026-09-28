@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Settings2 } from "lucide-react";
+import { SettingsOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { AnchorButton } from "@makeplane/propel/components/anchor-button";
 import { Button } from "@makeplane/propel/components/button";
@@ -34,13 +34,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
     <>
       {GiteaConfigured ? (
         <div className="flex items-center gap-4">
-          <AnchorButton
-            variant="primary"
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/authentication/gitea" />}
-            label="Edit"
-          />
+          <AnchorButton variant="primary" size="sm" render={<Link href="/authentication/gitea" />} label="Edit" />
           <Switch
             checked={Boolean(parseInt(GiteaConfig))}
             onCheckedChange={() => {
@@ -49,6 +43,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
                 : updateConfig("IS_GITEA_ENABLED", "1");
             }}
             size="sm"
+            aria-label="Enable Gitea"
             disabled={disabled}
           />
         </div>
@@ -59,7 +54,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
           stretch="auto"
           nativeButton={false}
           render={<Link href="/authentication/gitea" />}
-          icon={<Settings2 className="h-4 w-4 p-0.5 text-tertiary" />}
+          icon={<SettingsOutline className="h-4 w-4 p-0.5 text-tertiary" />}
           label="Configure"
         />
       )}

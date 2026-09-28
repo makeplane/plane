@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 // ui
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 
@@ -23,16 +23,22 @@ export function NotAWorkspaceMember() {
             </p>
           </div>
           <div className="flex items-center justify-center gap-2">
-            <Link href="/invitations">
-              <span>
-                <Button variant="secondary">Check pending invites</Button>
-              </span>
-            </Link>
-            <Link href="/create-workspace">
-              <span>
-                <Button variant="primary">Create new workspace</Button>
-              </span>
-            </Link>
+            <Button
+              variant="secondary"
+              size="sm"
+              stretch="auto"
+              label="Check pending invites"
+              nativeButton={false}
+              render={<Link href="/invitations" />}
+            />
+            <Button
+              variant="primary"
+              size="sm"
+              stretch="auto"
+              label="Create new workspace"
+              nativeButton={false}
+              render={<Link href="/create-workspace" />}
+            />
           </div>
         </div>
       </div>

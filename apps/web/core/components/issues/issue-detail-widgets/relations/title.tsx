@@ -4,28 +4,23 @@
  * See the LICENSE file for details.
  */
 
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { useTimeLineRelationOptions } from "@/components/relations";
-// local imports
-import { RelationActionButton } from "./quick-action-button";
 
 type Props = {
-  isOpen: boolean;
   issueId: string;
-  disabled: boolean;
   issueServiceType?: TIssueServiceType;
 };
 
 export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleTitle(props: Props) {
-  const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { issueId, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hook
   const {
@@ -36,24 +31,12 @@ export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleT
   // derived values
   const relationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
 
-  // indicator element
-  const indicatorElement = useMemo(
-    () => (
-      <span className="flex items-center justify-center">
-        <p className="text-14 !leading-3 text-tertiary">{relationsCount}</p>
-      </span>
-    ),
-    [relationsCount]
-  );
-
   return (
-    <CollapsibleButton
-      isOpen={isOpen}
-      title={t("common.relations")}
-      indicatorElement={indicatorElement}
-      actionItemElement={
-        !disabled && <RelationActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />
-      }
-    />
+    <span className="inline-flex items-center gap-2">
+      {t("common.relations")}
+      <span className="flex items-center justify-center">
+        <p className="text-14 leading-3! text-tertiary">{relationsCount}</p>
+      </span>
+    </span>
   );
 });

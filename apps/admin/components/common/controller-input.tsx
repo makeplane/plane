@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // icons
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane internal packages
 import { Input, InputGroup } from "@makeplane/propel/components/input";
 
@@ -40,10 +40,13 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
   const { name, control, type, label, description, placeholder, error, required } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
+  const descriptionId = description ? `${name}-description` : undefined;
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-13 text-tertiary">{label}</h4>
+      <label htmlFor={name} className="text-13 text-tertiary">
+        {label}
+      </label>
       <InputGroup size="lg">
         <Controller
           control={control}
@@ -59,6 +62,7 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
               onChange={onChange}
               ref={ref}
               aria-invalid={error}
+              aria-describedby={descriptionId}
               placeholder={placeholder}
             />
           )}
@@ -71,7 +75,7 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
               className="flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(false)}
             >
-              <EyeOff className="h-4 w-4" />
+              <HideOutline className="h-4 w-4" />
             </button>
           ) : (
             <button
@@ -80,11 +84,15 @@ export function ControllerInput<TFieldValues extends FieldValues = FieldValues>(
               className="flex items-center justify-center text-placeholder"
               onClick={() => setShowPassword(true)}
             >
-              <Eye className="h-4 w-4" />
+              <ShowOutline className="h-4 w-4" />
             </button>
           ))}
       </InputGroup>
-      {description && <p className="pt-0.5 text-11 text-tertiary">{description}</p>}
+      {description && (
+        <p id={descriptionId} className="pt-0.5 text-11 text-tertiary">
+          {description}
+        </p>
+      )}
     </div>
   );
 }

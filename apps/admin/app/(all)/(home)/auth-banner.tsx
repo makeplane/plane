@@ -4,11 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import { Info } from "lucide-react";
 // plane constants
 import type { TAdminAuthErrorInfo } from "@plane/constants";
 // icons
-import { CloseOutline } from "@makeplane/propel/icons";
+import { CloseOutline, InfoOutline } from "@makeplane/propel/icons";
 
 type TAuthBanner = {
   bannerData: TAdminAuthErrorInfo | undefined;
@@ -22,7 +21,7 @@ export function AuthBanner(props: TAuthBanner) {
   return (
     <div className="relative flex items-center gap-2 rounded-md border border-accent-strong/50 bg-accent-primary/10 p-2">
       <div className="relative flex h-4 w-4 flex-shrink-0 items-center justify-center">
-        <Info size={16} className="text-accent-primary" />
+        <InfoOutline width={16} height={16} className="text-accent-primary" />
       </div>
       <div className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</div>
       <button

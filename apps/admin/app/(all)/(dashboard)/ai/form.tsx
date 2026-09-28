@@ -5,13 +5,13 @@
  */
 
 import { useForm } from "react-hook-form";
-import { Lightbulb } from "lucide-react";
+import { ThoughtsOutline } from "@makeplane/propel/icons";
 import { Button } from "@makeplane/propel/components/button";
 import type { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
 // components
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
-import { TOAST_TYPE, setToast } from "@/providers/toast";
+import { setToast } from "@plane/blocks/toast";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -90,7 +90,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     await updateInstanceConfigurations(payload)
       .then(() =>
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success",
           message: "AI Settings updated successfully",
         })
@@ -133,7 +133,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         />
 
         <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary">
-          <Lightbulb className="size-4" />
+          <ThoughtsOutline className="size-4" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}
             <a className="font-medium underline" href="https://plane.so/contact">

@@ -9,9 +9,9 @@ import { useParams, useSearchParams } from "next/navigation";
 // components
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import { EUserProjectRoles } from "@plane/types";
-import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
+import { ContentWrapper, Row, ERowVariant } from "@plane/blocks/layout";
 // components
 import { ListLayout } from "@/components/core/list";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";

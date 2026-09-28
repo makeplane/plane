@@ -6,8 +6,8 @@
 
 import React from "react";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
-import { ControlLink, Row } from "@plane/ui";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { ControlLink, Row } from "@plane/blocks/layout";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -86,7 +86,7 @@ export function ListItem(props: IListItemProps) {
           >
             <div className={cn("flex items-center gap-4 truncate", leftElementClassName)}>
               {prependTitleElement && <span className="flex flex-shrink-0 items-center">{prependTitleElement}</span>}
-              <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
+              <Tooltip label={title} layout="stacked" disabled={isMobile}>
                 <span className="truncate text-13">{title}</span>
               </Tooltip>
             </div>

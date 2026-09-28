@@ -6,10 +6,11 @@
 
 import React from "react";
 // types
-import { CycleGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CycleGroupIcon } from "@plane/blocks/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // icons
-import { Row } from "@plane/ui";
+import { Row } from "@plane/blocks/layout";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -35,7 +36,7 @@ export function CycleListGroupHeader(props: Props) {
           {showCount && <div className="pl-2 text-13 font-medium text-tertiary">{`${count ?? "0"}`}</div>}
         </div>
       </div>
-      <ChevronDownIcon
+      <ChevronDownOutline
         className={cn("size-4 shrink-0 text-tertiary transition-transform", {
           "rotate-180": isExpanded,
         })}
