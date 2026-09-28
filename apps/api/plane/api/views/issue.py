@@ -236,7 +236,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
-        if issue_identifier and project_identifier:
+        if issue_identifier is not None and project_identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()

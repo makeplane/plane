@@ -28,7 +28,7 @@ old_url_patterns = [
         name="issue-search",
     ),
     path(
-        "workspaces/<str:slug>/issues/<str:project_identifier>-<str:issue_identifier>/",
+        "workspaces/<str:slug>/issues/<str:project_identifier>-<int:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
         name="issue-by-identifier",
     ),
@@ -92,7 +92,7 @@ new_url_patterns = [
         name="work-item-search",
     ),
     path(
-        "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
+        "workspaces/<str:slug>/work-items/<str:project_identifier>-<int:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
         name="work-item-by-identifier",
     ),
