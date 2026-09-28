@@ -7,9 +7,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { ListFilter } from "lucide-react";
+import { CloseOutline, FilterOutline, SearchOutline } from "@makeplane/propel/icons";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";
@@ -19,9 +19,12 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
-import { IconButton } from "@plane/propel/icon-button";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
 
 export const ViewListHeader = observer(function ViewListHeader() {
+  // translation
+  const { t } = useTranslation();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -59,13 +62,14 @@ export const ViewListHeader = observer(function ViewListHeader() {
         {!isSearchOpen && (
           <IconButton
             variant="ghost"
-            size="lg"
-            className="-mr-1"
+            size="md"
+            render={<button type="button" className="-mr-1" />}
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={SearchIcon}
+            icon={<Icon icon={SearchOutline} />}
+            aria-label={t("common.search.label")}
           />
         )}
         <div
@@ -76,7 +80,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
             }
           )}
         >
-          <SearchIcon className="h-3.5 w-3.5" />
+          <SearchOutline className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
@@ -94,7 +98,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
                 setIsSearchOpen(false);
               }}
             >
-              <CloseIcon className="h-3 w-3" />
+              <CloseOutline className="h-3 w-3" />
             </button>
           )}
         </div>
@@ -109,7 +113,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
           }}
         />
         <FiltersDropdown
-          icon={<ListFilter className="h-3 w-3" />}
+          icon={<FilterOutline className="h-3 w-3" />}
           title="Filters"
           placement="bottom-end"
           isFiltersApplied={false}

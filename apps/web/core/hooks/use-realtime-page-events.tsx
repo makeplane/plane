@@ -7,7 +7,7 @@
 import { useCallback, useMemo } from "react";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 // types
 import type { IUserLite } from "@plane/types";
 // components
@@ -118,7 +118,7 @@ export const useRealtimePageEvents = ({
               removePage({ pageId, shouldSync: false });
               if (page.id === pageId && data?.user_id !== currentUser?.id) {
                 setToast({
-                  type: TOAST_TYPE.ERROR,
+                  type: "error",
                   title: "Page deleted",
                   message: `Page deleted${getUserDisplayText(data.user_id)}`,
                 });
@@ -147,7 +147,7 @@ export const useRealtimePageEvents = ({
           if (page.id && pageIds.includes(page.id)) {
             // Show toast notification
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: errorType === "fetch" ? "Failed to load page" : "Failed to save page",
               message: errorMessage,
             });

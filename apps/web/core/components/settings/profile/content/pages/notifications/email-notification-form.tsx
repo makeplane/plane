@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IUserEmailNotificationSettings } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 // components
 import { SettingsControlItem } from "@/components/settings/control-item";
 // services
@@ -42,13 +42,13 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
       });
       setToast({
         title: t("success"),
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         message: t("email_notification_setting_updated_successfully"),
       });
     } catch (_error) {
       setToast({
         title: t("error"),
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         message: t("failed_to_update_email_notification_setting"),
       });
     }
@@ -68,13 +68,14 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="property_change"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={value}
-                onChange={(newValue) => {
-                  onChange(newValue);
-                  handleSettingChange("property_change", newValue);
-                }}
+              <Switch
                 size="sm"
+                checked={value}
+                onCheckedChange={(newValue) => {
+                  onChange(newValue);
+                  void handleSettingChange("property_change", newValue);
+                }}
+                aria-label={t("property_changes")}
               />
             )}
           />
@@ -88,13 +89,14 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="state_change"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={value}
-                onChange={(newValue) => {
-                  onChange(newValue);
-                  handleSettingChange("state_change", newValue);
-                }}
+              <Switch
                 size="sm"
+                checked={value}
+                onCheckedChange={(newValue) => {
+                  onChange(newValue);
+                  void handleSettingChange("state_change", newValue);
+                }}
+                aria-label={t("state_change")}
               />
             )}
           />
@@ -109,13 +111,14 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
               control={control}
               name="issue_completed"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch
-                  value={value}
-                  onChange={(newValue) => {
-                    onChange(newValue);
-                    handleSettingChange("issue_completed", newValue);
-                  }}
+                <Switch
                   size="sm"
+                  checked={value}
+                  onCheckedChange={(newValue) => {
+                    onChange(newValue);
+                    void handleSettingChange("issue_completed", newValue);
+                  }}
+                  aria-label={t("issue_completed")}
                 />
               )}
             />
@@ -130,13 +133,14 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="comment"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={value}
-                onChange={(newValue) => {
-                  onChange(newValue);
-                  handleSettingChange("comment", newValue);
-                }}
+              <Switch
                 size="sm"
+                checked={value}
+                onCheckedChange={(newValue) => {
+                  onChange(newValue);
+                  void handleSettingChange("comment", newValue);
+                }}
+                aria-label={t("comments")}
               />
             )}
           />
@@ -150,13 +154,14 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
             control={control}
             name="mention"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={value}
-                onChange={(newValue) => {
-                  onChange(newValue);
-                  handleSettingChange("mention", newValue);
-                }}
+              <Switch
                 size="sm"
+                checked={value}
+                onCheckedChange={(newValue) => {
+                  onChange(newValue);
+                  void handleSettingChange("mention", newValue);
+                }}
+                aria-label={t("mentions")}
               />
             )}
           />

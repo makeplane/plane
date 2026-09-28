@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  */
-
-import { EModalWidth, ModalCore } from "@plane/ui";
+import { Dialog, DialogContent } from "@makeplane/propel/components/dialog";
+import { useTranslation } from "@plane/i18n";
 import { Stickies } from "./stickies";
 
 type TProps = {
@@ -13,9 +13,22 @@ type TProps = {
 };
 export function AllStickiesModal(props: TProps) {
   const { isOpen, handleClose } = props;
+  // plane hooks
+  const { t } = useTranslation();
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VXL}>
-      <Stickies handleClose={handleClose} />
-    </ModalCore>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      {/* the visible "Your stickies" heading lives inside `Stickies` as plain text, so name the popup here */}
+      <DialogContent size="xl" aria-label={t("stickies.title")}>
+        {/* the popup is height-capped and clips overflow, so scroll the panel here as the legacy modal overlay did */}
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <Stickies handleClose={handleClose} />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

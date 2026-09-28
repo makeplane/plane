@@ -16,7 +16,7 @@ import {
   TALK_TO_SALES_URL,
 } from "@plane/constants";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { EModalWidth, ModalCore } from "@plane/ui";
+import { Dialog, DialogBody, DialogContent, DialogMain } from "@makeplane/propel/components/dialog";
 import { cn } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
@@ -49,88 +49,104 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VIIXL} className="rounded-2xl">
-      <div className="max-h-[90vh] overflow-auto p-10">
-        <div className="grid h-full grid-cols-12 gap-6">
-          {/* Free Plan Section */}
-          <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <div className="flex text-24 leading-8 font-bold">Upgrade to a paid plan and unlock missing features.</div>
-            <div className="mt-4 mb-2">
-              <p className="mb-4 pr-8 text-13 text-primary">
-                Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
-                today to unlock features your teams need yesterday.
-              </p>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+    >
+      {/* The visible plan heading names the dialog; it keeps its display typography instead of `DialogTitle`. */}
+      <DialogContent size="full" aria-labelledby="paid-plan-upgrade-modal-title">
+        <DialogMain>
+          <DialogBody tabIndex={0}>
+            <div className="grid h-full grid-cols-12 gap-6">
+              {/* Free Plan Section */}
+              <div className={cn(COMMON_CARD_CLASSNAME)}>
+                <h2 id="paid-plan-upgrade-modal-title" className="flex text-24 leading-8 font-bold">
+                  Upgrade to a paid plan and unlock missing features.
+                </h2>
+                <div className="mt-4 mb-2">
+                  <p className="mb-4 pr-8 text-13 text-primary">
+                    Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away.
+                    Upgrade today to unlock features your teams need yesterday.
+                  </p>
+                </div>
+
+                {/* Free plan details */}
+                <FreePlanCard isOnFreePlan />
+              </div>
+
+              {/* Pro plan */}
+              <div className={cn(COMMON_CARD_CLASSNAME)}>
+                <PlanUpgradeCard
+                  planVariant={EProductSubscriptionEnum.PRO}
+                  product={PLANE_COMMUNITY_PRODUCTS[EProductSubscriptionEnum.PRO]}
+                  features={PRO_PLAN_FEATURES}
+                  verticalFeatureList
+                  extraFeatures={
+                    <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
+                      <a
+                        href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.PRO]}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        See full features list
+                      </a>
+                    </p>
+                  }
+                  handleCheckout={handleRedirection}
+                  isSelfHosted={!!isSelfHosted}
+                  isTrialAllowed={!!isTrialAllowed}
+                />
+              </div>
+              <div className={cn(COMMON_CARD_CLASSNAME)}>
+                <PlanUpgradeCard
+                  planVariant={EProductSubscriptionEnum.BUSINESS}
+                  product={PLANE_COMMUNITY_PRODUCTS[EProductSubscriptionEnum.BUSINESS]}
+                  features={BUSINESS_PLAN_FEATURES}
+                  verticalFeatureList
+                  extraFeatures={
+                    <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
+                      <a
+                        href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.BUSINESS]}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        See full features list
+                      </a>
+                    </p>
+                  }
+                  handleCheckout={handleRedirection}
+                  isSelfHosted={!!isSelfHosted}
+                  isTrialAllowed={!!isTrialAllowed}
+                />
+              </div>
+              <div className={cn(COMMON_CARD_CLASSNAME)}>
+                <PlanUpgradeCard
+                  planVariant={EProductSubscriptionEnum.ENTERPRISE}
+                  product={PLANE_COMMUNITY_PRODUCTS[EProductSubscriptionEnum.ENTERPRISE]}
+                  features={ENTERPRISE_PLAN_FEATURES}
+                  verticalFeatureList
+                  extraFeatures={
+                    <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
+                      <a
+                        href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.ENTERPRISE]}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        See full features list
+                      </a>
+                    </p>
+                  }
+                  handleCheckout={handleRedirection}
+                  isSelfHosted={!!isSelfHosted}
+                  isTrialAllowed={!!isTrialAllowed}
+                />
+              </div>
             </div>
-
-            {/* Free plan details */}
-            <FreePlanCard isOnFreePlan />
-          </div>
-
-          {/* Pro plan */}
-          <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <PlanUpgradeCard
-              planVariant={EProductSubscriptionEnum.PRO}
-              product={PLANE_COMMUNITY_PRODUCTS[EProductSubscriptionEnum.PRO]}
-              features={PRO_PLAN_FEATURES}
-              verticalFeatureList
-              extraFeatures={
-                <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.PRO]} target="_blank" rel="noreferrer">
-                    See full features list
-                  </a>
-                </p>
-              }
-              handleCheckout={handleRedirection}
-              isSelfHosted={!!isSelfHosted}
-              isTrialAllowed={!!isTrialAllowed}
-            />
-          </div>
-          <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <PlanUpgradeCard
-              planVariant={EProductSubscriptionEnum.BUSINESS}
-              product={PLANE_COMMUNITY_PRODUCTS[EProductSubscriptionEnum.BUSINESS]}
-              features={BUSINESS_PLAN_FEATURES}
-              verticalFeatureList
-              extraFeatures={
-                <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a
-                    href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.BUSINESS]}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    See full features list
-                  </a>
-                </p>
-              }
-              handleCheckout={handleRedirection}
-              isSelfHosted={!!isSelfHosted}
-              isTrialAllowed={!!isTrialAllowed}
-            />
-          </div>
-          <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <PlanUpgradeCard
-              planVariant={EProductSubscriptionEnum.ENTERPRISE}
-              product={PLANE_COMMUNITY_PRODUCTS[EProductSubscriptionEnum.ENTERPRISE]}
-              features={ENTERPRISE_PLAN_FEATURES}
-              verticalFeatureList
-              extraFeatures={
-                <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a
-                    href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.ENTERPRISE]}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    See full features list
-                  </a>
-                </p>
-              }
-              handleCheckout={handleRedirection}
-              isSelfHosted={!!isSelfHosted}
-              isTrialAllowed={!!isTrialAllowed}
-            />
-          </div>
-        </div>
-      </div>
-    </ModalCore>
+          </DialogBody>
+        </DialogMain>
+      </DialogContent>
+    </Dialog>
   );
 });

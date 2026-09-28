@@ -7,14 +7,13 @@
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { SquareStackIcon } from "lucide-react";
-import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { CopyOutline, DeleteOutline, EditOutline, SquareStackOutline } from "@makeplane/propel/icons";
 // plane utils
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TWorkspaceDraftIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { Row } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { Row } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -64,7 +63,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "edit",
       title: "edit",
-      icon: EditIcon,
+      icon: EditOutline,
       action: () => {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
@@ -73,7 +72,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "make-a-copy",
       title: "make_a_copy",
-      icon: CopyIcon,
+      icon: CopyOutline,
       action: () => {
         setCreateUpdateIssueModal(true);
       },
@@ -81,7 +80,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "move-to-issues",
       title: "move_to_project",
-      icon: SquareStackIcon,
+      icon: SquareStackOutline,
       action: () => {
         setMoveToIssue(true);
         setIssueToEdit(issue);
@@ -91,7 +90,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "delete",
       title: "delete",
-      icon: TrashIcon,
+      icon: DeleteOutline,
       action: () => {
         setDeleteIssueModal(true);
       },
@@ -160,7 +159,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                 <div className="grid size-4 flex-shrink-0 place-items-center" />
               </div>
 
-              <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
+              <Tooltip label={issue.name} layout="stacked" align="start">
                 <p className="w-full cursor-pointer truncate text-13 text-primary">{issue.name}</p>
               </Tooltip>
             </div>
@@ -189,6 +188,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                 "md:flex": isSidebarCollapsed,
                 "lg:flex": !isSidebarCollapsed,
               })}
+              role="presentation"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

@@ -14,7 +14,6 @@ export * from "./dashboard";
 export * from "./emoji";
 export * from "./endpoints";
 export * from "./estimates";
-export * from "./event-tracker";
 export * from "./file";
 export * from "./fetch-keys";
 export * from "./filter";

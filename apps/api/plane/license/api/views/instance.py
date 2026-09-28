@@ -59,8 +59,6 @@ class InstanceEndpoint(BaseAPIView):
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
             SLACK_CLIENT_ID,
-            POSTHOG_API_KEY,
-            POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
             LLM_API_KEY,
         ) = get_configuration_value(
@@ -107,14 +105,6 @@ class InstanceEndpoint(BaseAPIView):
                     "default": os.environ.get("SLACK_CLIENT_ID", None),
                 },
                 {
-                    "key": "POSTHOG_API_KEY",
-                    "default": os.environ.get("POSTHOG_API_KEY", None),
-                },
-                {
-                    "key": "POSTHOG_HOST",
-                    "default": os.environ.get("POSTHOG_HOST", None),
-                },
-                {
                     "key": "UNSPLASH_ACCESS_KEY",
                     "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 },
@@ -141,10 +131,6 @@ class InstanceEndpoint(BaseAPIView):
 
         # Slack client
         data["slack_client_id"] = SLACK_CLIENT_ID
-
-        # Posthog
-        data["posthog_api_key"] = POSTHOG_API_KEY
-        data["posthog_host"] = POSTHOG_HOST
 
         # Unsplash
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)

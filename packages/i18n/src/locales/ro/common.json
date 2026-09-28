@@ -8,6 +8,7 @@
   "submit": "Trimite",
   "cancel": "Anulează",
   "loading": "Se încarcă",
+  "searching": "Se caută...",
   "error": "Eroare",
   "success": "Succes",
   "warning": "Avertisment",
@@ -303,6 +304,9 @@
   "create_new_label": "Creează etichetă nouă",
   "label_name": "Nume etichetă",
   "failed_to_create_label": "Nu s-a putut crea eticheta. Vă rugăm să încercați din nou.",
+  "no_matching_labels": "Nicio etichetă potrivită",
+  "adding_label": "Se adaugă „{name}\"",
+  "add_label_to_labels": "Adaugă „{name}\" la etichete",
   "start_date": "Data de început",
   "end_date": "Data de sfârșit",
   "due_date": "Data limită",
@@ -522,6 +526,7 @@
       "updated_on": "Actualizat la"
     },
     "sort": {
+      "label": "Sortează",
       "asc": "Crescător",
       "desc": "Descrescător",
       "created_on": "Creată la",
@@ -619,7 +624,8 @@
       "enable": "Activează",
       "disable": "Dezactivează",
       "copy_markdown": "Copiază markdown",
-      "reply": "Răspunde"
+      "reply": "Răspunde",
+      "add_reaction": "Adaugă o reacție"
     },
     "name": "Nume",
     "discard": "Renunță",
@@ -867,5 +873,6 @@
       "description": "Exportă activitățile într-un fișier JSON.",
       "short_description": "Exportă ca JSON"
     }
-  }
+  },
+  "labels_count": "{count, plural, one {# etichetă} few {# etichete} other {# de etichete}}"
 }
