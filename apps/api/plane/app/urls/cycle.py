@@ -80,17 +80,17 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/archive/",
-        CycleArchiveUnarchiveEndpoint.as_view(http_method_names=["delete", "post"]),
+        CycleArchiveUnarchiveEndpoint.as_view(http_method_names=["delete", "options", "post"]),
         name="cycle-archive-unarchive",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/",
-        CycleArchiveUnarchiveEndpoint.as_view(http_method_names=["get"]),
+        CycleArchiveUnarchiveEndpoint.as_view(http_method_names=["get", "head", "options"]),
         name="cycle-archive-unarchive",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/<uuid:pk>/",
-        CycleArchiveUnarchiveEndpoint.as_view(http_method_names=["get"]),
+        CycleArchiveUnarchiveEndpoint.as_view(http_method_names=["get", "head", "options"]),
         name="cycle-archive-unarchive",
     ),
     path(

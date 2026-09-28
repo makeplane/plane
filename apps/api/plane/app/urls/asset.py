@@ -26,18 +26,20 @@ from plane.app.views import (
 urlpatterns = [
     path(
         "workspaces/<str:slug>/file-assets/",
-        FileAssetEndpoint.as_view(http_method_names=["post"]),
+        FileAssetEndpoint.as_view(http_method_names=["options", "post"]),
         name="file-assets",
     ),
     path(
         "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
-        FileAssetEndpoint.as_view(http_method_names=["delete", "get"]),
+        FileAssetEndpoint.as_view(http_method_names=["delete", "get", "head", "options"]),
         name="file-assets",
     ),
-    path("users/file-assets/", UserAssetsEndpoint.as_view(http_method_names=["post"]), name="user-file-assets"),
+    path(
+        "users/file-assets/", UserAssetsEndpoint.as_view(http_method_names=["options", "post"]), name="user-file-assets"
+    ),
     path(
         "users/file-assets/<str:asset_key>/",
-        UserAssetsEndpoint.as_view(http_method_names=["delete", "get"]),
+        UserAssetsEndpoint.as_view(http_method_names=["delete", "get", "head", "options"]),
         name="user-file-assets",
     ),
     path(
@@ -48,22 +50,22 @@ urlpatterns = [
     # V2 Endpoints
     path(
         "assets/v2/workspaces/<str:slug>/",
-        WorkspaceFileAssetEndpoint.as_view(http_method_names=["post"]),
+        WorkspaceFileAssetEndpoint.as_view(http_method_names=["options", "post"]),
         name="workspace-file-assets",
     ),
     path(
         "assets/v2/workspaces/<str:slug>/<uuid:asset_id>/",
-        WorkspaceFileAssetEndpoint.as_view(http_method_names=["delete", "get", "patch"]),
+        WorkspaceFileAssetEndpoint.as_view(http_method_names=["delete", "get", "head", "options", "patch"]),
         name="workspace-file-assets",
     ),
     path(
         "assets/v2/user-assets/",
-        UserAssetsV2Endpoint.as_view(http_method_names=["post"]),
+        UserAssetsV2Endpoint.as_view(http_method_names=["options", "post"]),
         name="user-file-assets",
     ),
     path(
         "assets/v2/user-assets/<uuid:asset_id>/",
-        UserAssetsV2Endpoint.as_view(http_method_names=["delete", "patch"]),
+        UserAssetsV2Endpoint.as_view(http_method_names=["delete", "options", "patch"]),
         name="user-file-assets",
     ),
     path(
@@ -78,12 +80,12 @@ urlpatterns = [
     ),
     path(
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/",
-        ProjectAssetEndpoint.as_view(http_method_names=["post"]),
+        ProjectAssetEndpoint.as_view(http_method_names=["options", "post"]),
         name="bulk-asset-update",
     ),
     path(
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:pk>/",
-        ProjectAssetEndpoint.as_view(http_method_names=["delete", "get", "patch"]),
+        ProjectAssetEndpoint.as_view(http_method_names=["delete", "get", "head", "options", "patch"]),
         name="bulk-asset-update",
     ),
     path(

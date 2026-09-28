@@ -125,23 +125,23 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
-        IssueAttachmentEndpoint.as_view(http_method_names=["get", "post"]),
+        IssueAttachmentEndpoint.as_view(http_method_names=["get", "head", "options", "post"]),
         name="project-issue-attachments",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentEndpoint.as_view(http_method_names=["delete"]),
+        IssueAttachmentEndpoint.as_view(http_method_names=["delete", "options"]),
         name="project-issue-attachments",
     ),
     # V2 Attachments
     path(
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
-        IssueAttachmentV2Endpoint.as_view(http_method_names=["get", "post"]),
+        IssueAttachmentV2Endpoint.as_view(http_method_names=["get", "head", "options", "post"]),
         name="project-issue-attachments",
     ),
     path(
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:pk>/",
-        IssueAttachmentV2Endpoint.as_view(http_method_names=["delete", "get", "patch"]),
+        IssueAttachmentV2Endpoint.as_view(http_method_names=["delete", "get", "head", "options", "patch"]),
         name="project-issue-attachments",
     ),
     ## End Issues

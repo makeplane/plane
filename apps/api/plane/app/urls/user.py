@@ -48,7 +48,7 @@ urlpatterns = [
     path("users/me/profile/", ProfileEndpoint.as_view(), name="accounts"),
     # End profile
     # Accounts
-    path("users/me/accounts/", AccountEndpoint.as_view(http_method_names=["get"]), name="accounts"),
+    path("users/me/accounts/", AccountEndpoint.as_view(http_method_names=["get", "head", "options"]), name="accounts"),
     path("users/me/accounts/<uuid:pk>/", AccountEndpoint.as_view(), name="accounts"),
     ## End Accounts
     path(
