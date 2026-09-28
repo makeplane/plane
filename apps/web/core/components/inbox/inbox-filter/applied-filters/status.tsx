@@ -7,11 +7,8 @@
 import { observer } from "mobx-react";
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
-// constants
-import { Tag } from "@plane/ui";
-// hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { InboxStatusIcon } from "../../inbox-status-icon";
 
@@ -28,7 +25,7 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <Tag>
+    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
       <div className="text-11 text-secondary">Status</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -44,12 +41,12 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
                 className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
               >
-                <CloseIcon className={`h-3 w-3`} />
+                <CloseOutline className={`h-3 w-3`} />
               </div>
             )}
           </div>
         );
       })}
-    </Tag>
+    </div>
   );
 });

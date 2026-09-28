@@ -48,7 +48,7 @@ type Props = {
   /**
    * @description Editor ref, this will be used to imperatively attach editor related helper functions
    */
-  editorRef?: React.RefObject<EditorRefApi>;
+  editorRef?: React.RefObject<EditorRefApi | null>;
   /**
    * @description Entity ID, this will be used for file uploads and as the unique identifier for the entity
    */
@@ -274,7 +274,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
               return asset_id;
             } catch (error) {
               console.log("Error in uploading asset:", error);
-              throw new Error("Asset upload failed. Please try again later.");
+              throw new Error("Asset upload failed. Please try again later.", { cause: error });
             }
           }}
           duplicateFile={async (assetId: string) => {

@@ -7,18 +7,17 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
+import { setToast } from "@plane/blocks/toast";
+import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // components
+import { LabelSelect } from "@/components/dropdowns/label/label-select";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useLabel } from "@/hooks/store/use-label";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
-// ui
-// types
-import { LabelList, IssueLabelSelectRoot } from "./";
-// TODO: Fix this import statement, as core should not import from ee
+
+// stable fallback so children aren't re-rendered by a fresh [] identity each render
+const EMPTY_LABEL_IDS: string[] = [];
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -30,9 +29,8 @@ export type TIssueLabel = {
   issueServiceType?: TIssueServiceType;
 };
 
-export type TLabelOperations = {
+type TLabelOperations = {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 };
 
 export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
@@ -47,9 +45,8 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   } = props;
   const { t } = useTranslation();
   // hooks
-  const { updateIssue } = useIssueDetail(issueServiceType);
-  const { createLabel } = useLabel();
   const {
+    updateIssue,
     issue: { getIssueById },
   } = useIssueDetail(issueServiceType);
   const { getIssueInboxByIssueId } = useProjectInbox();
@@ -62,61 +59,35 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
         try {
           if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
           else await updateIssue(workspaceSlug, projectId, issueId, data);
-        } catch (_error) {
+        } catch {
           setToast({
             title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: t("entity.update.failed", { entity: t("issue.label", { count: 1 }) }),
           });
         }
       },
-      createLabel: async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
-        try {
-          const labelResponse = await createLabel(workspaceSlug, projectId, data);
-          if (!isInboxIssue)
-            setToast({
-              title: t("toast.success"),
-              type: TOAST_TYPE.SUCCESS,
-              message: t("label.create.success"),
-            });
-          return labelResponse;
-        } catch (error) {
-          let errMessage = t("label.create.failed");
-          if (error && (error as any).error === "Label with the same name already exists in the project")
-            errMessage = t("label.create.already_exists");
-
-          setToast({
-            title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
-            message: errMessage,
-          });
-          throw error;
-        }
-      },
     }),
-    [updateIssue, createLabel, onLabelUpdate]
+    [updateIssue, onLabelUpdate, t]
   );
 
-  return (
-    <div className="relative flex min-h-7.5 w-full flex-wrap items-center gap-1 px-2">
-      <LabelList
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issueId}
-        values={issue?.label_ids || []}
-        labelOperations={labelOperations}
-        disabled={disabled}
-      />
+  const labelIds = issue?.label_ids || EMPTY_LABEL_IDS;
 
-      {!disabled && (
-        <IssueLabelSelectRoot
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          values={issue?.label_ids || []}
-          labelOperations={labelOperations}
-        />
-      )}
+  return (
+    <div className="relative flex min-h-7.5 w-full flex-wrap items-center">
+      {/* The binding lists the project's labels and lets project admins create one from an unmatched search. */}
+      <LabelSelect
+        projectId={projectId}
+        value={labelIds}
+        onChange={(nextLabelIds) =>
+          void labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: nextLabelIds })
+        }
+        disabled={disabled}
+        variant="select-ghost-md"
+        placeholder={t("label.select")}
+        tooltip
+        testId="work-item-label-select"
+      />
     </div>
   );
 });

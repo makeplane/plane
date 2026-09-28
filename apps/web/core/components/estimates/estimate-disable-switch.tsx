@@ -6,8 +6,8 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
+import { setToast } from "@plane/blocks/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
@@ -36,7 +36,7 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
         estimate: currentProjectActiveEstimate ? null : currentActiveEstimateId,
       });
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: currentProjectActiveEstimate
           ? t("project_settings.estimates.toasts.disabled.success.title")
           : t("project_settings.estimates.toasts.enabled.success.title"),
@@ -46,7 +46,7 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
       });
     } catch (_err) {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("project_settings.estimates.toasts.disabled.error.title"),
         message: t("project_settings.estimates.toasts.disabled.error.message"),
       });
@@ -54,11 +54,14 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
   };
 
   return (
-    <ToggleSwitch
-      value={Boolean(currentProjectActiveEstimate)}
-      onChange={disableEstimate}
-      disabled={!isAdmin}
+    <Switch
       size="sm"
+      checked={Boolean(currentProjectActiveEstimate)}
+      onCheckedChange={() => {
+        void disableEstimate();
+      }}
+      disabled={!isAdmin}
+      aria-label="Toggle estimates"
     />
   );
 });

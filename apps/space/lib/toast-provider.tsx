@@ -4,19 +4,15 @@
  * See the LICENSE file for details.
  */
 
-import { useTheme } from "next-themes";
 // plane imports
-import { Toast } from "@plane/propel/toast";
-import { resolveGeneralTheme } from "@plane/utils";
+import { PlaneToastProvider } from "@plane/blocks/toast";
 
+/**
+ * The toast viewport comes from `@plane/blocks/toast`, which mounts Propel's `ToastProvider` and
+ * binds it to the shared toast manager. It reads the theme off the CSS variables, so there is no
+ * `theme` prop. It calls `useTranslation`, so this must stay inside `TranslationProvider` (see
+ * `app/providers.tsx`).
+ */
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  // themes
-  const { resolvedTheme } = useTheme();
-
-  return (
-    <>
-      <Toast theme={resolveGeneralTheme(resolvedTheme)} />
-      {children}
-    </>
-  );
+  return <PlaneToastProvider>{children}</PlaneToastProvider>;
 }

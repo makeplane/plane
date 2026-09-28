@@ -6,16 +6,23 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { MoreHorizontal } from "lucide-react";
+import {
+  DeleteOutline,
+  EditOutline,
+  GlobeOutline,
+  LinkOutline,
+  LockOutline,
+  MoreHorizontalOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IconButton } from "@plane/propel/icon-button";
-import { LinkIcon, GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
-import { CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { resolveItemVariant } from "@plane/blocks/context-menu";
 // hooks
 import { useUser } from "@/hooks/store/user";
 
@@ -45,14 +52,14 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
           key: "edit",
           action: setEditMode,
           title: t("common.actions.edit"),
-          icon: EditIcon,
+          icon: EditOutline,
           shouldRender: canEdit,
         },
         {
           key: "copy_link",
           action: () => activityOperations.copyCommentLink(comment.id),
           title: t("common.actions.copy_link"),
-          icon: LinkIcon,
+          icon: LinkOutline,
           shouldRender: showCopyLinkOption,
         },
         {
@@ -68,14 +75,14 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
             comment.access === EIssueCommentAccessSpecifier.INTERNAL
               ? t("issue.comments.switch.public")
               : t("issue.comments.switch.private"),
-          icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? GlobeIcon : LockIcon,
+          icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? GlobeOutline : LockOutline,
           shouldRender: showAccessSpecifier,
         },
         {
           key: "delete",
           action: () => activityOperations.removeComment(comment.id),
           title: t("common.actions.delete"),
-          icon: TrashIcon,
+          icon: DeleteOutline,
           shouldRender: canDelete,
         },
       ].filter((item) => item.shouldRender !== false);
@@ -86,35 +93,30 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   if (MENU_ITEMS.length === 0) return null;
 
   return (
-    <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
-      {MENU_ITEMS.map((item) => (
-        <CustomMenu.MenuItem
-          key={item.key}
-          onClick={() => item.action()}
-          className={cn(
-            "flex items-center gap-2",
-            {
-              "text-placeholder": item.disabled,
-            },
-            item.className
-          )}
-          disabled={item.disabled}
-        >
-          {item.icon && <item.icon className={cn("size-3 shrink-0", item.iconClassName)} />}
-          <div>
-            <h5>{item.title}</h5>
-            {item.description && (
-              <p
-                className={cn("whitespace-pre-line text-tertiary", {
-                  "text-placeholder": item.disabled,
-                })}
-              >
-                {item.description}
-              </p>
-            )}
-          </div>
-        </CustomMenu.MenuItem>
-      ))}
-    </CustomMenu>
+    <Menu>
+      <MenuTrigger
+        render={
+          <IconButton
+            icon={<Icon icon={MoreHorizontalOutline} />}
+            aria-label={t("common.options")}
+            variant="ghost"
+            size="xs"
+          />
+        }
+      />
+      <MenuContent side="bottom" align="end">
+        {MENU_ITEMS.map((item) => (
+          <MenuItem
+            key={item.key}
+            variant={resolveItemVariant(item)}
+            label={item.title ?? ""}
+            description={item.description}
+            icon={item.icon ? <Icon icon={item.icon} /> : undefined}
+            disabled={item.disabled}
+            onClick={() => item.action()}
+          />
+        ))}
+      </MenuContent>
+    </Menu>
   );
 });

@@ -7,14 +7,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { CircleUserRound } from "lucide-react";
+import { UserOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Input } from "@plane/ui";
+
 import { getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
@@ -97,7 +99,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     })
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Success!",
           message: "Profile picture deleted successfully.",
         });
@@ -106,7 +108,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "There was some error in deleting your profile picture. Please try again.",
         });
@@ -138,7 +140,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
     } catch (error) {
       console.error("Error handling cover image:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: error instanceof Error ? error.message : "Failed to process cover image",
       });
@@ -223,7 +225,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!userAvatar || userAvatar === "" ? (
                       <div className="h-16 w-16 rounded-md bg-layer-1 p-2">
-                        <CircleUserRound className="h-full w-full text-secondary" />
+                        <UserOutline className="h-full w-full text-secondary" />
                       </div>
                     ) : (
                       <div className="relative h-16 w-16 overflow-hidden">
@@ -279,19 +281,22 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     validate: validatePersonName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.first_name)}
-                      placeholder="Enter your first name"
-                      className={`w-full rounded-md ${errors.first_name ? "border-danger-strong" : ""}`}
-                      maxLength={50}
-                      autoComplete="on"
-                    />
+                    <Field name="first_name" invalid={Boolean(errors.first_name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="first_name"
+                          name="first_name"
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          placeholder="Enter your first name"
+                          maxLength={50}
+                          autoComplete="on"
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {errors.first_name && <span className="text-11 text-danger-primary">{errors.first_name.message}</span>}
@@ -305,19 +310,22 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     validate: validatePersonName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="last_name"
-                      name="last_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.last_name)}
-                      placeholder="Enter your last name"
-                      className="w-full rounded-md"
-                      maxLength={50}
-                      autoComplete="on"
-                    />
+                    <Field name="last_name" invalid={Boolean(errors.last_name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="last_name"
+                          name="last_name"
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          placeholder="Enter your last name"
+                          maxLength={50}
+                          autoComplete="on"
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {errors.last_name && <span className="text-11 text-danger-primary">{errors.last_name.message}</span>}
@@ -335,18 +343,21 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     validate: validateDisplayName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="display_name"
-                      name="display_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors?.display_name)}
-                      placeholder="Enter your display name"
-                      className={`w-full ${errors?.display_name ? "border-danger-strong" : ""}`}
-                      maxLength={50}
-                    />
+                    <Field name="display_name" invalid={Boolean(errors?.display_name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="display_name"
+                          name="display_name"
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          placeholder="Enter your display name"
+                          maxLength={50}
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {errors?.display_name && (
@@ -365,20 +376,21 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     required: "Email is required.",
                   }}
                   render={({ field: { value, ref } }) => (
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={value}
-                      ref={ref}
-                      hasError={Boolean(errors.email)}
-                      placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
-                        errors.email ? "border-danger-strong" : ""
-                      }`}
-                      autoComplete="on"
-                      disabled
-                    />
+                    <Field name="email" invalid={Boolean(errors.email)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={value}
+                          ref={ref}
+                          placeholder="Enter your email"
+                          autoComplete="on"
+                          disabled
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {isSMTPConfigured && (
@@ -394,9 +406,14 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
             </div>
           </div>
           <div>
-            <Button variant="primary" type="submit" loading={isLoading}>
-              {isLoading ? t("saving") : t("save_changes")}
-            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              stretch="auto"
+              type="submit"
+              label={isLoading ? t("saving") : t("save_changes")}
+              loading={isLoading}
+            />
           </div>
         </div>
       </form>
@@ -405,9 +422,13 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
           title={t("deactivate_account")}
           description={t("deactivate_account_description")}
           control={
-            <Button variant="error-outline" onClick={() => setDeactivateAccountModal(true)}>
-              {t("deactivate_account")}
-            </Button>
+            <Button
+              variant="danger-outline"
+              size="sm"
+              stretch="auto"
+              label={t("deactivate_account")}
+              onClick={() => setDeactivateAccountModal(true)}
+            />
           }
         />
       </div>

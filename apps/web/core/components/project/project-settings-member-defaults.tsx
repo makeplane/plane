@@ -12,16 +12,17 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader } from "@plane/blocks/skeleton";
 // constants
 import { PROJECT_DETAILS } from "@plane/constants";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// local imports
-import { MemberSelect } from "./member-select";
+// components
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -110,7 +111,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       .then(() => {
         setToast({
           title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           message: t("project_settings.general.toast.success"),
         });
       })
@@ -128,7 +129,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       .then(() => {
         setToast({
           title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           message: t("project_settings.general.toast.success"),
         });
       })
@@ -146,11 +147,17 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
             name="project_lead"
             render={({ field: { value } }) => (
               <MemberSelect
-                value={value}
+                value={value as string | null}
+                // The clear row emits "", which `submitChanges` stores as null through its "none" branch.
                 onChange={(val: string) => {
-                  submitChanges({ project_lead: val });
+                  void submitChanges({ project_lead: val || "none" });
                 }}
-                isDisabled={!isAdmin}
+                variant="select-md"
+                projectId={projectId}
+                disabled={!isAdmin}
+                placeholder={t("common.none")}
+                clearable
+                clearLabel={t("common.none")}
               />
             )}
           />
@@ -167,11 +174,17 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
             name="default_assignee"
             render={({ field: { value } }) => (
               <MemberSelect
-                value={value}
+                value={value as string | null}
+                // The clear row emits "", which `submitChanges` stores as null through its "none" branch.
                 onChange={(val: string) => {
-                  submitChanges({ default_assignee: val });
+                  void submitChanges({ default_assignee: val || "none" });
                 }}
-                isDisabled={!isAdmin}
+                variant="select-md"
+                projectId={projectId}
+                disabled={!isAdmin}
+                placeholder={t("common.none")}
+                clearable
+                clearLabel={t("common.none")}
               />
             )}
           />
@@ -187,11 +200,12 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
           description="This will allow guests to have view access to all the project work items."
         >
           <div className="flex items-center justify-end">
-            <ToggleSwitch
-              value={!!currentProjectDetails?.guest_view_all_features}
-              onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
-              disabled={!isAdmin}
+            <Switch
               size="sm"
+              checked={!!currentProjectDetails?.guest_view_all_features}
+              onCheckedChange={toggleGuestViewAllIssues}
+              disabled={!isAdmin}
+              aria-label="Guest access"
             />
           </div>
         </DefaultSettingItem>
