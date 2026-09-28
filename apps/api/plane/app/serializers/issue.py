@@ -194,7 +194,48 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
+        # Workflow gate (§9.2) — when workflows are enabled for this
+        # project, the requested initial state must come from the
+        # workflow's creation-eligible set. We resolve against the
+        # project's effective workflow so admins don't have to repeat
+        # type_id plumbing into the serializer context.
+        if self.instance is None and attrs.get("state") is not None:
+            self._enforce_workflow_creation_gate(attrs)
+
         return attrs
+
+    def _enforce_workflow_creation_gate(self, attrs):
+        """§9.2 — validate the requested initial state against the workflow.
+
+        Imports are local to keep the serializer import graph stable
+        when the workflow service is not yet loaded (e.g. fresh
+        checkout before migrations).
+        """
+        try:
+            from plane.db.models import Project
+            from plane.services.workflow.errors import WorkflowError
+            from plane.services.workflow.transitions import TransitionService
+        except ImportError:
+            return
+
+        project_id = self.context.get("project_id")
+        if not project_id:
+            return
+        project = Project.objects.filter(pk=project_id).first()
+        if project is None:
+            return
+
+        try:
+            resolved_state = TransitionService.validate_creation_state(
+                project=project,
+                issue_type_id=attrs.get("type_id"),
+                requested_state_id=str(attrs["state"].id),
+            )
+        except WorkflowError as exc:
+            raise serializers.ValidationError(exc.to_payload())
+
+        if resolved_state is not None:
+            attrs["state"] = resolved_state
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -206,6 +247,20 @@ class IssueCreateSerializer(BaseSerializer):
 
         # Create Issue
         issue = Issue.objects.create(**validated_data, project_id=project_id)
+
+        # Workflow binding (§9.2 step 7) — when workflows are enabled,
+        # bind the freshly-created issue to the current published
+        # revision. The binding lookup is a no-op when enforcement is
+        # off so legacy projects are unaffected.
+        try:
+            from plane.services.workflow.bindings import bind_on_creation
+        except ImportError:
+            bind_on_creation = None
+        if bind_on_creation is not None:
+            bind_on_creation(
+                issue=issue,
+                actor_id=str(issue.created_by_id) if issue.created_by_id else None,
+            )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -282,6 +337,45 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = instance.workspace_id
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
+
+        # Workflow gate (§10, §17.4) — when ``state_id`` changes and
+        # workflows are enabled, route the change through
+        # ``TransitionService`` instead of letting the default
+        # ``ModelSerializer.update`` write ``state`` directly to the
+        # ORM. When workflows are off (the default) this branch is a
+        # no-op so legacy behavior is preserved.
+        requested_state = validated_data.pop("state", None)
+        if requested_state is not None and str(requested_state.id) != str(
+            instance.state_id
+        ):
+            try:
+                from plane.services.workflow.errors import WorkflowError
+                from plane.services.workflow.transitions import TransitionService
+            except ImportError:
+                TransitionService = None
+                WorkflowError = Exception
+            if TransitionService is not None:
+                actor_id = (
+                    str(self.context.get("updated_by_id"))
+                    if self.context.get("updated_by_id")
+                    else str(updated_by_id)
+                )
+                try:
+                    instance = TransitionService.transition(
+                        issue_id=instance.id,
+                        target_state_id=str(requested_state.id),
+                        actor=None,
+                        actor_id=actor_id,
+                        origin="api",
+                    )
+                except WorkflowError as exc:
+                    raise serializers.ValidationError(exc.to_payload())
+                # Reload to pick up the service-applied ``state``.
+                instance.refresh_from_db()
+            else:
+                # Fallback when the workflow service is unavailable
+                # (very early bootstrap, broken migration, etc.).
+                validated_data["state"] = requested_state
 
         if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()

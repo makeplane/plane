@@ -31,6 +31,9 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    IssueTransitionEndpoint,
+    IssueWorkflowActionsEndpoint,
+    IssueWorkflowEndpoint,
 )
 
 urlpatterns = [
@@ -277,6 +280,22 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/meta/",
         IssueMetaEndpoint.as_view(),
         name="issue-meta",
+    ),
+    # §17.3 — workflow runtime endpoints (work-item-scoped).
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/workflow/",
+        IssueWorkflowEndpoint.as_view(),
+        name="issue-workflow",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/workflow/actions/",
+        IssueWorkflowActionsEndpoint.as_view(),
+        name="issue-workflow-actions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/transitions/",
+        IssueTransitionEndpoint.as_view(),
+        name="issue-transitions",
     ),
     path(
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",

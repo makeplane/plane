@@ -93,6 +93,13 @@ WEBHOOK_DISALLOWED_DOMAINS = [
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
+# Workflows feature flag — spec §25 Phase 1.
+# When disabled (default), the workflow service is a no-op and no state
+# mutation path is intercepted; behavior is identical to plain CE.
+# Per-project `Project.workflow_enabled` (default false) further gates
+# enforcement so the instance flag can ship before any project opts in.
+ENABLE_WORKFLOWS = os.environ.get("ENABLE_WORKFLOWS", "0") == "1"
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.auth",

@@ -258,3 +258,25 @@ from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
+
+from .workflow import (
+    ProjectWorkflowDetailEndpoint,
+    ProjectWorkflowListEndpoint,
+    WorkflowDraftEndpoint,
+    WorkflowFlowActorDetailEndpoint,
+    WorkflowFlowActorListEndpoint,
+    WorkflowPublishEndpoint,
+    WorkflowRevisionFlowDetailEndpoint,
+    WorkflowRevisionFlowListEndpoint,
+    WorkflowRevisionListEndpoint,
+    WorkflowRevisionStateDetailEndpoint,
+    WorkflowRevisionStateListEndpoint,
+    WorkflowTypeAssignmentDetailEndpoint,
+    WorkflowTypeAssignmentListEndpoint,
+)
+
+from .issue.workflow_runtime import (
+    IssueTransitionEndpoint,
+    IssueWorkflowActionsEndpoint,
+    IssueWorkflowEndpoint,
+)

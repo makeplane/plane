@@ -160,3 +160,23 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .workflow import (
+    WorkflowCreateSerializer,
+    WorkflowDraftSerializer,
+    WorkflowFlowActorReadSerializer,
+    WorkflowFlowActorWriteSerializer,
+    WorkflowFlowReadSerializer,
+    WorkflowFlowUpdateSerializer,
+    WorkflowFlowWriteSerializer,
+    WorkflowLiteSerializer,
+    WorkflowReadSerializer,
+    WorkflowRevisionPublishSerializer,
+    WorkflowRevisionReadSerializer,
+    WorkflowStateReadSerializer,
+    WorkflowStateUpdateSerializer,
+    WorkflowStateWriteSerializer,
+    WorkflowTypeAssignmentReadSerializer,
+    WorkflowTypeAssignmentWriteSerializer,
+    WorkflowUpdateSerializer,
+)
