@@ -7,11 +7,11 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ImageIcon } from "lucide-react";
+import { ImageOutline } from "@makeplane/propel/icons";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { setToast } from "@plane/blocks/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
@@ -98,7 +98,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       ]);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error",
         message: "User details update failed. Please try again!",
       });
@@ -189,7 +189,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
-          <ImageIcon className="size-4" />
+          <ImageOutline className="size-4" />
           <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>
@@ -247,9 +247,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-        Continue
-      </Button>
+      <Button variant="primary" type="submit" stretch="full" size="lg" disabled={isButtonDisabled} label="Continue" />
 
       {/* Marketing Consent */}
       {!instanceConfig?.is_self_managed && (

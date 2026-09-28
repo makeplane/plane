@@ -10,8 +10,8 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { DropIndicator } from "@plane/ui";
+import { setToast } from "@plane/blocks/toast";
+import { DropIndicator } from "@plane/blocks/common";
 import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 
 type Props = {
@@ -50,13 +50,13 @@ export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
       dropTargetForElements({
         element,
         canDrop: ({ source }) => source?.data?.id !== id && source?.data?.dragInstanceId === "GANTT_REORDER",
-        getData: ({ input, element }) => {
+        getData: ({ input, element: targetElement }) => {
           const data = { id };
 
           // attach instruction for last in list
           return attachInstruction(data, {
             input,
-            element,
+            element: targetElement,
             currentLevel: 0,
             indentPerLevel: 0,
             mode: isLastChild ? "last-in-group" : "standard",
@@ -94,7 +94,7 @@ export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
         },
       })
     );
-  }, [blockRef?.current, isLastChild, onDrop]);
+  }, [id, isDragEnabled, isLastChild, onDrop]);
 
   useOutsideClickDetector(blockRef, () => blockRef?.current?.classList?.remove(HIGHLIGHT_WITH_LINE));
 
@@ -107,7 +107,7 @@ export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
         if (!isDragEnabled) {
           setToast({
             title: "Warning!",
-            type: TOAST_TYPE.WARNING,
+            type: "warning",
             message: "Drag and drop is only enabled when sorted by manual",
           });
         }

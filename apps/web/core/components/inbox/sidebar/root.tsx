@@ -7,12 +7,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
-import { Header, Loader, EHeaderVariant } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
+import { Loader } from "@plane/blocks/skeleton";
 // components
 import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
 // hooks
@@ -86,34 +87,39 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
     <div className="h-full w-full flex-shrink-0 border-r border-strong bg-surface-1">
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
-          {tabNavigationOptions.map((option) => (
-            <div
-              key={option?.key}
-              className={cn(
-                `relative flex h-full cursor-pointer items-center gap-1 px-3 text-13 font-medium transition-all`,
-                currentTab === option?.key ? `text-accent-primary` : `hover:text-secondary`
-              )}
-              onClick={() => {
-                if (currentTab != option?.key) {
-                  handleCurrentTab(workspaceSlug, projectId, option?.key);
-                  router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${option?.key}`);
-                }
+          <div className="flex min-w-0 flex-1">
+            <Tabs
+              variant="underline"
+              value={currentTab}
+              onValueChange={(value) => {
+                const nextTab = value as TInboxIssueCurrentTab;
+                if (nextTab === currentTab) return;
+                handleCurrentTab(workspaceSlug, projectId, nextTab);
+                router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${nextTab}`);
               }}
             >
-              <div>{t(option?.i18n_label)}</div>
-              {option?.key === "open" && currentTab === option?.key && (
-                <div className="rounded-full bg-accent-primary/20 p-1.5 py-0.5 text-11 font-semibold text-accent-primary">
-                  {inboxIssuePaginationInfo?.total_results || 0}
-                </div>
-              )}
-              <div
-                className={cn(
-                  `absolute right-0 bottom-0 left-0 rounded-t-md border`,
-                  currentTab === option?.key ? `border-accent-strong` : `border-transparent`
-                )}
-              />
-            </div>
-          ))}
+              {/* Shift the strip down 12px without adding height to the clipped secondary header. */}
+              <div className="-mb-3 pt-3">
+                <TabsList>
+                  {tabNavigationOptions.map((option) => (
+                    <Tab
+                      key={option.key}
+                      value={option.key}
+                      label={t(option.i18n_label)}
+                      icon={
+                        option.key === EInboxIssueCurrentTab.OPEN && currentTab === option.key ? (
+                          // Propel has no trailing slot; keep the active-only count after the label.
+                          <span className="order-1 rounded-full bg-accent-primary/20 px-1.5 py-0.5 text-11 font-semibold text-accent-primary">
+                            {inboxIssuePaginationInfo?.total_results || 0}
+                          </span>
+                        ) : undefined
+                      }
+                    />
+                  ))}
+                </TabsList>
+              </div>
+            </Tabs>
+          </div>
           <div className="m-auto mr-0">
             <FiltersRoot />
           </div>

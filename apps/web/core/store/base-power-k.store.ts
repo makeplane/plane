@@ -5,17 +5,10 @@
  */
 
 import { observable, action, makeObservable } from "mobx";
-// plane imports
-import type { EIssuesStoreType } from "@plane/types";
 // components
 import type { IPowerKCommandRegistry } from "@/components/power-k/core/registry";
 import { PowerKCommandRegistry } from "@/components/power-k/core/registry";
 import type { TPowerKContextType, TPowerKPageType } from "@/components/power-k/core/types";
-
-export interface ModalData {
-  store: EIssuesStoreType;
-  viewId: string;
-}
 
 export interface IBasePowerKStore {
   // observables
@@ -24,12 +17,10 @@ export interface IBasePowerKStore {
   commandRegistry: IPowerKCommandRegistry;
   activeContext: TPowerKContextType | null;
   activePage: TPowerKPageType | null;
-  topNavInputRef: React.RefObject<HTMLInputElement> | null;
-  topNavSearchInputRef: React.RefObject<HTMLInputElement> | null;
+  topNavInputRef: React.RefObject<HTMLInputElement | null> | null;
   setActiveContext: (entity: TPowerKContextType | null) => void;
   setActivePage: (page: TPowerKPageType | null) => void;
-  setTopNavInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void;
-  setTopNavSearchInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void;
+  setTopNavInputRef: (ref: React.RefObject<HTMLInputElement | null> | null) => void;
   // toggle actions
   togglePowerKModal: (value?: boolean) => void;
   toggleShortcutsListModal: (value?: boolean) => void;
@@ -42,8 +33,7 @@ export class BasePowerKStore implements IBasePowerKStore {
   commandRegistry: IPowerKCommandRegistry = new PowerKCommandRegistry();
   activeContext: TPowerKContextType | null = null;
   activePage: TPowerKPageType | null = null;
-  topNavInputRef: React.RefObject<HTMLInputElement> | null = null;
-  topNavSearchInputRef: React.RefObject<HTMLInputElement> | null = null;
+  topNavInputRef: React.RefObject<HTMLInputElement | null> | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -54,14 +44,12 @@ export class BasePowerKStore implements IBasePowerKStore {
       activeContext: observable,
       activePage: observable,
       topNavInputRef: observable.ref,
-      topNavSearchInputRef: observable.ref,
       // toggle actions
       togglePowerKModal: action,
       toggleShortcutsListModal: action,
       setActiveContext: action,
       setActivePage: action,
       setTopNavInputRef: action,
-      setTopNavSearchInputRef: action,
     });
   }
 
@@ -85,16 +73,8 @@ export class BasePowerKStore implements IBasePowerKStore {
    * Sets the top nav input ref for keyboard shortcut access
    * @param ref
    */
-  setTopNavInputRef = (ref: React.RefObject<HTMLInputElement> | null) => {
+  setTopNavInputRef = (ref: React.RefObject<HTMLInputElement | null> | null) => {
     this.topNavInputRef = ref;
-  };
-
-  /**
-   * Sets the top nav search input ref for keyboard shortcut access
-   * @param ref
-   */
-  setTopNavSearchInputRef = (ref: React.RefObject<HTMLInputElement> | null) => {
-    this.topNavSearchInputRef = ref;
   };
 
   /**
