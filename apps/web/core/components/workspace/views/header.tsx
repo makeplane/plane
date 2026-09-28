@@ -10,9 +10,9 @@ import { useParams } from "next/navigation";
 
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/blocks/layout";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -111,7 +111,7 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
           className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-surface-1 py-3 hover:border-subtle hover:text-placeholder"
           onClick={() => setCreateViewModal(true)}
         >
-          <PlusIcon className="h-4 w-4 text-accent-secondary" />
+          <AddOutline className="h-4 w-4 text-accent-secondary" />
         </button>
       ) : (
         <></>

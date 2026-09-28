@@ -4,14 +4,14 @@
  * See the LICENSE file for details.
  */
 
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 
 type TIssueLabelPill = { name?: string; color?: string };
 
 export function LabelActivityChip(props: TIssueLabelPill) {
   const { name, color } = props;
   return (
-    <Tooltip tooltipContent={name}>
+    <Tooltip label={name ?? ""} layout="stacked">
       <span className="inline-flex w-min max-w-32 flex-shrink-0 cursor-default items-center gap-2 truncate rounded-full border border-strong px-2 py-0.5 text-11 whitespace-nowrap">
         <span
           className="h-1.5 w-1.5 flex-shrink-0 rounded-full"

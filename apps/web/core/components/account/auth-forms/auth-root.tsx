@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
-import { OAuthOptions } from "@plane/ui";
+import { Banner } from "@makeplane/propel/components/banner";
+import { OAuthOptions } from "@plane/blocks/auth";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -23,7 +25,6 @@ import { useOAuthConfig } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
-import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
 
@@ -48,6 +49,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // store hooks
   const { config } = useInstance();
+  // translation
+  const { t } = useTranslation();
   // derived values
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
@@ -116,7 +119,14 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   return (
     <AuthContainer>
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+        <Banner
+          placement="inline"
+          variant="accent"
+          role="alert"
+          description={errorInfo.message}
+          dismissLabel={t("close")}
+          onDismiss={() => setErrorInfo(undefined)}
+        />
       )}
       <AuthHeader
         workspaceSlug={workspaceSlug?.toString() || undefined}

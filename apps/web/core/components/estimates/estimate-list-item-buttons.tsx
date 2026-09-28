@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { TrashIcon } from "@plane/propel/icons";
+import { DeleteOutline } from "@makeplane/propel/icons";
 
 type TEstimateListItem = {
   estimateId: string;
@@ -26,7 +26,7 @@ export const EstimateListItemButtons = observer(function EstimateListItemButtons
         className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-colors hover:bg-layer-1"
         onClick={() => onDeleteClick && onDeleteClick(estimateId)}
       >
-        <TrashIcon width={12} height={12} />
+        <DeleteOutline width={12} height={12} />
       </button>
     </div>
   );

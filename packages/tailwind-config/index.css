@@ -10,17 +10,10 @@
  * Token *values* are propel's, not ours: many differ from what this package
  * shipped. See the migration notes for the drift that needs a visual pass.
  *
- * Imported as the two leaf files rather than the "@makeplane/propel/styles"
- * barrel. The barrel is those same two files plus `@source "../"`, which points
- * Tailwind at propel's dist and emits utilities for its components — dead CSS
- * here, since we consume propel for tokens only and import none of its JS.
- * Re-add the barrel if propel components are adopted.
- *
- * propel's CSS deliberately does not import tailwindcss itself, so that stays
- * above.
+ * Styles barrel (tokens + animations + `@source` of propel dist) so component
+ * utilities emit. propel's CSS does not import tailwindcss itself.
  */
-@import "@makeplane/propel/styles/variables";
-@import "@makeplane/propel/styles/animations";
+@import "@makeplane/propel/styles";
 @source "../**/*.{ts,tsx}";
 
 * {
