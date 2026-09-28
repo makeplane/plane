@@ -8,7 +8,7 @@
 # Login: alice@acme.so / password123 — http://127.0.0.1:3100/acme-qa/dashboards/
 
 .PHONY: help dashboard-qa dashboard-qa-up dashboard-qa-down dashboard-qa-seed \
-	dashboard-qa-web dashboard-qa-restart dashboard-qa-status
+	dashboard-qa-web dashboard-qa-restart dashboard-qa-rebuild-api dashboard-qa-status
 
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## / — /'
@@ -33,9 +33,13 @@ dashboard-qa-web: ## Web dev server only (requires API already up)
 	@chmod +x dashboard-qa.sh
 	@./dashboard-qa.sh web
 
-dashboard-qa-restart: ## Restart API, re-seed, flush Redis, restart web in background
+dashboard-qa-restart: ## Soft-restart QA API container only (keeps Redis sessions)
 	@chmod +x dashboard-qa.sh
 	@./dashboard-qa.sh restart
+
+dashboard-qa-rebuild-api: ## Rebuild QA API image after apps/api changes (no seed)
+	@chmod +x dashboard-qa.sh
+	@./dashboard-qa.sh rebuild-api
 
 dashboard-qa-status: ## Print API / instance / web health
 	@chmod +x dashboard-qa.sh

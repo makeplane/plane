@@ -185,3 +185,21 @@ export function useDashboardCustomRange(): { start: string | null; end: string |
     () => store.getCustomRange()
   );
 }
+
+export function useDashboardOverviewGroupBy(): import("@plane/types").TWorkItemsGroupBy {
+  const store = useDashboardOperationsStore();
+  return useSyncExternalStore(
+    (listener) => store.subscribe(listener),
+    () => store.getOverviewGroupBy(),
+    () => store.getOverviewGroupBy()
+  );
+}
+
+export function useDashboardWorkloadBreakdownBy(): import("@plane/types").TWorkloadBreakdownBy {
+  const store = useDashboardOperationsStore();
+  return useSyncExternalStore(
+    (listener) => store.subscribe(listener),
+    () => store.getSnapshot().workload_breakdown_by ?? "project",
+    () => store.getSnapshot().workload_breakdown_by ?? "project"
+  );
+}

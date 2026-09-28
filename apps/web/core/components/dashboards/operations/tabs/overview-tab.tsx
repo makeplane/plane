@@ -5,13 +5,8 @@
  */
 
 /**
- * Overview tab (spec §6). Renders the six-KPI strip, the 5-segment
- * progress bar, the dual delivery trend, the top-projects list, the
- * team workload preview, and the needs-attention preview.
- *
- * The workload preview is fetched from /dashboard/workload/ at page=1
- * size=5 by this parent component; the panel itself stays hook-free
- * so it remains unit-testable.
+ * Overview — layout v2 + Codex review: plain-language panels, Hiện tại /
+ * Trong kỳ badges, 30-second fold then scroll for timeline + projects table.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -21,13 +16,14 @@ import type {
   TIssueRow,
   TKpiCounts,
   TProgressData,
+  TProjectsData,
   TSectionStatus,
   TSnapshotRule,
   TDashboardOverviewResponse,
   TDashboardSection,
-  TTopProjectsData,
   TTimelineData,
-  TWorkloadData,
+  TTopProjectsData,
+  TWorkItemsGroupData,
   TWorkloadMemberRow,
 } from "@plane/types";
 import { buildScopePayload } from "@plane/shared-state";
@@ -37,6 +33,7 @@ import {
   useDashboardCustomRange,
   useDashboardOperationsSnapshot,
   useDashboardProjectIds,
+  useDashboardWorkloadBreakdownBy,
 } from "../use-operations-store";
 import { classifyDashboardError, classifySection, type TDashboardTabError } from "../error-handling";
 import { ItemDrawer } from "../item-drawer";
@@ -46,7 +43,10 @@ import { DeliveryPanel } from "../panels/delivery-panel";
 import { TopProjectsPanel } from "../panels/top-projects-panel";
 import { AttentionPreviewPanel } from "../panels/attention-preview-panel";
 import { WorkloadPreviewPanel } from "../panels/workload-preview-panel";
-import { TimelinePreviewPanel } from "../panels/timeline-preview-panel";
+import { WorkItemsGroupPanel } from "../panels/work-items-group-panel";
+import { ProjectsPreviewPanel } from "../panels/projects-preview-panel";
+import { CyclesPreviewPanel, DeadlinesPreviewPanel } from "../panels/timeline-split-panels";
+import { ScopeTimeBadge } from "../panels/scope-time-badge";
 
 export interface OverviewRequestState {
   status: "idle" | "loading" | "ok" | "error";
@@ -57,52 +57,22 @@ export interface OverviewRequestState {
 interface Props {
   workspaceSlug: string;
   state: OverviewRequestState;
-  /**
-   * Refresh revision passed from the shell. Refresh bumps this counter
-   * so the workload + attention preview fetches refetch alongside the
-   * overview (per spec §9.5: "mutate + refresh entire visible
-   * Dashboard"). When undefined, only scope changes refetch the
-   * previews.
-   */
   refreshRevision?: number;
 }
+
+const WORKLOAD_PREVIEW_SIZE = 5;
+const PROJECTS_PREVIEW_SIZE = 10;
+const GROUP_PREVIEW_LIMIT = 10;
 
 export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 0 }: Props): React.ReactElement {
   const { data: currentUser } = useUser();
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
   const customRange = useDashboardCustomRange();
-  // Current user id participates in the request key so a "My work"
-  // view changes assignee_id and refetches the overview + previews
-  // — this is the canonical scope parity fix (shell, tabs, drawer).
   const currentUserId = currentUser?.id ?? null;
+  const overviewGroupBy = snapshot.overview_group_by;
+  const workloadBreakdownBy = useDashboardWorkloadBreakdownBy();
 
-  // Workload preview — fetched from /dashboard/workload/ with the
-  // server-side risk-sorted preview contract (per coordinator
-  // finding 2026-09-27 15:21Z). Backend is expected to honour
-  // `preview: true` by sorting the FULL roster by
-  // (overdue → blocked → started → open → name) and returning
-  // the top N, so a Z-named member who is overloaded surfaces
-  // even when name-sort pagination would land them on page 2+.
-  // If the backend ignores `preview` (legacy), the client falls
-  // back to its local sort — same data, smaller cohort.
-  //
-  // The contract asserts page_size=5 against a full roster; we
-  // intentionally do NOT use page_size=100 as a silent workaround.
-  const [workloadRows, setWorkloadRows] = useState<TWorkloadMemberRow[]>([]);
-  const [workloadSectionStatus, setWorkloadSectionStatus] = useState<TSectionStatus>("ok");
-  const [workloadSectionReason, setWorkloadSectionReason] = useState<string | undefined>(undefined);
-  const [workloadFetchError, setWorkloadFetchError] = useState<TDashboardTabError | null>(null);
-  const workloadGenerationRef = useRef(0);
-  const [workloadReloadKey, setWorkloadReloadKey] = useState(0);
-
-  // Canonical scope payload — captured once so every preview effect
-  // can depend on a single object reference that changes with view_mode
-  // (My work), project_ids, custom range, etc. Even when the
-  // underlying store snapshot reference is preserved by the
-  // snapshot-equality guard, `buildScopePayload` returns a NEW object
-  // whenever any input changes — so this becomes a precise refetch
-  // trigger.
   const scopePayload = useMemo(
     () =>
       buildScopePayload({
@@ -114,19 +84,57 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
     [snapshot, customRange, projectIds, currentUserId]
   );
 
+  const [workloadRows, setWorkloadRows] = useState<TWorkloadMemberRow[]>([]);
+  const [workloadTotalMembers, setWorkloadTotalMembers] = useState<number | undefined>(undefined);
+  const [workloadSectionStatus, setWorkloadSectionStatus] = useState<TSectionStatus>("ok");
+  const [workloadSectionReason, setWorkloadSectionReason] = useState<string | undefined>(undefined);
+  const [workloadFetchError, setWorkloadFetchError] = useState<TDashboardTabError | null>(null);
+  const workloadGenerationRef = useRef(0);
+  const [workloadReloadKey, setWorkloadReloadKey] = useState(0);
+
+  const [groupData, setGroupData] = useState<TWorkItemsGroupData | null>(null);
+  const [groupFetchError, setGroupFetchError] = useState<TDashboardTabError | null>(null);
+  const groupGenerationRef = useRef(0);
+  const [groupReloadKey, setGroupReloadKey] = useState(0);
+
+  const [projectsData, setProjectsData] = useState<TProjectsData | null>(null);
+  const [projectsFetchError, setProjectsFetchError] = useState<TDashboardTabError | null>(null);
+  const projectsGenerationRef = useRef(0);
+  const [projectsReloadKey, setProjectsReloadKey] = useState(0);
+
+  const [timelineData, setTimelineData] = useState<TTimelineData | null>(null);
+  const [timelineFetchError, setTimelineFetchError] = useState<TDashboardTabError | null>(null);
+  const timelineGenerationRef = useRef(0);
+  const [timelineReloadKey, setTimelineReloadKey] = useState(0);
+
   useEffect(() => {
     if (!workspaceSlug) return;
     const controller = new AbortController();
     const generation = ++workloadGenerationRef.current;
     setWorkloadFetchError(null);
     dashboardOperationsService
-      .workload(workspaceSlug, { ...scopePayload, page: 1, page_size: 5, preview: true }, controller.signal)
+      .workload(
+        workspaceSlug,
+        {
+          ...scopePayload,
+          page: 1,
+          page_size: WORKLOAD_PREVIEW_SIZE,
+          preview: true,
+          breakdown_by: workloadBreakdownBy,
+        },
+        controller.signal
+      )
       .then((envelope) => {
         if (generation !== workloadGenerationRef.current) return undefined;
         const section = envelope.sections.find((entry) => entry.section_id === "workload");
-        const classified = classifySection<TWorkloadData>(
+        const classified = classifySection(
           section as
-            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TWorkloadData; reason?: string }
+            | {
+                section_id: string;
+                status: "ok" | "error" | "unavailable";
+                data?: import("@plane/types").TWorkloadData;
+                reason?: string;
+              }
             | undefined
         );
         if (classified.kind === "ok") {
@@ -135,35 +143,9 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
           }
           setWorkloadSectionStatus("ok");
           setWorkloadSectionReason(undefined);
-          // Server is authoritative for the preview ordering when
-          // it honours `preview: true` — it has the full picture, so
-          // we trust the row order it returns. The client sort
-          // below is the safety net for the legacy backend that
-          // ignores `preview` and paginates by display_name.
+          setWorkloadTotalMembers(classified.data.total_members);
           const rows = classified.data.rows;
-          const isServerRiskSorted = rows.every((row, index, all) => {
-            if (index === 0) return true;
-            const prev = all[index - 1];
-            const a = [row.overdue, row.blocked, row.started, row.open];
-            const p = [prev.overdue, prev.blocked, prev.started, prev.open];
-            for (let i = 0; i < 4; i++) {
-              if (p[i] !== a[i]) return p[i] > a[i];
-            }
-            return true;
-          });
-          if (isServerRiskSorted) {
-            setWorkloadRows(rows.slice(0, 5));
-          } else {
-            const sorted = rows.toSorted(
-              (a, b) =>
-                b.overdue - a.overdue ||
-                b.blocked - a.blocked ||
-                b.started - a.started ||
-                b.open - a.open ||
-                (a.display_name ?? "").localeCompare(b.display_name ?? "")
-            );
-            setWorkloadRows(sorted.slice(0, 5));
-          }
+          setWorkloadRows(rows.slice(0, WORKLOAD_PREVIEW_SIZE));
           return undefined;
         }
         if (classified.kind === "unavailable") {
@@ -172,7 +154,6 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
           setWorkloadRows([]);
           return undefined;
         }
-        // section_error / missing section
         setWorkloadSectionStatus("error");
         setWorkloadSectionReason(classified.reason);
         setWorkloadRows([]);
@@ -182,20 +163,71 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
         if (generation !== workloadGenerationRef.current) return;
         if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
         setWorkloadSectionStatus("error");
-        setWorkloadSectionReason(undefined);
         setWorkloadFetchError(classifyDashboardError(err));
         setWorkloadRows([]);
       });
-    return () => {
-      controller.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceSlug, scopePayload, workloadReloadKey, refreshRevision]);
+    return () => controller.abort();
+  }, [workspaceSlug, scopePayload, workloadReloadKey, refreshRevision, workloadBreakdownBy]);
 
-  const [timelineData, setTimelineData] = useState<TTimelineData | null>(null);
-  const [timelineFetchError, setTimelineFetchError] = useState<TDashboardTabError | null>(null);
-  const timelineGenerationRef = useRef(0);
-  const [timelineReloadKey, setTimelineReloadKey] = useState(0);
+  useEffect(() => {
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    const generation = ++groupGenerationRef.current;
+    setGroupFetchError(null);
+    dashboardOperationsService
+      .workItemsGroup(
+        workspaceSlug,
+        { ...scopePayload, group_by: overviewGroupBy, limit: GROUP_PREVIEW_LIMIT },
+        controller.signal
+      )
+      .then((envelope) => {
+        if (generation !== groupGenerationRef.current) return undefined;
+        const section = envelope.sections.find((entry) => entry.section_id === "work_items_group");
+        const classified = classifySection<TWorkItemsGroupData>(section as never);
+        if (classified.kind === "ok") {
+          setGroupData(classified.data);
+          return undefined;
+        }
+        setGroupData(null);
+        setGroupFetchError({ kind: "malformed", message: classified.reason ?? "error" });
+        return undefined;
+      })
+      .catch((err) => {
+        if (generation !== groupGenerationRef.current) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setGroupData(null);
+        setGroupFetchError(classifyDashboardError(err));
+      });
+    return () => controller.abort();
+  }, [workspaceSlug, scopePayload, overviewGroupBy, groupReloadKey, refreshRevision]);
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+    const controller = new AbortController();
+    const generation = ++projectsGenerationRef.current;
+    setProjectsFetchError(null);
+    dashboardOperationsService
+      .projects(workspaceSlug, { ...scopePayload, page: 1, page_size: PROJECTS_PREVIEW_SIZE }, controller.signal)
+      .then((envelope) => {
+        if (generation !== projectsGenerationRef.current) return undefined;
+        const section = envelope.sections.find((entry) => entry.section_id === "projects");
+        const classified = classifySection<TProjectsData>(section as never);
+        if (classified.kind === "ok") {
+          setProjectsData(classified.data);
+          return undefined;
+        }
+        setProjectsData(null);
+        setProjectsFetchError({ kind: "malformed", message: classified.reason ?? "error" });
+        return undefined;
+      })
+      .catch((err) => {
+        if (generation !== projectsGenerationRef.current) return;
+        if (err?.name === "AbortError" || err?.code === "ERR_CANCELED" || err?.code === "ABORTED") return;
+        setProjectsData(null);
+        setProjectsFetchError(classifyDashboardError(err));
+      });
+    return () => controller.abort();
+  }, [workspaceSlug, scopePayload, projectsReloadKey, refreshRevision]);
 
   useEffect(() => {
     if (!workspaceSlug) return;
@@ -211,24 +243,13 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
       .then((envelope) => {
         if (generation !== timelineGenerationRef.current) return undefined;
         const section = envelope.sections.find((entry) => entry.section_id === "timeline");
-        const classified = classifySection<TTimelineData>(
-          section as
-            | { section_id: string; status: "ok" | "error" | "unavailable"; data?: TTimelineData; reason?: string }
-            | undefined
-        );
+        const classified = classifySection<TTimelineData>(section as never);
         if (classified.kind === "ok") {
-          if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-            return undefined;
-          }
           setTimelineData(classified.data);
           return undefined;
         }
         setTimelineData(null);
-        if (classified.kind === "unavailable") {
-          setTimelineFetchError({ kind: "malformed", message: classified.reason ?? "unavailable" });
-          return undefined;
-        }
-        setTimelineFetchError({ kind: "malformed", message: classified.reason ?? "section_error" });
+        setTimelineFetchError({ kind: "malformed", message: classified.reason ?? "error" });
         return undefined;
       })
       .catch((err) => {
@@ -237,48 +258,25 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
         setTimelineData(null);
         setTimelineFetchError(classifyDashboardError(err));
       });
-    return () => {
-      controller.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => controller.abort();
   }, [workspaceSlug, scopePayload, timelineReloadKey, refreshRevision]);
 
-  // KPI drilldown: clicking a KPI opens the ItemDrawer with the
-  // matching snapshot rule. The drawer carries the canonical scope
-  // (period / business_filters / project_ids) so the drilldown
-  // resolves to the same effective scope as the KPI's row total.
   const [drawerMetric, setDrawerMetric] = useState<TSnapshotRule | null>(null);
-  const onKpiClick = useCallback((metric: TSnapshotRule) => {
-    setDrawerMetric(metric);
-  }, []);
-  const onDrawerClose = useCallback(() => {
-    setDrawerMetric(null);
-  }, []);
+  const onKpiClick = useCallback((metric: TSnapshotRule) => setDrawerMetric(metric), []);
+  const onDrawerClose = useCallback(() => setDrawerMetric(null), []);
 
-  // Fetch attention rows for the Needs-attention panel using the
-  // dedicated /attention/ endpoint, paginated, so the panel always
-  // shows up-to-5 + "View all" → drawer (drawer comes in Task 6).
   const [attentionRows, setAttentionRows] = useState<TIssueRow[]>([]);
   const [attentionReasonCounts, setAttentionReasonCounts] = useState<Record<string, number>>({});
   const [attentionStatus, setAttentionStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
-  const attentionAbortRef = useRef<AbortController | null>(null);
   const attentionGenerationRef = useRef(0);
 
   useEffect(() => {
     if (!workspaceSlug) return;
-    attentionAbortRef.current?.abort();
     const controller = new AbortController();
-    attentionAbortRef.current = controller;
     const generation = ++attentionGenerationRef.current;
     setAttentionStatus("loading");
-    const payload = buildScopePayload({
-      prefs: snapshot,
-      customRange,
-      projectIds,
-      currentUserId,
-    });
     dashboardOperationsService
-      .attention(workspaceSlug, { ...payload, page: 1, page_size: 5 }, controller.signal)
+      .attention(workspaceSlug, { ...scopePayload, page: 1, page_size: 5 }, controller.signal)
       .then((response) => {
         if (generation !== attentionGenerationRef.current) return undefined;
         const section = response.sections.find((entry) => entry.section_id === "attention");
@@ -286,7 +284,7 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
           setAttentionStatus("error");
           return undefined;
         }
-        const data = section.data as { rows?: TIssueRow[]; reason_counts?: Record<string, number>; total?: number };
+        const data = section.data as { rows?: TIssueRow[]; reason_counts?: Record<string, number> };
         setAttentionRows(data.rows ?? []);
         setAttentionReasonCounts(data.reason_counts ?? {});
         setAttentionStatus("ok");
@@ -296,10 +294,9 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
         if (generation !== attentionGenerationRef.current) return;
         setAttentionStatus("error");
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- scopePayload captures snapshot/customRange/projectIds
+    return () => controller.abort();
   }, [workspaceSlug, scopePayload, refreshRevision]);
 
-  // Resolve each section by id with type-safety.
   const kpis = useMemo<TKpiCounts | null>(() => {
     const found = state.data?.sections.find(
       (s): s is TDashboardSection<TKpiCounts> & { status: "ok" } => s.section_id === "kpis" && s.status === "ok"
@@ -339,21 +336,35 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
   }, [state.data]);
 
   const isLoading = state.status === "loading" || state.status === "idle";
+  const timelineRetry = () => setTimelineReloadKey((n) => n + 1);
 
   return (
     <div className="flex flex-col gap-4" data-testid="operations-overview-tab">
+      <header className="flex flex-col gap-1 rounded-md border border-subtle bg-layer-2/60 px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-14 font-semibold text-primary">Tóm tắt nhanh</h2>
+          <ScopeTimeBadge kind="snapshot" />
+        </div>
+        <p className="text-12 text-secondary">
+          Nhìn tình hình team trong khoảng 30 giây. Cuộn xuống để xem hạn, chu kỳ và bảng dự án chi tiết hơn.
+        </p>
+        <p className="text-11 text-tertiary">Chạm vào ô số liệu để xem danh sách việc tương ứng.</p>
+      </header>
+
       <KpiStrip data={kpis} isLoading={isLoading} error={state.status === "error"} onMetricClick={onKpiClick} />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-stretch">
+        <div className="flex lg:col-span-4">
           <ProgressPanel data={progress} isLoading={isLoading} error={state.status === "error"} />
         </div>
-        <div className="lg:col-span-4">
+        <div className="flex lg:col-span-4">
           <DeliveryPanel data={delivery} isLoading={isLoading} error={state.status === "error"} />
         </div>
-        <div className="lg:col-span-3">
+        <div className="flex lg:col-span-4">
           <TopProjectsPanel data={topProjects} isLoading={isLoading} error={state.status === "error"} />
         </div>
       </div>
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <WorkloadPreviewPanel
@@ -362,6 +373,7 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
             error={workloadFetchError}
             isLoading={isLoading}
             rows={workloadRows}
+            totalMembers={workloadTotalMembers}
             onRetry={() => setWorkloadReloadKey((n) => n + 1)}
           />
         </div>
@@ -375,12 +387,43 @@ export function OperationsOverviewTab({ workspaceSlug, state, refreshRevision = 
           />
         </div>
       </div>
-      <TimelinePreviewPanel
-        isLoading={isLoading && timelineData === null && timelineFetchError === null}
-        data={timelineData}
-        error={timelineFetchError}
-        onRetry={() => setTimelineReloadKey((n) => n + 1)}
+
+      <p className="text-11 font-medium tracking-wide text-tertiary uppercase">Cuộn thêm — lịch & dự án</p>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <CyclesPreviewPanel
+            data={timelineData}
+            isLoading={isLoading && timelineData === null && timelineFetchError === null}
+            error={timelineFetchError}
+            onRetry={timelineRetry}
+          />
+        </div>
+        <div className="lg:col-span-5">
+          <DeadlinesPreviewPanel
+            data={timelineData}
+            isLoading={isLoading && timelineData === null && timelineFetchError === null}
+            error={timelineFetchError}
+            onRetry={timelineRetry}
+          />
+        </div>
+      </div>
+
+      <ProjectsPreviewPanel
+        data={projectsData}
+        isLoading={isLoading && projectsData === null && projectsFetchError === null}
+        error={projectsFetchError}
+        onRetry={() => setProjectsReloadKey((n) => n + 1)}
       />
+
+      <WorkItemsGroupPanel
+        groupBy={overviewGroupBy}
+        data={groupData}
+        isLoading={isLoading && groupData === null && groupFetchError === null}
+        error={groupFetchError}
+        onRetry={() => setGroupReloadKey((n) => n + 1)}
+      />
+
       {drawerMetric !== null ? (
         <ItemDrawer workspaceSlug={workspaceSlug} open onClose={onDrawerClose} metric={drawerMetric} />
       ) : null}

@@ -6,6 +6,7 @@
 
 import type { TTopProjectsData } from "@plane/types";
 import { PanelSurface } from "./progress-panel";
+import { ScopeTimeBadge } from "./scope-time-badge";
 
 interface Props {
   data: TTopProjectsData | null;
@@ -16,11 +17,13 @@ interface Props {
 export function TopProjectsPanel({ data, isLoading, error }: Props): React.ReactElement {
   return (
     <PanelSurface
-      title="Top projects by risk"
-      subtitle="Projects with the most overdue and blocked work."
+      title="Dự án cần chú ý"
+      subtitle="Dự án có nhiều việc quá hạn hoặc bị chặn nhất."
       isLoading={isLoading}
       error={error}
       testId="top-projects-panel"
+      stretch
+      headerExtra={<ScopeTimeBadge kind="snapshot" />}
     >
       {data ? <TopProjectsBody data={data} /> : null}
     </PanelSurface>
@@ -37,7 +40,7 @@ function TopProjectsBody({ data }: { data: TTopProjectsData }): React.ReactEleme
   }
   const maxOpen = Math.max(1, ...data.top.map((p) => p.open));
   return (
-    <div className="flex flex-col gap-1.5" data-testid="top-projects-list">
+    <div className="flex flex-1 flex-col gap-1.5" data-testid="top-projects-list">
       {data.top.map((project) => (
         <div key={project.project_id} className="flex items-center gap-2 text-12">
           <span className="flex-1 truncate text-primary" title={project.name}>
@@ -59,7 +62,7 @@ function TopProjectsBody({ data }: { data: TTopProjectsData }): React.ReactEleme
               className="text-danger rounded-sm bg-danger-subtle px-1.5 text-11"
               data-testid={`top-project-overdue-${project.project_id}`}
             >
-              {project.overdue} overdue
+              {project.overdue} quá hạn
             </span>
           ) : null}
           {project.blocked > 0 ? (
@@ -67,13 +70,13 @@ function TopProjectsBody({ data }: { data: TTopProjectsData }): React.ReactEleme
               className="text-warning rounded-sm bg-warning-subtle px-1.5 text-11"
               data-testid={`top-project-blocked-${project.project_id}`}
             >
-              {project.blocked} blocked
+              {project.blocked} bị chặn
             </span>
           ) : null}
         </div>
       ))}
       <div className="text-11 text-tertiary">
-        Showing {data.shown} of {data.total_projects_in_scope} projects in scope
+        Top {data.shown} / {data.total_projects_in_scope} dự án trong phạm vi
       </div>
     </div>
   );

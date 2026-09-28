@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import type { TDeliveryTrendData } from "@plane/types";
 import { LineChart } from "@plane/propel/charts/line-chart";
 import { PanelSurface } from "./progress-panel";
+import { ScopeTimeBadge } from "./scope-time-badge";
 
 interface Props {
   data: TDeliveryTrendData | null;
@@ -41,11 +42,13 @@ interface ChartPoint {
 export function DeliveryPanel({ data, isLoading, error }: Props): React.ReactElement {
   return (
     <PanelSurface
-      title="Created vs completed"
-      subtitle="Created vs completed in the selected period."
+      title="Tạo mới vs hoàn thành"
+      subtitle="So sánh việc được tạo và việc xong trong kỳ bạn chọn."
       isLoading={isLoading}
       error={error}
       testId="delivery-panel"
+      stretch
+      headerExtra={<ScopeTimeBadge kind="period" />}
     >
       {data ? <DeliveryBody data={data} /> : null}
     </PanelSurface>
@@ -79,8 +82,8 @@ function DeliveryBody({ data }: { data: TDeliveryTrendData }): React.ReactElemen
   }, [series_created, series_completed]);
 
   return (
-    <div className="flex flex-col gap-2" data-testid="delivery-chart-container">
-      <div className="h-[180px] w-full">
+    <div className="flex flex-1 flex-col gap-2" data-testid="delivery-chart-container">
+      <div className="min-h-[180px] w-full flex-1">
         <LineChart
           className="h-full w-full"
           data={mergedPoints as unknown as Array<Record<string, string | number>>}

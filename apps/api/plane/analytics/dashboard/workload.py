@@ -29,7 +29,7 @@ read model runs (see :mod:`plane.analytics.dashboard.snapshot`).
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from django.db.models import Count, Exists, OuterRef, Q, QuerySet
 
@@ -41,6 +41,7 @@ from .predicates import (
     _overdue_q,
     operational_queryset,
 )
+from .workload_breakdown import attach_workload_breakdowns
 
 
 # WIP threshold defaults to 5 issues started per member (spec §6.5).
@@ -57,6 +58,8 @@ def workload_payload(
     page_size: int = 25,
     wip_threshold: Optional[int] = None,
     preview: bool = False,
+    breakdown_by: Optional[str] = None,
+    breakdown_limit: int = 5,
 ) -> Dict[str, Any]:
     """Compose the workload section payload.
 
@@ -82,13 +85,21 @@ def workload_payload(
 
     threshold = wip_threshold if wip_threshold is not None else DEFAULT_WIP_THRESHOLD
     return _build_workload(
-        scope, page=page, page_size=page_size, threshold=threshold, preview=preview,
+        scope,
+        page=page,
+        page_size=page_size,
+        threshold=threshold,
+        preview=preview,
+        breakdown_by=breakdown_by,
+        breakdown_limit=breakdown_limit,
     )
 
 
 def _build_workload(
     scope: DashboardScope, *, page: int, page_size: int, threshold: int,
     preview: bool = False,
+    breakdown_by: Optional[str] = None,
+    breakdown_limit: int = 5,
 ) -> Dict[str, Any]:
     """Build the workload payload. Caller must wrap this in a snapshot."""
     from plane.db.models import IssueAssignee, ProjectMember, User
@@ -245,6 +256,13 @@ def _build_workload(
     distinct = _distinct_totals(scope)
     unassigned_row = _unassigned_row(scope)
     inactive_row = _inactive_summary(scope, inactive_member_ids)
+
+    attach_workload_breakdowns(
+        scope,
+        page_rows,
+        breakdown_by=breakdown_by,
+        slice_limit=breakdown_limit,
+    )
 
     return {
         "section_id": "workload",

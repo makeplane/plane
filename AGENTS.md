@@ -18,10 +18,13 @@ Isolated stack: API **http://localhost:8100**, web **http://localhost:3100/acme-
 Web loads **`apps/web/.env.dashboard-qa`** via `--mode dashboard-qa`: **`VITE_API_BASE_URL` is empty** — `/api` and `/auth` are proxied to `:8100` on the dev server so **login CSRF stays same-origin**. Open **http://localhost:3100** only.
 
 - `make dashboard-qa` — Docker stack + seed + web (foreground)
-- `make dashboard-qa-restart` — after API crash, login loop, or connection reset
+- `make dashboard-qa-restart` — **soft** `docker restart` QA API only (keeps DB + Redis sessions)
+- `make dashboard-qa-rebuild-api` — rebuild API Docker image after **`apps/api` Python** changes (no seed)
 - `make dashboard-qa-status` — health check
-- `make dashboard-qa-seed` — re-seed + Redis flush only
+- `make dashboard-qa-seed` — **destructive to login sessions** (Redis flush + re-seed); use only if instance broken
 - Same via `pnpm dashboard-qa`, `pnpm dashboard-qa:restart`, `pnpm dashboard-qa:status`
+
+While developing: **save files** — web on `:3100` hot-reloads. Do **not** run restart/reseed for normal UI work.
 
 Login: `alice@acme.so` / `password123`, workspace `acme-qa`.
 

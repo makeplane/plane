@@ -51,6 +51,7 @@ from plane.analytics.dashboard.snapshot import (
 )
 from plane.analytics.dashboard.timeline import timeline_payload
 from plane.analytics.dashboard.workload import workload_payload
+from plane.analytics.dashboard.group_breakdown import work_items_group_payload
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace
@@ -275,10 +276,21 @@ class DashboardWorkloadEndpoint(BaseAPIView):
                         return _bad_request("wip_threshold must be an integer", code="INVALID_PAYLOAD")
 
                 preview = bool(payload.get("preview", False))
+                breakdown_by = payload.get("breakdown_by")
+                if breakdown_by is not None:
+                    breakdown_by = str(breakdown_by)
+                breakdown_limit = 5
+                if payload.get("breakdown_limit") is not None:
+                    try:
+                        breakdown_limit = int(payload.get("breakdown_limit"))
+                    except (ValueError, TypeError) as exc:
+                        return _bad_request(f"Invalid breakdown_limit: {exc}", code="INVALID_PAYLOAD", exc=exc)
                 try:
                     data = workload_payload(
                         scope, page=page, page_size=page_size,
                         wip_threshold=wip_threshold, preview=preview,
+                        breakdown_by=breakdown_by,
+                        breakdown_limit=breakdown_limit,
                     )
                 except DashboardContractError as exc:
                     return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
@@ -371,6 +383,51 @@ class DashboardTimelineEndpoint(BaseAPIView):
         except SnapshotIsolationUnavailable as exc:
             return _unavailable(str(exc))
         return Response(envelope(scope, data), status=status.HTTP_200_OK)
+
+
+class DashboardWorkItemsGroupEndpoint(BaseAPIView):
+    """``POST /api/workspaces/{slug}/dashboard/work-items-group/``.
+
+    Groups open work in the current scope by ``project``, ``module``,
+    ``cycle``, or ``label``. Body: canonical scope fields plus
+    ``group_by`` and optional ``limit`` (default 10, max 50).
+    """
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request: Request, slug: str) -> Response:
+        workspace = _workspace_or_404(slug)
+        if workspace is None:
+            return _not_found()
+
+        try:
+            payload = _validate_payload(request.data or {})
+        except DashboardContractError as exc:
+            return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+        group_by = str(payload.get("group_by", "label"))
+        try:
+            limit = int(payload.get("limit", 10))
+        except (ValueError, TypeError) as exc:
+            return _bad_request(f"Invalid limit: {exc}", code="INVALID_PAYLOAD", exc=exc)
+
+        try:
+            with dashboard_snapshot():
+                try:
+                    scope = resolve_dashboard_scope(
+                        workspace=workspace, principal=request.user, payload=payload,
+                    )
+                except DashboardContractError as exc:
+                    return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+
+                try:
+                    data = work_items_group_payload(scope, group_by=group_by, limit=limit)
+                except DashboardContractError as exc:
+                    return _bad_request(str(exc), code="INVALID_PAYLOAD", exc=exc)
+        except SnapshotIsolationUnavailable as exc:
+            return _unavailable(str(exc))
+
+        section = {"status": "ok", "section_id": "work_items_group", "data": data}
+        return Response(envelope(scope, section), status=status.HTTP_200_OK)
 
 
 class DashboardItemsEndpoint(BaseAPIView):

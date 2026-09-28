@@ -7,7 +7,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
-COMPOSE_PROJECT="${COMPOSE_PROJECT:-plane-dashboard-qa}"
 COMPOSE_FILE="${COMPOSE_FILE:-docker-compose-dashboard-qa.yml}"
 API_URL="${DASHBOARD_QA_API_URL:-http://localhost:8100}"
 WEB_HOST="${DASHBOARD_QA_WEB_HOST:-localhost}"
@@ -17,6 +16,33 @@ WEB_LOG="${DASHBOARD_QA_WEB_LOG:-/tmp/plane-dashboard-qa-web.log}"
 READY_JSON="${DASHBOARD_QA_READY_JSON:-/tmp/plane-dashboard-qa-ready.json}"
 API_CONTAINER="${DASHBOARD_QA_API_CONTAINER:-plane-dashboard-qa-api}"
 REDIS_CONTAINER="${DASHBOARD_QA_REDIS_CONTAINER:-plane-dashboard-qa-redis}"
+
+# Fixed container_name in compose — only one API may exist. Prefer the compose
+# project label on an already-running QA container (db/redis/api) so `dc` matches
+# the stack that owns :8100, not a second project that fights for the same name.
+resolve_compose_project() {
+  if [[ -n "${COMPOSE_PROJECT:-}" ]]; then
+    echo "$COMPOSE_PROJECT"
+    return 0
+  fi
+  local name proj
+  for name in plane-dashboard-qa-db plane-dashboard-qa-redis plane-dashboard-qa-api; do
+    if docker ps -a --format '{{.Names}}' | grep -qx "$name"; then
+      proj="$(docker inspect "$name" --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null || true)"
+      if [[ -n "$proj" ]]; then
+        echo "$proj"
+        return 0
+      fi
+    fi
+  done
+  if docker network inspect team-operations-dashboard_dashboard_qa_net >/dev/null 2>&1; then
+    echo "team-operations-dashboard"
+  else
+    echo "plane-dashboard-qa"
+  fi
+}
+
+COMPOSE_PROJECT="$(resolve_compose_project)"
 
 dc() {
   docker compose -p "$COMPOSE_PROJECT" -f "$COMPOSE_FILE" "$@"
@@ -74,6 +100,15 @@ seed_and_flush() {
   docker exec "$REDIS_CONTAINER" valkey-cli FLUSHALL >/dev/null
   if [[ -f "$READY_JSON" ]]; then
     echo "Readiness file: $READY_JSON"
+  fi
+}
+
+remove_qa_api_container() {
+  if docker ps -a --format '{{.Names}}' | grep -qx "$API_CONTAINER"; then
+    local proj
+    proj="$(docker inspect "$API_CONTAINER" --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null || true)"
+    echo "Removing existing ${API_CONTAINER} (compose project: ${proj:-unknown})…"
+    docker rm -f "$API_CONTAINER" >/dev/null 2>&1 || true
   fi
 }
 
@@ -144,16 +179,31 @@ cmd_dev() { cmd_up; start_web_fg; }
 
 cmd_restart() {
   require_docker
-  echo "Recreating QA API (applies CORS / CSRF trusted origins)…"
-  dc up -d --force-recreate dashboard-qa-api
+  echo "Restarting QA API only (compose project: ${COMPOSE_PROJECT}) — no seed, no Redis flush."
+  if docker ps --format '{{.Names}}' | grep -qx "$API_CONTAINER"; then
+    docker restart "$API_CONTAINER" >/dev/null
+  else
+    dc up -d dashboard-qa-api
+  fi
   wait_for_api
-  seed_and_flush
-  start_web_bg
+  cmd_status
+  echo ""
+  echo "Web on :${WEB_PORT} hot-reloads on save. Use '$0 rebuild-api' after Python changes in apps/api."
+  echo "Use '$0 seed' only if instance/login is broken (clears Redis sessions + re-seeds)."
+}
+
+cmd_rebuild_api() {
+  require_docker
+  echo "Rebuilding QA API image (compose project: ${COMPOSE_PROJECT}) — no seed, no Redis flush."
+  remove_qa_api_container
+  dc up -d --build --no-deps dashboard-qa-api
+  wait_for_api
   cmd_status
 }
 
 cmd_status() {
   echo "=== Dashboard QA status ==="
+  echo "Compose project: ${COMPOSE_PROJECT}"
   if docker ps --format '{{.Names}}' | grep -qx "$API_CONTAINER" 2>/dev/null; then
     echo "Docker API: running"
   else
@@ -172,8 +222,9 @@ main() {
     web-bg) cmd_web_bg ;;
     dev) cmd_dev ;;
     restart) cmd_restart ;;
+    rebuild-api) cmd_rebuild_api ;;
     status) cmd_status ;;
-    *) echo "Usage: $0 {dev|up|down|seed|web|restart|status}" >&2; exit 1 ;;
+    *) echo "Usage: $0 {dev|up|down|seed|web|web-bg|restart|rebuild-api|status}" >&2; exit 1 ;;
   esac
 }
 

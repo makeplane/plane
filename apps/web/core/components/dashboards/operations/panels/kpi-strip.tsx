@@ -43,7 +43,7 @@ interface Kpi {
 const KPIS: Kpi[] = [
   {
     id: "total",
-    label: "Total work items",
+    label: "Tổng việc",
     accentClass: "border-t-blue-500",
     icon: (
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -53,11 +53,11 @@ const KPIS: Kpi[] = [
     ),
     metric: "total",
     secondary: (d) =>
-      d.total === 0 ? null : { fraction: d.open / d.total, denominatorLabel: "open", colour: "#3b82f6" },
+      d.total === 0 ? null : { fraction: d.open / d.total, denominatorLabel: "đang mở", colour: "#3b82f6" },
   },
   {
     id: "completed",
-    label: "Completed",
+    label: "Đã xong",
     accentClass: "border-t-green-500",
     icon: (
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -73,14 +73,14 @@ const KPIS: Kpi[] = [
         ? null
         : {
             fraction: d.completed / denom,
-            denominatorLabel: "of total − cancelled",
+            denominatorLabel: "trong tổng",
             colour: "#22c55e",
           };
     },
   },
   {
     id: "started",
-    label: "In progress",
+    label: "Đang làm",
     accentClass: "border-t-amber-500",
     icon: (
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -90,11 +90,11 @@ const KPIS: Kpi[] = [
     ),
     metric: "started",
     secondary: (d) =>
-      d.open === 0 ? null : { fraction: d.started / d.open, denominatorLabel: "of open", colour: "#f59e0b" },
+      d.open === 0 ? null : { fraction: d.started / d.open, denominatorLabel: "trong việc mở", colour: "#f59e0b" },
   },
   {
     id: "not_started",
-    label: "Not started",
+    label: "Chưa bắt đầu",
     accentClass: "border-t-neutral-500",
     icon: (
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -103,11 +103,11 @@ const KPIS: Kpi[] = [
     ),
     metric: "not_started",
     secondary: (d) =>
-      d.open === 0 ? null : { fraction: d.not_started / d.open, denominatorLabel: "of open", colour: "#9ca3af" },
+      d.open === 0 ? null : { fraction: d.not_started / d.open, denominatorLabel: "trong việc mở", colour: "#9ca3af" },
   },
   {
     id: "blocked",
-    label: "Blocked",
+    label: "Bị chặn",
     accentClass: "border-t-purple-500",
     icon: (
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -117,11 +117,11 @@ const KPIS: Kpi[] = [
     ),
     metric: "blocked",
     secondary: (d) =>
-      d.open === 0 ? null : { fraction: d.blocked / d.open, denominatorLabel: "of open", colour: "#a855f7" },
+      d.open === 0 ? null : { fraction: d.blocked / d.open, denominatorLabel: "trong việc mở", colour: "#a855f7" },
   },
   {
     id: "overdue",
-    label: "Overdue",
+    label: "Quá hạn",
     accentClass: "border-t-red-500",
     icon: (
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -131,7 +131,7 @@ const KPIS: Kpi[] = [
     ),
     metric: "overdue",
     secondary: (d) =>
-      d.open === 0 ? null : { fraction: d.overdue / d.open, denominatorLabel: "of open", colour: "#ef4444" },
+      d.open === 0 ? null : { fraction: d.overdue / d.open, denominatorLabel: "trong việc mở", colour: "#ef4444" },
   },
 ];
 
@@ -180,7 +180,7 @@ function KpiCard({ kpi, value, isLoading, error, secondary, onClick }: KpiCardPr
       onClick={onClick}
       className={`${baseClasses} ${interactiveClasses}`}
       data-testid={`kpi-${kpi.id}`}
-      aria-label={isInteractive ? `${kpi.label}: ${display}. Open drilldown.` : `${kpi.label}: ${display}`}
+      aria-label={isInteractive ? `${kpi.label}: ${display}. Xem danh sách.` : `${kpi.label}: ${display}`}
     >
       <div className="flex items-center gap-1.5">
         <span className="text-tertiary" aria-hidden="true">
@@ -194,7 +194,7 @@ function KpiCard({ kpi, value, isLoading, error, secondary, onClick }: KpiCardPr
           <Ring secondary={secondary} />
         ) : isInteractive ? (
           <span className="text-11 text-tertiary" aria-hidden="true">
-            →
+            ·
           </span>
         ) : null}
       </div>

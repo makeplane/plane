@@ -16,13 +16,21 @@
  */
 
 import { useCallback } from "react";
-import type { TBusinessFilterKey, TBusinessFilters, TDateBucket, TPeriodPreset } from "@plane/types";
+import type {
+  TBusinessFilterKey,
+  TDateBucket,
+  TPeriodPreset,
+  TWorkItemsGroupBy,
+  TWorkloadBreakdownBy,
+} from "@plane/types";
 import {
   useDashboardBusinessFilters,
   useDashboardOperationsStore,
+  useDashboardOverviewGroupBy,
   useDashboardPeriod,
   useDashboardTab,
   useDashboardViewMode,
+  useDashboardWorkloadBreakdownBy,
 } from "./use-operations-store";
 import { DASHBOARD_TABS, type TDashboardTab } from "@plane/shared-state";
 
@@ -37,6 +45,18 @@ const PERIOD_OPTIONS: Array<{ value: TPeriodPreset; label: string }> = [
   { value: "last_7_days", label: "Last 7 days" },
   { value: "none", label: "None" },
   { value: "custom", label: "Custom" },
+];
+
+const GROUP_BY_OPTIONS: Array<{ value: TWorkItemsGroupBy; label: string }> = [
+  { value: "label", label: "Nhãn" },
+  { value: "project", label: "Dự án" },
+  { value: "module", label: "Module" },
+  { value: "cycle", label: "Chu kỳ" },
+];
+
+const WORKLOAD_BREAKDOWN_OPTIONS: Array<{ value: TWorkloadBreakdownBy; label: string }> = [
+  { value: "project", label: "Dự án" },
+  { value: "label", label: "Nhãn" },
 ];
 
 const BUCKET_OPTIONS: Array<{ value: TDateBucket; label: string }> = [
@@ -74,12 +94,19 @@ export function OperationsScopeControls(props: Props): React.ReactElement {
   const viewMode = useDashboardViewMode();
   const period = useDashboardPeriod();
   const filters = useDashboardBusinessFilters();
+  const overviewGroupBy = useDashboardOverviewGroupBy();
+  const workloadBreakdownBy = useDashboardWorkloadBreakdownBy();
   const store = useDashboardOperationsStore();
 
   const setTab = useCallback((next: TDashboardTab) => store.setTab(next), [store]);
   const setViewMode = useCallback((mode: "team" | "my_work") => store.setViewMode(mode), [store]);
   const setPeriod = useCallback((preset: TPeriodPreset) => store.setPeriodPreset(preset), [store]);
   const setBucket = useCallback((bucket: TDateBucket) => store.setDateBucket(bucket), [store]);
+  const setOverviewGroupBy = useCallback((groupBy: TWorkItemsGroupBy) => store.setOverviewGroupBy(groupBy), [store]);
+  const setWorkloadBreakdownBy = useCallback(
+    (breakdownBy: TWorkloadBreakdownBy) => store.setWorkloadBreakdownBy(breakdownBy),
+    [store]
+  );
   const removeFilter = useCallback(
     (key: TBusinessFilterKey, value?: string) => store.removeBusinessFilter(key, value),
     [store]
@@ -177,6 +204,42 @@ export function OperationsScopeControls(props: Props): React.ReactElement {
             ))}
           </select>
         </label>
+
+        {tab === "overview" ? (
+          <label className="flex items-center gap-1.5 text-12 text-secondary">
+            <span>Nhóm việc theo</span>
+            <select
+              className="rounded-sm border border-subtle bg-layer-1 px-2 py-1 text-12 text-primary"
+              value={overviewGroupBy}
+              onChange={(event) => setOverviewGroupBy(event.target.value as TWorkItemsGroupBy)}
+              data-testid="operations-overview-group-by"
+            >
+              {GROUP_BY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+
+        {tab === "workload" ? (
+          <label className="flex items-center gap-1.5 text-12 text-secondary">
+            <span>Phân bổ theo</span>
+            <select
+              className="rounded-sm border border-subtle bg-layer-1 px-2 py-1 text-12 text-primary"
+              value={workloadBreakdownBy}
+              onChange={(event) => setWorkloadBreakdownBy(event.target.value as TWorkloadBreakdownBy)}
+              data-testid="operations-workload-breakdown-by"
+            >
+              {WORKLOAD_BREAKDOWN_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
 
         <label className="flex items-center gap-1.5 text-12 text-secondary">
           <span>Bucket</span>

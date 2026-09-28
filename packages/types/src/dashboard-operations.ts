@@ -120,6 +120,12 @@ export interface TDashboardStandalonePayload extends TDashboardScopePayload {
   cycles_page?: number;
   deadlines_page?: number;
   unscheduled_page?: number;
+  /** ``POST .../work-items-group/`` — bucket dimension. */
+  group_by?: TWorkItemsGroupBy;
+  limit?: number;
+  /** ``POST .../workload/`` — per-member project/label mix. */
+  breakdown_by?: TWorkloadBreakdownBy;
+  breakdown_limit?: number;
 }
 
 // ----- Response envelope + sections -------------------------------------
@@ -349,6 +355,46 @@ export interface TDashboardSelection {
   date_bucket?: TDateBucket;
 }
 
+// ----- Work items group (overview) ------------------------------------
+
+export type TWorkItemsGroupBy = "project" | "module" | "cycle" | "label";
+
+/** Workload tab: slice each member's row by project or label. */
+export type TWorkloadBreakdownBy = "project" | "label";
+
+export interface TWorkloadBreakdownSlice {
+  group_id: string | null;
+  name: string;
+  count: number;
+  /** Integer 0–100; slices on a row sum to 100 when denominator > 0. */
+  pct: number;
+}
+
+export interface TWorkloadBreakdown {
+  by: TWorkloadBreakdownBy;
+  basis: "open_or_completed_in_period";
+  denominator: number;
+  slices: TWorkloadBreakdownSlice[];
+}
+
+export interface TWorkItemsGroupRow {
+  group_id: string | null;
+  name: string;
+  open: number;
+  started: number;
+  overdue: number;
+  blocked: number;
+}
+
+export interface TWorkItemsGroupData {
+  group_by: TWorkItemsGroupBy;
+  rows: TWorkItemsGroupRow[];
+  shown: number;
+  includes_unbucketed: boolean;
+  unbucketed: TWorkItemsGroupRow | null;
+  scope_key?: string;
+}
+
 // ----- Workload (Task 3) ---------------------------------------------
 
 /**
@@ -372,6 +418,8 @@ export interface TWorkloadMemberRow {
   blocked: number;
   due_soon: number;
   completed_in_period: number;
+  /** Project/label mix for the selected period (open + completed in period). */
+  breakdown?: TWorkloadBreakdown;
   /** Rule-based warning, never a productivity inference. */
   wip_high?: boolean;
 }

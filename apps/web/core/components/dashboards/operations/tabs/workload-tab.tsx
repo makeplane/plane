@@ -36,10 +36,13 @@ import {
   useDashboardCustomRange,
   useDashboardOperationsSnapshot,
   useDashboardProjectIds,
+  useDashboardWorkloadBreakdownBy,
 } from "../use-operations-store";
 import { useUser } from "@/hooks/store/user";
 import { classifyDashboardError, classifySection, type TDashboardTabError } from "../error-handling";
 import { ErrorPanel } from "../panels/error-panel";
+import { WorkloadAllocationBar } from "../panels/workload-allocation-bar";
+import { ScopeTimeBadge } from "../panels/scope-time-badge";
 
 interface Props {
   workspaceSlug: string;
@@ -63,6 +66,7 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
   const snapshot = useDashboardOperationsSnapshot();
   const projectIds = useDashboardProjectIds();
   const customRange = useDashboardCustomRange();
+  const workloadBreakdownBy = useDashboardWorkloadBreakdownBy();
 
   const [state, setState] = useState<TabState>({ kind: "idle" });
   const [page, setPage] = useState(1);
@@ -90,7 +94,7 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
     const refreshAtFetchStart = refreshRevision;
 
     dashboardOperationsService
-      .workload(workspaceSlug, { ...scopePayload, page }, controller.signal)
+      .workload(workspaceSlug, { ...scopePayload, page, breakdown_by: workloadBreakdownBy }, controller.signal)
       .then((envelope: TStandaloneEnvelope<TWorkloadData>) => {
         if (controller.signal.aborted) return undefined;
         if (generation !== fetchGenerationRef.current) return undefined;
@@ -134,14 +138,18 @@ export function OperationsWorkloadTab({ workspaceSlug, refreshRevision = 0 }: Pr
     return () => {
       controller.abort();
     };
-  }, [workspaceSlug, scopeRequestKey, scopePayload, page, refreshRevision, reloadKey]);
+  }, [workspaceSlug, scopeRequestKey, scopePayload, page, refreshRevision, reloadKey, workloadBreakdownBy]);
 
   return (
     <div className="flex flex-col gap-3" data-testid="operations-workload-tab">
-      <header className="flex flex-col gap-0.5">
-        <h2 className="text-13 font-medium text-primary">Workload</h2>
+      <header className="flex flex-col gap-1 rounded-md border border-subtle bg-layer-2/60 px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-13 font-medium text-primary">Khối lượng theo người</h2>
+          <ScopeTimeBadge kind="period" />
+        </div>
         <p className="text-11 text-tertiary">
-          Open work by assignee — overdue, blocked, and due-soon counts use full credit per person.
+          Thanh phân bổ = % việc đang mở hoặc xong trong kỳ bạn chọn, gom theo dự án hoặc nhãn (đổi ở{" "}
+          <strong className="font-medium text-secondary">Phân bổ theo</strong> trên thanh điều khiển).
         </p>
       </header>
       {state.kind === "loading" ? (
@@ -219,8 +227,9 @@ function WorkloadTable({
         <table className="w-full text-12">
           <thead className="bg-layer-2 text-left text-11 text-tertiary">
             <tr>
-              <th className="px-3 py-2">Member</th>
-              <th className="px-3 py-2 text-right">Open</th>
+              <th className="px-3 py-2">Thành viên</th>
+              <th className="min-w-[220px] px-3 py-2">Phân bổ (kỳ)</th>
+              <th className="px-3 py-2 text-right">Mở</th>
               <th className="px-3 py-2 text-right">Started</th>
               <th className="px-3 py-2 text-right">Overdue</th>
               <th className="px-3 py-2 text-right">Blocked</th>
@@ -248,6 +257,12 @@ function WorkloadTable({
                       ) : null}
                       {row.display_name}
                     </span>
+                  </td>
+                  <td className="px-3 py-2 align-top">
+                    <WorkloadAllocationBar
+                      breakdown={row.breakdown}
+                      testId={`workload-allocation-${row.member_id ?? "unassigned"}`}
+                    />
                   </td>
                   <td className="font-mono px-3 py-2 text-right tabular-nums">{row.open}</td>
                   <td className="font-mono px-3 py-2 text-right tabular-nums">{row.started}</td>

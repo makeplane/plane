@@ -32,6 +32,7 @@ import type {
   TWorkloadData,
   TProjectsData,
   TTimelineData,
+  TWorkItemsGroupData,
 } from "@plane/types";
 
 import { APIService } from "./api.service";
@@ -145,6 +146,23 @@ export class DashboardOperationsService extends APIService {
   ): Promise<TStandaloneEnvelope<TTimelineData>> {
     const config = signal ? { signal } : undefined;
     return this.post(`/api/workspaces/${workspaceSlug}/dashboard/timeline/`, payload, config)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data ?? err;
+      });
+  }
+
+  /**
+   * `POST /api/workspaces/{slug}/dashboard/work-items-group/` — open work
+   * aggregated by project, module, cycle, or label.
+   */
+  async workItemsGroup(
+    workspaceSlug: string,
+    payload: TDashboardStandalonePayload = {},
+    signal?: AbortSignal
+  ): Promise<TStandaloneEnvelope<TWorkItemsGroupData>> {
+    const config = signal ? { signal } : undefined;
+    return this.post(`/api/workspaces/${workspaceSlug}/dashboard/work-items-group/`, payload, config)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data ?? err;

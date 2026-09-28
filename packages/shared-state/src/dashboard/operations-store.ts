@@ -27,10 +27,17 @@
  * scope that produced it".
  */
 
-import type { TBusinessFilters, TDateBucket, TPeriodPreset, TSnapshotRule } from "@plane/types";
+import type {
+  TBusinessFilters,
+  TDateBucket,
+  TPeriodPreset,
+  TSnapshotRule,
+  TWorkItemsGroupBy,
+  TWorkloadBreakdownBy,
+} from "@plane/types";
 
 /** Bump when the persisted shape changes; older payloads are discarded. */
-export const DASHBOARD_OPERATIONS_SCHEMA_VERSION = 1;
+export const DASHBOARD_OPERATIONS_SCHEMA_VERSION = 3;
 
 const STORAGE_KEY_PREFIX = "plane-dashboard-operations-preferences";
 
@@ -47,6 +54,10 @@ export interface TDashboardOperationsPreferences {
   date_bucket: TDateBucket;
   business_filters: TBusinessFilters;
   tab: TDashboardTab;
+  /** Overview panel: group open work by this dimension. */
+  overview_group_by: TWorkItemsGroupBy;
+  /** Workload tab: show per-member mix by project or label. */
+  workload_breakdown_by: TWorkloadBreakdownBy;
 }
 
 export const defaultDashboardOperationsPreferences = (): TDashboardOperationsPreferences => ({
@@ -56,6 +67,8 @@ export const defaultDashboardOperationsPreferences = (): TDashboardOperationsPre
   date_bucket: "day",
   business_filters: {},
   tab: "overview",
+  overview_group_by: "label",
+  workload_breakdown_by: "project",
 });
 
 /** Shape of the localStorage payload. */
@@ -121,6 +134,12 @@ const isViewMode = (value: unknown): value is "team" | "my_work" => value === "t
 
 const isTab = (value: unknown): value is TDashboardTab =>
   value === "overview" || value === "projects" || value === "workload" || value === "timeline" || value === "insights";
+
+const isWorkItemsGroupBy = (value: unknown): value is TWorkItemsGroupBy =>
+  value === "project" || value === "module" || value === "cycle" || value === "label";
+
+const isWorkloadBreakdownBy = (value: unknown): value is TWorkloadBreakdownBy =>
+  value === "project" || value === "label";
 
 const ALLOWED_FILTER_KEYS = new Set<string>([
   "state_id",
@@ -308,7 +327,7 @@ export function buildScopeSignature(
     end: prefs.period_preset === "custom" ? (range?.end ?? null) : null,
     date_bucket: prefs.date_bucket,
     business_filters_key: JSON.stringify(sortKeys(effectiveFilters)),
-    project_ids_key: ids.slice().sort().join("|"),
+    project_ids_key: ids.slice().toSorted().join("|"),
   };
 }
 
@@ -347,12 +366,12 @@ function sortKeys(value: unknown): unknown {
     const allPrimitive = items.every(
       (v) => v === null || typeof v === "string" || typeof v === "number" || typeof v === "boolean"
     );
-    if (allPrimitive) return (items as unknown[]).slice().sort();
+    if (allPrimitive) return (items as unknown[]).slice().toSorted();
     return items;
   }
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {};
-    for (const k of Object.keys(value).sort()) out[k] = sortKeys((value as Record<string, unknown>)[k]);
+    for (const k of Object.keys(value).toSorted()) out[k] = sortKeys((value as Record<string, unknown>)[k]);
     return out;
   }
   return value;
@@ -385,6 +404,10 @@ export interface IDashboardOperationsStore {
   setCustomRange(start: string | null, end: string | null): void;
   setDateBucket(bucket: TDateBucket): void;
   setTab(tab: TDashboardTab): void;
+  setOverviewGroupBy(groupBy: TWorkItemsGroupBy): void;
+  getOverviewGroupBy(): TWorkItemsGroupBy;
+  setWorkloadBreakdownBy(breakdownBy: TWorkloadBreakdownBy): void;
+  getWorkloadBreakdownBy(): TWorkloadBreakdownBy;
   setBusinessFilters(filters: TBusinessFilters): void;
   addBusinessFilter(key: keyof TBusinessFilters, value: string): void;
   removeBusinessFilter(key: keyof TBusinessFilters, value?: string): void;
@@ -592,6 +615,30 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     this.boundEmit();
   }
 
+  setOverviewGroupBy(groupBy: TWorkItemsGroupBy): void {
+    if (this.prefs.overview_group_by === groupBy) return;
+    this.prefs = { ...this.prefs, overview_group_by: groupBy };
+    this.persist();
+    this.requestGeneration += 1;
+    this.boundEmit();
+  }
+
+  getOverviewGroupBy(): TWorkItemsGroupBy {
+    return this.prefs.overview_group_by;
+  }
+
+  setWorkloadBreakdownBy(breakdownBy: TWorkloadBreakdownBy): void {
+    if (this.prefs.workload_breakdown_by === breakdownBy) return;
+    this.prefs = { ...this.prefs, workload_breakdown_by: breakdownBy };
+    this.persist();
+    this.requestGeneration += 1;
+    this.boundEmit();
+  }
+
+  getWorkloadBreakdownBy(): TWorkloadBreakdownBy {
+    return this.prefs.workload_breakdown_by;
+  }
+
   setBusinessFilters(filters: TBusinessFilters): void {
     this.prefs = { ...this.prefs, business_filters: { ...filters } };
     this.persist();
@@ -751,8 +798,11 @@ export class DashboardOperationsStore implements IDashboardOperationsStore {
     if (!raw) return defaultDashboardOperationsPreferences();
     try {
       const parsed = JSON.parse(raw) as Partial<TDashboardOperationsPreferences>;
-      if (parsed && typeof parsed === "object" && parsed.schema_version === DASHBOARD_OPERATIONS_SCHEMA_VERSION) {
-        return sanitizeDashboardOperationsPreferences(parsed);
+      if (parsed && typeof parsed === "object") {
+        const version = parsed.schema_version;
+        if (version === DASHBOARD_OPERATIONS_SCHEMA_VERSION || version === 2) {
+          return sanitizeDashboardOperationsPreferences(parsed);
+        }
       }
     } catch {
       // discard corrupted payload
@@ -777,9 +827,11 @@ function dashboardOperationsPrefsEqual(
   if (a.period_preset !== b.period_preset) return false;
   if (a.date_bucket !== b.date_bucket) return false;
   if (a.tab !== b.tab) return false;
+  if (a.overview_group_by !== b.overview_group_by) return false;
+  if (a.workload_breakdown_by !== b.workload_breakdown_by) return false;
   if (a.schema_version !== b.schema_version) return false;
-  const aFilters = Object.keys(a.business_filters).sort();
-  const bFilters = Object.keys(b.business_filters).sort();
+  const aFilters = Object.keys(a.business_filters).toSorted();
+  const bFilters = Object.keys(b.business_filters).toSorted();
   if (aFilters.length !== bFilters.length) return false;
   for (let i = 0; i < aFilters.length; i++) {
     if (aFilters[i] !== bFilters[i]) return false;
@@ -801,6 +853,12 @@ function sanitizeDashboardOperationsPreferences(
   const period_preset: TPeriodPreset = isPeriodPreset(raw.period_preset) ? raw.period_preset : fallback.period_preset;
   const date_bucket: TDateBucket = isDateBucket(raw.date_bucket) ? raw.date_bucket : fallback.date_bucket;
   const tab: TDashboardTab = isTab(raw.tab) ? raw.tab : fallback.tab;
+  const overview_group_by: TWorkItemsGroupBy = isWorkItemsGroupBy(raw.overview_group_by)
+    ? raw.overview_group_by
+    : fallback.overview_group_by;
+  const workload_breakdown_by: TWorkloadBreakdownBy = isWorkloadBreakdownBy(raw.workload_breakdown_by)
+    ? raw.workload_breakdown_by
+    : fallback.workload_breakdown_by;
   const business_filters: TBusinessFilters = {};
   if (raw.business_filters && typeof raw.business_filters === "object") {
     for (const [key, value] of Object.entries(raw.business_filters)) {
@@ -817,5 +875,7 @@ function sanitizeDashboardOperationsPreferences(
     date_bucket,
     business_filters,
     tab,
+    overview_group_by,
+    workload_breakdown_by,
   };
 }

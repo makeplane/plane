@@ -16,12 +16,7 @@ import { AttentionPreviewPanel } from "@/components/dashboards/operations/panels
 import { WorkloadPreviewPanel } from "@/components/dashboards/operations/panels/workload-preview-panel";
 import { DeliveryPanel } from "@/components/dashboards/operations/panels/delivery-panel";
 
-import {
-  defaultDashboardOperationsPreferences,
-  DashboardOperationsStore,
-  type TDashboardOperationsStorage,
-} from "@plane/shared-state";
-import { OperationsScopeControls } from "@/components/dashboards/operations/scope-controls";
+import { defaultDashboardOperationsPreferences } from "@plane/shared-state";
 import type {
   TAttentionPreviewData,
   TDeliveryTrendData,
@@ -30,20 +25,6 @@ import type {
   TProgressData,
   TTopProjectsData,
 } from "@plane/types";
-
-// Per package conventions the store needs a storage shim.
-const memoryStorage = (): TDashboardOperationsStorage => {
-  const items = new Map<string, string>();
-  return {
-    getItem: (key: string) => items.get(key) ?? null,
-    setItem: (key: string, value: string) => {
-      items.set(key, value);
-    },
-    removeItem: (key: string) => {
-      items.delete(key);
-    },
-  };
-};
 
 const KPI_OK: TKpiCounts = {
   total: 12,
@@ -149,7 +130,7 @@ describe("ProgressPanel", () => {
 
   test("completion rate denominator excludes cancelled", () => {
     render(<ProgressPanel data={PROGRESS_OK} isLoading={false} error={false} />);
-    expect(screen.getByText(/Completion .* of 11/)).toBeTruthy();
+    expect(screen.getByTestId("progress-completion-summary").textContent).toMatch(/11 việc/);
   });
 });
 
@@ -166,7 +147,7 @@ describe("TopProjectsPanel", () => {
   test("renders top N and explains total-projects-in-scope", () => {
     render(<TopProjectsPanel data={TOP_OK} isLoading={false} error={false} />);
     expect(screen.getByTestId("top-projects-list")).toBeTruthy();
-    expect(screen.getByText(/Showing 2 of 4 projects in scope/)).toBeTruthy();
+    expect(screen.getByText(/Top 2 \/ 4 dự án trong phạm vi/)).toBeTruthy();
   });
 
   test("renders overdue and blocked badges per project", () => {
@@ -201,7 +182,7 @@ describe("WorkloadPreviewPanel", () => {
       />
     );
     expect(screen.getByTestId("workload-preview-unavailable")).toBeTruthy();
-    expect(screen.getByText(/Workload unavailable/)).toBeTruthy();
+    expect(screen.getByText(/Chưa tải được khối lượng công việc/)).toBeTruthy();
     expect(screen.getByTestId("workload-preview-retry")).toBeTruthy();
   });
 
