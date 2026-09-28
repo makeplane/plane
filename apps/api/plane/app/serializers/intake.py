@@ -78,10 +78,51 @@ class IntakeIssueSerializer(BaseSerializer):
                     workspace=instance.workspace, project=instance.project, default=True
                 ).first()
                 if default_state:
-                    issue.state = default_state
-                    issue.save()
+                    self._route_intake_transition(issue=issue, target_state=default_state)
 
         return instance
+
+    def _route_intake_transition(self, *, issue, target_state):
+        """Route the intake-accept state move through ``TransitionService``.
+
+        Falls back to the legacy ``issue.save()`` path when workflows
+        are off (the default) so this change is invisible on legacy
+        projects (§17.4 compatibility).
+        """
+        try:
+            from plane.services.workflow.errors import WorkflowError
+            from plane.services.workflow.flags import workflows_active
+            from plane.services.workflow.transitions import TransitionService
+        except ImportError:
+            WorkflowError = Exception
+            TransitionService = None
+            workflows_active = None
+
+        if TransitionService is None or workflows_active is None:
+            issue.state = target_state
+            issue.save()
+            return
+
+        if not workflows_active(project=issue.project):
+            issue.state = target_state
+            issue.save()
+            return
+
+        try:
+            TransitionService.transition(
+                issue_id=issue.id,
+                target_state_id=str(target_state.id),
+                actor=None,
+                actor_id=str(self.instance.created_by_id) if self.instance.created_by_id else None,
+                origin="intake",
+                system_bypass=True,
+                bypass_reason="intake accept: triage -> default",
+            )
+        except WorkflowError:
+            # Re-raise — the intake accept is a real transition and
+            # must surface workflow failures to the caller.
+            raise
+        issue.refresh_from_db()
 
     def to_representation(self, instance):
         # Pass the annotated fields to the Issue instance if they exist

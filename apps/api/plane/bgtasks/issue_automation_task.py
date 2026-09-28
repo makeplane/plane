@@ -121,6 +121,53 @@ def close_old_issues():
                 else:
                     close_state = project.default_state
 
+                if close_state is None:
+                    continue
+
+                # Workflow guard (§20, §34). Every state mutation must
+                # either flow through ``TransitionService`` or carry an
+                # audited system_bypass. The automation task is a
+                # documented bypass — it runs on a schedule and is not
+                # bound to a single user request — so we route each
+                # close through the service with a clear reason.
+                if _workflows_active_for_project(project):
+                    for issue in issues:
+                        try:
+                            from plane.services.workflow.transitions import (
+                                TransitionService,
+                            )
+
+                            TransitionService.transition(
+                                issue_id=issue.id,
+                                target_state_id=str(close_state.id),
+                                actor=None,
+                                actor_id=str(project.created_by_id),
+                                origin="automation:close_old_issues",
+                                system_bypass=True,
+                                bypass_reason=(
+                                    "automation:close_old_issues — "
+                                    f"close_in={close_in}"
+                                ),
+                            )
+                        except Exception as transition_exc:  # noqa: BLE001
+                            # The automation task must not abort on a
+                            # single issue failure; log and continue.
+                            log_exception(transition_exc)
+                            continue
+                        issue.refresh_from_db()
+                        issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps({"closed_to": str(issue.state_id)}),
+                            actor_id=str(project.created_by_id),
+                            issue_id=issue.id,
+                            project_id=project_id,
+                            current_instance=None,
+                            subscriber=False,
+                            epoch=int(timezone.now().timestamp()),
+                            notification=True,
+                        )
+                    continue
+
                 issues_to_update = []
                 for issue in issues:
                     issue.state = close_state
@@ -147,3 +194,17 @@ def close_old_issues():
     except Exception as e:
         log_exception(e)
         return
+
+
+def _workflows_active_for_project(project) -> bool:
+    """Return ``True`` when workflows gate this project.
+
+    Imported lazily so the automation task can still run on a
+    checkout where the workflow service has not been wired in yet
+    (e.g. before migrations).
+    """
+    try:
+        from plane.services.workflow.flags import workflows_active
+    except ImportError:
+        return False
+    return workflows_active(project=project)
