@@ -4,9 +4,7 @@
  * See the LICENSE file for details.
  */
 
-// ui
-import { Checkbox } from "@plane/ui";
-// helpers
+import { Checkbox } from "@makeplane/propel/components/checkbox";
 import { cn } from "@plane/utils";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -26,13 +24,14 @@ export function MultipleSelectGroupAction(props: Props) {
   if (selectionHelpers.isSelectionDisabled) return null;
 
   return (
-    <Checkbox
-      className={cn("size-3.5 !outline-none", className)}
-      iconClassName="size-3"
-      onClick={() => selectionHelpers.handleGroupClick(groupID)}
-      checked={groupSelectionStatus === "complete"}
-      indeterminate={groupSelectionStatus === "partial"}
-      disabled={disabled}
-    />
+    <span className={cn("inline-flex", className)}>
+      <Checkbox
+        checked={groupSelectionStatus === "complete"}
+        indeterminate={groupSelectionStatus === "partial"}
+        disabled={disabled}
+        aria-label="Select all in group"
+        onCheckedChange={() => selectionHelpers.handleGroupClick(groupID)}
+      />
+    </span>
   );
 }

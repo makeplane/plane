@@ -6,10 +6,10 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
+import { Field } from "@makeplane/propel/components/field";
+import { TextArea } from "@makeplane/propel/components/text-area";
 import { useTranslation } from "@plane/i18n";
 import type { TNameDescriptionLoader } from "@plane/types";
-// components
-import { TextArea } from "@plane/ui";
 // types
 import { cn } from "@plane/utils";
 import useDebounce from "@/hooks/use-debounce";
@@ -25,7 +25,6 @@ export type IssueTitleInputProps = {
   issueOperations: TIssueOperations;
   projectId: string;
   issueId: string;
-  className?: string;
   containerClassName?: string;
 };
 
@@ -39,7 +38,6 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
     issueId,
     issueOperations,
     projectId,
-    className,
     containerClassName,
   } = props;
   const { t } = useTranslation();
@@ -132,7 +130,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
   );
 
   const handleTitleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
       setIsSubmitting("submitting");
       const titleFromEvent = e.target.value;
       setTitle(titleFromEvent);
@@ -147,26 +145,27 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
   return (
     <div className="flex flex-col gap-1.5">
       <div className={cn("relative", containerClassName)}>
-        <TextArea
-          id="title-input"
-          className={cn(
-            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium ring-0 outline-none",
-            {
-              "mx-2.5 ring-1 ring-danger-strong": title?.length === 0,
-            },
-            className
-          )}
-          disabled={disabled}
-          value={title}
-          onChange={handleTitleChange}
-          maxLength={255}
-          placeholder={t("issue.title.label")}
-          onFocus={() => setIsLengthVisible(true)}
-          onBlur={() => setIsLengthVisible(false)}
-        />
+        <Field name="title" invalid={title?.length === 0}>
+          <div className="flex w-full">
+            <TextArea
+              size="2xl"
+              surface="inline"
+              autoResize
+              rows={1}
+              id="title-input"
+              disabled={disabled}
+              value={title}
+              onChange={handleTitleChange}
+              maxLength={255}
+              placeholder={t("issue.title.label")}
+              onFocus={() => setIsLengthVisible(true)}
+              onBlur={() => setIsLengthVisible(false)}
+            />
+          </div>
+        </Field>
         <div
           className={cn(
-            "pointer-events-none absolute right-1 bottom-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
+            "pointer-events-none absolute right-1 bottom-1 z-2 rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }

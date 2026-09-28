@@ -8,8 +8,8 @@ import { observer } from "mobx-react";
 
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { PlusIcon } from "@plane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
+import { AddOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TInvitationModalActionsProps = {
@@ -53,18 +53,30 @@ export const InvitationModalActions = observer(function InvitationModalActions(p
         onClick={appendField}
         disabled={isInviteDisabled}
       >
-        <PlusIcon className="h-3.5 w-3.5" />
+        <AddOutline className="h-3.5 w-3.5" />
         {addMoreButtonText || t("common.add_more")}
       </button>
       <div className="flex items-center gap-2">
-        <Button variant="secondary" size="lg" onClick={handleClose}>
-          {cancelButtonText || t("cancel")}
-        </Button>
-        <Button variant="primary" size="lg" type="submit" loading={isSubmitting} disabled={isInviteDisabled}>
-          {isSubmitting
-            ? submitButtonText?.loading || t("workspace_settings.settings.members.modal.button_loading")
-            : submitButtonText?.default || t("workspace_settings.settings.members.modal.button")}
-        </Button>
+        <Button
+          variant="secondary"
+          size="md"
+          stretch="auto"
+          label={cancelButtonText || t("cancel")}
+          onClick={handleClose}
+        />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          type="submit"
+          label={
+            isSubmitting
+              ? submitButtonText?.loading || t("workspace_settings.settings.members.modal.button_loading")
+              : submitButtonText?.default || t("workspace_settings.settings.members.modal.button")
+          }
+          loading={isSubmitting}
+          disabled={isInviteDisabled}
+        />
       </div>
     </div>
   );

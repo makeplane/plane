@@ -9,10 +9,11 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
-import { DraftIcon } from "@plane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
+import { DraftsOutline } from "@makeplane/propel/icons";
 import { EIssuesStoreType } from "@plane/types";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
@@ -52,7 +53,7 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("drafts")} icon={<DraftIcon className="h-4 w-4 text-tertiary" />} />
+                  <BreadcrumbLink label={t("drafts")} icon={<DraftsOutline className="h-4 w-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>
@@ -68,13 +69,12 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
           {joinedProjectIds && joinedProjectIds.length > 0 && (
             <Button
               variant="primary"
-              size="lg"
-              className="items-center gap-1"
+              size="md"
+              stretch="auto"
+              label={t("workspace_draft_issues.draft_an_issue")}
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}
-            >
-              {t("workspace_draft_issues.draft_an_issue")}
-            </Button>
+            />
           )}
         </Header.RightItem>
       </Header>

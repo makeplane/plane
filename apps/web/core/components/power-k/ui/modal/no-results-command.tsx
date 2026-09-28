@@ -6,7 +6,7 @@
 
 import { Command } from "cmdk";
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
+import { SearchOutline } from "@makeplane/propel/icons";
 // components
 import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
@@ -25,7 +25,7 @@ export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchRes
   return (
     <Command.Group>
       <PowerKModalCommandItem
-        icon={SearchIcon}
+        icon={SearchOutline}
         value="no-results"
         label={
           <p className="flex items-center gap-2">

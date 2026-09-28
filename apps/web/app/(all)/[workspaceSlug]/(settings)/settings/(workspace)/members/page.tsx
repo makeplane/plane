@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { SearchIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@makeplane/propel/components/button";
+import { SearchOutline } from "@makeplane/propel/icons";
+import { setToast } from "@plane/blocks/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -58,7 +58,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
       setInviteModal(false);
 
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Success!",
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
@@ -69,7 +69,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         message = err.error;
       }
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });
@@ -120,7 +120,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
           </h4>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <input
                 className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
                 placeholder={`${t("search")}...`}
@@ -136,9 +136,13 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               memberType="workspace"
             />
             {canPerformWorkspaceAdminActions && (
-              <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
-                {t("workspace_settings.settings.members.add_member")}
-              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("workspace_settings.settings.members.add_member")}
+                onClick={() => setInviteModal(true)}
+              />
             )}
           </div>
         </div>

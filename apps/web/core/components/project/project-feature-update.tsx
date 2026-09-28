@@ -8,9 +8,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button, getButtonStyling } from "@plane/propel/button";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { Row } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { DialogActions, DialogBody, DialogInfo, DialogMain } from "@makeplane/propel/components/dialog";
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 // components
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -35,31 +35,29 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
 
   return (
     <>
-      <Row className="py-6">
-        <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
-      </Row>
-      <div className="mt-4 flex items-center justify-between gap-2 border-t border-subtle px-6 py-4">
-        <div className="flex gap-1 text-13 font-medium text-tertiary">
-          {t("congrats")}
-          <Logo logo={currentProjectDetails.logo_props} /> <p className="break-all">{currentProjectDetails.name}</p>{" "}
-          {t("created").toLowerCase()}.
-        </div>
-        <div className="flex gap-2">
-          {/* eslint-disable-next-line jsx-a11y/tabindex-no-positive */}
-          <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
-            {t("close")}
-          </Button>
-          <Link
-            href={`/${workspaceSlug}/projects/${projectId}/issues`}
-            onClick={onClose}
-            className={getButtonStyling("primary", "lg")}
-            // oxlint-disable-next-line jsx-a11y/tabindex-no-positive
-            tabIndex={2}
-          >
-            {t("open_project")}
-          </Link>
-        </div>
-      </div>
+      <DialogMain>
+        <DialogBody tabIndex={0}>
+          <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
+        </DialogBody>
+      </DialogMain>
+      <DialogActions>
+        <DialogInfo>
+          <div className="flex gap-1 text-13 font-medium text-tertiary">
+            {t("congrats")}
+            <Logo logo={currentProjectDetails.logo_props} /> <p className="break-all">{currentProjectDetails.name}</p>{" "}
+            {t("created").toLowerCase()}.
+          </div>
+        </DialogInfo>
+        <Button variant="secondary" size="md" stretch="auto" onClick={onClose} label={t("close")} />
+        <Button
+          variant="primary"
+          size="md"
+          stretch="auto"
+          nativeButton={false}
+          render={<Link href={`/${workspaceSlug}/projects/${projectId}/issues`} onClick={onClose} />}
+          label={t("open_project")}
+        />
+      </DialogActions>
     </>
   );
 });

@@ -5,10 +5,14 @@
  */
 
 import { useEffect, useState } from "react";
-import { TwitterPicker } from "react-color";
-import { Button } from "@plane/propel/button";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/components/popover";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import { Button } from "@makeplane/propel/components/button";
+import { ColorSwatchPicker } from "@plane/blocks/common";
+import { useTranslation } from "@plane/i18n";
 import type { IState } from "@plane/types";
-import { Popover, Input, TextArea } from "@plane/ui";
 
 type TStateForm = {
   data: Partial<IState>;
@@ -20,8 +24,8 @@ type TStateForm = {
 
 function PopoverButton({ color }: { color?: string }) {
   return (
-    <div
-      className="group inline-flex h-5 w-5 items-center rounded-sm text-14 font-medium transition-all focus:outline-none"
+    <span
+      className="group inline-flex h-5 w-5 items-center rounded-sm text-14 font-medium transition-all"
       style={{
         backgroundColor: color ?? "black",
       }}
@@ -31,6 +35,8 @@ function PopoverButton({ color }: { color?: string }) {
 
 export function StateForm(props: TStateForm) {
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [formData, setFromData] = useState<Partial<IState> | undefined>(undefined);
   const [errors, setErrors] = useState<Partial<Record<keyof IState, string>> | undefined>(undefined);
@@ -66,44 +72,77 @@ export function StateForm(props: TStateForm) {
     <div className="relative flex space-x-2 rounded-sm bg-surface-1 p-3">
       {/* color */}
       <div className="mt-2 h-full flex-shrink-0">
-        <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">
-          <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
+        <Popover>
+          <PopoverTrigger
+            render={
+              <button
+                type="button"
+                className="flex items-center justify-center rounded-sm focus:outline-none"
+                aria-label={t("aria_labels.color_picker.open")}
+              >
+                <PopoverButton color={formData?.color} />
+              </button>
+            }
+          />
+          <PopoverContent variant="rich" side="bottom" align="start">
+            <ColorSwatchPicker value={formData?.color} onChange={(hex) => handleFormData("color", hex)} />
+          </PopoverContent>
         </Popover>
       </div>
 
       <div className="w-full space-y-2">
         {/* title */}
-        <Input
-          id="name"
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData?.name}
-          onChange={(e) => handleFormData("name", e.target.value)}
-          hasError={(errors && Boolean(errors.name)) || false}
-          className="w-full"
-          maxLength={100}
-          autoFocus
-        />
+        <Field name="name" invalid={(errors && Boolean(errors.name)) || false}>
+          <InputGroup size="2xl">
+            <Input
+              size="2xl"
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData?.name}
+              onChange={(e) => handleFormData("name", e.target.value)}
+              maxLength={100}
+              autoFocus
+            />
+          </InputGroup>
+        </Field>
 
         {/* description */}
-        <TextArea
-          id="description"
-          name="description"
-          placeholder="Describe this state for your members."
-          value={formData?.description}
-          onChange={(e) => handleFormData("description", e.target.value)}
-          hasError={(errors && Boolean(errors.description)) || false}
-          className="min-h-14 w-full resize-none text-13"
-        />
+        <Field name="description" invalid={(errors && Boolean(errors.description)) || false}>
+          <TextAreaGroup resize="none">
+            <TextArea
+              size="lg"
+              surface="field"
+              autoResize
+              maxRows={8}
+              id="description"
+              name="description"
+              placeholder="Describe this state for your members."
+              value={formData?.description ?? ""}
+              onChange={(e) => handleFormData("description", e.target.value)}
+            />
+          </TextAreaGroup>
+        </Field>
 
         <div className="flex items-center space-x-2">
-          <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
-            {buttonTitle}
-          </Button>
-          <Button type="button" variant="secondary" size="lg" disabled={buttonDisabled} onClick={onCancel}>
-            Cancel
-          </Button>
+          <Button
+            variant="primary"
+            size="md"
+            stretch="auto"
+            label={buttonTitle}
+            onClick={formSubmit}
+            disabled={buttonDisabled}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            label="Cancel"
+            disabled={buttonDisabled}
+            onClick={onCancel}
+          />
         </div>
       </div>
     </div>

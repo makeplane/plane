@@ -15,8 +15,8 @@ def sanitize_filename(filename):
     """
     Sanitize a filename to prevent path traversal attacks.
 
-    Strips directory components, path traversal sequences, and null bytes
-    from user-supplied filenames used in upload paths and S3 object keys.
+    Strips directory components, path traversal sequences, and control
+    characters from user-supplied filenames used in upload paths and S3 object keys.
 
     Returns None for empty/missing input so callers can still validate
     that a filename was provided.
@@ -24,8 +24,8 @@ def sanitize_filename(filename):
     if not filename or not isinstance(filename, str):
         return None
 
-    # Strip null bytes
-    filename = filename.replace("\x00", "")
+    # Strip ASCII control characters (0-31 and 127), including null bytes
+    filename = "".join(char for char in filename if not (ord(char) < 32 or ord(char) == 127))
 
     # Normalize backslashes so os.path.basename handles Windows-style paths on POSIX
     filename = filename.replace("\\", "/")
@@ -113,6 +113,15 @@ def validate_next_path(next_path: str) -> str:
         return ""
 
     next_path = next_path.replace("\\", "")
+
+    # Browsers (per the WHATWG URL spec) strip every ASCII tab/CR/LF from a
+    # URL before parsing it, so "/\t/\t/evil.com" is what the browser
+    # actually navigates on, even though urlparse() sees a netloc-free,
+    # scheme-free string here and a literal .startswith("//") below would
+    # miss it too (the second character is a tab, not a slash). Strip them
+    # here so every check downstream sees what the browser will.
+    next_path = next_path.translate(str.maketrans("", "", "\t\r\n"))
+
     parsed_url = urlparse(next_path)
 
     # Block absolute URLs or anything with scheme/netloc
@@ -121,6 +130,17 @@ def validate_next_path(next_path: str) -> str:
 
     # Must start with a forward slash and not be empty
     if not next_path or not next_path.startswith("/"):
+        return ""
+
+    # Reject authority-relative paths (//, ///, ////, ...). urlparse() only
+    # treats a leading "//" as a netloc when what follows still looks like a
+    # bare host (e.g. "//example.com/"); for "///example.com/" both scheme
+    # and netloc come back empty, so the branch above never fires and this
+    # string would otherwise sail through every check below unmodified. The
+    # browser itself still resolves any leading "//" as authority-relative
+    # against an http(s) base, navigating off-domain regardless of what
+    # urlparse() made of it server-side.
+    if next_path.startswith("//"):
         return ""
 
     # Prevent path traversal

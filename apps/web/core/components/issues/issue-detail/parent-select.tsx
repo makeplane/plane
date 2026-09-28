@@ -9,9 +9,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 
 import { useTranslation } from "@plane/i18n";
-import { EditIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, EditOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -91,7 +91,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       >
         {issue.parent_id && parentIssue ? (
           <div className="flex items-center gap-1.5">
-            <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
+            <Tooltip label={`Title: ${parentIssue.name}`} layout="stacked" disabled={isMobile}>
               <Link href={workItemLink} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                 {parentIssue?.project_id && parentIssueProjectDetails && (
                   <IssueIdentifier
@@ -107,7 +107,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
             </Tooltip>
 
             {!disabled && (
-              <Tooltip tooltipContent={t("common.remove")} position="bottom" isMobile={isMobile}>
+              <Tooltip label={t("common.remove")} side="bottom" disabled={isMobile}>
                 <span
                   onClick={(e) => {
                     e.preventDefault();
@@ -115,7 +115,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
+                  <CloseOutline className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                 </span>
               </Tooltip>
             )}
@@ -129,7 +129,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
               "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >
-            <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
+            <EditOutline className="h-2.5 w-2.5 flex-shrink-0" />
           </span>
         )}
       </button>
