@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
 // components
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
 
 type Props = {
   issue: TIssue;
@@ -23,7 +23,7 @@ export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeCo
 
   return (
     <div className="h-11 border-b-[0.5px] border-subtle">
-      <MemberDropdown
+      <MemberSelect
         value={issue?.assignee_ids ?? []}
         onChange={(data) => {
           onChange(
@@ -39,12 +39,9 @@ export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeCo
         disabled={disabled}
         multiple
         placeholder="Assignees"
-        buttonVariant={
-          issue?.assignee_ids && issue.assignee_ids.length > 1 ? "transparent-without-text" : "transparent-with-text"
-        }
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
-        buttonContainerClassName="w-full"
-        optionsClassName="z-[9]"
+        // `.clickable` is what the table's keyboard navigation clicks on Enter / Space in a focused cell.
+        className="clickable"
+        variant="table-cell"
         onClose={onClose}
       />
     </div>

@@ -5,13 +5,13 @@
  */
 
 import { observer } from "mobx-react";
-import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope } from "lucide-react";
+import { CircleDashed, Microscope } from "lucide-react";
+import { AlertOctagonOutline, BarOutline, FolderOutline, SearchOutline } from "@makeplane/propel/icons";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
-import { SearchIcon } from "@plane/propel/icons";
-import { ContentWrapper } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { ContentWrapper } from "@plane/blocks/layout";
 import { cn } from "@plane/utils";
 // assets
 import ctaL1Dark from "@/app/assets/workspace-active-cycles/cta-l-1-dark.webp?url";
@@ -31,7 +31,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     title: "10,000-feet view of all active cycles.",
     description:
       "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
-    icon: Folder,
+    icon: FolderOutline,
   },
   {
     key: "get_snapshot_of_each_active_cycle",
@@ -44,20 +44,20 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     key: "compare_burndowns",
     title: "Compare burndowns.",
     description: "Monitor how each of your teams are performing with a peek into each cycle’s burndown report.",
-    icon: BarChart4,
+    icon: BarOutline,
   },
   {
     key: "quickly_see_make_or_break_issues",
     title: "Quickly see make-or-break work items. ",
     description:
       "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
-    icon: AlertOctagon,
+    icon: AlertOctagonOutline,
   },
   {
     key: "zoom_into_cycles_that_need_attention",
     title: "Zoom into cycles that need attention. ",
     description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
-    icon: SearchIcon,
+    icon: SearchOutline,
   },
   {
     key: "stay_ahead_of_blockers",
@@ -91,15 +91,17 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
             <p className="text-14 font-medium text-tertiary">{t("active_cycles_description")}</p>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              className={`${getButtonStyling("primary", "base")} cursor-pointer`}
-              href={MARKETING_PRICING_PAGE_LINK}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <ProIcon className="h-3.5 w-3.5 text-on-color" />
-              {t("upgrade")}
-            </a>
+            <Button
+              variant="primary"
+              size="sm"
+              stretch="auto"
+              nativeButton={false}
+              render={
+                <a href={MARKETING_PRICING_PAGE_LINK} target="_blank" rel="noreferrer" aria-label={t("upgrade")} />
+              }
+              icon={<ProIcon className="h-3.5 w-3.5 text-on-color" />}
+              label={t("upgrade")}
+            />
           </div>
           <span className="absolute top-0 left-0">
             <img

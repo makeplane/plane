@@ -6,9 +6,10 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { AnalyticsIcon } from "@plane/propel/icons";
+import { AnalyticsOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 
@@ -22,7 +23,7 @@ export const WorkspaceAnalyticsHeader = observer(function WorkspaceAnalyticsHead
             component={
               <BreadcrumbLink
                 label={t("workspace_analytics.label")}
-                icon={<AnalyticsIcon className="h-4 w-4 text-tertiary" />}
+                icon={<AnalyticsOutline className="h-4 w-4 text-tertiary" />}
               />
             }
           />

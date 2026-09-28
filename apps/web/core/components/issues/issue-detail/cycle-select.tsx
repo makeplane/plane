@@ -4,15 +4,13 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-// hooks
-// components
 import { cn } from "@plane/utils";
-import { CycleDropdown } from "@/components/dropdowns/cycle";
-// ui
-// helpers
+// components
+import { CycleSelect } from "@/components/dropdowns/cycle/cycle-select";
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TIssueOperations } from "./root";
@@ -24,10 +22,23 @@ type TIssueCycleSelect = {
   issueId: string;
   issueOperations: TIssueOperations;
   disabled?: boolean;
+  /** Adds a "No cycle" row that clears the selection. Defaults to `true`. */
+  clearable?: boolean;
+  /** Label for the clear row. Defaults to `t("cycle.no_cycle")`. */
+  clearLabel?: string;
 };
 
 export const IssueCycleSelect = observer(function IssueCycleSelect(props: TIssueCycleSelect) {
-  const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
+  const {
+    className = "",
+    workspaceSlug,
+    projectId,
+    issueId,
+    issueOperations,
+    disabled = false,
+    clearable = true,
+    clearLabel,
+  } = props;
   const { t } = useTranslation();
   // states
   const [isUpdating, setIsUpdating] = useState(false);
@@ -39,29 +50,29 @@ export const IssueCycleSelect = observer(function IssueCycleSelect(props: TIssue
   const issue = getIssueById(issueId);
   const disableSelect = disabled || isUpdating;
 
-  const handleIssueCycleChange = async (cycleId: string | null) => {
-    if (!issue || issue.cycle_id === cycleId) return;
-    setIsUpdating(true);
-    if (cycleId) await issueOperations.addCycleToIssue?.(workspaceSlug, projectId, cycleId, issueId);
-    else await issueOperations.removeIssueFromCycle?.(workspaceSlug, projectId, issue.cycle_id ?? "", issueId);
-    setIsUpdating(false);
-  };
+  const handleIssueCycleChange = useCallback(
+    async (cycleId: string | null) => {
+      if (!issue || issue.cycle_id === cycleId) return;
+      setIsUpdating(true);
+      if (cycleId) await issueOperations.addCycleToIssue?.(workspaceSlug, projectId, cycleId, issueId);
+      else await issueOperations.removeIssueFromCycle?.(workspaceSlug, projectId, issue.cycle_id ?? "", issueId);
+      setIsUpdating(false);
+    },
+    [issue, issueOperations, workspaceSlug, projectId, issueId]
+  );
 
   return (
-    <div className={cn("flex h-full items-center gap-1", className)}>
-      <CycleDropdown
+    <div className={cn("flex h-full w-full grow items-center gap-1", className)}>
+      <CycleSelect
+        projectId={projectId}
         value={issue?.cycle_id ?? null}
         onChange={handleIssueCycleChange}
-        projectId={projectId}
         disabled={disableSelect}
-        buttonVariant="transparent-with-text"
-        className="group w-full"
-        buttonContainerClassName="w-full text-left h-7.5 rounded-sm"
-        buttonClassName={`text-body-xs-medium justify-between ${issue?.cycle_id ? "" : "text-placeholder"}`}
+        variant="select-ghost-md"
         placeholder={t("cycle.no_cycle")}
-        hideIcon
-        dropdownArrow
-        dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+        tooltip
+        clearable={clearable}
+        clearLabel={clearLabel}
       />
     </div>
   );

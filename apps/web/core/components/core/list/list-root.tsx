@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { Row, ERowVariant } from "@plane/ui";
+import { Row, ERowVariant } from "@plane/blocks/layout";
 
 interface IListContainer {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export function ListLayout(props: IListContainer) {
   return (
     <Row
       variant={ERowVariant.HUGGING}
-      className="vertical-scrollbar flex scrollbar-lg h-full w-full flex-col overflow-y-auto"
+      className="vertical-scrollbar scrollbar-lg flex h-full w-full flex-col overflow-y-auto"
     >
       {children}
     </Row>

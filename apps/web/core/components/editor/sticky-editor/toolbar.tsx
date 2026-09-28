@@ -5,13 +5,12 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Palette } from "lucide-react";
+import { DeleteOutline, PaletteOutline } from "@makeplane/propel/icons";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TrashIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TSticky } from "@plane/types";
 // constants
 import { cn } from "@plane/utils";
@@ -68,15 +67,9 @@ export function StickyEditorToolbar(props: Props) {
       <div className="my-auto flex gap-4" ref={colorPaletteRef}>
         {/* color palette */}
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
-        <Tooltip
-          tooltipContent={
-            <p className="flex flex-col gap-1 text-center text-11">
-              <span className="font-medium">Background color</span>
-            </p>
-          }
-        >
+        <Tooltip label="Background color">
           <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
-            <Palette className="my-auto size-4" />
+            <PaletteOutline className="my-auto size-4" />
           </button>
         </Tooltip>
 
@@ -88,15 +81,7 @@ export function StickyEditorToolbar(props: Props) {
                   const isItemActive = activeStates[item.renderKey];
 
                   return (
-                    <Tooltip
-                      key={item.renderKey}
-                      tooltipContent={
-                        <p className="flex flex-col gap-1 text-center text-11">
-                          <span className="font-medium">{item.name}</span>
-                          {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
-                        </p>
-                      }
-                    >
+                    <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
                       <button
                         type="button"
                         onClick={() => executeCommand(item)}
@@ -118,15 +103,9 @@ export function StickyEditorToolbar(props: Props) {
         </div>
       </div>
       {/* delete action */}
-      <Tooltip
-        tooltipContent={
-          <p className="flex flex-col gap-1 text-center text-11">
-            <span className="font-medium">Delete</span>
-          </p>
-        }
-      >
+      <Tooltip label="Delete">
         <button type="button" onClick={handleDelete} className="my-auto text-primary/50">
-          <TrashIcon className="size-4" />
+          <DeleteOutline className="size-4" />
         </button>
       </Tooltip>
     </div>

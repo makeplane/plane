@@ -7,8 +7,10 @@
 import { useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { IconButton } from "@plane/propel/icon-button";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -18,6 +20,8 @@ type Props = {
 
 export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -43,13 +47,14 @@ export function PageSearchInput(props: Props) {
       {!isSearchOpen && (
         <IconButton
           variant="ghost"
-          size="lg"
-          className="my-auto -mr-1 shrink-0"
+          size="md"
+          render={<button type="button" className="my-auto -mr-1 shrink-0" />}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-          icon={SearchIcon}
+          icon={<Icon icon={SearchOutline} />}
+          aria-label={t("search")}
         />
       )}
       <div
@@ -60,7 +65,7 @@ export function PageSearchInput(props: Props) {
           }
         )}
       >
-        <SearchIcon className="h-3.5 w-3.5" />
+        <SearchOutline className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="ml-2 w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
@@ -78,7 +83,7 @@ export function PageSearchInput(props: Props) {
               setIsSearchOpen(false);
             }}
           >
-            <CloseIcon className="h-3 w-3" />
+            <CloseOutline className="h-3 w-3" />
           </button>
         )}
       </div>

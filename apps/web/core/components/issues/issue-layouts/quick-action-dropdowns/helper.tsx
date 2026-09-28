@@ -5,15 +5,52 @@
  */
 
 import { useMemo } from "react";
-import { XCircle, ArchiveRestoreIcon } from "lucide-react";
+import {
+  ArchiveOutline,
+  CloseCircleOutline,
+  CopyOutline,
+  DeleteOutline,
+  EditOutline,
+  LinkOutline,
+  NewTabOutline,
+  RestoreOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, CopyIcon, NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { createCopyMenuWithDuplication } from "./copy-menu-helper";
+
+/**
+ * The quick-action menus sit inside clickable rows (ControlLink anchors, row `onClick`s). The legacy
+ * menu's root swallowed clicks for them; Propel's `Menu` renders no element, so the trigger carries
+ * the guard (click + Enter/Space) and the portalled popup stops item clicks from bubbling up the React
+ * tree to the row. Base UI still runs its own trigger handler, so the menu opens as before.
+ */
+export const quickActionTriggerGuard = {
+  onClick: (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  },
+  onKeyDown: (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+  },
+};
+
+/**
+ * `MenuTrigger` defaults to `nativeButton`, so a caller's `customActionButton` that isn't a real
+ * `<button>` (e.g. a `<div>`) would get no role/tabIndex and trip Base UI's native-button check.
+ * Returns the `nativeButton` flag for the rendered trigger: true for the IconButton fallback and
+ * `<button>` elements, false otherwise so Base UI adds `role="button"` + `tabIndex` + key handling.
+ */
+export const isNativeQuickActionTrigger = (customActionButton: React.ReactElement | undefined) =>
+  !customActionButton || customActionButton.type === "button";
+
+export const stopQuickActionPropagation = (e: React.SyntheticEvent) => {
+  e.stopPropagation();
+};
 
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters
@@ -43,7 +80,7 @@ export function handleOptionalAction<T>(
     }
   } else {
     setToast({
-      type: TOAST_TYPE.ERROR,
+      type: "error",
       title: "Action not available",
       message: `${actionName} action is not implemented.`,
     });
@@ -98,7 +135,7 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(workItemLink).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: "success",
         title: "Link copied",
         message: "Work item link copied to clipboard",
       })
@@ -115,14 +152,14 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
       // oxlint-disable-next-line promise/always-return
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: "Restore success",
           message: "Your work item can be found in project work items.",
         });
       })
       .catch(() => {
         setToast({
-          type: TOAST_TYPE.ERROR,
+          type: "error",
           title: "Error!",
           message: "Work item could not be restored. Please try again.",
         });
@@ -161,7 +198,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createEditMenuItem = (customEditAction?: () => void): TContextMenuItem => ({
     key: "edit",
     title: t("common.actions.edit"),
-    icon: EditIcon,
+    icon: EditOutline,
     action:
       customEditAction ||
       (() => {
@@ -175,7 +212,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     const baseItem = {
       key: "make-a-copy",
       title: t("common.actions.make_a_copy"),
-      icon: CopyIcon,
+      icon: CopyOutline,
       action: () => {
         setCreateUpdateIssueModal(true);
       },
@@ -194,21 +231,21 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createOpenInNewTabMenuItem = (): TContextMenuItem => ({
     key: "open-in-new-tab",
     title: t("common.actions.open_in_new_tab"),
-    icon: NewTabIcon,
+    icon: NewTabOutline,
     action: actionHandlers.handleOpenInNewTab,
   });
 
   const createCopyLinkMenuItem = (): TContextMenuItem => ({
     key: "copy-link",
     title: t("common.actions.copy_link"),
-    icon: LinkIcon,
+    icon: LinkOutline,
     action: actionHandlers.handleCopyIssueLink,
   });
 
   const createRemoveFromCycleMenuItem = (): TContextMenuItem => ({
     key: "remove-from-cycle",
     title: "Remove from cycle",
-    icon: XCircle,
+    icon: CloseCircleOutline,
     action: () => handleOptionalAction(handleRemoveFromView, "Remove from cycle"),
     shouldRender: isEditingAllowed,
   });
@@ -216,7 +253,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createRemoveFromModuleMenuItem = (): TContextMenuItem => ({
     key: "remove-from-module",
     title: "Remove from module",
-    icon: XCircle,
+    icon: CloseCircleOutline,
     action: () => handleOptionalAction(handleRemoveFromView, "Remove from module"),
     shouldRender: isEditingAllowed,
   });
@@ -225,9 +262,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     key: "archive",
     title: t("common.actions.archive"),
     description: isInArchivableGroup ? undefined : t("issue.archive.description"),
-    icon: ArchiveIcon,
-    className: "items-start",
-    iconClassName: "mt-1",
+    icon: ArchiveOutline,
     action: () => handleOptionalAction(setArchiveIssueModal, "Archive", true),
     disabled: !isInArchivableGroup,
     shouldRender: isArchivingAllowed,
@@ -236,7 +271,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createRestoreMenuItem = (): TContextMenuItem => ({
     key: "restore",
     title: "Restore",
-    icon: ArchiveRestoreIcon,
+    icon: RestoreOutline,
     action: actionHandlers.handleIssueRestore,
     shouldRender: isRestoringAllowed,
   });
@@ -244,7 +279,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createDeleteMenuItem = (): TContextMenuItem => ({
     key: "delete",
     title: t("common.actions.delete"),
-    icon: TrashIcon,
+    icon: DeleteOutline,
     action: () => {
       setDeleteIssueModal(true);
     },

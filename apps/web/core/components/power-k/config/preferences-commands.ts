@@ -6,10 +6,11 @@
 
 import { useCallback } from "react";
 import { useTheme } from "next-themes";
-import { Calendar, Earth, Languages, Palette } from "lucide-react";
+import { Languages } from "lucide-react";
+import { CalendarOutline, GlobeOutline, PaletteOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -33,7 +34,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       return updateUserTheme({ theme: newTheme })
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: "Theme updated",
             message: "Reloading to apply changes...",
           });
@@ -43,7 +44,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.theme.error"),
           });
@@ -59,7 +60,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       updateCurrentUser({ user_timezone: value })
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("power_k.preferences_actions.toast.timezone.success"),
           });
@@ -67,7 +68,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.timezone.error"),
           });
@@ -83,7 +84,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       updateUserProfile(payload)
         .then(() => {
           setToast({
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             title: t("toast.success"),
             message: t("power_k.preferences_actions.toast.generic.success"),
           });
@@ -91,7 +92,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         })
         .catch(() => {
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.generic.error"),
           });
@@ -109,7 +110,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       type: "change-page",
       page: "update-theme",
       i18n_title: "power_k.preferences_actions.update_theme",
-      icon: Palette,
+      icon: PaletteOutline,
       onSelect: (data) => {
         const theme = data as string;
         void handleUpdateTheme(theme);
@@ -124,7 +125,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       page: "update-timezone",
       type: "change-page",
       i18n_title: "power_k.preferences_actions.update_timezone",
-      icon: Earth,
+      icon: GlobeOutline,
       onSelect: (data) => {
         const timezone = data as string;
         handleUpdateTimezone(timezone);
@@ -139,7 +140,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       page: "update-start-of-week",
       type: "change-page",
       i18n_title: "power_k.preferences_actions.update_start_of_week",
-      icon: Calendar,
+      icon: CalendarOutline,
       onSelect: (data) => {
         const startOfWeek = data as EStartOfTheWeek;
         handleUpdateUserProfile({ start_of_the_week: startOfWeek });

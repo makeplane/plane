@@ -7,7 +7,7 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
@@ -33,7 +33,7 @@ export const useRelationOperations = (
       copyLink: async (path) => {
         await copyUrlToClipboard(path);
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("common.link_copied"),
           message: t("entity.link_copied_to_clipboard", { entity: entityName }),
         });
@@ -43,13 +43,13 @@ export const useRelationOperations = (
           await updateIssue(workspaceSlug, projectId, issueId, data);
           setToast({
             title: t("toast.success"),
-            type: TOAST_TYPE.SUCCESS,
+            type: "success",
             message: t("entity.update.success", { entity: entityName }),
           });
         } catch (_error) {
           setToast({
             title: t("toast.error"),
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             message: t("entity.update.failed", { entity: entityName }),
           });
         }

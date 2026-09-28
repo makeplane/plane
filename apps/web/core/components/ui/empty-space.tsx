@@ -7,7 +7,7 @@
 // next
 import React from "react";
 import Link from "next/link";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 
 type EmptySpaceProps = {
   title: string;
@@ -68,7 +68,7 @@ function EmptySpaceItem({ title, description, Icon, action, href }: EmptySpaceIt
         {description ? <div className="text-13">{description}</div> : null}
       </div>
       <div className="flex-shrink-0 self-center">
-        <ChevronRightIcon className="h-5 w-5 text-secondary group-hover:text-primary" aria-hidden="true" />
+        <ChevronRightOutline className="h-5 w-5 text-secondary group-hover:text-primary" aria-hidden="true" />
       </div>
     </div>
   );

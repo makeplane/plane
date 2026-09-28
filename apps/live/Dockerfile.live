@@ -54,11 +54,20 @@ RUN pnpm turbo run build --filter=live
 FROM base AS runner
 WORKDIR /app
 
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-09-07
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
+
 # Remove go from Alpine APK database; not needed at runtime and carries stdlib CVEs
 RUN apk del go 2>/dev/null || true
 
-# Remove vulnerable picomatch bundled inside npm (CVE-2026-33671); npm is not used at runtime
-RUN rm -rf /usr/local/lib/node_modules/npm/node_modules/picomatch
+# npm is not used at runtime (CMD is plain node); its bundled dependencies carry
+# known vulnerabilities (tar, brace-expansion, pacote, sigstore, ip-address,
+# fast-uri, browserslist), so remove the whole CLI rather than picking off one
+# package at a time.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 
 COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/apps/live/dist ./apps/live/dist

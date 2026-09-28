@@ -6,18 +6,21 @@
 
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Info } from "lucide-react";
+import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
+import type { TNetworkChoice } from "@plane/constants";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { LockIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Button } from "@makeplane/propel/components/button";
+import { EmojiPicker, Logo } from "@plane/blocks/emoji-icon-picker";
+import { setToast } from "@plane/blocks/toast";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TextArea } from "@plane/ui";
+import { Select } from "@plane/blocks/select";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -93,7 +96,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
         setToast({
-          type: TOAST_TYPE.SUCCESS,
+          type: "success",
           title: t("toast.success"),
           message: t("project_settings.general.toast.success"),
         });
@@ -110,7 +113,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           if (nameError || identifierError || nameSpecialCharError) {
             if (nameError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_name_already_taken"),
               });
@@ -118,7 +121,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
             if (identifierError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
               });
@@ -126,14 +129,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
             if (nameSpecialCharError) {
               setToast({
-                type: TOAST_TYPE.ERROR,
+                type: "error",
                 title: t("toast.error"),
                 message: t("project_name_cannot_contain_special_characters"),
               });
             }
           } else {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: t("toast.error"),
               message: t("something_went_wrong"),
             });
@@ -142,7 +145,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           // Fallback error handling if the error processing fails
           console.error("Error processing API error:", error);
           setToast({
-            type: TOAST_TYPE.ERROR,
+            type: "error",
             title: t("toast.error"),
             message: t("something_went_wrong"),
           });
@@ -178,7 +181,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     } catch (error) {
       console.error("Error handling cover image:", error);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: t("toast.error"),
         message: error instanceof Error ? error.message : "Failed to process cover image",
       });
@@ -235,9 +238,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     setIsOpen(false);
                   }}
                   defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
-                  defaultOpen={
-                    value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-                  }
+                  defaultOpen={value.in_use && value.in_use === "emoji" ? "emoji" : "icon"}
                   disabled={!isAdmin}
                 />
               )}
@@ -247,7 +248,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
-                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color" />}
+                  {project.network === 0 && <LockOutline className="h-2.5 w-2.5 text-on-color" />}
                   {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
@@ -287,18 +288,21 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                ref={ref}
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.name)}
-                className="rounded-md !p-3 font-medium"
-                placeholder={t("common.project_name")}
-                disabled={!isAdmin}
-              />
+              <Field name="name" invalid={Boolean(errors.name)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="name"
+                    name="name"
+                    type="text"
+                    ref={ref}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t("common.project_name")}
+                    disabled={!isAdmin}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -309,16 +313,21 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             name="description"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TextArea
-                id="description"
-                name="description"
-                value={value}
-                placeholder={t("project_description_placeholder")}
-                onChange={onChange}
-                className="min-h-[102px] text-13 font-medium"
-                hasError={Boolean(errors?.description)}
-                disabled={!isAdmin}
-              />
+              <Field name="description" invalid={Boolean(errors?.description)} disabled={!isAdmin}>
+                <TextAreaGroup resize="none">
+                  <TextArea
+                    size="lg"
+                    surface="field"
+                    autoResize
+                    maxRows={8}
+                    id="description"
+                    name="description"
+                    value={value}
+                    placeholder={t("project_description_placeholder")}
+                    onChange={onChange}
+                  />
+                </TextAreaGroup>
+              </Field>
             )}
           />
         </div>
@@ -342,27 +351,31 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   },
                 }}
                 render={({ field: { value, ref } }) => (
-                  <Input
-                    id="identifier"
-                    name="identifier"
-                    type="text"
-                    value={value}
-                    onChange={handleIdentifierChange}
-                    ref={ref}
-                    hasError={Boolean(errors.identifier)}
-                    placeholder={t("project_settings.general.enter_project_id")}
-                    className="w-full font-medium"
-                    disabled={!isAdmin}
-                  />
+                  <Field name="identifier" invalid={Boolean(errors.identifier)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="identifier"
+                        name="identifier"
+                        type="text"
+                        value={value}
+                        onChange={handleIdentifierChange}
+                        ref={ref}
+                        placeholder={t("project_settings.general.enter_project_id")}
+                        disabled={!isAdmin}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={t("project_id_tooltip_content")}
-                className="text-13"
-                position="right-start"
+                label={t("project_id_tooltip_content")}
+                layout="stacked"
+                side="right"
+                align="start"
+                disabled={isMobile}
               >
-                <Info className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
+                <InfoOutline className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
             <span className="text-11 text-danger-primary">
@@ -377,38 +390,40 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               render={({ field: { value, onChange } }) => {
                 const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
                 return (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      <div className="flex items-center gap-1">
-                        {selectedNetwork ? (
-                          <>
-                            <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
-                            {t(selectedNetwork.i18n_label)}
-                          </>
-                        ) : (
-                          <span className="text-placeholder">{t("select_network")}</span>
-                        )}
-                      </div>
-                    }
-                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
-                    input
+                  <Select<TNetworkChoice>
+                    getValues={() => NETWORK_CHOICES}
+                    value={selectedNetwork ?? null}
+                    onChange={(key) => onChange(Number(key))}
+                    getOptionValue={(network) => String(network.key)}
+                    getOptionLabel={(network) => t(network.i18n_label)}
+                    getOptionIcon={(network) => (
+                      <ProjectNetworkIcon iconKey={network.iconKey} className="mt-0.5 size-4 shrink-0" />
+                    )}
+                    getOptionDescription={(network) => t(network.description)}
+                    placeholder={t("select_network")}
+                    showSearch={false}
+                    pinSelected={false}
+                    contentSizing="anchor"
                     disabled={!isAdmin}
-                    // optionsClassName="w-full"
+                    estimateItemSize={64}
                   >
-                    {NETWORK_CHOICES.map((network) => (
-                      <CustomSelect.Option key={network.key} value={network.key}>
-                        <div className="flex items-start gap-2">
-                          <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
-                          <div className="-mt-1">
-                            <p>{t(network.i18n_label)}</p>
-                            <p className="text-11 text-placeholder">{t(network.description)}</p>
-                          </div>
-                        </div>
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
+                    <Select.Trigger<TNetworkChoice>
+                      variant="select-lg"
+                      className="font-medium"
+                      disabled={!isAdmin}
+                      prependIcon={(networks) =>
+                        networks[0] ? (
+                          <ProjectNetworkIcon iconKey={networks[0].iconKey} className="h-3.5 w-3.5" />
+                        ) : undefined
+                      }
+                    >
+                      {(networks) => (
+                        <span className="min-w-0 grow truncate text-left">
+                          {networks[0] ? t(networks[0].i18n_label) : t("select_network")}
+                        </span>
+                      )}
+                    </Select.Trigger>
+                  </Select>
                 );
               }}
             />
@@ -438,9 +453,15 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
-              {isLoading ? t("updating") : t("common.update_project")}
-            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              label={isLoading ? t("updating") : t("common.update_project")}
+              loading={isLoading}
+              disabled={!isAdmin}
+            />
             <span className="text-13 text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>

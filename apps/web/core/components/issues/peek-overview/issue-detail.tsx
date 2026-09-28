@@ -33,7 +33,7 @@ import { IssueTitleInput } from "../title-input";
 const workItemVersionService = new WorkItemVersionService();
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: React.RefObject<EditorRefApi | null>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -103,7 +103,6 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         issueOperations={issueOperations}
         disabled={disabled || isArchived}
         value={issue.name}
-        containerClassName="-ml-3"
       />
 
       <DescriptionInput
