@@ -301,21 +301,32 @@ export function isValidNextPath(url: string): boolean {
   // Block backslashes which can be used for path traversal or Windows-style paths
   if (trimmedUrl.includes("\\")) return false;
 
-  // Decode URL to detect encoded bypasses like %2f or %5c
-  let decodedUrl = trimmedUrl;
-  try {
-    decodedUrl = decodeURIComponent(trimmedUrl);
-  } catch (_error) {
-    return false;
+  // Iteratively decode URL to detect nested/double-encoded bypasses like %252f or %255c
+  let currentUrl = trimmedUrl;
+  const decodedVariants: string[] = [trimmedUrl];
+
+  for (let i = 0; i < 5; i++) {
+    try {
+      const nextDecoded = decodeURIComponent(currentUrl);
+      if (nextDecoded === currentUrl) break;
+      currentUrl = nextDecoded;
+      decodedVariants.push(currentUrl);
+    } catch (_error) {
+      // If URIError occurs after the initial decoding step, stop further decoding
+      if (i > 0) break;
+      return false;
+    }
   }
 
-  // Check again after decoding
-  if (!decodedUrl.startsWith("/")) return false;
-  if (decodedUrl.startsWith("//")) return false;
-  if (decodedUrl.includes("\\")) return false;
+  // Validate every decoded level to block open redirect and injection bypasses
+  for (const variant of decodedVariants) {
+    if (!variant.startsWith("/")) return false;
+    if (variant.startsWith("//")) return false;
+    if (variant.includes("\\")) return false;
+    if (/[\x00-\x1F\x7F]/.test(variant)) return false;
+  }
 
-  // Block control characters and ASCII whitespace (e.g., \t, \n, \r, null bytes)
-  if (/[\x00-\x1F\x7F]/.test(decodedUrl)) return false;
+  const latestDecoded = decodedVariants[decodedVariants.length - 1];
 
   try {
     // Use URL constructor with a dummy base to normalize and validate the path
@@ -326,7 +337,7 @@ export function isValidNextPath(url: string): boolean {
       return false;
     }
 
-    const decodedNormalizedUrl = new URL(decodedUrl, "http://localhost");
+    const decodedNormalizedUrl = new URL(latestDecoded, "http://localhost");
     if (
       decodedNormalizedUrl.hostname !== "localhost" ||
       decodedNormalizedUrl.protocol !== "http:" ||
