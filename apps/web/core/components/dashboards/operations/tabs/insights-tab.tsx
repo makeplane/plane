@@ -44,10 +44,7 @@ export function OperationsInsightsTab({ workspaceSlug }: Props): React.ReactElem
   };
 
   return (
-    <div
-      className="flex flex-col gap-3"
-      data-testid="operations-insights-tab"
-    >
+    <div className="flex flex-col gap-3" data-testid="operations-insights-tab">
       <CustomizedInsights inheritedScope={inheritedScope} />
     </div>
   );

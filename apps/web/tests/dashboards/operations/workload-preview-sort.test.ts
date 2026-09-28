@@ -19,26 +19,21 @@
 import { describe, expect, test } from "vitest";
 import type { TWorkloadData, TWorkloadMemberRow } from "@plane/types";
 
-/**
- * Build a roster of 12 members. The first 5 by display_name are
- * all low-risk; a Z-named member (Zara) at position 12 is
- * overloaded with 10 overdue / 4 blocked / 6 started. A preview
- * that only paginates by display_name would never surface Zara;
- * a risk-sorted preview must.
- */
+const lowRiskMember = (i: number): TWorkloadMemberRow => ({
+  member_id: `u-low-${i}`,
+  display_name: `Alex Low ${i}`,
+  avatar_url: null,
+  is_active: true,
+  open: 1,
+  started: 1,
+  overdue: 0,
+  blocked: 0,
+  due_soon: 0,
+  completed_in_period: 0,
+});
+
+/** Build a roster of 12 low-risk members plus overloaded Zara at the end. */
 function makeRoster(): TWorkloadMemberRow[] {
-  const low = (i: number): TWorkloadMemberRow => ({
-    member_id: `u-low-${i}`,
-    display_name: `Alex Low ${i}`,
-    avatar_url: null,
-    is_active: true,
-    open: 1,
-    started: 1,
-    overdue: 0,
-    blocked: 0,
-    due_soon: 0,
-    completed_in_period: 0,
-  });
   const zara: TWorkloadMemberRow = {
     member_id: "u-zara",
     display_name: "Zara Overloaded",
@@ -52,7 +47,7 @@ function makeRoster(): TWorkloadMemberRow[] {
     completed_in_period: 0,
   };
   const rows: TWorkloadMemberRow[] = [];
-  for (let i = 0; i < 12; i++) rows.push(low(i));
+  for (let i = 0; i < 12; i++) rows.push(lowRiskMember(i));
   rows.push(zara);
   return rows;
 }
@@ -61,7 +56,7 @@ const PREVIEW_LIMIT = 5;
 
 /** Pure helper: server-side risk sort applied to a roster. */
 function serverRiskSort(rows: TWorkloadMemberRow[]): TWorkloadMemberRow[] {
-  return [...rows].sort(
+  return [...rows].toSorted(
     (a, b) =>
       b.overdue - a.overdue ||
       b.blocked - a.blocked ||
@@ -89,10 +84,7 @@ function isServerRiskSorted(rows: TWorkloadMemberRow[]): boolean {
   });
 }
 
-function applyPreview(
-  rows: TWorkloadMemberRow[],
-  serverHonoursPreview: boolean
-): TWorkloadMemberRow[] {
+function applyPreview(rows: TWorkloadMemberRow[], serverHonoursPreview: boolean): TWorkloadMemberRow[] {
   if (serverHonoursPreview) {
     return serverRiskSort(rows).slice(0, PREVIEW_LIMIT);
   }

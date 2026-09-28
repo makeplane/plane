@@ -20,9 +20,9 @@
  *   button — never a "metric pending backend" placeholder.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { TProjectsData, TProjectBreakdownRow, TStandaloneEnvelope } from "@plane/types";
-import { buildScopePayload, buildScopeSignature } from "@plane/shared-state";
+import { buildRequestKey, buildScopePayload } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
 import {
   useDashboardCustomRange,
@@ -55,41 +55,35 @@ export function OperationsProjectsTab({ workspaceSlug, refreshRevision = 0 }: Pr
   const [state, setState] = useState<TabState>({ kind: "idle" });
   const [page, setPage] = useState(1);
   const [reloadKey, setReloadKey] = useState(0);
-  const liveScopeKey = buildScopeSignature({
-    prefs: snapshot,
-    projectIds,
-    customRange,
-    currentUserId: currentUser?.id ?? null,
-  });
+  const fetchGenerationRef = useRef(0);
+  const scopePayload = useMemo(
+    () =>
+      buildScopePayload({
+        prefs: snapshot,
+        customRange,
+        projectIds,
+        currentUserId: currentUser?.id ?? null,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- customRange start/end are the stable primitive deps
+    [snapshot, customRange.start, customRange.end, projectIds, currentUser?.id]
+  );
+  const scopeRequestKey = useMemo(() => buildRequestKey(scopePayload), [scopePayload]);
 
   useEffect(() => {
     if (!workspaceSlug) return;
     const controller = new AbortController();
+    const generation = ++fetchGenerationRef.current;
     setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
-    const payload = buildScopePayload({
-      prefs: snapshot,
-      customRange,
-      projectIds,
-      currentUserId: currentUser?.id ?? null,
-    });
-    const scopeAtFetchStart = liveScopeKey;
     const pageAtFetchStart = page;
     const refreshAtFetchStart = refreshRevision;
 
     dashboardOperationsService
-      .projects(workspaceSlug, { ...payload, page }, controller.signal)
+      .projects(workspaceSlug, { ...scopePayload, page }, controller.signal)
       .then((envelope: TStandaloneEnvelope<TProjectsData>) => {
-        // The effect's cleanup already aborted the previous scope's
-        // fetch. A still-resolving promise lands here AFTER abort;
-        // the first-line guard ensures we never commit a late
-        // payload to state.
-        if (controller.signal.aborted) return;
-        if (
-          liveScopeKey !== scopeAtFetchStart ||
-          refreshRevision !== refreshAtFetchStart ||
-          page !== pageAtFetchStart
-        ) {
-          return;
+        if (controller.signal.aborted) return undefined;
+        if (generation !== fetchGenerationRef.current) return undefined;
+        if (refreshRevision !== refreshAtFetchStart || page !== pageAtFetchStart) {
+          return undefined;
         }
         const section = envelope.sections.find((entry) => entry.section_id === "projects");
         const classified = classifySection<TProjectsData>(
@@ -99,20 +93,21 @@ export function OperationsProjectsTab({ workspaceSlug, refreshRevision = 0 }: Pr
         );
         if (classified.kind === "ok") {
           if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-            return;
+            return undefined;
           }
           setState({ kind: "ok", data: classified.data });
           setPage(classified.data.pagination.page);
-          return;
+          return undefined;
         }
         if (classified.kind === "unavailable") {
           setState({ kind: "unavailable", reason: classified.reason });
-          return;
+          return undefined;
         }
         setState({
           kind: "error",
           error: { kind: "malformed", message: classified.reason ?? "section_error" },
         });
+        return undefined;
       })
       .catch((err) => {
         if (controller.signal.aborted) return;
@@ -123,18 +118,7 @@ export function OperationsProjectsTab({ workspaceSlug, refreshRevision = 0 }: Pr
     return () => {
       controller.abort();
     };
-  }, [
-    workspaceSlug,
-    snapshot,
-    customRange.start,
-    customRange.end,
-    projectIds,
-    currentUser?.id,
-    page,
-    refreshRevision,
-    liveScopeKey,
-    reloadKey,
-  ]);
+  }, [workspaceSlug, scopeRequestKey, scopePayload, page, refreshRevision, reloadKey]);
 
   return (
     <div className="flex flex-col gap-3" data-testid="operations-projects-tab">

@@ -53,9 +53,7 @@ const KPIS: Kpi[] = [
     ),
     metric: "total",
     secondary: (d) =>
-      d.total === 0
-        ? null
-        : { fraction: d.open / d.total, denominatorLabel: "open", colour: "#3b82f6" },
+      d.total === 0 ? null : { fraction: d.open / d.total, denominatorLabel: "open", colour: "#3b82f6" },
   },
   {
     id: "completed",
@@ -92,9 +90,7 @@ const KPIS: Kpi[] = [
     ),
     metric: "started",
     secondary: (d) =>
-      d.open === 0
-        ? null
-        : { fraction: d.started / d.open, denominatorLabel: "of open", colour: "#f59e0b" },
+      d.open === 0 ? null : { fraction: d.started / d.open, denominatorLabel: "of open", colour: "#f59e0b" },
   },
   {
     id: "not_started",
@@ -107,9 +103,7 @@ const KPIS: Kpi[] = [
     ),
     metric: "not_started",
     secondary: (d) =>
-      d.open === 0
-        ? null
-        : { fraction: d.not_started / d.open, denominatorLabel: "of open", colour: "#9ca3af" },
+      d.open === 0 ? null : { fraction: d.not_started / d.open, denominatorLabel: "of open", colour: "#9ca3af" },
   },
   {
     id: "blocked",
@@ -123,9 +117,7 @@ const KPIS: Kpi[] = [
     ),
     metric: "blocked",
     secondary: (d) =>
-      d.open === 0
-        ? null
-        : { fraction: d.blocked / d.open, denominatorLabel: "of open", colour: "#a855f7" },
+      d.open === 0 ? null : { fraction: d.blocked / d.open, denominatorLabel: "of open", colour: "#a855f7" },
   },
   {
     id: "overdue",
@@ -139,9 +131,7 @@ const KPIS: Kpi[] = [
     ),
     metric: "overdue",
     secondary: (d) =>
-      d.open === 0
-        ? null
-        : { fraction: d.overdue / d.open, denominatorLabel: "of open", colour: "#ef4444" },
+      d.open === 0 ? null : { fraction: d.overdue / d.open, denominatorLabel: "of open", colour: "#ef4444" },
   },
 ];
 
@@ -159,7 +149,7 @@ export function KpiStrip({ data, isLoading, error, onMetricClick }: Props): Reac
           value={data?.[kpi.id]}
           isLoading={isLoading}
           error={error}
-          secondary={!error && !isLoading && data ? kpi.secondary?.(data) ?? null : null}
+          secondary={!error && !isLoading && data ? (kpi.secondary?.(data) ?? null) : null}
           onClick={onMetricClick ? () => onMetricClick(kpi.metric) : undefined}
         />
       ))}
@@ -193,15 +183,19 @@ function KpiCard({ kpi, value, isLoading, error, secondary, onClick }: KpiCardPr
       aria-label={isInteractive ? `${kpi.label}: ${display}. Open drilldown.` : `${kpi.label}: ${display}`}
     >
       <div className="flex items-center gap-1.5">
-        <span className="text-tertiary" aria-hidden="true">{kpi.icon}</span>
+        <span className="text-tertiary" aria-hidden="true">
+          {kpi.icon}
+        </span>
         <span className="text-11 text-tertiary">{kpi.label}</span>
       </div>
       <div className="flex items-baseline justify-between gap-1.5">
-        <span className="font-mono text-22 font-semibold tabular-nums text-primary">{display}</span>
+        <span className="font-mono text-22 font-semibold text-primary tabular-nums">{display}</span>
         {secondary ? (
           <Ring secondary={secondary} />
         ) : isInteractive ? (
-          <span className="text-11 text-tertiary" aria-hidden="true">→</span>
+          <span className="text-11 text-tertiary" aria-hidden="true">
+            →
+          </span>
         ) : null}
       </div>
       {secondary ? (
@@ -209,7 +203,9 @@ function KpiCard({ kpi, value, isLoading, error, secondary, onClick }: KpiCardPr
           className="flex items-center justify-between gap-1.5 text-11 text-tertiary"
           data-testid={`kpi-${kpi.id}-secondary`}
         >
-          <span>{Math.round(secondary.fraction * 100)}% {secondary.denominatorLabel}</span>
+          <span>
+            {Math.round(secondary.fraction * 100)}% {secondary.denominatorLabel}
+          </span>
         </div>
       ) : null}
     </Component>

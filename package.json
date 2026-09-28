@@ -18,7 +18,10 @@
     "check:format": "turbo run check:format",
     "check:types": "turbo run check:types",
     "prepare": "husky",
-    "doctor": "npx react-doctor@latest"
+    "doctor": "npx react-doctor@latest",
+    "dashboard-qa": "make dashboard-qa",
+    "dashboard-qa:restart": "make dashboard-qa-restart",
+    "dashboard-qa:status": "make dashboard-qa-status"
   },
   "devDependencies": {
     "husky": "catalog:",

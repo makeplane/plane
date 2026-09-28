@@ -41,7 +41,7 @@ export interface InsightChartData {
   hasBreakdown: boolean;
 }
 
-const SERIES_FALLBACK_KEY = "count";
+export const SERIES_FALLBACK_KEY = "count";
 
 export const formatValue = (value: number, unit = ""): string => {
   const numeric = Number(value);

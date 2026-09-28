@@ -10,13 +10,7 @@ import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import type {
-  IAnalyticsParams,
-  TAnalyticsDateBasis,
-  TPeriodPreset,
-  TDateBucket,
-  TBusinessFilters,
-} from "@plane/types";
+import type { IAnalyticsParams, TPeriodPreset, TDateBucket, TBusinessFilters } from "@plane/types";
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web components

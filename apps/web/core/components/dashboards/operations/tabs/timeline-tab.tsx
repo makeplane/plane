@@ -21,7 +21,7 @@
  * with a retry button.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   TTimelineData,
   TStandaloneEnvelope,
@@ -29,7 +29,7 @@ import type {
   TTimelineDeadlineRow,
   TUnscheduledCycleRow,
 } from "@plane/types";
-import { buildScopePayload, buildScopeSignature } from "@plane/shared-state";
+import { buildRequestKey, buildScopePayload } from "@plane/shared-state";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
 import {
   useDashboardCustomRange,
@@ -61,40 +61,38 @@ export function OperationsTimelineTab({ workspaceSlug, refreshRevision = 0 }: Pr
 
   const [state, setState] = useState<TabState>({ kind: "idle" });
   const [reloadKey, setReloadKey] = useState(0);
-  const liveScopeKey = buildScopeSignature({
-    prefs: snapshot,
-    projectIds,
-    customRange,
-    currentUserId: currentUser?.id ?? null,
-  });
+  const fetchGenerationRef = useRef(0);
+  const scopePayload = useMemo(
+    () =>
+      buildScopePayload({
+        prefs: snapshot,
+        customRange,
+        projectIds,
+        currentUserId: currentUser?.id ?? null,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- customRange start/end are the stable primitive deps
+    [snapshot, customRange.start, customRange.end, projectIds, currentUser?.id]
+  );
+  const scopeRequestKey = useMemo(() => buildRequestKey(scopePayload), [scopePayload]);
 
   useEffect(() => {
     if (!workspaceSlug) return;
     const controller = new AbortController();
+    const generation = ++fetchGenerationRef.current;
     setState((prev) => (prev.kind === "ok" ? prev : { kind: "loading" }));
-    const payload = buildScopePayload({
-      prefs: snapshot,
-      customRange,
-      projectIds,
-      currentUserId: currentUser?.id ?? null,
-    });
-    const scopeAtFetchStart = liveScopeKey;
     const refreshAtFetchStart = refreshRevision;
 
     dashboardOperationsService
       .timeline(
         workspaceSlug,
-        { ...payload, page_size: 25, cycles_page: 1, deadlines_page: 1, unscheduled_page: 1 },
+        { ...scopePayload, page_size: 25, cycles_page: 1, deadlines_page: 1, unscheduled_page: 1 },
         controller.signal
       )
       .then((envelope: TStandaloneEnvelope<TTimelineData>) => {
-        // The effect's cleanup already aborted the previous scope's
-        // fetch. A still-resolving promise lands here AFTER abort;
-        // the first-line guard ensures we never commit a late
-        // payload to state.
-        if (controller.signal.aborted) return;
-        if (liveScopeKey !== scopeAtFetchStart || refreshRevision !== refreshAtFetchStart) {
-          return;
+        if (controller.signal.aborted) return undefined;
+        if (generation !== fetchGenerationRef.current) return undefined;
+        if (refreshRevision !== refreshAtFetchStart) {
+          return undefined;
         }
         const section = envelope.sections.find((entry) => entry.section_id === "timeline");
         const classified = classifySection<TTimelineData>(
@@ -104,19 +102,20 @@ export function OperationsTimelineTab({ workspaceSlug, refreshRevision = 0 }: Pr
         );
         if (classified.kind === "ok") {
           if (classified.data.scope_key && envelope.scope_key && classified.data.scope_key !== envelope.scope_key) {
-            return;
+            return undefined;
           }
           setState({ kind: "ok", data: classified.data });
-          return;
+          return undefined;
         }
         if (classified.kind === "unavailable") {
           setState({ kind: "unavailable", reason: classified.reason });
-          return;
+          return undefined;
         }
         setState({
           kind: "error",
           error: { kind: "malformed", message: classified.reason ?? "section_error" },
         });
+        return undefined;
       })
       .catch((err) => {
         if (controller.signal.aborted) return;
@@ -127,17 +126,7 @@ export function OperationsTimelineTab({ workspaceSlug, refreshRevision = 0 }: Pr
     return () => {
       controller.abort();
     };
-  }, [
-    workspaceSlug,
-    snapshot,
-    customRange.start,
-    customRange.end,
-    projectIds,
-    currentUser?.id,
-    refreshRevision,
-    liveScopeKey,
-    reloadKey,
-  ]);
+  }, [workspaceSlug, scopeRequestKey, scopePayload, refreshRevision, reloadKey]);
 
   return (
     <div className="flex flex-col gap-3" data-testid="operations-timeline-tab">

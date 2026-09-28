@@ -11,6 +11,20 @@
 - `pnpm turbo run <command> --filter=<package>` - Target specific package/app
 - `pnpm --filter=@plane/ui storybook` - Start Storybook on port 6006
 
+## Team Operations Dashboard QA (local)
+
+Isolated stack: API **http://localhost:8100**, web **http://localhost:3100/acme-qa/dashboards/** (not `pnpm dev` on :3000).
+
+Web loads **`apps/web/.env.dashboard-qa`** via `--mode dashboard-qa`: **`VITE_API_BASE_URL` is empty** — `/api` and `/auth` are proxied to `:8100` on the dev server so **login CSRF stays same-origin**. Open **http://localhost:3100** only.
+
+- `make dashboard-qa` — Docker stack + seed + web (foreground)
+- `make dashboard-qa-restart` — after API crash, login loop, or connection reset
+- `make dashboard-qa-status` — health check
+- `make dashboard-qa-seed` — re-seed + Redis flush only
+- Same via `pnpm dashboard-qa`, `pnpm dashboard-qa:restart`, `pnpm dashboard-qa:status`
+
+Login: `alice@acme.so` / `password123`, workspace `acme-qa`.
+
 ## Code Style
 
 - **Imports**: Use `workspace:*` for internal packages, `catalog:` for external deps

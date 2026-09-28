@@ -50,12 +50,7 @@ import type { TDashboardOverviewResponse } from "@plane/types";
 import { useUser } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { dashboardOperationsService } from "@/services/dashboard-operations.service";
-import {
-  buildRequestKey,
-  buildScopePayload,
-  buildScopeSignature,
-  type TDashboardScopeSignature,
-} from "@plane/shared-state";
+import { buildRequestKey, buildScopePayload, buildScopeSignature } from "@plane/shared-state";
 import { OperationsScopeControls } from "./scope-controls";
 import { OperationsOverviewTab } from "./tabs/overview-tab";
 import { OperationsProjectsTab } from "./tabs/projects-tab";
@@ -113,14 +108,11 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
   // Manual-refresh revision. Bumped by the Refresh button; reset to
   // 0 only on identity swap (the identity revision handles that case).
   const [refreshRevision, setRefreshRevision] = useState(0);
-  const lastCommittedRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
+  const overviewFetchGenerationRef = useRef(0);
   // Identity revision. Bumped on every (workspaceId, userId) change
   // so a swap refetches even when the scope itself is unchanged.
-  const identityRevision = useMemo(
-    () => identityFingerprint(workspaceId, userId),
-    [workspaceId, userId]
-  );
+  const identityRevision = useMemo(() => identityFingerprint(workspaceId, userId), [workspaceId, userId]);
 
   // Identity is set on mount + on user/workspace change. The effect
   // also clears prior data immediately so a new viewer never sees
@@ -147,6 +139,7 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
         projectIds,
         currentUserId: userId,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- customRange start/end are the stable primitive deps
     [snapshot, customRange.start, customRange.end, projectIds, userId]
   );
 
@@ -160,6 +153,7 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
         customRange,
         currentUserId: userId,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- customRange start/end are the stable primitive deps
     [snapshot, customRange.start, customRange.end, projectIds, userId]
   );
 
@@ -167,14 +161,10 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
   // refresh revision so swaps and explicit Refresh clicks refetch
   // even when the scope payload is byte-identical.
   const requestKeySource = useMemo(
-    () =>
-      `${identityRevision}::${refreshRevision}::${buildRequestKey(request)}`,
+    () => `${identityRevision}::${refreshRevision}::${buildRequestKey(request)}`,
     [identityRevision, refreshRevision, request]
   );
-  const debouncedRequestKey = useDebouncedValue(
-    requestKeySource,
-    DASHBOARD_OPERATIONS_DEBOUNCE_MS
-  );
+  const debouncedRequestKey = useDebouncedValue(requestKeySource, DASHBOARD_OPERATIONS_DEBOUNCE_MS);
 
   // Fetch overview on each scope change; debounced; race-safe. The
   // effect captures the scope signature at REQUEST START so a stale
@@ -190,35 +180,31 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
     // Capture the request signature NOW. The ref pattern would
     // let a stale signature slip through if a scope change happened
     // mid-flight; capturing the local value closes that gap.
-    const signatureAtRequestStart: TDashboardScopeSignature = scopeSignature;
-    const requestGeneration = store.beginRequest(signatureAtRequestStart);
+    const fetchGeneration = ++overviewFetchGenerationRef.current;
     setState((prev) => ({ ...prev, status: "loading", error: null }));
 
     dashboardOperationsService
       .overview(workspaceSlug, request, controller.signal)
       .then((response) => {
-        // Race-safe commit: only commit if the response belongs to
-        // the current request generation AND the scope signature
-        // captured at request start still matches.
-        const committed = store.commitResponse(requestGeneration, signatureAtRequestStart);
-        if (!committed) return;
-        lastCommittedRef.current = requestGeneration;
+        if (controller.signal.aborted) return undefined;
+        if (fetchGeneration !== overviewFetchGenerationRef.current) return undefined;
         setState({ status: "ok", data: response, error: null });
+        return undefined;
       })
       .catch((err) => {
-        const committed = store.commitResponse(requestGeneration, signatureAtRequestStart);
-        if (!committed) return;
+        if (controller.signal.aborted) return;
+        if (fetchGeneration !== overviewFetchGenerationRef.current) return;
         setState({
           status: "error",
           data: null,
-          error: typeof err === "string" ? err : err?.error ?? "request_failed",
+          error: typeof err === "string" ? err : (err?.error ?? "request_failed"),
         });
       });
 
     return () => {
       controller.abort();
     };
-  }, [debouncedRequestKey, store, workspaceSlug]);
+  }, [debouncedRequestKey, workspaceSlug, request, scopeSignature]);
 
   const onRefresh = useCallback(() => {
     // Bump the refresh revision so the next debounced key forces
@@ -269,11 +255,7 @@ export function OperationsShell({ workspaceSlug }: Props): React.ReactElement {
 
       <div className="flex flex-col gap-4 p-5" data-testid="operations-tab-content">
         {tab === "overview" ? (
-          <OperationsOverviewTab
-            workspaceSlug={workspaceSlug}
-            state={state}
-            refreshRevision={refreshRevision}
-          />
+          <OperationsOverviewTab workspaceSlug={workspaceSlug} state={state} refreshRevision={refreshRevision} />
         ) : tab === "projects" ? (
           <OperationsProjectsTab workspaceSlug={workspaceSlug} refreshRevision={refreshRevision} />
         ) : tab === "workload" ? (
