@@ -80,6 +80,18 @@ from .state import State, StateGroup, DEFAULT_STATES
 from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
+from .workflow import (
+    IssueWorkflowBinding,
+    Workflow,
+    WorkflowFlow,
+    WorkflowFlowActor,
+    WorkflowFlowActorType,
+    WorkflowFlowType,
+    WorkflowRevision,
+    WorkflowRevisionStatus,
+    WorkflowState,
+    WorkflowTypeAssignment,
+)
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,

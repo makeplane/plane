@@ -98,6 +98,10 @@ class Project(BaseModel):
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)
     guest_view_all_features = models.BooleanField(default=False)
+    # Spec §7.1 / §25 Phase 0 — feature flag controlling whether a project's
+    # Work Items are routed through the workflow service. Defaults to False
+    # so Phase 0 is purely additive (no existing path consults this field).
+    workflow_enabled = models.BooleanField(default=False)
     cover_image = models.TextField(blank=True, null=True)
     cover_image_asset = models.ForeignKey(
         "db.FileAsset",
