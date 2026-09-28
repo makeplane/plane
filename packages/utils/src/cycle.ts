@@ -12,6 +12,14 @@ import type { ICycle, TCycleFilters, TProgressSnapshot } from "@plane/types";
 import { findTotalDaysInRange, generateDateArray, getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
+// Module-scoped constants to avoid re-allocations on every invocation of orderCycles
+const ACCEPTED_STATUSES = new Set(["current", "upcoming", "draft"]);
+const STATUS_ORDER: Record<string, number> = {
+  current: 1,
+  upcoming: 2,
+  draft: 3,
+};
+
 /**
  * Orders cycles based on their status
  * @param {ICycle[]} cycles - Array of cycles to be ordered
@@ -21,22 +29,22 @@ import { satisfiesDateFilter } from "./filter";
 export const orderCycles = (cycles: ICycle[], sortByManual: boolean): ICycle[] => {
   if (cycles.length === 0) return [];
 
-  const acceptedStatuses = ["current", "upcoming", "draft"];
-  const STATUS_ORDER: {
-    [key: string]: number;
-  } = {
-    current: 1,
-    upcoming: 2,
-    draft: 3,
-  };
-
-  let filteredCycles = cycles.filter((c) => acceptedStatuses.includes(c.status?.toLowerCase() ?? ""));
-  if (sortByManual) filteredCycles = sortBy(filteredCycles, [(c) => c.sort_order]);
-  else
+  // Optimization: use module-scoped Set for O(1) status lookup instead of O(N) Array.includes.
+  let filteredCycles = cycles.filter((c) => ACCEPTED_STATUSES.has(c.status?.toLowerCase() ?? ""));
+  if (sortByManual) {
+    filteredCycles = sortBy(filteredCycles, [(c) => c.sort_order]);
+  } else {
     filteredCycles = sortBy(filteredCycles, [
-      (c) => STATUS_ORDER[c.status?.toLowerCase() ?? ""],
-      (c) => (c.status?.toLowerCase() === "upcoming" ? c.start_date : c.name.toLowerCase()),
+      (c) => {
+        const lowerStatus = c.status?.toLowerCase() ?? "";
+        return STATUS_ORDER[lowerStatus];
+      },
+      (c) => {
+        const lowerStatus = c.status?.toLowerCase() ?? "";
+        return lowerStatus === "upcoming" ? c.start_date : c.name.toLowerCase();
+      },
     ]);
+  }
 
   return filteredCycles;
 };
