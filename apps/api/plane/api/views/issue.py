@@ -237,15 +237,19 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         This endpoint provides workspace-level access to work items.
         """
         if issue_identifier and project_identifier:
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).get(
-                workspace__slug=slug,
-                project__identifier=project_identifier,
-                sequence_id=issue_identifier,
+            issue = (
+                Issue.issue_objects.annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .select_related("state")
+                .get(
+                    workspace__slug=slug,
+                    project__identifier=project_identifier,
+                    sequence_id=issue_identifier,
+                )
             )
             return Response(
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
@@ -579,12 +583,16 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
-        issue = Issue.issue_objects.annotate(
-            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        ).get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = (
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .select_related("state")
+            .get(workspace__slug=slug, project_id=project_id, pk=pk)
+        )
         return Response(
             IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
             status=status.HTTP_200_OK,
